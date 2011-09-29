@@ -44,6 +44,13 @@ struct BuilderSettings
      * and one of 255 will result in white).
      */
     unsigned char padding_byte;
+    
+    /**
+     * Whether or not to use padding at all. When TRUE, images that do not fill
+     * a whole tile will be padded with padding_byte. When FALSE, images will
+     * be cut to size.
+     */
+    bool use_padding;
 
     //TODO: More settings regarding properties of output image.
 };
@@ -57,7 +64,8 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
     256,                                //output_imgs_height
     80,                                 //output_quality
     BuilderSettings::PREFIX_X_Y_Z_JPG,  //filename_convention
-    '\0'                                //padding_byte
+    '\0',                               //padding_byte
+    0                                   //use_padding
 };
 
 /**

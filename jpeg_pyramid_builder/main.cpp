@@ -11,6 +11,7 @@ int main(int argc, const char * args [])
     {
         string path, output_prefix;
         BuilderSettings settings = DEFAULT_BUILDER_SETTINGS;
+        settings.filename_convention = BuilderSettings::PREFIX_Z_X_Y_JPG;
 
         //TODO: Parse command line options specifying the settings
 

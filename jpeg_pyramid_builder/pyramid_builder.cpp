@@ -38,6 +38,9 @@ JSAMPLE padding_byte;
 //Buffer for output images.
 JSAMPARRAY output_buffer;
 
+//The number of lines the input image has
+size_t num_lines;
+
 
 /*
  * An object representing a tile in the image. Can either contain its raw image
@@ -80,8 +83,8 @@ private:
             //Determine logical position
             size_t real_x, real_y;
             int depth = (int)ceil(log2(max(max_x, max_y)));
-            real_x = x_pos >> depth - z_pos;
-            real_y = y_pos >> depth - z_pos;
+            real_x = x_pos >> (depth - z_pos);
+            real_y = y_pos >> (depth - z_pos);
             
             //Determine file name
             ostringstream ofilename;
@@ -103,10 +106,29 @@ private:
             if(!ofile)
                 throw runtime_error("Can't open output file " + ofilename.str());
             jpeg_stdio_dest(&cinfo, ofile);
+            
+            size_t w = settings.output_imgs_width * 3;
+
+            //Check if we should pad the image
+            size_t right = (x_pos + size) * settings.output_imgs_width;
+            size_t bottom = (y_pos + size) * settings.output_imgs_height;
+            if (!settings.use_padding && (right > buf_width/3 || bottom > num_lines))
+            {
+                if (right > buf_width/3)
+                    cinfo.image_width = settings.output_imgs_width - ((right - buf_width/3) >> (depth - z_pos));
+                if (bottom > num_lines)
+                    cinfo.image_height = settings.output_imgs_height - ((bottom - num_lines) >> (depth - z_pos));
+                    
+                assert(cinfo.image_width <= settings.output_imgs_width && cinfo.image_height <= settings.output_imgs_height);
+            }
+            else
+            {
+                cinfo.image_width = settings.output_imgs_width;
+                cinfo.image_height = settings.output_imgs_height;
+            }
 
             //Start writing data
             jpeg_start_compress(&cinfo, TRUE);
-            size_t w = settings.output_imgs_width * 3;
             
             for (size_t i = 0; i < cinfo.image_height; ++i)
                  output_buffer[i] = &data.image[i * w];
@@ -373,6 +395,7 @@ void processImage(const string & image_path, const string & output_pr,
 
         assert(decinfo.output_components == 3);
         buf_width = decinfo.output_width * 3;
+        num_lines = decinfo.output_height;
 
         //Prepare tile tree
         max_x = ((decinfo.output_width - 1)
