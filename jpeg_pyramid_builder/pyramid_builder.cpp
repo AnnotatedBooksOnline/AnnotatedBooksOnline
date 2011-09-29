@@ -254,7 +254,7 @@ public:
     {
         assert(!done);
 
-        const size_t w = settings.output_imgs_width * sizeof(JSAMPLE) * 3,
+        const size_t w = settings.output_imgs_width * 3,
                      h = settings.output_imgs_height;
 
         //If atomic, store and flush data.
@@ -265,27 +265,22 @@ public:
             data.image = new JSAMPLE[w * h];
             const size_t chunkx = x_pos * w;
             for(size_t iy = 0; iy < h; ++iy)
-            for(size_t ix = 0; ix < w; ++ix)
             {
-                data.image[iy * w + ix] = chunkx + ix < buf_width
-                                        ? chunk[iy][chunkx + ix]
-                                        : padding_byte;
+                if (chunkx + w <= buf_width)
+                {
+                    memcpy(&data.image[iy * w], &chunk[iy][chunkx], w * sizeof(JSAMPLE));
+                }
+                else if (chunkx < buf_width)
+                {
+                    memcpy(&data.image[iy * w], &chunk[iy][chunkx], (buf_width - chunkx) * sizeof(JSAMPLE));
+                    memset(&data.image[iy * w + buf_width - chunkx], padding_byte, (w + chunkx - buf_width) * sizeof(JSAMPLE));
+                }
+                else
+                {
+                    // This should no longer happen, as it indicates a problem with tile pruning
+                    assert(false);
+                }
             }
-
-//            TODO: This optimalisation is buggy now, probably because I changed something
-//            if (chunkx + w <= buf_width)
-//            {
-//                memcpy(&data.image[y * w], &chunk[y][chunkx], w * sizeof(JSAMPLE));
-//            }
-//            else if (chunkx < buf_width)
-//            {
-//                memcpy(&data.image[y * w], &chunk[y][chunkx], (buf_width - chunkx) * sizeof(JSAMPLE));
-//                memset(&data.image[y * w + buf_width - chunkx], padding_byte, (w + chunkx - buf_width) * sizeof(JSAMPLE));
-//            }
-//            else
-//            {
-//                memset(&data.image[y * w], padding_byte, w * sizeof(JSAMPLE));
-//            }
 
             flushImage();
             done = true;
