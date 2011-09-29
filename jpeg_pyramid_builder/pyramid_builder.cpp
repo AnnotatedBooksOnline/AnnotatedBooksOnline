@@ -98,15 +98,15 @@ private:
                 throw runtime_error("Can't open output file " + ofilename.str());
             jpeg_stdio_dest(&cinfo, ofile);
 
-            //Start writing data, row by row
+            //Start writing data
             jpeg_start_compress(&cinfo, TRUE);
             size_t w = settings.output_imgs_width * 3;
+            
+            for (size_t i = 0; i < cinfo.image_height; ++i)
+                 output_buffer[i] = &data.image[i * w];
             while(cinfo.next_scanline < cinfo.image_height)
             {
-                size_t lines = 0;
-                for (size_t i = cinfo.next_scanline; i < settings.output_imgs_height; ++i, ++lines)
-                     output_buffer[i] = &data.image[w * (cinfo.next_scanline+i)];
-                jpeg_write_scanlines(&cinfo, output_buffer, lines);
+                jpeg_write_scanlines(&cinfo, &output_buffer[cinfo.next_scanline], cinfo.image_height - cinfo.next_scanline);
             }
 
             //Finalize compression
