@@ -77,18 +77,24 @@ private:
         FILE * ofile = NULL;
         try
         {
+            //Determine logical position
+            size_t real_x, real_y;
+            int depth = (int)ceil(log2(max(max_x, max_y)));
+            real_x = x_pos >> depth - z_pos;
+            real_y = y_pos >> depth - z_pos;
+            
             //Determine file name
             ostringstream ofilename;
             ofilename << output_prefix << '_';
             switch(settings.filename_convention)
             {
                 case BuilderSettings::PREFIX_X_Y_Z_JPG:
-                    ofilename << x_pos << '_' << y_pos <<'_'
+                    ofilename << real_x << '_' << real_y <<'_'
                               << z_pos << ".jpg";
                     break;
                 case BuilderSettings::PREFIX_Z_X_Y_JPG:
-                    ofilename << z_pos << '_' << x_pos <<'_'
-                              << y_pos << ".jpg";
+                    ofilename << z_pos << '_' << real_x <<'_'
+                              << real_y << ".jpg";
                     break;
             }
             
