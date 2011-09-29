@@ -198,7 +198,7 @@ public:
     {
         if(size > 1)
         {
-            size_t csize = max(1u, size / 2);
+            size_t csize = max((size_t)1u, size / 2);
             Tile * subtiles [] =
             {
                       new Tile(this, x        , y        , z + 1, csize),
@@ -435,3 +435,4 @@ void processImage(const string & image_path, const string & output_pr,
         throw;
     }
 }
+
