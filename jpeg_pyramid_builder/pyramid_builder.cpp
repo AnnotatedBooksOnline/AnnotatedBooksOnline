@@ -152,22 +152,26 @@ private:
         //case is simply taking the average of four pixel values.
 
         //Convenient macro to avoid repetition
-#define _SCALE_SUB_IMG(fromx, fromy, img)                          \
-        for(size_t y = 0; y < h / 2; ++y)                          \
-        for(size_t x = 0; x < w / 2; x += 3)                       \
-        for(size_t i = 0; i < 3; ++i)                              \
-        if(img)                                                    \
-        {                                                          \
-           JSAMPLE * curr = &img[w * y * 2 + (2 * x) + i];         \
-           unsigned int sampsum = curr[0] + curr[3]                \
-                                + curr[w] + curr[w + 3];           \
-           output[(fromy + y) * w + fromx + x + i] =               \
-                                static_cast<JSAMPLE>(sampsum / 4); \
-        }                                                          \
-        else                                                       \
-        {                                                          \
-            output[(fromy + y) * w + fromx + x + i] =              \
-                    static_cast<JSAMPLE>(settings.padding_byte);   \
+#define _SCALE_SUB_IMG(fromx, fromy, img)                              \
+        if(img)                                                        \
+        {                                                              \
+            for(size_t y = 0; y < h / 2; ++y)                          \
+            for(size_t x = 0; x < w / 2; x += 3)                       \
+            for(size_t i = 0; i < 3; ++i)                              \
+            {                                                          \
+               JSAMPLE * curr = &img[w * y * 2 + (2 * x) + i];         \
+               unsigned int sampsum = curr[0] + curr[3]                \
+                                    + curr[w] + curr[w + 3];           \
+               output[(fromy + y) * w + fromx + x + i] =               \
+                                    static_cast<JSAMPLE>(sampsum / 4); \
+            }                                                          \
+        }                                                              \
+        else                                                           \
+        {                                                              \
+            for(size_t y = 0; y < h / 2; ++y)                          \
+            for(size_t x = 0; x < w / 2; ++x)                          \
+                output[(fromy + y) * w + fromx + x] =                  \
+                        static_cast<JSAMPLE>(settings.padding_byte);   \
         }
 
         _SCALE_SUB_IMG(0    , 0    , img0);
