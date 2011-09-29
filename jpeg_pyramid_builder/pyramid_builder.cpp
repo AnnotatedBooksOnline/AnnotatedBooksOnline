@@ -264,11 +264,11 @@ public:
 
             data.image = new JSAMPLE[w * h];
             const size_t chunkx = x_pos * w;
-            for(size_t y = 0; y < h; ++y)
-            for(size_t x = 0; x < w; ++x)
+            for(size_t iy = 0; iy < h; ++iy)
+            for(size_t ix = 0; ix < w; ++ix)
             {
-                data.image[y * w + x] = chunkx + x < buf_width
-                                        ? chunk[y][chunkx + x]
+                data.image[iy * w + ix] = chunkx + ix < buf_width
+                                        ? chunk[iy][chunkx + ix]
                                         : padding_byte;
             }
 
