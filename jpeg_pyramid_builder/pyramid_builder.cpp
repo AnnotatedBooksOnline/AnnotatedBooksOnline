@@ -29,6 +29,9 @@ size_t buf_width;
 //TODO: Custom error handler that throws exceptions.
 jpeg_error_mgr jerr;
 
+//The shared compression object
+jpeg_compress_struct cinfo;
+
 //settings.padding_byte converted to a JSAMPLE.
 JSAMPLE padding_byte;
 
@@ -71,15 +74,9 @@ private:
         //Tiles outside image should no longer occur.
         assert(y_pos < max_y && x_pos < max_x);
 
-        //Initialize a compression object.
-        jpeg_compress_struct cinfo;
-        cinfo.err = jpeg_std_error(&jerr);
-
         FILE * ofile = NULL;
         try
         {
-            jpeg_create_compress(&cinfo);
-
             //Determine file name
             ostringstream ofilename;
             ofilename << output_prefix << '_';
@@ -100,13 +97,6 @@ private:
             if(!ofile)
                 throw runtime_error("Can't open output file " + ofilename.str());
             jpeg_stdio_dest(&cinfo, ofile);
-            cinfo.image_width = settings.output_imgs_width;
-            cinfo.image_height = settings.output_imgs_height;
-            cinfo.input_components = 3;
-            cinfo.in_color_space = JCS_RGB;
-            cinfo.optimize_coding = TRUE;
-            jpeg_set_defaults(&cinfo);
-            jpeg_set_quality(&cinfo, settings.output_quality, TRUE);
 
             //Start writing data, row by row
             jpeg_start_compress(&cinfo, TRUE);
@@ -121,7 +111,6 @@ private:
 
             //Finalize compression
             jpeg_finish_compress(&cinfo);
-            jpeg_destroy_compress(&cinfo);
             fclose(ofile);
             
             clog << ofilename.str() << " OK!" << endl;
@@ -342,6 +331,19 @@ void processImage(const string & image_path, const string & output_pr,
     settings = sett;
     output_prefix = output_pr;
 
+    //Initialize the compressor object
+    jpeg_create_compress(&cinfo);
+    cinfo.err = jpeg_std_error(&jerr);
+    cinfo.input_components = 3;
+    cinfo.in_color_space = JCS_RGB;
+    jpeg_set_defaults(&cinfo);
+    jpeg_set_quality(&cinfo, settings.output_quality, TRUE);
+    cinfo.optimize_coding = TRUE; // Set only after jpeg_set_defaults()
+    cinfo.image_width = settings.output_imgs_width;
+    cinfo.image_height = settings.output_imgs_height;
+
+
+    //Set decompressor
     jpeg_decompress_struct decinfo;
     decinfo.err = jpeg_std_error(&jerr);
     padding_byte = static_cast<JSAMPLE>(settings.padding_byte);
@@ -426,6 +428,7 @@ void processImage(const string & image_path, const string & output_pr,
         delete output_buffer;
         jpeg_destroy_decompress(&decinfo);
         fclose(ifile);
+        jpeg_destroy_compress(&cinfo);
     }
     catch(...)
     {
