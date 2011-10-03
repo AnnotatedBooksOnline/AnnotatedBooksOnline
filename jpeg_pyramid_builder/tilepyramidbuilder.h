@@ -67,9 +67,9 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
 {
     256,                                //output_imgs_width
     256,                                //output_imgs_height
-    80,                                 //output_quality
+    60,                                 //output_quality
     BuilderSettings::PREFIX_X_Y_Z_JPG,  //filename_convention
-    { 0, 0, 0 },                        //padding_byte
+    {{ 0, 0, 0 }},                      //padding
     0                                   //use_padding
 };
 

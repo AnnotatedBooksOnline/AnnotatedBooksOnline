@@ -22,12 +22,10 @@ using namespace std;
 
 // Universal types describing image components
 typedef unsigned char sample_t; // A singe sample (R or G or B)
-typedef struct
+typedef union
 {
-	sample_t r;
-	sample_t g;
-	sample_t b;
-} __attribute((packed)) rgb_t; // A single RGB pixel
+	sample_t sample[3];
+} rgb_t; // A single RGB pixel
 typedef rgb_t * line_t; // A scanline of RGB pixels
 typedef line_t * image_t; // A 2-dimensional image of RGB pixels
 
@@ -35,9 +33,9 @@ typedef line_t * image_t; // A 2-dimensional image of RGB pixels
 static inline rgb_t avg(const rgb_t & a, const rgb_t & b, const rgb_t & c, const rgb_t & d)
 {
 	rgb_t t;
-	t.r = (a.r+b.r+c.r+d.r)/4;
-	t.g = (a.g+b.g+c.g+d.g)/4;
-	t.b = (a.b+b.b+c.b+d.b)/4;
+	t.sample[0] = (a.sample[0]+b.sample[0]+c.sample[0]+d.sample[0])/4;
+	t.sample[1] = (a.sample[1]+b.sample[1]+c.sample[1]+d.sample[1])/4;
+	t.sample[2] = (a.sample[2]+b.sample[2]+c.sample[2]+d.sample[2])/4;
 	return t;
 }
 
