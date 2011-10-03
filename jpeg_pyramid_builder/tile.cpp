@@ -5,6 +5,8 @@
 
 #include "tile.h"
 
+#include "imagereaderwriter.h"
+
 using namespace std;
 
 //Creates and stores a compressed image from a raw image. data.image should be defined
@@ -17,7 +19,7 @@ void Tile::flushImage()
     {
         //Determine logical position
         size_t real_x, real_y;
-        int depth = (int)ceil(log2(max(max_x, max_y)));
+        int depth = (int) ceil(log2(max(max_x, max_y)));
         real_x = x_pos >> (depth - z_pos);
         real_y = y_pos >> (depth - z_pos);
         
@@ -37,13 +39,12 @@ void Tile::flushImage()
         }
         
         // Set the output parameters
-	FileParameters params (settings.output_imgs_width,
-                               settings.output_imgs_height);
-		            
+        FileParameters params(settings.output_imgs_width, settings.output_imgs_height);
+                    
         size_t w = settings.output_imgs_width;
 
         //Check if we should pad the image
-        size_t right = (x_pos + size) * settings.output_imgs_width;
+        size_t right  = (x_pos + size) * settings.output_imgs_width;
         size_t bottom = (y_pos + size) * settings.output_imgs_height;
         if (!settings.use_padding && (right > buf_width || bottom > num_lines))
         {
@@ -55,26 +56,26 @@ void Tile::flushImage()
             assert(params.width <= settings.output_imgs_width && params.height <= settings.output_imgs_height);
         }
         
-        output->set_parameters(params);
+        output->setParameters(params);
         
         //Open the file to write and initialize the compressor
-		output->open_file(ofilename.str());
+        output->open(ofilename.str());
 
         //Start writing data
         
         for (size_t i = 0; i < params.height; ++i)
              output_buffer[i] = &data.image[i * w];
              
-        output->write_scanlines(output_buffer, params.height);
+        output->writeScanlines(output_buffer, params.height);
 
         //Finalize compression
-        output->close_file();
+        output->close();
         
         clog << ofilename.str() << " OK!" << endl;
     }
     catch(...)
     {
-        // TODO
+        //TODO
         throw;
     }
 }
@@ -103,9 +104,9 @@ void Tile::scaleTilesToImage()
         for(size_t y = 0; y < h / 2; ++y)                          \
         for(size_t x = 0; x < w / 2; ++x)                          \
         {                                                          \
-        	rgb_t * curr = &img[w * y * 2 + (2 * x)];              \
-        	output[(fromy + y) * w + fromx + x] =                  \
-        		avg(curr[0], curr[1], curr[w], curr[w + 1]);       \
+            rgb_t * curr = &img[w * y * 2 + (2 * x)];              \
+            output[(fromy + y) * w + fromx + x] =                  \
+                avg(curr[0], curr[1], curr[w], curr[w + 1]);       \
         }                                                          \
     }                                                              \
     else                                                           \

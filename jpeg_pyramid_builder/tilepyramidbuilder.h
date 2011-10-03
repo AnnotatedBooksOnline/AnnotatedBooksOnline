@@ -4,9 +4,11 @@
  */
 
 #ifndef _TILEPYRAMIDBUILDER_H_
-#define	_TILEPYRAMIDBUILDER_H_
+#define _TILEPYRAMIDBUILDER_H_
 
 #include "common.h"
+
+class ImageWriter;
 
 struct BuilderSettings
 {
@@ -92,7 +94,7 @@ extern std::string output_prefix;
 extern size_t buf_width;
 
 //The shared compression object
-extern OutputMethod *output;
+extern ImageWriter *output;
 
 //Buffer for output images.
 extern image_t output_buffer;

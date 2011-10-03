@@ -24,7 +24,7 @@ string output_prefix;
 size_t buf_width;
 
 //The shared compression object
-OutputMethod * output;
+ImageWriter *output;
 
 //settings.padding_byte converted to a sample_t.
 rgb_t padding;
@@ -62,16 +62,16 @@ void processImage(const string &image_path, const string &output_pr,
     output_prefix = output_pr;
 
     //Set decompressor
-	InputMethod * input = new JPEGReader(); /* new TIFFReader(); */
+    ImageReader *input = new JPEGReader(); /* new TIFFReader(); */
 
     output_buffer = new line_t[settings.output_imgs_height];
     output = new JPEGWriter();
 
     try
     {
-        input->open_file(image_path);
+        input->open(image_path);
         
-        const FileParameters info = input->get_parameters();
+        const FileParameters info = input->getParameters();
         
         buf_width = info.width;
         num_lines = info.height;
@@ -91,7 +91,7 @@ void processImage(const string &image_path, const string &output_pr,
         size_t y;
         for(y = 0; y < max_y; ++y)
         {
-            input->read_scanlines(buffer, settings.output_imgs_height);			
+            input->readScanlines(buffer, settings.output_imgs_height);            
 
             //Process the chunk
             root.processImageChunk(y, buffer);
@@ -103,14 +103,14 @@ void processImage(const string &image_path, const string &output_pr,
         delete[] buffer;
         delete output_buffer;
 
-		input->close_file();
+        input->close();
 
-		delete output;
-		delete input;
+        delete output;
+        delete input;
     }
     catch(...)
     {
-    	// TODO
+        //TODO
         throw;
     }
 }

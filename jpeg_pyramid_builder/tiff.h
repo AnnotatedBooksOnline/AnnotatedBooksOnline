@@ -1,31 +1,31 @@
 /*
- * The TIFF decompressor
+ * The TIFF decompressor.
  */
 
-#ifndef TIFF_H
-#define TIFF_H
+#ifndef _TIFF_H_
+#define _TIFF_H_
 
 #include "common.h"
+
+#include "imagereaderwriter.h"
 #include <tiffio.h>
 
-
-class TIFFReader : public InputMethod
+class TIFFReader : public ImageReader
 {
-private:
-	TIFF * file;
-	uint32 width, height, config;
-	uint16 components;
-	size_t scanline;
-
 public:
-	TIFFReader();
-	~TIFFReader();
-	
-	void open_file(const std::string & name);
-	void read_scanlines(image_t buf, size_t lines);
-	void close_file();
-	const FileParameters get_parameters() const;
+    TIFFReader();
+    ~TIFFReader();
+    
+    void open(const std::string &name);
+    void readScanlines(image_t buf, size_t lines);
+    void close();
+    const FileParameters getParameters() const;
+    
+private:
+    TIFF *file;
+    uint32 width, height, config;
+    uint16 components;
+    size_t scanline;
 };
 
-#endif // TIFF_H
-
+#endif /* _TIFF_H_ */

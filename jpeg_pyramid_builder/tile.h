@@ -4,7 +4,7 @@
  */
 
 #ifndef _TILE_H_
-#define	_TILE_H_
+#define _TILE_H_
 
 #include "common.h"
 
@@ -30,7 +30,7 @@ public:
         if(size > 1)
         {
             size_t csize = std::max((size_t)1u, size / 2);
-            Tile *subtiles [] =
+            Tile *subtiles[] =
             {
                       new Tile(this, x        , y        , z + 1, csize),
                 x + csize < max_x

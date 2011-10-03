@@ -8,42 +8,43 @@
 
 #include "common.h"
 
+#include "imagereaderwriter.h"
 #include <jpeglib.h>
 
-class JPEGReader : public InputMethod
+class JPEGReader : public ImageReader
 {
 public:
-	JPEGReader();
-	~JPEGReader();
-	
-	void open_file(const std::string & name);
-	void read_scanlines(image_t buf, size_t lines);
-	void close_file();
-	const FileParameters get_parameters() const;
+    JPEGReader();
+    ~JPEGReader();
+    
+    void open(const std::string &name);
+    void readScanlines(image_t buf, size_t lines);
+    void close();
+    const FileParameters getParameters() const;
     
 private:
-	FILE *file;
-	jpeg_decompress_struct decinfo;
-	jpeg_error_mgr jerr;
-	bool initialized;
+    FILE *file;
+    jpeg_decompress_struct decinfo;
+    jpeg_error_mgr jerr;
+    bool initialized;
 };
 
-class JPEGWriter : public OutputMethod
+class JPEGWriter : public ImageWriter
 {
 public:
-	JPEGWriter();
-	~JPEGWriter();
-	
-	void open_file(const std::string & name);
-	void write_scanlines(const image_t buf, size_t lines);
-	void close_file();
-	void set_parameters(const FileParameters & params);
+    JPEGWriter();
+    ~JPEGWriter();
+    
+    void open(const std::string &name);
+    void writeScanlines(const image_t buf, size_t lines);
+    void close();
+    void setParameters(const FileParameters &params);
     
 private:
-	FILE *file;
-	jpeg_compress_struct cinfo;
-	jpeg_error_mgr jerr;
-	bool initialized;
+    FILE *file;
+    jpeg_compress_struct cinfo;
+    jpeg_error_mgr jerr;
+    bool initialized;
 };
 
 #endif /* _JPEG_H_ */
