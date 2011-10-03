@@ -1,0 +1,84 @@
+/* common */
+
+body
+{
+	margin: 0;
+	background: #EDEFF4;
+	color: #2E2E2A;
+	font-family: sans-serif;
+	font-size: 11pt;
+}
+
+#viewport
+{
+	position: relative;
+	border: 1px solid #DDD;
+	margin: 10px;
+	
+	overflow: hidden;
+	
+	background: red;
+	
+	cursor: url(../cursors/grab.cur), move;
+}
+
+.tiles
+{
+	position: relative;
+	
+	transform-origin: 0px 0px;
+	-webkit-transform-origin: 0px 0px;
+	-moz-transform-origin: 0px 0px;
+	-o-transform-origin: 0px 0px;
+	-ms-transform-origin: 0px 0px;
+	
+	-webkit-transition-property: -webkit-transform;
+}
+
+.dragging
+{
+	cursor: url(../cursors/grabbing.cur), move;
+}
+
+.level
+{
+	position: absolute;
+	
+	-webkit-transition-property: -webkit-transform;
+	
+	transform-style: preserve-3d;
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	-o-transform-style: preserve-3d;
+	-ms-transform-style: preserve-3d;
+	
+	/* 3d acceleration: seems to blur a LOT! */
+	
+	/* */
+	
+	/* rotation * /
+	transform: rotate(-10deg);
+	-webkit-transform: rotate(-10deg);
+	-moz-transform: rotate(-10deg);
+	-o-transform: rotate(-10deg);
+	-ms-transform: rotate(-10deg);
+	
+	/* */
+}
+
+.level img
+{
+	position: absolute;
+	
+	user-select: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-o-user-select: none;
+}
+
+#status
+{
+	margin-top: 10px;
+	text-align: center;
+}
