@@ -16,19 +16,14 @@
 #include <iostream>
 #include <cstring>
 #include <string>
-#include <jpeglib.h>
-
-//use standard library
-using namespace std;
-
 
 
 //Universal types describing image components
 typedef unsigned char sample_t; // A singe sample (R or G or B)
-typedef union
+union rgb_t
 {
 	sample_t sample[3];
-} rgb_t; // A single RGB pixel
+}; // A single RGB pixel
 typedef rgb_t * line_t; // A scanline of RGB pixels
 typedef line_t * image_t; // A 2-dimensional image of RGB pixels
 
@@ -43,11 +38,13 @@ static inline rgb_t avg(const rgb_t & a, const rgb_t & b, const rgb_t & c, const
 }
 
 //Structure describing parameters (for now only size) of an image
-typedef struct
+struct FileParameters
 {
-	size_t width; // The width in pixels
-	size_t height; // The height in pixels
-} FileParameters;
+    size_t width; // The width in pixels
+    size_t height; // The height in pixels
+
+    FileParameters(size_t width, size_t height) : width(width), height(height) {}
+};
 
 // A method of reading images, with a specific kind of compression
 class InputMethod
@@ -57,7 +54,7 @@ public:
 
 	// Opens a file for reading and starts decompressing it.
 	// Must be called before get_parameters.
-	virtual void open_file(const string & name) = 0;
+	virtual void open_file(const std::string & name) = 0;
 	
 	// Reads the given number of scanlines from the input image
 	virtual void read_scanlines(image_t buf, size_t lines) = 0;
@@ -76,7 +73,7 @@ public:
 	virtual ~OutputMethod() { };
 	
 	// Opens a file for writing and starts the compression core
-	virtual void open_file(const string & name) = 0;
+	virtual void open_file(const std::string & name) = 0;
 	
 	// Appends scanlines to the file
 	virtual void write_scanlines(const image_t buf, size_t lines) = 0;

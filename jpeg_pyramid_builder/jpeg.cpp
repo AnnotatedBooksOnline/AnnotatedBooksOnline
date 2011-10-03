@@ -6,6 +6,8 @@
 #include "jpeg.h"
 #include "tilepyramidbuilder.h"
 
+using namespace std;
+
 JPEGReader::JPEGReader()
 {
 	initialized = false;
@@ -73,7 +75,7 @@ const FileParameters JPEGReader::get_parameters() const
 {
 	assert(file);
 	
-	FileParameters p = {decinfo.output_width, decinfo.output_height};
+	FileParameters p (decinfo.output_width, decinfo.output_height);
 	return p;
 }
 

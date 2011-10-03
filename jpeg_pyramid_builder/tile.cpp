@@ -5,6 +5,8 @@
 
 #include "tile.h"
 
+using namespace std;
+
 //Creates and stores a compressed image from a raw image. data.image should be defined
 void Tile::flushImage()
 {
@@ -35,9 +37,8 @@ void Tile::flushImage()
         }
         
         // Set the output parameters
-		FileParameters params;
-        params.width = settings.output_imgs_width;
-        params.height = settings.output_imgs_height;
+	FileParameters params (settings.output_imgs_width,
+                               settings.output_imgs_height);
 		            
         size_t w = settings.output_imgs_width;
 

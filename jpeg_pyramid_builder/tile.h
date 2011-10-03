@@ -29,7 +29,7 @@ public:
     {
         if(size > 1)
         {
-            size_t csize = max((size_t)1u, size / 2);
+            size_t csize = std::max((size_t)1u, size / 2);
             Tile *subtiles [] =
             {
                       new Tile(this, x        , y        , z + 1, csize),
@@ -44,7 +44,7 @@ public:
                     : NULL
             };
             
-            copy(subtiles, subtiles + 4, data.subtiles);
+            std::copy(subtiles, subtiles + 4, data.subtiles);
         }
     }
 

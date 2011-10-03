@@ -7,6 +7,8 @@
 #include "tile.h"
 #include "jpeg.h"
 
+using namespace std;
+
 //Settings are stored in global variables for convenience:
 
 //Tiles with coordinates above max_x or max_y lie outside of the image

@@ -43,16 +43,13 @@ struct BuilderSettings
     } filename_convention;
 
     /**
-     * The value of the byte that is appended to tiles that partially lie
-     * outside of the image. The color of the pixels there will be the RGB value
-     * of three padding bytes (e.g. a padding_byte of 0 will result in black
-     * and one of 255 will result in white).
+     * The color used for padding.
      */
     rgb_t padding;
     
     /**
-     * Whether or not to use padding at all. When TRUE, images that do not fill
-     * a whole tile will be padded with padding_byte. When FALSE, images will
+     * Whether or not to use padding at all. When true, images that do not fill
+     * a whole tile will be padded with padding_byte. When false, images will
      * be cut to size.
      */
     bool use_padding;
@@ -89,7 +86,7 @@ extern size_t max_y, max_x;
 
 //The settings provided to processImage
 extern BuilderSettings settings;
-extern string output_prefix;
+extern std::string output_prefix;
 
 //The width in pixels of the buffer used to store scanlines
 extern size_t buf_width;
