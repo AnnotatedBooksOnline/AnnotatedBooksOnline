@@ -6,6 +6,7 @@
 #include "tilepyramidbuilder.h"
 #include "tile.h"
 #include "jpeg.h"
+#include "tiff.h"
 
 using namespace std;
 
@@ -61,7 +62,7 @@ void processImage(const string &image_path, const string &output_pr,
     output_prefix = output_pr;
 
     //Set decompressor
-	InputMethod *input = new JPEGReader();
+	InputMethod * input = new JPEGReader(); /* new TIFFReader(); */
 
     output_buffer = new line_t[settings.output_imgs_height];
     output = new JPEGWriter();
