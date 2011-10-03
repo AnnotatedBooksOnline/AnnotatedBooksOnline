@@ -41,7 +41,6 @@ JSAMPARRAY output_buffer;
 //The number of lines the input image has
 size_t num_lines;
 
-
 /*
  * An object representing a tile in the image. Can either contain its raw image
  * data, or, when the tile is not atomic (tiles are atomic when their size is 1),
@@ -54,7 +53,6 @@ size_t num_lines;
  */
 struct Tile
 {
-
 private:
     //If true, the raw image data of the tile is computed and flushed.
     bool done;
@@ -62,8 +60,8 @@ private:
     //The content of the tile: either pointers to four subtiles, or a raw image.
     union
     {
-        Tile * subtiles [4];
-        JSAMPLE * image;
+        Tile *subtiles[4];
+        JSAMPLE *image;
     } data;
     
     size_t x_pos, //The column of the tile
@@ -77,14 +75,14 @@ private:
         //Tiles outside image should no longer occur.
         assert(y_pos < max_y && x_pos < max_x);
 
-        FILE * ofile = NULL;
+        FILE *ofile = NULL;
         try
         {
             //Determine logical position
-            size_t real_x, real_y;
-            int depth = (int)ceil(log2(max(max_x, max_y)));
-            real_x = x_pos >> (depth - z_pos);
-            real_y = y_pos >> (depth - z_pos);
+            int depth = (int) ceil(log2(max(max_x, max_y)));
+            
+            size_t real_x = x_pos >> (depth - z_pos);
+            size_t real_y = y_pos >> (depth - z_pos);
             
             //Determine file name
             ostringstream ofilename;
@@ -95,6 +93,7 @@ private:
                     ofilename << real_x << '_' << real_y <<'_'
                               << z_pos << ".jpg";
                     break;
+                    
                 case BuilderSettings::PREFIX_Z_X_Y_JPG:
                     ofilename << z_pos << '_' << real_x <<'_'
                               << real_y << ".jpg";
@@ -110,12 +109,12 @@ private:
             size_t w = settings.output_imgs_width * 3;
 
             //Check if we should pad the image
-            size_t right = (x_pos + size) * settings.output_imgs_width;
+            size_t right  = (x_pos + size) * settings.output_imgs_width;
             size_t bottom = (y_pos + size) * settings.output_imgs_height;
-            if (!settings.use_padding && (right > buf_width/3 || bottom > num_lines))
+            if (!settings.use_padding && (right > buf_width / 3 || bottom > num_lines))
             {
-                if (right > buf_width/3)
-                    cinfo.image_width = settings.output_imgs_width - ((right - buf_width/3) >> (depth - z_pos));
+                if (right > buf_width / 3)
+                    cinfo.image_width = settings.output_imgs_width - ((right - buf_width / 3) >> (depth - z_pos));
                 if (bottom > num_lines)
                     cinfo.image_height = settings.output_imgs_height - ((bottom - num_lines) >> (depth - z_pos));
                     
@@ -156,13 +155,13 @@ private:
     {
         assert(!done);
 
-        const size_t w = settings.output_imgs_width * 3,
-                     h = settings.output_imgs_height;
-        JSAMPLE * img0 = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
-                * img1 = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
-                * img2 = data.subtiles[2] ? data.subtiles[2]->data.image : NULL,
-                * img3 = data.subtiles[3] ? data.subtiles[3]->data.image : NULL,
-                * output = new JSAMPLE[w * h];
+        const size_t w  = settings.output_imgs_width * 3,
+                     h  = settings.output_imgs_height;
+        JSAMPLE *img0   = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
+                *img1   = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
+                *img2   = data.subtiles[2] ? data.subtiles[2]->data.image : NULL,
+                *img3   = data.subtiles[3] ? data.subtiles[3]->data.image : NULL,
+                *output = new JSAMPLE[w * h];
 
         //Because the size of the subtiles is exactly halved, scaling can
         //be easily accomplished by bilinear interpolation, which in this
@@ -214,13 +213,13 @@ private:
 public:
 
     //Constructor. Recursively constructs subtiles until size == 1.
-    Tile(Tile * parent, size_t x, size_t y, size_t z, size_t size)
-                    : done(false), x_pos(x), y_pos(y), z_pos(z), size(size)
+    Tile(Tile *parent, size_t x, size_t y, size_t z, size_t size) :
+        done(false), x_pos(x), y_pos(y), z_pos(z), size(size)
     {
         if(size > 1)
         {
             size_t csize = max((size_t)1u, size / 2);
-            Tile * subtiles [] =
+            Tile *subtiles [] =
             {
                       new Tile(this, x        , y        , z + 1, csize),
                 x + csize < max_x
@@ -280,6 +279,7 @@ public:
             assert(y == y_pos);
 
             data.image = new JSAMPLE[w * h];
+            
             const size_t chunkx = x_pos * w;
             for(size_t iy = 0; iy < h; ++iy)
             {
@@ -294,7 +294,7 @@ public:
                 }
                 else
                 {
-                    // This should no longer happen, as it indicates a problem with tile pruning
+                    //This should no longer happen, as it indicates a problem with tile pruning
                     assert(false);
                 }
             }
@@ -337,22 +337,25 @@ public:
 };
 
 //Helper function that gives the smallest power of two larger than or equal to x.
-size_t toPow2(size_t x)
+size_t toNextPowerOfTwo(size_t x)
 {
-    //Looking at the first 1-bit of x would be faster, but this is simpler and
-    //more portable.
-    size_t r = 1;
-    while(r < x)
-        r *= 2;
-    return r;
+    --x;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    ++x;
+
+    return x;
 }
 
-void processImage(const string & image_path, const string & output_pr,
-                    const BuilderSettings & sett)
+void processImage(const string &image_path, const string &output_pr,
+    const BuilderSettings &sett)
 {
     if(sett.output_quality < 0 || sett.output_quality > 100)
         throw invalid_argument("Illegal quality value.");
-    if(sett.output_imgs_width % 2 == 1 || sett.output_imgs_height % 2 == 1)
+    if(sett.output_imgs_width & 1 == 1 || sett.output_imgs_height & 1 == 1)
         throw invalid_argument("Dimensions of output image should be multiples of two.");
 
     //Set globals
@@ -370,14 +373,13 @@ void processImage(const string & image_path, const string & output_pr,
     cinfo.image_width = settings.output_imgs_width;
     cinfo.image_height = settings.output_imgs_height;
 
-
     //Set decompressor
     jpeg_decompress_struct decinfo;
     decinfo.err = jpeg_std_error(&jerr);
     padding_byte = static_cast<JSAMPLE>(settings.padding_byte);
     output_buffer = new JSAMPROW [settings.output_imgs_height];
 
-    FILE * ifile = NULL;
+    FILE *ifile = NULL;
     try
     {
         //Initialise decompression object
@@ -394,16 +396,15 @@ void processImage(const string & image_path, const string & output_pr,
         jpeg_start_decompress(&decinfo);        
 
         assert(decinfo.output_components == 3);
+        
         buf_width = decinfo.output_width * 3;
         num_lines = decinfo.output_height;
 
         //Prepare tile tree
-        max_x = ((decinfo.output_width - 1)
-                         / settings.output_imgs_width + 1);
-        max_y = ((decinfo.output_height - 1)
-                         / settings.output_imgs_height + 1);
+        max_x = (decinfo.output_width  - 1) / settings.output_imgs_width  + 1;
+        max_y = (decinfo.output_height - 1) / settings.output_imgs_height + 1;
 
-        Tile root (NULL, 0, 0, 0, toPow2(max(max_x,max_y)));
+        Tile root(NULL, 0, 0, 0, toNextPowerOfTwo(max(max_x,max_y)));
 
         //Prepare buffers that will be used to store scanlines
         JSAMPARRAY buffer = new JSAMPROW[settings.output_imgs_height];
@@ -419,15 +420,16 @@ void processImage(const string & image_path, const string & output_pr,
             while(lines < settings.output_imgs_height)
             {
                 if(!stop)
-                    lines += jpeg_read_scanlines(&decinfo, & buffer[lines], 
-                                        settings.output_imgs_height - lines);
+                    lines += jpeg_read_scanlines(&decinfo, &buffer[lines], 
+                        settings.output_imgs_height - lines);
+                
                 if(decinfo.output_scanline == decinfo.output_height)
                 {
                     //Pad buffer because end of file reached
                     for(; lines < settings.output_imgs_height; ++lines)
                     {
-                        fill(buffer[lines], buffer[lines]
-                         + buf_width * sizeof(JSAMPLE), padding_byte);
+                        fill(buffer[lines], buffer[lines] +
+                            buf_width * sizeof(JSAMPLE), padding_byte);
                     }
                     stop = true;
                     break;
@@ -444,10 +446,11 @@ void processImage(const string & image_path, const string & output_pr,
             for(size_t i = 0; i < settings.output_imgs_height; ++i)
                 fill(buffer[i], buffer[i] + buf_width * sizeof(JSAMPLE),
                      padding_byte);
-        }
-        while(y < max_y)
-        {
-            root.processImageChunk(y++, buffer);
+            
+            while(y < max_y)
+            {
+                root.processImageChunk(y++, buffer);
+            }
         }
 
         //Delete buffers and finalize compression
@@ -455,6 +458,7 @@ void processImage(const string & image_path, const string & output_pr,
             delete[] buffer[i];
         delete[] buffer;
         delete output_buffer;
+        
         jpeg_destroy_decompress(&decinfo);
         fclose(ifile);
         jpeg_destroy_compress(&cinfo);
@@ -463,7 +467,7 @@ void processImage(const string & image_path, const string & output_pr,
     {
         if(ifile)
             fclose(ifile);
+        
         throw;
     }
 }
-

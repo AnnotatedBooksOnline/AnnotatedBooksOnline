@@ -29,7 +29,7 @@ int main(int argc, const char * args [])
         processImage(path, output_prefix, settings);
         return 0;
     }
-    catch(exception & ex)
+    catch(exception &ex)
     {
         cerr << "An error occured: " << ex.what() << endl;
         return 1;

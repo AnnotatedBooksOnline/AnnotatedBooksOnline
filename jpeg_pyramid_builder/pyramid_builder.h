@@ -1,5 +1,5 @@
-#ifndef JPEG_PYRAMID_BUILDER_H
-#define	JPEG_PYRAMID_BUILDER_H
+#ifndef _PYRAMID_BUILDER_H_
+#define	_PYRAMID_BUILDER_H_
 
 #include <string>
 
@@ -75,9 +75,7 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
  * @param output_prefix The prefix of the paths of all output files.
  * @param settings The settings of the pyramid builder.
  */
-void processImage(const std::string & image_path, const std::string & output_prefix,
-                     const BuilderSettings & settings = DEFAULT_BUILDER_SETTINGS);
+void processImage(const std::string &image_path, const std::string &output_prefix,
+    const BuilderSettings &settings = DEFAULT_BUILDER_SETTINGS);
 
-
-#endif	/* JPEG_PYRAMID_BUILDER_H */
-
+#endif /* _PYRAMID_BUILDER_H_ */
