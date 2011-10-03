@@ -1,9 +1,12 @@
+/*
+ * The JPEG compressor and decompressor.
+ *
+ */
+
 #include "jpeg.h"
 #include "tilepyramidbuilder.h"
 
-using namespace std;
-
-JPEG_input::JPEG_input()
+JPEGReader::JPEGReader()
 {
 	initialized = false;
 	file = NULL;
@@ -11,14 +14,14 @@ JPEG_input::JPEG_input()
     jpeg_create_decompress(&decinfo);
 }
 
-JPEG_input::~JPEG_input()
+JPEGReader::~JPEGReader()
 {
 	if (file)
 		close_file();
     jpeg_destroy_decompress(&decinfo);
 }
 
-void JPEG_input::open_file(const string & name)
+void JPEGReader::open_file(const string & name)
 {
 	assert(!file);
 	
@@ -39,7 +42,7 @@ void JPEG_input::open_file(const string & name)
     jpeg_start_decompress(&decinfo);
 }
 
-void JPEG_input::read_scanlines(image_t buf, size_t lines)
+void JPEGReader::read_scanlines(image_t buf, size_t lines)
 {
 	assert(file);
 	
@@ -58,7 +61,7 @@ void JPEG_input::read_scanlines(image_t buf, size_t lines)
 	}
 }
 
-void JPEG_input::close_file()
+void JPEGReader::close_file()
 {
 	assert(file);
 	fclose(file);
@@ -66,15 +69,15 @@ void JPEG_input::close_file()
 	file = NULL;
 }
 
-const FileParameters JPEG_input::get_parameters() const
+const FileParameters JPEGReader::get_parameters() const
 {
 	assert(file);
 	
-	FileParameters p = { decinfo.output_width, decinfo.output_height};
+	FileParameters p = {decinfo.output_width, decinfo.output_height};
 	return p;
 }
 
-JPEG_output::JPEG_output()
+JPEGWriter::JPEGWriter()
 {
 	file = NULL;
 
@@ -92,14 +95,14 @@ JPEG_output::JPEG_output()
 	cinfo.image_height = 0;
 }
 
-JPEG_output::~JPEG_output()
+JPEGWriter::~JPEGWriter()
 {
 	if (file)
 		close_file();
 	jpeg_destroy_compress(&cinfo);
 }
 
-void JPEG_output::open_file(const string & name)
+void JPEGWriter::open_file(const string & name)
 {
 	assert(!file);
 	assert(cinfo.image_width > 0 && cinfo.image_height > 0);
@@ -115,7 +118,7 @@ void JPEG_output::open_file(const string & name)
 	jpeg_start_compress(&cinfo, TRUE);
 }
 
-void JPEG_output::write_scanlines(const image_t buf, size_t lines)
+void JPEGWriter::write_scanlines(const image_t buf, size_t lines)
 {
 	assert(file);
 
@@ -126,7 +129,7 @@ void JPEG_output::write_scanlines(const image_t buf, size_t lines)
 	}
 }
 
-void JPEG_output::close_file()
+void JPEGWriter::close_file()
 {
 	assert(file);
 	
@@ -136,7 +139,7 @@ void JPEG_output::close_file()
 	file = NULL;
 }
 
-void JPEG_output::set_parameters(const FileParameters & params)
+void JPEGWriter::set_parameters(const FileParameters & params)
 {
 	assert(!file);
 	

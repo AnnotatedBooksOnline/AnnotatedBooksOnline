@@ -65,12 +65,12 @@ struct BuilderSettings
  */
 const BuilderSettings DEFAULT_BUILDER_SETTINGS =
 {
-    256,                                //output_imgs_width
-    256,                                //output_imgs_height
-    60,                                 //output_quality
-    BuilderSettings::PREFIX_X_Y_Z_JPG,  //filename_convention
+    256,                                //output image width
+    256,                                //output image height
+    60,                                 //output quality
+    BuilderSettings::PREFIX_X_Y_Z_JPG,  //filename convention
     {{ 0, 0, 0 }},                      //padding
-    0                                   //use_padding
+    0                                   //use padding
 };
 
 /**
@@ -95,7 +95,7 @@ extern string output_prefix;
 extern size_t buf_width;
 
 //The shared compression object
-extern OutputMethod * output;
+extern OutputMethod *output;
 
 //Buffer for output images.
 extern image_t output_buffer;

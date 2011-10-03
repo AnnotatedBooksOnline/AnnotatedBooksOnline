@@ -83,13 +83,13 @@ void Tile::scaleTilesToImage()
 {
     assert(!done);
 
-    const size_t w = settings.output_imgs_width,
-                 h = settings.output_imgs_height;
-    rgb_t    * img0 = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
-             * img1 = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
-             * img2 = data.subtiles[2] ? data.subtiles[2]->data.image : NULL,
-             * img3 = data.subtiles[3] ? data.subtiles[3]->data.image : NULL,
-             * output = new rgb_t[w * h];
+    const size_t w   = settings.output_imgs_width,
+                 h   = settings.output_imgs_height;
+    rgb_t    *img0   = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
+             *img1   = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
+             *img2   = data.subtiles[2] ? data.subtiles[2]->data.image : NULL,
+             *img3   = data.subtiles[3] ? data.subtiles[3]->data.image : NULL,
+             *output = new rgb_t[w * h];
 
     //Because the size of the subtiles is exactly halved, scaling can
     //be easily accomplished by bilinear interpolation, which in this

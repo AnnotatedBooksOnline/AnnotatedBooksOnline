@@ -59,10 +59,10 @@ void processImage(const string &image_path, const string &output_pr,
     output_prefix = output_pr;
 
     //Set decompressor
-	InputMethod * input = new JPEG_input();
+	InputMethod *input = new JPEGReader();
 
     output_buffer = new line_t[settings.output_imgs_height];
-    output = new JPEG_output();
+    output = new JPEGWriter();
 
     try
     {
@@ -74,12 +74,10 @@ void processImage(const string &image_path, const string &output_pr,
         num_lines = info.height;
 
         //Prepare tile tree
-        max_x = ((info.width - 1)
-                         / settings.output_imgs_width + 1);
-        max_y = ((info.height - 1)
-                         / settings.output_imgs_height + 1);
+        max_x = (info.width  - 1) / settings.output_imgs_width  + 1;
+        max_y = (info.height - 1) / settings.output_imgs_height + 1;
 
-        Tile root (NULL, 0, 0, 0, toNextPowerOfTwo(max(max_x,max_y)));
+        Tile root(NULL, 0, 0, 0, toNextPowerOfTwo(max(max_x, max_y)));
 
         //Prepare buffers that will be used to store scanlines
         image_t buffer = new line_t[settings.output_imgs_height];

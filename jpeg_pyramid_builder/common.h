@@ -16,11 +16,14 @@
 #include <iostream>
 #include <cstring>
 #include <string>
+#include <jpeglib.h>
 
 //use standard library
 using namespace std;
 
-// Universal types describing image components
+
+
+//Universal types describing image components
 typedef unsigned char sample_t; // A singe sample (R or G or B)
 typedef union
 {
@@ -29,7 +32,7 @@ typedef union
 typedef rgb_t * line_t; // A scanline of RGB pixels
 typedef line_t * image_t; // A 2-dimensional image of RGB pixels
 
-// Calculates the average of four RGB pixels
+//Calculates the average of four RGB pixels
 static inline rgb_t avg(const rgb_t & a, const rgb_t & b, const rgb_t & c, const rgb_t & d)
 {
 	rgb_t t;
@@ -39,7 +42,7 @@ static inline rgb_t avg(const rgb_t & a, const rgb_t & b, const rgb_t & c, const
 	return t;
 }
 
-// Structure describing parameters (for now only size) of an image
+//Structure describing parameters (for now only size) of an image
 typedef struct
 {
 	size_t width; // The width in pixels
@@ -50,7 +53,7 @@ typedef struct
 class InputMethod
 {
 public:
-	virtual ~InputMethod() {};
+	virtual ~InputMethod() { };
 
 	// Opens a file for reading and starts decompressing it.
 	// Must be called before get_parameters.
@@ -70,7 +73,7 @@ public:
 class OutputMethod
 {
 public:
-	virtual ~OutputMethod() {};
+	virtual ~OutputMethod() { };
 	
 	// Opens a file for writing and starts the compression core
 	virtual void open_file(const string & name) = 0;
@@ -84,5 +87,7 @@ public:
 	// Sets the image parameters
 	virtual void set_parameters(const FileParameters & params) = 0;
 };
+
+
 
 #endif /* _COMMON_H_ */
