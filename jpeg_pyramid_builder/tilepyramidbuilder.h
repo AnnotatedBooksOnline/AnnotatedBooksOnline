@@ -1,7 +1,12 @@
-#ifndef _PYRAMID_BUILDER_H_
-#define	_PYRAMID_BUILDER_H_
+/*
+ * Tile pyramid builder class header.
+ *
+ */
 
-#include <string>
+#ifndef _TILEPYRAMIDBUILDER_H_
+#define	_TILEPYRAMIDBUILDER_H_
+
+#include "common.h"
 
 struct BuilderSettings
 {
@@ -78,4 +83,32 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
 void processImage(const std::string &image_path, const std::string &output_prefix,
     const BuilderSettings &settings = DEFAULT_BUILDER_SETTINGS);
 
-#endif /* _PYRAMID_BUILDER_H_ */
+//Tiles with coordinates above max_x or max_y lie outside of the image
+//and therefore do not need to be part of the output.
+extern size_t max_y, max_x;
+
+//The settings provided to processImage
+extern BuilderSettings settings;
+extern string output_prefix;
+
+//The width in bytes of the buffer used to store scanlines retrieved by libjpeg
+extern size_t buf_width;
+
+//The standard error handler of libjpeg. When an error occurs, a message is
+//written to stdout and the program is terminated by a call to exit().
+//TODO: Custom error handler that throws exceptions.
+extern jpeg_error_mgr jerr;
+
+//The shared compression object
+extern jpeg_compress_struct cinfo;
+
+//settings.padding_byte converted to a JSAMPLE.
+extern JSAMPLE padding_byte;
+
+//Buffer for output images.
+extern JSAMPARRAY output_buffer;
+
+//The number of lines the input image has
+extern size_t num_lines;
+
+#endif /* _TILEPYRAMIDBUILDER_H_ */
