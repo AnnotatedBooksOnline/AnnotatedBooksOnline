@@ -23,7 +23,7 @@ struct BuilderSettings
     /**
      * An integer between 0 and 100 indicating the quality of the output images.
      * 
-     * This value is used with the jpeg_set_quality function from libjpeg.
+     * Only applicable on lossy compression
      */
     int output_quality;
 
@@ -48,7 +48,7 @@ struct BuilderSettings
      * of three padding bytes (e.g. a padding_byte of 0 will result in black
      * and one of 255 will result in white).
      */
-    unsigned char padding_byte;
+    rgb_t padding;
     
     /**
      * Whether or not to use padding at all. When TRUE, images that do not fill
@@ -69,7 +69,7 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
     256,                                //output_imgs_height
     80,                                 //output_quality
     BuilderSettings::PREFIX_X_Y_Z_JPG,  //filename_convention
-    '\0',                               //padding_byte
+    { 0, 0, 0 },                        //padding_byte
     0                                   //use_padding
 };
 
@@ -91,22 +91,14 @@ extern size_t max_y, max_x;
 extern BuilderSettings settings;
 extern string output_prefix;
 
-//The width in bytes of the buffer used to store scanlines retrieved by libjpeg
+//The width in pixels of the buffer used to store scanlines
 extern size_t buf_width;
 
-//The standard error handler of libjpeg. When an error occurs, a message is
-//written to stdout and the program is terminated by a call to exit().
-//TODO: Custom error handler that throws exceptions.
-extern jpeg_error_mgr jerr;
-
 //The shared compression object
-extern jpeg_compress_struct cinfo;
-
-//settings.padding_byte converted to a JSAMPLE.
-extern JSAMPLE padding_byte;
+extern OutputMethod * output;
 
 //Buffer for output images.
-extern JSAMPARRAY output_buffer;
+extern image_t output_buffer;
 
 //The number of lines the input image has
 extern size_t num_lines;

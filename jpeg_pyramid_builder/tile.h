@@ -78,7 +78,7 @@ public:
      * The argument y indicates the y-coordinate of the atomic tiles that fit in
      * this chunk.
      */
-    void processImageChunk(size_t y, JSAMPARRAY chunk);
+    void processImageChunk(size_t y, image_t chunk);
     
 private:
     //If true, the raw image data of the tile is computed and flushed.
@@ -88,7 +88,7 @@ private:
     union
     {
         Tile *subtiles[4];
-        JSAMPLE *image;
+        rgb_t *image;
     } data;
     
     size_t x_pos, //The column of the tile
