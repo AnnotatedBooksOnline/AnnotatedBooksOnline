@@ -47,7 +47,7 @@ int main(int argc, char **argv)
         string output_format  = "jpg";
         uint   output_quality = 60;
         bool   use_padding    = false;
-        rgb_t  padding_color  = {0x00, 0x00, 0x00};
+        rgb_t  padding_color  = {{0x00, 0x00, 0x00}};
         
         //Define getopt options
         static struct option long_options[] =
@@ -104,6 +104,7 @@ int main(int argc, char **argv)
                 case 'c':
                     printf("Padding color: '%s'\n", optarg);
                     
+                    (void)padding_color;
                     //can be hex: #0F0, #00FF00, or rgb: 0,255,0, or text: white, black
                     
                     break;

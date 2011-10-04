@@ -37,7 +37,7 @@ TilePyramidBuilder::TilePyramidBuilder(const BuilderSettings &settings)
     //Check settings
     if(settings.output_quality < 0 || settings.output_quality > 100)
         throw invalid_argument("Illegal quality value.");
-    if(settings.output_imgs_width & 1 == 1 || settings.output_imgs_height & 1 == 1)
+    if((settings.output_imgs_width & 1) == 1 || (settings.output_imgs_height & 1) == 1)
         throw invalid_argument("Dimensions of output image should be multiples of two.");
 
     //TODO: make local var

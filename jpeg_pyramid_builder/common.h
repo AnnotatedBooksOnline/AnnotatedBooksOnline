@@ -26,6 +26,7 @@
 
 //Include globally needed C++ libraries
 #include <cstdio>
+#include <cstdlib>
 #include <stdexcept>
 #include <exception>
 #include <sstream>
