@@ -76,7 +76,7 @@ Viewport.prototype.useZoomMethod      = false;
 //methods
 Viewport.prototype.constructor = function(dom, viewerWidth, viewerHeight, documentWidth, documentHeight, levels)
 {
-    //set members
+	//set members
 	this.dom                = $(dom);
 	this.documentDimensions = {width: documentWidth, height: documentHeight};
 	this.dimensions         = {width: viewerWidth,   height: viewerHeight};
@@ -279,12 +279,14 @@ Viewport.prototype.updateLevelTiles = function(area, zoomLevel)
 				img.style.top     = Math.round(y) + 'px';
 				img.style.display = 'none';
 				
-				hostIndex = (hostIndex + 1) & 3; //0-3
-				var baseUrl = 'http://khm' + hostIndex + '.google.nl/kh/v=92&';
-				img.src = baseUrl + 'x=' + googleCol + '&y=' + googleRow + '&z=' + googleDepth + '&s=Gali';
+				//hostIndex = (hostIndex + 1) & 3; //0-3
+				//var baseUrl = 'http://khm' + hostIndex + '.google.nl/kh/v=92&';
+				//img.src = baseUrl + 'x=' + googleCol + '&y=' + googleRow + '&z=' + googleDepth + '&s=Gali';
 				
 				//img.src = 'file://C:/Users/gerbenvv/Dropbox/SoftwareProject/Documentatie klant/Voorbeelden/Gabriel Harveys Livy/tiles/' +
-				//	'page1_' + zoomLevel + '_' + col + '_' + row + '.jpg';
+				//	'page1_' + zoomLevel + '_' + col + '_' + row + '.jpg;
+				
+				img.src = 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
 				
 				img.onload = function(event) {
 					var event  = event || window.event;
@@ -677,10 +679,14 @@ Viewport.prototype.scrollToZoom = function(event)
 	//get new zoom level
 	var newZoomLevel = this.zoomLevel + amount / 0.75 * 0.2; //NOTE: was 0.1
 	
-	//bail out not zooming: causes position to shift
-	if ((newZoomLevel < 0) && (!this.zoomLevel))
+	//clamp zoom level before factor is calculated
+	if (newZoomLevel < 0)
 	{
-		return cancelEvent(event);
+		newZoomLevel = 0;
+	}
+	else if (newZoomLevel > this.maxZoomLevel)
+	{
+		newZoomLevel = this.maxZoomLevel;
 	}
 	
 	//calculate new zoom factor
@@ -775,7 +781,7 @@ $(document).ready(
 		var windowHeight = $(window).height();
 		
 		//arguments are: selector of dom, document size of level 0 (width, height), maximum zoom level
-		viewport = new Viewport("#viewport", windowWidth - 20, windowHeight - 60, Viewport.tileSize, Viewport.tileSize, 20);
+		viewport = new Viewport("#viewport", windowWidth - 20, windowHeight - 60, Viewport.tileSize, Viewport.tileSize, 5);
 	}
 );
 
