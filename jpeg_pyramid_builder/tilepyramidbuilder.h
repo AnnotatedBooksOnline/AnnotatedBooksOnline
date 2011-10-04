@@ -25,7 +25,7 @@ struct BuilderSettings
      * 
      * Only applicable on lossy compression
      */
-    int output_quality;
+    uint output_quality;
 
     /**
      * The naming convention used for output files. 
