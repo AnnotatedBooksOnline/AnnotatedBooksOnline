@@ -23,9 +23,6 @@ string output_prefix;
 //The width in pixels of the buffer used to store scanlines
 uint buf_width;
 
-//The shared compression object
-ImageWriter *output;
-
 //settings.padding_byte converted to a sample_t.
 rgb_t padding;
 
@@ -35,43 +32,33 @@ image_t output_buffer;
 //The number of lines the input image has
 uint num_lines;
 
-//Helper function that gives the smallest power of two larger than or equal to x.
-uint toNextPowerOfTwo(uint x)
+TilePyramidBuilder::TilePyramidBuilder(const BuilderSettings &settings)
 {
-    --x;
-    x |= x >> 1;
-    x |= x >> 2;
-    x |= x >> 4;
-    x |= x >> 8;
-    x |= x >> 16;
-    ++x;
-
-    return x;
-}
-
-void processImage(const string &image_path, const string &output_pr,
-    const BuilderSettings &sett)
-{
-    if(sett.output_quality < 0 || sett.output_quality > 100)
+    //Check settings
+    if(settings.output_quality < 0 || settings.output_quality > 100)
         throw invalid_argument("Illegal quality value.");
-    if(sett.output_imgs_width % 2 == 1 || sett.output_imgs_height % 2 == 1)
+    if(settings.output_imgs_width & 1 == 1 || settings.output_imgs_height & 1 == 1)
         throw invalid_argument("Dimensions of output image should be multiples of two.");
 
+    //TODO: make local var
+    ::settings = settings;
+}
+
+void TilePyramidBuilder::build(const string &image_path, const string &output_pr)
+{
     //Set globals
-    settings = sett;
     output_prefix = output_pr;
 
     //Set decompressor
-    ImageReader *input = new JPEGReader(); /* new TIFFReader(); */
+    JPEGReader reader; /* TIFFReader reader; */
 
     output_buffer = new line_t[settings.output_imgs_height];
-    output = new JPEGWriter();
 
     try
     {
-        input->open(image_path);
+        reader.open(image_path);
         
-        const FileParameters info = input->getParameters();
+        const FileParameters info = reader.getParameters();
         
         buf_width = info.width;
         num_lines = info.height;
@@ -91,7 +78,7 @@ void processImage(const string &image_path, const string &output_pr,
         uint y;
         for(y = 0; y < max_y; ++y)
         {
-            input->readScanlines(buffer, settings.output_imgs_height);            
+            reader.readScanlines(buffer, settings.output_imgs_height);            
 
             //Process the chunk
             root.processImageChunk(y, buffer);
@@ -103,10 +90,7 @@ void processImage(const string &image_path, const string &output_pr,
         delete[] buffer;
         delete output_buffer;
 
-        input->close();
-
-        delete output;
-        delete input;
+        reader.close();
     }
     catch(...)
     {

@@ -24,15 +24,17 @@ public:
     
 private:
     FILE *file;
+    
     jpeg_decompress_struct decinfo;
     jpeg_error_mgr jerr;
+    
     bool initialized;
 };
 
 class JPEGWriter : public ImageWriter
 {
 public:
-    JPEGWriter();
+    JPEGWriter(const FileParameters &params);
     ~JPEGWriter();
     
     void open(const std::string &name);
@@ -42,9 +44,12 @@ public:
     
 private:
     FILE *file;
-    jpeg_compress_struct cinfo;
+    
     jpeg_error_mgr jerr;
+    
     bool initialized;
+    
+    jpeg_compress_struct cinfo;
 };
 
 #endif /* _JPEG_H_ */

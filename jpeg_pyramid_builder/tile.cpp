@@ -5,7 +5,7 @@
 
 #include "tile.h"
 
-#include "imagereaderwriter.h"
+#include "jpeg.h"
 
 using namespace std;
 
@@ -38,11 +38,9 @@ void Tile::flushImage()
                 break;
         }
         
-        // Set the output parameters
+        //Create writer parameters
         FileParameters params(settings.output_imgs_width, settings.output_imgs_height);
-                    
-        uint w = settings.output_imgs_width;
-
+        
         //Check if we should pad the image
         uint right  = (x_pos + size) * settings.output_imgs_width;
         uint bottom = (y_pos + size) * settings.output_imgs_height;
@@ -56,22 +54,26 @@ void Tile::flushImage()
             assert(params.width <= settings.output_imgs_width && params.height <= settings.output_imgs_height);
         }
         
-        output->setParameters(params);
+        //Create an image writer from params
+        JPEGWriter writer(params);
         
         //Open the file to write and initialize the compressor
-        output->open(ofilename.str());
+        writer.open(ofilename.str());
 
-        //Start writing data
+        //Write data
+        uint w = settings.output_imgs_width;
         
         for (uint i = 0; i < params.height; ++i)
              output_buffer[i] = &data.image[i * w];
              
-        output->writeScanlines(output_buffer, params.height);
+        writer.writeScanlines(output_buffer, params.height);
 
         //Finalize compression
-        output->close();
+        writer.close();
         
+#ifdef DEBUG
         clog << ofilename.str() << " OK!" << endl;
+#endif
     }
     catch(...)
     {

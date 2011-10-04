@@ -9,6 +9,8 @@ using namespace std;
 
 int main(int argc, const char **args)
 {
+    TilePyramidBuilder *builder = NULL;
+    
     try
     {
         string path, output_prefix;
@@ -30,19 +32,29 @@ int main(int argc, const char **args)
         path = args[1];
         output_prefix = args[2];
 
-        processImage(path, output_prefix, settings);
+        TilePyramidBuilder *builder = new TilePyramidBuilder(settings);
+        
+        builder->build(path, output_prefix);
+        
+        delete builder;
         
         return 0;
     }
-    catch(exception &ex)
+    catch(exception &e)
     {
-        cerr << "An error occured: " << ex.what() << endl;
+        cerr << "An error occured: " << e.what() << endl;
+        
+        if (builder)
+            delete builder;
         
         return 1;
     }
     catch(...)
     {
         cerr << "An error occured." << endl;
+        
+        if (builder)
+            delete builder;
         
         return 1;
     }

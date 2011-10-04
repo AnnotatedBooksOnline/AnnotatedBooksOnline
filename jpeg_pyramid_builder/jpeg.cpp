@@ -20,6 +20,7 @@ JPEGReader::~JPEGReader()
 {
     if (file)
         close();
+    
     jpeg_destroy_decompress(&decinfo);
 }
 
@@ -79,7 +80,7 @@ const FileParameters JPEGReader::getParameters() const
     return p;
 }
 
-JPEGWriter::JPEGWriter()
+JPEGWriter::JPEGWriter(const FileParameters &params)
 {
     file = NULL;
 
@@ -95,6 +96,9 @@ JPEGWriter::JPEGWriter()
     cinfo.optimize_coding = TRUE; //Set only after jpeg_set_defaults()
     cinfo.image_width = 0;
     cinfo.image_height = 0;
+    
+    //Set parameters
+    setParameters(params);
 }
 
 JPEGWriter::~JPEGWriter()

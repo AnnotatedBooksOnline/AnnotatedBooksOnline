@@ -8,8 +8,6 @@
 
 #include "common.h"
 
-class ImageWriter;
-
 struct BuilderSettings
 {
     /**
@@ -72,15 +70,42 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
     0                                   //use padding
 };
 
-/**
- * Processes the image with the given path.
- *
- * @param image_path The path of the image, as an ACII/UTF-8 string.
- * @param output_prefix The prefix of the paths of all output files.
- * @param settings The settings of the pyramid builder.
- */
-void processImage(const std::string &image_path, const std::string &output_prefix,
-    const BuilderSettings &settings = DEFAULT_BUILDER_SETTINGS);
+class TilePyramidBuilder
+{
+public:
+    /**
+     * Creates a tile pyramid builder.
+     *
+     * @param settings The settings of the pyramid builder.
+     */
+    TilePyramidBuilder(const BuilderSettings &settings = DEFAULT_BUILDER_SETTINGS);
+    
+    /**
+     * Processes the image with the given path.
+     *
+     * @param image_path The path of the image, as an ACII/UTF-8 string.
+     * @param output_prefix The prefix of the paths of all output files.
+     */
+    void build(const std::string &image_path, const std::string &output_prefix);
+
+private:
+    //Helper function that gives the smallest power of two larger than or equal to x.
+    uint toNextPowerOfTwo(uint x)
+    {
+        --x;
+        x |= x >> 1;
+        x |= x >> 2;
+        x |= x >> 4;
+        x |= x >> 8;
+        x |= x >> 16;
+        ++x;
+
+        return x;
+    }
+};
+
+//TODO: make all of these members
+
 
 //Tiles with coordinates above max_x or max_y lie outside of the image
 //and therefore do not need to be part of the output.
@@ -93,13 +118,13 @@ extern std::string output_prefix;
 //The width in pixels of the buffer used to store scanlines
 extern uint buf_width;
 
-//The shared compression object
-extern ImageWriter *output;
-
 //Buffer for output images.
 extern image_t output_buffer;
 
 //The number of lines the input image has
 extern uint num_lines;
+
+
+
 
 #endif /* _TILEPYRAMIDBUILDER_H_ */
