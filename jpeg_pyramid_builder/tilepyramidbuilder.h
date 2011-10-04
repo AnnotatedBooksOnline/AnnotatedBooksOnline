@@ -18,7 +18,17 @@ struct BuilderSettings
      * powers of 2, the complete image and parts near edges are padded with
      * a single color.
      */
-    uint output_imgs_width, output_imgs_height;
+    uint output_image_width, output_image_height;
+    
+    /**
+     * Output path. May contain placeholders.
+     */
+    std::string output_path;
+    
+    /**
+     * Output filename. May contain placeholders.
+     */
+    std::string output_filename;
     
     /**
      * An integer between 0 and 100 indicating the quality of the output images.
@@ -27,25 +37,7 @@ struct BuilderSettings
      */
     uint output_quality;
 
-    /**
-     * The naming convention used for output files. 
-     * 
-     * x and y indicate the coordinates of the upper-left smallest tile, in
-     * the range (0 .. number of tiles in column/row - 1).
-     *
-     * z indicates the zoom level. 0 is the highest level, showing the entire
-     * image. It increments by one every time the zoom factor is doubled.
-     */
-    enum
-    {
-        PREFIX_X_Y_Z_JPG, //prefix_x_y_z.jpg
-        PREFIX_Z_X_Y_JPG  //prefix_z_x_y.jpg
-    } filename_convention;
-
-    /**
-     * The color used for padding.
-     */
-    rgb_t padding;
+    //TODO: More settings regarding properties of output image.
     
     /**
      * Whether or not to use padding at all. When true, images that do not fill
@@ -54,7 +46,10 @@ struct BuilderSettings
      */
     bool use_padding;
 
-    //TODO: More settings regarding properties of output image.
+    /**
+     * The color used for padding.
+     */
+    rgb_t padding_color;
 };
 
 /**
@@ -64,10 +59,11 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
 {
     256,                                //output image width
     256,                                //output image height
+    ".",                                //output path
+    "tile_%z_%x_%y.%e",                 //output filename
     60,                                 //output quality
-    BuilderSettings::PREFIX_X_Y_Z_JPG,  //filename convention
-    {{ 0, 0, 0 }},                      //padding
-    0                                   //use padding
+    false,                              //use padding
+    {0x00, 0x00, 0x00}                  //padding color
 };
 
 class TilePyramidBuilder
@@ -83,10 +79,9 @@ public:
     /**
      * Processes the image with the given path.
      *
-     * @param image_path The path of the image, as an ACII/UTF-8 string.
-     * @param output_prefix The prefix of the paths of all output files.
+     * @param filename The path of the image, as an ACII string.
      */
-    void build(const std::string &image_path, const std::string &output_prefix);
+    void build(const std::string &filename);
 
 private:
     //Helper function that gives the smallest power of two larger than or equal to x.
@@ -113,7 +108,6 @@ extern uint max_y, max_x;
 
 //The settings provided to processImage
 extern BuilderSettings settings;
-extern std::string output_prefix;
 
 //The width in pixels of the buffer used to store scanlines
 extern uint buf_width;

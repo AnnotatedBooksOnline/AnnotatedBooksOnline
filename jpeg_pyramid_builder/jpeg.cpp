@@ -54,7 +54,7 @@ void JPEGReader::readScanlines(image_t buf, uint lines)
     {
         if(decinfo.output_scanline == decinfo.output_height)
         {
-            fill(buf[l], buf[l] + decinfo.output_width, settings.padding);
+            fill(buf[l], buf[l] + decinfo.output_width, settings.padding_color);
             l++;
         }
         else

@@ -3,6 +3,7 @@
  */
 
 #include "tiff.h"
+
 #include "tilepyramidbuilder.h"
 
 using namespace std;
@@ -59,7 +60,7 @@ void TIFFReader::readScanlines(image_t buf, uint lines)
         {
             if(row >= height)
             {
-                fill(buf[row - scanline], buf[row - scanline] + width, settings.padding);
+                fill(buf[row - scanline], buf[row - scanline] + width, settings.padding_color);
             }
             else
             {
@@ -75,7 +76,7 @@ void TIFFReader::readScanlines(image_t buf, uint lines)
         {
             if(row >= height)
             {
-                fill(buf[row - scanline], buf[row - scanline] + width, settings.padding);
+                fill(buf[row - scanline], buf[row - scanline] + width, settings.padding_color);
             }
             else
             {

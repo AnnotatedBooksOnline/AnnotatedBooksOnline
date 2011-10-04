@@ -68,16 +68,7 @@ public:
         }
     }
 
-    /*
-     * Processes a 'chunk' of the input image. A cunk being a piece of the image
-     * as high as a single tile. Since JPEG's are encoded per scaline, the
-     * chunks are still just as wide as the input image. This results in wider
-     * input images requiring more memory to process while height has no effect
-     * on maximal memory consumption.
-     *
-     * The argument y indicates the y-coordinate of the atomic tiles that fit in
-     * this chunk.
-     */
+    //Processes a chunk
     void processImageChunk(uint y, image_t chunk);
     
 private:
@@ -96,9 +87,9 @@ private:
     {
         rgb_t average;
         
-        average.sample[0] = (a.sample[0] + b.sample[0] + c.sample[0] + d.sample[0]) / 4;
-        average.sample[1] = (a.sample[1] + b.sample[1] + c.sample[1] + d.sample[1]) / 4;
-        average.sample[2] = (a.sample[2] + b.sample[2] + c.sample[2] + d.sample[2]) / 4;
+        average.r = (a.r + b.r + c.r + d.r) / 4;
+        average.g = (a.g + b.g + c.g + d.g) / 4;
+        average.b = (a.b + b.b + c.b + d.b) / 4;
         
         return average;
     }

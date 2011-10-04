@@ -23,48 +23,41 @@ void Tile::flushImage()
         uint real_x = x_pos >> (depth - z_pos);
         uint real_y = y_pos >> (depth - z_pos);
         
-        //Determine file name
-        ostringstream ofilename;
-        ofilename << output_prefix << '_';
-        switch(settings.filename_convention)
-        {
-            case BuilderSettings::PREFIX_X_Y_Z_JPG:
-                ofilename << real_x << '_' << real_y << '_' << z_pos << ".jpg";
-                break;
-                
-            case BuilderSettings::PREFIX_Z_X_Y_JPG:
-                ofilename << z_pos << '_' << real_x << '_' << real_y << ".jpg";
-                break;
-        }
+        //Determine file name, replace placeholders
+        string filename = settings.output_path + '/' + settings.output_filename;
+        
+        replace(filename, "%x", toString(real_x));
+        replace(filename, "%y", toString(real_y));
+        replace(filename, "%z", toString(z_pos));
+        replace(filename, "%e", "jpg"); //TODO: For now, should be output extension
+        replace(filename, "%f", "tile"); //TODO: For now, should be filename without extension
         
         //Create writer parameters
-        FileParameters params(settings.output_imgs_width, settings.output_imgs_height);
+        FileParameters params(settings.output_image_width, settings.output_image_height);
         
         //Check if we should pad the image
-        uint right  = (x_pos + size) * settings.output_imgs_width;
-        uint bottom = (y_pos + size) * settings.output_imgs_height;
+        uint right  = (x_pos + size) * settings.output_image_width;
+        uint bottom = (y_pos + size) * settings.output_image_height;
         if (!settings.use_padding && (right > buf_width || bottom > num_lines))
         {
             if (right > buf_width)
-                params.width = settings.output_imgs_width - ((right - buf_width) >> (depth - z_pos));
+                params.width = settings.output_image_width - ((right - buf_width) >> (depth - z_pos));
             
             if (bottom > num_lines)
-                params.height = settings.output_imgs_height - ((bottom - num_lines) >> (depth - z_pos));
+                params.height = settings.output_image_height - ((bottom - num_lines) >> (depth - z_pos));
                 
-            assert(params.width <= settings.output_imgs_width && params.height <= settings.output_imgs_height);
+            assert(params.width <= settings.output_image_width && params.height <= settings.output_image_height);
         }
         
         //Create an image writer from params
         JPEGWriter writer(params);
         
         //Open the file to write and initialize the compressor
-        writer.open(ofilename.str());
+        writer.open(filename);
 
         //Write data
-        uint w = settings.output_imgs_width;
-        
         for (uint i = 0; i < params.height; ++i)
-             output_buffer[i] = &data.image[i * w];
+             output_buffer[i] = &data.image[i * settings.output_image_width];
              
         writer.writeScanlines(output_buffer, params.height);
 
@@ -87,8 +80,8 @@ void Tile::scaleTilesToImage()
 {
     assert(!done);
 
-    const uint width  = settings.output_imgs_width,
-               height = settings.output_imgs_height;
+    const uint width  = settings.output_image_width,
+               height = settings.output_image_height;
     
     rgb_t *img0   = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
           *img1   = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
@@ -147,7 +140,7 @@ void Tile::scaleSubtile(uint from_x, uint from_y, uint width, uint height,
         {
             for(int x = start_x; x >= 0; --x, ++output)
             {
-                *output = settings.padding;
+                *output = settings.padding_color;
             }
         }
     }
@@ -167,8 +160,8 @@ void Tile::processImageChunk(uint y, image_t chunk)
 {
     assert(!done);
 
-    const uint w = settings.output_imgs_width,
-               h = settings.output_imgs_height;
+    const uint w = settings.output_image_width,
+               h = settings.output_image_height;
 
     //If atomic, store and flush data.
     if(size == 1)
@@ -188,7 +181,8 @@ void Tile::processImageChunk(uint y, image_t chunk)
                 memcpy(&data.image[iy * w], &chunk[iy][chunk_x], (buf_width - chunk_x) * sizeof(rgb_t));
                 
                 if (settings.use_padding)
-                    fill(&data.image[iy * w + buf_width - chunk_x], &data.image[iy * w + w], settings.padding);
+                    fill(&data.image[iy * w + buf_width - chunk_x], &data.image[iy * w + w],
+                        settings.padding_color);
             }
             else
             {

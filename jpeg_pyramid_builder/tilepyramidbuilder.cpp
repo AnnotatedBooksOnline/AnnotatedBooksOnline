@@ -18,13 +18,9 @@ uint max_y, max_x;
 
 //The settings provided to processImage
 BuilderSettings settings;
-string output_prefix;
 
 //The width in pixels of the buffer used to store scanlines
 uint buf_width;
-
-//settings.padding_byte converted to a sample_t.
-rgb_t padding;
 
 //Buffer for output images.
 image_t output_buffer;
@@ -37,26 +33,24 @@ TilePyramidBuilder::TilePyramidBuilder(const BuilderSettings &settings)
     //Check settings
     if(settings.output_quality < 0 || settings.output_quality > 100)
         throw invalid_argument("Illegal quality value.");
-    if((settings.output_imgs_width & 1) == 1 || (settings.output_imgs_height & 1) == 1)
+    if((settings.output_image_width & 1) == 1 || (settings.output_image_height & 1) == 1)
         throw invalid_argument("Dimensions of output image should be multiples of two.");
 
     //TODO: make local var
     ::settings = settings;
 }
 
-void TilePyramidBuilder::build(const string &image_path, const string &output_pr)
+void TilePyramidBuilder::build(const string &filename)
 {
     //Set globals
-    output_prefix = output_pr;
-
-    output_buffer = new line_t[settings.output_imgs_height];
+    output_buffer = new line_t[settings.output_image_height];
 
     try
     {
         //Create reader
         JPEGReader reader; /* TIFFReader reader; */
         
-        reader.open(image_path);
+        reader.open(filename);
         
         const FileParameters info = reader.getParameters();
         
@@ -64,28 +58,28 @@ void TilePyramidBuilder::build(const string &image_path, const string &output_pr
         num_lines = info.height;
 
         //Prepare tile tree
-        max_x = (info.width  - 1) / settings.output_imgs_width  + 1;
-        max_y = (info.height - 1) / settings.output_imgs_height + 1;
+        max_x = (info.width  - 1) / settings.output_image_width  + 1;
+        max_y = (info.height - 1) / settings.output_image_height + 1;
 
         Tile root(NULL, 0, 0, 0, toNextPowerOfTwo(max(max_x, max_y)));
 
         //Prepare buffers that will be used to store scanlines
-        image_t buffer = new line_t[settings.output_imgs_height];
-        for(uint i = 0; i < settings.output_imgs_height; ++i)
+        image_t buffer = new line_t[settings.output_image_height];
+        for(uint i = 0; i < settings.output_image_height; ++i)
             buffer[i] = new rgb_t[buf_width];
         
         //Keep feeding horizontal chunks of the image to the tile generator
         uint y;
         for(y = 0; y < max_y; ++y)
         {
-            reader.readScanlines(buffer, settings.output_imgs_height);            
+            reader.readScanlines(buffer, settings.output_image_height);            
 
             //Process the chunk
             root.processImageChunk(y, buffer);
         }
 
         //Delete buffers
-        for(uint i = 0; i < settings.output_imgs_height; ++i)
+        for(uint i = 0; i < settings.output_image_height; ++i)
             delete[] buffer[i];
         delete[] buffer;
         delete output_buffer;
