@@ -123,27 +123,32 @@ void Tile::scaleSubtile(uint from_x, uint from_y, uint width, uint height,
 {
     if(image)
     {
-        rgb_t *current = image;
-        
         output += from_y * width + from_x;
         
         int start_y = height / 2 - 1;
         int start_x = width  / 2 - 1;
         
-        for(int y = start_y; y >= 0; --y, current += width, output += width / 2)
+        for(int y = start_y; y >= 0; --y, image += width, output += width / 2)
         {
-            for(int x = start_x; x >= 0; --x, current += 2, ++output)
+            for(int x = start_x; x >= 0; --x, image += 2, ++output)
             {
-                *output = average(current[0], current[1], current[width], current[width + 1]);
+                *output = average(image[0], image[1], image[width], image[width + 1]);
             }
         }
     }
-    else
+    else if (settings.use_padding)
     {
-        for(uint y = 0; y < height / 2; ++y)
+        output += from_y * width + from_x;
+        
+        int start_y = height / 2 - 1;
+        int start_x = width  / 2 - 1;
+        
+        for(int y = start_y; y >= 0; --y, output += width / 2)
         {
-            for(uint x = 0; x < width / 2; ++x)
-                output[(from_y + y) * width + from_x + x] = settings.padding;
+            for(int x = start_x; x >= 0; --x, ++output)
+            {
+                *output = settings.padding;
+            }
         }
     }
 }
@@ -171,21 +176,23 @@ void Tile::processImageChunk(uint y, image_t chunk)
         assert(y == y_pos);
 
         data.image = new rgb_t[w * h];
-        const uint chunkx = x_pos * w;
+        const uint chunk_x = x_pos * w;
         for(uint iy = 0; iy < h; ++iy)
         {
-            if (chunkx + w <= buf_width)
+            if (chunk_x + w <= buf_width)
             {
-                memcpy(&data.image[iy * w], &chunk[iy][chunkx], w * sizeof(rgb_t));
+                memcpy(&data.image[iy * w], &chunk[iy][chunk_x], w * sizeof(rgb_t));
             }
-            else if (chunkx < buf_width)
+            else if (chunk_x < buf_width)
             {
-                memcpy(&data.image[iy * w], &chunk[iy][chunkx], (buf_width - chunkx) * sizeof(rgb_t));
-                fill(&data.image[iy * w + buf_width - chunkx], &data.image[iy * w + w], settings.padding);
+                memcpy(&data.image[iy * w], &chunk[iy][chunk_x], (buf_width - chunk_x) * sizeof(rgb_t));
+                
+                if (settings.use_padding)
+                    fill(&data.image[iy * w + buf_width - chunk_x], &data.image[iy * w + w], settings.padding);
             }
             else
             {
-                // This should no longer happen, as it indicates a problem with tile pruning
+                //This should no longer happen, as it indicates a problem with tile pruning
                 assert(false);
             }
         }
@@ -222,6 +229,7 @@ void Tile::processImageChunk(uint y, image_t chunk)
     {
         scaleTilesToImage();
         flushImage();
+        
         done = true;
     }
 }
