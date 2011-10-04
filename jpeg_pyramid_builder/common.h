@@ -113,11 +113,12 @@ inline void debug(const char *, ...) { }
 #endif
 
 //Universal types describing image components
-typedef unsigned char sample_t; //A singe sample (R or G or B)
+typedef uchar sample_t; //A singe sample (R or G or B)
 
 struct rgb_t
 {
     sample_t sample[3];
+    uchar padding; //To align this datatype to 32 bits
 };
 
 typedef rgb_t  *line_t; //A scanline of RGB pixels
