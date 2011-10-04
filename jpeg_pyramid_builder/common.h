@@ -115,11 +115,14 @@ inline void debug(const char *, ...) { }
 //Universal types describing image components
 typedef uchar sample_t; //A singe sample (R or G or B)
 
+#pragma pack(1)
+
 struct rgb_t
 {
     sample_t sample[3];
-    uchar padding; //To align this datatype to 32 bits
 };
+
+#pragma pack()
 
 typedef rgb_t  *line_t; //A scanline of RGB pixels
 typedef line_t *image_t; //A 2-dimensional image of RGB pixels
