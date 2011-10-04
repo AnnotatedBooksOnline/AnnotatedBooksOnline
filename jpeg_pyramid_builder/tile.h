@@ -81,6 +81,28 @@ public:
     void processImageChunk(uint y, image_t chunk);
     
 private:
+    //Creates and stores a JPEG from a raw image. data.image should be defined
+    void flushImage();
+
+    //Combines and scales four subtiles into a new image
+    void scaleTilesToImage();
+    
+    //Scales to a subtile
+    void scaleSubtile(uint from_x, uint from_y, uint width, uint height,
+        rgb_t *image, rgb_t *output);
+    
+    //Calculates the average of four RGB pixels
+    inline rgb_t average(const rgb_t &a, const rgb_t &b, const rgb_t &c, const rgb_t &d)
+    {
+        rgb_t average;
+        
+        average.sample[0] = (a.sample[0] + b.sample[0] + c.sample[0] + d.sample[0]) / 4;
+        average.sample[1] = (a.sample[1] + b.sample[1] + c.sample[1] + d.sample[1]) / 4;
+        average.sample[2] = (a.sample[2] + b.sample[2] + c.sample[2] + d.sample[2]) / 4;
+        
+        return average;
+    }
+    
     //If true, the raw image data of the tile is computed and flushed.
     bool done;
 
@@ -95,12 +117,6 @@ private:
          y_pos, //The row of the tile
          z_pos, //The zoom level of the tile, as indicated in the filename
          size;  //The number of atomic tiles contained
-
-    //Creates and stores a JPEG from a raw image. data.image should be defined
-    void flushImage();
-
-    //Combines and scales four subtiles into a new image
-    void scaleTilesToImage();
 };
 
 #endif /* _TILE_H_ */

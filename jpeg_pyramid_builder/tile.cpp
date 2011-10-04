@@ -18,10 +18,10 @@ void Tile::flushImage()
     try
     {
         //Determine logical position
-        uint real_x, real_y;
         int depth = (int) ceil(log2(max(max_x, max_y)));
-        real_x = x_pos >> (depth - z_pos);
-        real_y = y_pos >> (depth - z_pos);
+        
+        uint real_x = x_pos >> (depth - z_pos);
+        uint real_y = y_pos >> (depth - z_pos);
         
         //Determine file name
         ostringstream ofilename;
@@ -29,12 +29,11 @@ void Tile::flushImage()
         switch(settings.filename_convention)
         {
             case BuilderSettings::PREFIX_X_Y_Z_JPG:
-                ofilename << real_x << '_' << real_y <<'_'
-                          << z_pos << ".jpg";
+                ofilename << real_x << '_' << real_y << '_' << z_pos << ".jpg";
                 break;
+                
             case BuilderSettings::PREFIX_Z_X_Y_JPG:
-                ofilename << z_pos << '_' << real_x <<'_'
-                          << real_y << ".jpg";
+                ofilename << z_pos << '_' << real_x << '_' << real_y << ".jpg";
                 break;
         }
         
@@ -48,6 +47,7 @@ void Tile::flushImage()
         {
             if (right > buf_width)
                 params.width = settings.output_imgs_width - ((right - buf_width) >> (depth - z_pos));
+            
             if (bottom > num_lines)
                 params.height = settings.output_imgs_height - ((bottom - num_lines) >> (depth - z_pos));
                 
@@ -81,49 +81,28 @@ void Tile::flushImage()
         throw;
     }
 }
-    
+
 //Combines and scales four subtiles into a new image
 void Tile::scaleTilesToImage()
 {
     assert(!done);
 
-    const uint w   = settings.output_imgs_width,
-               h   = settings.output_imgs_height;
-    rgb_t    *img0   = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
-             *img1   = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
-             *img2   = data.subtiles[2] ? data.subtiles[2]->data.image : NULL,
-             *img3   = data.subtiles[3] ? data.subtiles[3]->data.image : NULL,
-             *output = new rgb_t[w * h];
+    const uint width  = settings.output_imgs_width,
+               height = settings.output_imgs_height;
+    
+    rgb_t *img0   = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
+          *img1   = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
+          *img2   = data.subtiles[2] ? data.subtiles[2]->data.image : NULL,
+          *img3   = data.subtiles[3] ? data.subtiles[3]->data.image : NULL,
+          *output = new rgb_t[width * height];
 
     //Because the size of the subtiles is exactly halved, scaling can
     //be easily accomplished by bilinear interpolation, which in this
     //case is simply taking the average of four pixel values.
-
-    //Convenient macro to avoid repetition
-#define _SCALE_SUB_IMG(fromx, fromy, img)                              \
-    if(img)                                                        \
-    {                                                              \
-        for(uint y = 0; y < h / 2; ++y)                          \
-        for(uint x = 0; x < w / 2; ++x)                          \
-        {                                                          \
-            rgb_t * curr = &img[w * y * 2 + (2 * x)];              \
-            output[(fromy + y) * w + fromx + x] =                  \
-                avg(curr[0], curr[1], curr[w], curr[w + 1]);       \
-        }                                                          \
-    }                                                              \
-    else                                                           \
-    {                                                              \
-        for(uint y = 0; y < h / 2; ++y)                          \
-        for(uint x = 0; x < w / 2; ++x)                          \
-            output[(fromy + y) * w + fromx + x] = settings.padding;\
-    }
-
-    _SCALE_SUB_IMG(0    , 0    , img0);
-    _SCALE_SUB_IMG(w / 2, 0    , img1);
-    _SCALE_SUB_IMG(0    , h / 2, img2);
-    _SCALE_SUB_IMG(w / 2, h / 2, img3);
-
-#undef _SCALE_SUB_IMG
+    scaleSubtile(0        , 0         , width, height, img0, output);
+    scaleSubtile(width / 2, 0         , width, height, img1, output);
+    scaleSubtile(0        , height / 2, width, height, img2, output);
+    scaleSubtile(width / 2, height / 2, width, height, img3, output);
 
     //The new tile is defined, so the old ones can be deleted
     if(data.subtiles[0])
@@ -136,6 +115,37 @@ void Tile::scaleTilesToImage()
         delete data.subtiles[3];
 
     data.image = output;
+}
+
+//Scales a subtile
+void Tile::scaleSubtile(uint from_x, uint from_y, uint width, uint height,
+    rgb_t *image, rgb_t *output)
+{
+    if(image)
+    {
+        rgb_t *current = image;
+        
+        output += from_y * width + from_x;
+        
+        int start_y = height / 2 - 1;
+        int start_x = width  / 2 - 1;
+        
+        for(int y = start_y; y >= 0; --y, current += width, output += width / 2)
+        {
+            for(int x = start_x; x >= 0; --x, current += 2, ++output)
+            {
+                *output = average(current[0], current[1], current[width], current[width + 1]);
+            }
+        }
+    }
+    else
+    {
+        for(uint y = 0; y < height / 2; ++y)
+        {
+            for(uint x = 0; x < width / 2; ++x)
+                output[(from_y + y) * width + from_x + x] = settings.padding;
+        }
+    }
 }
 
 /*

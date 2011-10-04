@@ -127,16 +127,4 @@ struct rgb_t
 typedef rgb_t  *line_t; //A scanline of RGB pixels
 typedef line_t *image_t; //A 2-dimensional image of RGB pixels
 
-//Calculates the average of four RGB pixels
-static inline rgb_t avg(const rgb_t &a, const rgb_t &b, const rgb_t &c, const rgb_t &d)
-{
-    rgb_t average;
-    
-    average.sample[0] = (a.sample[0] + b.sample[0] + c.sample[0] + d.sample[0]) / 4;
-    average.sample[1] = (a.sample[1] + b.sample[1] + c.sample[1] + d.sample[1]) / 4;
-    average.sample[2] = (a.sample[2] + b.sample[2] + c.sample[2] + d.sample[2]) / 4;
-    
-    return average;
-}
-
 #endif /* _COMMON_H_ */

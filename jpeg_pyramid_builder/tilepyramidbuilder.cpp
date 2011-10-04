@@ -49,13 +49,13 @@ void TilePyramidBuilder::build(const string &image_path, const string &output_pr
     //Set globals
     output_prefix = output_pr;
 
-    //Set decompressor
-    JPEGReader reader; /* TIFFReader reader; */
-
     output_buffer = new line_t[settings.output_imgs_height];
 
     try
     {
+        //Create reader
+        JPEGReader reader; /* TIFFReader reader; */
+        
         reader.open(image_path);
         
         const FileParameters info = reader.getParameters();
@@ -73,7 +73,7 @@ void TilePyramidBuilder::build(const string &image_path, const string &output_pr
         image_t buffer = new line_t[settings.output_imgs_height];
         for(uint i = 0; i < settings.output_imgs_height; ++i)
             buffer[i] = new rgb_t[buf_width];
-
+        
         //Keep feeding horizontal chunks of the image to the tile generator
         uint y;
         for(y = 0; y < max_y; ++y)
