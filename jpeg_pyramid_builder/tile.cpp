@@ -18,7 +18,7 @@ void Tile::flushImage()
     try
     {
         //Determine logical position
-        size_t real_x, real_y;
+        uint real_x, real_y;
         int depth = (int) ceil(log2(max(max_x, max_y)));
         real_x = x_pos >> (depth - z_pos);
         real_y = y_pos >> (depth - z_pos);
@@ -41,11 +41,11 @@ void Tile::flushImage()
         // Set the output parameters
         FileParameters params(settings.output_imgs_width, settings.output_imgs_height);
                     
-        size_t w = settings.output_imgs_width;
+        uint w = settings.output_imgs_width;
 
         //Check if we should pad the image
-        size_t right  = (x_pos + size) * settings.output_imgs_width;
-        size_t bottom = (y_pos + size) * settings.output_imgs_height;
+        uint right  = (x_pos + size) * settings.output_imgs_width;
+        uint bottom = (y_pos + size) * settings.output_imgs_height;
         if (!settings.use_padding && (right > buf_width || bottom > num_lines))
         {
             if (right > buf_width)
@@ -63,7 +63,7 @@ void Tile::flushImage()
 
         //Start writing data
         
-        for (size_t i = 0; i < params.height; ++i)
+        for (uint i = 0; i < params.height; ++i)
              output_buffer[i] = &data.image[i * w];
              
         output->writeScanlines(output_buffer, params.height);
@@ -85,8 +85,8 @@ void Tile::scaleTilesToImage()
 {
     assert(!done);
 
-    const size_t w   = settings.output_imgs_width,
-                 h   = settings.output_imgs_height;
+    const uint w   = settings.output_imgs_width,
+               h   = settings.output_imgs_height;
     rgb_t    *img0   = data.subtiles[0] ? data.subtiles[0]->data.image : NULL,
              *img1   = data.subtiles[1] ? data.subtiles[1]->data.image : NULL,
              *img2   = data.subtiles[2] ? data.subtiles[2]->data.image : NULL,
@@ -101,8 +101,8 @@ void Tile::scaleTilesToImage()
 #define _SCALE_SUB_IMG(fromx, fromy, img)                              \
     if(img)                                                        \
     {                                                              \
-        for(size_t y = 0; y < h / 2; ++y)                          \
-        for(size_t x = 0; x < w / 2; ++x)                          \
+        for(uint y = 0; y < h / 2; ++y)                          \
+        for(uint x = 0; x < w / 2; ++x)                          \
         {                                                          \
             rgb_t * curr = &img[w * y * 2 + (2 * x)];              \
             output[(fromy + y) * w + fromx + x] =                  \
@@ -111,8 +111,8 @@ void Tile::scaleTilesToImage()
     }                                                              \
     else                                                           \
     {                                                              \
-        for(size_t y = 0; y < h / 2; ++y)                          \
-        for(size_t x = 0; x < w / 2; ++x)                          \
+        for(uint y = 0; y < h / 2; ++y)                          \
+        for(uint x = 0; x < w / 2; ++x)                          \
             output[(fromy + y) * w + fromx + x] = settings.padding;\
     }
 
@@ -146,12 +146,12 @@ void Tile::scaleTilesToImage()
  * The argument y indicates the y-coordinate of the atomic tiles that fit in
  * this chunk.
  */
-void Tile::processImageChunk(size_t y, image_t chunk)
+void Tile::processImageChunk(uint y, image_t chunk)
 {
     assert(!done);
 
-    const size_t w = settings.output_imgs_width,
-                 h = settings.output_imgs_height;
+    const uint w = settings.output_imgs_width,
+               h = settings.output_imgs_height;
 
     //If atomic, store and flush data.
     if(size == 1)
@@ -159,8 +159,8 @@ void Tile::processImageChunk(size_t y, image_t chunk)
         assert(y == y_pos);
 
         data.image = new rgb_t[w * h];
-        const size_t chunkx = x_pos * w;
-        for(size_t iy = 0; iy < h; ++iy)
+        const uint chunkx = x_pos * w;
+        for(uint iy = 0; iy < h; ++iy)
         {
             if (chunkx + w <= buf_width)
             {

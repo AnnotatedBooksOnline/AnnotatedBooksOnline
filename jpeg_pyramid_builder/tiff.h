@@ -17,7 +17,7 @@ public:
     ~TIFFReader();
     
     void open(const std::string &name);
-    void readScanlines(image_t buf, size_t lines);
+    void readScanlines(image_t buf, uint lines);
     void close();
     const FileParameters getParameters() const;
     
@@ -25,7 +25,7 @@ private:
     TIFF *file;
     uint32 width, height, config;
     uint16 components;
-    size_t scanline;
+    uint scanline;
 };
 
 #endif /* _TIFF_H_ */

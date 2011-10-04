@@ -44,11 +44,11 @@ void JPEGReader::open(const string &name)
     jpeg_start_decompress(&decinfo);
 }
 
-void JPEGReader::readScanlines(image_t buf, size_t lines)
+void JPEGReader::readScanlines(image_t buf, uint lines)
 {
     assert(file);
     
-    size_t l = 0;
+    uint l = 0;
     while(l < lines)
     {
         if(decinfo.output_scanline == decinfo.output_height)
@@ -58,7 +58,7 @@ void JPEGReader::readScanlines(image_t buf, size_t lines)
         }
         else
         {
-            l += jpeg_read_scanlines(&decinfo, (JSAMPARRAY)&buf[l], lines - l);            
+            l += jpeg_read_scanlines(&decinfo, (JSAMPARRAY) &buf[l], lines - l);
         }
     }
 }
@@ -120,11 +120,11 @@ void JPEGWriter::open(const string &name)
     jpeg_start_compress(&cinfo, TRUE);
 }
 
-void JPEGWriter::writeScanlines(const image_t buf, size_t lines)
+void JPEGWriter::writeScanlines(const image_t buf, uint lines)
 {
     assert(file);
 
-    size_t l = 0;
+    uint l = 0;
     while(cinfo.next_scanline < cinfo.image_height)
     {
         l += jpeg_write_scanlines(&cinfo, (JSAMPARRAY) &buf[l], lines - l);
@@ -145,6 +145,6 @@ void JPEGWriter::setParameters(const FileParameters &params)
 {
     assert(!file);
     
-    cinfo.image_width = params.width;
+    cinfo.image_width  = params.width;
     cinfo.image_height = params.height;
 }

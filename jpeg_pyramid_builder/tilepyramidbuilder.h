@@ -20,7 +20,7 @@ struct BuilderSettings
      * powers of 2, the complete image and parts near edges are padded with
      * a single color.
      */
-    size_t output_imgs_width, output_imgs_height;
+    uint output_imgs_width, output_imgs_height;
     
     /**
      * An integer between 0 and 100 indicating the quality of the output images.
@@ -84,14 +84,14 @@ void processImage(const std::string &image_path, const std::string &output_prefi
 
 //Tiles with coordinates above max_x or max_y lie outside of the image
 //and therefore do not need to be part of the output.
-extern size_t max_y, max_x;
+extern uint max_y, max_x;
 
 //The settings provided to processImage
 extern BuilderSettings settings;
 extern std::string output_prefix;
 
 //The width in pixels of the buffer used to store scanlines
-extern size_t buf_width;
+extern uint buf_width;
 
 //The shared compression object
 extern ImageWriter *output;
@@ -100,6 +100,6 @@ extern ImageWriter *output;
 extern image_t output_buffer;
 
 //The number of lines the input image has
-extern size_t num_lines;
+extern uint num_lines;
 
 #endif /* _TILEPYRAMIDBUILDER_H_ */

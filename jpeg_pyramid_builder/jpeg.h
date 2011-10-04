@@ -18,7 +18,7 @@ public:
     ~JPEGReader();
     
     void open(const std::string &name);
-    void readScanlines(image_t buf, size_t lines);
+    void readScanlines(image_t buf, uint lines);
     void close();
     const FileParameters getParameters() const;
     
@@ -36,7 +36,7 @@ public:
     ~JPEGWriter();
     
     void open(const std::string &name);
-    void writeScanlines(const image_t buf, size_t lines);
+    void writeScanlines(const image_t buf, uint lines);
     void close();
     void setParameters(const FileParameters &params);
     

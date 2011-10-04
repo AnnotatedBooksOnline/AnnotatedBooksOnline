@@ -49,13 +49,13 @@ void TIFFReader::open(const string &name)
     scanline = 0;
 }
 
-void TIFFReader::readScanlines(image_t buf, size_t lines)
+void TIFFReader::readScanlines(image_t buf, uint lines)
 {
     assert(file);
     
     if (config == PLANARCONFIG_CONTIG)
     {
-        for (size_t row = scanline; row < scanline + lines; row++)
+        for (uint row = scanline; row < scanline + lines; row++)
         {
             if(row >= height)
             {
@@ -71,7 +71,7 @@ void TIFFReader::readScanlines(image_t buf, size_t lines)
     {
         throw runtime_error("Sorry, separate planar config not yet tested!"); //TODO
         
-        for (size_t row = scanline; row < scanline + lines; row++)
+        for (uint row = scanline; row < scanline + lines; row++)
         {
             if(row >= height)
             {
@@ -79,7 +79,7 @@ void TIFFReader::readScanlines(image_t buf, size_t lines)
             }
             else
             {
-                for (size_t s = 0; s < components; s++)
+                for (uint s = 0; s < components; s++)
                 {
                     TIFFReadScanline(file, (sample_t *) buf[row - scanline], row, s);
                 }

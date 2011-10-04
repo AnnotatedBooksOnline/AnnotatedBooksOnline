@@ -24,12 +24,12 @@ class Tile
 {
 public:
     //Constructor. Recursively constructs subtiles until size == 1.
-    Tile(Tile *parent, size_t x, size_t y, size_t z, size_t size) :
+    Tile(Tile *parent, uint x, uint y, uint z, uint size) :
         done(false), x_pos(x), y_pos(y), z_pos(z), size(size)
     {
         if(size > 1)
         {
-            size_t csize = std::max((size_t)1u, size / 2);
+            uint csize = std::max(1u, size / 2);
             Tile *subtiles[] =
             {
                       new Tile(this, x        , y        , z + 1, csize),
@@ -78,7 +78,7 @@ public:
      * The argument y indicates the y-coordinate of the atomic tiles that fit in
      * this chunk.
      */
-    void processImageChunk(size_t y, image_t chunk);
+    void processImageChunk(uint y, image_t chunk);
     
 private:
     //If true, the raw image data of the tile is computed and flushed.
@@ -91,10 +91,10 @@ private:
         rgb_t *image;
     } data;
     
-    size_t x_pos, //The column of the tile
-           y_pos, //The row of the tile
-           z_pos, //The zoom level of the tile, as indicated in the filename
-           size;  //The number of atomic tiles contained
+    uint x_pos, //The column of the tile
+         y_pos, //The row of the tile
+         z_pos, //The zoom level of the tile, as indicated in the filename
+         size;  //The number of atomic tiles contained
 
     //Creates and stores a JPEG from a raw image. data.image should be defined
     void flushImage();

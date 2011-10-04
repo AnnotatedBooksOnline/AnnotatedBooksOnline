@@ -14,14 +14,14 @@ using namespace std;
 
 //Tiles with coordinates above max_x or max_y lie outside of the image
 //and therefore do not need to be part of the output.
-size_t max_y, max_x;
+uint max_y, max_x;
 
 //The settings provided to processImage
 BuilderSettings settings;
 string output_prefix;
 
 //The width in pixels of the buffer used to store scanlines
-size_t buf_width;
+uint buf_width;
 
 //The shared compression object
 ImageWriter *output;
@@ -33,10 +33,10 @@ rgb_t padding;
 image_t output_buffer;
 
 //The number of lines the input image has
-size_t num_lines;
+uint num_lines;
 
 //Helper function that gives the smallest power of two larger than or equal to x.
-size_t toNextPowerOfTwo(size_t x)
+uint toNextPowerOfTwo(uint x)
 {
     --x;
     x |= x >> 1;
@@ -84,11 +84,11 @@ void processImage(const string &image_path, const string &output_pr,
 
         //Prepare buffers that will be used to store scanlines
         image_t buffer = new line_t[settings.output_imgs_height];
-        for(size_t i = 0; i < settings.output_imgs_height; ++i)
+        for(uint i = 0; i < settings.output_imgs_height; ++i)
             buffer[i] = new rgb_t[buf_width];
 
         //Keep feeding horizontal chunks of the image to the tile generator
-        size_t y;
+        uint y;
         for(y = 0; y < max_y; ++y)
         {
             input->readScanlines(buffer, settings.output_imgs_height);            
@@ -98,7 +98,7 @@ void processImage(const string &image_path, const string &output_pr,
         }
 
         //Delete buffers
-        for(size_t i = 0; i < settings.output_imgs_height; ++i)
+        for(uint i = 0; i < settings.output_imgs_height; ++i)
             delete[] buffer[i];
         delete[] buffer;
         delete output_buffer;
