@@ -39,12 +39,13 @@ rgb_t parseColor(const char *str)
 {
     //Check for hexadecimal colors
     uint r, g, b;
+    char trailing[2];
     if (str[0] == '#')
     {
         ++str;
         
         //Match full hexadecimal form
-        if (sscanf(str, "%2ux%2ux%2ux", &r, &g, &b) == 3)
+        if (sscanf(str, "%2x%2x%2x%1s", &r, &g, &b, trailing) == 3)
         {
             rgb_t color = {uchar(r), uchar(g), uchar(b)};
             
@@ -52,18 +53,20 @@ rgb_t parseColor(const char *str)
         }
         
         //Match short hexadecimal form
-        if (sscanf(str, "%1ux%1ux%1ux", &r, &g, &b) == 3)
+        if (sscanf(str, "%1x%1x%1x%1s", &r, &g, &b, trailing) == 3)
         {
             //Create full form from short form
             rgb_t color = {uchar(r * (16 + 1)), uchar(g * (16 + 1)), uchar(b * (16 + 1))};
             
             return color;
         }
+        
+        --str;
     }  
     else
     {
         //Match decimal color
-        if (sscanf(str, "%3u,%3u,%3u", &r, &g, &b) == 3)
+        if (sscanf(str, "%3u,%3u,%3u%1s", &r, &g, &b, trailing) == 3)
         {
             rgb_t color = {uchar(r), uchar(g), uchar(b)};
             
@@ -71,13 +74,13 @@ rgb_t parseColor(const char *str)
         }
         
         //Define two standard colors
-        if (strcmp(str, "white"))
+        if (strcmp(str, "white") == 0)
         {
             rgb_t color = {0xFF, 0xFF, 0xFF};
             
             return color;
         }
-        else if (strcmp(str, "black"))
+        else if (strcmp(str, "black") == 0)
         {
             rgb_t color = {0x00, 0x00, 0x00};
             
@@ -122,6 +125,9 @@ int main(int argc, char **argv)
                 //sentinel
                 {0, 0, 0, 0}
             };
+        
+        //Disable getopt its error message
+        opterr = 0;
         
         //Handle the options
         int option, option_index;
@@ -185,7 +191,7 @@ int main(int argc, char **argv)
                     else if (isprint(optopt))
                         fprintf(stderr, "Unknown option '-%c'.\n", optopt);
                     else
-                        fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                        fprintf(stderr, "Unknown option character '\\x%x'.\n", optopt);
                     
                     return 1;
                     
@@ -197,7 +203,7 @@ int main(int argc, char **argv)
         //Check for no input files
         if (optind == argc)
         {
-            throw runtime_error("No files were passed.");
+            throw runtime_error("No input files.");
         }
         
         //Set settings
