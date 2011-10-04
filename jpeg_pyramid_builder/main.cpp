@@ -20,10 +20,10 @@ void showUsage(char *command)
          << "  -t <type>    --output-type     <type>    Output type          'jpg'\n"
          << "  -q <num>     --output-quality  <num>     Output quality       '60'\n"
          << "  -w <num>     --output-width    <num>     Tile width           '256'\n"
-         << "  -e <num>     --output-height   <num>     Tile height          '256'\n"
+         << "  -h <num>     --output-height   <num>     Tile height          '256'\n"
          << "  -u           --use-padding               Use padding          off\n"
          << "  -c <color>   --padding-color   <color>   Padding color        '#000'\n"
-         << "  -h           --help                      Display this information\n\n"
+         << "               --help                      Display this information\n\n"
          << "Formats:\n"
          << "  <string>     A sequence of characters\n"
          << "  <num>        A positive number\n"
@@ -117,10 +117,10 @@ int main(int argc, char **argv)
                 {"output-type",     required_argument, NULL, 't'},
                 {"output-quality",  required_argument, NULL, 'q'},
                 {"output-width",    required_argument, NULL, 'w'},
-                {"output-height",   required_argument, NULL, 'e'},
+                {"output-height",   required_argument, NULL, 'h'},
                 {"use-padding",     no_argument,       NULL, 'u'},
                 {"padding-color",   required_argument, NULL, 'c'},
-                {"help",            no_argument,       NULL, 'h'},
+                {"help",            no_argument,       NULL, 'e'},
                 
                 //sentinel
                 {0, 0, 0, 0}
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
         
         //Handle the options
         int option, option_index;
-        while ((option = getopt_long(argc, argv, "i:p:f:t:q:w:e:uc:h", long_options, &option_index)) != -1)
+        while ((option = getopt_long(argc, argv, "i:p:f:t:q:w:h:uc:", long_options, &option_index)) != -1)
         {
             switch (option)
             {
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
                     
                     break;
                     
-                case 'e':
+                case 'h':
                     output_image_height = min(100000, max(10, atoi(optarg)));
                     
                     break;
@@ -180,7 +180,7 @@ int main(int argc, char **argv)
                     
                     break;
                     
-                case 'h':
+                case 'e':
                     showUsage(argv[0]);
                     
                     return 0;
