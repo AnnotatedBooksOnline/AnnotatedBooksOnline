@@ -63,7 +63,7 @@ const BuilderSettings DEFAULT_BUILDER_SETTINGS =
     "tile_%z_%x_%y.%e",                 //output filename
     60,                                 //output quality
     false,                              //use padding
-    {0x00, 0x00, 0x00}                  //padding color
+    {{{0x00, 0x00, 0x00}}}                //padding color
 };
 
 class TilePyramidBuilder

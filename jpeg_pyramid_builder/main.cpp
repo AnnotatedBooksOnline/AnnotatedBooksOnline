@@ -47,7 +47,7 @@ rgb_t parseColor(const char *str)
         //Match full hexadecimal form
         if (sscanf(str, "%2x%2x%2x%1s", &r, &g, &b, trailing) == 3)
         {
-            rgb_t color = {uchar(r), uchar(g), uchar(b)};
+            rgb_t color = {{{uchar(r), uchar(g), uchar(b)}}};
             
             return color;
         }
@@ -56,7 +56,7 @@ rgb_t parseColor(const char *str)
         if (sscanf(str, "%1x%1x%1x%1s", &r, &g, &b, trailing) == 3)
         {
             //Create full form from short form
-            rgb_t color = {uchar(r * (16 + 1)), uchar(g * (16 + 1)), uchar(b * (16 + 1))};
+            rgb_t color = {{{uchar(r * (16 + 1)), uchar(g * (16 + 1)), uchar(b * (16 + 1))}}};
             
             return color;
         }
@@ -68,7 +68,7 @@ rgb_t parseColor(const char *str)
         //Match decimal color
         if (sscanf(str, "%3u,%3u,%3u%1s", &r, &g, &b, trailing) == 3)
         {
-            rgb_t color = {uchar(r), uchar(g), uchar(b)};
+            rgb_t color = {{{uchar(r), uchar(g), uchar(b)}}};
             
             return color;
         }
@@ -76,13 +76,13 @@ rgb_t parseColor(const char *str)
         //Define two standard colors
         if (strcmp(str, "white") == 0)
         {
-            rgb_t color = {0xFF, 0xFF, 0xFF};
+            rgb_t color = {{{0xFF, 0xFF, 0xFF}}};
             
             return color;
         }
         else if (strcmp(str, "black") == 0)
         {
-            rgb_t color = {0x00, 0x00, 0x00};
+            rgb_t color = {{{0x00, 0x00, 0x00}}};
             
             return color;
         }
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
         uint   output_image_width  = 256;
         uint   output_image_height = 256;
         bool   use_padding         = false;
-        rgb_t  padding_color       = {0x00, 0x00, 0x00};
+        rgb_t  padding_color       = {{{0x00, 0x00, 0x00}}};
         
         //Define getopt options
         static struct option long_options[] =
