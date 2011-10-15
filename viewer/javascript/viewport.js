@@ -5,7 +5,7 @@
 "use strict";
 
 /*
- * Helper functions
+ * Helper functions.
  */
 
 function cancelEvent(event)
@@ -27,18 +27,18 @@ function cancelEvent(event)
 
 function showStatusText(str)
 {
-	$("#status").text(str);
+	//$("#status").text(str);
 }
 
 /*
- * Browser detection
+ * Browser detection.
  */
 
 var isIE = navigator.userAgent.indexOf("MSIE")    != -1;
 var isFF = navigator.userAgent.indexOf("Firefox") != -1;
 
 /*
- * Viewport class
+ * Viewport class.
  */
 
 function Viewport(dom, viewerWidth, viewerHeight, documentWidth, documentHeight, levels)
@@ -92,9 +92,13 @@ Viewport.prototype.constructor = function(dom, viewerWidth, viewerHeight, docume
 
 Viewport.prototype.initialize = function()
 {
-	var _this = this;
+	//set class on dom
+	this.dom.addClass('viewport');
 	
-	//get some shortcuts
+	//create tiles div
+	this.dom.append('<div class="tiles"></div>');
+	
+	//get shortcut
 	this.tiles = $(".tiles", this.dom);
 	
 	//create level containers, hide them by default
@@ -129,6 +133,7 @@ Viewport.prototype.initialize = function()
 	this.update({x: 0, y: 0}, 0); //TODO: be able to specify initial position and zoom level
 	
 	//set event listeners
+	var _this = this;
 	this.tiles.bind('selectstart', false);
 	this.tiles.bind('dragstart',   false);
 	this.dom.bind('mousewheel',    function(event) { _this.scrollToZoom(event);  });
@@ -816,28 +821,3 @@ Viewport.prototype.handleKeyUp = function(event)
 			return;
 	}
 }
-
-var viewport;
-
-$(document).ready(
-	function() {
-		//update the viewport size
-		var windowWidth  = $(window).width();
-		var windowHeight = $(window).height();
-		
-		//arguments are: selector of dom, document size of level 0 (width, height), maximum zoom level
-		viewport = new Viewport("#viewport", windowWidth - 20, windowHeight - 60, 151, 225, 5); //Viewport.tileSize, Viewport.tileSize
-	}
-);
-
-//resize viewport on window resizing
-$(window).resize(
-	function(){
-		//update the viewport size
-		var windowWidth  = $(window).width();
-		var windowHeight = $(window).height();
-		
-		//update viewport dimensions
-		viewport.setDimensions(windowWidth - 20, windowHeight - 60);
-	}
-);
