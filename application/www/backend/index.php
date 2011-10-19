@@ -1,9 +1,8 @@
 <?php
 
-//require framework
-require 'framework/all.php';
+//require database and controller
+require 'framework/database.php';
+require 'framework/controller.php';
 
-//require authentication
-require 'util/authentication.php';
-
-//NOTE: let controller handle the request
+//handle current request
+Controller::handleRequest();
