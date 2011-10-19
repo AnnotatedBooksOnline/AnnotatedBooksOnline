@@ -63,18 +63,16 @@ Viewport.prototype.spaceDown = false;
 
 Viewport.prototype.position;
 Viewport.prototype.rotation      = 0;
-Viewport.prototype.zoomLevel     = -1;
-Viewport.prototype.zoomFactor    = 0;
-Viewport.prototype.invZoomFactor = 0;
+Viewport.prototype.zoomLevel     = 0;
+Viewport.prototype.zoomFactor    = 1;
+Viewport.prototype.invZoomFactor = 1;
+
+Viewport.prototype.eventDispatcher = new EventDispatcher();
 
 //constants
 Viewport.emToPixelsFactor = 8;
-Viewport.tileSize         = 256; //TODO: set CSS to use this
+Viewport.tileSize         = 256;
 Viewport.invTileSize      = 1 / Viewport.tileSize;
-
-//which method to use: there are 4 methods: transform (preferred), zoom (nope), filter (IE), font-size (fallback)
-Viewport.prototype.useTransformMethod = false; 
-Viewport.prototype.useZoomMethod      = false;
 
 //methods
 Viewport.prototype.constructor = function(dom, viewerWidth, viewerHeight, documentWidth, documentHeight, levels)
@@ -84,7 +82,7 @@ Viewport.prototype.constructor = function(dom, viewerWidth, viewerHeight, docume
 	this.documentDimensions = {width: documentWidth, height: documentHeight};
 	this.dimensions         = {width: viewerWidth,   height: viewerHeight};
 	this.maxZoomLevel       = levels;
-	this.position           = {x: 0, y: 0};
+	this.position           = {x: -viewerWidth / 2 + documentWidth / 2, y: -viewerHeight / 2 + documentHeight / 2};
 	
 	//initialize
 	this.initialize();
@@ -96,7 +94,7 @@ Viewport.prototype.initialize = function()
 	this.dom.addClass('viewport');
 	
 	//create tiles div
-	this.dom.append('<div class="tiles"></div>');
+	this.dom.html('<div class="tiles"></div>');
 	
 	//get shortcut
 	this.tiles = $(".tiles", this.dom);
@@ -130,7 +128,12 @@ Viewport.prototype.initialize = function()
 	this.dom.height(this.dimensions.height + "px");
 	
 	//initialize viewport
-	this.update({x: 0, y: 0}, 0); //TODO: be able to specify initial position and zoom level
+	var newZoomLevel = Math.min(
+		Math.log((this.dimensions.width  * 0.8) / this.documentDimensions.width),
+		Math.log((this.dimensions.height * 0.8) / this.documentDimensions.height)
+	) / Math.LN2;
+	
+	this.zoom(newZoomLevel);
 	
 	//set event listeners
 	var _this = this;
@@ -148,22 +151,55 @@ Viewport.prototype.initialize = function()
 		this.dom.get(0).addEventListener('DOMMouseScroll', function(event) { _this.scrollToZoom(event); }, false);
 }
 
+//gets event dispatcher
+Viewport.prototype.getEventDispatcher = function()
+{
+	return this.eventDispatcher;
+}
+
 //sets dimensions of viewer
 Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
 {
+	var deltaDimensions = {
+		x: viewerWidth  - this.dimensions.width,
+		y: viewerHeight - this.dimensions.height
+	};
+	
+	
+	//TODO: figure this out
+	
+	
+	//var fraction = viewerWidth / this.dimensions.width;//Math.min(.., viewerHeight / this.dimensions.height);
+	//var newZoomLevel = this.zoomLevel + Math.log(fraction) / Math.LN2;
+	
+	
+	//var deltaZoomLevel 
+	
+	var newZoomLevel = this.zoomLevel + (//Math.min(
+		Math.log(viewerWidth  / this.dimensions.width)//,
+		//Math.log(viewerHeight / this.dimensions.height)
+	) / Math.LN2;
+	
+	
+	
+	var zoomPosition = {
+		x: viewerWidth  / 2 - deltaDimensions.x / 2,
+		y: viewerHeight / 2 - deltaDimensions.y / 2
+	};
+	
 	this.dimensions = {width: viewerWidth, height: viewerHeight};
 	
 	this.dom.width(viewerWidth + "px");
 	this.dom.height(viewerHeight + "px");
 	
-	this.update();
+	//this.zoom(newZoomLevel, zoomPosition);
+	
+	this.update(undefined, newZoomLevel);
 }
 
 //rotates a point a number of degrees
 Viewport.prototype.rotatePoint = function(point, angle)
 {
-	angle *= Math.PI / 180;
-	
 	var cos = Math.cos(angle);
 	var sin = Math.sin(angle);
 	
@@ -175,25 +211,20 @@ Viewport.prototype.rotatePoint = function(point, angle)
 	return result;
 }
 
-//gets visible area in viewport
-Viewport.prototype.getVisibleArea = function()
+//gets bounding box of a rotated bounding box
+Viewport.prototype.rotateBoundingBox = function(topLeft, bottomRight, angle)
 {
 	//TODO: optimize this
 	
-	//calculate topleft and bottomright
-	var topLeft     = this.position;
-	var bottomRight = {
-		x: topLeft.x + this.dimensions.width  * this.invZoomFactor,
-		y: topLeft.y + this.dimensions.height * this.invZoomFactor
-	};
+	//calculate topright and bottomleft
 	var topRight    = {x: bottomRight.x, y: topLeft.y};
 	var bottomLeft  = {x: topLeft.x, y: bottomRight.y};
 	
 	//rotate points, and set new topleft and bottomright
-	var rotatedTopLeft     = this.rotatePoint(topLeft,     -this.rotation);
-	var rotatedBottomRight = this.rotatePoint(bottomRight, -this.rotation);
-	var rotatedTopRight    = this.rotatePoint(topRight,    -this.rotation);
-	var rotatedBottomLeft  = this.rotatePoint(bottomLeft,  -this.rotation);
+	var rotatedTopLeft     = this.rotatePoint(topLeft,     angle);
+	var rotatedBottomRight = this.rotatePoint(bottomRight, angle);
+	var rotatedTopRight    = this.rotatePoint(topRight,    angle);
+	var rotatedBottomLeft  = this.rotatePoint(bottomLeft,  angle);
 	
 	topLeft = {
 		x: Math.min(Math.min(rotatedTopLeft.x, rotatedBottomRight.x), Math.min(rotatedTopRight.x, rotatedBottomLeft.x)),
@@ -208,6 +239,18 @@ Viewport.prototype.getVisibleArea = function()
 	return {topLeft: topLeft, bottomRight: bottomRight};
 }
 
+//gets visible area of document
+Viewport.prototype.getVisibleArea = function()
+{
+	//calculate topleft and bottomright
+	var topLeft     = this.position;
+	var bottomRight = {
+		x: topLeft.x + this.dimensions.width  * this.invZoomFactor,
+		y: topLeft.y + this.dimensions.height * this.invZoomFactor
+	};
+	
+	return this.rotateBoundingBox(topLeft, bottomRight, -this.rotation);
+}
 
 Viewport.prototype.removeInvisibleTiles = function(levelContainer, startRow, endRow, startCol, endCol)
 {
@@ -378,8 +421,8 @@ Viewport.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
 	
 	*/
 	
-	var scaledSin = levelScale * Math.sin(this.rotation * (Math.PI / 180));
-	var scaledCos = levelScale * Math.cos(this.rotation * (Math.PI / 180));
+	var scaledSin = levelScale * Math.sin(this.rotation);
+	var scaledCos = levelScale * Math.cos(this.rotation);
 	
 	var x1 = this.levelOffsets[zoomLevel].x;
 	var y1 = this.levelOffsets[zoomLevel].y;
@@ -422,8 +465,6 @@ Viewport.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
 		
 		
 		
-		
-		//TODO: simplify this *a* lot !
 		
 		levelContainer.style.transform       = transform;
 		levelContainer.style.webkitTransform = transform;
@@ -515,6 +556,9 @@ Viewport.prototype.updateLevels = function()
 			this.levelVisible[i] = false;
 		}
 	}
+	
+	//dispatch event
+	this.eventDispatcher.trigger('change', this.position, this.zoomLevel, this.rotation, area);
 }
 
 Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
@@ -532,47 +576,65 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
 	
 	//check zoom level
 	if (newZoomLevel < 0)
-	{
 		newZoomLevel = 0;
-	}
 	else if (newZoomLevel > this.maxZoomLevel)
-	{
 		newZoomLevel = this.maxZoomLevel;
-	}
 	
 	//round new zoom level to one tens
-	newZoomLevel = Math.round(newZoomLevel * 10) / 10;
+	//newZoomLevel = Math.round(newZoomLevel * 10) / 10; //TODO: find a way around ceiling problem
 	
 	//calculate zoom factor
-	var newZoomFactor = Math.pow(2, newZoomLevel);
+	var newZoomFactor   = Math.pow(2, newZoomLevel);
+	var newInvZoomLevel = 1 / newZoomFactor;
 	
 	
 	
-	//normalize rotation (NOTE: is this really needed? why not work with radians?)
-	newRotation %= 360;
-	if (newRotation < 0)
-		newRotation = 360 + newRotation;
 	
-	//NOTE: disabled bounds check for rotation
 	
-	//check position
-	//if (newPosition.x > (this.documentDimensions.width - this.dimensions.width / newZoomFactor))
-	//	newPosition.x = (this.documentDimensions.width - this.dimensions.width / newZoomFactor);
 	
-	//if (newPosition.y > (this.documentDimensions.height - this.dimensions.height / newZoomFactor))
-	//	newPosition.y = (this.documentDimensions.height - this.dimensions.height / newZoomFactor);
 	
-	//if (newPosition.x < 0)
-	//	newPosition.x = 0;
+	//do some bounds checking, and center document if smaller than viewport
+	var scaledMargin = 20 * newInvZoomLevel; //TODO: make margin setting
 	
-	//if (newPosition.y < 0)
-	//	newPosition.y = 0;
+	var topLeft     = {x: -scaledMargin, y: -scaledMargin};
+	var bottomRight = {
+		x: this.documentDimensions.width  + scaledMargin,
+		y: this.documentDimensions.height + scaledMargin
+	};
 	
+	var documentBox = this.rotateBoundingBox(topLeft, bottomRight, newRotation);
+	
+	var areaWidth  = (documentBox.bottomRight.x - documentBox.topLeft.x) * newZoomFactor;
+	var areaHeight = (documentBox.bottomRight.y - documentBox.topLeft.y) * newZoomFactor;
+	
+	if (areaWidth < this.dimensions.width)
+	{
+		var centerOffset = {x: this.documentDimensions.width * 0.5, y: this.documentDimensions.height * 0.5};
+		var rotatedCenterOffset = this.rotatePoint(centerOffset, newRotation);
+		
+		newPosition.x = rotatedCenterOffset.x - this.dimensions.width * 0.5 * newInvZoomLevel;
+	}
+	else if (newPosition.x < documentBox.topLeft.x)
+		newPosition.x = documentBox.topLeft.x;
+	else if (newPosition.x > (documentBox.bottomRight.x - this.dimensions.width * newInvZoomLevel))
+		newPosition.x = documentBox.bottomRight.x - this.dimensions.width * newInvZoomLevel;
+	
+	if (areaHeight < this.dimensions.height)
+	{
+		var centerOffset = {x: this.documentDimensions.width * 0.5, y: this.documentDimensions.height * 0.5};
+		var rotatedCenterOffset = this.rotatePoint(centerOffset, newRotation);
+		
+		newPosition.y = rotatedCenterOffset.y - this.dimensions.height * 0.5 * newInvZoomLevel;
+	}
+	else if (newPosition.y < documentBox.topLeft.y)
+		newPosition.y = documentBox.topLeft.y;
+	else if (newPosition.y > (documentBox.bottomRight.y - this.dimensions.height * newInvZoomLevel))
+		newPosition.y = documentBox.bottomRight.y - this.dimensions.height * newInvZoomLevel;
 	
 	//set new zoom level and factors
 	this.zoomLevel     = newZoomLevel;
 	this.zoomFactor    = newZoomFactor;
-	this.invZoomFactor = 1 / newZoomFactor;
+	this.invZoomFactor = newInvZoomLevel;
 	
 	//set new position and rotation
 	this.position = newPosition;
@@ -582,11 +644,40 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
 	this.updateLevels();
 	
 	
-	
-	
 	//DEBUG: show zoom and position
 	showStatusText("zoom: " + this.zoomLevel + ", x: " + this.position.x + ", y: " + this.position.y +
 		", rotation: " + this.rotation);
+}
+
+Viewport.prototype.zoom = function(newZoomLevel, viewportPosition)
+{
+	//default to center position
+	if (viewportPosition === undefined)
+	{
+		viewportPosition = {x: this.dimensions.width / 2, y: this.dimensions.height / 2};
+	}
+	
+	//clamp zoom level before factor is calculated
+	if (newZoomLevel < 0)
+	{
+		newZoomLevel = 0;
+	}
+	else if (newZoomLevel > this.maxZoomLevel)
+	{
+		newZoomLevel = this.maxZoomLevel;
+	}
+	
+	//calculate new zoom factor
+	var invNewZoomFactor = Math.pow(2, -newZoomLevel);
+	
+	//set factor of how much to subtract mouse position
+	var factor = (this.zoomFactor * invNewZoomFactor - 1) * this.invZoomFactor;
+	
+	//calculate new topleft position
+	var newPosition = {x: this.position.x - viewportPosition.x * factor, y: this.position.y - viewportPosition.y * factor};
+	
+	//update viewport
+	this.update(newPosition, newZoomLevel);
 }
 
 Viewport.prototype.startDragging = function(event)
@@ -622,14 +713,13 @@ Viewport.prototype.doDragging = function(event)
 	var newPosition;
 	if (this.spaceDown)
 	{
-	
-	
-	
-
-		//calculate mouse offset in document dimensions
+		//get offset of viewport dom
+		var domOffset = this.dom.offset();
+		
+		//calculate mouse position within viewport in document dimensions
 		var mouseOffset = {
-			x: this.mousePosition.x * this.invZoomFactor,
-			y: this.mousePosition.y * this.invZoomFactor
+			x: (event.pageX - domOffset.left) * this.invZoomFactor,
+			y: (event.pageY - domOffset.top) * this.invZoomFactor
 		};
 		
 		//calculate center offset of viewport document dimensions
@@ -639,7 +729,7 @@ Viewport.prototype.doDragging = function(event)
 		};
 		
 		//calculate rotation of mouse
-		var mouseRotation = (180 / Math.PI) * Math.atan2(mouseOffset.y - centerOffset.y, mouseOffset.x - centerOffset.x);
+		var mouseRotation = Math.atan2(mouseOffset.y - centerOffset.y, mouseOffset.x - centerOffset.x);
 		
 		if (this.mouseRotation === undefined)
 		{
@@ -648,16 +738,10 @@ Viewport.prototype.doDragging = function(event)
 		else
 		{
 			//calculate delta rotation and store new one
-			var deltaRotation  = mouseRotation - this.mouseRotation;
+			deltaRotation = mouseRotation - this.mouseRotation;
 			this.mouseRotation = mouseRotation;
 		}
 		
-		
-	
-	
-	
-	
-	
 		//calculate center position
 		var centerPosition = {x: this.position.x + centerOffset.x, y: this.position.y + centerOffset.y};
 		
@@ -699,8 +783,6 @@ Viewport.prototype.stopDragging = function(event)
 	$(document.body).removeClass("dragging");
 	this.tiles.removeClass("dragging");
 	
-	//NOTE: sometimes deltaPosition is not set !!
-	
 	//calculate new position
 	var newPosition = {
 		x: this.position.x - this.deltaPosition.x * 3 * this.invZoomFactor, //TODO: constant!
@@ -714,7 +796,6 @@ Viewport.prototype.stopDragging = function(event)
 		{percentage: 100},
 		{
 			duration: "fast",
-			//ease: "swing",
 			step: function(percentage)
 			{
 				//calculate fraction
@@ -741,38 +822,19 @@ Viewport.prototype.scrollToZoom = function(event)
 	var amount = event.detail ? event.detail * -1 : event.wheelDelta / 40;
 	
 	//get new zoom level
-	var newZoomLevel = this.zoomLevel + amount / 0.75 * 0.2; //NOTE: was 0.1
-	
-	//clamp zoom level before factor is calculated
-	if (newZoomLevel < 0)
-	{
-		newZoomLevel = 0;
-	}
-	else if (newZoomLevel > this.maxZoomLevel)
-	{
-		newZoomLevel = this.maxZoomLevel;
-	}
-	
-	//calculate new zoom factor
-	var invNewZoomFactor = Math.pow(2, -newZoomLevel);
+	var newZoomLevel = this.zoomLevel + amount / 0.75 * 0.2;
 	
 	//get offset of viewport dom
 	var domOffset = this.dom.offset();
 	
 	//calculate mouse position within viewport
 	var mousePosition = {
-		x: (event.pageX - domOffset.left) * this.invZoomFactor,
-		y: (event.pageY - domOffset.top)  * this.invZoomFactor
+		x: event.pageX - domOffset.left,
+		y: event.pageY - domOffset.top
 	};
 	
-	//set factor of how much to subtract mouse position
-	var factor = this.zoomFactor * invNewZoomFactor - 1;
-	
-	//calculate new topleft position
-	var newPosition = {x: this.position.x - mousePosition.x * factor, y: this.position.y - mousePosition.y * factor};
-	
-	//update viewport
-	this.update(newPosition, newZoomLevel);
+	//zoom in
+	this.zoom(newZoomLevel, mousePosition);
 	
 	return cancelEvent(event);
 }
