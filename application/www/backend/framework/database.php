@@ -17,7 +17,7 @@ class DBException extends Exception
  * 
  * Example:
  * \verbatim
- * $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd(time()));
+ * $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
  * foreach($results as $result)
  * {
  *  	print 'Happy birthday, ' . $result->getValue('user_name') . '!\n' 
@@ -201,8 +201,14 @@ class DBConnection
     			if(count($matches) == 0 || count($matches[0]) == 0 || $matches[0][0] != $arg)
     				throw new FormatException($arg . " is not a valid SQL identifier.");
     			return $arg;
-    		//TODO: case 't': ...
-    		//TODO: case 'a': ...
+    		case 't':
+    			if(!is_numeric($arg))
+    				throw new FormatException("Timestamp is not a number.");
+    			return "(timestamptz 'epoch' + {$this->quoteString($arg)} * interval '1 second')";
+    		case 'a':
+    			if(!jdtounix($arg))
+    				throw new FormatException('Provided date not within epoch.'); 
+    			return $this->quoteString(strftime('%G-%m-%d', jdtounix($arg)));
     		default:
     			throw new FormatException('%' . $specifier 
     										  . " is not a valid conversion specifier");
@@ -273,8 +279,12 @@ class DBConnection
     *  		 be transformed but has to conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b>. Make sure to
     *  		 validate whether this column or table is accessible when its name depends on user
     *  		 input.
-    *  - t - A point in time. TODO
-    *  - a - A date. TODO
+    *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of 
+    *  		 seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
+    *  		 returned by time().
+    *  - a - A date. The argument should be an integer representing a Julian day. This is the format
+    *  		 returned by unixtojd(). The date should lie somewhere between years 1970 and 2037 
+    *  		 (2440588 <= jday <= 2465342). See also http://en.wikipedia.org/wiki/Julian_date 
     *  - % - Simply prints a single %-character, no argument should be supplied along with this.
     *  
     *  Note that conversion specifiers are case insensitive, so you may also use capital letters.
@@ -397,6 +407,7 @@ class DBConnection
     }
 }
 
+//Test
 $dbc = DBConnection::getConnection();
 $dbc->execute('select a from %n where c < %d, d == %s','b', 42, 'abcedfg');
-$dbc->insert('blaat', array('id' => '%i15', 'name' => 'blah', 'someblob' => '%bfúsghf'));
+$dbc->insert('blaat', array('id' => '%i15', 'name' => 'blah', 'someblob' => '%bfúsghf', 'today' => '%a' . unixtojd()));
