@@ -13,7 +13,8 @@ class DBException extends Exception
 /**
  * An IteratorAggregate for the results of a query.
  * 
- * Can be used to iterate over the rows in the result set of a query.
+ * Can be used to iterate over the rows in the result set of a query. There can only exist one 
+ * ResultSet-object at a time. Whenever a new one gets constructed, the old one will be invalidated.
  * 
  * Example:
  * \verbatim
@@ -26,11 +27,107 @@ class DBException extends Exception
  */
 class ResultSet implements IteratorAggregate
 {
-    //TODO
+    private $valid;
+	private $statement;
+	private static $current = NULL;
+    
+    public function __construct($pdo_stat)
+    {
+    	self::invalidateCurrent();
+    	
+    	$this->valid = true;
+    	$this->statement = $pdo_stat;
+    	self::$current = $this;
+    }
+    
+    public function __destruct()
+    {
+    	invalidate();
+    }
+    
+    /**
+     * Invalidate the ResultSet that is currently in use, if any.
+     * 
+     * This is automatically called when a new query is executed.
+     */
+    public static function invalidateCurrent()
+    {
+    	if(self::$current != NULL)
+    	{
+    		self::$current->invalidate();
+    		self::$current = NULL;
+    	}
+    }
+    
+    /**
+     * Invalidates the ResultSet.
+     * 
+     * Doing so will no longer allow you to access any more rows from this result set.
+     */
+    public function invalidate()
+    {
+    	if($this->valid)
+    	{
+    		$this->statement->closeCursor();
+    		$this->valid = false;
+    	}
+    }
     
 	public function getIterator()
 	{
-		//TODO ...
+		return new ResultSetIterator($this, $statement);
+	}
+}
+
+/**
+ * An iterator of ResultSetRows used by ResultSet.
+ * 
+ * 
+ */
+class ResultSetIterator implements Iterator
+{
+	private $rset;
+	private $statement;
+	
+	public function __construct($rset, $stat)
+	{
+		$this->rset = rset;
+		$this->statement = $stat;
+		$this->statement->setFetchMode(PDO::FETCH_ASSOC);
+	}
+	
+	public function next()
+	{
+		if(!$this->rset->valid)
+			throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
+		
+		$this->statement->next();
+	}
+	
+	public function key()
+	{	
+		if(!$this->rset->valid)
+			throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
+		
+		return $this->statement->key();
+	}
+	
+	public function current()
+	{
+		if(!$this->rset->valid)
+			throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
+		
+		return new ResultSet($this->statement->current());
+	}
+	
+	public function valid()
+	{
+		return $this->statement->valid();
+	}
+	
+	public function rewind()
+	{
+		$this->statement->rewind();
 	}
 }
 
@@ -40,16 +137,40 @@ class ResultSet implements IteratorAggregate
  */
 class ResultSetRow
 {
-	//TODO
+	private $row;
 	
-	public function getValue($columnname)
+	public function __construct($row)
 	{
-		
+		$this->row = array_map('strtoupper', $row);
 	}
 	
+	/**
+	 * Get the value from the column with the specified name as a string.
+	 * 
+	 * @param string $columnname The name of the column, is case incensitive.
+	 * 
+	 * @return A string representing the value stored at the specified column, or NULL if there is 
+	 * 		   no column with this name.
+	 */
+	public function getValue($columnname)
+	{
+		if(array_key_exists(strtoupper($columnname), $this->row))
+			return $this->row[strtoupper($columnname)];
+		else
+			return NULL;
+	}
+	
+	//TODO: get value as number, date, blob etc.
+	
+	/**
+	 * Returns an associative array with the column names and corresponding alues.
+	 * 
+	 * Note that the column names are converted to upper case.
+	 * 
+	 */
 	public function getValues()
 	{
-		
+		return $this->row;
 	}
 }
 
@@ -61,9 +182,9 @@ class DBConnection
     private static function initConnection()
     {
         echo "Database connection initialized.</br>";
-        //return new PDO("pgsql:dbname=test;host=localhost", "postgres", "test");
+        return new PDO("pgsql:dbname=test;host=localhost", "postgres", "test");
 		//return new PDO('mysql:host=localhost;dbname=test', "root", "");
-		return NULL;
+		//return NULL;
     }
     
     private function __construct($p)
@@ -148,8 +269,8 @@ class DBConnection
     
     private function quoteString($str)
     {
-    	//return $this->pdo->quote($str);
-    	return "'" . addslashes($str) . "'"; //TODO: For testing (without a database) only!
+    	return $this->pdo->quote($str);
+    	//return "'" . addslashes($str) . "'"; //TODO: For testing (without a database) only!
     }
     
     //Formats a single value according to the rules specified with the query function.
@@ -261,6 +382,8 @@ class DBConnection
     * argument should be added that will be validated, properly escaped and/or quoted and
     * converted to a string of characters in a way indicated by the character after the
     * specifier's %-sign. This is somewhat similar to how functions like printf are used.
+    * 
+    * Calling this invalidates any previously created ResultSet.
     *
     * IMPORTANT NOTE: Never make the format string depend on user input, preferably do not use
     * strings stored in variables at all. Instead, use conversion specifiers for each SQL value
@@ -309,8 +432,8 @@ class DBConnection
     */
     public function query(/*$fquery, $args ...*/)
     {
-		//TODO: execute query and return results
-		echo $this->buildQuery(func_get_args()) . "</br>";
+		ResultSet::invalidateCurrent();
+    	return new ResultSet($this->pdo->query($this->buildQuery(func_get_args())));
     }
     
     /**
@@ -323,8 +446,7 @@ class DBConnection
      */
     public function execute(/*$fquery, $args ...*/)
     {
-    	//TODO: execute query
-    	echo $this->buildQuery(func_get_args()) . "</br>";
+    	return $this->pdo->exec($this->buildQuery(func_get_args()));
     }
     
     /**
@@ -409,5 +531,4 @@ class DBConnection
 
 //Test
 $dbc = DBConnection::getConnection();
-$dbc->execute('select a from %n where c < %d, d == %s','b', 42, 'abcedfg');
-$dbc->insert('blaat', array('id' => '%i15', 'name' => 'blah', 'someblob' => '%bfúsghf', 'today' => '%a' . unixtojd()));
+//$dbc->insert('testtabel', array('testid' => '%i42', 'blah' => "Yay! Het werkt!"));
