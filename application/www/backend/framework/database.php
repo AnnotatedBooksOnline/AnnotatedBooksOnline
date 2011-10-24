@@ -1,5 +1,10 @@
 ﻿<?php 
 
+define("DB_TEST_DSN", "pgsql:dbname=test;host=localhost");
+define("DB_TEST_USERNAME", "postgres");
+define("DB_TEST_PASSWORD", "test");
+
+
 class FormatException extends Exception
 {
     //TODO
@@ -28,7 +33,7 @@ class DBException extends Exception
 class ResultSet implements IteratorAggregate
 {
     private $valid;
-	private $statement;
+	public $statement;
 	private static $current = NULL;
     
     public function __construct($pdo_stat)
@@ -42,7 +47,7 @@ class ResultSet implements IteratorAggregate
     
     public function __destruct()
     {
-    	invalidate();
+    	$this->invalidate();
     }
     
     /**
@@ -73,9 +78,14 @@ class ResultSet implements IteratorAggregate
     	}
     }
     
+    public function isValid()
+    {
+    	return $this->valid;
+    }
+	
 	public function getIterator()
 	{
-		return new ResultSetIterator($this, $statement);
+		return new ResultSetIterator($this, $this->statement);
 	}
 }
 
@@ -88,46 +98,50 @@ class ResultSetIterator implements Iterator
 {
 	private $rset;
 	private $statement;
+	private $i;
+	private $curr;
 	
 	public function __construct($rset, $stat)
 	{
-		$this->rset = rset;
+		$this->rset = $rset;
 		$this->statement = $stat;
-		$this->statement->setFetchMode(PDO::FETCH_ASSOC);
+		$this->i = -1;
+		$this->next();
 	}
 	
 	public function next()
 	{
-		if(!$this->rset->valid)
+		if(!$this->rset->isValid())
 			throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
+		++$this->i;
+		if($this->i > $this->statement->rowCount())
+			throw new Exception("Iterator out of range.");
 		
-		$this->statement->next();
+		$this->curr = $this->statement->fetch(PDO::FETCH_ASSOC);
 	}
 	
 	public function key()
 	{	
-		if(!$this->rset->valid)
-			throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
-		
-		return $this->statement->key();
+		return $this->i;
 	}
 	
 	public function current()
 	{
-		if(!$this->rset->valid)
+		if(!$this->rset->isValid())
 			throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
 		
-		return new ResultSet($this->statement->current());
+		return new ResultSetRow($this->curr);
 	}
 	
 	public function valid()
 	{
-		return $this->statement->valid();
+		return $this->i < $this->statement->rowCount();
 	}
 	
 	public function rewind()
 	{
-		$this->statement->rewind();
+		if ($this->i > 0)
+			throw new Exception("Operation not supported.");
 	}
 }
 
@@ -141,7 +155,10 @@ class ResultSetRow
 	
 	public function __construct($row)
 	{
-		$this->row = array_map('strtoupper', $row);
+		foreach($row as $key => $val)
+		{
+			$this->row[strtoupper($key)] = $val; 
+		}
 	}
 	
 	/**
@@ -181,10 +198,8 @@ class DBConnection
     
     private static function initConnection()
     {
-        echo "Database connection initialized.</br>";
-        return new PDO("pgsql:dbname=test;host=localhost", "postgres", "test");
-		//return new PDO('mysql:host=localhost;dbname=test', "root", "");
-		//return NULL;
+        //echo "Database connection initialized.</br>";
+        return new PDO(DB_TEST_DSN, DB_TEST_USERNAME, DB_TEST_PASSWORD);
     }
     
     private function __construct($p)
@@ -267,12 +282,6 @@ class DBConnection
     		throw new DBException("Commit rollback failed for an unkown reason.");
     }
     
-    private function quoteString($str)
-    {
-    	return $this->pdo->quote($str);
-    	//return "'" . addslashes($str) . "'"; //TODO: For testing (without a database) only!
-    }
-    
     //Formats a single value according to the rules specified with the query function.
     private function formatSingle($specifier, $arg)
     {
@@ -296,14 +305,14 @@ class DBConnection
     				throw new FormatException($arg . "is not a number.");
 				else if(is_float($arg)) //TODO: Parse floating point numbers from string argument
 				{
-					//Note: PostgreSQL syntax
+					//Note: this is PostgreSQL syntax, other SQL dialects might do this a little different
 					if(is_nan($arg))
 						$arg = "NaN";
 					if(is_infinite($arg))
 						$arg = $arg > 0 ? "Infinity" : "-Infinity";
 				}
     		case 's': //Intentional fall-through to this point
-				$result = $this->quoteString($arg);
+				$result = $this->pdo->quote($arg);
     			if(!$result)
     				throw new DBException("String quoting is not supported.");
 				if(!mb_detect_encoding($result, 'UTF-8'))
@@ -311,25 +320,24 @@ class DBConnection
     			return $result;
     		
     		case 'b':
-    			//Note: this is PostgreSQL syntax, other SQL dialects might do this a little different
+    			//Note: PostgreSQL syntax
     			if(!is_string($arg))
     				throw new FormatException($arg . " is not a string.");
     			return "X'" . strtoupper(bin2hex($arg)) . "'";
     		case 'n':
-    			//TODO: Not sure whether this works
     			$matches = array();
     			preg_match_all('/\*|[a-zA-Z_][a-zA-Z_0-9\$]*/', $arg, $matches);
     			if(count($matches) == 0 || count($matches[0]) == 0 || $matches[0][0] != $arg)
     				throw new FormatException($arg . " is not a valid SQL identifier.");
-    			return $arg;
+    			return '"' . $arg . '"'; //Note: also Postgre syntax
     		case 't':
     			if(!is_numeric($arg))
     				throw new FormatException("Timestamp is not a number.");
-    			return "(timestamptz 'epoch' + {$this->quoteString($arg)} * interval '1 second')";
+    			return "(timestamptz 'epoch' + {$this->pdo->quote($arg)} * interval '1 second')";
     		case 'a':
     			if(!jdtounix($arg))
     				throw new FormatException('Provided date not within epoch.'); 
-    			return $this->quoteString(strftime('%G-%m-%d', jdtounix($arg)));
+    			return $this->pdo->quote(strftime('%G-%m-%d', jdtounix($arg)));
     		default:
     			throw new FormatException('%' . $specifier 
     										  . " is not a valid conversion specifier");
@@ -398,10 +406,9 @@ class DBConnection
     *  - i - Same as %d, except that floating point numbers are not accepted.
     *  - b - A SQL hexadecimal number representing a bytestring (used for BLOB's, for instance).
     *        The argument should be string which will be interpreted as binary data.
-    *  - n - A SQL identifier like a column or table name. The argument is a string that will not
-    *  		 be transformed but has to conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b>. Make sure to
-    *  		 validate whether this column or table is accessible when its name depends on user
-    *  		 input.
+    *  - n - A SQL identifier like a column or table name. The argument is a string that has to
+    *  		 conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
+    *  		 to its begin and end. The argument should not be directly formed from user input.
     *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of 
     *  		 seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
     *  		 returned by time().
@@ -530,5 +537,10 @@ class DBConnection
 }
 
 //Test
-$dbc = DBConnection::getConnection();
-//$dbc->insert('testtabel', array('testid' => '%i42', 'blah' => "Yay! Het werkt!"));
+// $dbc = DBConnection::getConnection();
+// $result = $dbc->query('select * from testtabel where testid >= %d',6);
+// foreach($result as $row)
+// {
+// 	echo $row->getValue('blah') . "</br>";
+// }
+
