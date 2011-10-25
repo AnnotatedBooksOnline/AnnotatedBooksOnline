@@ -45,14 +45,34 @@ void TilePyramidBuilder::build(const string &filename)
     //Set globals
     output_buffer = new line_t[settings.output_image_height];
 
+    //Create reader
+    ImageReader * reader = NULL;
+
     try
-    {
-        //Create reader
-        JPEGReader reader; /* TIFFReader reader; */
+    {        
+        if (settings.input_type == BuilderSettings::JPEG_INPUT)
+        {
+        	reader = new JPEGReader();
+    	}
+        else if (settings.input_type == BuilderSettings::TIFF_INPUT)
+        {
+        	reader = new TIFFReader();
+    	}
+        else
+        {
+        	size_t e = filename.find_last_of(".");
+        	string ext = filename.substr(e+1);
+        	if (ext == "TIF" || ext == "TIFF" || ext == "tif" || ext == "tiff")
+	        	reader = new TIFFReader();
+	        else // Assume JPEG
+	        	reader = new JPEGReader();
+    	}
+        	
+        assert(reader);
         
-        reader.open(filename);
+        reader->open(filename);
         
-        const FileParameters info = reader.getParameters();
+        const FileParameters info = reader->getParameters();
         
         buf_width = info.width;
         num_lines = info.height;
@@ -72,7 +92,7 @@ void TilePyramidBuilder::build(const string &filename)
         uint y;
         for(y = 0; y < max_y; ++y)
         {
-            reader.readScanlines(buffer, settings.output_image_height);            
+            reader->readScanlines(buffer, settings.output_image_height);            
 
             //Process the chunk
             root.processImageChunk(y, buffer);
@@ -84,11 +104,17 @@ void TilePyramidBuilder::build(const string &filename)
         delete[] buffer;
         delete output_buffer;
 
-        reader.close();
+        reader->close();
+        
+        delete reader;
     }
     catch(...)
     {
         //TODO
+        
+        if (reader)
+        	delete reader;
+
         throw;
     }
 }

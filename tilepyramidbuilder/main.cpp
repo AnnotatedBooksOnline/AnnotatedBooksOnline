@@ -205,7 +205,12 @@ int main(int argc, char **argv)
         BuilderSettings settings = DEFAULT_BUILDER_SETTINGS;
         
         //Input settings
-        //TODO: format
+        if (input_type == "jpg")
+            settings.input_type = BuilderSettings::JPEG_INPUT;
+        else if (input_type == "tiff")
+            settings.input_type = BuilderSettings::TIFF_INPUT;
+        else
+            settings.input_type = BuilderSettings::AUTO_INPUT;
         
         //Output settings
         settings.output_path         = output_path;

@@ -50,6 +50,16 @@ struct BuilderSettings
      * The color used for padding.
      */
     rgb_t padding_color;
+    
+    /**
+     * The kind of input to expect
+     */
+    enum
+    {
+    	JPEG_INPUT,
+    	TIFF_INPUT,
+    	AUTO_INPUT
+    } input_type;
 };
 
 /**
