@@ -17,7 +17,6 @@ void showUsage(char *command)
          << "  -i <type>    --input-type      <type>    Input type           'auto'\n"
          << "  -p <path>    --output-path     <path>    Output path          '.'\n"
          << "  -f <string>  --output-filename <string>  Filename prefix      'tile_%z_%x_%y.%e'\n"
-         << "  -t <type>    --output-type     <type>    Output type          'jpg'\n"
          << "  -q <num>     --output-quality  <num>     Output quality       '60'\n"
          << "  -w <num>     --output-width    <num>     Tile width           '256'\n"
          << "  -h <num>     --output-height   <num>     Tile height          '256'\n"
@@ -101,7 +100,6 @@ int main(int argc, char **argv)
         string input_type          = "auto";
         string output_path         = ".";
         string output_filename     = "tile_%z_%x_%y.%e";
-        string output_type         = "jpg";
         uint   output_quality      = 60;
         uint   output_image_width  = 256;
         uint   output_image_height = 256;
@@ -114,7 +112,6 @@ int main(int argc, char **argv)
                 {"input-type",      required_argument, NULL, 'i'},
                 {"output-path",     required_argument, NULL, 'p'},
                 {"output-filename", required_argument, NULL, 'f'},
-                {"output-type",     required_argument, NULL, 't'},
                 {"output-quality",  required_argument, NULL, 'q'},
                 {"output-width",    required_argument, NULL, 'w'},
                 {"output-height",   required_argument, NULL, 'h'},
@@ -147,11 +144,6 @@ int main(int argc, char **argv)
                     
                 case 'f':
                     output_filename = optarg;
-                    
-                    break;
-                    
-                case 't':
-                    output_type = optarg;
                     
                     break;
                     
@@ -221,7 +213,6 @@ int main(int argc, char **argv)
         settings.output_quality      = output_quality;
         settings.output_image_width  = output_image_width;
         settings.output_image_height = output_image_height;
-        //TODO: format
         
         //Padding settings
         settings.use_padding   = use_padding;
