@@ -43,7 +43,7 @@ abstract class Entity
         // Execute the query.
         
         // if count (results) != 1
-        //	   throw exception
+        //       throw exception
         
         // move query results to class instance variables. 
         

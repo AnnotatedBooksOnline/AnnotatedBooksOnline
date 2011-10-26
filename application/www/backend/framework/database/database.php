@@ -26,7 +26,7 @@ class DBException extends Exception
  * $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
  * foreach($results as $result)
  * {
- *  	print 'Happy birthday, ' . $result->getValue('user_name') . '!\n' 
+ *      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n' 
  * }
  * \endverbatim
  */
@@ -167,7 +167,7 @@ class ResultSetRow
      * @param string $columnname The name of the column, is case incensitive.
      * 
      * @return A string representing the value stored at the specified column, or NULL if there is 
-     * 		   no column with this name.
+     *            no column with this name.
      */
     public function getValue($columnname)
     {
@@ -233,7 +233,7 @@ class DBConnection
      * Nested transactions are currently not allowed. Therefore an exception will be thrown if a
      * transaction is already going on.
      * 
-     * @throws DBException	If some error occurs or a transaction has already been started.
+     * @throws DBException    If some error occurs or a transaction has already been started.
      * 
      */
     public function startTransaction()
@@ -278,7 +278,7 @@ class DBConnection
      * startTransaction() should be called again when trying again.
      * 
      * @throws DBException If no transaction has started, rollback is not supported or it failed
-     * 					   for some other reason.
+     *                        for some other reason.
      */
     public function rollBack()
     {
@@ -421,14 +421,14 @@ class DBConnection
      *  - b - A SQL hexadecimal number representing a bytestring (used for BLOB's, for instance).
      *        The argument should be string which will be interpreted as binary data.
      *  - n - A SQL identifier like a column or table name. The argument is a string that has to
-     *  		 conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
-     *  		 to its begin and end. The argument should not be directly formed from user input.
+     *           conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
+     *           to its begin and end. The argument should not be directly formed from user input.
      *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of 
-     *  		 seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
-     *  		 returned by time().
+     *           seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
+     *           returned by time().
      *  - a - A date. The argument should be an integer representing a Julian day. This is the format
-     *  		 returned by unixtojd(). The date should lie somewhere between years 1970 and 2037 
-     *  		 (2440588 <= jday <= 2465342). See also http://en.wikipedia.org/wiki/Julian_date 
+     *           returned by unixtojd(). The date should lie somewhere between years 1970 and 2037 
+     *           (2440588 <= jday <= 2465342). See also http://en.wikipedia.org/wiki/Julian_date 
      *  - % - Simply prints a single %-character, no argument should be supplied along with this.
      *  
      *  Note that conversion specifiers are case insensitive, so you may also use capital letters.
@@ -438,17 +438,17 @@ class DBConnection
      * \verbatim
      * query('SELECT user_name, user_email FROM users WHERE user_id = %i', $uid);
      * query('INSERT INTO ORDERS (ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS) VALUES (%i, %s, %s)',
-     * 		$id, $customer->getName(), $customer->getAdress());
+     *         $id, $customer->getName(), $customer->getAdress());
      * query('UPDATE THUMBNAILS SET IMAGE_DATA = %b WHERE IMAGE_NAME = %s, CREATE_DATE < %a', 
-     * 		$img->getData(), "vla.jpeg", $vladate);
+     *         $img->getData(), "vla.jpeg", $vladate);
      * \endverbatim
      *
-     * @return ResultSet	      The result of the query, if any.
+     * @return ResultSet          The result of the query, if any.
      * 
      * @throws FormatException If an argument does not conform to the requirements listed above, if
-     * 						  the number of arguments is too high or low or if an undefined format 
-     * 						  specifier is used.
-     * 		  DBException 	  If a database error occurs or when there is an error in the query.
+     *                           the number of arguments is too high or low or if an undefined format 
+     *                           specifier is used.
+     *           DBException       If a database error occurs or when there is an error in the query.
      *
      */
     public function query( /* $fquery, $args ... */ )
@@ -477,12 +477,12 @@ class DBConnection
      * 
      * @param $table   The table from which to select.
      * @param $columns An array of the columns to be selected from the table. An empty array means 
-     * 				   all columns should be selected.
+     *                    all columns should be selected.
      * 
      * @return ResultSet The contents of the selected columns, as retrieved by the database.
      *
      * @throws FormatException If a table or column name is not a valid SQL identifier.
-     * 		   DBException 	   If a database error occured.
+     *            DBException        If a database error occured.
      */
     public function select($table, $columns = array())
     {
@@ -508,17 +508,17 @@ class DBConnection
      * 
      * Helper function that formulates and executes a simple INSERT-statement.
      *
-     * @param string $table 		The name of the table in which to insert the values.
-     * @param array $col_val_array 	An array with strings representing columns as keys and things
-     * 								to be inserted into the associated column as string values.
-     * 								If a value starts with '%' and a single character the rest of
-     * 								the string will be formatted according to same rules as the
-     * 								query function. Values that don't start with a format specifier
-     * 								will be formatted with '%s'.
+     * @param string $table         The name of the table in which to insert the values.
+     * @param array $col_val_array     An array with strings representing columns as keys and things
+     *                                 to be inserted into the associated column as string values.
+     *                                 If a value starts with '%' and a single character the rest of
+     *                                 the string will be formatted according to same rules as the
+     *                                 query function. Values that don't start with a format specifier
+     *                                 will be formatted with '%s'.
      * 
      * @throws FormatException  If a value was formatted incorrectly or an illegal SQL identifier was
-     * 							used.
-     * 		   DBException 	   	If a database error occured.
+     *                             used.
+     *            DBException            If a database error occured.
      */
     public function insert($table, $col_val_array)
     {
@@ -555,5 +555,5 @@ class DBConnection
 // $result = $dbc->query('select * from testtabel where testid >= %d',6);
 // foreach($result as $row)
 // {
-// 	echo $row->getValue('blah') . "</br>";
+//     echo $row->getValue('blah') . "</br>";
 // }
