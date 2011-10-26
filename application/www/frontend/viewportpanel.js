@@ -7,7 +7,7 @@ Ext.define('Ext.ux.ViewportPanel', {
 
 	alias: 'widget.viewportpanel',
 
-	requires: ['Ext.slider.Single'],
+	requires: ['Ext.slider.Single'], //TODO: absolute layout
 
 	initComponent: function()
 	{
@@ -40,8 +40,10 @@ Ext.define('Ext.ux.ViewportPanel', {
 				minValue: 0,
 				maxValue: 200,
 				listeners: {
-					change: function(slider, value) {
-						_this.viewport.zoom(value / 200 * 5);
+					change: function(slider, value)
+					{
+						_this.skipNextChangeEvent = true;
+						_this.viewport.zoom(value / 200 * 5); //TODO: get via viewport method
 					}
 				}
 			}]
@@ -66,6 +68,7 @@ Ext.define('Ext.ux.ViewportPanel', {
 			var dom = this.items.first().body.dom;
 			
 			this.viewport = new Viewport(dom, width, height, 151, 225, 5);
+			//this.viewport = new Viewport(dom, width, height, 256, 256, 20); //Google maps
 			
 			this.eventDispatcher = this.viewport.getEventDispatcher();
 			this.eventDispatcher.bind('change', this.afterViewportChange, this);
@@ -80,7 +83,13 @@ Ext.define('Ext.ux.ViewportPanel', {
 	
 	afterViewportChange: function(event, position, zoomLevel, rotation, area)
 	{
-		this.slider.setValue(Math.round(zoomLevel / 5 * 200)); //TODO: get via viewport method
+		if (this.skipNextChangeEvent === true)
+		{
+			this.skipNextChangeEvent = false;
+			return;
+		}
+		
+		this.slider.setValue(Math.round(zoomLevel / 5 * 200), false); //TODO: get via viewport method
 	},
 	
 	setSize: function(width, height, animate)
@@ -89,5 +98,10 @@ Ext.define('Ext.ux.ViewportPanel', {
 			this.viewport.setDimensions(width, height);
 		
 		this.callParent(arguments);
+	},
+	
+	getViewport: function()
+	{
+		return this.viewport;
 	}
 });

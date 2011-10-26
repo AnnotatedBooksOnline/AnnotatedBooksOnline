@@ -14,11 +14,12 @@ function EventDispatcher()
 }
 
 //members
-EventDispatcher.prototype.events = {};
+EventDispatcher.prototype.events;
 
 //methods
 EventDispatcher.prototype.constructor = function()
 {
+	this.events = {};
 }
 
 EventDispatcher.prototype.bind = function(event, method, obj)
