@@ -157,6 +157,6 @@ Ext.define('Ext.us.LoginPanel', {
             }]
         });
         
-		this.callParent(arguments);
+        this.callParent(arguments);
     }
 });

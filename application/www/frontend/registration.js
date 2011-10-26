@@ -4,7 +4,8 @@ Ext.require([
     'Ext.tip.QuickTipManager'
 ]);
 
-Ext.onReady(function() {
+Ext.onReady(function()
+{
     Ext.tip.QuickTipManager.init();
 
     var formPanel = Ext.widget('form', {
@@ -28,24 +29,31 @@ Ext.onReady(function() {
          * Listen for validity change on the entire form and update the combined error icon
          */
         listeners: {
-            fieldvaliditychange: function() {
+            fieldvaliditychange: function()
+            {
                 this.updateErrorState();
             },
-            fielderrorchange: function() {
+            fielderrorchange: function()
+            {
                 this.updateErrorState();
             }
         },
 
-        updateErrorState: function() {
+        updateErrorState: function()
+        {
             var me = this,
                 errorCmp, fields, errors;
 
-            if (me.hasBeenDirty || me.getForm().isDirty()) { //prevents showing global error when form first loads
+            //prevent showing global error when form first loads
+            if (me.hasBeenDirty || me.getForm().isDirty())
+            {
                 errorCmp = me.down('#formErrorState');
                 fields = me.getForm().getFields();
                 errors = [];
-                fields.each(function(field) {
-                    Ext.Array.forEach(field.getErrors(), function(error) {
+                fields.each(function(field)
+                {
+                    Ext.Array.forEach(field.getErrors(), function(error)
+                    {
                         errors.push({name: field.getFieldLabel(), error: error});
                     });
                 });
@@ -99,7 +107,8 @@ Ext.onReady(function() {
              * Custom validator implementation - checks that the value matches what was entered into
              * the password1 field.
              */
-            validator: function(value) {
+            validator: function(value)
+            {
                 var password1 = this.previousSibling('[name=password1]');
                 return (value === password1.getValue()) ? true : 'Passwords do not match.'
             }
@@ -126,23 +135,27 @@ Ext.onReady(function() {
             listeners: {
                 click: {
                     element: 'boxLabelEl',
-                    fn: function(e) {
+                    fn: function(e)
+                    {
                         var target = e.getTarget('.terms'),
                             win;
-                        if (target) {
+                        if (target)
+                        {
                             win = Ext.widget('window', {
                                 title: 'Terms of Use',
                                 modal: true,
                                 html: '<iframe src="' + target.href + '" width="950" height="500" style="border:0"></iframe>',
                                 buttons: [{
                                     text: 'Decline',
-                                    handler: function() {
+                                    handler: function()
+                                    {
                                         this.up('window').close();
                                         formPanel.down('[name=acceptTerms]').setValue(false);
                                     }
                                 }, {
                                     text: 'Accept',
-                                    handler: function() {
+                                    handler: function()
+                                    {
                                         this.up('window').close();
                                         formPanel.down('[name=acceptTerms]').setValue(true);
                                     }
@@ -156,7 +169,8 @@ Ext.onReady(function() {
             },
 
             // Custom validation logic - requires the checkbox to be checked
-            getErrors: function() {
+            getErrors: function()
+            {
                 return this.getValue() ? [] : ['You must accept the Terms of Use']
             }
         }],
@@ -179,7 +193,8 @@ Ext.onReady(function() {
                 invalidText: 'Form has errors',
                 tipTpl: Ext.create('Ext.XTemplate', '<ul><tpl for="."><li><span class="field-name">{name}</span>: <span class="error">{error}</span></li></tpl></ul>'),
 
-                getTip: function() {
+                getTip: function()
+                {
                     var tip = this.tip;
                     if (!tip) {
                         tip = this.tip = Ext.widget('tooltip', {
@@ -197,7 +212,8 @@ Ext.onReady(function() {
                     return tip;
                 },
 
-                setErrors: function(errors) {
+                setErrors: function(errors)
+                {
                     var me = this,
                         baseCls = me.baseCls,
                         tip = me.getTip();
@@ -225,7 +241,8 @@ Ext.onReady(function() {
                 disabled: true,
                 text: 'Submit Registration',
                 width: 140,
-                handler: function() {
+                handler: function()
+                {
                     var form = this.up('form').getForm();
                     
                     //TODO
@@ -242,12 +259,12 @@ Ext.onReady(function() {
                     });
                     */
 
-                    if (form.isValid()) {
+                    if (form.isValid())
+                    {
                         Ext.Msg.alert('Submitted Values', form.getValues(true));
                     }
                 }
             }]
         }]
     });
-
 });

@@ -1,24 +1,11 @@
-/*
-
-This file is part of Ext JS 4
-
-Copyright (c) 2011 Sencha Inc
-
-Contact:  http://www.sencha.com/contact
-
-GNU General Public License Usage
-This file may be used under the terms of the GNU General Public License version 3.0 as published by the Free Software Foundation and appearing in the file LICENSE included in the packaging of this file.  Please review the following information to ensure the GNU General Public License version 3.0 requirements will be met: http://www.gnu.org/copyleft/gpl.html.
-
-If you are unsure which license is appropriate for your use, please contact the sales department at http://www.sencha.com/contact.
-
-*/
 Ext.require([
     'Ext.form.*',
     'Ext.Img',
     'Ext.tip.QuickTipManager'
 ]);
 
-Ext.onReady(function() {
+Ext.onReady(function()
+{
     Ext.tip.QuickTipManager.init();
 
     var formPanel = Ext.widget('form', {
@@ -42,24 +29,31 @@ Ext.onReady(function() {
          * Listen for validity change on the entire form and update the combined error icon
          */
         listeners: {
-            fieldvaliditychange: function() {
+            fieldvaliditychange: function()
+            {
                 this.updateErrorState();
             },
-            fielderrorchange: function() {
+            fielderrorchange: function()
+            {
                 this.updateErrorState();
             }
         },
 
-        updateErrorState: function() {
+        updateErrorState: function()
+        {
             var me = this,
                 errorCmp, fields, errors;
 
-            if (me.hasBeenDirty || me.getForm().isDirty()) { //prevents showing global error when form first loads
+            //prevent showing global error when form first loads
+            if (me.hasBeenDirty || me.getForm().isDirty())
+            {
                 errorCmp = me.down('#formErrorState');
                 fields = me.getForm().getFields();
                 errors = [];
-                fields.each(function(field) {
-                    Ext.Array.forEach(field.getErrors(), function(error) {
+                fields.each(function(field)
+                {
+                    Ext.Array.forEach(field.getErrors(), function(error)
+                    {
                         errors.push({name: field.getFieldLabel(), error: error});
                     });
                 });
@@ -102,7 +96,8 @@ Ext.onReady(function() {
                 invalidText: 'Form has errors',
                 tipTpl: Ext.create('Ext.XTemplate', '<ul><tpl for="."><li><span class="field-name">{name}</span>: <span class="error">{error}</span></li></tpl></ul>'),
 
-                getTip: function() {
+                getTip: function()
+                {
                     var tip = this.tip;
                     if (!tip) {
                         tip = this.tip = Ext.widget('tooltip', {
@@ -120,7 +115,8 @@ Ext.onReady(function() {
                     return tip;
                 },
 
-                setErrors: function(errors) {
+                setErrors: function(errors)
+                {
                     var me = this,
                         baseCls = me.baseCls,
                         tip = me.getTip();
@@ -128,7 +124,8 @@ Ext.onReady(function() {
                     errors = Ext.Array.from(errors);
 
                     // Update CSS class and tooltip content
-                    if (errors.length) {
+                    if (errors.length)
+                    {
                         me.addCls(baseCls + '-invalid');
                         me.removeCls(baseCls + '-valid');
                         me.update(me.invalidText);
@@ -148,7 +145,8 @@ Ext.onReady(function() {
                 disabled: true,
                 text: 'Login',
                 width: 140,
-                handler: function() {
+                handler: function()
+                {
                     var form = this.up('form').getForm();
 
                     /* Normally we would submit the form to the server here and handle the response...
@@ -164,13 +162,12 @@ Ext.onReady(function() {
                     });
                     */
 
-                    if (form.isValid()) {
+                    if (form.isValid())
+                    {
                         Ext.Msg.alert('Submitted Values', form.getValues(true));
                     }
                 }
             }]
         }]
     });
-
 });
-
