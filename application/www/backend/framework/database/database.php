@@ -176,7 +176,9 @@ class DBConnection extends Singleton
     private function buildQuery($arg_arr)
     {
         if (count($arg_arr) == 0)
-        throw new FormatException("No arguments.");
+        {
+            throw new FormatException("No arguments.");
+        }
 
         // Split the input at the % signs for easier formatting.
         $inp  = explode('%', $arg_arr[0]);
@@ -198,13 +200,17 @@ class DBConnection extends Singleton
             }
 
             if ($arg >= count($arg_arr))
-            throw new FormatException("Not enough arguments.");
+            {
+                throw new FormatException("Not enough arguments.");
+            }
             $outp .= $this->formatSingle($inp[$i][0], $arg_arr[$arg]) . substr($inp[$i], 1);
             ++$arg;
         }
 
         if ($arg < count($arg_arr))
-        throw new FormatException("Too many arguments.");
+        {
+            throw new FormatException("Too many arguments.");
+        }
 
         return $outp;
     }
@@ -340,7 +346,9 @@ class DBConnection extends Singleton
             if ($val[0] == '%')
             {
                 if (strlen($val) == 1)
-                throw new FormatException("Just a single '%' in provided value.");
+                {
+                    throw new FormatException("Just a single '%' in provided value.");
+                }
                 $spec = $val[1];
                 $val  = substr($val, 2);
             }
@@ -360,9 +368,9 @@ class DBConnection extends Singleton
 }
 
 // Test
-$dbc = DBConnection::getInstance();
-$result = $dbc->query('select * from testtabel where testid >= %d',6);
-foreach($result as $row)
-{
-    echo $row->getValue('blah') . "</br>";
-}
+// $dbc = DBConnection::getInstance();
+// $result = $dbc->query('select * from testtabel where testid >= %d',6);
+// foreach($result as $row)
+// {
+//     echo $row->getValue('blah') . "</br>";
+// }
