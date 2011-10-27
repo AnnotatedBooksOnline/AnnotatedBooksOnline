@@ -1,91 +1,53 @@
 ﻿<?php
 
-//TODO: use constants in Database, see User !!
+require_once 'framework/helpers/singleton.php';
+
+// TODO: Read these from ini-file
 define("DB_TEST_DSN", "pgsql:dbname=test;host=localhost");
 define("DB_TEST_USERNAME", "postgres");
 define("DB_TEST_PASSWORD", "test");
 
 class FormatException extends Exception
 {
-    //TODO
+    // TODO
 }
 
 class DBException extends Exception
 {
-    //TODO
+    // TODO
 }
 
 /**
  * An IteratorAggregate for the results of a query.
- * 
- * Can be used to iterate over the rows in the result set of a query. There can only exist one 
- * ResultSet-object at a time. Whenever a new one gets constructed, the old one will be invalidated.
- * 
+ *
+ * Can be used to iterate over the rows in the result set of a query.
+ *
  * Example:
  * \verbatim
  * $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
  * foreach($results as $result)
  * {
- *      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n' 
+ *      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n'
  * }
  * \endverbatim
  */
 class ResultSet implements IteratorAggregate
 {
-    private $valid;
     public $statement;
-    private static $current = NULL;
-    
-    //TODO: why static, that way we can't have two resultsets at the same time, or iterate them.
-    //TODO: this is quite a common usecase however: foreach (ResultSet a) { foreach (ResultSet b) { .. } }
-    
+
+    // TODO: why static, that way we can't have two resultsets at the same time, or iterate them.
+    // TODO: this is quite a common usecase however: foreach (ResultSet a) { foreach (ResultSet b) { .. } }
+
     public function __construct($pdo_stat)
     {
-        self::invalidateCurrent();
-        
-        $this->valid     = true;
         $this->statement = $pdo_stat;
-        self::$current   = $this;
     }
-    
+
     public function __destruct()
     {
-        $this->invalidate();
+        $this->statement->closeCursor();
     }
-    
-    /**
-     * Invalidate the ResultSet that is currently in use, if any.
-     * 
-     * This is automatically called when a new query is executed.
-     */
-    public static function invalidateCurrent()
-    {
-        if (self::$current != NULL)
-        {
-            self::$current->invalidate();
-            self::$current = NULL;
-        }
-    }
-    
-    /**
-     * Invalidates the ResultSet.
-     * 
-     * Doing so will no longer allow you to access any more rows from this result set.
-     */
-    public function invalidate()
-    {
-        if ($this->valid)
-        {
-            $this->statement->closeCursor();
-            $this->valid = false;
-        }
-    }
-    
-    public function isValid()
-    {
-        return $this->valid;
-    }
-    
+
     public function getIterator()
     {
         return new ResultSetIterator($this, $this->statement);
@@ -101,7 +63,7 @@ class ResultSetIterator implements Iterator
     private $statement;
     private $i;
     private $curr;
-    
+
     public function __construct($rset, $stat)
     {
         $this->rset      = $rset;
@@ -109,40 +71,39 @@ class ResultSetIterator implements Iterator
         $this->i         = -1;
         $this->next();
     }
-    
+
     public function next()
     {
-        if (!$this->rset->isValid())
-            throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
         ++$this->i;
         if ($this->i > $this->statement->rowCount())
+        {
             throw new Exception("Iterator out of range.");
-        
+        }
+
         $this->curr = $this->statement->fetch(PDO::FETCH_ASSOC);
     }
-    
+
     public function key()
     {
         return $this->i;
     }
-    
+
     public function current()
     {
-        if (!$this->rset->isValid())
-            throw new Exception("Trying to retrieve a row from an invalid ResultSet.");
-        
         return new ResultSetRow($this->curr);
     }
-    
+
     public function valid()
     {
         return $this->i < $this->statement->rowCount();
     }
-    
+
     public function rewind()
     {
         if ($this->i > 0)
-            throw new Exception("Operation not supported.");
+        {
+            throw new Exception("Cannot rewind a ResultSetIterator.");
+        }
     }
 }
 
@@ -152,7 +113,7 @@ class ResultSetIterator implements Iterator
 class ResultSetRow
 {
     private $row;
-    
+
     public function __construct($row)
     {
         foreach ($row as $key => $val)
@@ -160,30 +121,34 @@ class ResultSetRow
             $this->row[strtoupper($key)] = $val;
         }
     }
-    
+
     /**
      * Get the value from the column with the specified name as a string.
-     * 
+     *
      * @param string $columnname The name of the column, is case incensitive.
-     * 
-     * @return A string representing the value stored at the specified column, or NULL if there is 
+     *
+     * @return A string representing the value stored at the specified column, or NULL if there is
      *            no column with this name.
      */
     public function getValue($columnname)
     {
         if (array_key_exists(strtoupper($columnname), $this->row))
+        {
             return $this->row[strtoupper($columnname)];
+        }
         else
+        {
             return NULL;
+        }
     }
-    
-    //TODO: get value as number, date, blob etc.
-    
+
+    // TODO: get value as number, date, blob etc.
+
     /**
      * Returns an associative array with the column names and corresponding alues.
-     * 
+     *
      * Note that the column names are converted to upper case.
-     * 
+     *
      */
     public function getValues()
     {
@@ -191,190 +156,173 @@ class ResultSetRow
     }
 }
 
-class DBConnection
+class DBConnection extends Singleton
 {
-    private static $instance; //TODO: use Singleton!
     private $pdo;
-    
+
     private static function initConnection()
     {
-        //echo "Database connection initialized.</br>";
         return new PDO(DB_TEST_DSN, DB_TEST_USERNAME, DB_TEST_PASSWORD);
     }
-    
-    private function __construct($p)
+
+    protected function __construct()
     {
-        $this->pdo = $p;
+        $this->pdo = self::initConnection();
     }
-    
+
     public function __destruct()
     {
-        //TODO
+        // TODO
     }
-    
-    //TODO: use Singleton!
-    public static function getConnection()
+
+    /**
+     * Get an instance of the database connection. A new connection will be made if it is not yet 
+     * present.
+     * 
+     * @return An instance of the database connection.
+     */
+    public static function getInstance()
     {
-        if (!self::$instance)
-        {
-            self::$instance = new DBConnection(DBConnection::initConnection());
-        }
-        
-        return self::$instance;
+        return parent::getInstance(__CLASS__);
     }
-    
+
     /**
      * Starts a database transaction.
-     * 
-     * After calling this method, all query functions will no longer immediately commit their 
+     *
+     * After calling this method, all query functions will no longer immediately commit their
      * possible changes to the database. This will instead happen atomically and at once when
-     * commit() is called. 
-     * 
+     * commit() is called.
+     *
      * Nested transactions are currently not allowed. Therefore an exception will be thrown if a
      * transaction is already going on.
-     * 
+     *
      * @throws DBException    If some error occurs or a transaction has already been started.
-     * 
+     *
      */
     public function startTransaction()
     {
         if (!$this->pdo->beginTransaction())
+        {
             throw new DBException("Starting a transaction for an unkown reason.");
+        }
     }
-    
+
     /**
      * Checks wheter currently in a transaction.
-     * 
+     *
      * @return A boolean indicating whether currently in a transaction.
-     * 
+     *
      * @throws DBException
-     * 
+     *
      */
     public function inTransaction()
     {
         return $this->pdo->inTransaction();
     }
-    
+
     /**
      * Commits the current transaction.
-     * 
+     *
      * Commits the current transaction, finalizing all changes made to the database. The transaction
      * will now have ended and startTransaction can be called start a new one (or the query methods
      * can be called directly).
-     * 
+     *
      * @throws DBException If no transaction has started or the commit failed for some other reason.
-     * 
+     *
      */
     public function commit()
     {
         if (!$this->pdo->commit())
+        {
             throw new DBException("Commit failed for an unkown reason.");
+        }
     }
-    
+
     /**
      * Rolls back a transaction.
-     * 
+     *
      * Undoes all queries made in the current transaction. The transaction will have ended, so \
      * startTransaction() should be called again when trying again.
-     * 
+     *
      * @throws DBException If no transaction has started, rollback is not supported or it failed
      *                        for some other reason.
      */
     public function rollBack()
     {
         if (!$this->pdo->rollBack())
+        {
             throw new DBException("Commit rollback failed for an unkown reason.");
+        }
     }
-    
-    //Formats a single value according to the rules specified with the query function.
+
+    // Formats a single value according to the rules specified with the query function.
     private function formatSingle($specifier, $arg)
     {
-        //TODO: do not check each case, PHP was not made for that
-        //TODO: cast with eg: (int) if you want an int
-        
-        //TODO: assume UTF8, checking will take a lot of resources
-        
         switch ($specifier)
         {
             case 'i':
-                if (is_float($arg))
-                {
-                    throw new FormatException($arg . " is not an integer.");
-                }
-                else if (is_string($arg))
-                {
-                    preg_match_all('/[0-9]+/', $arg, $matches);
-                    if (count($matches) == 0 || count($matches[0]) == 0 || $matches[0][0] != $arg)
-                        throw new FormatException($arg . " is not an integer.");
-                }
-                
+                $arg = (int) $arg;
+
             case 'd':
                 if (is_bool($arg))
-                    $arg = $arg ? '1' : '0';
-                else if (!is_numeric($arg))
-                    throw new FormatException($arg . "is not a number.");
-                else if (is_float($arg)) //TODO: Parse floating point numbers from string argument
                 {
-                    //Note: this is PostgreSQL syntax, other SQL dialects might do this a little different
-                    if (is_nan($arg))
-                        $arg = "NaN";
-                    if (is_infinite($arg))
-                        $arg = $arg > 0 ? "Infinity" : "-Infinity";
+                    $arg = $arg ? '1' : '0';
                 }
-                
-            case 's': //Intentional fall-through to this point
+                    
+                assert(is_numeric($arg));
+
+            // Intentional fall-through to this point.
+            case 's': 
                 $result = $this->pdo->quote($arg);
                 if (!$result)
+                {
                     throw new DBException("String quoting is not supported.");
-                if (!mb_detect_encoding($result, 'UTF-8'))
-                    throw new FormatException("String is not encoded as UTF-8");
+                }
                 return $result;
-            
+
             case 'b':
-                //Note: PostgreSQL syntax
-                if (!is_string($arg))
-                    throw new FormatException($arg . " is not a string.");
+                // Note: PostgreSQL syntax.
                 return "X'" . strtoupper(bin2hex($arg)) . "'";
-                
+
             case 'n':
                 $matches = array();
                 preg_match_all('/\*|[a-zA-Z_][a-zA-Z_0-9\$]*/', $arg, $matches);
                 if (count($matches) == 0 || count($matches[0]) == 0 || $matches[0][0] != $arg)
+                {
                     throw new FormatException($arg . " is not a valid SQL identifier.");
-                return '"' . $arg . '"'; //Note: also Postgre syntax
-                
+                }
+                // Note: also Postgre syntax.
+                return '"' . $arg . '"';
+
             case 't':
-                if (!is_numeric($arg))
-                    throw new FormatException("Timestamp is not a number.");
+                assert(is_numeric($arg));
                 return "(timestamptz 'epoch' + {$this->pdo->quote($arg)} * interval '1 second')";
-                
+
             case 'a':
-                if (!jdtounix($arg))
-                    throw new FormatException('Provided date not within epoch.');
-                return $this->pdo->quote(strftime('%G-%m-%d', jdtounix($arg)));
-                
+                return $this->pdo->quote(strftime('%G-%m-%d', $arg));
+
             default:
                 throw new FormatException('%' . $specifier . " is not a valid conversion specifier");
         }
     }
-    
-    //Used by query and execute.
+
+    // Used by query and execute.
     private function buildQuery($arg_arr)
     {
         if (count($arg_arr) == 0)
-            throw new FormatException("No arguments.");
-        
-        //Split the input at the % signs for easier formatting
+        throw new FormatException("No arguments.");
+
+        // Split the input at the % signs for easier formatting.
         $inp  = explode('%', $arg_arr[0]);
         $outp = $inp[0];
         $arg  = 1;
         for ($i = 1; $i < count($inp); ++$i)
         {
-            //Check for %%
+            // Check for %%.
             if (strlen($inp[$i]) == 0)
             {
                 if ($i == count($inp) - 1)
-                    throw new FormatException("% at end of format string.");
+                throw new FormatException("% at end of format string.");
                 else
                 {
                     $outp .= '%' . $inp[$i + 1];
@@ -382,19 +330,19 @@ class DBConnection
                     continue;
                 }
             }
-            
+
             if ($arg >= count($arg_arr))
-                throw new FormatException("Not enough arguments.");
+            throw new FormatException("Not enough arguments.");
             $outp .= $this->formatSingle($inp[$i][0], $arg_arr[$arg]) . substr($inp[$i], 1);
             ++$arg;
         }
-        
+
         if ($arg < count($arg_arr))
-            throw new FormatException("Too many arguments.");
-        
+        throw new FormatException("Too many arguments.");
+
         return $outp;
     }
-    
+
     /**
      * Executes a formatted query.
      *
@@ -404,8 +352,6 @@ class DBConnection
      * argument should be added that will be validated, properly escaped and/or quoted and
      * converted to a string of characters in a way indicated by the character after the
      * specifier's %-sign. This is somewhat similar to how functions like printf are used.
-     * 
-     * Calling this invalidates any previously created ResultSet.
      *
      * IMPORTANT NOTE: Never make the format string depend on user input, preferably do not use
      * strings stored in variables at all. Instead, use conversion specifiers for each SQL value
@@ -423,14 +369,12 @@ class DBConnection
      *  - n - A SQL identifier like a column or table name. The argument is a string that has to
      *           conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
      *           to its begin and end. The argument should not be directly formed from user input.
-     *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of 
+     *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of
      *           seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
      *           returned by time().
-     *  - a - A date. The argument should be an integer representing a Julian day. This is the format
-     *           returned by unixtojd(). The date should lie somewhere between years 1970 and 2037 
-     *           (2440588 <= jday <= 2465342). See also http://en.wikipedia.org/wiki/Julian_date 
-     *  - % - Simply prints a single %-character, no argument should be supplied along with this.
-     *  
+     *  - a - A date. The argument should be a Unix timestamp (just like with %t) that lies at the start of 
+     * 	      or somewhere within the desired date.
+     *
      *  Note that conversion specifiers are case insensitive, so you may also use capital letters.
      *
      * Examples:
@@ -439,46 +383,45 @@ class DBConnection
      * query('SELECT user_name, user_email FROM users WHERE user_id = %i', $uid);
      * query('INSERT INTO ORDERS (ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS) VALUES (%i, %s, %s)',
      *         $id, $customer->getName(), $customer->getAdress());
-     * query('UPDATE THUMBNAILS SET IMAGE_DATA = %b WHERE IMAGE_NAME = %s, CREATE_DATE < %a', 
+     * query('UPDATE THUMBNAILS SET IMAGE_DATA = %b WHERE IMAGE_NAME = %s, CREATE_DATE < %a',
      *         $img->getData(), "vla.jpeg", $vladate);
      * \endverbatim
      *
      * @return ResultSet          The result of the query, if any.
-     * 
+     *
      * @throws FormatException If an argument does not conform to the requirements listed above, if
-     *                           the number of arguments is too high or low or if an undefined format 
+     *                           the number of arguments is too high or low or if an undefined format
      *                           specifier is used.
      *           DBException       If a database error occurs or when there is an error in the query.
      *
      */
     public function query( /* $fquery, $args ... */ )
     {
-        ResultSet::invalidateCurrent();
         return new ResultSet($this->pdo->query($this->buildQuery(func_get_args())));
     }
-    
+
     /**
      * Same as query, but does not return a result set.
-     * 
+     *
      * This function should be used for insertions and updates and such.
-     * 
+     *
      * @return The number of rows affected by the query.
-     * 
+     *
      */
     public function execute( /* $fquery, $args ... */ )
     {
         return $this->pdo->exec($this->buildQuery(func_get_args()));
     }
-    
+
     /**
      * Execute a selection query.
-     * 
+     *
      * Helper function that formulates and execute a simple SELECT-statement.
-     * 
+     *
      * @param $table   The table from which to select.
-     * @param $columns An array of the columns to be selected from the table. An empty array means 
+     * @param $columns An array of the columns to be selected from the table. An empty array means
      *                    all columns should be selected.
-     * 
+     *
      * @return ResultSet The contents of the selected columns, as retrieved by the database.
      *
      * @throws FormatException If a table or column name is not a valid SQL identifier.
@@ -491,21 +434,21 @@ class DBConnection
         {
             $columns = array('*');
         }
-        
+
         $q = "SELECT " . $this->formatSingle('n', $columns[0]);
         foreach (array_slice($columns, 1) as $col)
         {
             $q .= ', ' . $this->formatSingle('n', $col);
         }
-        
+
         $q .= " FROM " . $this->formatSingle('n', $table);
-        
+
         return $this->query($q);
     }
-    
+
     /**
      * Performs an insertion into the database.
-     * 
+     *
      * Helper function that formulates and executes a simple INSERT-statement.
      *
      * @param string $table         The name of the table in which to insert the values.
@@ -515,7 +458,7 @@ class DBConnection
      *                                 the string will be formatted according to same rules as the
      *                                 query function. Values that don't start with a format specifier
      *                                 will be formatted with '%s'.
-     * 
+     *
      * @throws FormatException  If a value was formatted incorrectly or an illegal SQL identifier was
      *                             used.
      *            DBException            If a database error occured.
@@ -524,14 +467,14 @@ class DBConnection
     {
         $q    = 'INSERT INTO ' . $this->formatSingle('n', $table) . ' (';
         $vals = '(';
-        
+
         foreach ($col_val_array as $col => $val)
         {
             $q .= $this->formatSingle('n', $col) . ',';
             if ($val[0] == '%')
             {
                 if (strlen($val) == 1)
-                    throw new FormatException("Just a single '%' in provided value.");
+                throw new FormatException("Just a single '%' in provided value.");
                 $spec = $val[1];
                 $val  = substr($val, 2);
             }
@@ -541,19 +484,19 @@ class DBConnection
             }
             $vals .= $this->formatSingle($spec, $val) . ',';
         }
-        
+
         $q    = rtrim($q, ',');
         $vals = rtrim($vals, ',');
         $q   .= ') VALUES ' . $vals . ')';
-        
+
         $this->execute($q);
     }
 }
 
-//Test
-// $dbc = DBConnection::getConnection();
-// $result = $dbc->query('select * from testtabel where testid >= %d',6);
-// foreach($result as $row)
-// {
-//     echo $row->getValue('blah') . "</br>";
-// }
+// Test
+/* $dbc = DBConnection::getInstance();
+$result = $dbc->query('select * from testtabel where testid >= %d',6);
+foreach($result as $row)
+{
+    echo $row->getValue('blah') . "</br>";
+} */
