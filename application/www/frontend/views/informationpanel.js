@@ -10,7 +10,7 @@ Ext.define('Ext.ux.InformationPanel', {
     {
         this.store = {
             fields: ['name', 'value'],
-            data  : [
+            data: [
                 {name: 'Author', value: 'Leonardo da Vinci'},
                 {name: 'Year',   value: '1497'}
             ]

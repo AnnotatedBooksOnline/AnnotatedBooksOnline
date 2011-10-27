@@ -4,9 +4,7 @@
 
 Ext.define('Ext.ux.ViewportPanel', {
     extend: 'Ext.Panel',
-
     alias: 'widget.viewportpanel',
-
     requires: ['Ext.slider.Single'], //TODO: absolute layout
 
     initComponent: function()

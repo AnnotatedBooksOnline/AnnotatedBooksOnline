@@ -8,6 +8,7 @@ Ext.require(['*']);
 Ext.onReady(function()
 {
     Ext.History.init();
+    Ext.tip.QuickTipManager.init();
     
     var topRegion = {
         height: 100,
@@ -50,7 +51,6 @@ Ext.onReady(function()
         flex: 1
     };
     
-    
     application = Ext.create('Ext.Viewport', {
         id: 'application',
         layout: {
@@ -59,6 +59,12 @@ Ext.onReady(function()
         },
         items: [topRegion, bottomRegion]
     });
+    
+    var loginWindow = new Ext.ux.LoginWindow();
+    loginWindow.show();
+    
+    var registerWindow = new Ext.ux.RegistrationWindow();
+    registerWindow.show();
     
     /*
 
