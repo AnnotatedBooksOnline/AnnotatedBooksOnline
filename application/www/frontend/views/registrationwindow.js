@@ -14,21 +14,33 @@ Ext.define('Ext.ux.RegistrationForm', {
             items: [{
                 name: 'username',
                 fieldLabel: 'Username',
+                vtype: 'uniqueUsername',
                 minLength: 6
+            },{
+                name: 'email',
+                fieldLabel: 'Email Address',
+                vtype: 'email'
             },{
                 name: 'firstname',
                 fieldLabel: 'First name',
-            },{
-                name: 'middlename',
-                fieldLabel: 'Middle name',
                 allowBlank: true
             },{
                 name: 'lastname',
                 fieldLabel: 'Last name',
+                allowBlank: true
             },{
-                name: 'email',
-                fieldLabel: 'Email Address',
-                vtype: 'email',
+                name: 'affiliation',
+                fieldLabel: 'Affiliation',
+                allowBlank: true
+            },{
+                name: 'occupation',
+                fieldLabel: 'Occupation',
+                allowBlank: true
+            },{
+                name: 'website',
+                fieldLabel: 'Website',
+                allowBlank: true,
+                vtype: 'url'
             },{
                 name: 'password1',
                 fieldLabel: 'Password',
@@ -48,6 +60,8 @@ Ext.define('Ext.ux.RegistrationForm', {
                     return (value === password1.getValue()) ? true : 'Passwords do not match.'
                 }
             },
+            
+            //TODO: CAPTCHA
 
             /*
              * Terms of Use acceptance checkbox. Two things are special about this:
@@ -186,4 +200,21 @@ Ext.define('Ext.ux.RegistrationWindow', {
         
         this.callParent();
     }
+});
+
+Ext.apply(Ext.Form.VTypes, {
+    uniqueUsername: function(username) {
+        //TODO: ajax request with database
+        /*
+        Ext.Ajax.request({
+            url: 'uniqueUsername.php',
+            method: 'POST',
+            params: 'username='+username,
+            succes: ...
+        });
+        */
+        return true;
+    },
+    
+    uniqueUsernameText: 'Username already in use'
 });
