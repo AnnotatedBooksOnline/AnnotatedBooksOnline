@@ -1,5 +1,7 @@
 <?php
 
+require_once 'framework/database/database.php';
+
 /**
  * Controller class.
  */
@@ -16,37 +18,44 @@ abstract class Controller
         try
         {
             
-            //TODO: handle multiple requests:
-            //TODO: controller=multirequest, data=[{controller: '..', action: '..', data: [..]}, ..]
+            //TODO: (GVV) handle multiple requests:
+            //TODO: (GVV) controller=multirequest, data=[{controller: '..', action: '..', data: [..]}, ..]
+            //TODO: (GVV) handle file uploads, with: output=json/html + custom ExtJS form action?
             
-            //TODO: handle file uploads, with: output=json/html + custom ExtJS form action?
-            
-            
-            //create controller instance
+            // Determine the name of the controller and try to create an instance of the controller class.
             $controllerName = isset($_GET['controller']) ? $_GET['controller'] : '';
             $controller = self::createInstance($controllerName);
             
-            //get action method to call
+            // Determine the name of action to call and the corresponding method in the controller.
             $actionName = isset($_GET['action']) ? $_GET['action'] : '';
-            
-            //check for method
             $methodName = 'action' . ucfirst($actionName);
+            
+            // Determine if the action method exists in the controller.
             if (method_exists($controller, $methodName))
             {
-                //get JSON data
+                // Initialize the database connection and start a transac
+                DBConnection::getInstance()->startTransaction();
+                
+                // Get the request JSON data.
                 $input = isset($_POST['data']) ? json_decode($_POST['data']) : '';
                 
-                //call method
+                // Call the action handler method.
                 $output = $controller->{$methodName}($input);
                 
-                //set appropriate content type
+                // Set the appropriate content type for a JSON response.
                 header('Content-Type: application/json');
                 
-                //output JSON
+                // Return the result as a JSON object.
                 echo json_encode($output);
+                
+                // Commit the database transaction.
+                DBConnection::getInstance()->commit();
             }
             else
             {
+                // Roll back the database transaction
+                DBConnection::getInstance()->rollBack();
+                
                 throw new Exception('Controller \'' . $controllerName .
                     '\' has no action \'' . $actionName . '\'.');
             }

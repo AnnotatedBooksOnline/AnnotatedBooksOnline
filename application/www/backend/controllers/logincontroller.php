@@ -1,7 +1,7 @@
 <?php
 
-require_once 'framework/controller.php';
-require_once 'util/authentication.php';
+require_once 'framework/controller/controller.php';
+//require_once 'util/authentication.php';
 
 /**
  * Login controller class.

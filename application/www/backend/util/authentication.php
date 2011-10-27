@@ -1,6 +1,6 @@
 <?php
 
-require_once 'framework/singleton.php';
+require_once 'framework/helpers/singleton.php';
 require_once 'models/usermodel.php';
 
 /**

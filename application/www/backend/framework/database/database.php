@@ -2,11 +2,9 @@
 
 require_once 'framework/helpers/singleton.php';
 require_once 'framework/database/resultset.php';
+require_once 'framework/helpers/collaboratoryconfig.php';
 
-// TODO: Read these from ini-file
-define("DB_TEST_DSN", "pgsql:dbname=test;host=localhost");
-define("DB_TEST_USERNAME", "postgres");
-define("DB_TEST_PASSWORD", "test");
+
 
 class FormatException extends Exception
 {
@@ -28,7 +26,10 @@ class DBConnection extends Singleton
 
     private static function initConnection()
     {
-        return new PDO(DB_TEST_DSN, DB_TEST_USERNAME, DB_TEST_PASSWORD);
+        // Create a php data object using the properties in the configuration file.
+        return new PDO(CollaboratoryConfig::getInstance()->getDatabaseDsn(), 
+                       CollaboratoryConfig::getInstance()->getDatabaseUsername(), 
+                       CollaboratoryConfig::getInstance()->getDatabasePassword());
     }
 
     protected function __construct()
