@@ -5,6 +5,7 @@
 Ext.define('Ext.ux.InformationPanel', {
     extend: 'Ext.grid.Panel',
     alias : 'widget.informationpanel',
+    requires: [], //TODO: sepcify
 
     initComponent: function()
     {
@@ -21,6 +22,18 @@ Ext.define('Ext.ux.InformationPanel', {
             {header: 'Value', dataIndex: 'value', flex: 1}
         ];
 
-        this.callParent(arguments);
+        this.callParent();
+    },
+    
+    afterRender: function()
+    {
+        this.callParent();
+        
+        //TODO: set document
+    },
+    
+    setDocument: function(document)
+    {
+        //TODO: set document
     }
 });

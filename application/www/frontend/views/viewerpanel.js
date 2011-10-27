@@ -1,64 +1,152 @@
 /*
- * Viewer panel interface class.
+ * Viewer panel class.
  */
+
+Ext.define('Ext.ux.ViewerSettingsForm', {
+    extend: 'Ext.ux.FormBase',
+    alias: 'widget.viewersettingsform',
+    requires: ['*'], // TODO: specify
+
+    initComponent: function() 
+    {
+        var _this = this;
+        var defConfig = {
+            items: [{
+                name: 'somexitingsetting',
+                fieldLabel: 'Some exiting setting',
+                minLength: 6
+            },{
+                name: 'anotherxitingsetting',
+                fieldLabel: 'Another exiting setting',
+                minLength: 8
+            }],
+            
+            buttons: [{
+                xtype: 'button',
+                formBind: true,
+                disabled: true,
+                text: 'Save',
+                width: 140,
+                handler: function()
+                {
+                    var form = this.up('form').getForm();
+                    
+                    if (form.isValid())
+                    {
+                        Ext.Msg.alert('Submitted Values', form.getValues(true));
+                    }
+                }
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    }
+});
+
+Ext.define('Ext.ux.ViewerSettingsWindow', {
+    extend: 'Ext.window.Window',
+
+    initComponent: function() 
+    {
+        var defConfig = {
+            title: 'Viewer settings',
+            layout: 'fit',
+            width: 600,
+            height: 400,
+            closable: true,
+            resizable: true,
+            draggable: true,
+            modal: true,
+            border: true,
+            items: [{
+                xtype: 'viewersettingsform'
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    }
+});
 
 Ext.define('Ext.ux.Viewer', {
     extend: 'Ext.Panel',
-
     alias: 'widget.viewerpanel',
-
-    requires: [], //TODO: tabs, border layout
+    requires: [], //TODO: border layout
 
     initComponent: function()
     {
-        //NOTE: configuration of viewport
-        
-        //TODO: make this a whole component, including sidepanels
-        
         var westRegion = {
             region: 'west',
-            title: 'Navigation',
+            xtype: 'navigationpanel',
             collapsible: true,
             split: true,
             width: 200,
-            html:
-                '<div style="position: relative; float: left; top: 10px; left: 10px;">' +
-                '<img src="tiles/tile_0_0_0.jpg" />' +
-                '<div id="test" style="position: absolute; border: 2px solid red;">' +
-                '</div></div>' +
-                '<div style="position: relative; float: left; top: 10px; left: 10px;">' +
-                '<img src="tiles/tile_0_0_0.jpg" />' +
-                '<div id="test2" style="position: absolute; border: 2px solid red;">' +
-                '</div></div>'
         };
         
+        var _this = this;
         var centerRegion = {
             region: 'center',
-            xtype: 'tabpanel',
-            activeTab: 0,
-            plain: true,
-            defaults: {
-                closable: true
-            },
-            items: [{
-                title: 'Book 1',
-                xtype: 'viewportpanel'
-            },{
-                title: 'Book 2',
-                xtype: 'viewportpanel'
-            },{
-                title: 'Book 3',
-                xtype: 'viewportpanel'
-            },{
-                title: 'Book 4',
-                xtype: 'viewportpanel'
-            }]
-            /*,
-            listeners: {
-                tabchange: onTabChange,
-                afterrender: onAfterRender 
-            }
-            */
+            xtype: 'viewportpanel',
+            
+            tbar: [
+                {
+                    xtype: 'slider',
+                    hideLabel: true,
+                    useTips: false,
+                    x: 20,
+                    y: 20,
+                    width: 214,
+                    minValue: 0,
+                    maxValue: 200,
+                    listeners: {
+                        change: function(slider, value)
+                        {
+                            _this.skipSettingSliderValue = true;
+                            _this.viewport.zoom(value / 200 * _this.viewport.getMaxZoomLevel());
+                        }
+                    }
+                }, '-', {
+                    xtype: 'textfield',
+                    width: 30,
+                    value: '1',
+                    maskReg: /\d+/,
+                    stripCharsRe: /[^\d]+/,
+                    allowNegative: false,
+                    allowDecimals: false,
+                    autoStripChars: true,
+                    allowBlank: false
+                },'/ 20',{
+                    iconCls: 'first-icon',
+                    tooltip: 'Go to first page',
+                },{
+                    iconCls: 'previous-icon',
+                    tooltip: 'Go to previous page',
+                },{
+                    iconCls: 'next-icon',
+                    tooltip: 'Go to next page',
+                },{
+                    iconCls: 'last-icon',
+                    tooltip: 'Go to last page',
+                }, '-', {
+                    iconCls: 'refresh-icon',
+                    tooltip: 'Reset viewer',
+                    listeners: {
+                        click: function()
+                        {
+                            _this.viewport.reset();
+                        }
+                    }
+                },{
+                    iconCls: 'settings-icon',
+                    tooltip: 'Set viewer settings',
+                    listeners: {
+                        click: function() { _this.showSettingsWindow(); }
+                    }
+                }
+            ]
         };
         
         var eastRegion = {
@@ -67,12 +155,11 @@ Ext.define('Ext.ux.Viewer', {
             xtype: 'informationpanel',
             collapsible: true,
             collapsed: true,
+            split: true,
             width: 200
         };
         
         var defConfig = {
-            //TODO: add more default options, available via this.optionName
-            
             layout: {
                 type: 'border',
                 padding: 5
@@ -82,45 +169,34 @@ Ext.define('Ext.ux.Viewer', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();        
+        this.callParent();
     },
     
     afterRender: function()
     {
         this.callParent();
         
-        this.tabs = this.items.get(1);
-    },
-    
-    afterComponentLayout: function(width, height)
-    {
-        this.callParent(arguments);
+        this.navigation = this.items.get(0);
+        this.viewport   = this.items.get(1).getViewport();
+        this.slider     = this.items.get(1).dockedItems.get(0).items.get(0);
         
-        var tab = this.tabs.items.get(0); //TODO: get current tab
-        var viewport = tab.getViewport();
+        //TODO: set book
         
-        var eventDispatcher = viewport.getEventDispatcher();
+        var eventDispatcher = this.viewport.getEventDispatcher();
         eventDispatcher.bind('change', this.afterViewportChange, this);
-        
-        //TODO: set current area
-        this.afterViewportChange(undefined, undefined, undefined, undefined, viewport.getVisibleArea());
     },
     
-    afterViewportChange: function(event, position, zoomLevel, rotation, area)
+    afterViewportChange: function(event)
     {
-        if (this.skipNextChangeEvent === true)
-        {
-            this.skipNextChangeEvent = false;
-            return;
-        }
-        
-        if (this.timer == undefined)
+        if (this.timer === undefined)
         {
             var _this = this;
             this.timer = setTimeout(
                 function()
                 {
                     _this.timer = undefined;
+                    
+                    var area = _this.viewport.getVisibleArea();
                     
                     var topLeft = {
                         x: Math.max(0, Math.min(151, Math.round(area.topLeft.x))),
@@ -141,10 +217,32 @@ Ext.define('Ext.ux.Viewer', {
                 10
             );
         }
+        
+        if (this.skipSettingSliderValue === true)
+        {
+            this.skipSettingSliderValue = false;
+            return;
+        }
+        
+        var sliderWidth = Math.round(
+            this.viewport.getZoomLevel() / this.viewport.getMaxZoomLevel() * 200
+        );
+        this.slider.setValue(sliderWidth, false);
     },
     
-    setSize: function(width, height, animate)
+    showSettingsWindow: function()
     {
-        this.callParent(arguments);
+        var window = new Ext.ux.ViewerSettingsWindow();
+        window.show();
+    },
+    
+    resetViewport: function()
+    {
+        this.viewport.reset();
+    },
+    
+    setBook: function(book)
+    {
+        //TODO: set book
     }
 });
