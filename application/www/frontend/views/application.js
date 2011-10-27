@@ -1,6 +1,117 @@
 /*
- * Application.
+ * Application viewport class.
  */
+
+Ext.define('Ext.ux.ApplicationViewport', {
+    extend: 'Ext.Viewport',
+    requires: ['*'], // TODO: specify
+    
+    initComponent: function() 
+    {
+        var topRegion = {
+            height: 100,
+            border: false,
+            tbar: [{
+                text: 'Book',
+                menu: [{
+                    text: 'Save current page...'
+                },{
+                    text: 'Go to page...'
+                },{
+                    text: 'Print...'
+                },{
+                    text: 'Close'
+                }]
+            },{
+                text: 'Viewer',
+                menu: [{
+                    text: 'Reset',
+                    listeners: {
+                        click: function()
+                        {
+                            var viewer = Ext.getCmp('viewer');
+                            
+                            viewer.resetViewport();
+                        }
+                    }
+                },{
+                    text: 'Viewer settings...',
+                    listeners: {
+                        click: function()
+                        {
+                            var viewer = Ext.getCmp('viewer');
+                            
+                            viewer.showSettingsWindow();
+                        }
+                    }
+                }]
+            }, '->', {
+                text: 'Options',
+                menu: [{
+                    text: 'Profile...'
+                },{
+                    text: 'Viewer settings...',
+                    listeners: {
+                        click: function()
+                        {
+                            var viewer = Ext.getCmp('viewer');
+                            
+                            viewer.showSettingsWindow();
+                        }
+                    }
+                }]
+            },{
+                text: 'Help'
+            }, '-', {
+                text: 'Logout'
+            }],
+            html: '(This panel will contain some books to open)'
+        };
+        
+        var bottomRegion = {
+            xtype: 'tabpanel',
+            flex: 1,
+            activeTab: 0,
+            plain: true,
+            defaults: {
+                closable: true
+            },
+            items: [{
+                title: 'Book 1',
+                xtype: 'viewerpanel',
+                id: 'viewer'
+            },{
+                title: 'Book 2',
+                xtype: 'viewerpanel'
+            },{
+                title: 'Book 3',
+                xtype: 'viewerpanel'
+            },{
+                title: 'Book 4',
+                xtype: 'viewerpanel'
+            }]
+            /*,
+            listeners: {
+                tabchange: onTabChange,
+                afterrender: onAfterRender 
+            }
+            */
+        };
+        
+        var _this = this;
+        var defConfig = {
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            items: [topRegion, bottomRegion]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    }
+});
 
 var application;
 
@@ -10,61 +121,14 @@ Ext.onReady(function()
     Ext.History.init();
     Ext.tip.QuickTipManager.init();
     
-    var topRegion = {
-        height: 100,
-        border: false,
-        tbar: [{
-            text: 'Book',
-            menu: [{
-                text: 'Save current page...'
-            },{
-                text: 'Go to page...'
-            },{
-                text: 'Print...'
-            },{
-                text: 'Close'
-            }]
-        },{
-            text: 'Viewer',
-            menu: [{
-                text: 'Reset'
-            },{
-                text: 'Viewer settings...'
-            }]
-        }, '->', {
-            text: 'Options',
-            menu: [{
-                text: 'Profile...'
-            },{
-                text: 'Viewer settings...'
-            }]
-        },{
-            text: 'Help'
-        }, '-', {
-            text: 'Logout'
-        }],
-        html: '(This panel will contain some books to open)'
-    };
+    application = new Ext.ux.ApplicationViewport();
     
-    var bottomRegion = {
-        xtype: 'viewerpanel',
-        flex: 1
-    };
     
-    application = Ext.create('Ext.Viewport', {
-        id: 'application',
-        layout: {
-            type: 'vbox',
-            align: 'stretch'
-        },
-        items: [topRegion, bottomRegion]
-    });
+    //var loginWindow = new Ext.ux.LoginWindow();
+    //loginWindow.show();
     
-    var loginWindow = new Ext.ux.LoginWindow();
-    loginWindow.show();
-    
-    var registerWindow = new Ext.ux.RegistrationWindow();
-    registerWindow.show();
+    //var registerWindow = new Ext.ux.RegistrationWindow();
+    //registerWindow.show();
     
     /*
 

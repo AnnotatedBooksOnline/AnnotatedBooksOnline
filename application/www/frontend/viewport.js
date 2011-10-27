@@ -8,22 +8,21 @@
  * Viewport class.
  */
 
-function Viewport(dom, viewerWidth, viewerHeight, documentWidth, documentHeight, levels)
+//class definition
+function Viewport()
 {
-    this.constructor(dom, viewerWidth, viewerHeight, documentWidth, documentHeight, levels);
+    if (arguments.length)
+        this.constructor.apply(this, arguments);
 }
+
+Viewport.prototype = new DomNode;
+Viewport.prototype.base = DomNode.prototype;
 
 //members
 Viewport.prototype.dom;
+Viewport.prototype.dimensions;
 
-Viewport.prototype.document;
-
-
-Viewport.prototype.documentDimensions;  //per document
-Viewport.prototype.maxZoomLevel;        //per document
-
-
-
+Viewport.prototype.eventDispatcher;
 
 Viewport.prototype.mousePosition;
 Viewport.prototype.deltaPosition;
@@ -31,70 +30,40 @@ Viewport.prototype.mouseRotation;
 Viewport.prototype.mouseDown = false;
 Viewport.prototype.spaceDown = false;
 
-Viewport.prototype.dimensions;
-    
+Viewport.prototype.document;
+Viewport.prototype.documentDimensions;
+Viewport.prototype.maxZoomLevel;
+
 Viewport.prototype.position;
 Viewport.prototype.rotation      = 0;
 Viewport.prototype.zoomLevel     = 0;
 Viewport.prototype.zoomFactor    = 1;
 Viewport.prototype.invZoomFactor = 1;
 
-Viewport.prototype.eventDispatcher;
-
-//methods
-Viewport.prototype.constructor = function(dom, viewerWidth, viewerHeight, documentWidth, documentHeight, levels)
+//constructor
+Viewport.prototype.constructor = function(width, height, document)
 {
     //set members
-    this.dom                = $(dom);
-    this.documentDimensions = {width: documentWidth, height: documentHeight};
-    this.dimensions         = {width: viewerWidth,   height: viewerHeight};
-    this.maxZoomLevel       = levels;
-    this.position           = {x: -viewerWidth / 2 + documentWidth / 2, y: -viewerHeight / 2 + documentHeight / 2};
+    this.document           = document;
+    this.dimensions         = {width: width, height: height};
     this.eventDispatcher    = new EventDispatcher();
+    this.documentDimensions = this.document.getDimensions();
+    this.maxZoomLevel       = this.document.getMaxZoomLevel();
+    this.position           = {
+        x: -width  / 2 + this.documentDimensions.width  / 2,
+        y: -height / 2 + this.documentDimensions.height / 2
+    };
+    
+    //create dom
+    this.base.constructor.call(this, '<div class="viewport"></div>');
     
     //initialize
     this.initialize();
 }
 
-Viewport.prototype.initialize = function()
-{
-    //set class on dom
-    this.dom.addClass('viewport');
-    
-    
-    //DEBUG: create document
-    this.document = new Document(this.documentDimensions.width, this.documentDimensions.height, this.maxZoomLevel);
-    
-    //DEBUG: append dom to our dom
-    this.dom.get(0).appendChild(this.document.dom.get(0));
-    
-    
-    
-    //set dimensions
-    this.dom.width(this.dimensions.width + "px");
-    this.dom.height(this.dimensions.height + "px");
-    
-    //initialize viewport
-    var newZoomLevel = Math.min(
-        Math.log((this.dimensions.width  * 0.8) / this.documentDimensions.width),
-        Math.log((this.dimensions.height * 0.8) / this.documentDimensions.height)
-    ) / Math.LN2;
-    
-    this.zoom(newZoomLevel);
-    
-    //set event listeners
-    var _this = this;
-    this.dom.bind('mousewheel',    function(event) { _this.scrollToZoom(event);  });
-    this.dom.bind('mousedown',     function(event) { _this.startDragging(event); });
-    $(document).bind('keydown',    function(event) { _this.handleKeyDown(event); });
-    $(document).bind('keyup',      function(event) { _this.handleKeyUp(event);   });
-    $(document).bind('mousemove',  function(event) { _this.doDragging(event);    });
-    $(document).bind('mouseup',    function(event) { _this.stopDragging(event);  });
-    
-    //add mouse scroll event for firefox
-    if (window.addEventListener)
-        this.dom.get(0).addEventListener('DOMMouseScroll', function(event) { _this.scrollToZoom(event); }, false);
-}
+/*
+ * Public methods.
+ */
 
 //gets event dispatcher
 Viewport.prototype.getEventDispatcher = function()
@@ -153,6 +122,90 @@ Viewport.prototype.getVisibleArea = function()
     };
     
     return rotateBoundingBox({topLeft: topLeft, bottomRight: bottomRight}, -this.rotation);
+}
+
+Viewport.prototype.getZoomLevel = function()
+{
+    return this.zoomLevel;
+}
+
+Viewport.prototype.getMaxZoomLevel = function()
+{
+    return this.maxZoomLevel;
+}
+
+//zooms in at a relative position to the viewport
+Viewport.prototype.zoom = function(newZoomLevel, viewportPosition)
+{
+    //default to center position
+    if (viewportPosition === undefined)
+    {
+        viewportPosition = {x: this.dimensions.width / 2, y: this.dimensions.height / 2};
+    }
+    
+    //clamp zoom level before factor is calculated
+    if (newZoomLevel < 0)
+    {
+        newZoomLevel = 0;
+    }
+    else if (newZoomLevel > this.maxZoomLevel)
+    {
+        newZoomLevel = this.maxZoomLevel;
+    }
+    
+    //calculate new zoom factor
+    var newInvZoomFactor = Math.pow(2, -newZoomLevel);
+    
+    //set factor of how much to subtract mouse position
+    var factor = (this.zoomFactor * newInvZoomFactor - 1) * this.invZoomFactor;
+    
+    //calculate new topleft position
+    var newPosition = {x: this.position.x - viewportPosition.x * factor, y: this.position.y - viewportPosition.y * factor};
+    
+    //update viewport
+    this.update(newPosition, newZoomLevel);
+}
+
+Viewport.prototype.reset = function()
+{
+    this.rotation = 0;
+    
+    var newZoomLevel = Math.min(
+        Math.log((this.dimensions.width  * 0.8) / this.documentDimensions.width),
+        Math.log((this.dimensions.height * 0.8) / this.documentDimensions.height)
+    ) / Math.LN2;
+    
+    this.zoom(newZoomLevel);
+}
+
+/*
+ * Private methods.
+ */
+
+Viewport.prototype.initialize = function()
+{
+    //set dimensions
+    this.dom.width(this.dimensions.width + "px");
+    this.dom.height(this.dimensions.height + "px");
+    
+    //append document to our dom
+    this.document.insert(this);
+    
+    //initialize viewport
+    this.reset();
+    
+    //set event listeners
+    var _this = this;
+    this.dom.bind('mousewheel',    function(event) { _this.scrollToZoom(event);  });
+    this.dom.bind('mousedown',     function(event) { _this.startDragging(event); });
+    $(document).bind('keydown',    function(event) { _this.handleKeyDown(event); });
+    $(document).bind('keyup',      function(event) { _this.handleKeyUp(event);   });
+    $(document).bind('mousemove',  function(event) { _this.doDragging(event);    });
+    $(document).bind('mouseup',    function(event) { _this.stopDragging(event);  });
+    
+    //add mouse scroll event for firefox
+    if (window.addEventListener)
+        this.dom.get(0).addEventListener('DOMMouseScroll', function(event) { _this.scrollToZoom(event); }, false);
 }
 
 Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
@@ -250,37 +303,6 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     //DEBUG: show zoom and position
     showStatusText("zoom: " + this.zoomLevel + ", x: " + this.position.x + ", y: " + this.position.y +
         ", rotation: " + this.rotation);
-}
-
-Viewport.prototype.zoom = function(newZoomLevel, viewportPosition)
-{
-    //default to center position
-    if (viewportPosition === undefined)
-    {
-        viewportPosition = {x: this.dimensions.width / 2, y: this.dimensions.height / 2};
-    }
-    
-    //clamp zoom level before factor is calculated
-    if (newZoomLevel < 0)
-    {
-        newZoomLevel = 0;
-    }
-    else if (newZoomLevel > this.maxZoomLevel)
-    {
-        newZoomLevel = this.maxZoomLevel;
-    }
-    
-    //calculate new zoom factor
-    var newInvZoomFactor = Math.pow(2, -newZoomLevel);
-    
-    //set factor of how much to subtract mouse position
-    var factor = (this.zoomFactor * newInvZoomFactor - 1) * this.invZoomFactor;
-    
-    //calculate new topleft position
-    var newPosition = {x: this.position.x - viewportPosition.x * factor, y: this.position.y - viewportPosition.y * factor};
-    
-    //update viewport
-    this.update(newPosition, newZoomLevel);
 }
 
 Viewport.prototype.startDragging = function(event)

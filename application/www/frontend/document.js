@@ -8,13 +8,15 @@
  * Document class.
  */
 
-function Document(width, height, levels)
+//class definition
+function Document()
 {
-    this.constructor(width, height, levels);
+    if (arguments.length)
+        this.constructor.apply(this, arguments);
 }
 
-//TODO: create different documents: TextDocument and PyramidTileDocument
-//TODO: attach and detach DOM nodes, create base class for this: DomNode
+Document.prototype = new DomNode;
+Document.prototype.base = DomNode.prototype;
 
 //members
 Document.prototype.dom;
@@ -34,22 +36,54 @@ Document.prototype.levelTimers;
 Document.tileSize    = 256;
 Document.invTileSize = 1 / Document.tileSize;
 
-//methods
-Document.prototype.constructor = function(width, height, levels)
+//constructor
+Document.prototype.constructor = function(width, height, maxZoomLevel)
 {
     //set members
-    this.dimensions    = {width: width, height: height};
-    this.maxZoomLevel  = levels;
+    this.dimensions   = {width: width, height: height};
+    this.maxZoomLevel = maxZoomLevel;
+    
+    //create dom
+    this.base.constructor.call(this, '<div class="tiles"></div>');
     
     //initialize
     this.initialize();
 }
 
+/*
+ * Public methods.
+ */
+
+Document.prototype.getDimensions = function()
+{
+    return this.dimensions;
+}
+
+Document.prototype.getMaxZoomLevel = function()
+{
+    return this.maxZoomLevel;
+}
+
+Document.prototype.update = function(position, zoomLevel, rotation, area)
+{
+    //set new zoom level and factors
+    this.zoomLevel    = zoomLevel;
+    this.zoomFactor   = Math.pow(2, zoomLevel);
+    this.invZoomLevel = 1 / this.zoomFactor;
+    
+    //set new position and rotation
+    this.position = position;
+    this.rotation = rotation;
+    
+    this.updateLevels(area);
+}
+
+/*
+ * Private methods.
+ */
+
 Document.prototype.initialize = function()
 {
-    //create dom
-    this.dom = $('<div class="tiles"></div>');
-    
     //create level containers, hide them by default
     this.levelSizes   = [];
     this.levelOffsets = [];
@@ -380,18 +414,4 @@ Document.prototype.updateLevels = function(area)
             this.levelVisible[i] = false;
         }
     }
-}
-
-Document.prototype.update = function(position, zoomLevel, rotation, area)
-{
-    //set new zoom level and factors
-    this.zoomLevel    = zoomLevel;
-    this.zoomFactor   = Math.pow(2, zoomLevel);
-    this.invZoomLevel = 1 / this.zoomFactor;
-    
-    //set new position and rotation
-    this.position = position;
-    this.rotation = rotation;
-    
-    this.updateLevels(area);
 }

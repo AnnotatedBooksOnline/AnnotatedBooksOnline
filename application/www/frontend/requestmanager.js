@@ -8,19 +8,25 @@
  * Request manager class.
  */
 
+//class definition
 function RequestManager()
 {
-    this.constructor();
+    if (arguments.length)
+        this.constructor.apply(this, arguments);
 }
 
 //members
 RequestManager.prototype.timer;
 RequestManager.prototype.requests = [];
 
-//methods
+//constructor
 RequestManager.prototype.constructor = function()
 {
 }
+
+/*
+ * Public methods.
+ */
 
 RequestManager.prototype.request = function(data, onFinished)
 {

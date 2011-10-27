@@ -6,22 +6,8 @@
 {
 	background: #EEE;
 	cursor: url(../cursors/grab.cur), move;
-}
-
-.tiles
-{
-	position: relative;
-	overflow: hidden;
-	width: 100%;
-	height: 100%;
-	
-	transform-origin: 0px 0px;
-	-webkit-transform-origin: 0px 0px;
-	-moz-transform-origin: 0px 0px;
-	-o-transform-origin: 0px 0px;
-	-ms-transform-origin: 0px 0px;
-	
-	-webkit-transition-property: -webkit-transform;
+	border: 1px solid #99BCE8 !important;
+	border-top: none !important;
 }
 
 .dragging
@@ -29,11 +15,27 @@
 	cursor: url(../cursors/grabbing.cur), move !important;
 }
 
+/*
+ * Document stylesheet.
+ */
+
+.tiles
+{
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
 .level
 {
 	position: absolute;
 	
-	-webkit-transition-property: -webkit-transform;
+	transform-origin: 0px 0px;
+	-webkit-transform-origin: 0px 0px;
+	-moz-transform-origin: 0px 0px;
+	-o-transform-origin: 0px 0px;
+	-ms-transform-origin: 0px 0px;
 	
 	transform-style: preserve-3d;
 	-webkit-transform-style: preserve-3d;

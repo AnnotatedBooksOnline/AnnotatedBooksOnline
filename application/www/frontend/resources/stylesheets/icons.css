@@ -1,0 +1,33 @@
+/*
+ * Icons stylesheet.
+ */
+
+.previous-icon, .x-tbar-page-prev
+{
+	background-image: url(../../extjs/resources/themes/images/default/grid/page-prev.gif) !important;
+}
+
+.next-icon, .x-tbar-page-next
+{
+	background-image: url(../../extjs/resources/themes/images/default/grid/page-next.gif) !important;
+}
+
+.first-icon, .x-tbar-page-first
+{
+	background-image: url(../../extjs/resources/themes/images/default/grid/page-first.gif) !important;
+}
+
+.last-icon, .x-tbar-page-last
+{
+	background-image: url(../../extjs/resources/themes/images/default/grid/page-last.gif) !important;
+}
+
+.refresh-icon
+{
+	background-image: url(../../extjs/resources/themes/images/default/grid/refresh.gif) !important;
+}
+
+.settings-icon
+{
+	background-image: url(../icons/wrench.png);
+}
