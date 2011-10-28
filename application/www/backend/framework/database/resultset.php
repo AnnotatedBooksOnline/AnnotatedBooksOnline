@@ -32,6 +32,16 @@ class ResultSet implements IteratorAggregate
     {
         return new ResultSetIterator($this, $this->statement);
     }
+    
+    public function getCount() 
+    {
+        return $this->statement->rowCount();
+    }
+    
+    public function getFirstResultRow()
+    {
+        return new ResultSetRow($this->statement->fetch(PDO::FETCH_ASSOC));
+    }
 }
 
 /**

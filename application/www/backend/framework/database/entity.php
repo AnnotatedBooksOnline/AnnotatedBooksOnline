@@ -1,5 +1,7 @@
 <?php
 
+require_once 'framework/database/database.php';
+
 /**
  * Abstract class for any database entity.
  */
@@ -18,64 +20,118 @@ abstract class Entity
     private $userChanged;
     
     /**
+     * 
+     * Enter description here ...
+     */
+    public function retrieve()
+    {
+        if (!$this->determineIsPrimaryKeyFilled()) {
+            // TODO : Throw exception;
+            return;
+        }
+        $query = makeSelectSql();
+        $resultSet = DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
+        
+        if ($resultSet->getCount() != 1) {
+            // TODO : Thow exception.
+            return;
+        }
+        
+        $this->moveAttributesToInstanceVars($resultSet->getFirstResultRow());
+    }
+    
+    /**
+      * 
+      * Enter description here ...
+      */
+    public function retrieveWithDetails()
+    {
+        $this->retrieve();
+        $this->retrieveDetails();
+    }
+    
+    /**
+     *
+     * Implement in derived class to retrieve attribute (and associactive?) entities.
+     */
+    abstract public function retrieveDetails();
+    
+    /**
      * Saves the entity to the database. A database row is inserted if the entity does not exist in the
      * database yet. A database row is updated if the entity exists in the database.
      */
-    protected function save()
+    public function save()
     {
         // Determine if this is a fresh entity which has to be inserted into the database.
-        if ($tsCreated != null)
+        if (!$this->determineIsPrimaryKeyFilled())
         {
             // Insert the entity into the database.
+            $query = $this->makeInsertSql();
+            DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
         }
         else
         {
-            // Update the existing database row.
+            $query = $this->makeUpdateSql();
+            DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
         }
     }
     
     /**
-     * 
+     *
      * Enter description here ...
      */
-    protected function retrieve($query)
+    public function saveWithDetails()
     {
-        // Execute the query.
-        
-        // if count (results) != 1
-        //       throw exception
-        
-        // move query results to class instance variables. 
-        
+        $this->save();
+        $this->saveDetails();
     }
     
     /**
      * 
      * Enter description here ...
      */
-    protected function retrieveWithDetails()
-    {
-        retrieve();
-        
-        retrieveDetails();
-    }
+    abstract public function saveDetails();
+    
     
     /**
-     * 
-     * Implement in derived class to retrieve attribute (and associactive?) entities.
+     * Moves the class instance variables into an array for insertion into a query.
      */
-    abstract protected function retrieveDetails();
+    abstract protected function moveInstanceVarsToAttributes();
     
     /**
-     * 
-     * Enter description here ...
+     * Moves the result attributes from a query into this classes instance variables.
+     * @param resultSetRow Result set row to read the attributes from.
      */
-    protected function saveWithDetails()
-    {
-        save();
-        
-        saveDetails();
-    }
+    abstract protected function moveAttributesToInstanceVars($resultSetRow);
     
-    abstract protected function saveDetails();
+    /**
+    * This method returns the SQL needed to select this entity from the database.
+    * @return SQL code to select this entity in the database.
+    */
+    abstract protected function makeSelectSql();
+    
+    /**
+     * This method returns the SQL needed to insert this entity into the database.
+     * @return SQL code to insert this entity in the database.
+     */
+    abstract protected function makeInsertSql();
+    
+    /**
+     * This method returns the SQL needed to delete this entity from the database.
+     * @return SQL code to delete this entity from the database.
+     */
+    abstract protected function makeDeleteSql();
+    
+    /**
+     * This method returns the SQL needed to update this entity in the database.
+     * @return SQL code to update this entity in the database.
+     */
+    abstract protected function makeUpdateSql();
+    
+    /**
+     * This method determines if the primary key instance variables of this object are filled.
+	 * @return <code>true</code> if the primary key is filled, otherwise <code>false</code>.
+     */
+    abstract protected function determineIsPrimaryKeyFilled();
+   
 }

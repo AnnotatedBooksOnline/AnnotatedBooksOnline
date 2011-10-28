@@ -1,7 +1,7 @@
 <?php
 
 require_once 'framework/controller/controller.php';
-//require_once 'util/authentication.php';
+require_once 'model/user/user.php';
 
 /**
  * Login controller class.
@@ -15,6 +15,14 @@ class LoginController extends Controller
     
     public function actionLogin($data)
     {
-        return array(1, 2, 3);
+        // Create a user object and fill it.
+        $user = new User();
+        $user->setFirstName("Mathijs");
+        $user->setLastName("Baaijens");
+        $user->setPassword("test123");
+        $user->setUsername("MathijsB");
+        
+        // Save the user object to the database.
+        $user->save();
     }
 }

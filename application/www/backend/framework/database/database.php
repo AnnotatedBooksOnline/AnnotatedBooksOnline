@@ -285,6 +285,24 @@ class DBConnection extends Singleton
     {
         return $this->pdo->exec($this->buildQuery(func_get_args()));
     }
+    
+    /**
+     * Executes a SQL statement prepared
+     */
+    public function executePreparedStatement($query, $queryArguments) {
+        $statement = $this->pdo->prepare($query);
+        
+        foreach ($queryArguments as $argumentName => $argumentValue)
+        {
+            $statement->bindParam(':'. $argumentName, $argumentValue);
+        }
+        
+        $statement->execute();
+        
+        echo $query;
+    
+        return new ResultSet($statement);
+    }
 
     /**
      * Execute a selection query.
