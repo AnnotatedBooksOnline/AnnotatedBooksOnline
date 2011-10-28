@@ -25,18 +25,25 @@ abstract class Entity
      */
     public function retrieve()
     {
-        if (!$this->determineIsPrimaryKeyFilled()) {
+        // Determine if the primary key is filled.
+        if (!$this->determineIsPrimaryKeyFilled()) 
+        {
             // TODO : Throw exception;
             return;
         }
+        
+        // Create the SQL statement to retrieve this entity and execute it prepared.
         $query = makeSelectSql();
         $resultSet = DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
         
-        if ($resultSet->getCount() != 1) {
+        // Determine if the entity was found in the database.
+        if ($resultSet->getCount() != 1) 
+        {
             // TODO : Thow exception.
             return;
         }
         
+        // Move the table row attributes to instance variables.
         $this->moveAttributesToInstanceVars($resultSet->getFirstResultRow());
     }
     
@@ -65,12 +72,13 @@ abstract class Entity
         // Determine if this is a fresh entity which has to be inserted into the database.
         if (!$this->determineIsPrimaryKeyFilled())
         {
-            // Insert the entity into the database.
+            // Create the SQL statement to insert this entity and execute the statement prepared.
             $query = $this->makeInsertSql();
             DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
         }
         else
         {
+            // Create the SQL statement to update this entity and execute the statement prepared.
             $query = $this->makeUpdateSql();
             DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
         }
