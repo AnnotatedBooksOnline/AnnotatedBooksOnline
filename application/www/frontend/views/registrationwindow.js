@@ -202,16 +202,21 @@ Ext.define('Ext.ux.RegistrationWindow', {
     }
 });
 
+//TODO: not working yet
 Ext.apply(Ext.Form.VTypes, {
-    uniqueUsername: function(username) {
+    uniqueUsername: function(value, field) {
         //TODO: ajax request with database
         /*
-        Ext.Ajax.request({
+        var username = ..;
+        
+        var response = Ext.Ajax.request({
             url: 'uniqueUsername.php',
             method: 'POST',
             params: 'username='+username,
             succes: ...
         });
+        
+        return response;
         */
         return true;
     },
