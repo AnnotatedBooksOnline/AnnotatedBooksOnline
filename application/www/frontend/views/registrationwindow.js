@@ -10,6 +10,7 @@ Ext.define('Ext.ux.RegistrationForm', {
     initComponent: function() 
     {
         var _this = this;
+        
         var defConfig = {
             items: [{
                 name: 'username',
@@ -49,7 +50,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                 minLength: 8
             },{
                 name: 'password2',
-                fieldLabel: 'Repeat Password',
+                fieldLabel: 'Repeat password',
                 inputType: 'password',
                 
                 // Custom validator implementation - checks that the value matches what was entered into
@@ -61,7 +62,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                 }
             },
             
-            //TODO: CAPTCHA
+            // TODO: CAPTCHA
 
             /*
              * Terms of Use acceptance checkbox. Two things are special about this:
@@ -121,10 +122,10 @@ Ext.define('Ext.ux.RegistrationForm', {
                 },
 
                 // Custom validation logic - requires the checkbox to be checked.
-                //getErrors: function()
-                //{
-                //    return this.getValue() ? [] : ['Please accept the terms of use.']
-                //}
+                // getErrors: function()
+                // {
+                //     return this.getValue() ? [] : ['Please accept the terms of use.']
+                // }
             }],
             
             buttons: [{
@@ -149,18 +150,18 @@ Ext.define('Ext.ux.RegistrationForm', {
 
                     // TODO
                     /*
-                    Normally we would submit the form to the server here and handle the response...
-                    form.submit({
-                        clientValidation: true,
-                        url: 'register.php',
-                        success: function(form, action) {
-                           //...
-                        },
-                        failure: function(form, action) {
-                            //...
-                        }
-                    });
-                    */
+                     * Normally we would submit the form to the server here and handle the response...
+                     * form.submit({
+                     *     clientValidation: true,
+                     *     url: 'register.php',
+                     *     success: function(form, action) {
+                     *        //...
+                     *     },
+                     *     failure: function(form, action) {
+                     *         //...
+                     *     }
+                     * });
+                     */
 
                     if (form.isValid())
                     {
@@ -202,10 +203,10 @@ Ext.define('Ext.ux.RegistrationWindow', {
     }
 });
 
-//TODO: not working yet
+// TODO: not working yet + should move to somewhere else
 Ext.apply(Ext.Form.VTypes, {
     uniqueUsername: function(value, field) {
-        //TODO: ajax request with database
+        // TODO: ajax request with database
         /*
         var username = ..;
         
