@@ -274,11 +274,11 @@ class DBConnection extends Singleton
      * Examples:
      *
      * \verbatim
-     * query('SELECT user_name, user_email FROM users WHERE user_id = %i', $uid);
-     * query('INSERT INTO ORDERS (ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS) VALUES (%i, %s, %s)',
-     *         $id, $customer->getName(), $customer->getAdress());
-     * query('UPDATE THUMBNAILS SET IMAGE_DATA = %b WHERE IMAGE_NAME = %s, CREATE_DATE < %a',
-     *         $img->getData(), "vla.jpeg", $vladate);
+     * ..->query('SELECT user_name, user_email FROM users WHERE user_id = %i', $uid);
+     * ..->query('INSERT INTO ORDERS (ORDER_ID, CUSTOMER_NAME, CUSTOMER_ADDRESS) VALUES (%i, %s, %s)',
+     *            $id, $customer->getName(), $customer->getAdress());
+     * ..->query('UPDATE THUMBNAILS SET IMAGE_DATA = %b WHERE IMAGE_NAME = %s, CREATE_DATE < %a',
+     *            $img->getData(), "vla.jpeg", $vladate);
      * \endverbatim
      * 
      * @param string $fquery A well-formed or format query.
@@ -308,7 +308,7 @@ class DBConnection extends Singleton
      */
     public function execute( /* $fquery, $args ... */ )
     {
-        $stat = $this->pdo->prepare($this->buildQuery(func_get_args()));
+        $stat = $this->pdo->prepare($this->buildQuery(func_get_arg(0), array_slice(func_get_args(),1)));
         if(!$stat->execute())
         {
             throw new DBException("SQL error: " . print_r($stat->errorInfo()));
@@ -334,21 +334,80 @@ class DBConnection extends Singleton
 //         return new ResultSet($statement);
 //     }
 
+    
+    //Helper function used by select, insert, update and delete.
+    private function buildWhereClause($where_equal_array, $operator)
+    {        
+        if(count($where_equal_array) == 0)
+        {
+            return "";
+        }
+        
+        $result = "WHERE ";
+        
+        foreach($where_equal_array as $col => $val)
+        {
+            $result .= $this->formatSingle('n', $col). ' ' . $operator . ' ';
+                     
+            if ($val[0] == '%')
+            {
+                if (strlen($val) == 1)
+                {
+                    throw new FormatException("Just a single '%' in provided value.");
+                }
+                $spec = $val[1];
+                $val  = substr($val, 2);
+            }
+            else
+            {
+                $spec = 's';
+            }
+            $result .= $this->formatSingle($spec, $val) . ',';
+        } 
+        
+        $result = rtrim($result, ',');
+        
+        return $result;
+    }
+    
+    //TODO: Allow specification of operators other than '=' in $where_equal arrays. Perhaps use 
+    //      custom classes for this (and $col_val_array arguments) instead of arrays.
+    
     /**
-     * Execute a selection query.
+     * Builds or executes a selection query.
      *
-     * Helper function that formulates and execute a simple SELECT-statement.
+     * Helper function that formulates or executes a SELECT-query. The columns to be selected and a
+     * WHERE-clause may be provided.
      *
-     * @param $table   The table from which to select.
-     * @param $columns An array of the columns to be selected from the table. An empty array means
-     *                    all columns should be selected.
+     * @param $table       The table from which to select.
+     * @param $columns     An array of the columns to be selected from the table. An empty array (the 
+     *                     default) means all columns should be selected. (Optional)
+     * @param $where_equal An associative array with as keys SQL identifiers also present as keys in
+     *                     $columns, and as values strings representing values columns in the 
+     *                     selected rows should be equal to; these will be formatted as a SQL 
+     *                     string, unless they start with a %. In that case they should be provided
+     *                     in the same matter as the second argument of the function insert. 
+     *                     (Optional)
+     * @param $exec	       A boolean that is true by default. Indicates whether the query should be
+     * 	                   executed immediately. If not a query will be returned that can be 
+     *                     performed by query().
+     *                                 
+     * Examples:
+     * \verbatim
+     * ..->select('user', array('first_name', 'last_name'));
+     * ..->select('image', array('img_name', 'img_data'), array('create_date' => '%a' . $date));
+     * ..->select('product', array('display_name','cost'), array('product_id' =>   '%d' . $id, 
+     *                                                           'availability' => '%d' . 1));
+     * \endverbatim
      *
-     * @return ResultSet The contents of the selected columns, as retrieved by the database.
+     * @return ResultSet/string If $exec is true: the contents of the selected columns, as 
+     *                          retrieved by the database. Otherwise: a query as a string that can
+     *                          be used as an argument to query(). 
      *
-     * @throws FormatException If a table or column name is not a valid SQL identifier.
-     *            DBException        If a database error occured.
+     * @throws FormatException If a table or column name is not a valid SQL identifier
+     *         DBException     If a database error occured.
      */
-    public function select($table, $columns = array())
+    public function select($table, $columns = array(), $where_equal = array(), $exec = true)
     {
         $n = count($columns);
         if ($n == 0)
@@ -356,36 +415,62 @@ class DBConnection extends Singleton
             $columns = array('*');
         }
 
-        $q = "SELECT " . $this->formatSingle('n', $columns[0]);
+        $q = 'SELECT ' . $this->formatSingle('n', $columns[0]);
         foreach (array_slice($columns, 1) as $col)
         {
             $q .= ', ' . $this->formatSingle('n', $col);
         }
 
-        $q .= " FROM " . $this->formatSingle('n', $table);
-
-        return $this->query($q);
+        $q .= ' FROM ' . $this->formatSingle('n', $table) . ' ';
+        
+        $q .= $this->buildWhereClause($where_equal, '=');
+        
+        if($exec)
+        {
+            return $this->query($q);
+        }
+        else
+        {
+            return $q;
+        }
     }
 
     /**
      * Performs an insertion into the database.
      *
-     * Helper function that formulates and executes a simple INSERT-statement.
+     * Helper function that formulates or executes an INSERT-statement.
+     * 
+     * TODO: examples
      *
-     * @param string $table         The name of the table in which to insert the values.
+     * @param string $table            The name of the table in which to insert the values.
      * @param array $col_val_array     An array with strings representing columns as keys and things
      *                                 to be inserted into the associated column as string values.
      *                                 If a value starts with '%' and a single character the rest of
      *                                 the string will be formatted according to same rules as the
      *                                 query function. Values that don't start with a format specifier
      *                                 will be formatted with '%s'.
+     * @param array $where_equal       A WHERE-clause to be added to the insert statement. Should be
+     *                                 used in the same matter as the $where_equal parameter of 
+     *                                 select. If this array is empty, the function is a no-op.
+     * @param bool  $exec              Indicates whether to automatically execute the query. If 
+     *                                 false, the result of this function should be provided to
+     *                                 execute() in order to perform the actual insertion.
+     *                                 
+     * @return string                  The formulated query. Should be manually executed if $exec
+     *                                 is false.
+     * 
      *
      * @throws FormatException  If a value was formatted incorrectly or an illegal SQL identifier was
-     *                             used.
-     *            DBException            If a database error occured.
+     *                          used.
+     *         DBException      If a database error occured.
      */
-    public function insert($table, $col_val_array)
+    public function insert($table, $col_val_array, $where_equal, $exec = true)
     {
+        if(count($where_equal) == 0)
+        {
+            return;
+        }
+        
         $q    = 'INSERT INTO ' . $this->formatSingle('n', $table) . ' (';
         $vals = '(';
 
@@ -410,17 +495,49 @@ class DBConnection extends Singleton
 
         $q    = rtrim($q, ',');
         $vals = rtrim($vals, ',');
-        $q   .= ') VALUES ' . $vals . ')';
+        $q   .= ') VALUES ' . $vals . ') ';
+        
+        $q .= $this->buildWhereClause($where_equal, '=');
 
-        $this->execute($q);
+        if($exec)
+        {
+            $this->execute($q);
+        }
+        
+        return $q;
+    }
+    
+    public function update($table, $col_val_array, $where_equal, $exec = true)
+    {
+        //TODO
+    }
+    
+    public function delete($table, $where_equal, $exec = true)
+    {
+        if(count($where_equal) == 0)
+        {
+            return;
+        }
+        
+        $q = 'DELETE FROM ' . $this->formatSingle('n', $table) . ' ';
+        
+        $q .= $this->buildWhereClause($where_equal, '=');
+        
+        if($exec)
+        {
+            $this->execute($q);
+        }
+        
+        return $q;
     }
 }
 
 // Test
-// $dbc = DBConnection::getInstance();
+$dbc = DBConnection::getInstance();
 // //$dbc->execute('insert into "DatumTijdTest" ("datum","tijd") values (%a, %t)', time(), time() + 1000);
 // $result = $dbc->query('select * from testtabel where testid >= %d',6);
 // foreach($result as $row)
 // {
 //     echo $row->getValue('blah') . "</br>";
 // }
+//$dbc->delete('testtabel', array('testid' => '%i' . 25));
