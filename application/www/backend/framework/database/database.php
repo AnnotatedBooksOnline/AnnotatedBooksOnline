@@ -509,7 +509,42 @@ class DBConnection extends Singleton
     
     public function update($table, $col_val_array, $where_equal, $exec = true)
     {
-        //TODO
+        if(count($where_equal) == 0)
+        {
+            return;
+        }
+        
+        $q  = 'UPDATE ' . $this->formatSingle('n', $table) . ' SET ';
+        
+        foreach($col_val_array as $col => $val)
+        {
+            $q .= $this->formatSingle('n', $col) . ' = ';
+            if ($val[0] == '%')
+            {
+                if (strlen($val) == 1)
+                {
+                    throw new FormatException("Just a single '%' in provided value.");
+                }
+                $spec = $val[1];
+                $val  = substr($val, 2);
+            }
+            else
+            {
+                $spec = 's';
+            }
+            $q .= $this->formatSingle($spec, $val) . ',';
+        }
+        
+        $q = rtrim($q, ',');
+        
+        $q .= $this->buildWhereClause($where_equal, '=');
+        
+        if($exec)
+        {
+            $this->execute($q);
+        }
+        
+        return $q;
     }
     
     public function delete($table, $where_equal, $exec = true)
@@ -540,4 +575,4 @@ $dbc = DBConnection::getInstance();
 // {
 //     echo $row->getValue('blah') . "</br>";
 // }
-//$dbc->delete('testtabel', array('testid' => '%i' . 25));
+// $dbc->update('testtabel', array('testid' => '%i' . 8), array('testid' => '%i' . 7));
