@@ -18,6 +18,10 @@ class ResultSet implements IteratorAggregate
 {
     public $statement;
 
+    /**
+     * Constructs a ResultSet from a prepared PDO statement.
+     * @param PDOStamement $pdo_stat The PDO statement. Should already have been executed.
+     */
     public function __construct($pdo_stat)
     {
         $this->statement = $pdo_stat;

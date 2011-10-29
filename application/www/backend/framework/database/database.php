@@ -1,5 +1,7 @@
 ﻿<?php
 
+//[[GPL]]
+
 require_once 'framework/helpers/singleton.php';
 require_once 'framework/database/resultset.php';
 require_once 'framework/helpers/collaboratoryconfig.php';
@@ -39,7 +41,10 @@ class DBConnection extends Singleton
 
     public function __destruct()
     {
-        // TODO
+        if($this->pdo->inTransaction())
+        {
+            $this->pdo->commit();
+        }
     }
 
     /**
@@ -173,18 +178,60 @@ class DBConnection extends Singleton
         }
     }
 
-    // Used by query and execute.
-    private function buildQuery($arg_arr)
+    
+    /**
+     * Builds a formatted query, but does not execute it.
+     * 
+     * Builds a query to be executed through query() and execute().The first argument should be a 
+     * UTF8-encoded 'format string' containing the query, with every variable SQL value (see below)
+     * replaced by a 'conversion specifier', which consists of a %-sign followed by a single 
+     * character. For each conversion specifier, an argument should be added to the array in the 
+     * second argument. that will be validated, properly escaped and/or quoted and converted to a
+     * string of characters in a way indicated by the character after the specifier's %-sign. This 
+     * is somewhat similar to how functions like printf are used.
+     *
+     * IMPORTANT NOTE: Never make the format string depend on user input, preferably do not use
+     * strings stored in variables at all. Instead, use conversion specifiers for each SQL value
+     * (like integers, strings etc.) of the query that is not conatant and depends on a run-time value.
+     *
+     * The following conversion specifiers can be used:
+     *  - s - A SQL string. The argument should contain a UTF-8 formatted string that will be
+     *        quoted and escaped in such a matter it cannot be used for SQL injections.
+     *  - d - A numeric literal. The argument should be either an integer, floating point number or
+     *        string containing a decimal number. Booleans are also allowed, resulting in either
+     *        '1' (true) or '0' (false).
+     *  - i - Same as %d, except that floating point numbers are not accepted.
+     *  - b - A SQL hexadecimal number representing a bytestring (used for BLOB's, for instance).
+     *        The argument should be string which will be interpreted as binary data.
+     *  - n - A SQL identifier like a column or table name. The argument is a string that has to
+     *           conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
+     *           to its begin and end. The argument should not be directly formed from user input.
+     *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of
+     *           seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
+     *           returned by time().
+     *  - a - A date. The argument should be a Unix timestamp (just like with %t) that lies at the start of 
+     *           or somewhere within the desired date.
+     *
+     * Note that conversion specifiers are case insensitive, so you may also use capital letters.
+     * 
+     * Some usage examples can be found in the coumentation of query().
+     *
+     * @param string $fquery The format query. 
+     * @param array  $arg_arr An indexed array of the arguments in the correct order.
+     * 
+     * @return string A string containing the query which can be safely executed through query()
+     *                or execute().
+     * 
+     * @throws FormatException If an argument does not conform to the requirements listed above, if
+     *                           the number of arguments is too high or low or if an undefined format
+     *                           specifier is used.
+     */
+    public function buildQuery($fquery, $arg_arr)
     {
-        if (count($arg_arr) == 0)
-        {
-            throw new FormatException("No arguments.");
-        }
-
         // Split the input at the % signs for easier formatting.
-        $inp  = explode('%', $arg_arr[0]);
+        $inp  = explode('%', $fquery);
         $outp = $inp[0];
-        $arg  = 1;
+        $arg  = 0;
         for ($i = 1; $i < count($inp); ++$i)
         {
             // Check for %%.
@@ -217,38 +264,12 @@ class DBConnection extends Singleton
     }
 
     /**
-     * Executes a formatted query.
+     * Executes a formatted query and returns its result.
      *
-     * Executes a query. The first argument should be a UTF8-encoded 'format string' containing the
-     * query, with every variable SQL value (see below) replaced by a 'conversion specifier', which
-     * consists of a %-sign followed by a single character. For each conversion specifier, an
-     * argument should be added that will be validated, properly escaped and/or quoted and
-     * converted to a string of characters in a way indicated by the character after the
-     * specifier's %-sign. This is somewhat similar to how functions like printf are used.
-     *
-     * IMPORTANT NOTE: Never make the format string depend on user input, preferably do not use
-     * strings stored in variables at all. Instead, use conversion specifiers for each SQL value
-     * (like integers, strings etc.) of the query that is not conatant and depends on a run-time value.
-     *
-     * The following conversion specifiers can be used:
-     *  - s - A SQL string. The argument should contain a UTF-8 formatted string that will be
-     *        quoted and escaped in such a matter it cannot be used for SQL injections.
-     *  - d - A numeric literal. The argument should be either an integer, floating point number or
-     *        string containing a decimal number. Booleans are also allowed, resulting in either
-     *        '1' (true) or '0' (false).
-     *  - i - Same as %d, except that floating point numbers are not accepted.
-     *  - b - A SQL hexadecimal number representing a bytestring (used for BLOB's, for instance).
-     *        The argument should be string which will be interpreted as binary data.
-     *  - n - A SQL identifier like a column or table name. The argument is a string that has to
-     *           conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
-     *           to its begin and end. The argument should not be directly formed from user input.
-     *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of
-     *           seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
-     *           returned by time().
-     *  - a - A date. The argument should be a Unix timestamp (just like with %t) that lies at the start of 
-     * 	      or somewhere within the desired date.
-     *
-     *  Note that conversion specifiers are case insensitive, so you may also use capital letters.
+     * Executes a query. It should either receive the result of buildQuery, a query that has been 
+     * determined to be safe and does not include unvalidated user input, or one that contains 
+     * format specifiers in the same way as required by buildQuery. In the last case, the result of
+     * the arguments to this function will be put in an array and provided to buildQuery.
      *
      * Examples:
      *
@@ -259,50 +280,59 @@ class DBConnection extends Singleton
      * query('UPDATE THUMBNAILS SET IMAGE_DATA = %b WHERE IMAGE_NAME = %s, CREATE_DATE < %a',
      *         $img->getData(), "vla.jpeg", $vladate);
      * \endverbatim
-     *
+     * 
+     * @param string $fquery A well-formed or format query.
+     * @param mixed  $args   Arguments that should be properly filled in in the place of format 
+     *                       specifiers in a format query. 
+     * 
      * @return ResultSet          The result of the query, if any.
      *
-     * @throws FormatException If an argument does not conform to the requirements listed above, if
-     *                           the number of arguments is too high or low or if an undefined format
-     *                           specifier is used.
-     *           DBException       If a database error occurs or when there is an error in the query.
+     * @throws FormatException 	   If buildQuery fails.
+     *         DBException         If a database error occurs or when there is an error in the query.
      *
      */
     public function query( /* $fquery, $args ... */ )
     {
-        return new ResultSet($this->pdo->query($this->buildQuery(func_get_args())));
+        $stat = $this->pdo->prepare($this->buildQuery(func_get_arg(0), array_slice(func_get_args(),1)));
+        if(!$stat->execute())
+        {
+            throw new DBException("SQL error: " . print_r($stat->errorInfo()));
+        }
+        return new ResultSet($stat);
     }
 
     /**
      * Same as query, but does not return a result set.
      *
      * This function should be used for insertions and updates and such.
-     *
-     * @return The number of rows affected by the query.
-     *
      */
     public function execute( /* $fquery, $args ... */ )
     {
-        return $this->pdo->exec($this->buildQuery(func_get_args()));
+        $stat = $this->pdo->prepare($this->buildQuery(func_get_args()));
+        if(!$stat->execute())
+        {
+            throw new DBException("SQL error: " . print_r($stat->errorInfo()));
+        }
     }
     
     /**
      * Executes a SQL statement prepared
+     * TODO: redundant?
      */
-    public function executePreparedStatement($query, $queryArguments) {
-        $statement = $this->pdo->prepare($query);
+//     public function executePreparedStatement($query, $queryArguments) {
+//         $statement = $this->pdo->prepare($query);
         
-        foreach ($queryArguments as $argumentName => $argumentValue)
-        {
-            $statement->bindParam(':'. $argumentName, $argumentValue);
-        }
+//         foreach ($queryArguments as $argumentName => $argumentValue)
+//         {
+//             $statement->bindParam(':'. $argumentName, $argumentValue);
+//         }
         
-        $statement->execute();
+//         $statement->execute();
         
-        echo $query;
+//         echo $query;
     
-        return new ResultSet($statement);
-    }
+//         return new ResultSet($statement);
+//     }
 
     /**
      * Execute a selection query.
@@ -388,6 +418,7 @@ class DBConnection extends Singleton
 
 // Test
 // $dbc = DBConnection::getInstance();
+// //$dbc->execute('insert into "DatumTijdTest" ("datum","tijd") values (%a, %t)', time(), time() + 1000);
 // $result = $dbc->query('select * from testtabel where testid >= %d',6);
 // foreach($result as $row)
 // {
