@@ -15,7 +15,7 @@ Ext.define('Ext.ux.RegistrationForm', {
             items: [{
                 name: 'username',
                 fieldLabel: 'Username',
-                //vtype: 'uniqueUsername',
+                vtype: 'uniqueUsername',
                 minLength: 6,
                 maxLength: 40
             },{
@@ -212,11 +212,10 @@ Ext.define('Ext.ux.RegistrationWindow', {
 });
 
 // TODO: not working yet + should move to somewhere else
-/*Ext.apply(Ext.Form.VTypes, {
 Ext.apply(Ext.form.VTypes, {
     uniqueUsername: function(value, field) {
         // TODO: ajax request with database
-        
+        /*
         var username = ..;
         
         var response = Ext.Ajax.request({
@@ -226,10 +225,10 @@ Ext.apply(Ext.form.VTypes, {
             succes: ...
         });
         
-        return response;
+        return response;*/
         
         return true;
     },
     
     uniqueUsernameText: 'Username already in use'
-});*/
+});
