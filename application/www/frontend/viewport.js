@@ -178,6 +178,18 @@ Viewport.prototype.reset = function()
     this.zoom(newZoomLevel);
 }
 
+Viewport.prototype.setDocument = function(document)
+{
+    this.document.remove();
+    
+    this.document           = document;
+    this.documentDimensions = document.getDimensions();
+    this.maxZoomLevel       = document.getMaxZoomLevel();
+    
+    this.document.insert(this);
+    this.reset();
+}
+
 /*
  * Private methods.
  */

@@ -1,19 +1,27 @@
 <?php 
+//[[GPL]]
 
 require_once 'framework/database/entity.php';
 
 /**
  * Class representing a user entity. 
+ *
  * ! Example implementation, not based on the data model !
  */
 class User extends Entity
 {
     /* NB : I just made up some attributes to server as an example */
     
-    /** User id */
-    private $userId;
     
-    /** User name. */
+    /** Rank constants. */
+    const RANK_NONE      = 0;
+    const RANK_MODERATOR = 1;
+    const RANK_ADMIN     = 2;
+    
+    /** Id. */
+    private $id;
+    
+    /** Username. */
     private $username;
     
     /** User password. */
@@ -25,154 +33,85 @@ class User extends Entity
     /** User last name. */
     private $lastName;
     
- 
+    /** Rank. */
+    private $rank;
+    
     /**
-     * Moves the class instance variables into an array for insertion into a query.
+     * Constructs a user by id.
+     *
+     * @param  $id  Id of the user. Default (null) will create a new user.
      */
-    protected function moveInstanceVarsToAttributes() 
+    public function __construct($id = null)
     {
-        return array(
-               'userId' => $this->userId,
-               'username' => $this->username,
-               'password' => $this->password,
-               'firstName' => $this->firstName,
-        	   'lastName' => $this->lastName
-            );
+        if ($id !== null)
+        {
+            $this->id = $id;
+            
+            $this->load();
+        }
     }
     
     /**
-     * Moves the result attributes from a query into this classes instance variables.
-     * @param resultSetRow Result set row to read the attributes from.
+     * Gets the table name.
+     *
+     * @return  The table name.
      */
-    protected function moveAttributesToInstanceVars($resultSetRow) 
+    public function save()
     {
-        $this->userId = $resultSetRow->getValue("userId");
-        $this->username = $resultSetRow->getValue("username");
-        $this->password = $resultSetRow->getValue("password");
-        $this->firstName = $resultSetRow->getValue("firstName");
-        $this->lastName = $resultSetRow->getValue("lastName");
+        parent::save();
+        
+        //NOTE: here, other components can be saved: eg: banned data, etc.
     }
     
-    
     /**
-     * Implement in derived class to retrieve attribute (and associactive?) entities.
+     * Gets the table name.
+     *
+     * @return  The table name.
      */
-    public function retrieveDetails() {
-        // No attribute entities to retrieve yet.
+    protected static function getTableName()
+    {
+        return 'Users';
     }
     
     /**
-	 *
+     * Gets the primary keys.
+     *
+     * @return  Array of all primary keys.
      */
-    public function saveDetails() {
-        /// No attribute entities to save yet.
-    }
-    
-    /**
-    * This method returns the SQL needed to select this entity from the database.
-    * @return SQL code to select this entity in the database.
-    */
-    protected function makeSelectSql()
+    protected static function getPrimaryKeys()
     {
-        $query = "SELECT * FROM UserT WHERE userId = :userId";
-        return $query;
+        return array('id');
     }
     
     /**
-    * This method returns the SQL needed to insert this entity into the database.
-    * @return SQL code to insert this entity in the database.
-    */
-    protected function makeInsertSql()
-    {
-        $query  = "INSERT INTO UserT ";
-        $query .= "(username, password, firstName, lastName, tsChanged, tsCreated, userCreated, userChanged) ";
-        $query .= "VALUES ";
-        $query .= "(:username, :password, :firstName, :lastName, current_timestamp, current_timestamp, 'mathijs', 'mathijs')";
-        return $query;
-    }
-    
-    /**
-     * This method returns the SQL needed to delete this entity from the database.
-     * @return SQL code to delete this entity from the database.
+     * Gets all the columns.
+     *
+     * @return  Array of all columns, except primary keys.
      */
-    protected function makeDeleteSql()
+    protected static function getColumns()
     {
-        $query  = "DELETE FROM UserT ";
-        $query .= "WHERE ";
-        $query .= "userId = :userId";
-        return $query;
+        return array('username', 'password', 'firstName', 'lastName', 'rank');
     }
     
-    /**
-     * This method returns the SQL needed to update this entity in the database.
-     * @return SQL code to update this entity in the database.
-     */
-    protected function makeUpdateSql()
-    {
-        $query  = "UPDATE UserT ";
-        $query .= "SET username = :username, password = :password, firstName = :firstname, lastName = :lastName, tsChanged = current_timestamp ";
-        $query .= "WHERE ";
-        $query .= "userId = :userId";
-        return $query;
-    }
-    
-    /**
-    * This method determines if the primary key instance variables of this object are filled.
-    * @return <code>true</code> if the primary key is filled, otherwise <code>false</code>.
-    */
-    protected function determineIsPrimaryKeyFilled()
-    {
-        return isset($this->userId);
-    }
-    
- 
     /*
-     * Getters / setters
+     * Getters and setters.
      */
-    public function setUserId($userId) 
-    {
-        $this->userId = $userId;
-    }
-    public function getUserId() 
-    {
-        return $this->userId;
-    }
     
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    }
-    public function getUsername()
-    {
-        return $this->username;
-    }
+    public function setId($id) { $this->id = $id; }
+    public function getId($id) { return $id;      }
     
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
-    public function getPassword()
-    {
-        return $this->password;
-    }
+    public function setUsername($username) { $this->username = $username; }
+    public function getUsername()          { return $this->username;      }
     
-    public function setFirstName($firstName)
-    {
-        $this->firstName = $firstName;
-    }
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
+    public function setPassword($password) { $this->password = $password; }
+    public function getPassword()          { return $this->password;      }
     
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-    }
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
+    public function setFirstName($firstName) { $this->firstName = $firstName; }
+    public function getFirstName()           { return $this->firstName;       }
     
+    public function setLastName($lastName) { $this->lastName = $lastName; }
+    public function getLastName()          { return $this->lastName;      }
+    
+    public function getRank()      { return $this->rank;  }
+    public function setRank($rank) { $this->rank = $rank; }
 }

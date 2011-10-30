@@ -1,61 +1,37 @@
 ﻿<?php
-
 //[[GPL]]
 
 require_once 'framework/helpers/singleton.php';
+require_once 'framework/helpers/configuration.php';
 require_once 'framework/database/resultset.php';
-require_once 'framework/helpers/collaboratoryconfig.php';
 
-
-
-class FormatException extends Exception
-{
-    // TODO
-}
-
-class DBException extends Exception
-{
-    // TODO
-}
+// Exceptions.
+class DatabaseException extends ExceptionBase { }
 
 /**
- * A singleton class representing a connection to the database. With this database queries can be executed. 
- *
+ * A singleton class representing a connection to the database.
+ * With this database queries can be executed. 
  */
-class DBConnection extends Singleton
+class Database extends Singleton
 {
     private $pdo;
 
-    private static function initConnection()
-    {
-        // Create a php data object using the properties in the configuration file.
-        return new PDO(CollaboratoryConfig::getInstance()->getDatabaseDsn(), 
-                       CollaboratoryConfig::getInstance()->getDatabaseUsername(), 
-                       CollaboratoryConfig::getInstance()->getDatabasePassword());
-    }
-
     protected function __construct()
     {
-        $this->pdo = self::initConnection();
+        $configuration = Configuration::getInstance();
+        
+        // Create a php data object using the settings from the configuration.
+        $this->pdo = new PDO($configuration->getString('database-dsn'), 
+                             $configuration->getString('database-username'), 
+                             $configuration->getString('database-password'));
     }
 
     public function __destruct()
     {
-        if($this->pdo->inTransaction())
+        if ($this->pdo->inTransaction())
         {
-            $this->pdo->commit();
+            $this->pdo->rollBack();
         }
-    }
-
-    /**
-     * Get an instance of the database connection. A new connection will be made if it is not yet 
-     * present.
-     * 
-     * @return An instance of the database connection.
-     */
-    public static function getInstance()
-    {
-        return parent::getInstance(__CLASS__);
     }
 
     /**
@@ -68,14 +44,14 @@ class DBConnection extends Singleton
      * Nested transactions are currently not allowed. Therefore an exception will be thrown if a
      * transaction is already going on.
      *
-     * @throws DBException    If some error occurs or a transaction has already been started.
+     * @throws DatabaseException    If some error occurs or a transaction has already been started.
      *
      */
     public function startTransaction()
     {
         if (!$this->pdo->beginTransaction())
         {
-            throw new DBException("Starting a transaction for an unkown reason.");
+            throw new DatabaseException('transaction-start');
         }
     }
 
@@ -84,7 +60,7 @@ class DBConnection extends Singleton
      *
      * @return A boolean indicating whether currently in a transaction.
      *
-     * @throws DBException
+     * @throws DatabaseException
      *
      */
     public function inTransaction()
@@ -99,14 +75,15 @@ class DBConnection extends Singleton
      * will now have ended and startTransaction can be called start a new one (or the query methods
      * can be called directly).
      *
-     * @throws DBException If no transaction has started or the commit failed for some other reason.
+     * @throws DatabaseException  If no transaction has started or the commit failed for some
+     *                            other reason.
      *
      */
     public function commit()
     {
         if (!$this->pdo->commit())
         {
-            throw new DBException("Commit failed for an unkown reason.");
+            throw new DatabaseException('transaction-commit');
         }
     }
 
@@ -116,69 +93,17 @@ class DBConnection extends Singleton
      * Undoes all queries made in the current transaction. The transaction will have ended, so \
      * startTransaction() should be called again when trying again.
      *
-     * @throws DBException If no transaction has started, rollback is not supported or it failed
-     *                        for some other reason.
+     * @throws DatabaseException  If no transaction has started, rollback is not supported or it failed
+     *                            for some other reason.
      */
     public function rollBack()
     {
         if (!$this->pdo->rollBack())
         {
-            throw new DBException("Commit rollback failed for an unkown reason.");
+            throw new DatabaseException('transaction-rollback');
         }
     }
 
-    // Formats a single value according to the rules specified with the query function.
-    private function formatSingle($specifier, $arg)
-    {
-        switch ($specifier)
-        {
-            case 'i':
-                $arg = (int) $arg;
-
-            case 'd':
-                if (is_bool($arg))
-                {
-                    $arg = $arg ? '1' : '0';
-                }
-                    
-                assert(is_numeric($arg));
-
-            // Intentional fall-through to this point.
-            case 's': 
-                $result = $this->pdo->quote($arg);
-                if (!$result)
-                {
-                    throw new DBException("String quoting is not supported.");
-                }
-                return $result;
-
-            case 'b':
-                // Note: PostgreSQL syntax.
-                return "X'" . strtoupper(bin2hex($arg)) . "'";
-
-            case 'n':
-                $matches = array();
-                preg_match_all('/\*|[a-zA-Z_][a-zA-Z_0-9\$]*/', $arg, $matches);
-                if (count($matches) == 0 || count($matches[0]) == 0 || $matches[0][0] != $arg)
-                {
-                    throw new FormatException($arg . " is not a valid SQL identifier.");
-                }
-                // Note: also Postgre syntax.
-                return '"' . $arg . '"';
-
-            case 't':
-                assert(is_numeric($arg));
-                return "(timestamptz 'epoch' + {$this->pdo->quote($arg)} * interval '1 second')";
-
-            case 'a':
-                return $this->pdo->quote(strftime('%G-%m-%d', $arg));
-
-            default:
-                throw new FormatException('%' . $specifier . " is not a valid conversion specifier");
-        }
-    }
-
-    
     /**
      * Builds a formatted query, but does not execute it.
      * 
@@ -204,7 +129,7 @@ class DBConnection extends Singleton
      *  - b - A SQL hexadecimal number representing a bytestring (used for BLOB's, for instance).
      *        The argument should be string which will be interpreted as binary data.
      *  - n - A SQL identifier like a column or table name. The argument is a string that has to
-     *           conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
+     *           conform to <b>^\*|\w[\w\$]*$</b> and will have double quotes (") added
      *           to its begin and end. The argument should not be directly formed from user input.
      *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of
      *           seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
@@ -216,20 +141,20 @@ class DBConnection extends Singleton
      * 
      * Some usage examples can be found in the coumentation of query().
      *
-     * @param string $fquery The format query. 
-     * @param array  $arg_arr An indexed array of the arguments in the correct order.
+     * @param string $query  The format query. 
+     * @param array  $args   An indexed array of the arguments in the correct order.
      * 
-     * @return string A string containing the query which can be safely executed through query()
-     *                or execute().
+     * @return string  A string containing the query which can be safely executed through query()
+     *                 or execute().
      * 
-     * @throws FormatException If an argument does not conform to the requirements listed above, if
-     *                           the number of arguments is too high or low or if an undefined format
-     *                           specifier is used.
+     * @throws FormatException  If an argument does not conform to the requirements listed above, if
+     *                          the number of arguments is too high or low or if an undefined format
+     *                          specifier is used.
      */
-    public function buildQuery($fquery, $arg_arr)
+    public function buildQuery($query, $args)
     {
         // Split the input at the % signs for easier formatting.
-        $inp  = explode('%', $fquery);
+        $inp  = explode('%', $query);
         $outp = $inp[0];
         $arg  = 0;
         for ($i = 1; $i < count($inp); ++$i)
@@ -238,7 +163,9 @@ class DBConnection extends Singleton
             if (strlen($inp[$i]) == 0)
             {
                 if ($i == count($inp) - 1)
-                throw new FormatException("% at end of format string.");
+                {
+                    throw new FormatException('percent-at-end');
+                }
                 else
                 {
                     $outp .= '%' . $inp[$i + 1];
@@ -247,17 +174,18 @@ class DBConnection extends Singleton
                 }
             }
 
-            if ($arg >= count($arg_arr))
+            if ($arg >= count($args))
             {
-                throw new FormatException("Not enough arguments.");
+                throw new FormatException('not-enought-arguments');
             }
-            $outp .= $this->formatSingle($inp[$i][0], $arg_arr[$arg]) . substr($inp[$i], 1);
+            
+            $outp .= $this->formatSingle($inp[$i][0], $args[$arg]) . substr($inp[$i], 1);
             ++$arg;
         }
 
-        if ($arg < count($arg_arr))
+        if ($arg < count($args))
         {
-            throw new FormatException("Too many arguments.");
+            throw new FormatException('too-many-arguments');
         }
 
         return $outp;
@@ -288,16 +216,16 @@ class DBConnection extends Singleton
      * @return ResultSet          The result of the query, if any.
      *
      * @throws FormatException 	   If buildQuery fails.
-     *         DBException         If a database error occurs or when there is an error in the query.
-     *
+     *         DatabaseException   If a database error occurs or when there is an error in the query.
      */
     public function query( /* $fquery, $args ... */ )
     {
         $stat = $this->pdo->prepare($this->buildQuery(func_get_arg(0), array_slice(func_get_args(),1)));
-        if(!$stat->execute())
+        if (!$stat->execute())
         {
-            throw new DBException("SQL error: " . print_r($stat->errorInfo()));
+            throw new DatabaseException('sql', print_r($stat->errorInfo(), true));
         }
+        
         return new ResultSet($stat);
     }
 
@@ -309,9 +237,9 @@ class DBConnection extends Singleton
     public function execute( /* $fquery, $args ... */ )
     {
         $stat = $this->pdo->prepare($this->buildQuery(func_get_arg(0), array_slice(func_get_args(),1)));
-        if(!$stat->execute())
+        if (!$stat->execute())
         {
-            throw new DBException("SQL error: " . print_r($stat->errorInfo()));
+            throw new DatabaseException('sql', print_r($stat->errorInfo(), true));
         }
     }
     
@@ -335,40 +263,6 @@ class DBConnection extends Singleton
 //     }
 
     
-    //Helper function used by select, insert, update and delete.
-    private function buildWhereClause($where_equal_array, $operator)
-    {        
-        if(count($where_equal_array) == 0)
-        {
-            return "";
-        }
-        
-        $result = "WHERE ";
-        
-        foreach($where_equal_array as $col => $val)
-        {
-            $result .= $this->formatSingle('n', $col). ' ' . $operator . ' ';
-                     
-            if ($val[0] == '%')
-            {
-                if (strlen($val) == 1)
-                {
-                    throw new FormatException("Just a single '%' in provided value.");
-                }
-                $spec = $val[1];
-                $val  = substr($val, 2);
-            }
-            else
-            {
-                $spec = 's';
-            }
-            $result .= $this->formatSingle($spec, $val) . ',';
-        } 
-        
-        $result = rtrim($result, ',');
-        
-        return $result;
-    }
     
     //TODO: Allow specification of operators other than '=' in $where_equal arrays. Perhaps use 
     //      custom classes for this (and $col_val_array arguments) instead of arrays.
@@ -400,17 +294,16 @@ class DBConnection extends Singleton
      *                                                           'availability' => '%d' . 1));
      * \endverbatim
      *
-     * @return ResultSet/string If $exec is true: the contents of the selected columns, as 
-     *                          retrieved by the database. Otherwise: a query as a string that can
-     *                          be used as an argument to query(). 
+     * @return ResultSet/string  If $exec is true: the contents of the selected columns, as 
+     *                           retrieved by the database. Otherwise: a query as a string that can
+     *                           be used as an argument to query(). 
      *
-     * @throws FormatException If a table or column name is not a valid SQL identifier
-     *         DBException     If a database error occured.
+     * @throws FormatException    If a table or column name is not a valid SQL identifier
+     *         DatabaseException  If a database error occured.
      */
     public function select($table, $columns = array(), $where_equal = array(), $exec = true)
     {
-        $n = count($columns);
-        if ($n == 0)
+        if (!$columns)
         {
             $columns = array('*');
         }
@@ -422,10 +315,9 @@ class DBConnection extends Singleton
         }
 
         $q .= ' FROM ' . $this->formatSingle('n', $table) . ' ';
-        
         $q .= $this->buildWhereClause($where_equal, '=');
         
-        if($exec)
+        if ($exec)
         {
             return $this->query($q);
         }
@@ -460,29 +352,30 @@ class DBConnection extends Singleton
      *                                 is false.
      * 
      *
-     * @throws FormatException  If a value was formatted incorrectly or an illegal SQL identifier was
-     *                          used.
-     *         DBException      If a database error occured.
+     * @throws FormatException    If a value was formatted incorrectly or an illegal SQL identifier was
+     *                            used.
+     *         DatabaseException  If a database error occured.
      */
     public function insert($table, $col_val_array, $where_equal, $exec = true)
     {
-        if(count($where_equal) == 0)
+        if (!$where_equal)
         {
             return;
         }
         
-        $q    = 'INSERT INTO ' . $this->formatSingle('n', $table) . ' (';
-        $vals = '(';
+        $query = 'INSERT INTO ' . $this->formatSingle('n', $table) . ' (';
+        $vals  = '(';
 
         foreach ($col_val_array as $col => $val)
         {
-            $q .= $this->formatSingle('n', $col) . ',';
+            $query .= $this->formatSingle('n', $col) . ',';
             if ($val[0] == '%')
             {
                 if (strlen($val) == 1)
                 {
-                    throw new FormatException("Just a single '%' in provided value.");
+                    throw new FormatException('single-percent');
                 }
+                
                 $spec = $val[1];
                 $val  = substr($val, 2);
             }
@@ -490,40 +383,100 @@ class DBConnection extends Singleton
             {
                 $spec = 's';
             }
+            
             $vals .= $this->formatSingle($spec, $val) . ',';
         }
 
-        $q    = rtrim($q, ',');
-        $vals = rtrim($vals, ',');
-        $q   .= ') VALUES ' . $vals . ') ';
+        $query  = rtrim($query, ',');
+        $vals   = rtrim($vals, ',');
+        $query .= ') VALUES ' . $vals . ') ';
         
-        $q .= $this->buildWhereClause($where_equal, '=');
+        $query .= $this->buildWhereClause($where_equal, '=');
 
-        if($exec)
+        if ($exec)
         {
-            $this->execute($q);
+            $this->execute($query);
         }
         
-        return $q;
+        return $query;
     }
     
     public function update($table, $col_val_array, $where_equal, $exec = true)
     {
-        if(count($where_equal) == 0)
+        if (!$where_equal)
         {
             return;
         }
         
-        $q  = 'UPDATE ' . $this->formatSingle('n', $table) . ' SET ';
-        
-        foreach($col_val_array as $col => $val)
+        $query = 'UPDATE ' . $this->formatSingle('n', $table) . ' SET ';
+        foreach ($col_val_array as $col => $val)
         {
-            $q .= $this->formatSingle('n', $col) . ' = ';
+            $query .= $this->formatSingle('n', $col) . ' = ';
             if ($val[0] == '%')
             {
                 if (strlen($val) == 1)
                 {
-                    throw new FormatException("Just a single '%' in provided value.");
+                    throw new FormatException('single-percent');
+                }
+                
+                $spec = $val[1];
+                $val  = substr($val, 2);
+            }
+            else
+            {
+                $spec = 's';
+            }
+            
+            $query .= $this->formatSingle($spec, $val) . ',';
+        }
+        
+        $query  = rtrim($query, ',');
+        $query .= $this->buildWhereClause($where_equal, '=');
+        
+        if ($exec)
+        {
+            $this->execute($query);
+        }
+        
+        return $query;
+    }
+    
+    public function delete($table, $where_equal, $exec = true)
+    {
+        if (!$where_equal)
+        {
+            return;
+        }
+        
+        $q  = 'DELETE FROM ' . $this->formatSingle('n', $table) . ' ';
+        $q .= $this->buildWhereClause($where_equal, '=');
+        
+        if ($exec)
+        {
+            $this->execute($q);
+        }
+        
+        return $q;
+    }
+    
+    // Helper function used by select, insert, update and delete.
+    private function buildWhereClause($where_equal_array, $operator)
+    {        
+        if(count($where_equal_array) == 0)
+        {
+            return '';
+        }
+        
+        $result = 'WHERE ';
+        foreach ($where_equal_array as $col => $val)
+        {
+            $result .= $this->formatSingle('n', $col). ' ' . $operator . ' ';
+                     
+            if ($val[0] == '%')
+            {
+                if (strlen($val) == 1)
+                {
+                    throw new FormatException('single-percent');
                 }
                 $spec = $val[1];
                 $val  = substr($val, 2);
@@ -532,38 +485,66 @@ class DBConnection extends Singleton
             {
                 $spec = 's';
             }
-            $q .= $this->formatSingle($spec, $val) . ',';
-        }
+            
+            $result .= $this->formatSingle($spec, $val) . ',';
+        } 
         
-        $q = rtrim($q, ',');
+        $result = rtrim($result, ',');
         
-        $q .= $this->buildWhereClause($where_equal, '=');
-        
-        if($exec)
-        {
-            $this->execute($q);
-        }
-        
-        return $q;
+        return $result;
     }
-    
-    public function delete($table, $where_equal, $exec = true)
+
+    // Formats a single value according to the rules specified with the query function.
+    private function formatSingle($specifier, $arg)
     {
-        if(count($where_equal) == 0)
+        switch ($specifier)
         {
-            return;
+            case 'i':
+                $arg = (int) $arg;
+
+            case 'd':
+                if (is_bool($arg))
+                {
+                    $arg = (int) $arg;
+                }
+                
+                assert(is_numeric($arg));
+
+                // Intentional fall-through.
+                
+            case 's': 
+                $result = $this->pdo->quote($arg);
+                if (!$result)
+                {
+                    throw new DatabaseException('string-quoting');
+                }
+                
+                return $result;
+
+            case 'b':
+                // Note: PostgreSQL syntax.
+                return "X'" . strtoupper(bin2hex($arg)) . "'";
+
+            case 'n':
+                if (!preg_match('/^\*|\w[\w\$]*$/', $arg))
+                {
+                    throw new FormatException('not-valid-sql-identifier', $arg);
+                }
+                
+                // Note: also Postgre syntax.
+                return '"' . $arg . '"';
+
+            case 't':
+                assert(is_numeric($arg));
+                
+                return "(timestamptz 'epoch' + " . $this->pdo->quote($arg) . " * interval '1 second')";
+
+            case 'a':
+                return $this->pdo->quote(strftime('%G-%m-%d', $arg));
+
+            default:
+                throw new FormatException('not-valid-conversion-specifier', $specifier);
         }
-        
-        $q = 'DELETE FROM ' . $this->formatSingle('n', $table) . ' ';
-        
-        $q .= $this->buildWhereClause($where_equal, '=');
-        
-        if($exec)
-        {
-            $this->execute($q);
-        }
-        
-        return $q;
     }
 }
 

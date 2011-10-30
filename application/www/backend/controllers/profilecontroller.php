@@ -1,12 +1,13 @@
 <?php
+//[[GPL]]
 
 require_once 'framework/controller.php';
-//require_once 'util/authentication.php';
+require_once 'util/authentication.php';
 
 /**
- * Login controller class.
+ * Profile controller class.
  */
-class LoginController extends Controller
+class ProfileController extends Controller
 {
     protected function __construct()
     {

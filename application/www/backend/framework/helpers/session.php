@@ -1,4 +1,5 @@
-<?php 
+<?php
+//[[GPL]]
 
 require_once 'framework/helpers/singleton.php';
 
@@ -14,16 +15,6 @@ class Session extends Singleton
     {
         //start the session
         session_start();
-    }
-    
-    /**
-     * Gets the session singleton instance.
-     *
-     * @return  The unique instance of the session.
-     */
-    public static function getInstance()
-    {
-        return parent::getInstance(__CLASS__);
     }
     
     /**

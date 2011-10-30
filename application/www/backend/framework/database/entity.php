@@ -1,13 +1,17 @@
 <?php
+//[[GPL]]
 
 require_once 'framework/database/database.php';
+
+// Exceptions.
+class EntityException extends ExceptionBase { }
 
 /**
  * Abstract class for any database entity.
  */
 abstract class Entity
 {
-    /** Timestamp when this entity was created */
+    /** Timestamp when this entity was created. */
     private $tsCreated;
     
     /** Timestamp when this entity was last changed. */
@@ -20,126 +24,271 @@ abstract class Entity
     private $userChanged;
     
     /**
-     * 
-     * Enter description here ...
+     * Loads this entity.
      */
-    public function retrieve()
+    protected function load()
     {
-        // Determine if the primary key is filled.
-        if (!$this->determineIsPrimaryKeyFilled()) 
+        // Determine if the primary keys are filled.
+        if (!$this->arePrimaryKeysFilled())
         {
-            // TODO : Throw exception;
-            return;
+            throw new EntityException('entity-primary-keys-not-set');
         }
         
         // Create the SQL statement to retrieve this entity and execute it prepared.
-        $query = makeSelectSql();
-        $resultSet = DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
+        $query = $this->getSelectQuery();
+        
+        $resultSet = Database::getInstance()->executePreparedStatement($query,
+            $this->getPrimaryKeyValues());
         
         // Determine if the entity was found in the database.
         if ($resultSet->getCount() != 1) 
         {
-            // TODO : Thow exception.
-            return;
+            throw new EntityException('entity-record-not-found');
         }
         
-        // Move the table row attributes to instance variables.
-        $this->moveAttributesToInstanceVars($resultSet->getFirstResultRow());
+        // Store result in our members.
+        foreach ($resultSet->getFirstResultRow()->getValues() as $name => $value)
+        {
+            $this->{$name} = $value;
+        }
     }
     
     /**
-      * 
-      * Enter description here ...
-      */
-    public function retrieveWithDetails()
-    {
-        $this->retrieve();
-        $this->retrieveDetails();
-    }
-    
-    /**
-     *
-     * Implement in derived class to retrieve attribute (and associactive?) entities.
-     */
-    abstract public function retrieveDetails();
-    
-    /**
-     * Saves the entity to the database. A database row is inserted if the entity does not exist in the
-     * database yet. A database row is updated if the entity exists in the database.
+     * Saves the entity to the database. A database row is inserted if the entity does not exist
+     * in the database yet. A database row is updated if the entity exists in the database.
      */
     public function save()
     {
+        // Initialize the database connection and start a transaction
+        Database::getInstance()->startTransaction();
+        
         // Determine if this is a fresh entity which has to be inserted into the database.
-        if (!$this->determineIsPrimaryKeyFilled())
+        if (!$this->isPrimaryKeyFilled())
         {
-            // Create the SQL statement to insert this entity and execute the statement prepared.
-            $query = $this->makeInsertSql();
-            DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
+            // Get the SQL statement to insert this entity and execute the statement prepared.
+            $query = $this->getInsertQuery();
+            
+            Database::getInstance()->executePreparedStatement($query, $this->getValues());
         }
         else
         {
-            // Create the SQL statement to update this entity and execute the statement prepared.
-            $query = $this->makeUpdateSql();
-            DBConnection::getInstance()->executePreparedStatement($query, $this->moveInstanceVarsToAttributes());
+            // Get the SQL statement to update this entity and execute the statement prepared.
+            $query = $this->getUpdateQuery();
+            
+            Database::getInstance()->executePreparedStatement($query, $this->getValues());
+        }
+        
+        // Commit the database transaction.
+        Database::getInstance()->commit();
+        
+        
+        //TODO: get primary keys and set them..
+        
+    }
+    
+    /**
+     * Sets some values of this entity.
+     *
+     * @param  $values  Array of name-value pairs to set.
+     */
+    public function setValues($values)
+    {
+        foreach ($values as $name => $value)
+        {
+            $this->{'set' . ucfirst($name)}($value);
         }
     }
     
     /**
+     * Gets all values of this entity.
      *
-     * Enter description here ...
+     * @return  All values of this entity.
      */
-    public function saveWithDetails()
+    public function getValues($keys = true, $default = true)
     {
-        $this->save();
-        $this->saveDetails();
+        $columns = array_merge(
+            $keys ? $this->getPrimaryKeys() : array(),
+            $this->getColumns(),
+            $default ? $this->getDefaultColumns() : array()
+        );
+        
+        $values = array();
+        foreach ($columns as $key)
+        {
+            $values[$key] = $this->{$key};
+        }
+        
+        return $values;
     }
     
     /**
-     * 
-     * Enter description here ...
+     * Gets all primary key values of this entity.
+     *
+     * @return  All primary key values of this entity.
      */
-    abstract public function saveDetails();
-    
+    public function getPrimaryKeyValues()
+    {
+        $values = array();
+        foreach ($this->getPrimaryKeys() as $key)
+        {
+            $values[$key] = $this->{$key};
+        }
+        
+        return $values;
+    }
     
     /**
-     * Moves the class instance variables into an array for insertion into a query.
+     * Checks if all primary keys are filled.
+     *
+     * @return  Whether the primary keys are filled.
      */
-    abstract protected function moveInstanceVarsToAttributes();
+    protected function arePrimaryKeysFilled()
+    {
+        foreach ($this->getPrimaryKeys() as $key)
+        {
+            if (!isset($this->{$key}))
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
     
     /**
-     * Moves the result attributes from a query into this classes instance variables.
-     * @param resultSetRow Result set row to read the attributes from.
+     * Gets columns that are available in all entities.
+     *
+     * @return  Query to select an entity from the database.
      */
-    abstract protected function moveAttributesToInstanceVars($resultSetRow);
+    protected static function getDefaultColumns()
+    {
+        return array('tsCreated', 'tsChanged', 'userCreated', 'userChanged');
+    }
     
     /**
-    * This method returns the SQL needed to select this entity from the database.
-    * @return SQL code to select this entity in the database.
-    */
-    abstract protected function makeSelectSql();
+     * Returns the query needed to select this entity from the database.
+     *
+     * @return  Query to select an entity from the database.
+     */
+    protected static function getSelectQuery()
+    {
+        // Get keys and table name.
+        $keys      = $this->getPrimaryKeys();
+        $tableName = $this->getTableName();
+        
+        // Set the where clause of the query.
+        $callback = function($value)
+        {
+            return $value . ' = :' . $value;
+        };
+
+        $whereClause = implode(' AND ', array_map($callback, $keys));
+        
+        // Create query.
+        $query = 'SELECT * FROM ' . $tableName . ' WHERE ' . $whereClause;
+        
+        return $query;
+    }
     
     /**
-     * This method returns the SQL needed to insert this entity into the database.
-     * @return SQL code to insert this entity in the database.
+     * Returns the query needed to insert this entity into the database.
+     *
+     * @return  Query to insert this entity in the database.
      */
-    abstract protected function makeInsertSql();
+    protected static function getInsertQuery()
+    {
+        // Get columns and table name.
+        $columns   = array_merge($this->getColumns(), $this->getDefaultColumns());
+        $tableName = $this->getTableName();
+        
+        // Create values.
+        $values = ':' . implode(', :', $columns);
+        
+        // Create query.
+        $query = 'INSERT INTO ' . $tableName
+               . '(' . implode(', ', $columns) . ') VALUES '
+               . '(' . $values . ')';
+        
+        return $query;
+    }
     
     /**
-     * This method returns the SQL needed to delete this entity from the database.
-     * @return SQL code to delete this entity from the database.
+     * Returns the query needed to delete this entity from the database.
+     *
+     * @return  Query to delete this entity from the database.
      */
-    abstract protected function makeDeleteSql();
+    protected static function getDeleteQuery()
+    {
+        // Get keys and table name.
+        $keys      = $this->getPrimaryKeys();
+        $tableName = $this->getTableName();
+        
+        // Set the where clause of the query.
+        $callback = function($value)
+        {
+            return $value . ' = :' . $value;
+        };
+
+        $whereClause = implode(' AND ', array_map($callback, $keys));
+        
+        // Create query.
+        $query = 'DELETE FROM ' . $tableName . ' WHERE ' . $whereClause;
+        
+        return $query;
+    }
     
     /**
-     * This method returns the SQL needed to update this entity in the database.
-     * @return SQL code to update this entity in the database.
+     * Returns the query needed to update this entity in the database.
+     *
+     * @return  Query to update this entity in the database.
      */
-    abstract protected function makeUpdateSql();
+    protected static function getUpdateQuery()
+    {
+        // Get columns and table name.
+        $keys      = $this->getPrimaryKeys();
+        $columns   = array_merge($this->getColumns(), $this->getDefaultColumns());
+        $tableName = $this->getTableName();
+        
+        // Set the set clause of the query.
+        $callback = function($value)
+        {
+            return $value . ' = :' . $value;
+        };
+
+        $setClause = implode(', ', array_map($callback, $columns));
+        
+        // Set the where clause of the query.
+        $callback = function($value)
+        {
+            return $value . ' = :' . $value;
+        };
+
+        $whereClause = implode(' AND ', array_map($callback, $keys));
+        
+        // Create query.
+        $query  = 'UPDATE ' . $tableName . ' SET ' . $setClause . ' WHERE ' . $whereClause;
+        
+        return $query;
+    }
     
     /**
-     * This method determines if the primary key instance variables of this object are filled.
-	 * @return <code>true</code> if the primary key is filled, otherwise <code>false</code>.
+     * Gets the table name.
+     *
+     * @return  The table name.
      */
-    abstract protected function determineIsPrimaryKeyFilled();
-   
+    abstract protected static function getTableName();
+    
+    /**
+     * Gets the primary key.
+     *
+     * @return  Array of all primary keys.
+     */
+    abstract protected static function getPrimaryKeys();
+    
+    /**
+     * Gets all the columns.
+     *
+     * @return  Array of all columns, except primary keys.
+     */
+    abstract protected static function getColumns();
 }
