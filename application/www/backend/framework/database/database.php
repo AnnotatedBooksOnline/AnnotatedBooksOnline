@@ -568,7 +568,7 @@ class DBConnection extends Singleton
 }
 
 // Test
-$dbc = DBConnection::getInstance();
+//$dbc = DBConnection::getInstance();
 // //$dbc->execute('insert into "DatumTijdTest" ("datum","tijd") values (%a, %t)', time(), time() + 1000);
 // $result = $dbc->query('select * from testtabel where testid >= %d',6);
 // foreach($result as $row)
