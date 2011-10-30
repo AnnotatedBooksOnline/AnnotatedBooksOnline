@@ -15,33 +15,40 @@ Ext.define('Ext.ux.RegistrationForm', {
             items: [{
                 name: 'username',
                 fieldLabel: 'Username',
-                vtype: 'uniqueUsername',
-                minLength: 6
+                //vtype: 'uniqueUsername',
+                minLength: 6,
+                maxLength: 40
             },{
                 name: 'email',
                 fieldLabel: 'Email Address',
-                vtype: 'email'
+                vtype: 'email',
+                maxLength: 256
             },{
                 name: 'firstname',
                 fieldLabel: 'First name',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'lastname',
                 fieldLabel: 'Last name',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'affiliation',
                 fieldLabel: 'Affiliation',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'occupation',
                 fieldLabel: 'Occupation',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'website',
                 fieldLabel: 'Website',
                 allowBlank: true,
-                vtype: 'url'
+                vtype: 'url',
+                maxLength: 256
             },{
                 name: 'password1',
                 fieldLabel: 'Password',
