@@ -213,6 +213,7 @@ Ext.define('Ext.ux.RegistrationWindow', {
 
 // TODO: not working yet + should move to somewhere else
 /*Ext.apply(Ext.Form.VTypes, {
+Ext.apply(Ext.form.VTypes, {
     uniqueUsername: function(value, field) {
         // TODO: ajax request with database
         
