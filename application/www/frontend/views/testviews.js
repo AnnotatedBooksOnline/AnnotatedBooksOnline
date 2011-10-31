@@ -18,7 +18,10 @@ Ext.onReady(function() {
         }/*,{
             title:'Userlist',
             xtype:'userlistpanel'
-        }*/]
+        }*/,{
+            title:'Search for books',
+            xtype:'searchpanel'
+            }]
     });
     
     Ext.create('Ext.Viewport', {
@@ -26,3 +29,4 @@ Ext.onReady(function() {
         items: [accordion]
     });
 });
+
