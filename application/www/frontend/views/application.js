@@ -79,16 +79,20 @@ Ext.define('Ext.ux.ApplicationViewport', {
             items: [{
                 title: 'Book 1',
                 xtype: 'viewerpanel',
-                id: 'viewer'
+                id: 'viewer', //TODO: get rid of this
+                book: new Book(1)
             },{
                 title: 'Book 2',
-                xtype: 'viewerpanel'
+                xtype: 'viewerpanel',
+                book: new Book(2)
             },{
                 title: 'Book 3',
-                xtype: 'viewerpanel'
+                xtype: 'viewerpanel',
+                book: new Book(3)
             },{
                 title: 'Book 4',
-                xtype: 'viewerpanel'
+                xtype: 'viewerpanel',
+                book: new Book(4)
             }]
             /*,
             listeners: {
