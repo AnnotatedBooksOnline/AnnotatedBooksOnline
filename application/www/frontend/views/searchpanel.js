@@ -30,7 +30,8 @@ Ext.define('Ext.form.field.YearBetweenField', {
                 autoStripChars: true,
                 labelSeparator: '',
                 labelWidth: 'auto',
-                style: 'margin-right: 5px;'
+                style: 'margin-right: 5px;',
+                allowBlank: true
             },
             items: [{
                 name: 'from',
@@ -138,7 +139,8 @@ Ext.define('Ext.ux.SearchField', {
             defaults: {
                 flex: 0,
                 style: 'margin-right: 15px;',
-                width: 500
+                width: 500,
+                allowBlank: true
             },
             items: [{
                 xtype: 'searchcombobox',
@@ -159,7 +161,7 @@ Ext.define('Ext.ux.SearchField', {
     }
 });
 
-Ext.define('Ext.ux.SearchPanel', {    extend: 'Ext.ux.FormBase',    alias: 'widget.searchpanel',    requires: ['*'], // TODO: specify        initComponent: function()     {        var _this = this;                var defConfig = {            items: [{                name: 'first',                xtype: 'searchfield',            }],                        buttons: [{                xtype: 'button',                formBind: true,                text: 'Update',                width: 140,                handler: function()                {                    var form = this.up('form').getForm();                    // TODO                    /*                     * Normally we would submit the form to the server here and handle the response...                     * form.submit({                     *     clientValidation: true,                     *     url: 'editprofile.php',                     *     success: function(form, action) {                     *        //...                     *     },                     *     failure: function(form, action) {                     *         //...                     *     }                     * });                     */                    if (form.isValid())                    {
+Ext.define('Ext.ux.SearchPanel', {    extend: 'Ext.ux.FormBase',    alias: 'widget.searchpanel',    requires: ['*'], // TODO: specify        initComponent: function()     {        var _this = this;                var defConfig = {            items: [{                xtype: 'searchfield'            }],                        buttons: [{                xtype: 'button',                formBind: true,                text: 'Search',                width: 140,                handler: function()                {                    var form = this.up('form').getForm();                    // TODO                    /*                     * Normally we would submit the form to the server here and handle the response...                     * form.submit({                     *     clientValidation: true,                     *     url: 'editprofile.php',                     *     success: function(form, action) {                     *        //...                     *     },                     *     failure: function(form, action) {                     *         //...                     *     }                     * });                     */                    if (form.isValid())                    {
                         var fields = [];
                         for (var i = 0; i < _this.items.length; ++i)
                         {
@@ -169,8 +171,155 @@ Ext.define('Ext.ux.SearchField', {
                                 fields[fields.length] = _this.items.get(i).getValue();
                             }
                         }
-                                                Ext.Msg.alert('Submitted Values', Ext.JSON.encode(fields));                    }                }            }]        };                Ext.apply(this, defConfig);                this.callParent();
+                                                Ext.Msg.alert('Submitted Values', Ext.JSON.encode(fields));                    }                }
+            }]        };                Ext.apply(this, defConfig);                this.callParent();
         
         var firstField = this.getComponent(0).down('[name=type]');
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});    }});
+
+
+
+
+
+
+Ext.define('SP.Search.SearchColumnModel', {
+    extend: 'Ext.data.Model',
+    fields: [{
+        name: 'name',
+        type: 'string'
+    },{
+        name: 'desc',
+        type: 'string'
+    },{
+        name: 'show',
+        type: 'boolean'
+    }]
+});
+
+var columns = Ext.create('Ext.data.Store', {
+    model: 'SP.Search.SearchColumnModel',
+/*        proxy: {
+        type: 'ajax',
+        url: 'search.php',
+        reader: {
+            type: 'json',
+            root: 'columns'
+        }
+    }*/
+    data: [{
+        name: 'name',
+        desc: 'Name',
+        show: true
+    },{
+        name: 'desc',
+        desc: 'Description',
+        show: true
+    },{
+        name: 'thumbnail',
+        desc: 'Thumbnail',
+        show: false
+    }]
+});
+
+
+
+var store = Ext.create('Ext.data.Store', {
+    model: Ext.define('CurrentColumnModel', {
+        extend: 'Ext.data.Model',
+        fields: function()
+        {
+            var cols = columns.getRange();
+            var fields = [];
+            for (var i = 0; i < cols.length; i++)
+            {
+                fields[fields.length] = {name: cols[i].get('name')};
+            }
+            return fields;
+        }()
+    }),
+/*        proxy: {
+        type: 'ajax',
+        url: 'search.php',
+        reader: {
+            type: 'json',
+            root: 'books'
+        }
+    }*/
+    data: [{
+        name: 'bla',
+        desc: 'Blaat',
+        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/forms.png'
+    },{
+        name: 'test',
+        desc: 'Dit is een test',
+        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/kiva.png'
+    }]
+});
+//    store.load();
+
+Ext.define('SP.Search.ResultSet', {
+    extend: 'Ext.view.View',
+    alias: 'widget.searchresultset',
+
+    initComponent: function() {
+        var defConfig = {
+            tpl: [
+                '<tpl for=".">',
+                    '<div>',
+                        '<div style="float: left">',
+                            '<img src="{thumbnail}" style="width: 50px; height: 67px;"/>',
+                        '</div>',
+                        '<div style="float: left">',
+                            '<table>{properties}</table>',
+                        '</div>',
+                    '</div>',
+                    '<div style="clear: both"/>',
+                '</tpl>',
+            ],
+            autoWidth: true,
+            disableSelection: true,
+//            trackOver: true,
+//            overItemCls: 'x-item-over',
+//            itemSelector: 'div.thumb-wrap',
+            emptyText: 'No books found.',
+            prepareData: function(data) {
+                var properties = "";
+                for (var field in data)
+                {
+                    var col = columns.findRecord('name', field);
+                    if (col != undefined && col.get('desc') != undefined && col.get('show'))
+                    {
+                        properties += '<tr><td>' + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
+                    }
+                }
+                data['properties'] = properties;
+                return data;
+            }
+        };
+        
+        Ext.apply(this, defConfig);
+        this.callParent();
+    }
+});
+
+Ext.define('Ext.ux.SearchResultView', {
+    extend: 'Ext.Panel',
+    alias: 'widget.searchresults',
+    requires: ['*'],
+    
+    initComponent: function() {
+        var defConfig = {
+            title: 'Search results',
+            id: 'bla',
+//            border: 0,
+            autoWidth: true,
+            items: [{
+                xtype: 'searchresultset',
+                store: store
+            }]
+        };
+        
+        Ext.apply(this, defConfig);                this.callParent();
+    }
+});
