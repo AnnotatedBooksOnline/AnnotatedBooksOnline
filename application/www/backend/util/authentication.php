@@ -1,4 +1,5 @@
 <?php
+//[[GPL]]
 
 require_once 'framework/helpers/singleton.php';
 require_once 'models/usermodel.php';
@@ -11,7 +12,7 @@ class Authentication extends Singleton
     private $user;
     
     /**
-     * Constructs a authentication class instance.
+     * Constructs an authentication class instance.
      */
     protected function __construct()
     {
@@ -29,9 +30,9 @@ class Authentication extends Singleton
     }
     
     /**
-     * Gets the session singleton instance.
+     * Gets the authentication singleton instance.
      *
-     * @return  The unique instance of the session.
+     * @return  The unique instance of the authentication.
      */
     public static function getInstance()
     {

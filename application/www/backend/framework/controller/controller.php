@@ -1,6 +1,5 @@
 <?php
-
-require_once 'framework/database/database.php';
+//[[GPL]]
 
 /**
  * Controller class.
@@ -17,7 +16,6 @@ abstract class Controller
         
         try
         {
-            
             //TODO: (GVV) handle multiple requests:
             //TODO: (GVV) controller=multirequest, data=[{controller: '..', action: '..', data: [..]}, ..]
             //TODO: (GVV) handle file uploads, with: output=json/html + custom ExtJS form action?
@@ -33,9 +31,6 @@ abstract class Controller
             // Determine if the action method exists in the controller.
             if (method_exists($controller, $methodName))
             {
-                // Initialize the database connection and start a transac
-                DBConnection::getInstance()->startTransaction();
-                
                 // Get the request JSON data.
                 $input = isset($_POST['data']) ? json_decode($_POST['data']) : '';
                 
@@ -47,15 +42,9 @@ abstract class Controller
                 
                 // Return the result as a JSON object.
                 echo json_encode($output);
-                
-                // Commit the database transaction.
-                DBConnection::getInstance()->commit();
             }
             else
             {
-                // Roll back the database transaction
-                DBConnection::getInstance()->rollBack();
-                
                 throw new Exception('Controller \'' . $controllerName .
                     '\' has no action \'' . $actionName . '\'.');
             }

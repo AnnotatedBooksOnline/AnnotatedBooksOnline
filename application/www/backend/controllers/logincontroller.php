@@ -1,4 +1,5 @@
 <?php
+//[[GPL]]
 
 require_once 'framework/controller/controller.php';
 require_once 'model/user/user.php';

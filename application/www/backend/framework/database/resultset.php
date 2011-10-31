@@ -1,19 +1,19 @@
 <?php
 
 /**
-* An IteratorAggregate for the results of a query.
-*
-* Can be used to iterate over the rows in the result set of a query.
-*
-* Example:
-* \verbatim
-* $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
-* foreach($results as $result)
-* {
-*      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n'
-* }
-* \endverbatim
-*/
+ * An IteratorAggregate for the results of a query.
+ *
+ * Can be used to iterate over the rows in the result set of a query.
+ *
+ * Example:
+ * \verbatim
+ * $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
+ * foreach($results as $result)
+ * {
+ *      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n'
+ * }
+ * \endverbatim
+ */
 class ResultSet implements IteratorAggregate
 {
     public $statement;
