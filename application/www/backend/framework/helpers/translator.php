@@ -8,7 +8,7 @@ require_once 'framework/helpers/singleton.php';
  */
 class Translator extends Singleton
 {
-    const FILE_PATH = 'translation/en-US/exceptions.ini';
+    const FILE_PATH = 'translation/en-US/errors.ini';
     
     /** All entries, by id. */
     private $entries;
