@@ -5,15 +5,8 @@ require_once 'framework/helpers/singleton.php';
 require_once 'framework/helpers/configuration.php';
 require_once 'framework/database/resultset.php';
 
-class FormatException extends Exception
-{
-    // TODO
-}
-
-class DatabaseException extends Exception
-{
-    // TODO
-}
+// Exceptions.
+class DatabaseException extends ExceptionBase { }
 
 /**
  * A singleton class representing a connection to the database.
@@ -42,17 +35,6 @@ class Database extends Singleton
     }
 
     /**
-     * Get an instance of the database. A new database connection will be made if it is not yet 
-     * present.
-     * 
-     * @return  An instance of the database connection.
-     */
-    public static function getInstance()
-    {
-        return parent::getInstance(__CLASS__);
-    }
-
-    /**
      * Starts a database transaction.
      *
      * After calling this method, all query functions will no longer immediately commit their
@@ -69,7 +51,7 @@ class Database extends Singleton
     {
         if (!$this->pdo->beginTransaction())
         {
-            throw new DatabaseException('Starting a failed transaction for an unkown reason.');
+            throw new DatabaseException('transaction-start');
         }
     }
 
@@ -101,7 +83,7 @@ class Database extends Singleton
     {
         if (!$this->pdo->commit())
         {
-            throw new DatabaseException('Commit failed for an unkown reason.');
+            throw new DatabaseException('transaction-commit');
         }
     }
 
@@ -118,7 +100,7 @@ class Database extends Singleton
     {
         if (!$this->pdo->rollBack())
         {
-            throw new DatabaseException('Commit rollback failed for an unkown reason.');
+            throw new DatabaseException('transaction-rollback');
         }
     }
 
@@ -147,7 +129,7 @@ class Database extends Singleton
      *  - b - A SQL hexadecimal number representing a bytestring (used for BLOB's, for instance).
      *        The argument should be string which will be interpreted as binary data.
      *  - n - A SQL identifier like a column or table name. The argument is a string that has to
-     *           conform to <b>\*|[a-zA-Z_][a-zA-Z_0-9\$]*</b> and will have souble quotes (") added
+     *           conform to <b>^\*|\w[\w\$]*$</b> and will have double quotes (") added
      *           to its begin and end. The argument should not be directly formed from user input.
      *  - t - A point in time. The argument should be formatted as a Unix timestamp: the numer of
      *           seconds (not milliseconds!) since January 1 1970 00:00:00 GMT. This is also the format
@@ -159,15 +141,15 @@ class Database extends Singleton
      * 
      * Some usage examples can be found in the coumentation of query().
      *
-     * @param string $query   The format query. 
-     * @param array  $args An indexed array of the arguments in the correct order.
+     * @param string $query  The format query. 
+     * @param array  $args   An indexed array of the arguments in the correct order.
      * 
-     * @return string A string containing the query which can be safely executed through query()
-     *                or execute().
+     * @return string  A string containing the query which can be safely executed through query()
+     *                 or execute().
      * 
-     * @throws FormatException If an argument does not conform to the requirements listed above, if
-     *                           the number of arguments is too high or low or if an undefined format
-     *                           specifier is used.
+     * @throws FormatException  If an argument does not conform to the requirements listed above, if
+     *                          the number of arguments is too high or low or if an undefined format
+     *                          specifier is used.
      */
     public function buildQuery($query, $args)
     {
@@ -182,7 +164,7 @@ class Database extends Singleton
             {
                 if ($i == count($inp) - 1)
                 {
-                    throw new FormatException('% at end of format string.');
+                    throw new FormatException('percent-at-end');
                 }
                 else
                 {
@@ -194,7 +176,7 @@ class Database extends Singleton
 
             if ($arg >= count($args))
             {
-                throw new FormatException('Not enough arguments.');
+                throw new FormatException('not-enought-arguments');
             }
             
             $outp .= $this->formatSingle($inp[$i][0], $args[$arg]) . substr($inp[$i], 1);
@@ -203,7 +185,7 @@ class Database extends Singleton
 
         if ($arg < count($args))
         {
-            throw new FormatException('Too many arguments.');
+            throw new FormatException('too-many-arguments');
         }
 
         return $outp;
@@ -239,10 +221,11 @@ class Database extends Singleton
     public function query( /* $fquery, $args ... */ )
     {
         $stat = $this->pdo->prepare($this->buildQuery(func_get_arg(0), array_slice(func_get_args(),1)));
-        if(!$stat->execute())
+        if (!$stat->execute())
         {
-            throw new DatabaseException('SQL error: ' . print_r($stat->errorInfo(), true));
+            throw new DatabaseException('sql', print_r($stat->errorInfo(), true));
         }
+        
         return new ResultSet($stat);
     }
 
@@ -254,9 +237,9 @@ class Database extends Singleton
     public function execute( /* $fquery, $args ... */ )
     {
         $stat = $this->pdo->prepare($this->buildQuery(func_get_arg(0), array_slice(func_get_args(),1)));
-        if(!$stat->execute())
+        if (!$stat->execute())
         {
-            throw new DatabaseException('SQL error: ' . print_r($stat->errorInfo(), true));
+            throw new DatabaseException('sql', print_r($stat->errorInfo(), true));
         }
     }
     
@@ -320,8 +303,7 @@ class Database extends Singleton
      */
     public function select($table, $columns = array(), $where_equal = array(), $exec = true)
     {
-        $n = count($columns);
-        if ($n == 0)
+        if (!$columns)
         {
             $columns = array('*');
         }
@@ -333,10 +315,9 @@ class Database extends Singleton
         }
 
         $q .= ' FROM ' . $this->formatSingle('n', $table) . ' ';
-        
         $q .= $this->buildWhereClause($where_equal, '=');
         
-        if($exec)
+        if ($exec)
         {
             return $this->query($q);
         }
@@ -382,18 +363,19 @@ class Database extends Singleton
             return;
         }
         
-        $q    = 'INSERT INTO ' . $this->formatSingle('n', $table) . ' (';
-        $vals = '(';
+        $query = 'INSERT INTO ' . $this->formatSingle('n', $table) . ' (';
+        $vals  = '(';
 
         foreach ($col_val_array as $col => $val)
         {
-            $q .= $this->formatSingle('n', $col) . ',';
+            $query .= $this->formatSingle('n', $col) . ',';
             if ($val[0] == '%')
             {
                 if (strlen($val) == 1)
                 {
-                    throw new FormatException('Just a single \'%\' in provided value.');
+                    throw new FormatException('single-percent');
                 }
+                
                 $spec = $val[1];
                 $val  = substr($val, 2);
             }
@@ -405,18 +387,18 @@ class Database extends Singleton
             $vals .= $this->formatSingle($spec, $val) . ',';
         }
 
-        $q    = rtrim($q, ',');
-        $vals = rtrim($vals, ',');
-        $q   .= ') VALUES ' . $vals . ') ';
+        $query  = rtrim($query, ',');
+        $vals   = rtrim($vals, ',');
+        $query .= ') VALUES ' . $vals . ') ';
         
-        $q .= $this->buildWhereClause($where_equal, '=');
+        $query .= $this->buildWhereClause($where_equal, '=');
 
         if ($exec)
         {
-            $this->execute($q);
+            $this->execute($query);
         }
         
-        return $q;
+        return $query;
     }
     
     public function update($table, $col_val_array, $where_equal, $exec = true)
@@ -426,17 +408,17 @@ class Database extends Singleton
             return;
         }
         
-        $q  = 'UPDATE ' . $this->formatSingle('n', $table) . ' SET ';
-        
+        $query = 'UPDATE ' . $this->formatSingle('n', $table) . ' SET ';
         foreach ($col_val_array as $col => $val)
         {
-            $q .= $this->formatSingle('n', $col) . ' = ';
+            $query .= $this->formatSingle('n', $col) . ' = ';
             if ($val[0] == '%')
             {
                 if (strlen($val) == 1)
                 {
-                    throw new FormatException("Just a single '%' in provided value.");
+                    throw new FormatException('single-percent');
                 }
+                
                 $spec = $val[1];
                 $val  = substr($val, 2);
             }
@@ -445,19 +427,18 @@ class Database extends Singleton
                 $spec = 's';
             }
             
-            $q .= $this->formatSingle($spec, $val) . ',';
+            $query .= $this->formatSingle($spec, $val) . ',';
         }
         
-        $q = rtrim($q, ',');
-        
-        $q .= $this->buildWhereClause($where_equal, '=');
+        $query  = rtrim($query, ',');
+        $query .= $this->buildWhereClause($where_equal, '=');
         
         if ($exec)
         {
-            $this->execute($q);
+            $this->execute($query);
         }
         
-        return $q;
+        return $query;
     }
     
     public function delete($table, $where_equal, $exec = true)
@@ -467,8 +448,7 @@ class Database extends Singleton
             return;
         }
         
-        $q = 'DELETE FROM ' . $this->formatSingle('n', $table) . ' ';
-        
+        $q  = 'DELETE FROM ' . $this->formatSingle('n', $table) . ' ';
         $q .= $this->buildWhereClause($where_equal, '=');
         
         if ($exec)
@@ -488,8 +468,7 @@ class Database extends Singleton
         }
         
         $result = 'WHERE ';
-        
-        foreach($where_equal_array as $col => $val)
+        foreach ($where_equal_array as $col => $val)
         {
             $result .= $this->formatSingle('n', $col). ' ' . $operator . ' ';
                      
@@ -497,7 +476,7 @@ class Database extends Singleton
             {
                 if (strlen($val) == 1)
                 {
-                    throw new FormatException('Just a single '%' in provided value.');
+                    throw new FormatException('single-percent');
                 }
                 $spec = $val[1];
                 $val  = substr($val, 2);
@@ -506,6 +485,7 @@ class Database extends Singleton
             {
                 $spec = 's';
             }
+            
             $result .= $this->formatSingle($spec, $val) . ',';
         } 
         
@@ -525,9 +505,9 @@ class Database extends Singleton
             case 'd':
                 if (is_bool($arg))
                 {
-                    $arg = $arg ? '1' : '0';
+                    $arg = (int) $arg;
                 }
-                    
+                
                 assert(is_numeric($arg));
 
                 // Intentional fall-through.
@@ -536,8 +516,9 @@ class Database extends Singleton
                 $result = $this->pdo->quote($arg);
                 if (!$result)
                 {
-                    throw new DatabaseException('String quoting is not supported.');
+                    throw new DatabaseException('string-quoting');
                 }
+                
                 return $result;
 
             case 'b':
@@ -545,11 +526,9 @@ class Database extends Singleton
                 return "X'" . strtoupper(bin2hex($arg)) . "'";
 
             case 'n':
-                $matches = array();
-                preg_match_all('/\*|[a-zA-Z_][a-zA-Z_0-9\$]*/', $arg, $matches);
-                if (count($matches) == 0 || count($matches[0]) == 0 || $matches[0][0] != $arg)
+                if (!preg_match('/^\*|\w[\w\$]*$/', $arg))
                 {
-                    throw new FormatException($arg . " is not a valid SQL identifier.");
+                    throw new FormatException('not-valid-sql-identifier', $arg);
                 }
                 
                 // Note: also Postgre syntax.
@@ -557,13 +536,14 @@ class Database extends Singleton
 
             case 't':
                 assert(is_numeric($arg));
-                return "(timestamptz 'epoch' + {$this->pdo->quote($arg)} * interval '1 second')";
+                
+                return "(timestamptz 'epoch' + " . $this->pdo->quote($arg) . " * interval '1 second')";
 
             case 'a':
                 return $this->pdo->quote(strftime('%G-%m-%d', $arg));
 
             default:
-                throw new FormatException('%' . $specifier . " is not a valid conversion specifier");
+                throw new FormatException('not-valid-conversion-specifier', $specifier);
         }
     }
 }

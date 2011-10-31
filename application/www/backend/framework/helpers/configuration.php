@@ -3,10 +3,8 @@
 
 require_once 'framework/helpers/singleton.php';
 
-class SettingNotFoundException extends Exception
-{
-    // TODO
-}
+// Exceptions
+class SettingNotFoundException extends ExceptionBase { }
 
 /**
  * Configuration class.
@@ -24,17 +22,7 @@ class Configuration extends Singleton
     protected function __construct()
     {
         // Load the settings from the configuration file.
-        $this->settings = parse_ini_file(self::FILE_PATH, true);
-    }
-    
-    /**
-     * Gets the configuration singleton instance.
-     *
-     * @return  The unique instance of the configuration.
-     */
-    public static function getInstance()
-    {
-        return parent::getInstance(__CLASS__);
+        $this->settings = parse_ini_file(self::FILE_PATH, false);
     }
     
     /**
@@ -60,7 +48,7 @@ class Configuration extends Singleton
         }
         else
         {
-            throw new SettingNotFoundException('Could not find setting \'' . $name . '\'.');
+            throw new SettingNotFoundException('setting-not-found', $name);
         }
     }
     

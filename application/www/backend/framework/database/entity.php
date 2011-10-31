@@ -3,6 +3,9 @@
 
 require_once 'framework/database/database.php';
 
+// Exceptions.
+class EntityException extends ExceptionBase { }
+
 /**
  * Abstract class for any database entity.
  */
@@ -28,7 +31,7 @@ abstract class Entity
         // Determine if the primary keys are filled.
         if (!$this->arePrimaryKeysFilled())
         {
-            throw new Exception('Cannot load entity, primary key(s) are not available.');
+            throw new EntityException('entity-primary-keys-not-set');
         }
         
         // Create the SQL statement to retrieve this entity and execute it prepared.
@@ -40,7 +43,7 @@ abstract class Entity
         // Determine if the entity was found in the database.
         if ($resultSet->getCount() != 1) 
         {
-            throw new Exception('Entity record could not be found.');
+            throw new EntityException('entity-record-not-found');
         }
         
         // Store result in our members.

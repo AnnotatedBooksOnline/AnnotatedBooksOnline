@@ -1,6 +1,12 @@
 <?php
 //[[GPL]]
 
+require 'framework/helpers/exceptionbase.php';
+require 'framework/helpers/translator.php';
+
+// Exceptions
+class ControllerException extends ExceptionBase { }
+
 /**
  * Controller class.
  */
@@ -45,9 +51,12 @@ abstract class Controller
             }
             else
             {
-                throw new Exception('Controller \'' . $controllerName .
-                    '\' has no action \'' . $actionName . '\'.');
+                throw new ControllerException('controller-action-not-found', $controllerName, $actionName);
             }
+        }
+        catch (ExceptionBase $e)
+        {
+            exit(htmlspecialchars($e->getMessage()));
         }
         catch (Exception $e)
         {
@@ -75,7 +84,7 @@ abstract class Controller
         }
         else
         {
-            throw new Exception('Controller \'' . $type . '\' not found.');
+            throw new ControllerException('controller-not-found', $type);
         }
     }
 }
