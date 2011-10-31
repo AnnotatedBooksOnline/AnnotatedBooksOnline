@@ -1,9 +1,13 @@
-<?php 
+<?php
+//[[GPL]]
+
+// Exceptions
+class SingletonException extends ExceptionBase { }
 
 /**
  * Base class for all singleton classes.
  */
-class Singleton
+abstract class Singleton
 {
     private static $instance;
 
@@ -12,16 +16,15 @@ class Singleton
     }
 
     /**
-     * Gets the subclass its singleton instance.
-     *
-     * @param  $className   Name of the subclass to create an instance of.
+     * Gets the unique singleton instance.
      *
      * @return  The unique instance of the subclass.
      */
-    protected static function getInstance($className)
+    public static function getInstance()
     {
         if (!isset(self::$instance))
         {
+            $className = get_called_class();
             self::$instance = new $className;
         }
         
@@ -30,11 +33,11 @@ class Singleton
 
     public function __clone()
     {
-        throw new Exception('Cloning a singleton class is not allowed.');
+        throw new SingletonException('cloning-singleton');
     }
 
     public function __wakeup()
     {
-        throw new Exception('Deserializing a singleton class is not allowed.');
+        throw new SingletonException('deserializing-singleton');
     }
 }

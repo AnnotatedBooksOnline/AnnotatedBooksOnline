@@ -24,10 +24,6 @@ Ext.define('Ext.ux.ViewportPanel', {
     {
         this.callParent();
         
-        //DEBUG: create document
-        this.document = new Document(151, 225, 5); //256, 256, 20 for Google maps
-        //TODO: get document from arguments
-        
         var size = this.getSize();
         this.viewport = new Viewport(size.width, size.height, this.document);
     },
@@ -35,8 +31,14 @@ Ext.define('Ext.ux.ViewportPanel', {
     afterComponentLayout: function(width, height)
     {
         this.viewport.setDimensions(width, height);
-        this.viewport.reset();
-        this.viewport.insert(this.body.dom);
+        
+        if (this.insertedViewport === undefined)
+        {
+            this.viewport.reset();
+            this.viewport.insert(this.body.dom);
+            
+            this.insertedViewport = true;
+        }
         
         this.callParent(arguments);
     },

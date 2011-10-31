@@ -1,19 +1,23 @@
 <?php
+//[[GPL]]
+
+// Exceptions
+class ResultSetException extends ExceptionBase { }
 
 /**
-* An IteratorAggregate for the results of a query.
-*
-* Can be used to iterate over the rows in the result set of a query.
-*
-* Example:
-* \verbatim
-* $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
-* foreach($results as $result)
-* {
-*      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n'
-* }
-* \endverbatim
-*/
+ * An IteratorAggregate for the results of a query.
+ *
+ * Can be used to iterate over the rows in the result set of a query.
+ *
+ * Example:
+ * \verbatim
+ * $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
+ * foreach($results as $result)
+ * {
+ *      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n'
+ * }
+ * \endverbatim
+ */
 class ResultSet implements IteratorAggregate
 {
     public $statement;
@@ -71,7 +75,7 @@ class ResultSetIterator implements Iterator
         ++$this->i;
         if ($this->i > $this->statement->rowCount())
         {
-            throw new Exception("Iterator out of range.");
+            throw new ResultSetException('iterator-out-of-range');
         }
 
         $this->curr = $this->statement->fetch(PDO::FETCH_ASSOC);
@@ -96,7 +100,7 @@ class ResultSetIterator implements Iterator
     {
         if ($this->i > 0)
         {
-            throw new Exception("Cannot rewind a ResultSetIterator.");
+            throw new ResultSetException('cannot-rewind-iterator');
         }
     }
 }

@@ -84,13 +84,15 @@ Ext.define('Ext.ux.Viewer', {
             collapsible: true,
             split: true,
             width: 200,
+            cls: 'navigation-panel'
         };
         
         var _this = this;
         var centerRegion = {
             region: 'center',
             xtype: 'viewportpanel',
-            
+            document: _this.book.getDocument(0),
+            cls: 'viewport-panel',
             tbar: [
                 {
                     xtype: 'slider',
@@ -107,7 +109,8 @@ Ext.define('Ext.ux.Viewer', {
                             _this.skipSettingSliderValue = true;
                             _this.viewport.zoom(value / 200 * _this.viewport.getMaxZoomLevel());
                         }
-                    }
+                    },
+                    cls: 'zoom-slider'
                 }, '-', {
                     xtype: 'textfield',
                     width: 30,
@@ -118,12 +121,18 @@ Ext.define('Ext.ux.Viewer', {
                     allowDecimals: false,
                     autoStripChars: true,
                     allowBlank: false
-                },'/ 20',{
+                },{
+                    xtype: 'tbtext',
+                    text: '/ ' + _this.book.getDocumentAmount(),
+                    cls: 'total-text'
+                },{
                     iconCls: 'first-icon',
                     tooltip: 'Go to first page',
+                    disabled: true
                 },{
                     iconCls: 'previous-icon',
                     tooltip: 'Go to previous page',
+                    disabled: true
                 },{
                     iconCls: 'next-icon',
                     tooltip: 'Go to next page',
@@ -179,8 +188,7 @@ Ext.define('Ext.ux.Viewer', {
         this.navigation = this.items.get(0);
         this.viewport   = this.items.get(1).getViewport();
         this.slider     = this.items.get(1).dockedItems.get(0).items.get(0);
-        
-        //TODO: set book
+        this.totalText  = this.items.get(1).dockedItems.get(0).items.get(4);
         
         var eventDispatcher = this.viewport.getEventDispatcher();
         eventDispatcher.bind('change', this.afterViewportChange, this);
@@ -243,6 +251,8 @@ Ext.define('Ext.ux.Viewer', {
     
     setBook: function(book)
     {
-        //TODO: set book
+        this.book = book;
+        
+        this.viewport.setDocument(book.getDocument(0));
     }
 });

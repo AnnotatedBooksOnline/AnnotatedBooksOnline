@@ -16,32 +16,39 @@ Ext.define('Ext.ux.RegistrationForm', {
                 name: 'username',
                 fieldLabel: 'Username',
                 vtype: 'uniqueUsername',
-                minLength: 6
+                minLength: 6,
+                maxLength: 40
             },{
                 name: 'email',
                 fieldLabel: 'Email Address',
-                vtype: 'email'
+                vtype: 'email',
+                maxLength: 256
             },{
                 name: 'firstname',
                 fieldLabel: 'First name',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'lastname',
                 fieldLabel: 'Last name',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'affiliation',
                 fieldLabel: 'Affiliation',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'occupation',
                 fieldLabel: 'Occupation',
-                allowBlank: true
+                allowBlank: true,
+                maxLength: 50
             },{
                 name: 'website',
                 fieldLabel: 'Website',
                 allowBlank: true,
-                vtype: 'url'
+                vtype: 'url',
+                maxLength: 256
             },{
                 name: 'password1',
                 fieldLabel: 'Password',
@@ -53,8 +60,8 @@ Ext.define('Ext.ux.RegistrationForm', {
                 fieldLabel: 'Repeat password',
                 inputType: 'password',
                 
-                // Custom validator implementation - checks that the value matches what was entered into
-                // the password1 field.
+                // Custom validator implementation - checks that the value matches what was entered
+                // into the password1 field.
                 validator: function(value)
                 {
                     var password1 = this.previousSibling('[name=password1]');
@@ -96,7 +103,8 @@ Ext.define('Ext.ux.RegistrationForm', {
                                     modal: true,
                                     width: 500,
                                     height: 400,
-                                    html: '<iframe src="' + target.href + '" style="border: 0; width: 100%; height: 100%;"></iframe>',
+                                    html: '<iframe src="' + target.href + '" style="border: 0;'
+                                        + 'width: 100%; height: 100%;"></iframe>',
                                     buttons: [{
                                         text: 'Decline',
                                         handler: function()
@@ -217,11 +225,10 @@ Ext.apply(Ext.form.VTypes, {
             succes: ...
         });
         
-        return response;
-        */
+        return response;*/
+        
         return true;
     },
     
     uniqueUsernameText: 'Username already in use'
 });
-

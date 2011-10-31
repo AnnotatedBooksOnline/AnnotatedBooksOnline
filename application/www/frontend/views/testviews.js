@@ -4,6 +4,9 @@ Ext.onReady(function() {
         layout:'accordion',
         split: true,
         items:[{
+            title:'Userlist',
+            xtype:'userlistpanel'
+        },{
             title:'Edit profile',
             xtype:'editprofileform'
         },{
@@ -15,13 +18,10 @@ Ext.onReady(function() {
         },{
             title:'Login',
             xtype:'loginform'
-        }/*,{
-            title:'Userlist',
-            xtype:'userlistpanel'
-        }*/,{
+        },{
             title:'Search for books',
             xtype:'searchpanel'
-            }]
+        }]
     });
     
     Ext.create('Ext.Viewport', {
