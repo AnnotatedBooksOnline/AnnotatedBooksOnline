@@ -21,6 +21,15 @@ Ext.onReady(function() {
         },{
             title:'Login',
             xtype:'loginform'
+        },{
+            title:'Search for books',
+            xtype:'panel',
+            autoHeight: true,
+            items: [{
+                xtype: 'searchpanel'
+            },{
+                xtype: 'searchresults'
+            }]
         }]
     });
     
@@ -29,3 +38,4 @@ Ext.onReady(function() {
         items: [accordion]
     });
 });
+

@@ -2,7 +2,9 @@
 //[[GPL]]
 
 require 'framework/helpers/exceptionbase.php';
+require 'framework/helpers/configuration.php';
 require 'framework/helpers/translator.php';
+require 'framework/helpers/log.php';
 
 // Exceptions
 class ControllerException extends ExceptionBase { }
@@ -40,9 +42,12 @@ abstract class Controller
                 // Get the request JSON data.
                 $input = isset($_POST['data']) ? json_decode($_POST['data']) : '';
                 
+                // Log a messsage.
+                Log::info("Handling action action '%s' of controller '%s'.", $actionName, $controllerName);
+                
                 // Call the action handler method.
                 $output = $controller->{$methodName}($input);
-                
+        
                 // Set the appropriate content type for a JSON response.
                 header('Content-Type: application/json');
                 
@@ -54,13 +59,13 @@ abstract class Controller
                 throw new ControllerException('controller-action-not-found', $controllerName, $actionName);
             }
         }
-        catch (ExceptionBase $e)
-        {
-            exit(htmlspecialchars($e->getMessage()));
-        }
         catch (Exception $e)
         {
-            exit(htmlspecialchars($e->getMessage()));
+            // Set the appropriate content type for a JSON response.
+            header('Content-Type: application/json');
+            
+            // Handle exception and output result array as JSON.
+            echo json_encode(self::handleException($e));
         }
     }
     
@@ -86,5 +91,32 @@ abstract class Controller
         {
             throw new ControllerException('controller-not-found', $type);
         }
+    }
+    
+    // Shows an exception.
+    private static function handleException($e)
+    {
+        // Get exception info.
+        $stackTrace = $e->getTraceAsString();
+        $message    = $e->getMessage();
+        $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
+        
+        // Set result.
+        $result = array('message' => $message, 'code' => $code);
+        
+        // Set stacktrace if in debug mode.
+        if (Configuration::getInstance()->getBoolean('debug-mode', false))
+        {
+            $result['trace'] = $stackTrace;
+        }
+        
+        // Log the exception.
+        Log::error("An exception occured: message: '%s', code: '%s', stack trace:\n%s",
+            $message, $code, $stackTrace);
+        
+        // Set error code.
+        header('HTTP/1.0 500 Internal Server Error');
+        
+        return $result;
     }
 }

@@ -1,0 +1,138 @@
+<?php
+//[[GPL]]
+
+require_once 'framework/helpers/singleton.php';
+
+/**
+ * Log class.
+ */
+class Log extends Singleton
+{
+    /** Unique instance. */
+    protected static $instance;
+    
+    /** Logging file. */
+    private $file;
+    
+    /** Logging level. */
+    private $level;
+    
+    /**
+     * Constructs a log class instance.
+     */
+    protected function __construct()
+    {
+        // Open log file.
+        $this->file = fopen('log/log.txt', 'a');
+        
+        // Get log level.
+        $this->level = Configuration::getInstance()->getBoolean('logging-level', 2);
+    }
+    
+    /**
+     * Closes log file.
+     */
+    public function __destruct()
+    {
+        fclose($this->file);
+    }
+    
+    /**
+     * Adds a debug message.
+     *
+     * @param  $format  The format of the message.
+     * @param  ...      The arguments of the format.
+     */
+    public static function debug($format)
+    {
+        // Check whether to log it.
+        $instance = self::getInstance();
+        if ($instance->level < 4)
+        {
+            return;
+        }
+        
+        // Get arguments of the function, minus the format
+        $args = func_get_args();
+        array_shift($args);
+        
+        // Add a line.
+        $instance->appendLine('DEBUG', vsprintf($format, $args));
+    }
+    
+    /**
+     * Adds an info message.
+     *
+     * @param  $format  The format of the message.
+     * @param  ...      The arguments of the format.
+     */
+    public static function info($format)
+    {
+        // Check whether to log it.
+        $instance = self::getInstance();
+        if ($instance->level < 3)
+        {
+            return;
+        }
+        
+        // Get arguments of the function, minus the format
+        $args = func_get_args();
+        array_shift($args);
+        
+        // Add a line.
+        $instance->appendLine('INFO', vsprintf($format, $args));
+    }
+    
+    /**
+     * Adds a warning message.
+     *
+     * @param  $format  The format of the message.
+     * @param  ...      The arguments of the format.
+     */
+    public static function warn($format)
+    {
+        // Check whether to log it.
+        $instance = self::getInstance();
+        if ($instance->level < 2)
+        {
+            return;
+        }
+        
+        // Get arguments of the function, minus the format
+        $args = func_get_args();
+        array_shift($args);
+        
+        // Add a line.
+        $instance->appendLine('WARN', vsprintf($format, $args));
+    }
+    
+    /**
+     * Adds an error message.
+     *
+     * @param  $format  The format of the message.
+     * @param  ...      The arguments of the format.
+     */
+    public static function error($format)
+    {
+        // Check whether to log it.
+        $instance = self::getInstance();
+        if ($instance->level < 1)
+        {
+            return;
+        }
+        
+        // Get arguments of the function, minus the format
+        $args = func_get_args();
+        array_shift($args);
+        
+        // Add a line.
+        $instance->appendLine('ERROR', vsprintf($format, $args));
+    }
+    
+    // Appends a line to the log file.
+    private function appendLine($type, $line)
+    {
+        // Append line to file.
+        fwrite($this->file, gmdate("Y/m/d H:i:s") . ' - ' . $type . ': ' . trim($line) . "\n");
+    }
+}

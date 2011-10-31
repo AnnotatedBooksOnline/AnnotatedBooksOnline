@@ -9,8 +9,6 @@ class SingletonException extends ExceptionBase { }
  */
 abstract class Singleton
 {
-    private static $instance;
-
     private function __construct()
     {
     }
@@ -25,10 +23,10 @@ abstract class Singleton
         if (!isset(self::$instance))
         {
             $className = get_called_class();
-            self::$instance = new $className;
+            static::$instance = new $className;
         }
         
-        return self::$instance;
+        return static::$instance;
     }
 
     public function __clone()

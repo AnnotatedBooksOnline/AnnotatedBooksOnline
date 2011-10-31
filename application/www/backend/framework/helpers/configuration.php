@@ -3,7 +3,7 @@
 
 require_once 'framework/helpers/singleton.php';
 
-// Exceptions
+// Exceptions.
 class SettingNotFoundException extends ExceptionBase { }
 
 /**
@@ -11,7 +11,8 @@ class SettingNotFoundException extends ExceptionBase { }
  */
 class Configuration extends Singleton
 {
-    const FILE_PATH = "config/config.ini";
+    /** Unique instance. */
+    protected static $instance;
     
     /** All settings, by name. */
     private $settings;
@@ -21,8 +22,11 @@ class Configuration extends Singleton
      */
     protected function __construct()
     {
-        // Load the settings from the configuration file.
-        $this->settings = parse_ini_file(self::FILE_PATH, false);
+        $this->settings = array();
+        
+        // Load framework its default settings and custom settings.
+        $this->addSettings('framework/config/default.ini');
+        $this->addSettings('config/config.ini');
     }
     
     /**
@@ -40,7 +44,7 @@ class Configuration extends Singleton
     {
         if (isset($this->settings[$name]))
         {
-            return (int) $this->settings[$name];
+            return $this->settings[$name];
         }
         else if ($default !== null)
         {
@@ -98,5 +102,13 @@ class Configuration extends Singleton
     public function getBoolean($name, $default = null)
     {
         return (bool) $this->getString($name, $default);
+    }
+    
+    // Adds settings from a file.
+    private function addSettings($filename)
+    {
+        // Load ini file and add settings.
+        $settings = parse_ini_file($filename, false);
+        $this->settings = array_merge($this->settings, $settings);
     }
 }

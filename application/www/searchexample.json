@@ -1,0 +1,36 @@
+{
+    "columns":[{
+        "name":"title",
+        "desc":"Title",
+        "show":true
+    },{
+        "name":"year",
+        "desc":"Year of publication",
+        "show":true
+    },{
+        "name":"thumbnail",
+        "desc":"Thumbnail",
+        "show":false
+    },{
+        "name":"author",
+        "desc":"Author",
+        "show":true
+    }],
+    "records":[{
+        "title":"Gabriel Harvey: his life, marginalia, and library",
+        "author":"Virginia F. Stern",
+        "year":1979,
+        "thumbnail":"http://bks4.books.google.nl/books?id=v8ghAAAAMAAJ&printsec=frontcover&img=1&zoom=1"
+    },{
+        "title":"Tax for the year 1811",
+        "year":1811,
+        "thumbnail":"http://books.google.nl/googlebooks/images/no_cover_thumb.gif",
+        "author":"Commonwealth of Massachusetts"
+    },{
+        "title":"Ancient critical essays upon English poets and poësy",
+        "thumbnail":"http://bks4.books.google.nl/books?id=yDIJAAAAQAAJ&printsec=frontcover&img=1&zoom=1",
+        "author":"Gabriel Harvey et al.",
+        "year":1811
+    }]
+}
+
