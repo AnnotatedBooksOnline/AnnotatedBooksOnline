@@ -103,13 +103,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         this.callParent();
         
-        
         this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
         this.tabs = this.items.get(1);
-        
-        
-        
-        // TODO: event dispatcher !!
     },
     
     getEventDispatcher: function()
