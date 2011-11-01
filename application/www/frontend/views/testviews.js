@@ -20,13 +20,7 @@ Ext.onReady(function() {
             xtype:'loginform'
         },{
             title:'Search for books',
-            xtype:'panel',
-            autoHeight: true,
-            items: [{
-                xtype: 'searchpanel'
-            },{
-                xtype: 'searchresults'
-            }]
+            xtype:'booksearch'
         }]
     });
     
