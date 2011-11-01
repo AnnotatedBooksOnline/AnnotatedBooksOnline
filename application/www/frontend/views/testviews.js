@@ -4,6 +4,9 @@ Ext.onReady(function() {
         layout:'accordion',
         split: true,
         items:[{
+            title:'Upload',
+            xtype:'uploadpanel'
+        },{
             title:'Userlist',
             xtype:'userlistpanel'
         },{
