@@ -160,7 +160,7 @@ abstract class Entity
      *
      * @return  Query to select an entity from the database.
      */
-    protected static function getDefaultColumns()
+    protected function getDefaultColumns()
     {
         return array('tsCreated', 'tsChanged', 'userCreated', 'userChanged');
     }
@@ -170,7 +170,7 @@ abstract class Entity
      *
      * @return  Query to select an entity from the database.
      */
-    protected static function getSelectQuery()
+    protected function getSelectQuery()
     {
         // Get keys and table name.
         $keys      = $this->getPrimaryKeys();
@@ -195,7 +195,7 @@ abstract class Entity
      *
      * @return  Query to insert this entity in the database.
      */
-    protected static function getInsertQuery()
+    protected function getInsertQuery()
     {
         // Get columns and table name.
         $columns   = array_merge($this->getColumns(), $this->getDefaultColumns());
@@ -217,7 +217,7 @@ abstract class Entity
      *
      * @return  Query to delete this entity from the database.
      */
-    protected static function getDeleteQuery()
+    protected function getDeleteQuery()
     {
         // Get keys and table name.
         $keys      = $this->getPrimaryKeys();
@@ -242,7 +242,7 @@ abstract class Entity
      *
      * @return  Query to update this entity in the database.
      */
-    protected static function getUpdateQuery()
+    protected function getUpdateQuery()
     {
         // Get columns and table name.
         $keys      = $this->getPrimaryKeys();
@@ -276,19 +276,19 @@ abstract class Entity
      *
      * @return  The table name.
      */
-    abstract protected static function getTableName();
+    abstract protected function getTableName();
     
     /**
      * Gets the primary key.
      *
      * @return  Array of all primary keys.
      */
-    abstract protected static function getPrimaryKeys();
+    abstract protected function getPrimaryKeys();
     
     /**
      * Gets all the columns.
      *
      * @return  Array of all columns, except primary keys.
      */
-    abstract protected static function getColumns();
+    abstract protected function getColumns();
 }

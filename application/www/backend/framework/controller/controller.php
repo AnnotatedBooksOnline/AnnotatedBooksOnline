@@ -19,7 +19,7 @@ abstract class Controller
      */
     public static function handleRequest()
     {
-        //NOTE: try: http://localhost/backend/?controller=login&action=login
+        //NOTE: try: http://localhost/backend/?controller=Authentication&action=login
         //NOTE: note that JSON data goes via POST !
         
         try
@@ -84,7 +84,7 @@ abstract class Controller
         {
             require_once 'controllers/' . $type . 'controller.php';
             
-            $className = ucfirst($type) . 'Controller';
+            $className = $type . 'Controller';
             return new $className;
         }
         else

@@ -34,18 +34,6 @@ Book.prototype.constructor = function(id)
  * Public methods.
  */
 
-Book.prototype.initialize = function()
-{
-    this.documents = [
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5)  //256, 256, 20 for Google maps
-    ];
-}
-
 Book.prototype.getDocument = function(index)
 {
     //NOTE: we might create a document lazily
@@ -61,4 +49,20 @@ Book.prototype.getDocumentAmount = function(index)
 Book.prototype.getDocuments = function()
 {
     return this.documents;
+}
+
+/*
+ * Private methods.
+ */
+
+Book.prototype.initialize = function()
+{
+    this.documents = [
+        new Document(151, 225, 5), //256, 256, 20 for Google maps
+        new Document(151, 225, 5), //256, 256, 20 for Google maps
+        new Document(151, 225, 5), //256, 256, 20 for Google maps
+        new Document(151, 225, 5), //256, 256, 20 for Google maps
+        new Document(151, 225, 5), //256, 256, 20 for Google maps
+        new Document(151, 225, 5)  //256, 256, 20 for Google maps
+    ];
 }

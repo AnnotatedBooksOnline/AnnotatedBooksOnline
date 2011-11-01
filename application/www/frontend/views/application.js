@@ -39,31 +39,39 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     listeners: {
                         click: function()
                         {
-                            var viewer = Ext.getCmp('viewer');
-                            
-                            viewer.showSettingsWindow();
+                            Ext.ux.Viewer.showSettingsWindow();
                         }
                     }
                 }]
             }, '->', {
                 text: 'Options',
                 menu: [{
-                    text: 'Profile...'
+                    text: 'Edit profile...',
+                    listeners: {
+                        click: function()
+                        {
+                            Authentication.showEditProfileWindow();
+                        }
+                    }
                 },{
                     text: 'Viewer settings...',
                     listeners: {
                         click: function()
                         {
-                            var viewer = Ext.getCmp('viewer');
-                            
-                            viewer.showSettingsWindow();
+                            Ext.ux.Viewer.showSettingsWindow();
                         }
                     }
                 }]
             },{
                 text: 'Help'
             }, '-', {
-                text: 'Logout'
+                text: 'Login',
+                listeners: {
+                    click: function()
+                    {
+                        Authentication.showLoginWindow();
+                    }
+                }
             }],
             html: '(This panel will contain some books to open)'
         };
@@ -72,82 +80,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             xtype: 'tabpanel',
             flex: 1,
             activeTab: 0,
-            plain: true,
-            defaults: {
-                closable: true
-            },
-            items: [{
-                title: 'Book 1',
-                xtype: 'viewerpanel',
-                id: 'viewer', //TODO: get rid of this
-                book: new Book(1)
-            },{
-                title: 'Book 2',
-                xtype: 'viewerpanel',
-                book: new Book(2)
-            },{
-                title: 'Book 3',
-                xtype: 'viewerpanel',
-                book: new Book(3)
-            },{
-                title: 'Book 4',
-                xtype: 'viewerpanel',
-                book: new Book(4)
-            },{
-                title: 'Search',
-                layout: 'hbox',
-                bodyPadding: 10,
-                items: [{
-                    border: false,
-                    plain: true,
-                    flex: 1
-                },{
-                    xtype: 'searchpanel',
-                    width: 800,
-                    height: 400
-                },{
-                    border: false,
-                    plain: true,
-                    flex: 1
-                }]
-            },{
-                title: 'Users',
-                xtype: 'userlistpanel',
-                border: false
-            },{
-                title: 'Edit profile',
-                layout: 'hbox',
-                bodyPadding: 10,
-                items: [{
-                    border: false,
-                    plain: true,
-                    flex: 1
-                },{
-                    xtype: 'editprofileform',
-                    width: 800,
-                    height: 600,
-                },{
-                    border: false,
-                    plain: true,
-                    flex: 1
-                }]
-            },{
-                title: 'View profile of \'thisisme\'',
-                xtype: 'viewprofilepanel'
-            },{
-                title: 'Registration',
-                xtype: 'registrationform'
-            },{
-                title: 'Login',
-                xtype: 'loginform',
-                
-            }]
-            /*,
-            listeners: {
-                tabchange: onTabChange,
-                afterrender: onAfterRender 
-            }
-            */
+            plain: true
         };
         
         var _this = this;
@@ -161,232 +94,200 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         Ext.apply(this, defConfig);
         
+        this.eventDispatcher = new EventDispatcher();
+        
         this.callParent();
-    }
-});
-
-var application;
-var requestManager;
-
-Ext.require(['*']);
-Ext.onReady(function()
-{
-    Ext.History.init();
-    Ext.tip.QuickTipManager.init();
+    },
     
-    application = new Ext.ux.ApplicationViewport();
-    
-    requestManager = new RequestManager();
-    requestManager.request('login', 'login', {some: 'data', another: 1});
-    
-    
-    //var loginWindow = new Ext.ux.LoginWindow();
-    //loginWindow.show();
-    
-    //var registerWindow = new Ext.ux.RegistrationWindow();
-    //registerWindow.show();
-    
-    /*
-
-    // Needed if you want to handle history for multiple components in the same page.
-    // Should be something that won't be in component ids.
-    var tokenDelimiter = ':';
-
-    function onTabChange(tabPanel, tab) {
-        var tabs = [],
-            ownerCt = tabPanel.ownerCt, 
-            oldToken, newToken;
-
-        tabs.push(tab.id);
-        tabs.push(tabPanel.id);
-
-        while (ownerCt && ownerCt.is('tabpanel')) {
-            tabs.push(ownerCt.id);
-            ownerCt = ownerCt.ownerCt;
-        }
+    afterRender: function()
+    {
+        this.callParent();
         
-        newToken = tabs.reverse().join(tokenDelimiter);
         
-        oldToken = Ext.History.getToken();
-       
-        if (oldToken === null || oldToken.search(newToken) === -1) {
-            Ext.History.add(newToken);
-        }
-    }
-
-    // Handle this change event in order to restore the UI to the appropriate history state
-    function onAfterRender() {
-        Ext.History.on('change', function(token) {
-            var parts, tabPanel, length, i;
+        this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
+        this.tabs = this.items.get(1);
+        
+        
+        
+        // TODO: event dispatcher !!
+    },
+    
+    getEventDispatcher: function()
+    {
+        return this.eventDispatcher;
+    },
+    
+    openTab: function(type, data, activateTab)
+    {
+        var _this = this;
+        var tabConfig = {
+            // Our tab info.
+            tabInfo: {type: type, data: data},
             
-            if (token) {
-                parts = token.split(tokenDelimiter);
-                length = parts.length;
+            // Default settings.
+            closable: true,
+            
+            // Tab listeners.
+            listeners: {
+                activate: function(tab)
+                    {
+                        var index = _this.tabs.items.findIndex('id', tab.id);
+                        _this.tabActivated(index);
+                    },
+                deactivate: function(tab)
+                    {
+                        var index = _this.tabs.items.findIndex('id', tab.id);
+                        _this.tabDeactivated(index);
+                    },
+                close: function(tab)
+                    {
+                        var index = _this.tabs.items.findIndex('id', tab.id);
+                        _this.tabClosed(index);
+                    }
+            }
+        };
+        
+        switch (type)
+        {
+            case 'book':
+                // Data is supposed to be a book id here.
+                var id = data[0];
+                if (!id)
+                {
+                    return;
+                }
                 
-                // setActiveTab in all nested tabs
-                for (i = 0; i < length - 1; i++) {
-                    Ext.getCmp(parts[i]).setActiveTab(Ext.getCmp(parts[i + 1]));
-                }
-            }
-        });
+                // Add a book tab.
+                Ext.apply(tabConfig, {
+                    title: 'Book ' + id,
+                    xtype: 'viewerpanel',
+                    book: new Book(id) // NOTE: This will be asynchronious...
+                });
+                
+                break;
+                
+            case 'profile':
+                break;
+                
+            case 'search':
+                // Add a search tab.
+                Ext.apply(tabConfig, {
+                    title: 'Search',
+                    layout: 'hbox',
+                    bodyPadding: 10,
+                    items: [{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    },{
+                        xtype: 'searchpanel',
+                        width: 800,
+                        height: 400
+                    },{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    }]
+                });
+                
+                break;
+                
+            case 'users':
+                // Add a users tab.
+                Ext.apply(tabConfig, {
+                    title: 'Users',
+                    xtype: 'userlistpanel',
+                    border: false
+                });
+                
+                break;
+                
+            case 'viewprofile':
+                // Add a view profile tab.
+                Ext.apply(tabConfig, {
+                    title: 'Profile of ' + data.join('-'),
+                    xtype: 'viewprofilepanel'
+                });
+                
+                break;
+                
+            case 'register':
+                // Add a registration form.
+                Ext.apply(tabConfig, {
+                    title: 'Registration',
+                    layout: 'hbox',
+                    bodyPadding: 10,
+                    items: [{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    },{
+                        xtype: 'registrationform',
+                        width: 800,
+                        height: 400
+                    },{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    }]
+                });
+                
+                break;
+        }
         
-        // This is the initial default state.  Necessary if you navigate starting from the
-        // page without any existing history token params and go back to the start state.
-        var activeTab1 = Ext.getCmp('main-tabs').getActiveTab(),
-            activeTab2 = activeTab1.getActiveTab();
-            
-        onTabChange(activeTab1, activeTab2);
-    }
-    
-    var loginForm = {
-        xtype: 'form',
-        border: false,
+        // Add tab.
+        var newTab = this.tabs.add(tabConfig);
         
-        url: 'login.php',
-        
-        bodyPadding: 5,
-        
-        layout: 'anchor',
-        defaults: {
-            labelWidth: 120,
-            anchor: '100%'
-        },
-        
-        defaultType: 'textfield',
-        items: [{
-            fieldLabel: 'Username',
-            name: 'username',
-            allowBlank: false
-        },{
-            fieldLabel: 'Password',
-            name: 'password',
-            vtype: 'password',
-            allowBlank: false
-        }],
+        // Activate tab.
+        if (activateTab !== false)
+        {
+            this.tabs.setActiveTab(newTab);
+        }
+    },
 
-        buttons: [{
-            text: 'Login',
-            formBind: true,
-            disabled: true,
-            handler: function()
+    gotoTab: function(type, data, openIfNotAvailable)
+    {
+        // Try to match the type and data
+        var joinedData = (data === undefined) ? '' : data.join('-');
+        var index = this.tabs.items.findIndexBy(function(obj, key)
             {
-                var form = this.up('form').getForm();
-                if (form.isValid())
-                {
-                    form.submit({
-                        success: function(form, action)
-                        {
-                            //Ext.Msg.alert('Success', action.result.msg);
-                        },
-                        failure: function(form, action)
-                        {
-                            //Ext.Msg.alert('Failed', action.result.msg);
-                        }
-                    });
-                }
-            }
-        },{
-            text: 'Cancel'
-        }]
-    };
-    
-    var loginWindow = new Ext.Window({
-        id: 'login-window',
-        title: 'Login to continue',
-        layout: 'fit',
-        width: 600,
-        height: 400,
-        closable: true,
-        resizable: true,
-        draggable: true,
-        modal: true,
-        border: true,
-        items: [{
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
-            items: [loginForm, {
-                width: '100%',
-                border: false,
-                html: 'some text'
-            }]
-        }]
-    });
-    
-    loginWindow.show();
-    
-    //---
-    
-    var profileForm = {
-        xtype: 'form',
-        border: false,
+                var tabJoinedData = (obj.tabInfo.data === undefined) ? '' :
+                    obj.tabInfo.data.join('-');
+                
+                return (obj.tabInfo.type == type) && (joinedData === tabJoinedData);
+            });
         
-        url: 'edit-profile.php',
-        
-        bodyPadding: 5,
-        
-        layout: 'anchor',
-        defaults: {
-            labelWidth: 120,
-            anchor: '100%'
-        },
-        
-        defaultType: 'textfield',
-        items: [{
-            fieldLabel: 'Name',
-            name: 'name',
-            allowBlank: false
-        },{
-            fieldLabel: 'Email',
-            name: 'email',
-            vtype: 'email'
-        },{
-            fieldLabel: 'Some other field',
-            name: 'other'
-        }],
+        // Go to that tab.
+        if (index >= 0)
+        {
+            this.tabs.setActiveTab(index);
+        }
+        else if (openIfNotAvailable === true)
+        {
+            this.openTab(type, data);
+        }
+    },
+    
+    getTabInfo: function(index)
+    {
+        return this.tabs.items.get(index).tabInfo;
+    },
 
-        buttons: [{
-            text: 'Save',
-            formBind: true,
-            disabled: true,
-            handler: function()
-            {
-                var form = this.up('form').getForm();
-                if (form.isValid())
-                {
-                    form.submit({
-                        success: function(form, action)
-                        {
-                            Ext.Msg.alert('Success', action.result.msg);
-                        },
-                        failure: function(form, action)
-                        {
-                            Ext.Msg.alert('Failed', action.result.msg);
-                        }
-                    });
-                }
-            }
-        },{
-            text: 'Cancel'
-        }]
-    };
-    
-    var profileWindow = new Ext.Window({
-        id: 'profile-window',
-        title: 'Edit profile',
-        layout: 'fit',
-        width: 500,
-        height: 300,
-        closable: true,
-        resizable: true,
-        draggable: true,
-        modal: true,
-        border: true,
-        items: [profileForm]
-    });
-    
-    profileWindow.show();
-    
-    */
+    tabClosed: function(index)
+    {
+        this.eventDispatcher.trigger('change', this, index);
+        this.eventDispatcher.trigger('close', this, index);
+    },
+
+    tabActivated: function(index)
+    {
+        this.eventDispatcher.trigger('change', this, index);
+        this.eventDispatcher.trigger('activate', this, index);
+    },
+
+    tabDeactivated: function(index)
+    {
+        this.eventDispatcher.trigger('change', this, index);
+        this.eventDispatcher.trigger('deactivate', this, index);
+    },
 });

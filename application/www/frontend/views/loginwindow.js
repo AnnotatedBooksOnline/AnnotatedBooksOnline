@@ -32,24 +32,19 @@ Ext.define('Ext.ux.LoginForm', {
                 {
                     var form = this.up('form').getForm();
 
-                    // TODO
-                    /*
-                    Normally we would submit the form to the server here and handle the response...
-                    form.submit({
-                        clientValidation: true,
-                        url: 'login.php',
-                        success: function(form, action) {
-                           //...
-                        },
-                        failure: function(form, action) {
-                            //...
-                        }
-                    });
-                    */
-
                     if (form.isValid())
                     {
-                        Ext.Msg.alert('Submitted Values', form.getValues(true));
+                        var values = form.getValues();
+                        
+                        Authentication.getInstance().login(values.username, values.password, function()
+                            {
+                                this.up('window').close();
+                            },
+                            function(code, message, trace)
+                            {
+                                // TODO: Some error handling.
+                            },
+                            this);
                     }
                 }
             }]
@@ -67,10 +62,10 @@ Ext.define('Ext.ux.LoginWindow', {
     initComponent: function() 
     {
         var defConfig = {
-            title: 'Login to continue',
+            title: 'Login',
             layout: 'fit',
-            width: 600,
-            height: 400,
+            width: 400,
+            height: 200,
             closable: true,
             resizable: true,
             draggable: true,
