@@ -14,6 +14,10 @@ class DatabaseException extends ExceptionBase { }
  */
 class Database extends Singleton
 {
+    /** Unique instance. */
+    protected static $instance;
+    
+    /* PDO resource. */
     private $pdo;
 
     protected function __construct()

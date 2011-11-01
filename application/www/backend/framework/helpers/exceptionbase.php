@@ -6,14 +6,28 @@
  */
 class ExceptionBase extends Exception
 {
-    public function __construct($code)
+    private $id;
+    
+    public function __construct($id)
     {
-        // Translate the message according to the code.
+        $this->id = $id;
+        
+        // Translate the message according to the id.
         $args    = func_get_args();
-        $args[0] = 'error-' . $code;
+        $args[0] = 'error-' . $id;
         $message = call_user_func_array('_', $args);
         
         parent::__construct($message);
+    }
+    
+    /**
+     * Gets the exception unique identifier.
+     *
+     * @return  Identifier to the exception.
+     */
+    public function getIdentifier()
+    {
+        return $this->id;
     }
 }
 

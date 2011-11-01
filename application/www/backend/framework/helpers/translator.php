@@ -8,7 +8,8 @@ require_once 'framework/helpers/singleton.php';
  */
 class Translator extends Singleton
 {
-    const FILE_PATH = 'translation/en-US/errors.ini';
+    /** Unique instance. */
+    protected static $instance;
     
     /** All entries, by id. */
     private $entries;
@@ -18,11 +19,11 @@ class Translator extends Singleton
      */
     protected function __construct()
     {
-        // Load the entries from the language file.
-        $this->entries = parse_ini_file(self::FILE_PATH, false);
+        $this->entries = array();
         
-        
-        //TODO: (GVV) Handle multiple files.
+        // Load framework and custom translation files.
+        $this->addEntries('framework/translation/en-US/');
+        $this->addEntries('translation/en-US/');
     }
     
     /**
@@ -42,6 +43,21 @@ class Translator extends Singleton
         else
         {
             return $id;
+        }
+    }
+    
+    // Adds language file entries from a directory.
+    private function addEntries($directory)
+    {
+        // Load the entries from the language files in the directory.
+        foreach (scandir($directory) as $filename)
+        {
+            if (substr($filename, -4) == '.ini')
+            {
+                // Load ini file and add entries.
+                $entries = parse_ini_file($directory . $filename, false);
+                $this->entries = array_merge($this->entries, $entries);
+            }
         }
     }
 }
