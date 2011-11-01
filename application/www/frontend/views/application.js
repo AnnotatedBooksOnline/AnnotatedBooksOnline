@@ -93,6 +93,54 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 title: 'Book 4',
                 xtype: 'viewerpanel',
                 book: new Book(4)
+            },{
+                title: 'Search',
+                layout: 'hbox',
+                bodyPadding: 10,
+                items: [{
+                    border: false,
+                    plain: true,
+                    flex: 1
+                },{
+                    xtype: 'searchpanel',
+                    width: 800,
+                    height: 400
+                },{
+                    border: false,
+                    plain: true,
+                    flex: 1
+                }]
+            },{
+                title: 'Users',
+                xtype: 'userlistpanel',
+                border: false
+            },{
+                title: 'Edit profile',
+                layout: 'hbox',
+                bodyPadding: 10,
+                items: [{
+                    border: false,
+                    plain: true,
+                    flex: 1
+                },{
+                    xtype: 'editprofileform',
+                    width: 800,
+                    height: 600,
+                },{
+                    border: false,
+                    plain: true,
+                    flex: 1
+                }]
+            },{
+                title: 'View profile of \'thisisme\'',
+                xtype: 'viewprofilepanel'
+            },{
+                title: 'Registration',
+                xtype: 'registrationform'
+            },{
+                title: 'Login',
+                xtype: 'loginform',
+                
             }]
             /*,
             listeners: {
@@ -118,6 +166,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
 });
 
 var application;
+var requestManager;
 
 Ext.require(['*']);
 Ext.onReady(function()
@@ -126,6 +175,9 @@ Ext.onReady(function()
     Ext.tip.QuickTipManager.init();
     
     application = new Ext.ux.ApplicationViewport();
+    
+    requestManager = new RequestManager();
+    requestManager.request('login', 'login', {some: 'data', another: 1});
     
     
     //var loginWindow = new Ext.ux.LoginWindow();

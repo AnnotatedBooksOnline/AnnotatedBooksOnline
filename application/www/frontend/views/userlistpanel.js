@@ -111,58 +111,58 @@ Ext.define('Ext.ux.UserListPanel', {
         var defConfig = {
             items: [{
                 xtype: 'grid',
+                border: false,
                 store: store,
-                layout: 'fit',
                 viewConfig: {
                     stripeRows: true
                 },
                 columns: [
                     {
-                        text     : 'Username',
-                        flex     : 1,
-                        sortable : true,
+                        text:      'Username',
+                        flex:      1,
+                        sortable:  true,
                         dataIndex: 'username'
                     },
                     {
-                        text     : 'E-mail',
-                        width    : 200,
-                        sortable : true,
-                        renderer : email,
+                        text:      'E-mail',
+                        width:     200,
+                        sortable:  true,
+                        renderer:  email,
                         dataIndex: 'email'
                     },
                     {
-                        text     : 'First name',
-                        width    : 150,
-                        sortable : true,
+                        text:      'First name',
+                        width:     150,
+                        sortable:  true,
                         dataIndex: 'firstname'
                     },
                     {
-                        text     : 'Last name',
-                        width    : 150,
-                        sortable : true,
+                        text:      'Last name',
+                        width:     150,
+                        sortable:  true,
                         dataIndex: 'lastname'
                     },
                     {
-                        text     : 'Affiliation',
-                        width    : 150,
-                        sortable : true,
+                        text:      'Affiliation',
+                        width:     150,
+                        sortable:  true,
                         dataIndex: 'affiliation'
                     },
                     {
-                        text     : 'Occupation',
-                        width    : 150,
-                        sortable : true,
+                        text:      'Occupation',
+                        width:     150,
+                        sortable:  true,
                         dataIndex: 'occupation'
                     },
                     {
-                        text     : 'Website',
-                        width    : 150,
-                        sortable : true,
-                        renderer : website,
+                        text:      'Website',
+                        width:     150,
+                        sortable:  true,
+                        renderer:  website,
                         dataIndex: 'website'
                     }
                 ],
-                bbar: Ext.create('Ext.PagingToolbar', {
+                tbar: Ext.create('Ext.PagingToolbar', {
                     store: store,
                     displayInfo: true,
                     displayMsg: 'Displaying users {0} - {1} of {2}',

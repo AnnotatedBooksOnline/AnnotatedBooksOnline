@@ -2,19 +2,29 @@
 //[[GPL]]
 
 require_once 'framework/helpers/singleton.php';
+require_once 'framework/helpers/configuration.php';
 
 /**
  * Represents the current user session.
  */
 class Session extends Singleton
 {
+    /** Unique instance. */
+    protected static $instance;
+    
+    /** Session prefix. */
+    private $prefix;
+    
     /**
      * Constructs a session class instance.
      */
     protected function __construct()
     {
-        //start the session
+        // Start the session.
         session_start();
+        
+        // Get prefix
+        $this->prefix = Configuration::getInstance()->getString('session-prefix');
     }
     
     /**
@@ -25,7 +35,7 @@ class Session extends Singleton
      */
     public function setVar($name, $value)
     {
-        $_SESSION['application_' . $name] = $value;
+        $_SESSION[$this->prefix . '_' . $name] = $value;
     }
     
     /**
@@ -35,7 +45,7 @@ class Session extends Singleton
      */
     public function unsetVar($name)
     {
-        unset($_SESSION['application_' . $name]);
+        unset($_SESSION[$this->prefix . '_' . $name]);
     }
     
     /**
@@ -47,7 +57,8 @@ class Session extends Singleton
      */
     public function getVar($name)
     {
-        return isset($_SESSION['application_' . $name]) ? $_SESSION['application_' . $name] : '';
+        return isset($_SESSION[$this->prefix . '_' . $name]) ?
+            $_SESSION[$this->prefix . '_' . $name] : '';
     }
     
     /**
@@ -59,6 +70,6 @@ class Session extends Singleton
      */
     public function exists($name)
     {
-        return isset($_SESSION['application_' . $name]);
+        return isset($_SESSION[$this->prefix . '_' . $name]);
     }
 }

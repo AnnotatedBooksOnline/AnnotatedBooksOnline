@@ -9,34 +9,49 @@ require_once 'models/usermodel.php';
  */
 class Authentication extends Singleton
 {
+    /** Unique instance. */
+    protected static $instance;
+    
+    /** Currently logged on user */
     private $user;
+    
+    /** Whether we have fetched the user. */
+    private $fetchedUser;
     
     /**
      * Constructs an authentication class instance.
      */
     protected function __construct()
     {
-        $session = Session::getInstance();
-        
-        if ($session->exists('userid'))
-        {
-            $userId = $session->getVar('userid');
-            $this->user = new User($userId);
-        }
-        else
-        {
-            $this->user = null;
-        }
+        $this->fetchedUser = false;
     }
     
     /**
-     * Gets the authentication singleton instance.
+     * Gets the currently logged on user.
      *
-     * @return  The unique instance of the authentication.
+     * @return  The currently logged on user.
      */
-    public static function getInstance()
+    public function getUser()
     {
-        return parent::getInstance(__CLASS__);
+        // Lazily fetch user.
+        if (!$this->fetchedUser)
+        {
+            $session = Session::getInstance();
+            
+            if ($session->exists('userid'))
+            {
+                $userId = $session->getVar('userid');
+                $this->user = new User($userId);
+            }
+            else
+            {
+                $this->user = null;
+            }
+            
+            $this->fetchedUser = true;
+        }
+        
+        return $this->user;
     }
     
     /**
@@ -47,7 +62,14 @@ class Authentication extends Singleton
      */
     public function login($username, $password)
     {
-        $this->user = User::fromUsernameAndPassword($username, $password);
+        $currentUser = $this->getUser();
+        if ($currentUser != null)
+        {
+            // TODO
+        }
+        
+        $this->user        = User::fromUsernameAndPassword($username, $password);
+        $this->fetchedUser = true;
     }
     
     /**
@@ -58,7 +80,8 @@ class Authentication extends Singleton
         $session = Session::getInstance();
         $session->unsetVar('userid');
         
-        $this->user = null;
+        $this->user        = null;
+        $this->fetchedUser = true;
     }
     
     /**
@@ -68,7 +91,15 @@ class Authentication extends Singleton
      */
     public function isLoggedOn()
     {
-        return isset($this->user);
+        // Do it the lazy way.
+        if ($this->fetchedUser)
+        {
+            return isset($this->user);
+        }
+        else
+        {
+            return Session::getInstance()->exists('userid');
+        }
     }
     
     /**
@@ -78,6 +109,7 @@ class Authentication extends Singleton
      */
     public function getRank()
     {
-        return (isset($this->user) ? $this->user->getRank() : User::RANK_NONE);
+        $user = $this->getUser();
+        return (isset($user) ? $user->getRank() : User::RANK_NONE);
     }
 }
