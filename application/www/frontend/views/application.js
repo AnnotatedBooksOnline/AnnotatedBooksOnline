@@ -95,21 +95,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 book: new Book(4)
             },{
                 title: 'Search',
-                layout: 'hbox',
-                bodyPadding: 10,
-                items: [{
-                    border: false,
-                    plain: true,
-                    flex: 1
-                },{
-                    xtype: 'searchpanel',
-                    width: 800,
-                    height: 400
-                },{
-                    border: false,
-                    plain: true,
-                    flex: 1
-                }]
+                xtype: 'booksearch'
             },{
                 title: 'Users',
                 xtype: 'userlistpanel',
