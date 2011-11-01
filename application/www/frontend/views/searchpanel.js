@@ -1,5 +1,43 @@
 /* * Search panel class. */
- 
+
+var bookProperties = [{
+    abbreviation: 'year',
+    name: 'Year of publication'
+},{
+    abbreviation: 'title',
+    name: 'Title'
+},{
+    abbreviation: 'author',
+    name: 'Author'
+},{
+    abbreviation: 'place',
+    name: 'Place published'
+},{
+    abbreviation: 'publisher',
+    name: 'Publisher'
+},{
+    abbreviation: 'version',
+    name: 'Version'
+},{
+    abbreviation: 'language',
+    name: 'Language'
+},{
+    abbreviation: 'library',
+    name: 'Library'
+},{
+    abbreviation: 'signature',
+    name: 'Signature'
+},{
+    abbreviation: 'provenance', // TODO: I really do not know how to make this a valid search variable. Added it anyhow. -- Bert
+    name: 'Provenance'
+},{
+    abbreviation: 'annotlanguage',
+    name: 'Language of annotations'
+},{
+    abbreviation: 'summary',
+    name: 'Summary'
+}];
+
 Ext.regModel('SearchParameter', {
     fields: [{
         type: 'string',
@@ -61,8 +99,7 @@ Ext.define('Ext.form.field.SearchComboBox', {
         var _this = this;
         
         var defConfig = {
-            displayField: 'name',
-            width: 250,
+            width: 200,
             store: Ext.create('Ext.data.Store', {
                     model: 'SearchParameter',
                     data: [{
@@ -71,16 +108,7 @@ Ext.define('Ext.form.field.SearchComboBox', {
                     },{
                         abbreviation: 'any',
                         name: 'Any'
-                    },{
-                        abbreviation: 'year',
-                        name: 'Year of publication'
-                    },{
-                        abbreviation: 'title',
-                        name: 'Title'
-                    },{
-                        abbreviation: 'author',
-                        name: 'Author'
-                    }]
+                    }].concat(bookProperties)
                 }),
             queryMode: 'local',
             displayField: 'name',
@@ -92,22 +120,17 @@ Ext.define('Ext.form.field.SearchComboBox', {
                     this.ownerCt.remove(this.ownerCt.getComponent(1));
                     switch (combo.getValue())
                     {
-                        case 'any':
-                            this.ownerCt.add([{xtype: 'textfield', name: 'value'}]);
-                            break;
                         case 'year':
                             this.ownerCt.add([{xtype: 'yearbetweenfield', name: 'value'}]);
-                            break;
-                        case 'title':
-                            this.ownerCt.add([{xtype: 'textfield', name: 'value'}]);
-                            break;
-                        case 'author':
-                            this.ownerCt.add([{xtype: 'textfield', name: 'value'}]);
                             break;
                         case 'select':
                             if (this.ownerCt.next('[xtype=searchfield]') != null)
                                 this.up('[xtype=searchpanel]').remove(this.ownerCt);
                             break;
+                        default:
+                            this.ownerCt.add([{xtype: 'textfield', name: 'value'}]);
+                            break;
+
                     }
                     if (this.up('[xtype=searchpanel]') && this.up('[xtype=searchpanel]').getComponent(this.up('[xtype=searchpanel]').items.length-1).down('[name=type]').getValue() != 'select')
                     {
@@ -314,21 +337,93 @@ Ext.define('SP.Search.ResultSet', {
     }
 });
 
-Ext.define('Ext.ux.SearchResultView', {
+Ext.define('SP.Search.SortComboBox', {
+    extend: 'Ext.form.field.ComboBox',
+    alias: 'widget.sortcombobox',
+    requires: ['*'],
+    
+    initComponent: function() {
+        var _this = this;
+        
+        var defConfig = {
+            store: Ext.create('Ext.data.Store', {
+                    model: 'SearchParameter',
+                    data: [{
+                        abbreviation: 'modified',
+                        name: 'Date last modified'
+                    },{
+                        abbreviation: 'uploaded',
+                        name: 'Date uploaded'
+                    }].concat(bookProperties)
+                }),
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'abbreviation',
+            forceSelection: true,
+            listeners: {
+                select: function(combo)
+                {
+                    _this.sortFn();
+                }
+            }
+        };
+        
+        Ext.apply(this, defConfig);                this.callParent();
+    }
+});
+
+Ext.define('SP.Search.SearchResultView', {
     extend: 'Ext.Panel',
     alias: 'widget.searchresults',
     requires: ['*'],
     
     initComponent: function() {
         var _this = this;
+
+        function sort()
+        {
+            var current = _this.down('[xtype=sortcombobox]');
+            var sorters = [];
+            do
+            {
+                var val = current.getValue();
+                if (val)
+                {
+                    sorters[sorters.length] = { property: val, direction: 'ASC' };
+                }
+            } while(current = current.nextSibling('[xtype=sortcombobox]'));
+            _this.down('[xtype=searchresultset]').store.sort(sorters);
+        };
+        
         var defConfig = {
             title: 'Search results',
-            id: 'bla',
 //            border: 0,
-            autoWidth: true,
+            items: [{
+                xtype: 'panel',
+                name: 'sort',
+                border: 0,
+                style: 'padding: 10px;',
+                items: [{
+                    xtype: 'sortcombobox',
+                    fieldLabel: 'Sort by',
+                    sortFn: sort
+                },{
+                    xtype: 'sortcombobox',
+                    fieldLabel: 'then',
+                    sortFn: sort
+                },{
+                    xtype: 'sortcombobox',
+                    fieldLabel: 'then',
+                    sortFn: sort
+                }]
+            },{
+                xtype: 'panel',
+                name: 'results',
+                border: 0
+            }],
             setData: function(data) {
-                _this.removeAll();
-                _this.add([{
+                _this.down('[name=results]').removeAll();
+                _this.down('[name=results]').add([{
                     xtype: 'searchresultset',
                     data: data
                 }]);
