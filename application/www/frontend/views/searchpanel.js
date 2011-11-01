@@ -161,7 +161,31 @@ Ext.define('Ext.ux.SearchField', {
     }
 });
 
-Ext.define('Ext.ux.SearchPanel', {    extend: 'Ext.ux.FormBase',    alias: 'widget.searchpanel',    requires: ['*'], // TODO: specify        initComponent: function()     {        var _this = this;                var defConfig = {            items: [{                xtype: 'searchfield'            }],                        buttons: [{                xtype: 'button',                formBind: true,                text: 'Search',                width: 140,                handler: function()                {                    var form = this.up('form').getForm();                    // TODO                    /*                     * Normally we would submit the form to the server here and handle the response...                     * form.submit({                     *     clientValidation: true,                     *     url: 'editprofile.php',                     *     success: function(form, action) {                     *        //...                     *     },                     *     failure: function(form, action) {                     *         //...                     *     }                     * });                     */                    if (form.isValid())                    {
+Ext.define('Ext.ux.SearchPanel', {    extend: 'Ext.ux.FormBase',    alias: 'widget.searchpanel',    requires: ['*'], // TODO: specify        initComponent: function()     {        var _this = this;        var defConfig = {            items: [{                xtype: 'searchfield'            }],                        buttons: [{                xtype: 'button',                formBind: true,                text: 'Search',                width: 140,                handler: function()                {                    var form = this.up('form').getForm();                    // TODO                    /*                     * Normally we would submit the form to the server here and handle the response...                     * form.submit({                     *     clientValidation: true,                     *     url: 'editprofile.php',                     *     success: function(form, action) {                     *        //...                     *     },                     *     failure: function(form, action) {                     *         //...                     *     }                     * });                     */
+                     
+/*
+    {columns: [{
+        name: 'name',
+        desc: 'Name',
+        show: true
+    },{
+        name: 'desc',
+        desc: 'Description',
+        show: true
+    },{
+        name: 'thumbnail',
+        desc: 'Thumbnail',
+        show: false
+    }],
+    records: [{
+        name: 'bla',
+        desc: 'Blaat',
+        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/forms.png'
+    },{
+        name: 'test',
+        desc: 'Dit is een test',
+        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/kiva.png'
+    }]} */                    if (form.isValid())                    {
                         var fields = [];
                         for (var i = 0; i < _this.items.length; ++i)
                         {
@@ -171,7 +195,21 @@ Ext.define('Ext.ux.SearchField', {
                                 fields[fields.length] = _this.items.get(i).getValue();
                             }
                         }
-                                                Ext.Msg.alert('Submitted Values', Ext.JSON.encode(fields));                    }                }
+                        
+                        function callback(success, data)
+                        {
+                            if (!success)
+                            {
+                                alert('Failed to get search results'); //TODO
+                            }
+                            else
+                            {
+                                _this.ownerCt.down('[xtype=searchresults]').setData(data);
+                            }
+                        }
+                        
+                        SP.JSON.url = 'searchexample.json'; // TODO: should not be necessary anymore
+                        SP.JSON.doRequest('searchbooks', fields, callback);                    }                }
             }]        };                Ext.apply(this, defConfig);                this.callParent();
         
         var firstField = this.getComponent(0).down('[name=type]');
@@ -197,72 +235,44 @@ Ext.define('SP.Search.SearchColumnModel', {
     }]
 });
 
-var columns = Ext.create('Ext.data.Store', {
-    model: 'SP.Search.SearchColumnModel',
-/*        proxy: {
-        type: 'ajax',
-        url: 'search.php',
-        reader: {
-            type: 'json',
-            root: 'columns'
-        }
-    }*/
-    data: [{
-        name: 'name',
-        desc: 'Name',
-        show: true
-    },{
-        name: 'desc',
-        desc: 'Description',
-        show: true
-    },{
-        name: 'thumbnail',
-        desc: 'Thumbnail',
-        show: false
-    }]
-});
-
-
-
-var store = Ext.create('Ext.data.Store', {
-    model: Ext.define('CurrentColumnModel', {
-        extend: 'Ext.data.Model',
-        fields: function()
-        {
-            var cols = columns.getRange();
-            var fields = [];
-            for (var i = 0; i < cols.length; i++)
-            {
-                fields[fields.length] = {name: cols[i].get('name')};
-            }
-            return fields;
-        }()
-    }),
-/*        proxy: {
-        type: 'ajax',
-        url: 'search.php',
-        reader: {
-            type: 'json',
-            root: 'books'
-        }
-    }*/
-    data: [{
-        name: 'bla',
-        desc: 'Blaat',
-        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/forms.png'
-    },{
-        name: 'test',
-        desc: 'Dit is een test',
-        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/kiva.png'
-    }]
-});
-//    store.load();
-
 Ext.define('SP.Search.ResultSet', {
     extend: 'Ext.view.View',
     alias: 'widget.searchresultset',
 
     initComponent: function() {
+        function getSearchColumnStore(data)
+        {
+            var columns = Ext.create('Ext.data.Store', {
+                model: 'SP.Search.SearchColumnModel',
+                data: data.columns
+            });
+            
+            return columns;
+        }
+
+        function getSearchResultStore(data, columns)
+        {
+            var store = Ext.create('Ext.data.Store', {
+                model: Ext.define('CurrentColumnModel', {
+                    extend: 'Ext.data.Model',
+                    fields: function()
+                    {
+                        var cols = columns.getRange();
+                        var fields = [];
+                        for (var i = 0; i < cols.length; i++)
+                        {
+                            fields[fields.length] = {name: cols[i].get('name')};
+                        }
+                        return fields;
+                    }()
+                }),
+                data: data.records
+            });
+            
+            return store;
+        }
+        
+        var cols = getSearchColumnStore(this.data);
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
@@ -277,6 +287,7 @@ Ext.define('SP.Search.ResultSet', {
                     '<div style="clear: both"/>',
                 '</tpl>',
             ],
+            store: getSearchResultStore(this.data, cols),
             autoWidth: true,
             disableSelection: true,
 //            trackOver: true,
@@ -287,7 +298,7 @@ Ext.define('SP.Search.ResultSet', {
                 var properties = "";
                 for (var field in data)
                 {
-                    var col = columns.findRecord('name', field);
+                    var col = cols.findRecord('name', field);
                     if (col != undefined && col.get('desc') != undefined && col.get('show'))
                     {
                         properties += '<tr><td>' + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
@@ -309,17 +320,22 @@ Ext.define('Ext.ux.SearchResultView', {
     requires: ['*'],
     
     initComponent: function() {
+        var _this = this;
         var defConfig = {
             title: 'Search results',
             id: 'bla',
 //            border: 0,
             autoWidth: true,
-            items: [{
-                xtype: 'searchresultset',
-                store: store
-            }]
+            setData: function(data) {
+                _this.removeAll();
+                _this.add([{
+                    xtype: 'searchresultset',
+                    data: data
+                }]);
+            }
         };
         
         Ext.apply(this, defConfig);                this.callParent();
     }
 });
+
