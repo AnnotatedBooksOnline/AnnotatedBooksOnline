@@ -1,4 +1,6 @@
-/* * Search panel class. */
+/*
+ * Search panel class.
+ */
 
 var bookProperties = [{
     abbreviation: 'year',
@@ -85,7 +87,9 @@ Ext.define('Ext.form.field.YearBetweenField', {
             }
         };
         
-        Ext.apply(this, defConfig);                this.callParent();
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
     }
 });
 
@@ -140,7 +144,9 @@ Ext.define('Ext.form.field.SearchComboBox', {
             }
         };
         
-        Ext.apply(this, defConfig);                this.callParent();
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
         
         this.setValue('select');
     }
@@ -180,64 +186,39 @@ Ext.define('Ext.ux.SearchField', {
             }
         }
         
-        Ext.apply(this, defConfig);                this.callParent();
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
     }
 });
 
-Ext.define('Ext.ux.SearchPanel', {    extend: 'Ext.ux.FormBase',    alias: 'widget.searchpanel',    requires: ['*'], // TODO: specify        initComponent: function()     {        var _this = this;        var defConfig = {            items: [{                xtype: 'searchfield'            }],                        buttons: [{                xtype: 'button',                formBind: true,                text: 'Search',                width: 140,                handler: function()                {                    var form = this.up('form').getForm();                    // TODO                    /*                     * Normally we would submit the form to the server here and handle the response...                     * form.submit({                     *     clientValidation: true,                     *     url: 'editprofile.php',                     *     success: function(form, action) {                     *        //...                     *     },                     *     failure: function(form, action) {                     *         //...                     *     }                     * });                     */
-                     
-/*
-    {columns: [{
-        name: 'name',
-        desc: 'Name',
-        show: true
-    },{
-        name: 'desc',
-        desc: 'Description',
-        show: true
-    },{
-        name: 'thumbnail',
-        desc: 'Thumbnail',
-        show: false
-    }],
-    records: [{
-        name: 'bla',
-        desc: 'Blaat',
-        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/forms.png'
-    },{
-        name: 'test',
-        desc: 'Dit is een test',
-        thumbnail: 'http://dev.sencha.com/deploy/ext-4.0.0/examples/datasets/touch-icons/kiva.png'
-    }]} */                    if (form.isValid())                    {
-                        var fields = [];
-                        for (var i = 0; i < _this.items.length; ++i)
-                        {
-                            var val = _this.items.get(i).getValue();
-                            if (val.type != "select")
-                            {
-                                fields[fields.length] = _this.items.get(i).getValue();
-                            }
-                        }
-                        
-                        function callback(success, data)
-                        {
-                            if (!success)
-                            {
-                                alert('Failed to get search results'); //TODO
-                            }
-                            else
-                            {
-                                _this.ownerCt.down('[xtype=searchresults]').setData(data);
-                            }
-                        }
-                        
-                        SP.JSON.url = 'searchexample.json'; // TODO: should not be necessary anymore
-                        SP.JSON.doRequest('searchbooks', fields, callback);                    }                }
-            }]        };                Ext.apply(this, defConfig);                this.callParent();
+
+Ext.define('SP.Search.SearchPanel', {
+    extend: 'Ext.Panel',
+    alias: 'widget.searchpanel',
+    requires: ['*'], // TODO: specify
+    
+    initComponent: function() 
+    {
+        var _this = this;
+        var defConfig = {
+            border: 0,
+            style: 'padding: 10px;',
+            
+            items: [{
+                xtype: 'searchfield'
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
         
         var firstField = this.getComponent(0).down('[name=type]');
         firstField.select('any');
-        firstField.fireEvent('select',firstField,{});    }});
+        firstField.fireEvent('select',firstField,{});
+    }
+});
 
 
 
@@ -263,6 +244,8 @@ Ext.define('SP.Search.ResultSet', {
     alias: 'widget.searchresultset',
 
     initComponent: function() {
+        var _this = this;
+    
         function getSearchColumnStore(data)
         {
             var columns = Ext.create('Ext.data.Store', {
@@ -307,23 +290,21 @@ Ext.define('SP.Search.ResultSet', {
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
-                    '<div>',
-                        '<div style="float: left">',
+                    '<div class="bookitem" style="border: 1px solid #DDDDDD; margin: 10px; cursor: pointer">',
+                        '<div style="float: left; width: 50px; height: 67px">',
                             '<img src="{thumbnail}" style="width: 50px; height: 67px;"/>',
                         '</div>',
                         '<div style="float: left">',
                             '<table>{properties}</table>',
                         '</div>',
+                        '<div style="clear: both"></div>',
                     '</div>',
-                    '<div style="clear: both"/>',
                 '</tpl>',
             ],
             store: getSearchResultStore(this.data, cols),
-            autoWidth: true,
-            disableSelection: true,
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
-//            itemSelector: 'div.thumb-wrap',
+            itemSelector: 'div.bookitem',
             emptyText: 'No books found.',
             prepareData: function(data) {
                 var properties = "";
@@ -337,6 +318,15 @@ Ext.define('SP.Search.ResultSet', {
                 }
                 data['properties'] = properties;
                 return data;
+            },
+            listeners: {
+                selectionchange: function(view, nodes)
+                {
+                    if (nodes.length != 0)
+                    {
+                        alert(_this.getSelectionModel().selected.get(0).get('title')); // TODO: actually open the book.
+                    }
+                }
             }
         };
         
@@ -376,7 +366,9 @@ Ext.define('SP.Search.SortComboBox', {
             }
         };
         
-        Ext.apply(this, defConfig);                this.callParent();
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
     }
 });
 
@@ -405,7 +397,7 @@ Ext.define('SP.Search.SearchResultView', {
         
         var defConfig = {
             title: 'Search results',
-//            border: 0,
+            border: 0,
             items: [{
                 xtype: 'panel',
                 name: 'sort',
@@ -447,7 +439,75 @@ Ext.define('SP.Search.SearchResultView', {
             }
         };
         
-        Ext.apply(this, defConfig);                this.callParent();
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    }
+});
+
+Ext.define('SP.Search.BookSearch', {
+    extend: 'Ext.Panel',
+    alias: 'widget.booksearch',
+    requires: ['*'], // TODO: specify
+    
+    initComponent: function() 
+    {
+        var _this = this;
+        var defConfig = {
+            title: 'Search',
+            
+            items: [{
+                xtype: 'panel',
+                title: 'Search',
+                border: 0,
+                items: [{
+                    xtype: 'searchpanel'
+                }]
+            },{
+                xtype: 'button',
+                text: 'Search',
+                width: 140,
+                style: 'margin: 10px;',
+                handler: function()
+                {
+                    var fields = [];
+                    for (var i = 0; i < _this.down('[xtype=searchpanel]').items.length; ++i)
+                    {
+                        var val = _this.down('[xtype=searchpanel]').items.get(i).getValue();
+                        if (val.type != "select")
+                        {
+                            fields[fields.length] = _this.down('[xtype=searchpanel]').items.get(i).getValue();
+                        }
+                    }
+                    
+                    function callback(success, data)
+                    {
+                        if (!success)
+                        {
+                            alert('Failed to get search results'); //TODO
+                        }
+                        else
+                        {
+                            _this.ownerCt.down('[xtype=searchresults]').setData(data);
+                        }
+                    }
+                    
+                    SP.JSON.url = 'searchexample.json'; // TODO: should not be necessary anymore
+                    SP.JSON.doRequest('searchbooks', fields, callback);
+                }
+            },{
+                xtype: 'searchresults',
+                title: 'Search results'
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+        
+        var firstField = this.getComponent(0).down('[name=type]');
+        firstField.select('any');
+        firstField.fireEvent('select',firstField,{});
     }
 });
 

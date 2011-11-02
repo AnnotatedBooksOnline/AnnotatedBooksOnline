@@ -168,21 +168,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a search tab.
                 Ext.apply(tabConfig, {
                     title: 'Search',
-                    layout: 'hbox',
-                    bodyPadding: 10,
-                    items: [{
-                        border: false,
-                        plain: true,
-                        flex: 1
-                    },{
-                        xtype: 'searchpanel',
-                        width: 800,
-                        height: 400
-                    },{
-                        border: false,
-                        plain: true,
-                        flex: 1
-                    }]
+                    xtype: 'booksearch'
                 });
                 
                 break;
