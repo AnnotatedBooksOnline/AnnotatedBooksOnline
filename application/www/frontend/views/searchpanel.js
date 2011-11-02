@@ -127,18 +127,26 @@ Ext.define('Ext.form.field.SearchComboBox', {
                         case 'year':
                             this.ownerCt.add([{xtype: 'yearbetweenfield', name: 'value'}]);
                             break;
+                            
                         case 'select':
                             if (this.ownerCt.next('[xtype=searchfield]') != null)
+                            {
                                 this.up('[xtype=searchpanel]').remove(this.ownerCt);
+                            }
+                            
                             break;
+                            
                         default:
                             this.ownerCt.add([{xtype: 'textfield', name: 'value'}]);
                             break;
-
                     }
-                    if (this.up('[xtype=searchpanel]') && this.up('[xtype=searchpanel]').getComponent(this.up('[xtype=searchpanel]').items.length-1).down('[name=type]').getValue() != 'select')
+                    
+                    var searchPanel = this.up('[xtype=searchpanel]');
+                    
+                    if (searchPanel && searchPanel.getComponent(searchPanel.items.length-1).
+                        down('[name=type]').getValue() != 'select')
                     {
-                        this.up('[xtype=searchpanel]').add([{xtype: 'searchfield'}]);
+                        searchPanel.add([{xtype: 'searchfield'}]);
                     }
                 }
             }
@@ -192,8 +200,7 @@ Ext.define('Ext.ux.SearchField', {
     }
 });
 
-
-Ext.define('SP.Search.SearchPanel', {
+Ext.define('Ext.ux.SearchPanel', {
     extend: 'Ext.Panel',
     alias: 'widget.searchpanel',
     requires: ['*'], // TODO: specify
@@ -203,7 +210,7 @@ Ext.define('SP.Search.SearchPanel', {
         var _this = this;
         var defConfig = {
             border: 0,
-            style: 'padding: 10px;',
+            bodyPadding: 10,
             
             items: [{
                 xtype: 'searchfield'
@@ -216,16 +223,11 @@ Ext.define('SP.Search.SearchPanel', {
         
         var firstField = this.getComponent(0).down('[name=type]');
         firstField.select('any');
-        firstField.fireEvent('select',firstField,{});
+        firstField.fireEvent('select', firstField, {});
     }
 });
 
-
-
-
-
-
-Ext.define('SP.Search.SearchColumnModel', {
+Ext.define('Ext.ux.SearchColumnModel', {
     extend: 'Ext.data.Model',
     fields: [{
         name: 'name',
@@ -239,7 +241,7 @@ Ext.define('SP.Search.SearchColumnModel', {
     }]
 });
 
-Ext.define('SP.Search.ResultSet', {
+Ext.define('Ext.ux.ResultSet', {
     extend: 'Ext.view.View',
     alias: 'widget.searchresultset',
 
@@ -249,7 +251,7 @@ Ext.define('SP.Search.ResultSet', {
         function getSearchColumnStore(data)
         {
             var columns = Ext.create('Ext.data.Store', {
-                model: 'SP.Search.SearchColumnModel',
+                model: 'Ext.ux.SearchColumnModel',
                 data: data.columns
             });
             
@@ -267,6 +269,7 @@ Ext.define('SP.Search.ResultSet', {
                     {
                         fields[fields.length] = {name: cols[i].get('name')};
                     }
+                    
                     return fields;
                 }(),
                 pageSize: 2,
@@ -343,7 +346,7 @@ Ext.define('SP.Search.ResultSet', {
     }
 });
 
-Ext.define('SP.Search.SortComboBox', {
+Ext.define('Ext.ux.SortComboBox', {
     extend: 'Ext.container.Container',
     alias: 'widget.sortcombobox',
     requires: ['*'],
@@ -386,7 +389,7 @@ Ext.define('SP.Search.SortComboBox', {
     }
     });
 
-Ext.define('SP.Search.SortComboBoxField', {
+Ext.define('Ext.ux.SortComboBoxField', {
     extend: 'Ext.form.field.ComboBox',
     alias: 'widget.sortcomboboxfield',
     requires: ['*'],
@@ -423,7 +426,7 @@ Ext.define('SP.Search.SortComboBoxField', {
     }
 });
 
-Ext.define('SP.Search.SearchResultView', {
+Ext.define('Ext.ux.SearchResultView', {
     extend: 'Ext.Panel',
     alias: 'widget.searchresults',
     requires: ['*'],
@@ -489,8 +492,10 @@ Ext.define('SP.Search.SearchResultView', {
                     displayMsg: 'Displaying results {0} - {1} of {2}',
                     emptyMsg: 'No books found'
                 }]);
+                
                 _this.down('[name=results]').down('[xtype=pagingtoolbar]').remove('refresh');
                 _this.down('[name=results]').down('[xtype=pagingtoolbar]').add({id: 'refresh', enable: Ext.emptyFn});
+                
                 sort();
             }
         };
@@ -501,7 +506,7 @@ Ext.define('SP.Search.SearchResultView', {
     }
 });
 
-Ext.define('SP.Search.BookSearch', {
+Ext.define('Ext.ux.BookSearch', {
     extend: 'Ext.Panel',
     alias: 'widget.booksearch',
     requires: ['*'], // TODO: specify
@@ -526,30 +531,25 @@ Ext.define('SP.Search.BookSearch', {
                 style: 'margin: 10px;',
                 handler: function()
                 {
+                    // Get search fields.
                     var fields = [];
                     for (var i = 0; i < _this.down('[xtype=searchpanel]').items.length; ++i)
                     {
                         var val = _this.down('[xtype=searchpanel]').items.get(i).getValue();
-                        if (val.type != "select")
+                        if (val.type != 'select')
                         {
                             fields[fields.length] = _this.down('[xtype=searchpanel]').items.get(i).getValue();
                         }
                     }
                     
-                    function callback(success, data)
+                    // Request book results.
+                    var onSuccess = function(data)
                     {
-                        if (!success)
-                        {
-                            alert('Failed to get search results'); //TODO
-                        }
-                        else
-                        {
-                            _this.ownerCt.down('[xtype=searchresults]').setData(data);
-                        }
-                    }
+                        // Set resulting data on search results panel.
+                        this.ownerCt.down('[xtype=searchresults]').setData(data);
+                    };
                     
-                    SP.JSON.url = 'searchexample.json'; // TODO: should not be necessary anymore
-                    SP.JSON.doRequest('searchbooks', fields, callback);
+                    RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
                 }
             },{
                 xtype: 'searchresults',
@@ -566,4 +566,3 @@ Ext.define('SP.Search.BookSearch', {
         firstField.fireEvent('select',firstField,{});
     }
 });
-
