@@ -35,7 +35,7 @@ class ExceptionBase extends Exception
 class FormatException extends ExceptionBase { }
 
 // Make all error exceptions.
-error_reporting(E_STRICT);
+error_reporting(E_ALL | E_STRICT);
 set_error_handler(
     function($errNumber, $errMessage, $errorFile, $errorLine)
     {
