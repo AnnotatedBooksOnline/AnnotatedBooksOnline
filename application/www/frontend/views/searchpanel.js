@@ -344,8 +344,51 @@ Ext.define('SP.Search.ResultSet', {
 });
 
 Ext.define('SP.Search.SortComboBox', {
-    extend: 'Ext.form.field.ComboBox',
+    extend: 'Ext.container.Container',
     alias: 'widget.sortcombobox',
+    requires: ['*'],
+
+    initComponent: function() {
+        var _this = this;
+        
+        var defConfig = {
+            layout: 'hbox',
+            items: [{
+                xtype: 'sortcomboboxfield'
+            },{
+                xtype: 'checkbox',
+                listeners: {
+                    change: function()
+                    {
+                        _this.sortFn();
+                    }
+                },
+                labelSeparator: '',
+                labelWidth: 'auto',
+                style: 'margin-left: 5px;',
+                fieldLabel: 'Inverted',
+                labelAlign: 'right'
+            }],
+            getSorter: function()
+            {
+                var val = _this.getComponent(0).getValue();
+                if (val)
+                {
+                    return { property: val, direction: (_this.getComponent(1).getValue() ? 'DESC' : 'ASC') }
+                }
+                return null;
+            }
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    }
+    });
+
+Ext.define('SP.Search.SortComboBoxField', {
+    extend: 'Ext.form.field.ComboBox',
+    alias: 'widget.sortcomboboxfield',
     requires: ['*'],
     
     initComponent: function() {
@@ -369,7 +412,7 @@ Ext.define('SP.Search.SortComboBox', {
             listeners: {
                 select: function(combo)
                 {
-                    _this.sortFn();
+                    _this.ownerCt.sortFn();
                 }
             }
         };
@@ -394,13 +437,17 @@ Ext.define('SP.Search.SearchResultView', {
             var sorters = [];
             do
             {
-                var val = current.getValue();
+                var val = current.getSorter();
                 if (val)
                 {
-                    sorters[sorters.length] = { property: val, direction: 'ASC' };
+                    sorters[sorters.length] = val;
                 }
             } while(current = current.nextSibling('[xtype=sortcombobox]'));
-            _this.down('[xtype=searchresultset]').store.pagedSort(sorters);
+            var results = _this.down('[xtype=searchresultset]');
+            if (results)
+            {
+                results.store.pagedSort(sorters);
+            }
         };
         
         var defConfig = {
@@ -444,6 +491,7 @@ Ext.define('SP.Search.SearchResultView', {
                 }]);
                 _this.down('[name=results]').down('[xtype=pagingtoolbar]').remove('refresh');
                 _this.down('[name=results]').down('[xtype=pagingtoolbar]').add({id: 'refresh', enable: Ext.emptyFn});
+                sort();
             }
         };
         
