@@ -270,13 +270,21 @@ Ext.define('SP.Search.ResultSet', {
                     return fields;
                 }(),
                 pageSize: 2,
-                data: data.records
+                data: data.records,
+                pagedSort: function(sorters, direction)
+                {
+                    this.loadData(data.records);
+                    var s = this.sort(sorters, direction);
+                    this.loadData(this.data.getRange().slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
+                    return s;
+                }
             });
             
             store.on('load',
                 function(store, records, successful, operation)
                 {
-                    this.loadData(data.records.slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
+                    this.loadData(data.records);
+                    this.loadData(this.data.getRange().slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
                 },
                 store
             );
@@ -392,7 +400,7 @@ Ext.define('SP.Search.SearchResultView', {
                     sorters[sorters.length] = { property: val, direction: 'ASC' };
                 }
             } while(current = current.nextSibling('[xtype=sortcombobox]'));
-            _this.down('[xtype=searchresultset]').store.sort(sorters);
+            _this.down('[xtype=searchresultset]').store.pagedSort(sorters);
         };
         
         var defConfig = {
