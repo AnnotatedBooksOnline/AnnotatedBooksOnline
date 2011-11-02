@@ -68,7 +68,11 @@ Ext.define('Ext.ux.UserListPanel', {
                {name: 'occupation'},
                {name: 'website'}
             ],
-            data: myData
+            proxy: {
+                type: 'requestmanager',
+                action: 'userList',
+                controller: 'User'
+            }
         });
         
         /* option 2

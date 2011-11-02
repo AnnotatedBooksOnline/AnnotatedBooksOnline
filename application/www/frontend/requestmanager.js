@@ -130,3 +130,87 @@ RequestManager.prototype.flush = function()
         });
     }
 }
+/*
+ * Ext Proxy for the RequestManager.
+ * 
+ * Requests contain these fields:
+ * - action: read, create, update, destroy
+ * - params: object describing page, filters, sorters, ...
+ *     - page: the current page number
+ *     - start: the start row index
+ *     - limit: the number of rows to be returned
+ *     - filters: the Ext.util.Filter[] to apply
+ *     - sorters: the Ext.util.Sorter[] to apply
+ * - records: the records (Ext.data.Model[]) to process
+ * 
+ * Response should contain these fields:
+ * - records: the returned data fields
+ * - total: the total number of fields in the query (for paging)
+ * - success: whether or not the request succeeded (regarding the data, not the server or connection)
+ */
+
+Ext.define('Ext.ux.RequestManagerProxy', {
+    requires: ['Ext.util.MixedCollection', 'Ext.Ajax'],
+    extend: 'Ext.data.proxy.Server',
+    alias: 'proxy.requestmanager',
+    
+    controller: undefined,
+    action: undefined,
+    root: 'records',
+    
+    actionMethods: {
+        create : 'POST',
+        read   : 'POST',
+        update : 'POST',
+        destroy: 'POST'
+    },
+    url: '/backend/', // Just so Ext does not complain.
+    
+    doRequest: function(operation, callback, scope) {
+        var writer  = this.getWriter(),
+            request = this.buildRequest(operation, callback, scope);
+            
+        if (operation.allowWrite()) {
+            request = writer.write(request);
+        }
+        
+        // Just to make things a bit more compliant and less complicated: simulate 'real' ExtJS behaviour.
+        Ext.apply(request, {
+            headers       : this.headers,
+            timeout       : this.timeout,
+            scope         : this,
+            callback      : this.createRequestCallback(request, operation, callback, scope),
+            method        : this.getMethod(request),
+            disableCaching: false
+        });
+        
+        function onSuccess(object, data)
+        {
+            me.processResponse(true, operation, request, data, callback, object);
+        }
+        
+        function onError(object, code, message, trace)
+        {
+            me.processResponse(false, operation, request, 'Error ' + code + ': ' + message, callback, object);
+        }
+
+        RequestManager.getInstance().request(this.controller, this.action, {action: operation.action, params: request.params, records: request.jsonData}, scope, onSuccess, onError);
+        
+        return request;
+    },
+    
+    getMethod: function(request) {
+        return this.actionMethods[request.action];
+    },
+    
+    createRequestCallback: function(request, operation, callback, scope) {
+        var me = this;
+        
+        return function(options, success, response) {
+            me.processResponse(success, operation, request, response, callback, scope);
+        };
+    }
+}, function() {
+    Ext.data.HttpProxy = this;
+});
+
