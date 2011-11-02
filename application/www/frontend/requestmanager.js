@@ -8,18 +8,21 @@
  * Request manager class.
  */
 
-//class definition
+// Class definition.
 function RequestManager()
 {
     //if (arguments.length)
         this.constructor.apply(this, arguments);
 }
 
-//members
+// Fields.
 RequestManager.prototype.timer;
 RequestManager.prototype.requests;
 
-//constructor
+// Singleton instance.
+RequestManager.instance;
+
+// Constructor.
 RequestManager.prototype.constructor = function()
 {
     this.requests = [];
@@ -29,10 +32,26 @@ RequestManager.prototype.constructor = function()
  * Public methods.
  */
 
-RequestManager.prototype.request = function(controller, action, data, onFinished)
+RequestManager.getInstance = function()
 {
-    var request = {controller: controller, action: action, data: data, onFinished: onFinished};
+    if (RequestManager.instance === undefined)
+    {
+        RequestManager.instance = new RequestManager();
+    }
     
+    return RequestManager.instance;
+}
+
+RequestManager.prototype.request = function(controller, action, data, object, onSuccess, onError)
+{
+    var request = {
+        controller: controller,
+        action: action,
+        data: data,
+        object: object,
+        onSuccess: onSuccess,
+        onError: onError
+    };
     this.requests.push(request);
     
     if (this.requests.length >= 10)
@@ -62,20 +81,26 @@ RequestManager.prototype.flush = function()
                 json: Ext.JSON.encode(request.data)
             },
             method: 'POST',
-            success: function(result, request)
+            success: function(result, req)
             {
                 var data = Ext.JSON.decode(result.responseText);
                 
-                
-                
-                Ext.MessageBox.alert('Success', 'Success!');
+                if (request.onSuccess !== undefined)
+                {
+                    request.onSuccess.call(request.object, data);
+                }
             },
-            failure: function(result, request)
+            failure: function(result, req)
             {
-                var data;
+                var data, message, code, trace;
+                
                 try
                 {
                     data = Ext.JSON.decode(result.responseText);
+                    
+                    message = data.message;
+                    code    = data.code;
+                    trace   = data.trace;
                 }
                 catch (e)
                 {
@@ -86,9 +111,21 @@ RequestManager.prototype.flush = function()
                     };
                 }
                 
-                var trace = data.trace || '(not available)';
-                Ext.MessageBox.alert('Error', 'An error occurred, message: \'' +
-                    data.message + '\', code: \'' + data.code + '\', stack trace: ' + "\n" + trace);
+                if (request.onError !== undefined)
+                {
+                    request.onError.call(request.object, code, message, trace);
+                }
+                else
+                {
+                    trace = trace || '(not available)';
+                    
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'An error occurred, message: \'' + data.message + '\', code: \'' +
+                             data.code + '\', stack trace: ' + "\n" + trace,
+                        icon: Ext.Msg.ERROR
+                    });
+                }
             }
         });
     }

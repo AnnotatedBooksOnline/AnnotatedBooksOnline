@@ -4,20 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Viewer</title>
-        <!-- optimization: stylesheets first, then javascript -->
+        <title>Collaboratory</title>
+        <!-- As an optimization we load stylesheets first, then Javascript. -->
         <link rel="stylesheet" type="text/css" href="frontend/extjs/resources/css/ext-all.css"/>
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/viewport.css" />
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/icons.css" />
         <script type="text/javascript" src="frontend/extjs/bootstrap.js"></script>
         <script type="text/javascript" src="frontend/jquery-1.6.4.min.js"></script>
         <script type="text/javascript" src="frontend/common.js"></script>
-        <script type="text/javascript" src="frontend/requestmanager.js"></script>
-        <script type="text/javascript" src="frontend/eventdispatcher.js"></script>
-        <script type="text/javascript" src="frontend/domnode.js"></script>
-        <script type="text/javascript" src="frontend/document.js"></script>
-        <script type="text/javascript" src="frontend/book.js"></script>
-        <script type="text/javascript" src="frontend/viewport.js"></script>
         <script type="text/javascript" src="frontend/views/util.js"></script>
         <script type="text/javascript" src="frontend/views/formbase.js"></script>
         <script type="text/javascript" src="frontend/views/viewportpanel.js"></script>
@@ -31,9 +25,17 @@
         <script type="text/javascript" src="frontend/views/userlistpanel.js"></script>
         <script type="text/javascript" src="frontend/views/searchpanel.js"></script>
         <script type="text/javascript" src="frontend/views/application.js"></script>
+        <script type="text/javascript" src="frontend/eventdispatcher.js"></script>
+        <script type="text/javascript" src="frontend/domnode.js"></script>
+        <script type="text/javascript" src="frontend/document.js"></script>
+        <script type="text/javascript" src="frontend/book.js"></script>
+        <script type="text/javascript" src="frontend/viewport.js"></script>
+        <script type="text/javascript" src="frontend/requestmanager.js"></script>
+        <script type="text/javascript" src="frontend/authentication.js"></script>
+        <script type="text/javascript" src="frontend/application.js"></script>
     </head>
     <body>
-        <!-- history form -->
+        <!-- History form. -->
         <form id="history-form" class="x-hide-display">
             <input type="hidden" id="x-history-field" />
             <iframe id="x-history-frame"></iframe>

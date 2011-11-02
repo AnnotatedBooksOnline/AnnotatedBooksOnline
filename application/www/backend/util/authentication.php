@@ -2,7 +2,8 @@
 //[[GPL]]
 
 require_once 'framework/helpers/singleton.php';
-require_once 'models/usermodel.php';
+require_once 'framework/helpers/session.php';
+require_once 'model/user/user.php';
 
 /**
  * Authentication utility class.

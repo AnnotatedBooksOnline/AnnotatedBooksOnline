@@ -152,7 +152,7 @@ Ext.define('Ext.ux.Viewer', {
                     iconCls: 'settings-icon',
                     tooltip: 'Set viewer settings',
                     listeners: {
-                        click: function() { _this.showSettingsWindow(); }
+                        click: function() { Ext.ux.Viewer.showSettingsWindow(); }
                     }
                 }
             ]
@@ -238,12 +238,6 @@ Ext.define('Ext.ux.Viewer', {
         this.slider.setValue(sliderWidth, false);
     },
     
-    showSettingsWindow: function()
-    {
-        var window = new Ext.ux.ViewerSettingsWindow();
-        window.show();
-    },
-    
     resetViewport: function()
     {
         this.viewport.reset();
@@ -254,5 +248,30 @@ Ext.define('Ext.ux.Viewer', {
         this.book = book;
         
         this.viewport.setDocument(book.getDocument(0));
+    },
+    
+    statics: {
+        showSettingsWindow: function()
+        {
+            // Check if the settings window is not already shown.
+            if (Ext.ux.Viewer.settingsWindow !== undefined)
+            {
+                Ext.WindowManager.bringToFront(Ext.ux.Viewer.settingsWindow);
+                
+                return;
+            }
+            
+            // Register action.
+            Application.getInstance().addHistoryAction('viewersettings');
+            
+            // Show login window.
+            var _this = this;
+            Ext.ux.Viewer.settingsWindow = new Ext.ux.ViewerSettingsWindow({
+                    listeners: {
+                        close: function() { Ext.ux.Viewer.settingsWindow = undefined; }
+                    }
+                });
+            Ext.ux.Viewer.settingsWindow.show();
+        },
     }
 });

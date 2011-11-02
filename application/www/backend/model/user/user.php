@@ -52,6 +52,19 @@ class User extends Entity
     }
     
     /**
+     * Constructs a user by username and password.
+     *
+     * @param  $username  Username of the user.
+     * @param  $password  Password of the user.
+     *
+     * @return  The matching user.
+     */
+    public static function fromUsernameAndPassword($username, $password)
+    {
+        ;
+    }
+    
+    /**
      * Gets the table name.
      *
      * @return  The table name.
@@ -68,7 +81,7 @@ class User extends Entity
      *
      * @return  The table name.
      */
-    protected static function getTableName()
+    protected function getTableName()
     {
         return 'Users';
     }
@@ -78,7 +91,7 @@ class User extends Entity
      *
      * @return  Array of all primary keys.
      */
-    protected static function getPrimaryKeys()
+    protected function getPrimaryKeys()
     {
         return array('id');
     }
@@ -88,7 +101,7 @@ class User extends Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected static function getColumns()
+    protected function getColumns()
     {
         return array('username', 'password', 'firstName', 'lastName', 'rank');
     }
