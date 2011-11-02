@@ -258,22 +258,30 @@ Ext.define('SP.Search.ResultSet', {
 
         function getSearchResultStore(data, columns)
         {
-            var store = Ext.create('Ext.data.Store', {
-                model: Ext.define('CurrentColumnModel', {
-                    extend: 'Ext.data.Model',
-                    fields: function()
+            var store = Ext.create('Ext.data.ArrayStore', {
+                fields: function()
+                {
+                    var cols = columns.getRange();
+                    var fields = [];
+                    for (var i = 0; i < cols.length; i++)
                     {
-                        var cols = columns.getRange();
-                        var fields = [];
-                        for (var i = 0; i < cols.length; i++)
-                        {
-                            fields[fields.length] = {name: cols[i].get('name')};
-                        }
-                        return fields;
-                    }()
-                }),
+                        fields[fields.length] = {name: cols[i].get('name')};
+                    }
+                    return fields;
+                }(),
+                pageSize: 2,
                 data: data.records
             });
+            
+            store.on('load',
+                function(store, records, successful, operation)
+                {
+                    this.loadData(data.records.slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
+                },
+                store
+            );
+            
+            store.load();
             
             return store;
         }
@@ -419,6 +427,15 @@ Ext.define('SP.Search.SearchResultView', {
                     xtype: 'searchresultset',
                     data: data
                 }]);
+                _this.down('[name=results]').add([{
+                    xtype: 'pagingtoolbar',
+                    store: _this.down('[name=results]').getComponent(0).getStore(),
+                    displayInfo: true,
+                    displayMsg: 'Displaying results {0} - {1} of {2}',
+                    emptyMsg: 'No books found'
+                }]);
+                _this.down('[name=results]').down('[xtype=pagingtoolbar]').remove('refresh');
+                _this.down('[name=results]').down('[xtype=pagingtoolbar]').add({id: 'refresh', enable: Ext.emptyFn});
             }
         };
         
