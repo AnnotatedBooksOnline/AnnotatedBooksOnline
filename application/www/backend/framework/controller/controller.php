@@ -3,7 +3,7 @@
 
 require 'framework/helpers/exceptionbase.php';
 require 'framework/helpers/configuration.php';
-//require 'framework/helpers/translator.php';
+require 'framework/helpers/translator.php';
 require 'framework/helpers/log.php';
 
 // Exceptions

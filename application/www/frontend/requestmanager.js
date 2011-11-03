@@ -103,12 +103,12 @@ RequestManager.prototype.flush = function()
                 }
                 catch (e)
                 {
-                    data = {
-                        code: 'error',
-                        message: 'Server error.',
-                        trace: result.responseText
-                    };
+                    code    = 'error';
+                    message = 'Server error.';
+                    trace   = result.responseText;
                 }
+                
+                trace = trace || '(not available)';
                 
                 if (request.onError !== undefined)
                 {
@@ -116,12 +116,10 @@ RequestManager.prototype.flush = function()
                 }
                 else
                 {
-                    trace = trace || '(not available)';
-                    
                     Ext.Msg.show({
                         title: 'Error',
-                        msg: 'An error occurred, message: \'' + data.message + '\', code: \'' +
-                             data.code + '\', stack trace: ' + "\n" + trace,
+                        msg: 'An error occurred, message: \'' + message + '\', code: \'' +
+                             code + '\', stack trace: ' + "\n" + trace,
                         icon: Ext.Msg.ERROR,
                         buttons: Ext.Msg.OK
                     });
@@ -130,6 +128,7 @@ RequestManager.prototype.flush = function()
         });
     }
 }
+
 /*
  * Ext Proxy for the RequestManager.
  *
@@ -158,7 +157,8 @@ Ext.define('Ext.ux.RequestManagerProxy', {
     
     controller: undefined,
     
-    url: '/backend/', // Just so Ext does not complain.
+    // Set url so Ext JS does not complain.
+    url: '/backend/',
     reader: {
         type: 'json',
         root: 'records'
@@ -175,25 +175,48 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         }
         
         // Just to make things a bit more compliant and less complicated: simulate 'real' ExtJS behaviour.
+        //var _this = this;
         Ext.apply(request, {
-            headers:       this.headers,
-            timeout:       this.timeout,
-            scope:         scope,
-            callback:      this.createRequestCallback(request, operation, callback, scope),
-            method:        'POST',
-            disableCaching: false
+            method:         'POST',
+            headers:        this.headers,
+            timeout:        this.timeout,
+            scope:          scope,
+            disableCaching: false,
+            //callback:
+            //    function(options, success, response)
+            //    {
+            //        _this.processResponse(success, operation, request, response, callback, scope);
+            //    }
         });
         
         var _this = this;
         function onSuccess(data)
         {
+            // Set missing return data if not set.
+            // These are not required by some actions.
+            if (!data)
+            {
+                data = {success: true, records: []};
+            }
+            else if (!data.records)
+            {
+                data.records = [];
+            }
+            
             _this.processResponse(true, operation, request, data, callback, scope);
         }
         
         function onError(code, message, trace)
         {
-            var msg = 'An error occurred, message: \'' + data.message + '\', code: \''
-                    + data.code + '\', stack trace: ' + "\n" + trace;
+            var msg = 'An error occurred, message: \'' + message + '\', code: \''
+                    + code + '\', stack trace: ' + "\n" + trace;
+            
+            Ext.Msg.show({
+                title: 'Error',
+                msg: msg,
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
             
             _this.processResponse(false, operation, request, msg, callback, scope);
         }
@@ -229,15 +252,6 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         );
 
         return request;
-    },
-    
-    createRequestCallback: function(request, operation, callback, scope)
-    {
-        var _this = this;
-        return function(options, success, response)
-        {
-            _this.processResponse(success, operation, request, response, callback, scope);
-        };
     }
 });
 

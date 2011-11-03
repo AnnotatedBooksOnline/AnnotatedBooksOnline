@@ -1,21 +1,6 @@
 /*
- * Userlist class.
+ * Userlist panel class.
  */
-
-Ext.define('User', {
-    extend: 'Ext.data.Model',
-    requires: ['*'], // TODO: specify
-    idProperty: 'user',
-    fields: [
-       {name: 'username'},
-       {name: 'email'},
-       {name: 'firstname'},
-       {name: 'lastname'},
-       {name: 'affiliation'},
-       {name: 'occupation'},
-       {name: 'website'}
-    ]
-});
 
 Ext.define('Ext.ux.UserListPanel', {
     extend: 'Ext.form.Panel',
@@ -28,23 +13,19 @@ Ext.define('Ext.ux.UserListPanel', {
         
         var store = Ext.create('Ext.data.Store', {
             pageSize: 10,
-            proxy: {
-                model: 'User',
-                type: 'requestmanager',
-                controller: 'User'
-            }
+            model: 'Ext.ux.UserModel'
         });
         
         store.loadPage(1);
         
-        function email(email)
+        function renderEmail(email)
         {
             return '<a href="mailto:' + email + '">' + email + '</a>';
         }
         
-        function website(website)
+        function renderWebsite(website)
         {
-            if (website.substr(0,4) === 'http') 
+            if (website.substr(0, 4) === 'http') 
             {
                 return '<a href="' + website + '">' + website + '</a>';
             } 
@@ -53,7 +34,6 @@ Ext.define('Ext.ux.UserListPanel', {
                 return '<a href="http://' + website + '">' + website + '</a>';
             }
         }
-        
         
         var defConfig = {
             items: [{
@@ -74,7 +54,7 @@ Ext.define('Ext.ux.UserListPanel', {
                         text:      'E-mail',
                         width:     200,
                         sortable:  true,
-                        renderer:  email,
+                        renderer:  renderEmail,
                         dataIndex: 'email'
                     },
                     {
@@ -105,7 +85,7 @@ Ext.define('Ext.ux.UserListPanel', {
                         text:      'Website',
                         width:     150,
                         sortable:  true,
-                        renderer:  website,
+                        renderer:  renderWebsite,
                         dataIndex: 'website'
                     }
                 ],

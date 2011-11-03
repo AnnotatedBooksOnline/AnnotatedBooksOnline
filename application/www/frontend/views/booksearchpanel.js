@@ -40,13 +40,28 @@ var bookProperties = [{
     name: 'Summary'
 }];
 
-Ext.regModel('SearchParameter', {
+Ext.define('Ext.ux.SearchParameterModel', {
+    extend: 'Ext.data.Model',
     fields: [{
         type: 'string',
         name: 'abbreviation'
     },{
         type: 'string',
         name: 'description'
+    }]
+});
+
+Ext.define('Ext.ux.SearchColumnModel', {
+    extend: 'Ext.data.Model',
+    fields: [{
+        name: 'name',
+        type: 'string'
+    },{
+        name: 'desc',
+        type: 'string'
+    },{
+        name: 'show',
+        type: 'boolean'
     }]
 });
 
@@ -105,7 +120,7 @@ Ext.define('Ext.form.field.SearchComboBox', {
         var defConfig = {
             width: 200,
             store: Ext.create('Ext.data.Store', {
-                    model: 'SearchParameter',
+                    model: 'Ext.ux.SearchParameterModel',
                     data: [{
                         abbreviation: 'select',
                         name: '-Select-'
@@ -227,20 +242,6 @@ Ext.define('Ext.ux.SearchPanel', {
     }
 });
 
-Ext.define('Ext.ux.SearchColumnModel', {
-    extend: 'Ext.data.Model',
-    fields: [{
-        name: 'name',
-        type: 'string'
-    },{
-        name: 'desc',
-        type: 'string'
-    },{
-        name: 'show',
-        type: 'boolean'
-    }]
-});
-
 Ext.define('Ext.ux.ResultSet', {
     extend: 'Ext.view.View',
     alias: 'widget.searchresultset',
@@ -277,9 +278,9 @@ Ext.define('Ext.ux.ResultSet', {
                 pagedSort: function(sorters, direction)
                 {
                     this.loadData(data.records);
-                    var s = this.sort(sorters, direction);
-                    this.loadData(this.data.getRange().slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
-                    return s;
+                    var sorted = this.sort(sorters, direction);
+                    this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize));
+                    return sorted;
                 }
             });
             
@@ -403,7 +404,7 @@ Ext.define('Ext.ux.SortComboBoxField', {
         
         var defConfig = {
             store: Ext.create('Ext.data.Store', {
-                    model: 'SearchParameter',
+                    model: 'Ext.ux.SearchParameterModel',
                     data: [{
                         abbreviation: 'modified',
                         name: 'Date last modified'
@@ -510,7 +511,11 @@ Ext.define('Ext.ux.SearchResultView', {
     }
 });
 
-Ext.define('Ext.ux.BookSearch', {
+/*
+ * Book search panel class.
+ */
+
+Ext.define('Ext.ux.BookSearchPanel', {
     extend: 'Ext.Panel',
     alias: 'widget.booksearch',
     requires: ['*'], // TODO: specify
