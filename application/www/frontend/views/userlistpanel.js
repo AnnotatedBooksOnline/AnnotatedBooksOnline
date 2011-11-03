@@ -31,7 +31,6 @@ Ext.define('Ext.ux.UserListPanel', {
             proxy: {
                 model: 'User',
                 type: 'requestmanager',
-                action: 'userList',
                 controller: 'User'
             }
         });

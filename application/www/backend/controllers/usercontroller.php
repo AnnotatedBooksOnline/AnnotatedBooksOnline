@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 //[[GPL]]
 
 require_once 'framework/controller/controller.php';
@@ -14,7 +14,7 @@ class UserController extends Controller
         ;
     }
     
-    public function actionUserList($data)
+    public function actionLoad($data)
     {
         $records = array(
             array(
@@ -243,8 +243,12 @@ class UserController extends Controller
                 'website' => 'http://www.uu.nl/'
             )
         );
+        
+        $start = isset($data->start) ? abs(intval($data->start)) : 0;
+        $limit = isset($data->limit) ? abs(intval($data->limit)) : count($records);
+        
         return array(
-            'records' => array_slice($records, $data->params->start, $data->params->limit),
+            'records' => array_slice($records, $start, $limit),
             'total' => count($records),
             'success' => true
         );

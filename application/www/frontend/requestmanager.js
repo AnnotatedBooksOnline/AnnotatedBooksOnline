@@ -178,7 +178,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         Ext.apply(request, {
             headers:       this.headers,
             timeout:       this.timeout,
-            scope:         this,
+            scope:         scope,
             callback:      this.createRequestCallback(request, operation, callback, scope),
             method:        'POST',
             disableCaching: false
@@ -187,7 +187,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         var _this = this;
         function onSuccess(data)
         {
-            _this.processResponse(true, operation, request, data, callback, _this);
+            _this.processResponse(true, operation, request, data, callback, scope);
         }
         
         function onError(code, message, trace)
@@ -195,7 +195,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
             var msg = 'An error occurred, message: \'' + data.message + '\', code: \''
                     + data.code + '\', stack trace: ' + "\n" + trace;
             
-            _this.processResponse(false, operation, request, msg, callback, _this);
+            _this.processResponse(false, operation, request, msg, callback, scope);
         }
         
         // Determine data to send.
