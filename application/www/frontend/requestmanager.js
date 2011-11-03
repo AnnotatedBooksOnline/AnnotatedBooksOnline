@@ -70,16 +70,15 @@ RequestManager.prototype.flush = function()
     var requests  = this.requests;
     this.requests = [];
     
-    
     for (var i in requests)
     {
         var request = requests[i];
         
         Ext.Ajax.request({
+            // Url parameters appended here, because data may be null, in which case
+            // the params would be considered POST parameters instead of GET parameters.
             url: '/backend/?controller=' + request.controller + '&action=' + request.action,
-            params: {
-                json: Ext.JSON.encode(request.data)
-            },
+            jsonData: request.data,
             method: 'POST',
             success: function(result, req)
             {
@@ -123,7 +122,8 @@ RequestManager.prototype.flush = function()
                         title: 'Error',
                         msg: 'An error occurred, message: \'' + data.message + '\', code: \'' +
                              data.code + '\', stack trace: ' + "\n" + trace,
-                        icon: Ext.Msg.ERROR
+                        icon: Ext.Msg.ERROR,
+                        buttons: Ext.Msg.OK
                     });
                 }
             }

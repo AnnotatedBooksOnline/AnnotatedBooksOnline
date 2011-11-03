@@ -63,7 +63,7 @@ class Translator extends Singleton
 }
 
 // Define a shortcut function to get an entry.
-function _($id)
+function __($id)
 {
     // Get arguments of the function, minus the id.
     $args = func_get_args();

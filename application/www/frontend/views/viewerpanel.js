@@ -112,6 +112,14 @@ Ext.define('Ext.ux.Viewer', {
                     },
                     cls: 'zoom-slider'
                 }, '-', {
+                    iconCls: 'first-icon',
+                    tooltip: 'Go to first page',
+                    disabled: true
+                },{
+                    iconCls: 'previous-icon',
+                    tooltip: 'Go to previous page',
+                    disabled: true
+                }, '-', 'Page', {
                     xtype: 'textfield',
                     width: 30,
                     value: '1',
@@ -123,17 +131,9 @@ Ext.define('Ext.ux.Viewer', {
                     allowBlank: false
                 },{
                     xtype: 'tbtext',
-                    text: '/ ' + _this.book.getDocumentAmount(),
+                    text: 'of ' + _this.book.getDocumentAmount(),
                     cls: 'total-text'
-                },{
-                    iconCls: 'first-icon',
-                    tooltip: 'Go to first page',
-                    disabled: true
-                },{
-                    iconCls: 'previous-icon',
-                    tooltip: 'Go to previous page',
-                    disabled: true
-                },{
+                }, '-', {
                     iconCls: 'next-icon',
                     tooltip: 'Go to next page',
                 },{

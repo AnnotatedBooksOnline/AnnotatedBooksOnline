@@ -301,14 +301,14 @@ Ext.define('Ext.ux.ResultSet', {
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
-                    '<div class="bookitem" style="border: 1px solid #DDDDDD; margin: 10px; cursor: pointer">',
-                        '<div style="float: left; width: 50px; height: 67px">',
+                    '<div class="bookitem" style="border: 1px solid #DDD; margin: 10px; cursor: pointer;">',
+                        '<div style="float: left; width: 50px; height: 67px; margin-right: 10px;">',
                             '<img src="{thumbnail}" style="width: 50px; height: 67px;"/>',
                         '</div>',
-                        '<div style="float: left">',
+                        '<div style="float: left; margin-top: 10px;">',
                             '<table>{properties}</table>',
                         '</div>',
-                        '<div style="clear: both"></div>',
+                        '<div style="clear: both;"></div>',
                     '</div>',
                 '</tpl>',
             ],
@@ -317,26 +317,30 @@ Ext.define('Ext.ux.ResultSet', {
 //            overItemCls: 'x-item-over',
             itemSelector: 'div.bookitem',
             emptyText: 'No books found.',
-            prepareData: function(data) {
-                var properties = "";
+            prepareData: function(data)
+            {
+                var properties = '';
                 for (var field in data)
                 {
                     var col = cols.findRecord('name', field);
-                    if (col != undefined && col.get('desc') != undefined && col.get('show'))
+                    if (col && col.get('desc') && col.get('show'))
                     {
-                        properties += '<tr><td>' + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
+                        properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
+                                    + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
                     }
                 }
+                
                 data['properties'] = properties;
+                
                 return data;
             },
             listeners: {
-                selectionchange: function(view, nodes)
+                itemclick: function(view, record)
                 {
-                    if (nodes.length != 0)
-                    {
-                        alert(_this.getSelectionModel().selected.get(0).get('title')); // TODO: actually open the book.
-                    }
+                    // Open book in a new tab.
+                    var id = record.get('id');
+                    
+                    Application.getInstance().gotoTab('book', [id], true);
                 }
             }
         };

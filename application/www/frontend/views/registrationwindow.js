@@ -151,7 +151,8 @@ Ext.define('Ext.ux.RegistrationForm', {
                         Ext.Msg.show({
                             title: 'Error',
                             msg: 'Please accept the Terms of Use.',
-                            icon: Ext.Msg.ERROR
+                            icon: Ext.Msg.ERROR,
+                            buttons: Ext.Msg.OK
                         });
                         return;
                     }

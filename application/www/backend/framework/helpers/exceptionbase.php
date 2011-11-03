@@ -15,7 +15,7 @@ class ExceptionBase extends Exception
         // Translate the message according to the id.
         $args    = func_get_args();
         $args[0] = 'error-' . $id;
-        $message = call_user_func_array('_', $args);
+        $message = call_user_func_array('__', $args);
         
         parent::__construct($message);
     }

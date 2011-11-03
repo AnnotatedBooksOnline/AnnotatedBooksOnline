@@ -40,7 +40,7 @@ abstract class Controller
             if (method_exists($controller, $methodName))
             {
                 // Get the request JSON data.
-                $input = isset($_POST['data']) ? json_decode($_POST['data']) : '';
+                $input = file_get_contents('php://input');
                 
                 // Log a messsage.
                 Log::info("Handling action action '%s' of controller '%s'.", $actionName, $controllerName);

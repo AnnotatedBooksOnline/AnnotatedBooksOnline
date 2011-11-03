@@ -124,21 +124,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
             
             // Tab listeners.
             listeners: {
-                activate: function(tab)
-                    {
-                        var index = _this.tabs.items.findIndex('id', tab.id);
-                        _this.tabActivated(index);
-                    },
-                deactivate: function(tab)
-                    {
-                        var index = _this.tabs.items.findIndex('id', tab.id);
-                        _this.tabDeactivated(index);
-                    },
-                close: function(tab)
-                    {
-                        var index = _this.tabs.items.findIndex('id', tab.id);
-                        _this.tabClosed(index);
-                    }
+                activate:    function(tab) { _this.onTabEvent(tab, 'activate');    },
+                deactivate:  function(tab) { _this.onTabEvent(tab, 'deactivate');  },
+                beforeclose: function(tab) { _this.onTabEvent(tab, 'beforeclose'); },
+                close:       function(tab) { _this.onTabEvent(tab, 'close');       }
             }
         };
         
@@ -253,22 +242,12 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         return this.tabs.items.get(index).tabInfo;
     },
-
-    tabClosed: function(index)
+    
+    onTabEvent: function(tab, event)
     {
+        var index = this.tabs.items.findIndex('id', tab.id);
+        
         this.eventDispatcher.trigger('change', this, index);
-        this.eventDispatcher.trigger('close', this, index);
-    },
-
-    tabActivated: function(index)
-    {
-        this.eventDispatcher.trigger('change', this, index);
-        this.eventDispatcher.trigger('activate', this, index);
-    },
-
-    tabDeactivated: function(index)
-    {
-        this.eventDispatcher.trigger('change', this, index);
-        this.eventDispatcher.trigger('deactivate', this, index);
-    },
+        this.eventDispatcher.trigger(event, this, index);
+    }
 });

@@ -70,6 +70,16 @@ Application.prototype.addHistoryAction = function(action, data)
     this.currentToken = newToken;
 }
 
+Application.prototype.openTab = function(type, data, activateTab)
+{
+    this.viewport.openTab(type, data, activateTab);
+}
+
+Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
+{
+    this.viewport.gotoTab(type, data, openIfNotAvailable);
+}
+
 /*
  * Private methods.
  */
@@ -89,6 +99,15 @@ Application.prototype.initialize = function()
             var info = viewport.getTabInfo(index);
             
             this.addHistoryAction(info.type, info.data);
+        }, this);
+    
+    this.viewport.getEventDispatcher().bind('beforeclose', function(event, viewport, index)
+        {
+            //alert('close');
+            
+            //Ext.History.back();
+            
+            // TODO: go to previous tab, instead of first one.
         }, this);
     
     // Register actions.
