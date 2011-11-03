@@ -68,6 +68,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 },
                 name: 'register'
             },{
+                text: 'Upload',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('upload', [], true);
+                    }
+                },
+                name: 'upload'
+            },{
                 text: 'Edit profile',
                 listeners: {
                     click: function()
@@ -255,6 +264,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         plain: true,
                         flex: 1
                     }]
+                });
+                
+                break;
+            
+            case 'upload':
+                // Add a upload tab.
+                Ext.apply(tabConfig, {
+                    title: 'upload',
+                    xtype: 'uploadform'
                 });
                 
                 break;
