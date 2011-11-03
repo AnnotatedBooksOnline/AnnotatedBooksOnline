@@ -97,7 +97,25 @@ Ext.define('Ext.ux.UploadForm', {
                         xtype: 'label',
                         text: 'Some percentage..',
                         margins: '0 0 0 10'
+                    },{
+                        xtype: 'button',
+                        text: 'Delete scan',
+                        disabled: true,
+                        width: 140,
+                        margins: '0 0 0 10',
+                        handler: function()
+                        {
+                            // TODO: handler
+                        }
                     }]
+                },{
+                    xtype: 'button',
+                    text: 'Add scan',
+                    width: 140,
+                    handler: function()
+                    {
+                        // TODO: handler
+                    }
                 }]
             },{
                 xtype: 'fieldset',
