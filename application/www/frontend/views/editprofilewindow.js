@@ -111,7 +111,7 @@ Ext.define('Ext.ux.EditProfileForm', {
             }],
             
             model: Ext.ux.UserModel,
-            modelId: 1
+            modelId: Authentication.getInstance().getUserId()
         };
         
         Ext.apply(this, defConfig);

@@ -18,6 +18,7 @@ function Authentication()
 // Fields.
 Authentication.prototype.eventDispatcher;
 Authentication.prototype.loggedOn;
+Authentication.prototype.userId;
 
 Authentication.prototype.keepAliveInterval;
 
@@ -48,7 +49,7 @@ Authentication.getInstance = function()
 }
 
 // Gets event dispatcher.
-Viewport.prototype.getEventDispatcher = function()
+Authentication.prototype.getEventDispatcher = function()
 {
     return this.eventDispatcher;
 }
@@ -58,8 +59,80 @@ Authentication.prototype.isLoggedOn = function()
     return this.loggedOn;
 }
 
+Authentication.prototype.getUserId = function()
+{
+    return this.loggedOn ? this.userId : 0;
+}
+
+Authentication.prototype.requireLogin = function(obj, onSuccess, onError)
+{
+    // Check if logged on.
+    if (this.loggedOn)
+    {
+        onSuccess.call(obj);
+        
+        return;
+    }
+    
+    // Check if there is already a login window.
+    if (Authentication.loginWindow !== undefined)
+    {
+        Authentication.loginWindow.addListener(
+            'close',
+            function()
+            {
+                if (this.loggedOn)
+                {
+                    if (onSuccess !== undefined)
+                    {
+                        onSuccess.call(obj);
+                    }
+                }
+                else if (onError !== undefined)
+                {
+                    onError.call(obj);
+                }
+            },
+            this
+        );
+        
+        return;
+    }
+    
+    // Show login window.
+    var _this = this;
+    Authentication.loginWindow = new Ext.ux.LoginWindow({
+            listeners: {
+                close: function()
+                    {
+                        if (_this.loggedOn)
+                        {
+                            if (onSuccess !== undefined)
+                            {
+                                onSuccess.call(obj);
+                            }
+                        }
+                        else if (onError !== undefined)
+                        {
+                            onError.call(obj);
+                        }
+                        
+                        Authentication.loginWindow = undefined; 
+                    }
+            }
+        });
+    Authentication.loginWindow.show();
+}
+
 Authentication.showLoginWindow = function()
 {
+    // Check if logged on.
+    if (Authentication.getInstance().isLoggedOn())
+    {
+        // Already logged on, bail out.
+        return;
+    }
+    
     // Check if the login window is not already shown.
     if (Authentication.loginWindow !== undefined)
     {
@@ -72,7 +145,6 @@ Authentication.showLoginWindow = function()
     Application.getInstance().addHistoryAction('login');
     
     // Show login window.
-    var _this = this;
     Authentication.loginWindow = new Ext.ux.LoginWindow({
             listeners: {
                 close: function() { Authentication.loginWindow = undefined; }
@@ -91,38 +163,70 @@ Authentication.showEditProfileWindow = function()
         return;
     }
     
-    // Register action.
-    Application.getInstance().addHistoryAction('editprofile');
-    
-    // Show profile window.
-    var _this = this;
-    Authentication.profileWindow = new Ext.ux.EditProfileWindow({
-            listeners: {
-                close: function() { Authentication.profileWindow = undefined; }
-            }
+    // Require login for this.
+    var authentication = Authentication.getInstance();
+    authentication.requireLogin(authentication, function()
+        {
+            // Register action.
+            Application.getInstance().addHistoryAction('editprofile');
+            
+            // Show profile window.
+            Authentication.profileWindow = new Ext.ux.EditProfileWindow({
+                    listeners: {
+                        close: function() { Authentication.profileWindow = undefined; }
+                    }
+                });
+            Authentication.profileWindow.show();
         });
-    Authentication.profileWindow.show();
 }
 
-Authentication.prototype.logout = function()
+Authentication.prototype.logout = function(showPrompt)
 {
-    // TODO: Send logout request.
+    // Logout callback, called after request has been done.
+    var callback = function(data)
+        {
+            // Set us logged out.
+            this.loggedOn = false;
+            
+            // Clear keep-alive interval
+            if (this.keepAliveInterval !== undefined)
+            {
+                clearInterval(this.keepAliveInterval);
+                this.keepAliveInterval = undefined;
+            }
+            
+            // Trigger logout.
+            this.eventDispatcher.trigger('change', this);
+            this.eventDispatcher.trigger('logout', this);
+        };
     
-    this.loggedOn = false;
-    
-    // Clear keep-alive interval
-    if (this.keepAliveInterval !== undefined)
+    if (showPrompt !== false)
     {
-        clearInterval(this.keepAliveInterval);
-        this.keepAliveInterval = undefined;
+        var _this = this;
+        Ext.Msg.show({
+            title: 'Are you sure?',
+            msg: 'Are you sure you want to log out?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            callback: function(button)
+                {
+                    if (button == 'yes')
+                    {
+                        // Send logout request.
+                        RequestManager.getInstance().request('Authentication', 'logout', {}, _this,
+                            callback);
+                    }
+                }
+        });
     }
-    
-    // Trigger logout.
-    this.eventDispatcher.trigger('change', this);
-    this.eventDispatcher.trigger('logout', this);
+    else
+    {
+        // Send logout request without prompting.
+        RequestManager.getInstance().request('Authentication', 'logout', {}, this, callback);
+    }
 }
 
-Authentication.prototype.login = function(username, password, onSuccess, onError, obj)
+Authentication.prototype.login = function(username, password, obj, onSuccess, onError)
 {
     // Do a login request.
     RequestManager.getInstance().request('Authentication', 'login', {username: username, password: password},
@@ -131,6 +235,9 @@ Authentication.prototype.login = function(username, password, onSuccess, onError
         {
             // We are logged on.
             this.loggedOn = true;
+            
+            // Set user id.
+            this.userId = data.userId;
             
             // Create keep-alive interval.
             var _this = this;

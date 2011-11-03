@@ -154,30 +154,18 @@ Ext.define('Ext.ux.RegistrationForm', {
                             icon: Ext.Msg.ERROR,
                             buttons: Ext.Msg.OK
                         });
+                        
                         return;
                     }
-
-                    // TODO
-                    /*
-                     * Normally we would submit the form to the server here and handle the response...
-                     * form.submit({
-                     *     clientValidation: true,
-                     *     url: 'register.php',
-                     *     success: function(form, action) {
-                     *        //...
-                     *     },
-                     *     failure: function(form, action) {
-                     *         //...
-                     *     }
-                     * });
-                     */
-
+                    
                     if (form.isValid())
                     {
-                        Ext.Msg.alert('Submitted Values', form.getValues(true));
+                        _this.saveModel();
                     }
                 }
-            }]
+            }],
+            
+            model: new Ext.ux.UserModel()
         };
         
         Ext.apply(this, defConfig);

@@ -9,9 +9,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
     initComponent: function() 
     {
         var topRegion = {
-            height: 100,
+            height: 50,
             border: false,
-            tbar: [{
+            tbar: [/*{
                 text: 'Book',
                 menu: [{
                     text: 'Save current page...'
@@ -22,27 +22,69 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 },{
                     text: 'Close'
                 }]
+            },*/{
+                text: 'Search',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().openTab('search', [], true);
+                    }
+                },
+                name: 'search'
             },{
-                text: 'Viewer',
-                menu: [{
-                    text: 'Reset',
-                    listeners: {
-                        click: function()
-                        {
-                            var viewer = Ext.getCmp('viewer');
-                            
-                            viewer.resetViewport();
-                        }
+                text: 'Book 100',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('book', [100], true);
                     }
-                },{
-                    text: 'Viewer settings...',
-                    listeners: {
-                        click: function()
-                        {
-                            Ext.ux.Viewer.showSettingsWindow();
-                        }
+                },
+                name: 'book100'
+            },{
+                text: 'Users',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('users', [], true);
                     }
-                }]
+                },
+                name: 'users'
+            },{
+                text: 'View profile',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('viewprofile', ['Renze'], true);
+                    }
+                },
+                name: 'viewprofile'
+            },{
+                text: 'Register',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('register', [], true);
+                    }
+                },
+                name: 'register'
+            },{
+                text: 'Edit profile',
+                listeners: {
+                    click: function()
+                    {
+                        Authentication.showEditProfileWindow();
+                    }
+                },
+                name: 'editprofile'
+            },{
+                text: 'Viewer settings',
+                listeners: {
+                    click: function()
+                    {
+                        Ext.ux.Viewer.showSettingsWindow();
+                    }
+                },
+                name: 'viewersettings'
             }, '->', {
                 text: 'Options',
                 menu: [{
@@ -62,18 +104,28 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         }
                     }
                 }]
-            },{
+            },/*{
                 text: 'Help'
-            }, '-', {
+            }, '-', */{
                 text: 'Login',
                 listeners: {
                     click: function()
                     {
                         Authentication.showLoginWindow();
                     }
-                }
-            }],
-            html: '(This panel will contain some books to open)'
+                },
+                name: 'login'
+            },{
+                text: 'Logout',
+                listeners: {
+                    click: function()
+                    {
+                        Authentication.getInstance().logout();
+                    }
+                },
+                name: 'logout',
+                hidden: true
+            }]
         };
         
         var bottomRegion = {
@@ -93,6 +145,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
         };
         
         Ext.apply(this, defConfig);
+        
+        Authentication.getInstance().getEventDispatcher().bind('change', this,
+            this.onAuthenticationChange);
         
         this.eventDispatcher = new EventDispatcher();
         
@@ -203,6 +258,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 });
                 
                 break;
+            
+            default:
+                throw new Error('Unknown tab type: \'' + type + '\'.');
         }
         
         // Add tab.
@@ -238,9 +296,26 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
     },
     
+    closeTab: function(index)
+    {
+        this.tabs.items.get(index).close();
+    },
+    
     getTabInfo: function(index)
     {
         return this.tabs.items.get(index).tabInfo;
+    },
+    
+    getTabsInfo: function()
+    {
+        var result = [];
+        this.tabs.items.each(
+            function(tab, index)
+            {
+                result[index] = tab.tabInfo;
+            });
+        
+        return result;
     },
     
     onTabEvent: function(tab, event)
@@ -249,5 +324,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         this.eventDispatcher.trigger('change', this, index);
         this.eventDispatcher.trigger(event, this, index);
+    },
+    
+    onAuthenticationChange: function(event, authentication)
+    {
+        if (authentication.isLoggedOn())
+        {
+            this.down("[name='logout']").show();
+            this.down("[name='login']").hide();
+        }
+        else
+        {
+            this.down("[name='logout']").hide();
+            this.down("[name='login']").show();
+        }
     }
 });

@@ -60,6 +60,8 @@ class Authentication extends Singleton
      *
      * @param  $username  The username of the user to log in.
      * @param  $password  The password of the user to log in.
+     *
+     * @return  The new user.
      */
     public function login($username, $password)
     {
@@ -71,6 +73,8 @@ class Authentication extends Singleton
         
         $this->user        = User::fromUsernameAndPassword($username, $password);
         $this->fetchedUser = true;
+        
+        return $this->user;
     }
     
     /**

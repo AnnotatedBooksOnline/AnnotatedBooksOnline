@@ -36,15 +36,15 @@ Ext.define('Ext.ux.LoginForm', {
                     {
                         var values = form.getValues();
                         
-                        Authentication.getInstance().login(values.username, values.password, function()
+                        Authentication.getInstance().login(values.username, values.password, this,
+                            function()
                             {
                                 this.up('window').close();
                             },
                             function(code, message, trace)
                             {
                                 // TODO: Some error handling.
-                            },
-                            this);
+                            });
                     }
                 }
             }]

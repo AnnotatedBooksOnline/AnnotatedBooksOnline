@@ -71,6 +71,14 @@ Ext.define('Ext.ux.FormBase', {
                     
                     // Hide loading mask.
                     _this.loadingMask.hide();
+                },
+                failure: function()
+                {
+                    // Hide loading mask.
+                    _this.loadingMask.hide();
+                    
+                    // Disable form.
+                    _this.disable();
                 }
             });
         }
@@ -96,7 +104,7 @@ Ext.define('Ext.ux.FormBase', {
         }
     },
     
-    saveModel: function(obj, onSuccess)
+    saveModel: function(obj, onSuccess, onError)
     {
         // Show saving mask.
         this.savingMask.show();
@@ -116,6 +124,17 @@ Ext.define('Ext.ux.FormBase', {
                 if (onSuccess !== undefined)
                 {
                     onSuccess.call(obj);
+                }
+            },
+            failure: function()
+            {
+                // Hide saving mask.
+                _this.savingMask.hide();
+                
+                // Call error callback.
+                if (onError !== undefined)
+                {
+                    onError.call(obj);
                 }
             }
         });

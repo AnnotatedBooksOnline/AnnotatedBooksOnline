@@ -22,7 +22,7 @@ EventDispatcher.prototype.constructor = function()
     this.events = {};
 }
 
-EventDispatcher.prototype.bind = function(event, method, obj)
+EventDispatcher.prototype.bind = function(event, obj, method)
 {
     var listeners = this.events[event];
     if (listeners === undefined)
@@ -31,7 +31,7 @@ EventDispatcher.prototype.bind = function(event, method, obj)
     listeners.push({method: method, obj: obj});
 }
 
-EventDispatcher.prototype.unbind = function(event, listener, obj)
+EventDispatcher.prototype.unbind = function(event, obj, listener)
 {
     var listeners = this.events[event];
     if (listeners === undefined)

@@ -61,7 +61,14 @@ class User extends Entity
      */
     public static function fromUsernameAndPassword($username, $password)
     {
-        ;
+        // TODO: Really implement this.
+        
+        $user = new User();
+        $user->setId(3);
+        $user->setUsername($username);
+        $user->setPassword($password);
+        
+        return $user;
     }
     
     /**
@@ -73,7 +80,7 @@ class User extends Entity
     {
         parent::save();
         
-        //NOTE: here, other components can be saved: eg: banned data, etc.
+        // NOTE: Here, other components can be saved: eg: banned data, etc.
     }
     
     /**
@@ -110,14 +117,13 @@ class User extends Entity
      * Getters and setters.
      */
     
-    public function setId($id) { $this->id = $id; }
-    public function getId($id) { return $id;      }
+    public function setId($id) { $this->id = $id;  }
+    public function getId()    { return $this->id; }
     
     public function setUsername($username) { $this->username = $username; }
     public function getUsername()          { return $this->username;      }
     
-    public function setPassword($password) { $this->password = $password; }
-    public function getPassword()          { return $this->password;      }
+    public function setPassword($password) { $this->password = $password; } // TODO: Hash it.
     
     public function setFirstName($firstName) { $this->firstName = $firstName; }
     public function getFirstName()           { return $this->firstName;       }
@@ -125,6 +131,6 @@ class User extends Entity
     public function setLastName($lastName) { $this->lastName = $lastName; }
     public function getLastName()          { return $this->lastName;      }
     
-    public function getRank()      { return $this->rank;  }
     public function setRank($rank) { $this->rank = $rank; }
+    public function getRank()      { return $this->rank;  }
 }

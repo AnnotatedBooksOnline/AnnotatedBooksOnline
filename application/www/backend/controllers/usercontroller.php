@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 //[[GPL]]
 
 require_once 'framework/controller/controller.php';
@@ -323,6 +323,24 @@ class UserController extends Controller
         return array(
             'records' => array(
                 'id' => 1,
+                'username' => 'Other username',
+                'email' => 'me@email.com',
+                'firstname' => 'sdf',
+                'lastname' => 'sdf',
+                'affiliation' => 'sdf',
+                'occupation' => 'sdf',
+                'website' => 'http://www.test.nl/'
+            )
+        );
+    }
+    
+    public function actionCreate($data)
+    {
+        usleep(2 * 1000 * 1000);
+        
+        return array(
+            'records' => array(
+                'id' => 26,
                 'username' => 'Other username',
                 'email' => 'me@email.com',
                 'firstname' => 'sdf',

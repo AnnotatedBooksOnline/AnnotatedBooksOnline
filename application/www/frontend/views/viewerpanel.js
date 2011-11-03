@@ -191,7 +191,7 @@ Ext.define('Ext.ux.Viewer', {
         this.totalText  = this.items.get(1).dockedItems.get(0).items.get(4);
         
         var eventDispatcher = this.viewport.getEventDispatcher();
-        eventDispatcher.bind('change', this.afterViewportChange, this);
+        eventDispatcher.bind('change', this, this.afterViewportChange);
     },
     
     afterViewportChange: function(event)

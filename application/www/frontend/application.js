@@ -72,11 +72,37 @@ Application.prototype.addHistoryAction = function(action, data)
 
 Application.prototype.openTab = function(type, data, activateTab)
 {
+    // Check if allowed type.
+    if (!this.authentication.isLoggedOn() && this.tabNeedsAuthentication(type))
+    {
+        this.authentication.requireLogin(this, function()
+            {
+                // Redirect call.
+                this.viewport.openTab(type, data, activateTab);
+            });
+        
+        return;
+    }
+    
+    // Redirect call.
     this.viewport.openTab(type, data, activateTab);
 }
 
 Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
 {
+    // Check if allowed type.
+    if (!this.authentication.isLoggedOn() && this.tabNeedsAuthentication(type))
+    {
+        this.authentication.requireLogin(this, function()
+            {
+                // Redirect call.
+                this.viewport.openTab(type, data, openIfNotAvailable);
+            });
+        
+        return;
+    }
+    
+    // Redirect call.
     this.viewport.gotoTab(type, data, openIfNotAvailable);
 }
 
@@ -86,6 +112,10 @@ Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
 
 Application.prototype.initialize = function()
 {
+    // Get authentication and request manager instances.
+    this.authentication = Authentication.getInstance();
+    this.requestManager = RequestManager.getInstance();
+    
     // Initialize history and quicktips.
     Ext.History.init();
     Ext.tip.QuickTipManager.init();
@@ -94,21 +124,21 @@ Application.prototype.initialize = function()
     this.viewport = new Ext.ux.ApplicationViewport();
     
     // Listen for tab changes
-    this.viewport.getEventDispatcher().bind('activate', function(event, viewport, index)
+    this.viewport.getEventDispatcher().bind('activate', this, function(event, viewport, index)
         {
             var info = viewport.getTabInfo(index);
             
             this.addHistoryAction(info.type, info.data);
-        }, this);
+        });
     
-    this.viewport.getEventDispatcher().bind('beforeclose', function(event, viewport, index)
+    this.viewport.getEventDispatcher().bind('beforeclose', this, function(event, viewport, index)
         {
             //alert('close');
             
             //Ext.History.back();
             
             // TODO: go to previous tab, instead of first one.
-        }, this);
+        });
     
     // Register actions.
     this.registerActions();
@@ -140,23 +170,14 @@ Application.prototype.initialize = function()
         historyChangeEventHandler(token);
     }
     
-    // DEBUG: Open some books.
-    this.viewport.openTab('book', [10]);
-    this.viewport.openTab('book', [5]);
-    this.viewport.openTab('search');
-    this.viewport.openTab('users');
-    this.viewport.openTab('register');
-    this.viewport.openTab('viewprofile', ['Renze']);
-    
-    // Get authentication and request manager instances.
-    this.authentication = Authentication.getInstance();
-    this.requestManager = RequestManager.getInstance();
+    // Handle authentication changes.
+    this.authentication.getEventDispatcher().bind('change', this, this.onAuthenticationChange);
 }
 
 Application.prototype.registerActions = function()
 {
     // Listen for history actions.
-    this.eventDispatcher.bind('historychange', function(event, app, action, data)
+    this.eventDispatcher.bind('historychange', this, function(event, app, action, data)
         {
             switch (action)
             {
@@ -187,10 +208,41 @@ Application.prototype.registerActions = function()
                     );
                     
                     // Go to the given panel.
-                    this.viewport.gotoTab(action, data, true);
+                    this.gotoTab(action, data, true);
                     break;
             }
-        }, this);
+        });
+}
+
+Application.prototype.onAuthenticationChange = function(event, authentication)
+{
+    if (!authentication.isLoggedOn())
+    {
+        // Close all tabs that need authentication.
+        var tabsInfo = this.viewport.getTabsInfo();
+        for (var i = tabsInfo.length - 1; i >= 0; --i)
+        {
+            // Close tab if it needs authentication.
+            if (this.tabNeedsAuthentication(tabsInfo[i].type))
+            {
+                this.viewport.closeTab(i);
+            }
+        }
+    }
+}
+
+Application.prototype.tabNeedsAuthentication = function(type)
+{
+    // Specify a whitelist here.
+    switch (type)
+    {
+        case 'book':
+        case 'search':
+        case 'register':
+            return false;
+    }
+    
+    return true;
 }
 
 // Start application.

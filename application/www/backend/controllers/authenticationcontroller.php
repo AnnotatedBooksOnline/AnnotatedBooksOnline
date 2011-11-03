@@ -21,7 +21,9 @@ class AuthenticationController extends Controller
         $password = isset($data['username']) ? substr($data['password'],       0, 32) : '';
         
         // Login.
-        Authentication::getInstance()->login($username, $password);
+        $user = Authentication::getInstance()->login($username, $password);
+        
+        return array('userId' => $user->getId());
     }
     
     public function actionLogout($data)
