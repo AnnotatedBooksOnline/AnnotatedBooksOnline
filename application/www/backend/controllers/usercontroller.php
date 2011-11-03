@@ -14,6 +14,26 @@ class UserController extends Controller
         ;
     }
     
+    /*
+    
+    Load:
+        - id
+        - page
+        - start
+        - limit
+        - sort: [ {property, direction}, {property, direction}, .. ]
+    
+    Save:
+        - records: [ {id, ..}, {id, ..} ]
+    
+    Create:
+        - records: [ {id, ..}, {id, ..} ]
+    
+    Delete:
+        - records: [ {id, ..}, {id, ..} ]
+    
+    */
+    
     public function actionLoad($data)
     {
         $records = array(
@@ -244,13 +264,12 @@ class UserController extends Controller
             )
         );
         
-        $start = isset($data->start) ? abs(intval($data->start)) : 0;
-        $limit = isset($data->limit) ? abs(intval($data->limit)) : count($records);
+        $start = isset($data['start']) ? abs(intval($data['start'])) : 0;
+        $limit = isset($data['limit']) ? abs(intval($data['limit'])) : count($records);
         
         return array(
             'records' => array_slice($records, $start, $limit),
-            'total' => count($records),
-            'success' => true
+            'total' => count($records)
         );
     }
 }

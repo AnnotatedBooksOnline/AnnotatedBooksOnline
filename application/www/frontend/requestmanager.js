@@ -199,8 +199,13 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         }
         
         // Determine data to send.
-        var data = {records: request.jsonData};
+        var data = {};
         Ext.apply(data, request.params);
+        
+        if (request.jsonData !== undefined)
+        {
+            data.records = request.jsonData;
+        }
 
         // Determine action to use.
         var action;
