@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 //[[GPL]]
 
 require_once 'framework/helpers/singleton.php';
