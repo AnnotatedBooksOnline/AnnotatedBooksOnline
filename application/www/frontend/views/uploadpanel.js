@@ -11,6 +11,7 @@ Ext.define('Ext.ux.UploadForm', {
     {
         var _this = this;
         
+        // TODO: get this from database (this table is not yet in the model)
         var store = Ext.create('Ext.data.ArrayStore', {
             data: [['nl', 'Dutch'],['en', 'English'],['de', 'German']],
             fields: ['value', 'text'],
@@ -20,7 +21,23 @@ Ext.define('Ext.ux.UploadForm', {
             }
         });
         
+        // TODO: let this function communicate with db, define better name
+        // defined @ library & signature
+        function checkLibrarySignature(library, signature) {
+            var result = null; // TODO: getfromdb(library, signature);
+            if (result === null)
+            {
+                return true;
+            }
+            else 
+            {
+                return 'The combination of library and signature is not unique in our system. '
+                     + 'See opennewtabwithresult ' /*+ result*/ + 'for the version in our system.';
+            }
+        };
+        
         var defConfig = {
+            // TODO : width/dimensions
             items: [{
                 xtype: 'fieldset',
                 title: 'Upload',
@@ -36,7 +53,14 @@ Ext.define('Ext.ux.UploadForm', {
                         emptyText: 'Select an XML-file',
                         fieldLabel: 'XML',
                         name: 'xml-path',
-                        buttonText: 'Browse...'
+                        buttonText: 'Browse...',
+                        allowBlank: true,
+                        validator: function(value)
+                        {
+                            return (value.substr(value.length-4).toLowerCase() === ".xml")
+                                ? true 
+                                : 'File must be XML.';
+                        }
                     },{
                         // TODO: add percentage
                         xtype: 'label',
@@ -53,7 +77,21 @@ Ext.define('Ext.ux.UploadForm', {
                         emptyText: 'Select an scan',
                         fieldLabel: 'Scan *',
                         name: 'scan-file-1',
-                        buttonText: 'Browse...'
+                        buttonText: 'Browse...',
+                        validator: function(value)
+                        {
+                            var extension = value.substr(value.length-5).toLowerCase();
+                            if (extension === ".tiff" 
+                             || extension === ".jpeg" 
+                             || extension.substr(1) === ".jpg")
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return 'File must be JPG, JPEG or TIFF (lower case is accepted).';
+                            }
+                        }
                     },{
                         // TODO: add percentage
                         xtype: 'label',
@@ -71,11 +109,21 @@ Ext.define('Ext.ux.UploadForm', {
                     defaultType: 'textfield',
                     items: [{
                         fieldLabel: 'Library *',
-                        name: 'library'
+                        name: 'library',
+                        validator: function(library)
+                        {
+                            var signature = this.nextSibling('[name=signature]');
+                            return checkLibrarySignature(library, signature.getValue());
+                        }
                     },{
                         fieldLabel: 'Signature *',
                         name: 'signature',
-                        margins: '0 0 0 10'
+                        margins: '0 0 0 10',
+                        validator: function(signature)
+                        {
+                            var library = this.previousSibling('[name=library]');
+                            return checkLibrarySignature(library.getValue, signature);
+                        }
                     }]
                 },{
                     xtype: 'fieldcontainer',
@@ -127,7 +175,14 @@ Ext.define('Ext.ux.UploadForm', {
                             width: 168,
                             minLength: 4,
                             maxLength: 4,
-                            margins: '0 0 0 10'
+                            margins: '0 0 0 10',
+                            listeners: {
+                                'change': function(f, from) {
+                                    var to = this.nextSibling('[name=to]');
+                                    to.setValue(from);
+                                    return;
+                                }
+                            }
                         },{
                             xtype: 'label',
                             text: '-',
@@ -139,7 +194,14 @@ Ext.define('Ext.ux.UploadForm', {
                             width: 63,
                             minLength: 4,
                             maxLength: 4,
-                            margins: '0 0 0 10'
+                            margins: '0 0 0 10',
+                            validator: function(to)
+                            {
+                                var from = this.previousSibling('[name=from]');
+                                return (parseInt(from.getValue()) > parseInt(to)) 
+                                    ? 'A time period can\'t go back in time' 
+                                    : true;
+                            }
                         }]
                     },{ 
                         xtype: 'fieldcontainer',
@@ -204,11 +266,12 @@ Ext.define('Ext.ux.UploadForm', {
             buttons: [{
                 xtype: 'button',
                 formBind: true,
+                disabled: true,
                 text: 'Save',
                 width: 140,
                 handler: function()
                 {
-                    // TODO: handler
+                    // TODO: submit values
                 }
             }]
         };
