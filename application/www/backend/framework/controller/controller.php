@@ -3,7 +3,7 @@
 
 require 'framework/helpers/exceptionbase.php';
 require 'framework/helpers/configuration.php';
-require 'framework/helpers/translator.php';
+//require 'framework/helpers/translator.php';
 require 'framework/helpers/log.php';
 
 // Exceptions
@@ -40,7 +40,7 @@ abstract class Controller
             if (method_exists($controller, $methodName))
             {
                 // Get the request JSON data.
-                $input = isset($_POST['data']) ? json_decode($_POST['data']) : '';
+                $input = isset($_POST['json']) ? json_decode(stripslashes($_POST['json'])) : '';
                 
                 // Log a messsage.
                 Log::info("Handling action action '%s' of controller '%s'.", $actionName, $controllerName);

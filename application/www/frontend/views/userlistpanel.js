@@ -2,7 +2,6 @@
  * Userlist class.
  */
 
-/* option 2
 Ext.define('User', {
     extend: 'Ext.data.Model',
     requires: ['*'], // TODO: specify
@@ -17,7 +16,6 @@ Ext.define('User', {
        {name: 'website'}
     ]
 });
-*/
 
 Ext.define('Ext.ux.UserListPanel', {
     extend: 'Ext.form.Panel',
@@ -27,72 +25,18 @@ Ext.define('Ext.ux.UserListPanel', {
     initComponent: function() 
     {
         var _this = this;
-
-        // sample static data for the store
-        var myData = [
-            ['a','me@email.com','sdf','sdf','sdf','sdf','http://www.test.nl/'],
-            ['b','us@them.com','df','df','df','df','https://www.test2.nl'],
-            ['c','us@them.com','ds','ds','ds','ds','www.test3.nl/'],
-            ['d','us@them.com','sdf','sdf','sdf','sdf','http://test4.nl'],
-            ['e','us@them.com','vcbx','vcbx','vcbx','vcbx','https://test5.nl'],
-            ['f','us@them.com','fs','fs','fs','fs','http://www.uu.nl/'],
-            ['g','us@them.com','sdf','sdf','sdf','sdf','http://www.uu.nl/'],
-            ['h','us@them.com','ds','ds','ds','ds','http://www.uu.nl/'],
-            ['i','us@them.com','xcvbc','xcvbc','xcvbc','xcvbc','http://www.uu.nl/'],
-            ['j','us@them.com','xvb','xvb','xvb','xvb','http://www.uu.nl/'],
-            ['k','us@them.com','cxvb','cxvb','cxvb','cxvb','http://www.uu.nl/'],
-            ['l','us@them.com','cvb','cvb','cvb','cvb','http://www.uu.nl/'],
-            ['m','us@them.com','cxvb','cxvb','cxvb','cxvb','http://www.uu.nl/'],
-            ['n','us@them.com','vcbx','vcbx','vcbx','vcbx','http://www.uu.nl/'],
-            ['o','us@them.com','c','c','c','c','http://www.uu.nl/'],
-            ['p','us@them.com','vcvc','vcvc','vcvc','vcvc','http://www.uu.nl/'],
-            ['q','us@them.com','cvx','cvx','cvx','cvx','http://www.uu.nl/'],
-            ['r','us@them.com','cv','cv','cv','cv','http://www.uu.nl/'],
-            ['s','us@them.com','xcvbc','xcvbc','xcvbc','xcvbc','http://www.uu.nl/'],
-            ['t','us@them.com','bv','bv','bv','bv','http://www.uu.nl/'],
-            ['u','us@them.com','g','g','g','g','http://www.uu.nl/'],
-            ['v','us@them.com','er','er','er','er','http://www.uu.nl/'],
-            ['w','us@them.com','ts','ts','ts','ts','http://www.uu.nl/'],
-            ['x','us@them.com','dsfg','dsfg','dsfg','dsfg','http://www.uu.nl/'],
-            ['Langerdanditkannietoftochwelll','emailadressenkunnenheellangzijn@maarzijndatnooit.com','Langerdanditkannietoftochwelllneetochnietbijnaaaa','Langerdanditkannietoftochwelllneetochnietbijnaaaa','Langerdanditkannietoftochwelllneetochnietbijnaaaa','Langerdanditkannietoftochwelllneetochnietbijnaaaa','http://www.uu.nl/']
-        ];
         
-        var store = Ext.create('Ext.data.ArrayStore', {
+        var store = Ext.create('Ext.data.Store', {
             pageSize: 10,
-            fields: [
-               {name: 'username'},
-               {name: 'email'},
-               {name: 'firstname'},
-               {name: 'lastname'},
-               {name: 'affiliation'},
-               {name: 'occupation'},
-               {name: 'website'}
-            ],
             proxy: {
+                model: 'User',
                 type: 'requestmanager',
                 action: 'userList',
                 controller: 'User'
             }
         });
         
-        /* option 2
-        var store = Ext.create('Ext.data.Store', {
-            model: 'User',
-            remoteSort: true,
-            pageSize: 10,
-            proxy: {
-                type: 'pagingmemory',
-                data: myData,
-                reader: {
-                    type: 'array'
-                }
-            }
-        });
-        */
-        
         store.loadPage(1);
-        // option 2
-        // store.load();
         
         function email(email)
         {

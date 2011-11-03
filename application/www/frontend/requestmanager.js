@@ -156,7 +156,6 @@ Ext.define('Ext.ux.RequestManagerProxy', {
     
     controller: undefined,
     action: undefined,
-    root: 'records',
     
     actionMethods: {
         create : 'POST',
@@ -165,6 +164,10 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         destroy: 'POST'
     },
     url: '/backend/', // Just so Ext does not complain.
+    reader: {
+        type: 'json',
+        root: 'records'
+    },
     
     doRequest: function(operation, callback, scope) {
         var writer  = this.getWriter(),
@@ -184,18 +187,20 @@ Ext.define('Ext.ux.RequestManagerProxy', {
             disableCaching: false
         });
         
-        function onSuccess(object, data)
+        var me = this;
+        
+        function onSuccess(data)
         {
-            me.processResponse(true, operation, request, data, callback, object);
+            me.processResponse(true, operation, request, data, callback, this);
         }
         
-        function onError(object, code, message, trace)
+        function onError(code, message, trace)
         {
-            me.processResponse(false, operation, request, 'Error ' + code + ': ' + message, callback, object);
+            me.processResponse(false, operation, request, 'Error ' + code + ': ' + message, callback, this);
         }
 
         RequestManager.getInstance().request(this.controller, this.action, {action: operation.action, params: request.params, records: request.jsonData}, scope, onSuccess, onError);
-        
+
         return request;
     },
     
