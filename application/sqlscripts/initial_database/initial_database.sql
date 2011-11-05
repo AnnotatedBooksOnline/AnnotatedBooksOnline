@@ -1,231 +1,224 @@
 CREATE TABLE "User"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "UserID" serial NOT NULL,
-  "Username" varchar(30) NOT NULL,
-  "PasswordHash" character(40) NOT NULL,
-  "EmailAddress" varchar(256) NOT NULL,
-  "FirstName" varchar(50),
-  "LastName" varchar(50),
-  "Affiliation" varchar(50),
-  "Occupation" varchar(50),
-  "Website" varchar(255),
-  "HomeAddress" varchar(255),
-  "Active" bit(1) NOT NULL,
-  "Banned" bit(1) NOT NULL,
-  "Rank" smallint NOT NULL,
+  "userID" serial NOT NULL,
+  "username" varchar(30) NOT NULL,
+  "passwordHash" character(40) NOT NULL,
+  "email" varchar(256) NOT NULL,
+  "firstName" varchar(50),
+  "lastName" varchar(50),
+  "affiliation" varchar(50),
+  "occupation" varchar(50),
+  "website" varchar(255),
+  "homeAddress" varchar(255),
+  "active" bit(1) NOT NULL,
+  "banned" bit(1) NOT NULL,
+  "rank" smallint NOT NULL,
   
-  PRIMARY KEY ("UserID"),
-  UNIQUE ("Username")
+  PRIMARY KEY ("userID"),
+  UNIQUE ("username")
 );
 
 
 CREATE TABLE "PendingUser"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "UserPending" serial NOT NULL,
-  "ConfirmationCode" character(20) NOT NULL,
-  "ExpirationDate" date NOT NULL,
+  "pendingUserID" serial NOT NULL,
+  "confirmationCode" character(20) NOT NULL,
+  "expirationDate" date NOT NULL,
   
-  FOREIGN KEY ("UserPending")
+  FOREIGN KEY ("pendingUserID")
       REFERENCES "User",
-  UNIQUE ("ConfirmationCode")
+  UNIQUE ("confirmationCode")
 );
 
 CREATE TABLE "BannedUser"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "UserBanned" serial NOT NULL,
-  "Description" text,
-  "EndOfBan" date,
+  "banID" serial NOT NULL,
+  "userID" serial NOT NULL,
+  "description" text,
+  "endOfBan" date,
   
-  FOREIGN KEY ("UserBanned")
+  PRIMARY KEY ("banID"),
+  FOREIGN KEY ("userID")
       REFERENCES "User"
 );
 
 CREATE TABLE "BannedIPAddress"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
 
-  "IPAddress" bigint NOT NULL,
-  "Description" text,
-  "EndOfBan" date,
+  "ipAddress" bigint NOT NULL,
+  "description" text,
+  "endOfBan" date,
   
-  PRIMARY KEY ("IPAddress")
+  PRIMARY KEY ("ipAddress")
 );
 
 CREATE TABLE "Permission"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "PermissionID" serial NOT NULL,
-  "ActionName" varchar(50) NOT NULL,
-  "MinRank" smallint NOT NULL,
+  "permissionID" serial NOT NULL,
+  "actionName" varchar(50) NOT NULL,
+  "minRank" smallint NOT NULL,
   
-  PRIMARY KEY ("PermissionID")
+  PRIMARY KEY ("permissionID")
 );
 
 
 
 CREATE TABLE "Library"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "LibraryID" serial NOT NULL,
-  "LibraryName" varchar(50) NOT NULL,
-  "LibraryAddress" varchar(255),
-  "Website" varchar(255),
-  "FurtherInfo" text,
+  "libraryID" serial NOT NULL,
+  "libraryName" varchar(50) NOT NULL,
+  "libraryAddress" varchar(255),
+  "website" varchar(255),
+  "furtherInfo" text,
   
-  PRIMARY KEY ("LibraryID"),
-  UNIQUE ("LibraryName")
+  PRIMARY KEY ("libraryID"),
+  UNIQUE ("libraryName")
 );
 
 CREATE TABLE "Binding"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "BindingID" integer NOT NULL,
-  "Library" serial NOT NULL,
-  "Signature" character(255) NOT NULL,
-  "Languages" varchar(255),
+  "bindingID" serial NOT NULL,
+  "libraryID" serial NOT NULL,
+  "signature" character(255) NOT NULL,
   "Summary" text,
   "PagesToFirst" integer NOT NULL,
   "PagesFromLast" integer NOT NULL,
   
-  PRIMARY KEY ("BindingID"),
-  FOREIGN KEY ("Library")
+  PRIMARY KEY ("bindingID"),
+  FOREIGN KEY ("libraryID")
       REFERENCES "Library",
-  UNIQUE ("Signature")
+  UNIQUE ("signature")
+);
+
+CREATE TABLE "BindingLanguage"
+(
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
+  
+  "bindingID" serial NOT NULL,
+  "language" varchar(30) NOT NULL,
+  
+  PRIMARY KEY ("bindingID", "language"),
+  FOREIGN KEY ("bindingID")
+      REFERENCES "Binding"
 );
 
 CREATE TABLE "Book"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "BookID" serial NOT NULL,
-  "Binding" serial NOT NULL,
-  "MinYear" smallint NOT NULL,
-  "MaxYear" smallint NOT NULL,
-  "PreciseDate" date,
-  "PlacePublished" varchar(50),
-  "Publisher" varchar(50),
-  "PrintVersion" integer,
-  "Language" varchar(30) NOT NULL,
+  "bookID" serial NOT NULL,
+  "bindingID" serial NOT NULL,
+  "minYear" smallint NOT NULL,
+  "maxYear" smallint NOT NULL,
+  "preciseDate" date,
+  "placePublished" varchar(50),
+  "publisher" varchar(50),
+  "printVersion" integer,
+  "language" varchar(30) NOT NULL,
   
-  PRIMARY KEY ("BookID"),
-  FOREIGN KEY ("Binding")
+  PRIMARY KEY ("bookID"),
+  FOREIGN KEY ("bindingID")
       REFERENCES "Binding"
 );
 
 CREATE TABLE "TEIFile"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "TEIFileID" serial NOT NULL,
-  "Book" serial,
-  "Binding" serial,
-  "FileName" varchar(255) NOT NULL,
-  "Contents" text NOT NULL,
+  "teiFileID" serial NOT NULL,
+  "bookID" serial,
+  "bindingID" serial,
+  "fileName" varchar(255) NOT NULL,
+  "contents" text NOT NULL,
   
-  PRIMARY KEY ("TEIFileID"),
-  FOREIGN KEY ("Book")
+  PRIMARY KEY ("teiFileID"),
+  FOREIGN KEY ("bookID")
       REFERENCES "Book"
       ON DELETE SET NULL,
-  FOREIGN KEY ("Binding")
+  FOREIGN KEY ("bindingID")
       REFERENCES "Binding"
       ON DELETE SET NULL
 );
 
 CREATE TABLE "Scan"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
   
-  "ScanID" serial NOT NULL,
-  "Book" serial NOT NULL,
-  "PageNo" integer NOT NULL,
-  "Status" smallint NOT NULL,
-  "TileSetID" integer NOT NULL,
-  "FullScanID" integer NOT NULL,
-  "Thumbnail" bytea,
+  "scanID" serial NOT NULL,
+  "bookID" serial NOT NULL,
+  "pageNo" integer NOT NULL,
+  "status" smallint NOT NULL,
   
-  PRIMARY KEY ("ScanID"),
-  FOREIGN KEY ("Book")
-      REFERENCES "Book",
-  UNIQUE ("TileSetID"),
-  UNIQUE ("FullScanID")
+  PRIMARY KEY ("scanID"),
+  FOREIGN KEY ("bookID")
+      REFERENCES "Book"
 );
 
 CREATE TABLE "Person"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
 
-  "PersonID" serial NOT NULL,
-  "StdFirstName" varchar(50),
-  "StdLastName" varchar(50),
-  "StdLastNamePrefix" varchar(20),
+  "personID" serial NOT NULL,
+  "name" varchar(60) NOT NULL,
   
-  PRIMARY KEY ("PersonID")
-);
-
-CREATE TABLE "AlternativeName"
-(
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
-
-  "Person" serial NOT NULL,
-  "FirstName" varchar(50),
-  "LastName" varchar(50),
-  "LastNamePrefix" varchar(20),
-  
-  FOREIGN KEY ("Person")
-      REFERENCES "Person" ("PersonID")
+  PRIMARY KEY ("personID")
 );
 
 CREATE TABLE "Author"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
 
   "Book" serial NOT NULL,
   "Author" serial NOT NULL,
@@ -238,17 +231,18 @@ CREATE TABLE "Author"
 
 CREATE TABLE "Provenance"
 (
-  "CreateDate" timestamp,
-  "ChangeDate" timestamp,
-  "UserCreated" varchar(30),
-  "UserChanged" varchar(30),
+  "createDate" timestamp,
+  "changeDate" timestamp,
+  "userCreated" varchar(30),
+  "userChanged" varchar(30),
     
-  "Binding" serial NOT NULL,
-  "Person" serial NOT NULL,
+  "bindingID" serial NOT NULL,
+  "personID" serial NOT NULL,
   
-  FOREIGN KEY ("Person")
+  PRIMARY KEY ("bindingID","personID"),
+  FOREIGN KEY ("personID")
     REFERENCES "Person",
-  FOREIGN KEY ("Binding")
+  FOREIGN KEY ("bindingID")
       REFERENCES "Binding"
 );
 
