@@ -169,8 +169,8 @@ CREATE TABLE "TEIFile"
   "userChanged" varchar(30),
   
   "teiFileID" serial NOT NULL,
-  "bookID" serial,
-  "bindingID" serial,
+  "bookID" serial NOT NULL,
+  "bindingID" serial NOT NULL,
   "fileName" varchar(255) NOT NULL,
   "contents" text NOT NULL,
   

@@ -36,10 +36,79 @@ class DBConnection extends Singleton
     }
 }
 
-
 /**
- * TODO
+ * An object of this class represents a query that is being build. Using its functions, the query 
+ * can be safely (not vulnerable to injections) expanded. The order in which the functions are used
+ * is irrelevant, but an exception is thrown when conflicts arise (e.g. when calling update and 
+ * select on the same object without clearing).
+ * 
+ * When finished, you can call prepare() which prepares the (possible paramterized) query and bakes 
+ * a PDOStatement. PDO functions can subsequently be used to execute the query. 
+ * 
+ * If you want to inspect its result, use either the PDO functions or construct a {@link ResultSet}
+ * from the executed statement.   
+ * 
+ * <b>Definitions:</b>
+ * The following definitions will be used in the documentation of this class:
+ * 
+ *  - SQL identifier: a string representing something like a SQL table or column name. Is allowed
+ *                    to start and end with double-quotes ("). The actual identifier should start
+ *                    with a letter or underscore and its following characters should be letters,
+ *                    underscores, digits or $-signs. With letters characters in range a-z and A-Z
+ *                    are meant. SQL supports non-ASCII letters but this definition doesn't.
+ *                    Illegal SQL identifiers will be detected when calling prepare() and result in
+ *                    an exception.
+ *  
+ *  - SQL value:      a UTF-8 string or something convertible to that representing a SQL string 
+ *                    literal that will be used in the query as a new column value or something a 
+ *                    column value can be compared to. These values will be properly escaped, 
+ *                    meaning they should be injection-proof and can directy depend on user input
+ *                    (assuming there is no bug in the code of the prepare-function). 
+ *                    (Strings containing) integer and floating point values can be used to 
+ *                    represent numeric SQL values. This might not, however, be possible with some
+ *                    other types (like hexadecimal strings representing BLOB's). Use parameter 
+ *                    markers for these.
+ *  
+ *  - Parameter marker: Either a single '?' or a string which first character is a ':', followed by
+ *                      some identifier representing a parameter name. You can only use one style 
+ *                      per query: either question marks or named parameters. These markers will be
+ *                      directly placed inside the incomplete query fed to PDO::prepare and allow
+ *                      the database to partially prepare the query, so multiple executions with
+ *                      different parameters will occur faster.
+ *                      After preparation, variables need to bound to these markers using 
+ *                      PDOStatement::execute() or PDOStatement::bindValue().
+ *                      For more information: see http://nl.php.net/manual/en/pdo.prepare.php
+ *                       
  *
+ * <b>Chaining</b>
+ * All member function of {@link QueryBuilder}, with the exception of prepare(). Return a reference
+ * to the object they were called on (return $this). This allows 'chaining' operations, as can be
+ * seen in the examples.
+ * 
+ * <b>Examples</b>
+ * \verbatim
+ * 
+ * // Simple selection.
+ * $qb->select(array('username', 'affiliation'))->from('User')->where(array('userid' => $uid));
+ * $stat = $qb->prepare();
+ * 
+ * // Another selection, with ?-marker.
+ * $qb->from('TEIFile')->select()->where(array('createDate' => '<= ?'));
+ * 
+ * // Building and executing an insertion query with named parameter markers.
+ * $stat = $qb->insert('PendingUser', array('pendingUserID'    => ':pid', 
+ *                                          'confirmationCode' => ':code',
+ *                                          'expirationDate'   => endOfYear()))->prepare();
+ * $stat->execute(array(':pid' => $user1, ':code' => generateCode()));
+ * $stat->execute(array(':pid' => $user2, ':code' => generateCode()));
+ * 
+ * // Query which deletes all books from between 1500 and 1512 that are written in either Japanese 
+ * // or German.
+ * $qb->delete('Book')->where(array('minYear' => '>= 1500', 'maxYear' => '<= 1512'))
+ *                    ->where_or(array('language' => 'LIKE ja%', 'language' => 'LIKE de%'));
+ * 
+ * \endverbatim
+ * 
  */
 class QueryBuilder
 {
@@ -74,7 +143,9 @@ class QueryBuilder
     }
     
     /**
-     * Constructs a new QueryBuilder.
+     * Constructs a new QueryBuilder. Acquires an instance of the DBConnection-singleton, which 
+     * will now be initialized if it wasn't before.
+     * 
      */
     public function __construct()
     {
@@ -98,8 +169,8 @@ class QueryBuilder
      * columns to be selected. If a single select with no argument or an empty array has been made,
      * all columns will be selected.
      * 
-     * @param array $cols An array of strings representing column names. They should be valid SQL
-     *                    identifiers.
+     * @param array $cols A (possibly empty) array of SQL Identifiers representing columns to limit
+     *                    the result of the selection to.
      */
     public function select($cols = array())
     {
@@ -114,10 +185,9 @@ class QueryBuilder
     /**
      * When constructing a SELECT-statement, specifies which table(s) to select from.
      * 
-     * @param string/array $tables An array of strings representing tables to select from. Each
-     *                             should be a valid SQL identifier. It's also possible to specify
-     *                             a string, which will be interpreted as an array containing only
-     *                             that string.
+     * @param string/array $tables An array of SQL identifiers representing tables to select from. 
+     *                             It's also possible to specify a single string, which will be 
+     *                             interpreted as an array containing only that.
      */
     public function from($tables)
     {
@@ -137,10 +207,11 @@ class QueryBuilder
     }
     
     /**
-     * Determines the query should be an INSERT-statement and specifies its parameters. TODO ... 
+     * Determines the query should be an INSERT-statement and specifies its parameters. 
      * 
-     * @param string $table To name of the table in which to insert.
-     * @param array  $vals  An associative array with column name => value.
+     * @param string $table The name of the table in which to insert.
+     * @param array  $vals  An associative array with column names as keys and as values parameter
+     *                      marks or SQL values.
      */
     public function insert($table, $vals)
     {
@@ -154,7 +225,12 @@ class QueryBuilder
     }
     
     /**
-     * TODO ...
+     * Determines the query should be an UPDATE-statement and specifies its parameters. Can (and
+     * usually should) be followed by a where. 
+     * 
+     * @param string $table The name of the table in which to update rows.
+     * @param array  $vals  An associative array with column names as keys and as values parameter
+     *                      marks or SQL values.
      */
     public function update($table, $vals)
     {
@@ -167,6 +243,11 @@ class QueryBuilder
         return $this;
     }
     
+    /**
+     * Determine the query should be a DELETE-statement. Should generally be followed by a where.
+     * 
+     * @param string $table The table from which to delete.
+     */
     public function delete($table)
     {
         $this->assert($this->kind === NULL || $this->kind == 'DELETE', 'different-kinds');
@@ -178,7 +259,20 @@ class QueryBuilder
     }
     
     /**
-     * TODO ...
+     * Specify the where clause of the query. Its argument is an associative array with as keys
+     * column names and as values a predicate. This predicate can simply be SQL value or parameter
+     * marker, in which case that column will be compared for equality to that value. It can also 
+     * be a SQL operator, followed by a single space, followed by a parameter marker or SQL value 
+     * (see examples). In that case that operator will be used instead of '='. The value behind the
+     * operator will still be escaped, so don't add quotes yourself.
+     * 
+     * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', '!=', '<>', 
+     * 'not is', 'not like', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
+     * 
+     * Different elements in the where-array are seperated by AND's (same as comma's). The results
+     * of multiple where-calls will also be seperated by AND's.
+     * 
+     * @param array $clause The afformented associative array.
      */
     public function where($clause)
     {
@@ -211,11 +305,13 @@ class QueryBuilder
         return $id;
     }
     
-    
+    //Escapes a SQL value, returns parameter markers unchanged.
     private function escapeValue($val)
     {
         // Explicitly cast to string.
         $val = (string) $val;
+        
+        //TODO: Forbid ?'s as their order can lead to confusion.
         
         if($val == '?' || (count($val) > 0 && $val[0] == ':'))
         {
@@ -240,6 +336,17 @@ class QueryBuilder
         return in_array(strtolower(trim($op)), $ops);
     }
     
+    /**
+     * Finalizes the query and prepares it (see class documentation). It does not clear the query 
+     * afterwards.
+     * 
+     * @return PDOStatement The prepared PDO statement that is not yet executed. If parameter 
+     *                      markers were used when constructing the query, corresponding parameters
+     *                      need to be bound first.
+     * 
+     * @throws QueryFormatException When an invalid identifier was used during the construction of
+     *                              the query.
+     */
     public function prepare()
     {       
         $this->assert(count($this->tables) > 0, 'query-incomplete');
