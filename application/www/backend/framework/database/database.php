@@ -46,12 +46,12 @@ class QueryBuilder
     // PDO resource for preparing queries.
     private $pdo;
     
-    // Query kind: 'SELECT', 'INSERT' or 'UPDATE'.
+    // Query kind: 'SELECT', 'INSERT', 'UPDATE' or 'DELETE'.
     private $kind;
     // Either an indexed array of selected columns (select), or an associative array of columns and
-    // values (insert, update).
+    // values (insert, update). Not used by delete.
     private $cols;
-    // Array of target tables.
+    // Array of target tables. Should contain one element when not selecting.
     private $tables;
     // Array of arrays of where clause elements. Inner arrays represent elements seperated by OR's,
     // while outer arrays will be seperated by AND's.
@@ -69,6 +69,8 @@ class QueryBuilder
         $this->tables = array();
         $this->whereclause = array();
         $this->joinclause = array();
+        
+        return $this;
     }
     
     /**
@@ -120,6 +122,7 @@ class QueryBuilder
     public function from($tables)
     {
         $this->assert($this->kind === NULL || $this->kind == 'SELECT', 'different-kinds');
+        $this->kind = 'SELECT';
         
         if(is_array($tables))
         {
@@ -144,7 +147,7 @@ class QueryBuilder
         $this->assert($this->kind === NULL, 'different-kinds');
         $this->kind = 'INSERT';
         
-        $tables = array($table);
+        $this->tables = array($table);
         $this->cols = $vals;
         
         return $this;
@@ -158,8 +161,18 @@ class QueryBuilder
         $this->assert($this->kind === NULL, 'different-kinds');
         $this->kind = 'UPDATE';
         
-        $tables = array($table);
+        $this->tables = array($table);
         $this->cols = $vals;
+        
+        return $this;
+    }
+    
+    public function delete($table)
+    {
+        $this->assert($this->kind === NULL || $this->kind == 'DELETE', 'different-kinds');
+        $this->kind = 'DELETE';
+        
+        $this->tables = array($table);
         
         return $this;
     }
@@ -182,11 +195,149 @@ class QueryBuilder
         array_push($this->whereclause, $clause);
         
         return $this;
+    }    
+    
+    // Checks whether something like a column or table name is a valid SQL identifier. Is used by
+    // prepare for a little extra security in case of programming mistakes. An identifier is 
+    // is allowed (but not obliged) to start and end with two double-quote (") characters. 
+    // Returns its argument.
+    private function validateSQLId($id)
+    {
+        if(!preg_match('/\w[\w\$]*$|"\w[\w\$]*$"/', $id))
+        {
+            throw new QueryFormatException('invalid-sql-id', $id);
+        }
+        
+        return $id;
     }
     
     
-    public function prepare($bindings = array())
+    private function escapeValue($val)
     {
-        //TODO
+        // Explicitly cast to string.
+        $val = (string) $val;
+        
+        if($val == '?' || (count($val) > 0 && $val[0] == ':'))
+        {
+            // PDO bindings shouldn't be escaped.
+            return $val;
+        }
+        else
+        {
+            return $this->pdo->quote($val);
+        }
+    }
+    
+    // Returns whether $op is a binary SQL operator returning a boolean to be used in a WHERE 
+    // clause. See documentation where(..).
+    private function isWhereOperator($op)
+    {
+        $ops = array('<','>','>=','<=',
+                     '=','==', 'is','like',
+                     '!=', '<>', 'not is', 'not like',
+                     'overlaps', 'in', 'not in');
+        
+        return in_array(strtolower(trim($op)), $ops);
+    }
+    
+    public function prepare()
+    {       
+        $this->assert(count($this->tables) > 0, 'query-incomplete');
+        
+        // Build query base depending on kind.
+        switch($this->kind)
+        {
+            case 'SELECT':
+                $q = 'SELECT ';
+                foreach($this->cols as $col)
+                {
+                    $q .= $this->validateSQLId($col) . ',';
+                }
+                
+                $q  = rtrim($q, ',') . ' FROM ';
+                foreach ($this->tables as $table)
+                {
+                    $q .= $this->validateSQLId($table) . ',';
+                }
+                
+                $q  = rtrim($q, ',');
+                break;
+            case 'DELETE':
+                $q = 'DELETE ' . $this->validateSQLId($this->tables[0]);
+                break;
+            case 'INSERT':
+                $q = 'INSERT INTO ' . $this->validateSQLId($this->tables[0]);
+                $cols = '(';
+                $vals  = '(';
+                
+                foreach ($this->cols as $col => $val)
+                {
+                    $cols .= $this->validateSQLId($col) . ',';
+                    $vals .= $this->escapeValue($val) . ',';
+                }
+                
+                $cols = rtrim($cols, ',') . ')';
+                $vals = rtrim($vals, ',') . ')';
+                
+                $q .= ' ' . $cols . ' VALUES ' . $vals;
+                break;
+            case 'UPDATE':
+                $q = 'UPDATE ' . $this->validateSQLId($this->tables[0]) . ' SET (';
+                
+                foreach ($this->cols as $col => $val)
+                {
+                    $this->validateSQLId($col) . ' = ' . $this->escapeValue($val) . ',';
+                }
+                
+                $q = rtrim($q, ',') . ')';
+                break;
+            default:
+                throw new QueryFormatException('query-incomplete');
+        }
+        
+        // Where clause.
+        if(count($this->whereclause) > 0)
+        {
+            $q .= ' WHERE (';
+            
+            //TODO: Do this with lambda function, implode and map.
+            foreach($this->whereclause as $outer)
+            {
+                foreach($outer as $col => $opval)
+                {
+                    // If present, extract operator from opval.
+                    $opval = trim($opval);
+                    $lastspace = strrpos($opval, ' ');
+                    if($lastspace)
+                    {
+                        $op = substr($opval, 0, $lastspace);
+                        $val = substr($opval, $lastspace + 1);
+                        if(!$this->isWhereOperator($op))
+                        {
+                            throw new QueryFormatException('invalid-where-operator', $op);
+                        }
+                    }
+                    else
+                    {
+                        $op = '=';
+                        $val = $opval;
+                    }
+                    
+                    $q .= $this->validateSQLId($col) . ' ' . $op . ' ' . $this->escapeValue($val) . ' OR ';
+                }
+                if(count($outer) > 0)
+                {
+                    // Strap off last ' OR '. 
+                    $q = substr(0, count($q) - 4);
+                }
+                
+                $q .= ') AND (';
+            }
+            
+            // Strap off last ' AND ('.
+            $q = substr(0, count($q) - 6);
+        }
+        
+        return $this->pdo->prepare($q);
     }
 }
