@@ -1,6 +1,7 @@
 <?php
 //[[GPL]]
 
+require_once 'framework/helpers/exceptionbase.php';
 require_once 'framework/helpers/singleton.php';
 require_once 'framework/helpers/configuration.php';
 
@@ -34,6 +35,22 @@ class DBConnection extends Singleton
     {
         return $this->pdo;
     }
+}
+
+/**
+ * Can be used to group multiple predicates together with OR-operators in QueryBuilder::where.
+ */
+function _or(/* $a0, $a1, ... $an*/)
+{
+    return '(' . implode(' OR ', func_get_args()) . ')';
+}
+
+/**
+* Can be used to group multiple predicates together with AND-operators in QueryBuilder::where.
+*/
+function _and(/* $a0, $a1, ... $an*/)
+{
+    return '(' . implode(' AND ', func_get_args()) . ')';
 }
 
 /**
@@ -104,8 +121,8 @@ class DBConnection extends Singleton
  * 
  * // Query which deletes all books from between 1500 and 1512 that are written in either Japanese 
  * // or German.
- * $qb->delete('Book')->where(array('minYear' => '>= 1500', 'maxYear' => '<= 1512'))
- *                    ->where_or(array('language' => 'LIKE ja%', 'language' => 'LIKE de%'));
+ * $qb->delete('Book')->where('minYear >= 1500', 'maxYear <= 1512', 
+ *                             _or('language LIKE ja%', 'language LIKE de%'));
  * 
  * \endverbatim
  * 
@@ -122,8 +139,7 @@ class QueryBuilder
     private $cols;
     // Array of target tables. Should contain one element when not selecting.
     private $tables;
-    // Array of arrays of where clause elements. Inner arrays represent elements seperated by OR's,
-    // while outer arrays will be seperated by AND's.
+    // String representing the WHERE-clause.
     private $whereclause;
     
     //TODO: join, union etc.
@@ -136,7 +152,7 @@ class QueryBuilder
         $this->kind = NULL;
         $this->cols = array();
         $this->tables = array();
-        $this->whereclause = array();
+        $this->whereclause = NULL;
         $this->joinclause = array();
         
         return $this;
@@ -258,38 +274,63 @@ class QueryBuilder
         return $this;
     }
     
+//     /**
+//      * Specify the where clause of the query. Its argument is an associative array with as keys
+//      * column names and as values a predicate. This predicate can simply be SQL value or parameter
+//      * marker, in which case that column will be compared for equality to that value. It can also 
+//      * be a SQL operator, followed by a single space, followed by a parameter marker or SQL value 
+//      * (see examples). In that case that operator will be used instead of '='. The value behind the
+//      * operator will still be escaped, so don't add quotes yourself.
+//      * 
+//      * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', '!=', '<>', 
+//      * 'not is', 'not like', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
+//      * 
+//      * Different elements in the where-array are seperated by AND's (same as comma's). The results
+//      * of multiple where-calls will also be seperated by AND's.
+//      * 
+//      * @param array $clause The afformented associative array.
+//      */
+//     public function where($clause)
+//     {
+//         foreach($clause as $left => $right)
+//         {
+//             array_push($this->whereclause, array($left => $right));
+//         }
+        
+//         return $this;
+//     }
+    
+//     public function where_or($clause)
+//     {
+//         array_push($this->whereclause, $clause);
+        
+//         return $this;
+//     }    
+
     /**
-     * Specify the where clause of the query. Its argument is an associative array with as keys
-     * column names and as values a predicate. This predicate can simply be SQL value or parameter
-     * marker, in which case that column will be compared for equality to that value. It can also 
-     * be a SQL operator, followed by a single space, followed by a parameter marker or SQL value 
-     * (see examples). In that case that operator will be used instead of '='. The value behind the
-     * operator will still be escaped, so don't add quotes yourself.
+     * Specify the WHERE-clause of a query. Each argument should be a string containing a SQL 
+     * predicate that will be directly placed in the where-statement of the query. Note that its
+     * contents will NOT be escaped or validated, so make sure they do not directly depend on user
+     * input. Parameter markers should be used instead.
      * 
-     * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', '!=', '<>', 
-     * 'not is', 'not like', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
+     * The arguments are sperated by a logical AND's. Use the _or and _and functions to delimit 
+     * sub-predicates with respectively OR's or AND's. 
      * 
-     * Different elements in the where-array are seperated by AND's (same as comma's). The results
-     * of multiple where-calls will also be seperated by AND's.
+     * For instance, the predicate (A || B || (C && D)) && E can be formulated as:
      * 
-     * @param array $clause The afformented associative array.
+     * \verbatim
+     * ..->where(_or(A, B, _and(C, D)), E);
+     * \endverbatim
      */
-    public function where($clause)
+    public function where(/* $arg0, $arg1, ... $argn */)
     {
-        foreach($clause as $left => $right)
+        if($this->whereclause === NULL)
         {
-            array_push($this->whereclause, array($left => $right));
+            $this->whereclause = 'WHERE ';
         }
         
-        return $this;
+        return implode(', ', func_get_args());
     }
-    
-    public function where_or($clause)
-    {
-        array_push($this->whereclause, $clause);
-        
-        return $this;
-    }    
     
     // Checks whether something like a column or table name is a valid SQL identifier. Is used by
     // prepare for a little extra security in case of programming mistakes. An identifier is 
@@ -402,49 +443,56 @@ class QueryBuilder
                 throw new QueryFormatException('query-incomplete');
         }
         
-        // Where clause.
-        if(count($this->whereclause) > 0)
-        {
-            $q .= ' WHERE (';
+//         //Where clause.
+//         if(count($this->whereclause) > 0)
+//         {
+//             $q .= ' WHERE (';
             
-            //TODO: Do this with lambda function, implode and map.
-            foreach($this->whereclause as $outer)
-            {
-                foreach($outer as $col => $opval)
-                {
-                    // If present, extract operator from opval.
-                    $opval = trim($opval);
-                    $lastspace = strrpos($opval, ' ');
-                    if($lastspace)
-                    {
-                        $op = substr($opval, 0, $lastspace);
-                        $val = substr($opval, $lastspace + 1);
-                        if(!$this->isWhereOperator($op))
-                        {
-                            throw new QueryFormatException('invalid-where-operator', $op);
-                        }
-                    }
-                    else
-                    {
-                        $op = '=';
-                        $val = $opval;
-                    }
+//             //TODO: Do this with lambda function, implode and map.
+//             foreach($this->whereclause as $outer)
+//             {
+//                 foreach($outer as $col => $opval)
+//                 {
+//                     // If present, extract operator from opval.
+//                     $opval = trim($opval);
+//                     $lastspace = strrpos($opval, ' ');
+//                     if($lastspace)
+//                     {
+//                         $op = substr($opval, 0, $lastspace);
+//                         $val = substr($opval, $lastspace + 1);
+//                         if(!$this->isWhereOperator($op))
+//                         {
+//                             throw new QueryFormatException('invalid-where-operator', $op);
+//                         }
+//                     }
+//                     else
+//                     {
+//                         $op = '=';
+//                         $val = $opval;
+//                     }
                     
-                    $q .= $this->validateSQLId($col) . ' ' . $op . ' ' . $this->escapeValue($val) . ' OR ';
-                }
-                if(count($outer) > 0)
-                {
-                    // Strap off last ' OR '. 
-                    $q = substr(0, count($q) - 4);
-                }
+//                     $q .= $this->validateSQLId($col) . ' ' . $op . ' ' . $this->escapeValue($val) . ' OR ';
+//                 }
+//                 if(count($outer) > 0)
+//                 {
+//                     // Strap off last ' OR '. 
+//                     $q = substr(0, count($q) - 4);
+//                 }
                 
-                $q .= ') AND (';
-            }
+//                 $q .= ') AND (';
+//             }
             
-            // Strap off last ' AND ('.
-            $q = substr(0, count($q) - 6);
+//             // Strap off last ' AND ('.
+//             $q = substr(0, count($q) - 6);
+//         }
+        
+        //Where clause
+        if($this->whereclause !== NULL)
+        {
+            $q .= $this->whereclause;
         }
         
         return $this->pdo->prepare($q);
     }
 }
+

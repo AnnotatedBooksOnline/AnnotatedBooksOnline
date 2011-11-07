@@ -196,9 +196,9 @@ int main(int argc, char **argv)
         if (optind == argc)
         {
 	        cerr << "An error occured: No input files." << endl;
-			showUsage(argv[0]);
-			
-			return 1;
+          showUsage(argv[0]);
+          
+          return 1;
         }
         
         //Set settings
@@ -224,16 +224,13 @@ int main(int argc, char **argv)
         settings.padding_color = padding_color;
 
         //Create tile pyramid builder
-        TilePyramidBuilder *builder = new TilePyramidBuilder(settings);
+        TilePyramidBuilder builder (settings);
         
         //Feed it the files
         for (uint i = (uint) optind; i < (uint) argc; ++i)
         {
-            builder->build(argv[i]);
+            builder.build(argv[i]);
         }
-        
-        //Finalize
-        delete builder;
         
         return 0;
     }
@@ -241,17 +238,11 @@ int main(int argc, char **argv)
     {
         cerr << "An error occured: " << e.what() << endl;
         
-        if (builder)
-            delete builder;
-        
         return 1;
     }
     catch(...)
     {
         cerr << "An error occured." << endl;
-        
-        if (builder)
-            delete builder;
         
         return 1;
     }
