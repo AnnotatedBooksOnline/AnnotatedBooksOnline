@@ -136,11 +136,12 @@ Ext.define('Ext.form.field.SearchComboBox', {
             listeners: {
                 select: function(combo)
                 {
+                    this.ownerCt.getComponent(2).setDisabled(false);
                     this.ownerCt.remove(this.ownerCt.getComponent(1));
                     switch (combo.getValue())
                     {
                         case 'year':
-                            this.ownerCt.add([{xtype: 'yearbetweenfield', name: 'value'}]);
+                            this.ownerCt.insert(1, [{xtype: 'yearbetweenfield', name: 'value'}]);
                             break;
                             
                         case 'select':
@@ -152,7 +153,7 @@ Ext.define('Ext.form.field.SearchComboBox', {
                             break;
                             
                         default:
-                            this.ownerCt.add([{xtype: 'textfield', name: 'value'}]);
+                            this.ownerCt.insert(1, [{xtype: 'textfield', name: 'value'}]);
                             break;
                     }
                     
@@ -201,6 +202,19 @@ Ext.define('Ext.ux.SearchField', {
                 xtype: 'textfield',
                 name: 'value',
                 disabled: true
+            },{
+                xtype: 'button',
+                name: 'close',
+                text: 'X',
+                width: 20,
+                disabled: true,
+                handler: function()
+                {
+                    if (this.ownerCt.getComponent(0).getValue() != 'select')
+                    {
+                        this.up('[xtype=searchpanel]').remove(this.ownerCt);
+                    }
+                }
             }],
             
             getValue: function()
