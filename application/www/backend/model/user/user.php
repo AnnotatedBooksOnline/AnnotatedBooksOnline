@@ -15,7 +15,7 @@ class User extends Entity
     const RANK_MODERATOR = 1;
     const RANK_ADMIN     = 2;
     
-  
+    
     /** User ID */
     private $userID;
     
@@ -80,12 +80,18 @@ class User extends Entity
      */
     public static function fromUsernameAndPassword($username, $password)
     {
-        // TODO: Really implement this.
-        
-        $user = new User();
-        $user->setId(3);
-        $user->setUsername($username);
-        $user->setPassword($password);
+        $qb = new QueryBuilder();
+        $stat = $qb->from(getTableName())->select('userID')->where('username = :username', 'passwordHash = :hash')->prepare();
+        $stat->execute(array(':username' => $username, ':hash' => secureHash($password)));
+        if ($stat->rowCount() == 1)
+        {
+            $user = new User($stat->fetchColumn(0));
+        }
+        else
+        {
+            $user = NULL;
+            // TODO: Throw exception.
+        }
         
         return $user;
     }
@@ -142,7 +148,7 @@ class User extends Entity
     private function secureHash($password)
     {
         // Generate a salt based on the user ID. This salt does not have to be secure.
-        $salt = md5('user' . getId() . $password);
+        $salt = md5('user' . $password);
         
         // Use Blowfish with 1024 passes to generate a sufficiently secure password.
         $algorithm = '$2a';
