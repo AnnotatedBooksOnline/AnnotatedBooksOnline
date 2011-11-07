@@ -109,7 +109,7 @@ class User extends Entity
      */
     protected function getTableName()
     {
-        return 'User';
+        return 'RegisteredUser';
     }
     
     /**
