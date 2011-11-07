@@ -10,30 +10,49 @@ require_once 'framework/database/entity.php';
  */
 class User extends Entity
 {
-    /* NB : I just made up some attributes to server as an example */
-    
-    
     /** Rank constants. */
     const RANK_NONE      = 0;
     const RANK_MODERATOR = 1;
     const RANK_ADMIN     = 2;
     
-    /** Id. */
-    private $id;
+  
+    /** User ID */
+    private $userID;
     
-    /** Username. */
+    /** Username */
     private $username;
     
-    /** User password. */
-    private $password;
+    /** Password hash */
+    private $passwordHash;
     
-    /** User first name. */
+    /** Email address */
+    private $email;
+    
+    /** First name */
     private $firstName;
     
-    /** User last name. */
+    /** Last name */
     private $lastName;
     
-    /** Rank. */
+    /** Affiliation */
+    private $affiliation;
+    
+    /** Occupation */
+    private $occupation;
+    
+    /** Home address */
+    private $homeAddress;
+    
+    /** Website */
+    private $website;
+    
+    /** Whether this User is active */
+    private $active;
+    
+    /** Whether this User is banned */
+    private $banned;
+    
+    /** Rank number */
     private $rank;
     
     /**
@@ -45,7 +64,7 @@ class User extends Entity
     {
         if ($id !== null)
         {
-            $this->id = $id;
+            $this->userID = $id;
             
             $this->load();
         }
@@ -90,7 +109,7 @@ class User extends Entity
      */
     protected function getTableName()
     {
-        return 'Users';
+        return 'User';
     }
     
     /**
@@ -100,7 +119,7 @@ class User extends Entity
      */
     protected function getPrimaryKeys()
     {
-        return array('id');
+        return array('userID');
     }
     
     /**
@@ -110,7 +129,9 @@ class User extends Entity
      */
     protected function getColumns()
     {
-        return array('username', 'password', 'firstName', 'lastName', 'rank');
+        return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
+                     'affiliation', 'occupation', 'website', 'homeAddress', 'active',
+                     'banned', 'rank');
     }
     
     /**
@@ -133,22 +154,49 @@ class User extends Entity
      * Getters and setters.
      */
 
-    // TODO: This should be done in the constructor, and this function should be removed.
-    // Updating the ID of a user is the last thing you would want to do.
-    private function setId($id) { $this->id = $id;  }
-    public function getId()    { return $this->id; }
+    public function getId()
+    {
+        return $this->id;
+    }
     
-    public function setUsername($username) { $this->username = $username; }
-    public function getUsername()          { return $this->username;      }
+    public function getUsername()
+    {
+        return $this->username;
+    }
+    public function setUsername($username)
+    {
+        $this->username = $username;
+    }
     
-    public function setPassword($password) { $this->password = secureHash($password); }
+    public function setPassword($password)
+    {
+        $this->passwordHash = secureHash($password);
+    }
     
-    public function setFirstName($firstName) { $this->firstName = $firstName; }
-    public function getFirstName()           { return $this->firstName;       }
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+    }
     
-    public function setLastName($lastName) { $this->lastName = $lastName; }
-    public function getLastName()          { return $this->lastName;      }
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
     
-    public function setRank($rank) { $this->rank = $rank; }
-    public function getRank()      { return $this->rank;  }
+    public function getRank()
+    {
+        return $this->rank;
+    }
+    public function setRank($rank)
+    {
+        $this->rank = $rank;
+    }
 }

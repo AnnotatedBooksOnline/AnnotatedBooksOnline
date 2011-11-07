@@ -179,7 +179,7 @@ abstract class Entity
         // Set the where clause of the query.
         $callback = function($value)
         {
-            return $value . ' = :' . $value;
+            return $value . ' = :' . $this->{$value};
         };
 
         $whereClause = implode(' AND ', array_map($callback, $keys));
