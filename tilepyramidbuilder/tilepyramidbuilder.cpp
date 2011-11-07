@@ -52,22 +52,22 @@ void TilePyramidBuilder::build(const string &filename)
     {        
         if (settings.input_type == BuilderSettings::JPEG_INPUT)
         {
-        	reader = new JPEGReader();
-    	}
+            reader = new JPEGReader();
+        }
         else if (settings.input_type == BuilderSettings::TIFF_INPUT)
         {
-        	reader = new TIFFReader();
-    	}
+            reader = new TIFFReader();
+        }
         else
         {
-        	size_t e = filename.find_last_of(".");
-        	string ext = filename.substr(e+1);
-        	if (ext == "TIF" || ext == "TIFF" || ext == "tif" || ext == "tiff")
-	        	reader = new TIFFReader();
-	        else // Assume JPEG
-	        	reader = new JPEGReader();
-    	}
-        	
+            size_t e = filename.find_last_of(".");
+            string ext = filename.substr(e+1);
+            if (ext == "TIF" || ext == "TIFF" || ext == "tif" || ext == "tiff")
+                reader = new TIFFReader();
+            else // Assume JPEG
+                reader = new JPEGReader();
+        }
+            
         assert(reader);
         
         reader->open(filename);
@@ -113,7 +113,7 @@ void TilePyramidBuilder::build(const string &filename)
         //TODO
         
         if (reader)
-        	delete reader;
+            delete reader;
 
         throw;
     }
