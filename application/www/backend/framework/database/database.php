@@ -68,11 +68,11 @@ function _and(/* $a0, $a1, ... $an*/)
  * <b>Definitions:</b>
  * The following definitions will be used in the documentation of this class:
  * 
- *  - SQL identifier: a string representing something like a SQL table or column name. Is allowed
- *                    to start and end with double-quotes ("). The actual identifier should start
- *                    with a letter or underscore and its following characters should be letters,
- *                    underscores, digits or $-signs. With letters characters in range a-z and A-Z
- *                    are meant. SQL supports non-ASCII letters but this definition doesn't.
+ *  - SQL identifier: a string representing something like a SQL table or column name. It should 
+ *                    start with a letter or underscore and its following characters should be 
+ *                    letters, underscores, digits or $-signs. With letters characters in range 
+ *                    a-z and A-Z are meant. SQL supports non-ASCII letters but this definition 
+ *                    doesn't.
  *                    Illegal SQL identifiers will be detected when calling prepare() and result in
  *                    an exception.
  *  
@@ -326,19 +326,24 @@ class QueryBuilder
     {
         if($this->whereclause === NULL)
         {
-            $this->whereclause = 'WHERE ';
+            $this->whereclause = ' WHERE ';
+        }
+        else
+        {
+            $this->whereclause .= ' AND ';
         }
         
-        return implode(', ', func_get_args());
+        $this->whereclause .= implode(' AND ', func_get_args());
+        
+        return $this;
     }
     
     // Checks whether something like a column or table name is a valid SQL identifier. Is used by
-    // prepare for a little extra security in case of programming mistakes. An identifier is 
-    // is allowed (but not obliged) to start and end with two double-quote (") characters. 
+    // prepare for a little extra security in case of programming mistakes.
     // Returns its argument.
     private function validateSQLId($id)
     {
-        if(!preg_match('/\w[\w\$]*$|"\w[\w\$]*$"/', $id))
+        if(!preg_match('/\w[\w\$]*$|\w[\w\$]*$/', $id))
         {
             throw new QueryFormatException('invalid-sql-id', $id);
         }
@@ -411,7 +416,7 @@ class QueryBuilder
                 $q  = rtrim($q, ',');
                 break;
             case 'DELETE':
-                $q = 'DELETE ' . $this->validateSQLId($this->tables[0]);
+                $q = 'DELETE FROM ' . $this->validateSQLId($this->tables[0]);
                 break;
             case 'INSERT':
                 $q = 'INSERT INTO ' . $this->validateSQLId($this->tables[0]);
@@ -430,14 +435,14 @@ class QueryBuilder
                 $q .= ' ' . $cols . ' VALUES ' . $vals;
                 break;
             case 'UPDATE':
-                $q = 'UPDATE ' . $this->validateSQLId($this->tables[0]) . ' SET (';
+                $q = 'UPDATE ' . $this->validateSQLId($this->tables[0]) . ' SET ';
                 
                 foreach ($this->cols as $col => $val)
                 {
-                    $this->validateSQLId($col) . ' = ' . $this->escapeValue($val) . ',';
+                    $q .= $this->validateSQLId($col) . ' = ' . $this->escapeValue($val) . ',';
                 }
                 
-                $q = rtrim($q, ',') . ')';
+                $q = rtrim($q, ',') . ' ';
                 break;
             default:
                 throw new QueryFormatException('query-incomplete');
@@ -491,8 +496,7 @@ class QueryBuilder
         {
             $q .= $this->whereclause;
         }
-        
+        echo $q;
         return $this->pdo->prepare($q);
     }
 }
-
