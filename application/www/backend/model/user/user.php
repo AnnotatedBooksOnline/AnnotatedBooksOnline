@@ -113,17 +113,35 @@ class User extends Entity
         return array('username', 'password', 'firstName', 'lastName', 'rank');
     }
     
+    /**
+     * Calculates a secure hash for the given password.
+     *
+     * @return  A secure hash for the given password.
+     */
+    private function secureHash($password)
+    {
+        // Generate a salt based on the user ID. This salt does not have to be secure.
+        $salt = md5('user' . getId() . $password);
+        
+        // Use Blowfish with 1024 passes to generate a sufficiently secure password.
+        $algorithm = '$2a';
+        $passes = '$10';
+        return crypt($password, $algorithm . $passes . '$' . $salt);
+    }
+    
     /*
      * Getters and setters.
      */
-    
-    public function setId($id) { $this->id = $id;  }
+
+    // TODO: This should be done in the constructor, and this function should be removed.
+    // Updating the ID of a user is the last thing you would want to do.
+    private function setId($id) { $this->id = $id;  }
     public function getId()    { return $this->id; }
     
     public function setUsername($username) { $this->username = $username; }
     public function getUsername()          { return $this->username;      }
     
-    public function setPassword($password) { $this->password = $password; } // TODO: Hash it.
+    public function setPassword($password) { $this->password = secureHash($password); }
     
     public function setFirstName($firstName) { $this->firstName = $firstName; }
     public function getFirstName()           { return $this->firstName;       }
