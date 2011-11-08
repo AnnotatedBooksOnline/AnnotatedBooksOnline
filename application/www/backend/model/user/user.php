@@ -175,7 +175,7 @@ class User extends Entity
     // NOTE: (GVV) Please, do keep these one one line, so all the getters and setters don't take up
     // NOTE: (GVV) a million lines.
     
-    public function getId() { return $this->id; }
+    public function getId() { return $this->userId; }
     
     public function setUsername($username) { $this->username = $username; }
     public function getUsername()          { return $this->username;      }

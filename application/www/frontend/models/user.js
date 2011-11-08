@@ -6,11 +6,11 @@ Ext.define('Ext.ux.UserModel', {
     extend: 'Ext.data.Model',
     idProperty: 'id',
     fields: [
-       {name: 'id'},
+       {name: 'userId'},
        {name: 'username'},
        {name: 'email'},
-       {name: 'firstname'},
-       {name: 'lastname'},
+       {name: 'firstName'},
+       {name: 'lastName'},
        {name: 'affiliation'},
        {name: 'occupation'},
        {name: 'website'}

@@ -55,7 +55,7 @@ class ResultSet implements IteratorAggregate
             // TODO: Throw error.
         }
         
-        return new ResultSetRow();
+        return new ResultSetRow($row);
     }
 }
 
@@ -118,12 +118,14 @@ class ResultSetIterator implements Iterator
 class ResultSetRow
 {
     private $row;
+    private $rowCase;
 
     public function __construct($row)
     {
         foreach ($row as $key => $val)
         {
-            $this->row[strtoupper($key)] = $val;
+            $this->row[$key] = $val;
+            $this->rowCase[strtoupper($key)] = $key;
         }
     }
 
@@ -137,9 +139,9 @@ class ResultSetRow
      */
     public function getValue($columnname)
     {
-        if (array_key_exists(strtoupper($columnname), $this->row))
+        if (array_key_exists(strtoupper($columnname), $this->rowCase))
         {
-            return $this->row[strtoupper($columnname)];
+            return $this->row[$this->rowCase[strtoupper($columnname)]];
         }
         else
         {

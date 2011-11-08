@@ -61,13 +61,13 @@ Ext.define('Ext.ux.UserListPanel', {
                         text:      'First name',
                         width:     150,
                         sortable:  true,
-                        dataIndex: 'firstname'
+                        dataIndex: 'firstName'
                     },
                     {
                         text:      'Last name',
                         width:     150,
                         sortable:  true,
-                        dataIndex: 'lastname'
+                        dataIndex: 'lastName'
                     },
                     {
                         text:      'Affiliation',
