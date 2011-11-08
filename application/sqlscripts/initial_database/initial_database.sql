@@ -241,8 +241,8 @@ CREATE TABLE "Provenances"
     "changedBy" varchar(30),
 
     PRIMARY KEY ("bindingId", "personId"),
-    FOREIGN KEY ("personId)
-        REFERENCES Persons",
+    FOREIGN KEY ("personId")
+        REFERENCES "Persons",
     FOREIGN KEY ("bindingId")
         REFERENCES "Bindings"
 );

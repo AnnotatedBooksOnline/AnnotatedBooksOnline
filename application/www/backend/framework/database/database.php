@@ -1,16 +1,16 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/helpers/exceptionbase.php';
 require_once 'framework/helpers/singleton.php';
 require_once 'framework/helpers/configuration.php';
+require_once 'framework/database/resultset.php';
 
 // Exceptions.
-class DatabaseException extends ExceptionBase { }
-
+class DatabaseException    extends ExceptionBase { }
 class QueryFormatException extends ExceptionBase { }
 
-class DBConnection extends Singleton
+// Database class.
+class Database extends Singleton
 {
     // Unique instance.
     protected static $instance;
@@ -35,22 +35,15 @@ class DBConnection extends Singleton
     {
         return $this->pdo;
     }
-}
-
-/**
- * Can be used to group multiple predicates together with OR-operators in QueryBuilder::where.
- */
-function _or(/* $a0, $a1, ... $an*/)
-{
-    return '(' . implode(' OR ', func_get_args()) . ')';
-}
-
-/**
-* Can be used to group multiple predicates together with AND-operators in QueryBuilder::where.
-*/
-function _and(/* $a0, $a1, ... $an*/)
-{
-    return '(' . implode(' AND ', func_get_args()) . ')';
+    
+    /**
+     * Executes query.
+     */
+    public function execute($query, $params = array())
+    {
+        $this->pdo->prepare($query);
+        $this->pdo->execute($query, $params);
+    }
 }
 
 /**
@@ -127,57 +120,117 @@ function _and(/* $a0, $a1, ... $an*/)
  * \endverbatim
  * 
  */
-class QueryBuilder
+class Query
 {
-    // PDO resource for preparing queries.
+    /** PDO resource for preparing queries. */
     private $pdo;
     
-    // Query kind: 'SELECT', 'INSERT', 'UPDATE' or 'DELETE'.
+    /** Query kind: 'SELECT', 'INSERT', 'UPDATE' or 'DELETE'. */
     private $kind;
-    // Either an indexed array of selected columns (select), or an associative array of columns and
-    // values (insert, update). Not used by delete.
-    private $cols;
-    // Array of target tables. Should contain one element when not selecting.
-    private $tables;
-    // String representing the WHERE-clause.
-    private $whereclause;
     
-    //TODO: join, union etc.
+    /**
+     * Either an indexed array of selected columns (select), or an associative array of columns and
+     * values (insert, update). Not used by delete.
+     */
+    private $columns;
+    
+    /** Array of target tables. Should contain one element when not selecting. */
+    private $tables;
+    
+    /** String representing the join clause. */
+    private $joinClause;
+    
+    /** String representing the where clause. */
+    private $whereClause;
+    
+    /** String representing the having clause. */
+    private $havingClause;
+    
+    /** String representing the group by clause. */
+    private $groupByClause;
+    
+    /** String representing the order by clause. */
+    private $orderByClause;
+    
+    /** String representing the limit and offset clauses. */
+    private $limitClause;
+    
+    /**
+     * Constructs a new query. Acquires an instance of the the database, which 
+     * will now be initialized if it wasn't before.
+     */
+    private function __construct($kind)
+    {
+        $this->pdo = Database::getInstance()->getPDO();
+        
+        $this->clear();
+        
+        $this->kind = $kind;
+    }
+    
+    
+    /*
+    
+    
+    EXAMPLES:
+    
+    
+    Complex example:
+    
+        $query = Query::select('u.userId')->
+                 from('Users u')->
+                 count('id', 'grantTotal')->
+                 aggregate('MAX', 'maximum')->
+                 where('username = :username', 'passwordHash = :hash')->
+                 whereOr('username = :username', 'passwordHash = :hash')->
+                 join('OtherTable o', array('o.id = u.id', 'o.name = u.name'), 'LEFT')->
+                 limit(0, 1)->
+                 orderBy('u.username', 'desc')->
+                 groupBy('u.name');
+        
+        $rowSet = $query->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
+    
+    
+    Simple example:
+    
+        Query::delete('Users')->where('userId = :id')->execute(array('id' => $userId);
+    
+    
+    See also the User model.
+    
+    */
+    
+    
+    
+    
+    
+    
+    
+    /*
+     * Helper methods.
+     */
     
     /**
      * Clears all query elements that have been set.
      */
     public function clear()
     {
-        $this->kind = NULL;
-        $this->cols = array();
-        $this->tables = array();
-        $this->whereclause = NULL;
-        $this->joinclause = array();
+        $this->kind          = null;
+        $this->columns       = array();
+        $this->tables        = array();
+        $this->joinClause    = '';
+        $this->whereClause   = '';
+        $this->havingClause  = '';
+        $this->groupByClause = '';
+        $this->orderByClause = '';
+        $this->limitClause   = '';
         
         return $this;
     }
     
-    /**
-     * Constructs a new QueryBuilder. Acquires an instance of the DBConnection-singleton, which 
-     * will now be initialized if it wasn't before.
-     * 
+    /*
+     * Query kinds.
      */
-    public function __construct()
-    {
-        $this->pdo = DBConnection::getInstance()->getPDO();
-        
-        $this->clear();
-    }
-    
-    // Convenience function.
-    private function assert($cond, $error_id)
-    {
-        if(!$cond)
-        {
-            throw new QueryFormatException($error_id);
-        }
-    }     
     
     /**
      * Determines the query should be a SELECT-statement, if not yet the case, and specifies which 
@@ -185,41 +238,22 @@ class QueryBuilder
      * columns to be selected. If a single select with no argument or an empty array has been made,
      * all columns will be selected.
      * 
-     * @param array $cols A (possibly empty) array of SQL Identifiers representing columns to limit
+     * @param array $columns A (possibly empty) array of SQL Identifiers representing columns to limit
      *                    the result of the selection to.
      */
-    public function select($cols = array())
+    public static function select( /* $arg0, $arg1, ... $argn */ )
     {
-        $this->assert($this->kind === NULL || $this->kind == 'SELECT', 'different-kinds');
-        $this->kind = 'SELECT';
+        $query = new Query('SELECT');
         
-        $this->cols = array_merge($this->cols, $cols);
-        
-        return $this;
-    }
-    
-    /**
-     * When constructing a SELECT-statement, specifies which table(s) to select from.
-     * 
-     * @param string/array $tables An array of SQL identifiers representing tables to select from. 
-     *                             It's also possible to specify a single string, which will be 
-     *                             interpreted as an array containing only that.
-     */
-    public function from($tables)
-    {
-        $this->assert($this->kind === NULL || $this->kind == 'SELECT', 'different-kinds');
-        $this->kind = 'SELECT';
-        
-        if(is_array($tables))
+        $columns = self::argsToArray(func_get_args());
+        if (!$columns)
         {
-            $this->tables = array_merge($this->tables, $tables);
-        }
-        else
-        {
-            array_push($this->tables, $tables);
+            $columns = array('*');
         }
         
-        return $this;
+        $query->columns = array_map(array($query, 'escapeIdentifier'), $columns);
+        
+        return $query;
     }
     
     /**
@@ -229,15 +263,14 @@ class QueryBuilder
      * @param array  $vals  An associative array with column names as keys and as values parameter
      *                      marks or SQL values.
      */
-    public function insert($table, $vals)
+    public static function insert($table, $values)
     {
-        $this->assert($this->kind === NULL, 'different-kinds');
-        $this->kind = 'INSERT';
+        $query = new Query('INSERT');
         
-        $this->tables = array($table);
-        $this->cols = $vals;
+        $query->tables  = array($query->escapeIdentifier($table));
+        $query->columns = $values;
         
-        return $this;
+        return $query;
     }
     
     /**
@@ -248,15 +281,14 @@ class QueryBuilder
      * @param array  $vals  An associative array with column names as keys and as values parameter
      *                      marks or SQL values.
      */
-    public function update($table, $vals)
+    public static function update($table, $values)
     {
-        $this->assert($this->kind === NULL, 'different-kinds');
-        $this->kind = 'UPDATE';
+        $query = new Query('UPDATE');
         
-        $this->tables = array($table);
-        $this->cols = $vals;
+        $query->tables  = array($query->escapeIdentifier($table));
+        $query->columns = $values;
         
-        return $this;
+        return $query;
     }
     
     /**
@@ -264,126 +296,201 @@ class QueryBuilder
      * 
      * @param string $table The table from which to delete.
      */
-    public function delete($table)
+    public static function delete($table)
     {
-        $this->assert($this->kind === NULL || $this->kind == 'DELETE', 'different-kinds');
-        $this->kind = 'DELETE';
+        $query = new Query('DELETE');
         
-        $this->tables = array($table);
+        $query->tables = array($query->escapeIdentifier($table));
+        
+        return $query;
+    }
+    
+    /*
+     * Columns.
+     */
+    
+    public function columns( /* $arg0, $arg1, ... $argn */ )
+    {
+        $columns = self::argsToArray(func_get_args());
+        if (!$columns)
+        {
+            $columns = array('*');
+        }
+        
+        $query->kind    = 'SELECT';
+        $query->columns = array_merge($query->columns,
+            array_map(array($query, 'escapeIdentifier'), $columns));
         
         return $this;
     }
     
-//     /**
-//      * Specify the where clause of the query. Its argument is an associative array with as keys
-//      * column names and as values a predicate. This predicate can simply be SQL value or parameter
-//      * marker, in which case that column will be compared for equality to that value. It can also 
-//      * be a SQL operator, followed by a single space, followed by a parameter marker or SQL value 
-//      * (see examples). In that case that operator will be used instead of '='. The value behind the
-//      * operator will still be escaped, so don't add quotes yourself.
-//      * 
-//      * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', '!=', '<>', 
-//      * 'not is', 'not like', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
-//      * 
-//      * Different elements in the where-array are seperated by AND's (same as comma's). The results
-//      * of multiple where-calls will also be seperated by AND's.
-//      * 
-//      * @param array $clause The afformented associative array.
-//      */
-//     public function where($clause)
-//     {
-//         foreach($clause as $left => $right)
-//         {
-//             array_push($this->whereclause, array($left => $right));
-//         }
+    public function count($column = '*', $as = 'total')
+    {
+        $this->columns[] = $this->handleAggregate('COUNT', $column, $as);
         
-//         return $this;
-//     }
+        return $this;
+    }
     
-//     public function where_or($clause)
-//     {
-//         array_push($this->whereclause, $clause);
+    public function aggregate($function, $as = 'aggregate', $column = '*')
+    {
+        $this->columns[] = $this->handleAggregate($function, $column, $as);
         
-//         return $this;
-//     }    
-
+        return $this;
+    }
+    
+    /*
+     * Tables.
+     */
+    
     /**
-     * Specify the WHERE-clause of a query. Each argument should be a string containing a SQL 
+     * When constructing a SELECT-statement, specifies which table(s) to select from.
+     * 
+     * @param string/array $tables An array of SQL identifiers representing tables to select from. 
+     *                             It's also possible to specify a single string, which will be 
+     *                             interpreted as an array containing only that.
+     */
+    public function from( /* $arg0, $arg1, ... $argn */ )
+    {
+        $this->assert($this->kind == 'SELECT', 'different-kinds');
+        
+        $tables = self::argsToArray(func_get_args());
+        if (!$tables)
+        {
+            throw new QueryFormatException('query-incomplete');
+        }
+        
+        $this->tables = array_merge($this->tables,
+            array_map(array($this, 'escapeIdentifier'), $tables));
+        
+        return $this;
+    }
+    
+    public function join($table, $conditions = '', $type = '')
+	{
+		// Check type.
+        $type = strtoupper($type);
+        if (!in_array($type, array('LEFT', 'RIGHT', 'OUTER', 'INNER', 'LEFT OUTER', 'RIGHT OUTER')))
+        {
+            $type = '';
+        }
+        else
+        {
+            $type .= ' ';
+        }
+        
+        // Add join
+        $this->joinClause .= "\n" . $type . 'JOIN ' . $this->escapeIdentifier($table);
+        
+        // Add conditions.
+        if ($conditions)
+        {
+            $this->joinClause .= "\nON " . $this->handleConditions($conditions);
+        }
+        
+		return $this;
+	}
+    
+    /*
+     * Conditions.
+     */
+    
+    /**
+     * Specify the a condition of a query. Each argument should be a string containing a
      * predicate that will be directly placed in the where-statement of the query. Note that its
      * contents will NOT be escaped or validated, so make sure they do not directly depend on user
      * input. Parameter markers should be used instead.
      * 
-     * The arguments are sperated by a logical AND's. Use the _or and _and functions to delimit 
-     * sub-predicates with respectively OR's or AND's. 
+     * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', '!=', '<>', 
+     * 'not is', 'not like', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
      * 
-     * For instance, the predicate (A || B || (C && D)) && E can be formulated as:
-     * 
-     * \verbatim
-     * ..->where(_or(A, B, _and(C, D)), E);
-     * \endverbatim
+     * The arguments are separated by a logical AND's. Use whereOr to separate them with OR's.
      */
-    public function where(/* $arg0, $arg1, ... $argn */)
+    public function where( /* $arg0, $arg1, ... $argn */ )
     {
-        if($this->whereclause === NULL)
-        {
-            $this->whereclause = ' WHERE ';
-        }
-        else
-        {
-            $this->whereclause .= ' AND ';
-        }
-        
-        $this->whereclause .= implode(' AND ', func_get_args());
+        $this->handleWhere(func_get_args(), true);
         
         return $this;
     }
     
-    // Checks whether something like a column or table name is a valid SQL identifier. Is used by
-    // prepare for a little extra security in case of programming mistakes.
-    // Returns its argument.
-    private function validateSQLId($id)
+    public function whereOr( /* $arg0, $arg1, ... $argn */ )
     {
-        if(!preg_match('/\w[\w\$]*$|\w[\w\$]*$/', $id))
-        {
-            throw new QueryFormatException('invalid-sql-id', $id);
-        }
+        $this->handleWhere(func_get_args(), false);
         
-        return $id;
+        return $this;
     }
     
-    //Escapes a SQL value, returns parameter markers unchanged.
-    private function escapeValue($val)
+    public function having( /* $arg0, $arg1, ... $argn */ )
     {
-        // Explicitly cast to string.
-        $val = (string) $val;
+        $this->handleHaving(func_get_args(), true);
         
-        //TODO: Forbid ?'s as their order can lead to confusion.
-        
-        if($val == '?' || (count($val) > 0 && $val[0] == ':'))
-        {
-            // PDO bindings shouldn't be escaped.
-            return $val;
-        }
-        else
-        {
-            return $this->pdo->quote($val);
-        }
+        return $this;
     }
     
-    // Returns whether $op is a binary SQL operator returning a boolean to be used in a WHERE 
-    // clause. See documentation where(..).
-    private function isWhereOperator($op)
+    public function havingOr( /* $arg0, $arg1, ... $argn */ )
     {
-        $ops = array('<','>','>=','<=',
-                     '=','==', 'is','like',
-                     '!=', '<>', 'not is', 'not like',
-                     'overlaps', 'in', 'not in');
+        $this->handleHaving(func_get_args(), false);
         
-        return in_array(strtolower(trim($op)), $ops);
+        return $this;
     }
+    
+    /*
+     * Ordering.
+     */
+    
+    public function limit($value, $offset = '')
+	{
+		$this->limitClause = "\nLIMIT " . $value . ($offset ? "\nOFFSET " . $offset : '');
+
+		return $this;
+	}
+    
+    public function groupBy()
+	{
+        // Get columns.
+        $columns = self::argsToArray(func_get_args());
+        $columns = implode(', ', array_map(array($this, 'escapeIdentifier'), $columns));
+        
+        // Add group by clause.
+        $this->groupByClause .= "\nGROUP BY " . $columns;
+        
+		return $this;
+	}
+    
+    public function orderBy($column, $direction = 'asc')
+	{
+		// Check type.
+        $direction = (strtolower($direction) != 'desc') ? 'ASC' : 'DESC';
+        
+        // Add order by clause.
+        $this->orderByClause .= "\nORDER BY " . $this->escapeIdentifier($column) . ' ' . $direction;
+        
+		return $this;
+	}
+    
+    /*
+     * Execution.
+     */
+    
+    public function execute()
+    {
+        $arguments = $this->argsToArray(func_get_args());
+        $query = $this->build();
+        
+        Log::debug('Executing query: %s.', $query);
+        
+        $statement = $this->pdo->prepare($query);
+        
+        $statement->execute($arguments);
+        
+        return new ResultSet($statement);
+    }
+    
+    /*
+     * Private members.
+     */
     
     /**
-     * Finalizes the query and prepares it (see class documentation). It does not clear the query 
+     * Builds the query. It does not clear the query 
      * afterwards.
      * 
      * @return PDOStatement The prepared PDO statement that is not yet executed. If parameter 
@@ -393,110 +500,188 @@ class QueryBuilder
      * @throws QueryFormatException When an invalid identifier was used during the construction of
      *                              the query.
      */
-    public function prepare()
-    {       
-        $this->assert(count($this->tables) > 0, 'query-incomplete');
-        
+    private function build()
+    {
         // Build query base depending on kind.
-        switch($this->kind)
+        switch ($this->kind)
         {
             case 'SELECT':
-                $q = 'SELECT ';
-                foreach($this->cols as $col)
-                {
-                    $q .= $this->validateSQLId($col) . ',';
-                }
+                $query = 'SELECT ';
+                $query .= implode(', ', $this->columns);
+                $query .= "\nFROM ";
+                $query .= implode(', ', $this->tables);
                 
-                $q  = rtrim($q, ',') . ' FROM ';
-                foreach ($this->tables as $table)
-                {
-                    $q .= $this->validateSQLId($table) . ',';
-                }
-                
-                $q  = rtrim($q, ',');
                 break;
+                
             case 'DELETE':
-                $q = 'DELETE FROM ' . $this->validateSQLId($this->tables[0]);
+                $query = 'DELETE FROM ' . $this->tables[0];
                 break;
+                
             case 'INSERT':
-                $q = 'INSERT INTO ' . $this->validateSQLId($this->tables[0]);
-                $cols = '(';
-                $vals  = '(';
+                $query = 'INSERT INTO ' . $this->tables[0];
                 
-                foreach ($this->cols as $col => $val)
-                {
-                    $cols .= $this->validateSQLId($col) . ',';
-                    $vals .= $this->escapeValue($val) . ',';
-                }
+                $columns = array_keys($this->columns);
+                $values  = array_values($this->columns);
                 
-                $cols = rtrim($cols, ',') . ')';
-                $vals = rtrim($vals, ',') . ')';
-                
-                $q .= ' ' . $cols . ' VALUES ' . $vals;
+                $query .= '(' . implode(', ', $columns) . ")\nVALUES (" . implode(', ', $values) . ')';
                 break;
+                
             case 'UPDATE':
-                $q = 'UPDATE ' . $this->validateSQLId($this->tables[0]) . ' SET ';
+                $query = 'UPDATE ' . $this->tables[0];
                 
-                foreach ($this->cols as $col => $val)
+                $columns = array();
+                foreach ($this->columns as $column => $value)
                 {
-                    $q .= $this->validateSQLId($col) . ' = ' . $this->escapeValue($val) . ',';
+                    $columns[] = $column . ' = ' . $value;
                 }
                 
-                $q = rtrim($q, ',') . ' ';
+                $query .= "\sSET " . implode(', ', $columns);
                 break;
+                
             default:
                 throw new QueryFormatException('query-incomplete');
         }
         
-//         //Where clause.
-//         if(count($this->whereclause) > 0)
-//         {
-//             $q .= ' WHERE (';
-            
-//             //TODO: Do this with lambda function, implode and map.
-//             foreach($this->whereclause as $outer)
-//             {
-//                 foreach($outer as $col => $opval)
-//                 {
-//                     // If present, extract operator from opval.
-//                     $opval = trim($opval);
-//                     $lastspace = strrpos($opval, ' ');
-//                     if($lastspace)
-//                     {
-//                         $op = substr($opval, 0, $lastspace);
-//                         $val = substr($opval, $lastspace + 1);
-//                         if(!$this->isWhereOperator($op))
-//                         {
-//                             throw new QueryFormatException('invalid-where-operator', $op);
-//                         }
-//                     }
-//                     else
-//                     {
-//                         $op = '=';
-//                         $val = $opval;
-//                     }
-                    
-//                     $q .= $this->validateSQLId($col) . ' ' . $op . ' ' . $this->escapeValue($val) . ' OR ';
-//                 }
-//                 if(count($outer) > 0)
-//                 {
-//                     // Strap off last ' OR '. 
-//                     $q = substr(0, count($q) - 4);
-//                 }
-                
-//                 $q .= ') AND (';
-//             }
-            
-//             // Strap off last ' AND ('.
-//             $q = substr(0, count($q) - 6);
-//         }
+        // Add clauses.
+        $query .= $this->joinClause;
+        $query .= $this->whereClause;
+        $query .= $this->havingClause;
+        $query .= $this->groupByClause;
+        $query .= $this->orderByClause;
+        $query .= $this->limitClause;
         
-        //Where clause
-        if($this->whereclause !== NULL)
+        return $query;
+    }
+    
+    
+    private function handleAggregate($function, $column, $as)
+    {
+        return strtoupper($function) . '(' . $this->escapeIdentifier($column) . ') AS ' .
+            $this->escapeIdentifier($as);
+    }
+    
+    private function handleHaving($conditions, $joinWithAnd = true)
+    {
+        // Get conditions.
+        $conditions = $this->handleConditions($conditions, $joinWithAnd);
+        
+        // Add clauses to having clause.
+        if ($this->havingClause)
         {
-            $q .= $this->whereclause;
+            $this->havingClause .= "\nAND " . $conditions;
         }
-        echo $q;
-        return $this->pdo->prepare($q);
+        else
+        {
+            $this->havingClause = "\nHAVING " . $conditions;
+        }
+    }
+    
+    private function handleWhere($conditions, $joinWithAnd = true)
+    {
+        // Get conditions.
+        $conditions = $this->handleConditions($conditions, $joinWithAnd);
+        
+        // Add clauses to where clause.
+        if ($this->whereClause)
+        {
+            $this->whereClause .= "\nAND " . $conditions;
+        }
+        else
+        {
+            $this->whereClause = "\nWHERE " . $conditions;
+        }
+    }
+    
+    private function handleConditions($args, $joinWithAnd = true)
+    {
+        // Get conditions.
+        $conditions = self::argsToArray($args);
+        
+        // Get clauses.
+        $clauses = array();
+        foreach ($conditions as $condition)
+        {
+            $matches = array();
+            if (preg_match('/^([a-z][\w\.]*)\s*(>=|<=|!=|<|>|==|=|is not|is|not like|like)\s*(.*?)$/i',
+                $condition, $matches))
+            {
+                $identifier = $this->escapeIdentifier($matches[1]);
+                $operator   = $matches[2];
+                $value      = $this->escapeIdentifier($matches[3]);
+                
+                $clauses[] = $identifier . ' ' . $operator . ' ' . $value;
+            }
+        }
+        
+        // Implode clauses.
+        if ($joinWithAnd)
+        {
+            return implode("\nAND ", $clauses);
+        }
+        else
+        {
+            return '(' . implode(' OR ', $clauses) . ')';
+        }
+    }
+    
+    // Escapes a value, returns parameter markers unchanged.
+    private function escapeValue($value)
+    {
+        // Explicitly cast to string.
+        $value = (string) $value;
+        
+        // Check for placeholders.
+        if ($value && ($value[0] == ':'))
+        {
+            return $value;
+        }
+        else
+        {
+            return $this->pdo->quote($value);
+        }
+    }
+    
+    // Escapes an identifier.
+    private function escapeIdentifier($identifier)
+    {
+        if ($identifier == '*')
+        {
+            return $identifier;
+        }
+        
+        return preg_replace('/(?<![:\w])(\w+)(?![\(\w])/', '"\1"', $identifier);
+    }
+    
+    // Flattens arguments to an array.
+    private static function argsToArray($args)
+    {
+        if (!is_array($args))
+        {
+            return $args;
+        }
+        
+        $result = array();
+        foreach ($args as $arg)
+        {
+            if (is_array($arg))
+            {
+                $result = array_merge($result, $arg);
+            }
+            else
+            {
+                $result[] = $arg;
+            }
+        }
+        
+        return $result;
+    }
+    
+    // Asserts a condition.
+    private function assert($condition, $errorId)
+    {
+        if (!$condition)
+        {
+            throw new QueryFormatException($errorId);
+        }
     }
 }

@@ -3,10 +3,16 @@
 
 require_once 'framework/database/entity.php';
 
+// Exceptions.
+class UserNotFoundException extends ExceptionBase {
+    public function __construct($username)
+    {
+        parent::__construct('user-not-found', $username);
+    }
+}
+
 /**
- * Class representing a user entity. 
- *
- * ! Example implementation, not based on the data model !
+ * Class representing a user entity.
  */
 class User extends Entity
 {
@@ -17,7 +23,7 @@ class User extends Entity
     
     
     /** User ID */
-    private $userID;
+    private $userId;
     
     /** Username */
     private $username;
@@ -64,7 +70,7 @@ class User extends Entity
     {
         if ($id !== null)
         {
-            $this->userID = $id;
+            $this->userId = $id;
             
             $this->load();
         }
@@ -80,17 +86,50 @@ class User extends Entity
      */
     public static function fromUsernameAndPassword($username, $password)
     {
-        $qb = new QueryBuilder();
-        $stat = $qb->from(getTableName())->select('userID')->where('username = :username', 'passwordHash = :hash')->prepare();
-        $stat->execute(array(':username' => $username, ':hash' => secureHash($password)));
-        if ($stat->rowCount() == 1)
+        
+        
+        
+        
+        
+        
+        
+        
+        /*
+        $q = Query::select('u.userId')->
+             from('Users u')->
+             count('id', 'grantTotal')->
+             aggregate('MAX', 'maximum')->
+             where('username = :username', 'passwordHash = :hash')->
+             whereOr('username = :username', 'passwordHash = :hash')->
+             join('OtherTable o', array('o.id = u.id', 'o.name = u.name'), 'LEFT')->
+             limit(0, 1)->
+             orderBy('u.username', 'desc')->
+             groupBy('u.username', 'desc');
+        
+        $rowSet = $q->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
+        
+        $q = Query::delete('Users')->
+             where('username = :username', 'passwordHash = :hash')->
+             whereOr('username = :username', 'passwordHash = :hash');
+        
+        $rowSet = $q->execute();
+        
+        */
+        
+        
+        
+        $query = Query::select('userId')->
+                 from('Users')->
+                 where('username = :username', 'passwordHash = :hash');
+        
+        $result = $query->execute(array('username' => $username, 'hash' => self::secureHash($password)));
+        if ($result->getAmount() == 1)
         {
-            $user = new User($stat->fetchColumn(0));
+            $user = new User($result->getValue('userId'));
         }
         else
         {
-            $user = NULL;
-            // TODO: Throw exception.
+            throw new UserNotFoundException($username);
         }
         
         return $user;
@@ -115,7 +154,7 @@ class User extends Entity
      */
     protected function getTableName()
     {
-        return 'RegisteredUser';
+        return 'Users';
     }
     
     /**
@@ -125,7 +164,7 @@ class User extends Entity
      */
     protected function getPrimaryKeys()
     {
-        return array('userID');
+        return array('userId');
     }
     
     /**
@@ -145,10 +184,10 @@ class User extends Entity
      *
      * @return  A secure hash for the given password.
      */
-    private function secureHash($password)
+    private static function secureHash($password)
     {
         // Generate a salt based on the user ID. This salt does not have to be secure.
-        $salt = md5('user' . $password);
+        $salt = md5('user' . $password); // TODO: use salt.
         
         // Use Blowfish with 1024 passes to generate a sufficiently secure password.
         $algorithm = '$2a';
@@ -162,7 +201,7 @@ class User extends Entity
 
     public function getId()
     {
-        return $this->id;
+        return $this->userId;
     }
     
     public function getUsername()

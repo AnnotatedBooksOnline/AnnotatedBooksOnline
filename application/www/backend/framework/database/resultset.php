@@ -24,11 +24,12 @@ class ResultSet implements IteratorAggregate
 
     /**
      * Constructs a ResultSet from a prepared PDO statement.
-     * @param PDOStamement $pdo_stat The PDO statement. Should already have been executed.
+     *
+     * @param PDOStamement  $statement  The PDO statement. Should already have been executed.
      */
-    public function __construct($pdo_stat)
+    public function __construct($statement)
     {
-        $this->statement = $pdo_stat;
+        $this->statement = $statement;
     }
 
     public function __destruct()
@@ -41,7 +42,7 @@ class ResultSet implements IteratorAggregate
         return new ResultSetIterator($this, $this->statement);
     }
     
-    public function getCount() 
+    public function getAmount() 
     {
         return $this->statement->rowCount();
     }
