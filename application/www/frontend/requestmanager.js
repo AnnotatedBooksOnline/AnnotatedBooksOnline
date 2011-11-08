@@ -102,9 +102,12 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
     {
         data = Ext.JSON.decode(responseText);
         
-        message = data.message;
-        code    = data.code;
-        trace   = data.trace;
+        if (!success)
+        {
+            message = data.message;
+            code    = data.code;
+            trace   = data.trace;
+        }
     }
     catch (e)
     {
@@ -241,7 +244,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         
         if (request.jsonData !== undefined)
         {
-            data.records = request.jsonData;
+            data.record = request.jsonData;
         }
 
         // Determine action to use.

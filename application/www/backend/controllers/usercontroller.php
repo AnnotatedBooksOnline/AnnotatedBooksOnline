@@ -22,33 +22,44 @@ class UserController extends Controller
         - start
         - limit
         - sort: [ {property, direction}, {property, direction}, .. ]
+        - filter: ?
     
     Save:
-        - records: [ {id, ..}, {id, ..} ]
+        - record: {id, ..}, {id, ..}
     
     Create:
-        - records: [ {id, ..}, {id, ..} ]
+        - record: {id, ..}, {id, ..}
     
     Delete:
-        - records: [ {id, ..}, {id, ..} ]
+        - record: {id, ..}, {id, ..}
     
     */
     
     public function actionLoad($data)
     {
-        $total = Query::select('userId')->from('Users')->execute()->getAmount();
-        $start = isset($data['start']) ? abs(intval($data['start'])) : 0;
-        $limit = isset($data['limit']) ? abs(intval($data['limit'])) : $total;
+        // TODO: Do a security check!
+        
+        $total = Query::select()->
+                 count('userId', 'total')->
+                 from('Users')->
+                 execute()->
+                 getFirstRow()->
+                 getValue('total');
+        
+        $start = $this->getInteger($data, 'start', 0,      true, 0, $total);
+        $limit = $this->getInteger($data, 'limit', $total, true, 0, $total);
         
         $result = Query::select(
-            "userId",
-            "username",
-            "email",
-            "firstName",
-            "lastName",
-            "affiliation",
-            "occupation",
-            "website"
+            'userId',
+            'username',
+            'email',
+            'firstName',
+            'lastName',
+            'affiliation',
+            'occupation',
+            'website',
+            'homeAddress',
+            'rank'
         )
         ->from('Users')
         ->limit($limit, $start)
@@ -56,14 +67,14 @@ class UserController extends Controller
         ->getIterator();
         
         $records = array();
-        foreach($result as $user)
+        foreach ($result as $user)
         {
-            array_push($records, $user->getValues());
+            $records[] = $user->getValues();
         }
         
         return array(
             'records' => $records,
-            'total' => $total
+            'total'   => $total
         );
     }
     
@@ -87,18 +98,16 @@ class UserController extends Controller
     
     public function actionCreate($data)
     {
-        $record = self::getArray($data, 'records');
+        $record = self::getArray($data, 'record');
         
-        // TODO: weird enough, records is just one record.
-        
-        $username    = self::getString($record, 'username');
-        $email       = self::getString($record, 'email');
-        $firstName   = self::getString($record, 'firstName');
-        $lastName    = self::getString($record, 'lastName');
-        $password    = self::getString($record, 'password');
-        $affiliation = self::getString($record, 'affiliation');
-        $occupation  = self::getString($record, 'occupation');
-        $website     = self::getString($record, 'website');
+        $username    = self::getString($record, 'username', '', true, 25);
+        $email       = self::getString($record, 'email', '', true, 255);
+        $firstName   = self::getString($record, 'firstName', '', true, 50);
+        $lastName    = self::getString($record, 'lastName', '', true, 50);
+        $password    = self::getString($record, 'password', '', false, 32);
+        $affiliation = self::getString($record, 'affiliation', '', true, 50);
+        $occupation  = self::getString($record, 'occupation', '', true, 50);
+        $website     = self::getString($record, 'website', '', true, 255);
         
         $values = array(
             'username'    => $username,
@@ -107,6 +116,7 @@ class UserController extends Controller
             'lastName'    => $lastName,
             'password'    => $password,
             'affiliation' => $affiliation,
+            'occupation'  => $occupation,
             'website'     => $website,
             'homeAddress' => '',
             'active'      => '1', // TODO: Activation
@@ -119,5 +129,18 @@ class UserController extends Controller
         $user->save();
         
         return array('records' => $values); // TODO: Should this also just be one?
+    }
+    
+    public function actionUsernameExists($data)
+    {
+        $username = self::getString($data, 'username', '', true, 25);
+        
+        $total = Query::select('userId')->
+                 from('Users')->
+                 where('username = :username')->
+                 execute(array('username' => $username))->
+                 getAmount();
+        
+        return (bool) $total;
     }
 }

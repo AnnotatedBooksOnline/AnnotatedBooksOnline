@@ -8,12 +8,15 @@ Ext.define('Ext.ux.UserModel', {
     fields: [
        {name: 'userId'},
        {name: 'username'},
+       {name: 'password'}, // Password is needed for registration. Not filled when fetching a user.
        {name: 'email'},
        {name: 'firstName'},
        {name: 'lastName'},
        {name: 'affiliation'},
        {name: 'occupation'},
-       {name: 'website'}
+       {name: 'website'},
+       {name: 'homeAddress'},
+       {name: 'rank'}
     ],
     proxy: {
         type: 'requestmanager',

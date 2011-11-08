@@ -322,10 +322,6 @@ class Query
         $query = new Query('SELECT');
         
         $columns = self::argsToArray(func_get_args());
-        if (!$columns)
-        {
-            $columns = array('*');
-        }
         
         $query->columns = array_map(array($query, 'escapeIdentifier'), $columns);
         
@@ -523,8 +519,11 @@ class Query
      * Ordering.
      */
     
-    public function limit($value, $offset = '')
+    public function limit($value, $offset = 0)
 	{
+        $value  = max(intval($value),  0);
+        $offset = max(intval($offset), 0);
+        
 		$this->limitClause = "\nLIMIT " . $value . ($offset ? "\nOFFSET " . $offset : '');
 
 		return $this;
@@ -583,8 +582,10 @@ class Query
         switch ($this->kind)
         {
             case 'SELECT':
+                $columns = $this->columns ? $this->columns : array('*');
+                
                 $query = 'SELECT ';
-                $query .= implode(', ', $this->columns);
+                $query .= implode(', ', $columns);
                 $query .= "\nFROM ";
                 $query .= implode(', ', $this->tables);
                 

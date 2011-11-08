@@ -134,7 +134,7 @@ abstract class Controller
     protected static function getInteger($data, $key,
         $default = 0, $positive = false, $minValue = null, $maxValue = null)
     {
-        return (int) $this->getDouble($data, $key, $positive, $minValue, $maxValue);
+        return (int) self::getDouble($data, $key, $default, $positive, $minValue, $maxValue);
     }
     
     /**
