@@ -19,7 +19,7 @@ class User extends Entity
     
     
     /** User ID */
-    private $userID;
+    private $userId;
     
     /** Username */
     private $username;
@@ -83,7 +83,7 @@ class User extends Entity
     public static function fromUsernameAndPassword($username, $password)
     {
         $qb = new QueryBuilder();
-        $stat = $qb->from(self::getTableName())->select(array('userID'))->where('username = :username', 'passwordHash = :hash')->prepare();
+        $stat = $qb->from(self::getTableName())->select(array('userId'))->where('username = :username', 'passwordHash = :hash')->prepare();
         $stat->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
         if ($stat->rowCount() == 1)
         {
@@ -116,7 +116,7 @@ class User extends Entity
      */
     protected static function getTableName()
     {
-        return 'RegisteredUser';
+        return 'Users';
     }
     
     /**
@@ -126,7 +126,7 @@ class User extends Entity
      */
     protected static function getPrimaryKeys()
     {
-        return array('userID');
+        return array('userId');
     }
     
     /**
