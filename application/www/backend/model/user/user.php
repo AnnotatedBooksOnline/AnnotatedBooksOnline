@@ -86,38 +86,6 @@ class User extends Entity
      */
     public static function fromUsernameAndPassword($username, $password)
     {
-        
-        
-        
-        
-        
-        
-        
-        
-        /*
-        $q = Query::select('u.userId')->
-             from('Users u')->
-             count('id', 'grantTotal')->
-             aggregate('MAX', 'maximum')->
-             where('username = :username', 'passwordHash = :hash')->
-             whereOr('username = :username', 'passwordHash = :hash')->
-             join('OtherTable o', array('o.id = u.id', 'o.name = u.name'), 'LEFT')->
-             limit(0, 1)->
-             orderBy('u.username', 'desc')->
-             groupBy('u.username', 'desc');
-        
-        $rowSet = $q->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
-        
-        $q = Query::delete('Users')->
-             where('username = :username', 'passwordHash = :hash')->
-             whereOr('username = :username', 'passwordHash = :hash');
-        
-        $rowSet = $q->execute();
-        
-        */
-        
-        
-        
         $query = Query::select('userId')->
                  from('Users')->
                  where('username = :username', 'passwordHash = :hash');
@@ -125,14 +93,12 @@ class User extends Entity
         $result = $query->execute(array('username' => $username, 'hash' => self::secureHash($password)));
         if ($result->getAmount() == 1)
         {
-            $user = new User($result->getValue('userId'));
+            return new User($result->getValue('userId'));
         }
         else
         {
             throw new UserNotFoundException($username);
         }
-        
-        return $user;
     }
     
     /**
@@ -152,7 +118,7 @@ class User extends Entity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    protected static function getTableName()
     {
         return 'Users';
     }
@@ -162,7 +128,7 @@ class User extends Entity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    protected static function getPrimaryKeys()
     {
         return array('userId');
     }
@@ -172,7 +138,7 @@ class User extends Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    protected static function getColumns()
     {
         return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
                      'affiliation', 'occupation', 'website', 'homeAddress', 'active',
@@ -215,7 +181,7 @@ class User extends Entity
     
     public function setPassword($password)
     {
-        $this->passwordHash = secureHash($password);
+        $this->passwordHash = self::secureHash($password);
     }
     
     public function getFirstName()

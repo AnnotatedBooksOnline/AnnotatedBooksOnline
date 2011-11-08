@@ -276,19 +276,28 @@ abstract class Entity
      *
      * @return  The table name.
      */
-    abstract protected function getTableName();
+    protected static function getTableName()
+    {
+        throw new EntityException('entity-function-not-implemented');
+    }
     
     /**
      * Gets the primary key.
      *
      * @return  Array of all primary keys.
      */
-    abstract protected function getPrimaryKeys();
+    protected static function getPrimaryKeys()
+    {
+        throw new EntityException('entity-function-not-implemented');
+    }
     
     /**
      * Gets all the columns.
      *
      * @return  Array of all columns, except primary keys.
      */
-    abstract protected function getColumns();
+    protected static function getColumns()
+    {
+        throw new EntityException('entity-function-not-implemented');
+    }
 }

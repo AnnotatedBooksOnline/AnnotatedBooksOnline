@@ -116,10 +116,11 @@ RequestManager.prototype.flush = function()
                 }
                 else
                 {
+                    var msg = 'Error code: \'' +
+                        code + '\', stack trace: ' + "\n" + trace;
                     Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'An error occurred, message: \'' + message + '\', code: \'' +
-                             code + '\', stack trace: ' + "\n" + trace,
+                        title: 'Error: ' + message,
+                        msg: msg.replace(/\n/g, '<br />'),
                         icon: Ext.Msg.ERROR,
                         buttons: Ext.Msg.OK
                     });
