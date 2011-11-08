@@ -496,7 +496,9 @@ class QueryBuilder
         {
             $q .= $this->whereclause;
         }
-        echo $q;
+        
+        Log::debug('%s', $q); // TODO: disable logging of queries
+        
         return $this->pdo->prepare($q);
     }
 }

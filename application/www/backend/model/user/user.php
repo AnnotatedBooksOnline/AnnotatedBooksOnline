@@ -3,6 +3,8 @@
 
 require_once 'framework/database/entity.php';
 
+class UserException extends EntityException { }
+
 /**
  * Class representing a user entity. 
  *
@@ -81,16 +83,15 @@ class User extends Entity
     public static function fromUsernameAndPassword($username, $password)
     {
         $qb = new QueryBuilder();
-        $stat = $qb->from(getTableName())->select('userID')->where('username = :username', 'passwordHash = :hash')->prepare();
-        $stat->execute(array(':username' => $username, ':hash' => secureHash($password)));
+        $stat = $qb->from(self::getTableName())->select(array('userID'))->where('username = :username', 'passwordHash = :hash')->prepare();
+        $stat->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
         if ($stat->rowCount() == 1)
         {
             $user = new User($stat->fetchColumn(0));
         }
         else
         {
-            $user = NULL;
-            // TODO: Throw exception.
+            throw new UserException('user-not-found');
         }
         
         return $user;
@@ -113,7 +114,7 @@ class User extends Entity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    protected static function getTableName()
     {
         return 'RegisteredUser';
     }
@@ -123,7 +124,7 @@ class User extends Entity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    protected static function getPrimaryKeys()
     {
         return array('userID');
     }
@@ -133,7 +134,7 @@ class User extends Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    protected static function getColumns()
     {
         return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
                      'affiliation', 'occupation', 'website', 'homeAddress', 'active',
@@ -145,7 +146,7 @@ class User extends Entity
      *
      * @return  A secure hash for the given password.
      */
-    private function secureHash($password)
+    private static function secureHash($password)
     {
         // Generate a salt based on the user ID. This salt does not have to be secure.
         $salt = md5('user' . $password);
@@ -176,7 +177,7 @@ class User extends Entity
     
     public function setPassword($password)
     {
-        $this->passwordHash = secureHash($password);
+        $this->passwordHash = self::secureHash($password);
     }
     
     public function getFirstName()

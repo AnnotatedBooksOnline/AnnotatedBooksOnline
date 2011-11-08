@@ -40,11 +40,11 @@ Ext.define('Ext.ux.LoginForm', {
                             function()
                             {
                                 this.up('window').close();
-                            },
+                            }/*,
                             function(code, message, trace)
                             {
                                 // TODO: Some error handling.
-                            });
+                            }*/);
                     }
                 }
             }]
