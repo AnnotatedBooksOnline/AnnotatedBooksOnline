@@ -336,19 +336,37 @@ class UserController extends Controller
     
     public function actionCreate($data)
     {
-        usleep(2 * 1000 * 1000);
+        $record = self::getArray($data, 'records');
         
-        return array(
-            'records' => array(
-                'id' => 26,
-                'username' => 'Other username',
-                'email' => 'me@email.com',
-                'firstname' => 'sdf',
-                'lastname' => 'sdf',
-                'affiliation' => 'sdf',
-                'occupation' => 'sdf',
-                'website' => 'http://www.test.nl/'
-            )
+        // TODO: weird enough, records is just one record.
+        
+        $username    = self::getString($record, 'username');
+        $email       = self::getString($record, 'email');
+        $firstName   = self::getString($record, 'firstName');
+        $lastName    = self::getString($record, 'lastName');
+        $password    = self::getString($record, 'password');
+        $affiliation = self::getString($record, 'affiliation');
+        $occupation  = self::getString($record, 'occupation');
+        $website     = self::getString($record, 'website');
+        
+        $values = array(
+            'username'    => $username,
+            'email'       => $email,
+            'firstName'   => $firstName,
+            'lastName'    => $lastName,
+            'password'    => $password,
+            'affiliation' => $affiliation,
+            'website'     => $website,
+            'homeAddress' => '',
+            'active'      => '1', // TODO: Activation
+            'banned'      => '0', // TODO: Typing, to allow a boolean.
+            'rank'        => User::RANK_ADMIN
         );
+        
+        $user = new User();
+        $user->setValues($values);
+        $user->save();
+        
+        return array('records' => $values); // TODO: Should this also just be one?
     }
 }

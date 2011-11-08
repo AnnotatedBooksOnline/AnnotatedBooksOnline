@@ -95,11 +95,14 @@ Ext.define('Ext.ux.FormBase', {
         // Set all form values that are also defined
         // in the model.
         var values = this.getForm().getValues();
-        for (var name in this.model.fields)
+        
+        for (var i = this.model.fields.items.length - 1; i >= 0; --i)
         {
-            if (values[name] !== undefined)
+            var fieldName = this.model.fields.items[i].name;
+            
+            if (values[fieldName] !== undefined)
             {
-                this.model.set(name, values[name]);
+                this.model.set(fieldName, values[fieldName]);
             }
         }
     },

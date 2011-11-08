@@ -8,6 +8,7 @@
  * Helper functions.
  */
 
+// Stops a browser event from bubbling up.
 function cancelEvent(event)
 {
     event = event || window.event;
@@ -25,12 +26,7 @@ function cancelEvent(event)
     return false;
 }
 
-function showStatusText(str)
-{
-    //$("#status").text(str);
-}
-
-//rotates a point a number of degrees
+// Rotates a point by an angle.
 function rotatePoint(point, angle)
 {
     var cos = Math.cos(angle);
@@ -44,16 +40,16 @@ function rotatePoint(point, angle)
     return result;
 }
 
-//gets bounding box of a rotated bounding box
+// Gets bounding box of a rotated bounding box.
 function rotateBoundingBox(aabb, angle)
 {
-    //TODO: optimize this
+    // TODO: Optimize this.
     
-    //calculate topright and bottomleft
+    // Calculate topright and bottomleft.
     var topRight    = {x: aabb.bottomRight.x, y: aabb.topLeft.y};
     var bottomLeft  = {x: aabb.topLeft.x, y: aabb.bottomRight.y};
     
-    //rotate points, and set new topleft and bottomright
+    // Rotate points, and set new topleft and bottomright.
     var rotatedTopLeft     = rotatePoint(aabb.topLeft,     angle);
     var rotatedBottomRight = rotatePoint(aabb.bottomRight, angle);
     var rotatedTopRight    = rotatePoint(topRight,         angle);
@@ -70,6 +66,16 @@ function rotateBoundingBox(aabb, angle)
     };
     
     return {topLeft: topLeft, bottomRight: bottomRight};
+}
+
+// Escapes a string for displaying.
+function escape(str)
+{
+    return str.replace(/&/g, '&amp;').
+               replace(/"/g, '&quot;').
+               replace(/</g, '&lt;').
+               replace(/>/g, '&gt;').
+               replace(/\n/g, '<br />');
 }
 
 /*

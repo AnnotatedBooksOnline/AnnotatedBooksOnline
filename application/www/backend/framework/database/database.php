@@ -12,10 +12,10 @@ class QueryFormatException extends ExceptionBase { }
 // Database class.
 class Database extends Singleton
 {
-    // Unique instance.
+    /** Unique instance. */
     protected static $instance;
     
-    // PDO resource.
+    /** PDO resource. */
     private $pdo;
     
     protected function __construct()
@@ -28,21 +28,103 @@ class Database extends Singleton
                              $config->getString('database-password'));
     }
     
-    /**
-     * Returns the underlying PDO-object.
-     */
-    public function getPDO()
+    public function __destruct()
     {
-        return $this->pdo;
+        if ($this->pdo->inTransaction())
+        {
+            $this->pdo->rollBack();
+        }
+    }
+
+    /**
+     * Starts a database transaction.
+     *
+     * After calling this method, all query functions will no longer immediately commit their
+     * possible changes to the database. This will instead happen atomically and at once when
+     * commit() is called.
+     *
+     * Nested transactions are currently not allowed. Therefore an exception will be thrown if a
+     * transaction is already going on.
+     *
+     * @throws DatabaseException  If some error occurs or a transaction has already been started.
+     *
+     */
+    public function startTransaction()
+    {
+        // TODO: stack transactions by keeping a counter.
+        
+        if (!$this->pdo->beginTransaction())
+        {
+            throw new DatabaseException('transaction-start');
+        }
+    }
+
+    /**
+     * Checks whether currently in a transaction.
+     *
+     * @return A boolean indicating whether currently in a transaction.
+     *
+     * @throws DatabaseException
+     *
+     */
+    public function inTransaction()
+    {
+        return $this->pdo->inTransaction();
+    }
+
+    /**
+     * Commits the current transaction.
+     *
+     * Commits the current transaction, finalizing all changes made to the database. The transaction
+     * will now have ended and startTransaction can be called start a new one (or the query methods
+     * can be called directly).
+     *
+     * @throws DatabaseException  If no transaction has started or the commit failed for some
+     *                            other reason.
+     *
+     */
+    public function commit()
+    {
+        if (!$this->pdo->commit())
+        {
+            throw new DatabaseException('transaction-commit');
+        }
+    }
+
+    /**
+     * Rolls back a transaction.
+     *
+     * Undoes all queries made in the current transaction. The transaction will have ended, so \
+     * startTransaction() should be called again when trying again.
+     *
+     * @throws DatabaseException  If no transaction has started, rollback is not supported or it failed
+     *                            for some other reason.
+     */
+    public function rollBack()
+    {
+        if (!$this->pdo->rollBack())
+        {
+            throw new DatabaseException('transaction-rollback');
+        }
     }
     
     /**
      * Executes query.
      */
-    public function execute($query, $params = array())
+    public function execute($query, $arguments = array())
     {
-        $this->pdo->prepare($query);
-        $this->pdo->execute($query, $params);
+        Log::debug("Executing query:\n%s", $query);
+        
+        $statement = $this->pdo->prepare($query);
+        if (!$statement->execute($arguments))
+        {
+            // Get error info.
+            $errorInfo = $statement->errorInfo();
+            
+            throw new DatabaseException('query-failed', $errorInfo[1], $errorInfo[2]);
+        }
+        
+        return new ResultSet($statement);
     }
 }
 
@@ -52,11 +134,8 @@ class Database extends Singleton
  * is irrelevant, but an exception is thrown when conflicts arise (e.g. when calling update and 
  * select on the same object without clearing).
  * 
- * When finished, you can call prepare() which prepares the (possible paramterized) query and bakes 
- * a PDOStatement. PDO functions can subsequently be used to execute the query. 
- * 
- * If you want to inspect its result, use either the PDO functions or construct a {@link ResultSet}
- * from the executed statement.   
+ * When finished, you can call execute() which executes the query. This method construct a
+ * {@link ResultSet} and returns it.  
  * 
  * <b>Definitions:</b>
  * The following definitions will be used in the documentation of this class:
@@ -122,9 +201,6 @@ class Database extends Singleton
  */
 class Query
 {
-    /** PDO resource for preparing queries. */
-    private $pdo;
-    
     /** Query kind: 'SELECT', 'INSERT', 'UPDATE' or 'DELETE'. */
     private $kind;
     
@@ -161,12 +237,13 @@ class Query
      */
     private function __construct($kind)
     {
-        $this->pdo = Database::getInstance()->getPDO();
-        
         $this->clear();
         
         $this->kind = $kind;
     }
+    
+    
+    
     
     
     /*
@@ -215,7 +292,6 @@ class Query
      */
     public function clear()
     {
-        $this->kind          = null;
         $this->columns       = array();
         $this->tables        = array();
         $this->joinClause    = '';
@@ -268,7 +344,12 @@ class Query
         $query = new Query('INSERT');
         
         $query->tables  = array($query->escapeIdentifier($table));
-        $query->columns = $values;
+        
+        $query->columns = array();
+        foreach ($values as $column => $value)
+        {
+            $query->columns[$query->escapeIdentifier($column)] = $query->escapeValue($value);
+        }
         
         return $query;
     }
@@ -286,7 +367,12 @@ class Query
         $query = new Query('UPDATE');
         
         $query->tables  = array($query->escapeIdentifier($table));
-        $query->columns = $values;
+        
+        $query->columns = array();
+        foreach ($values as $column => $value)
+        {
+            $query->columns[$query->escapeIdentifier($column)] = $query->escapeValue($value);
+        }
         
         return $query;
     }
@@ -474,15 +560,8 @@ class Query
     public function execute()
     {
         $arguments = $this->argsToArray(func_get_args());
-        $query = $this->build();
         
-        Log::debug('Executing query: %s.', $query);
-        
-        $statement = $this->pdo->prepare($query);
-        
-        $statement->execute($arguments);
-        
-        return new ResultSet($statement);
+        return Database::getInstance()->execute($this->build(), $arguments);
     }
     
     /*
@@ -493,12 +572,10 @@ class Query
      * Builds the query. It does not clear the query 
      * afterwards.
      * 
-     * @return PDOStatement The prepared PDO statement that is not yet executed. If parameter 
-     *                      markers were used when constructing the query, corresponding parameters
-     *                      need to be bound first.
+     * @return  The full SQL query.
      * 
-     * @throws QueryFormatException When an invalid identifier was used during the construction of
-     *                              the query.
+     * @throws  QueryFormatException  When an invalid identifier was used during the construction of
+     *                                the query.
      */
     private function build()
     {
@@ -552,7 +629,6 @@ class Query
         
         return $query;
     }
-    
     
     private function handleAggregate($function, $column, $as)
     {

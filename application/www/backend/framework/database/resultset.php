@@ -20,7 +20,7 @@ class ResultSetException extends ExceptionBase { }
  */
 class ResultSet implements IteratorAggregate
 {
-    public $statement;
+    private $statement;
 
     /**
      * Constructs a ResultSet from a prepared PDO statement.
@@ -47,9 +47,15 @@ class ResultSet implements IteratorAggregate
         return $this->statement->rowCount();
     }
     
-    public function getFirstResultRow()
+    public function getFirstRow()
     {
-        return new ResultSetRow($this->statement->fetch(PDO::FETCH_ASSOC));
+        $row = $this->statement->fetch(PDO::FETCH_ASSOC);
+        if (!$row)
+        {
+            // TODO: Throw error.
+        }
+        
+        return new ResultSetRow();
     }
 }
 

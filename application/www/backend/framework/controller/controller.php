@@ -19,9 +19,6 @@ abstract class Controller
      */
     public static function handleRequest()
     {
-        //NOTE: try: http://localhost/backend/?controller=Authentication&action=login
-        //NOTE: note that JSON data goes via POST !
-        
         try
         {
             //TODO: (GVV) handle multiple requests:
@@ -91,6 +88,130 @@ abstract class Controller
         {
             throw new ControllerException('controller-not-found', $type);
         }
+    }
+    
+    /**
+     * Gets a string from data.
+     *
+     * @param  $data       Data to fetch value from.
+     * @param  $key        Key of the value.
+     * @param  $default    Default value.
+     * @param  $trim       Whether to trim spaces of value.
+     * @param  $maxLength  Maximum length of value.
+     *
+     * @return  The sanitized string value.
+     */
+    protected static function getString($data, $key,
+        $default = '', $trim = true, $maxLength = -1)
+    {
+        $value = isset($data[$key]) ? $data[$key] : $default;
+        
+        if ($trim)
+        {
+            $value = trim($value);
+        }
+        
+        if ($maxLength >= 0)
+        {
+            $value = substr($value, 0, $maxLength);
+        }
+        
+        return $value;
+    }
+    
+    /**
+     * Gets an integer from data.
+     *
+     * @param  $data      Data to fetch value from.
+     * @param  $key       Key of the value.
+     * @param  $default   Default value.
+     * @param  $positive  Whether the value must be positive.
+     * @param  $minValue  Minimum value.
+     * @param  $maxValue  Maximum value.
+     *
+     * @return  The sanitized integer value.
+     */
+    protected static function getInteger($data, $key,
+        $default = 0, $positive = false, $minValue = null, $maxValue = null)
+    {
+        return (int) $this->getDouble($data, $key, $positive, $minValue, $maxValue);
+    }
+    
+    /**
+     * Gets a double from data.
+     *
+     * @param  $data      Data to fetch value from.
+     * @param  $key       Key of the value.
+     * @param  $default   Default value.
+     * @param  $positive  Whether the value must be positive.
+     * @param  $minValue  Minimum value.
+     * @param  $maxValue  Maximum value.
+     *
+     * @return  The sanitized double value.
+     */
+    protected static function getDouble($data, $key,
+        $default = 0, $positive = false, $minValue = null, $maxValue = null)
+    {
+        $value = isset($data[$key]) ? (double) $data[$key] : $default;
+        
+        if ($minValue !== null)
+        {
+            $value = max($value, $minValue);
+        }
+        
+        if ($maxValue !== null)
+        {
+            $value = min($value, $maxValue);
+        }
+        
+        if ($positive && ($value < 0))
+        {
+            $value = 0;
+        }
+        
+        return $value;
+    }
+    
+    /**
+     * Gets a boolean from data.
+     *
+     * @param  $data     Data to fetch value from.
+     * @param  $key      Key of the value.
+     * @param  $default  Default value.
+     *
+     * @return  The sanitized boolean value.
+     */
+    protected static function getBoolean($data, $key, $default = false)
+    {
+        $value = isset($data[$key]) ? $data[$key] : $default;
+        
+        return (bool) $value;
+    }
+    
+    /**
+     * Gets a string from data.
+     *
+     * @param  $data       Data to fetch value from.
+     * @param  $key        Key of the value.
+     * @param  $default    Default value.
+     * @param  $maxLength  Maximum length of the array.
+     *
+     * @return  The sanitized array value.
+     */
+    protected static function getArray($data, $key, $default = array(), $maxLength = -1)
+    {
+        $value = isset($data[$key]) ? $data[$key] : null;
+        if (!is_array($value))
+        {
+            $value = $default;
+        }
+        
+        if ($maxLength >= 0)
+        {
+            $value = array_slice($value, 0, $maxLength);
+        }
+        
+        return $value;
     }
     
     // Shows an exception.

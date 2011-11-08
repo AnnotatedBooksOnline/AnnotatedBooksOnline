@@ -74,6 +74,7 @@ RequestManager.prototype.flush = function()
     {
         var request = requests[i];
         
+        var _this = this;
         Ext.Ajax.request({
             // Url parameters appended here, because data may be null, in which case
             // the params would be considered POST parameters instead of GET parameters.
@@ -82,53 +83,77 @@ RequestManager.prototype.flush = function()
             method: 'POST',
             success: function(result, req)
             {
-                var data = Ext.JSON.decode(result.responseText);
-                
-                if (request.onSuccess !== undefined)
-                {
-                    request.onSuccess.call(request.object, data);
-                }
+                _this.onRequestFinished(request, true, result.responseText);
             },
             failure: function(result, req)
             {
-                var data, message, code, trace;
-                
-                try
-                {
-                    data = Ext.JSON.decode(result.responseText);
-                    
-                    message = data.message;
-                    code    = data.code;
-                    trace   = data.trace;
-                }
-                catch (e)
-                {
-                    code    = 'error';
-                    message = 'Server error.';
-                    trace   = result.responseText;
-                }
-                
-                trace = trace || '(not available)';
-                
-                if (request.onError !== undefined)
-                {
-                    request.onError.call(request.object, code, message, trace);
-                }
-                else
-                {
-                    var msg = 'Error code: \'' +
-                        code + '\', stack trace: ' + "\n" + trace;
-                    Ext.Msg.show({
-                        title: 'Error: ' + message,
-                        msg: msg.replace(/\n/g, '<br />'),
-                        icon: Ext.Msg.ERROR,
-                        buttons: Ext.Msg.OK
-                    });
-                }
+                _this.onRequestFinished(request, false, result.responseText);
             }
         });
     }
 }
+
+RequestManager.prototype.onRequestFinished = function(request, success, responseText)
+{
+    var data, message, code, trace;
+    
+    // Try to decode response text.
+    try
+    {
+        data = Ext.JSON.decode(responseText);
+        
+        message = data.message;
+        code    = data.code;
+        trace   = data.trace;
+    }
+    catch (e)
+    {
+        success = false;
+        
+        code    = 'error';
+        message = 'Server error.';
+        trace   = responseText;
+    }
+    
+    // Call the right callback.
+    if (success)
+    {
+        if (request.onSuccess !== undefined)
+        {
+            request.onSuccess.call(request.object, data);
+        }
+    }
+    else
+    {
+        // Determine stack trace.
+        trace = trace || '(not available)';
+        
+        // Call error callback.
+        if (request.onError !== undefined)
+        {
+            request.onError.call(request.object, code, message, trace);
+        }
+        else
+        {
+            RequestManager.showErrorMessage(code, message, trace);
+        }
+    }
+}
+
+RequestManager.showErrorMessage = function(code, message, trace)
+{
+    // Let the stack trace stay as HTML, it is a serverside exception.
+    var messageContent = escape('An error occurred, message: \'' +
+        message + '\', code: \'' + code + '\', stack trace:' + "\n\n") + trace;
+    
+    Ext.Msg.show({
+        title: message,
+        msg: messageContent,
+        icon: Ext.Msg.ERROR,
+        buttons: Ext.Msg.OK
+    });
+}
+
 
 /*
  * Ext Proxy for the RequestManager.
@@ -182,12 +207,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
             headers:        this.headers,
             timeout:        this.timeout,
             scope:          scope,
-            disableCaching: false,
-            //callback:
-            //    function(options, success, response)
-            //    {
-            //        _this.processResponse(success, operation, request, response, callback, scope);
-            //    }
+            disableCaching: false
         });
         
         var _this = this;
@@ -209,17 +229,10 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         
         function onError(code, message, trace)
         {
-            var msg = 'An error occurred, message: \'' + message + '\', code: \''
-                    + code + '\', stack trace: ' + "\n" + trace;
+            // TODO: Remove this, we may want to capture errors later on.
+            RequestManager.showErrorMessage(code, message, trace);
             
-            Ext.Msg.show({
-                title: 'Error',
-                msg: msg,
-                icon: Ext.Msg.ERROR,
-                buttons: Ext.Msg.OK
-            });
-            
-            _this.processResponse(false, operation, request, msg, callback, scope);
+            _this.processResponse(false, operation, request, message, callback, scope);
         }
         
         // Determine data to send.

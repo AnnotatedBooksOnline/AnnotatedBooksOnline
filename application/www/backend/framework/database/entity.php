@@ -12,16 +12,16 @@ class EntityException extends ExceptionBase { }
 abstract class Entity
 {
     /** Timestamp when this entity was created. */
-    private $tsCreated;
+    private $createdOn;
     
     /** Timestamp when this entity was last changed. */
-    private $tsChanged;
+    private $changedOn;
     
     /** Identifier of the user who has created this entity. */
-    private $userCreated;
+    private $createdBy;
     
     /** Identifier of the user who has last changed this entity. */
-    private $userChanged;
+    private $changedBy;
     
     /**
      * Loads this entity.
@@ -35,19 +35,16 @@ abstract class Entity
         }
         
         // Create the SQL statement to retrieve this entity and execute it prepared.
-        $query = $this->getSelectQuery();
-        
-        $resultSet = Database::getInstance()->executePreparedStatement($query,
-            $this->getPrimaryKeyValues());
+        $resultSet = $this->getSelectQuery()->execute($this->getPrimaryKeyValues());
         
         // Determine if the entity was found in the database.
-        if ($resultSet->getCount() != 1) 
+        if ($resultSet->getAmount() != 1) 
         {
             throw new EntityException('entity-record-not-found');
         }
         
         // Store result in our members.
-        foreach ($resultSet->getFirstResultRow()->getValues() as $name => $value)
+        foreach ($resultSet->getFirstRow()->getValues() as $name => $value)
         {
             $this->{$name} = $value;
         }
@@ -60,30 +57,28 @@ abstract class Entity
     public function save()
     {
         // Initialize the database connection and start a transaction
-        Database::getInstance()->startTransaction();
+        //Database::getInstance()->startTransaction();
         
         // Determine if this is a fresh entity which has to be inserted into the database.
-        if (!$this->isPrimaryKeyFilled())
+        if (!$this->arePrimaryKeysFilled())
         {
-            // Get the SQL statement to insert this entity and execute the statement prepared.
-            $query = $this->getInsertQuery();
+            // TODO: Set default columns.
             
-            Database::getInstance()->executePreparedStatement($query, $this->getValues());
+            
+            // Get the SQL statement to insert this entity and execute the statement prepared.
+            $this->getInsertQuery()->execute($this->getValues(false));
+            
+            
+            // TODO: Get primary keys and set them.
         }
         else
         {
             // Get the SQL statement to update this entity and execute the statement prepared.
-            $query = $this->getUpdateQuery();
-            
-            Database::getInstance()->executePreparedStatement($query, $this->getValues());
+            $this->getUpdateQuery()->execute($this->getValues());
         }
         
         // Commit the database transaction.
-        Database::getInstance()->commit();
-        
-        
-        //TODO: get primary keys and set them..
-        
+        //Database::getInstance()->commit();
     }
     
     /**
@@ -162,7 +157,7 @@ abstract class Entity
      */
     protected function getDefaultColumns()
     {
-        return array('tsCreated', 'tsChanged', 'userCreated', 'userChanged');
+        return array('createdOn', 'changedOn', 'createdBy', 'changedBy');
     }
     
     /**
@@ -176,18 +171,16 @@ abstract class Entity
         $keys      = $this->getPrimaryKeys();
         $tableName = $this->getTableName();
         
-        // Set the where clause of the query.
+        // Set the conditions of the query.
         $callback = function($value)
         {
-            return $value . ' = :' . $this->{$value};
+            return $value . ' = :' . $value;
         };
 
-        $whereClause = implode(' AND ', array_map($callback, $keys));
+        $conditions = array_map($callback, $keys);
         
         // Create query.
-        $query = 'SELECT * FROM ' . $tableName . ' WHERE ' . $whereClause;
-        
-        return $query;
+        return Query::select()->from($tableName)->where($conditions);
     }
     
     /**
@@ -202,14 +195,15 @@ abstract class Entity
         $tableName = $this->getTableName();
         
         // Create values.
-        $values = ':' . implode(', :', $columns);
+        $callback = function($value)
+        {
+            return ':' . $value;
+        };
+
+        $values = array_map($callback, $columns);
         
         // Create query.
-        $query = 'INSERT INTO ' . $tableName
-               . '(' . implode(', ', $columns) . ') VALUES '
-               . '(' . $values . ')';
-        
-        return $query;
+        return Query::insert($tableName, array_combine($columns, $values));
     }
     
     /**
@@ -223,18 +217,16 @@ abstract class Entity
         $keys      = $this->getPrimaryKeys();
         $tableName = $this->getTableName();
         
-        // Set the where clause of the query.
+        // Set the conditions of the query.
         $callback = function($value)
         {
             return $value . ' = :' . $value;
         };
 
-        $whereClause = implode(' AND ', array_map($callback, $keys));
+        $conditions = array_map($callback, $keys);
         
         // Create query.
-        $query = 'DELETE FROM ' . $tableName . ' WHERE ' . $whereClause;
-        
-        return $query;
+        return Query::delete($tableName)->where($conditions);
     }
     
     /**
@@ -252,23 +244,21 @@ abstract class Entity
         // Set the set clause of the query.
         $callback = function($value)
         {
-            return $value . ' = :' . $value;
+            return ':' . $value;
         };
 
-        $setClause = implode(', ', array_map($callback, $columns));
+        $values = array_map($callback, $columns);
         
-        // Set the where clause of the query.
+        // Set the conditions of the query.
         $callback = function($value)
         {
             return $value . ' = :' . $value;
         };
 
-        $whereClause = implode(' AND ', array_map($callback, $keys));
+        $conditions = array_map($callback, $keys);
         
         // Create query.
-        $query  = 'UPDATE ' . $tableName . ' SET ' . $setClause . ' WHERE ' . $whereClause;
-        
-        return $query;
+        return Query::update($tableName, array_combine($columns, $values))->where($conditions);
     }
     
     /**
