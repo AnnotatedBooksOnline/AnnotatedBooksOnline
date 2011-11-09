@@ -51,7 +51,7 @@ class UserController extends Controller
         $start = $this->getInteger($data, 'start', 0,      true, 0, $total);
         $limit = $this->getInteger($data, 'limit', $total, true, 0, $total);
         
-        $result = Query::select(
+        $query = Query::select(
             'userId',
             'username',
             'email',
