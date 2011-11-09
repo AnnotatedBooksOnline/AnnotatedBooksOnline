@@ -118,14 +118,14 @@ class ResultSetIterator implements Iterator
 class ResultSetRow
 {
     private $row;
-    private $rowCase;
+    //private $rowCase;
 
     public function __construct($row)
     {
         foreach ($row as $key => $val)
         {
             $this->row[$key] = $val;
-            $this->rowCase[strtoupper($key)] = $key;
+            // $this->rowCase[strtoupper($key)] = $key;
         }
     }
 
@@ -134,19 +134,25 @@ class ResultSetRow
      *
      * @param string $columnname The name of the column, is case incensitive.
      *
-     * @return A string representing the value stored at the specified column, or NULL if there is
+     * @return A string representing the value stored at the specified column, or null if there is
      *            no column with this name.
      */
-    public function getValue($columnname)
+    public function getValue($columnName)
     {
-        if (array_key_exists(strtoupper($columnname), $this->rowCase))
-        {
-            return $this->row[$this->rowCase[strtoupper($columnname)]];
-        }
-        else
-        {
-            return NULL;
-        }
+        return isset($this->row[$columnName]) ? $this->row[$columnName] : null;
+        
+        // NOTE: (GVV) Getting this case insensitive is too much overhead,
+        // NOTE: (GVV) and really should not be needed as I made the columns case sensitive.
+        // NOTE: (GVV) Also, the query builder also makes names case sensitive.
+        
+        // if (isset($this->rowCase[strtoupper($columnName)]))
+        // {
+        //     return $this->row[$this->rowCase[strtoupper($columnName)]];
+        // }
+        // else
+        // {
+        //     return null;
+        // }
     }
 
     // TODO: get value as number, date, blob etc.

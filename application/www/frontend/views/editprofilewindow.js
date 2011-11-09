@@ -23,12 +23,12 @@ Ext.define('Ext.ux.EditProfileForm', {
                 vtype: 'email',
                 maxLength: 256
             },{
-                name: 'firstname',
+                name: 'firstName',
                 fieldLabel: 'First name',
                 allowBlank: true,
                 maxLength: 50
             },{
-                name: 'lastname',
+                name: 'lastName',
                 fieldLabel: 'Last name',
                 allowBlank: true,
                 maxLength: 50
@@ -49,40 +49,32 @@ Ext.define('Ext.ux.EditProfileForm', {
                 vtype: 'url',
                 maxLength: 256
             },{
-                name: 'password1',
+                name: 'password',
+                fieldLabel: 'Current password',
+                allowBlank: true,
+                inputType: 'password',
+                style: 'margin-top: 15px',
+                minLength: 8,
+                maxLength: 32
+            },{
+                name: 'newPassword',
                 fieldLabel: 'New password',
                 allowBlank: true,
                 inputType: 'password',
-                style: 'margin-top:15px'
+                minLength: 8,
+                maxLength: 32
             },{
-                name: 'password2',
+                name: 'repeatnewpassword',
                 fieldLabel: 'Repeat password',
                 allowBlank: true,
                 inputType: 'password',
                 
                 // Custom validator implementation - checks that the value matches what was entered
-                // into the password1 field.
+                // into the new password field.
                 validator: function(value)
                 {
-                    var password1 = this.previousSibling('[name=password1]');
-                    
-                    // TODO: add current password to change the password.
-                    
-                    if (value === password1.getValue())
-                    {
-                        if (value.length >= 8 || value.length === 0)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return 'Password needs to be 8 characters or longer.';
-                        }
-                    }
-                    else
-                    {
-                        return 'Passwords do not match.';
-                    }
+                    var password = this.previousSibling('[name=newPassword]');
+                    return (value === password.getValue()) ? true : 'Passwords do not match.';
                 }
             }],
             

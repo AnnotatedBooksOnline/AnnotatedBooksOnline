@@ -25,21 +25,49 @@ class UserController extends Controller
         - filter: ?
     
     Save:
-        - record: {id, ..}, {id, ..}
+        - record: {id, ..}
     
     Create:
-        - record: {id, ..}, {id, ..}
+        - record: {id, ..}
     
     Delete:
-        - record: {id, ..}, {id, ..}
+        - record: {id, ..}
     
     */
     
     public function actionLoad($data)
     {
+        // Check whether logged on.
         Authentication::assertLoggedOn();
         
-        // TODO: Do a security check!
+        $id = self::getInteger($data, 'id', 0);
+        if ($id)
+        {
+            $user = new User($id);
+        
+            // TODO: Do a security check on id!
+            
+            /*
+            // TODO: Return just these values:
+            
+            array(
+                'userId'
+                'username',
+                'email',
+                'firstName',
+                'lastName',
+                'affiliation',
+                'occupation',
+                'website',
+                'homeAddress',
+                'rank'
+            )
+            */
+            
+            return array('records' => $user->getValues(), 'total' => 1);
+        }
+        
+        // TODO: Do a security check on user kind!
         
         $total = Query::select()->
                  count('userId', 'total')->
@@ -48,8 +76,8 @@ class UserController extends Controller
                  getFirstRow()->
                  getValue('total');
         
-        $start = $this->getInteger($data, 'start', 0,      true, 0, $total);
-        $limit = $this->getInteger($data, 'limit', $total, true, 0, $total);
+        $start = self::getInteger($data, 'start', 0,      true, 0, $total);
+        $limit = self::getInteger($data, 'limit', $total, true, 0, $total);
         
         $query = Query::select(
             'userId',
@@ -113,19 +141,47 @@ class UserController extends Controller
     
     public function actionSave($data)
     {
-        usleep(2 * 1000 * 1000);
+        // Check whether logged on.
+        Authentication::assertLoggedOn();
+        
+        // TODO: Do a security check on id!
+        
+        $record = self::getArray($data, 'record');
+        
+        $userId      = self::getInteger($record, 'userId', 0);
+        $username    = self::getString($record, 'username', '', true, 25);
+        $email       = self::getString($record, 'email', '', true, 255);
+        $firstName   = self::getString($record, 'firstName', '', true, 50);
+        $lastName    = self::getString($record, 'lastName', '', true, 50);
+        $password    = self::getString($record, 'password', '', false, 32);
+        $affiliation = self::getString($record, 'affiliation', '', true, 50);
+        $occupation  = self::getString($record, 'occupation', '', true, 50);
+        $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
+        $website     = self::getString($record, 'website', '', true, 255);
+        
+        $values = array(
+            'username'    => $username,
+            'email'       => $email,
+            'firstName'   => $firstName,
+            'lastName'    => $lastName,
+            'password'    => $password,
+            'affiliation' => $affiliation,
+            'occupation'  => $occupation,
+            'homeAddress' => $homeAddress,
+            'website'     => $website,
+            'homeAddress' => '',
+            'active'      => '1', // TODO: Activation
+            'banned'      => '0', // TODO: Typing, to allow a boolean.
+            'rank'        => User::RANK_ADMIN
+        );
+        
+        $user = new User($userId);
+        $user->setValues($values);
+        $user->save();
         
         return array(
-            'records' => array(
-                'id' => 1,
-                'username' => 'Other username',
-                'email' => 'me@email.com',
-                'firstname' => 'sdf',
-                'lastname' => 'sdf',
-                'affiliation' => 'sdf',
-                'occupation' => 'sdf',
-                'website' => 'http://www.test.nl/'
-            )
+            'records' => $values,
+            'total'   => 1
         );
     }
     
@@ -140,6 +196,7 @@ class UserController extends Controller
         $password    = self::getString($record, 'password', '', false, 32);
         $affiliation = self::getString($record, 'affiliation', '', true, 50);
         $occupation  = self::getString($record, 'occupation', '', true, 50);
+        $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
         $website     = self::getString($record, 'website', '', true, 255);
         
         $values = array(
@@ -150,9 +207,9 @@ class UserController extends Controller
             'password'    => $password,
             'affiliation' => $affiliation,
             'occupation'  => $occupation,
+            'homeAddress' => $homeAddress,
             'website'     => $website,
-            'homeAddress' => '',
-            'active'      => '1', // TODO: Activation
+            'active'      => '1', // TODO: Activation.
             'banned'      => '0', // TODO: Typing, to allow a boolean.
             'rank'        => User::RANK_ADMIN
         );

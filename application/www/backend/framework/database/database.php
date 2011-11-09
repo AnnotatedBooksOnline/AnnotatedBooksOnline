@@ -613,7 +613,7 @@ class Query
                     $columns[] = $column . ' = ' . $value;
                 }
                 
-                $query .= "\sSET " . implode(', ', $columns);
+                $query .= "\nSET " . implode(', ', $columns);
                 break;
                 
             default:

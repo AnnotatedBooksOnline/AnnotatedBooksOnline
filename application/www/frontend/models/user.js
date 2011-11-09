@@ -4,11 +4,10 @@
 
 Ext.define('Ext.ux.UserModel', {
     extend: 'Ext.data.Model',
-    idProperty: 'id',
+    idProperty: 'userId',
     fields: [
        {name: 'userId'},
        {name: 'username'},
-       {name: 'password'}, // Password is needed for registration. Not filled when fetching a user.
        {name: 'email'},
        {name: 'firstName'},
        {name: 'lastName'},
@@ -16,7 +15,11 @@ Ext.define('Ext.ux.UserModel', {
        {name: 'occupation'},
        {name: 'website'},
        {name: 'homeAddress'},
-       {name: 'rank'}
+       {name: 'rank'},
+       
+       // Passwords are needed for registration and profile. Not filled when fetching a user.
+       {name: 'password'},
+       {name: 'newPassword'},
     ],
     proxy: {
         type: 'requestmanager',
