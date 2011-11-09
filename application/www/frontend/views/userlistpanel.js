@@ -13,7 +13,9 @@ Ext.define('Ext.ux.UserListPanel', {
         
         var store = Ext.create('Ext.data.Store', {
             pageSize: 10,
-            model: 'Ext.ux.UserModel'
+            model: 'Ext.ux.UserModel',
+            remoteSort: true,
+            remoteFilter: true
         });
         
         store.loadPage(1);

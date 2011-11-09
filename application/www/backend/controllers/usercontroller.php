@@ -37,12 +37,15 @@ class UserController extends Controller
     
     public function actionLoad($data)
     {
-        // TODO: Do a security check!
+        // Check whether logged on.
+        Authentication::assertLoggedOn();
         
         $id = self::getInteger($data, 'id', 0);
         if ($id)
         {
             $user = new User($id);
+        
+            // TODO: Do a security check on id!
             
             /*
             // TODO: Return just these values:
@@ -64,6 +67,8 @@ class UserController extends Controller
             return array('records' => $user->getValues(), 'total' => 1);
         }
         
+        // TODO: Do a security check on user kind!
+        
         $total = Query::select()->
                  count('userId', 'total')->
                  from('Users')->
@@ -74,7 +79,7 @@ class UserController extends Controller
         $start = self::getInteger($data, 'start', 0,      true, 0, $total);
         $limit = self::getInteger($data, 'limit', $total, true, 0, $total);
         
-        $result = Query::select(
+        $query = Query::select(
             'userId',
             'username',
             'email',
@@ -87,9 +92,40 @@ class UserController extends Controller
             'rank'
         )
         ->from('Users')
-        ->limit($limit, $start)
-        ->execute()
-        ->getIterator();
+        ->limit($limit, $start);
+        
+        $bindings = array();
+        
+        if (isset($data['filter']))
+        {
+            $filterProperties = array();
+            foreach (json_decode(self::getString($data, 'filter'), true) as $f)
+            {
+                if (isset($f['property']) && isset($f['value']))
+                {
+                    array_push($filterProperties, self::getString($f, 'property') . ' = :' . self::getString($f, 'property'));
+                    $bindings[self::getString($f, 'property')] = self::getString($f, 'value');
+                }
+            }
+            
+            if (count($filterProperties) > 0)
+            {
+                $query = $query->where($filterProperties);
+            }
+        }
+        
+        if (isset($data['sort']))
+        {
+            foreach (json_decode(self::getString($data, 'sort'), true) as $s)
+            {
+                if (isset($s['property']) && isset($s['direction']))
+                {
+                    $query = $query->orderBy(self::getString($s, 'property'), self::getString($s, 'direction'));
+                }
+            }
+        }
+        
+        $result = $query->execute($bindings)->getIterator();
         
         $records = array();
         foreach ($result as $user)
@@ -105,7 +141,10 @@ class UserController extends Controller
     
     public function actionSave($data)
     {
-        // TODO: Do a security check!
+        // Check whether logged on.
+        Authentication::assertLoggedOn();
+        
+        // TODO: Do a security check on id!
         
         $record = self::getArray($data, 'record');
         
@@ -170,7 +209,7 @@ class UserController extends Controller
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => '1', // TODO: Activation
+            'active'      => '1', // TODO: Activation.
             'banned'      => '0', // TODO: Typing, to allow a boolean.
             'rank'        => User::RANK_ADMIN
         );
@@ -180,6 +219,8 @@ class UserController extends Controller
         $user->save();
         
         return array('records' => $values); // TODO: Should this also just be one?
+        
+        // TODO: Create a pending user.
     }
     
     public function actionUsernameExists($data)
