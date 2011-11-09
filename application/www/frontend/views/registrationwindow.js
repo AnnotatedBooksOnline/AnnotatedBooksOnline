@@ -1,4 +1,30 @@
 /*
+ * Username uniqueness check.
+ */
+
+Ext.apply(Ext.form.VTypes, {
+    uniqueUsername: function(value, field)
+    {
+        // Send existance check request.
+        RequestManager.getInstance().request(
+            'User',
+            'usernameExists',
+            {username: value},
+            this,
+            function(data)
+            {
+                if (data)
+                {
+                    field.markInvalid('Username already in use');
+                }
+            }
+        );
+        
+        return true;
+    }
+});
+
+/*
  * Registration window class.
  */
 
@@ -17,19 +43,19 @@ Ext.define('Ext.ux.RegistrationForm', {
                 fieldLabel: 'Username',
                 vtype: 'uniqueUsername',
                 minLength: 6,
-                maxLength: 40
+                maxLength: 30
             },{
                 name: 'email',
                 fieldLabel: 'Email Address',
                 vtype: 'email',
-                maxLength: 256
+                maxLength: 255
             },{
-                name: 'firstname',
+                name: 'firstName',
                 fieldLabel: 'First name',
                 allowBlank: true,
                 maxLength: 50
             },{
-                name: 'lastname',
+                name: 'lastName',
                 fieldLabel: 'Last name',
                 allowBlank: true,
                 maxLength: 50
@@ -48,24 +74,30 @@ Ext.define('Ext.ux.RegistrationForm', {
                 fieldLabel: 'Website',
                 allowBlank: true,
                 vtype: 'url',
-                maxLength: 256
+                maxLength: 255
             },{
-                name: 'password1',
+                name: 'homeAddress',
+                fieldLabel: 'Address',
+                allowBlank: true,
+                maxLength: 555
+            },{
+                name: 'password',
                 fieldLabel: 'Password',
                 inputType: 'password',
-                style: 'margin-top:15px',
-                minLength: 8
+                style: 'margin-top: 15px',
+                minLength: 8,
+                maxLength: 32
             },{
-                name: 'password2',
+                name: 'repeatPassword',
                 fieldLabel: 'Repeat password',
                 inputType: 'password',
                 
                 // Custom validator implementation - checks that the value matches what was entered
-                // into the password1 field.
+                // into the repeat password field.
                 validator: function(value)
                 {
-                    var password1 = this.previousSibling('[name=password1]');
-                    return (value === password1.getValue()) ? true : 'Passwords do not match.'
+                    var repeatPassword = this.previousSibling('[name=password]');
+                    return (value === repeatPassword.getValue()) ? true : 'Passwords do not match.'
                 }
             },
             
@@ -198,26 +230,4 @@ Ext.define('Ext.ux.RegistrationWindow', {
         
         this.callParent();
     }
-});
-
-// TODO: not working yet + should move to somewhere else
-Ext.apply(Ext.form.VTypes, {
-    uniqueUsername: function(value, field) {
-        // TODO: ajax request with database
-        /*
-        var username = ..;
-        
-        var response = Ext.Ajax.request({
-            url: 'uniqueUsername.php',
-            method: 'POST',
-            params: 'username='+username,
-            succes: ...
-        });
-        
-        return response;*/
-        
-        return true;
-    },
-    
-    uniqueUsernameText: 'Username already in use'
 });

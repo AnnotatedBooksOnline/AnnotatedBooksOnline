@@ -17,8 +17,8 @@ class AuthenticationController extends Controller
     public function actionLogin($data)
     {
         // Get fields.
-        $username = isset($data['username']) ? substr(trim($data['username']), 0, 25) : '';
-        $password = isset($data['username']) ? substr($data['password'],       0, 32) : '';
+        $username = self::getString($data, 'username', '', true, 25);
+        $password = self::getString($data, 'password', '', false, 32);
         
         // Login.
         $user = Authentication::getInstance()->login($username, $password);
