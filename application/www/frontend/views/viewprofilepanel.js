@@ -20,7 +20,16 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             {
                 if (this.first() != undefined)
                 {
-                    _this.down('[xtype=propertygrid]').setSource(this.first().raw);
+                    var data = this.first().raw;
+                    var properties = _this.down('[xtype=propertygrid]').propertyNames;
+                    for (property in data)
+                    {
+                        if (properties[property] == undefined)
+                        {
+                            data[property] = undefined;
+                        }
+                    }
+                    _this.down('[xtype=propertygrid]').setSource(data);
                 }
             },
             store
@@ -34,7 +43,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             items: [{
                 xtype: 'propertygrid',
                 propertyNames: {
-                    email: 'E-mail',
+                    email: 'Email',
                     firstName: 'First name',
                     lastName: 'Last name',
                     affiliation: 'Affiliation',
