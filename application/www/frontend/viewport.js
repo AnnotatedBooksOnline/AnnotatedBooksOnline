@@ -313,8 +313,8 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     
     
     //DEBUG: show zoom and position
-    showStatusText("zoom: " + this.zoomLevel + ", x: " + this.position.x + ", y: " + this.position.y +
-        ", rotation: " + this.rotation);
+    //showStatusText("zoom: " + this.zoomLevel + ", x: " + this.position.x + ", y: " + this.position.y +
+    //    ", rotation: " + this.rotation);
 }
 
 Viewport.prototype.startDragging = function(event)

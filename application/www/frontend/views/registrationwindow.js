@@ -96,12 +96,10 @@ Ext.define('Ext.ux.RegistrationForm', {
                 // into the repeat password field.
                 validator: function(value)
                 {
-                    var repeatPassword = this.previousSibling('[name=password]');
-                    return (value === repeatPassword.getValue()) ? true : 'Passwords do not match.'
+                    var password = this.previousSibling('[name=password]');
+                    return (value === password.getValue()) ? true : 'Passwords do not match.';
                 }
             },
-            
-            // TODO: CAPTCHA
 
             /*
              * Terms of Use acceptance checkbox. Two things are special about this:
@@ -118,9 +116,9 @@ Ext.define('Ext.ux.RegistrationForm', {
                 fieldLabel: 'Terms of Use',
                 hideLabel: true,
                 style: 'margin-top: 15px',
-                boxLabel: 'I have read and accept the <a href="http://www.sencha.com/legal/terms-of-use/" class="terms">Terms of Use</a>.',
+                boxLabel: 'I have read and accept the <a href="http://www.sencha.com/legal/terms-of-use/" class="terms">terms of use</a>.',
 
-                // Listener to open the Terms of Use page link in a modal window.
+                // Listener to open the terms of use page link in a modal window.
                 listeners: {
                     click: {
                         element: 'boxLabelEl',
@@ -159,13 +157,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                             }
                         }
                     }
-                },
-
-                // Custom validation logic - requires the checkbox to be checked.
-                // getErrors: function()
-                // {
-                //     return this.getValue() ? [] : ['Please accept the terms of use.']
-                // }
+                }
             }],
             
             buttons: [{
@@ -182,7 +174,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                     {
                         Ext.Msg.show({
                             title: 'Error',
-                            msg: 'Please accept the Terms of Use.',
+                            msg: 'Please accept the terms of use.',
                             icon: Ext.Msg.ERROR,
                             buttons: Ext.Msg.OK
                         });
