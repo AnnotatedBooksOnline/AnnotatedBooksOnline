@@ -15,6 +15,8 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             model: 'Ext.ux.UserModel'
         });
         
+        store.filter('username', this.tabInfo.data[0]);
+        
         store.on('datachanged',
             function(store)
             {
@@ -35,7 +37,6 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             store
         );
         
-        store.filter('userId', Authentication.getInstance().getUserId()); // TODO: Set this to the userId to display.
         store.load();
         
         var defConfig = {
