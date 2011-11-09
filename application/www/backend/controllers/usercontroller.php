@@ -36,11 +36,13 @@ class UserController extends Controller
     
     public function actionLoad($data)
     {
+        Authentication::assertLoggedOn();
+        
         $total = Query::select('userId')->from('Users')->execute()->getAmount();
         $start = isset($data['start']) ? abs(intval($data['start'])) : 0;
         $limit = isset($data['limit']) ? abs(intval($data['limit'])) : $total;
-        
-        $result = Query::select(
+                
+        $query = Query::select(
             "userId",
             "username",
             "email",
@@ -51,9 +53,29 @@ class UserController extends Controller
             "website"
         )
         ->from('Users')
-        ->limit($limit, $start)
-        ->execute()
-        ->getIterator();
+        ->limit($limit, $start);
+        
+        $bindings = array();
+        
+        if (isset($data['filter']))
+        {
+            $filterProperties = array();
+            foreach (json_decode(self::getString($data, 'filter'), true) as $f)
+            {
+                if (isset($f['property']) && isset($f['value']))
+                {
+                    array_push($filterProperties, self::getString($f, 'property') . ' = :' . self::getString($f, 'property'));
+                    $bindings[self::getString($f, 'property')] = self::getString($f, 'value');
+                }
+            }
+            
+            if (count($filterProperties) > 0)
+            {
+                $query = $query->where($filterProperties);
+            }
+        }
+        
+        $result = $query->execute($bindings)->getIterator();
         
         $records = array();
         foreach($result as $user)
@@ -119,5 +141,7 @@ class UserController extends Controller
         $user->save();
         
         return array('records' => $values); // TODO: Should this also just be one?
+        
+        // TODO: Create a pending user.
     }
 }

@@ -18,5 +18,7 @@ class KeepAliveController extends Controller
     {
         // Get a session instance to keep it alive.
         Session::getInstance();
+
+        return array();
     }
 }

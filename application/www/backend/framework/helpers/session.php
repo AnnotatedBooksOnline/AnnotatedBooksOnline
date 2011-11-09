@@ -21,7 +21,10 @@ class Session extends Singleton
     protected function __construct()
     {
         // Start the session.
-        session_start();
+        if (!isset($_SESSION))
+        {
+            session_start();
+        }
         
         // Get prefix
         $this->prefix = Configuration::getInstance()->getString('session-prefix');
