@@ -86,6 +86,17 @@ class UserController extends Controller
             }
         }
         
+        if (isset($data['sort']))
+        {
+            foreach (json_decode(self::getString($data, 'sort'), true) as $s)
+            {
+                if (isset($s['property']) && isset($s['direction']))
+                {
+                    $query = $query->orderBy(self::getString($s, 'property'), self::getString($s, 'direction'));
+                }
+            }
+        }
+        
         $result = $query->execute($bindings)->getIterator();
         
         $records = array();
