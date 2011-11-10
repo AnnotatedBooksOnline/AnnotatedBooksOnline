@@ -215,7 +215,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             case 'viewprofile':
                 // Add a view profile tab.
                 Ext.apply(tabConfig, {
-                    title: 'Profile of ' + data.join('-'),
+                    title: 'Profile of ' + data[0],
                     xtype: 'viewprofilepanel'
                 });
                 

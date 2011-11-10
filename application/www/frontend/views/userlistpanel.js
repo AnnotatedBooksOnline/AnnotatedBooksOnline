@@ -89,7 +89,15 @@ Ext.define('Ext.ux.UserListPanel', {
                     displayInfo: true,
                     displayMsg: 'Displaying users {0} - {1} of {2}',
                     emptyMsg: 'No users to display'
-                },
+                }),
+                listeners: {
+                    itemclick: function(view, record)
+                    {
+                        // Open user in a new tab.
+                        var name = record.get('username');
+                        Application.getInstance().gotoTab('viewprofile', [name], true);
+                    }
+                }
             }]
         };
         

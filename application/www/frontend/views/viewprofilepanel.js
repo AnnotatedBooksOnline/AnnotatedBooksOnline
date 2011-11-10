@@ -15,18 +15,28 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             model: 'Ext.ux.UserModel'
         });
         
+        store.filter('username', this.tabInfo.data[0]);
+        
         store.on('datachanged',
             function(store)
             {
                 if (this.first() != undefined)
                 {
-                    _this.down('[xtype=propertygrid]').setSource(this.first().raw);
+                    var data = this.first().raw;
+                    var properties = _this.down('[xtype=propertygrid]').propertyNames;
+                    for (property in data)
+                    {
+                        if (properties[property] == undefined)
+                        {
+                            data[property] = undefined;
+                        }
+                    }
+                    _this.down('[xtype=propertygrid]').setSource(data);
                 }
             },
             store
         );
         
-        store.filter('userId', Authentication.getInstance().getUserId()); // TODO: Set this to the userId to display.
         store.load();
         
         var defConfig = {
@@ -34,7 +44,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             items: [{
                 xtype: 'propertygrid',
                 propertyNames: {
-                    email: 'E-mail',
+                    email: 'Email',
                     firstName: 'First name',
                     lastName: 'Last name',
                     affiliation: 'Affiliation',
