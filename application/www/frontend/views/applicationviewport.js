@@ -21,6 +21,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     text: 'Close'
                 }]
             },*/{
+                text: 'Register',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('register', [], true);
+                    }
+                },
+                name: 'register'
+            },{
                 text: 'Search',
                 listeners: {
                     click: function()
@@ -40,15 +49,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 name: 'users',
                 hidden: true
             },{
-                text: 'Register',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('register', [], true);
-                    }
-                },
-                name: 'register'
-            },{
                 text: 'Upload',
                 listeners: {
                     click: function()
@@ -56,7 +56,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         Application.getInstance().gotoTab('upload', [], true);
                     }
                 },
-                name: 'upload'
+                name: 'upload',
+                hidden: true
+            },{
+                text: 'Info',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().openTab('info', [], true);
+                    }
+                },
+                name: 'info'
             }, '->', {
                 text: '',
                 menu: [{
@@ -65,7 +75,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     listeners: {
                         click: function()
                         {
-                        Authentication.getInstance().logout();
+                            Authentication.getInstance().logout();
                         }
                     }
                 },{
@@ -260,6 +270,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a welcome tab.
                 Ext.apply(tabConfig, {
                     title: 'Welcome',
+                    xtype: 'welcomepanel',
                     closable: false
                 });
                 
@@ -269,6 +280,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an info tab.
                 Ext.apply(tabConfig, {
                     title: 'Info',
+                    xtype: 'infopanel'
                 });
                 
                 break;
