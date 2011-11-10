@@ -160,34 +160,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                 }
             }],
             
-            buttons: [{
-                xtype: 'button',
-                formBind: true,
-                disabled: true,
-                text: 'Register',
-                width: 140,
-                handler: function()
-                {
-                    var form = this.up('form').getForm();
-                    
-                    if (!this.up('form').down('[name=acceptTerms]').getValue())
-                    {
-                        Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'Please accept the terms of use.',
-                            icon: Ext.Msg.ERROR,
-                            buttons: Ext.Msg.OK
-                        });
-                        
-                        return;
-                    }
-                    
-                    if (form.isValid())
-                    {
-                        _this.saveModel();
-                    }
-                }
-            }],
+            submitButtonText: 'Register',
             
             model: new Ext.ux.UserModel()
         };
@@ -195,6 +168,27 @@ Ext.define('Ext.ux.RegistrationForm', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    submit: function()
+    {
+        if (!this.down('[name=acceptTerms]').getValue())
+        {
+            Ext.Msg.show({
+                title: 'Error',
+                msg: 'Please accept the terms of use.',
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+            });
+            
+            return;
+        }
+        
+        var form = this.getForm();
+        if (form.isValid())
+        {
+            this.saveModel();
+        }
     }
 });
 

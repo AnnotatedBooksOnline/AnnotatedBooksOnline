@@ -18,15 +18,43 @@ Ext.define('Ext.ux.FormBase', {
             defaultType: 'textfield',
             
             defaults: {
-                anchor: '100%'
+                anchor: '100%',
+                
+                // Enable enter to submit form.
+                enableKeyEvents: true,
+                listeners: {
+                    specialKey: function(field, event)
+                    {
+                        if (event.getKey() == Ext.EventObject.ENTER)
+                        {
+                            _this.submit();
+                        }
+                    }
+                }
             },
             
             fieldDefaults: {
                 allowBlank: false
-            }
+            },
         };
         
         Ext.apply(this, defConfig);
+        
+        // Add submit button.
+        if (!this.buttons)
+        {
+            this.buttons = [{
+                xtype: 'button',
+                formBind: true,
+                disabled: true,
+                text: this.submitButtonText,
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
+                }
+            }];
+        }
         
         // Create loading and saving masks.
         this.loadingMask = new Ext.LoadMask(this, {msg: 'Loading...'});
@@ -90,6 +118,11 @@ Ext.define('Ext.ux.FormBase', {
         }
     },
     
+    getModel: function()
+    {
+        return this.model;
+    },
+    
     updateModel: function()
     {
         // Set all form values that are also defined
@@ -141,5 +174,10 @@ Ext.define('Ext.ux.FormBase', {
                 }
             }
         });
+    },
+    
+    submit: function()
+    {
+        // Implement in subclass.
     }
 });

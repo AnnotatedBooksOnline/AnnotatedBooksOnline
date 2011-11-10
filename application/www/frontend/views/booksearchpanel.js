@@ -205,8 +205,8 @@ Ext.define('Ext.ux.SearchField', {
             },{
                 xtype: 'button',
                 name: 'close',
-                text: 'X',
-                width: 20,
+                iconCls: 'remove-icon',
+                width: 22,
                 disabled: true,
                 handler: function()
                 {
@@ -256,63 +256,15 @@ Ext.define('Ext.ux.SearchPanel', {
     }
 });
 
-Ext.define('Ext.ux.ResultSet', {
+Ext.define('Ext.ux.SearchResultSet', {
     extend: 'Ext.view.View',
     alias: 'widget.searchresultset',
 
-    initComponent: function() {
-        var _this = this;
-    
-        function getSearchColumnStore(data)
-        {
-            var columns = Ext.create('Ext.data.Store', {
-                model: 'Ext.ux.SearchColumnModel',
-                data: data.columns
-            });
-            
-            return columns;
-        }
-
-        function getSearchResultStore(data, columns)
-        {
-            var store = Ext.create('Ext.data.ArrayStore', {
-                fields: function()
-                {
-                    var cols = columns.getRange();
-                    var fields = [];
-                    for (var i = 0; i < cols.length; i++)
-                    {
-                        fields[fields.length] = {name: cols[i].get('name')};
-                    }
-                    
-                    return fields;
-                }(),
-                pageSize: 2,
-                data: data.records,
-                pagedSort: function(sorters, direction)
-                {
-                    this.loadData(data.records);
-                    var sorted = this.sort(sorters, direction);
-                    this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize));
-                    return sorted;
-                }
-            });
-            
-            store.on('load',
-                function(store, records, successful, operation)
-                {
-                    this.loadData(data.records);
-                    this.loadData(this.data.getRange().slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
-                },
-                store
-            );
-            
-            store.load();
-            
-            return store;
-        }
+    initComponent: function()
+    {
+        var cols  = this.getSearchColumnStore(this.data);
+        var store = this.getSearchResultStore(this.data, cols);
         
-        var cols = getSearchColumnStore(this.data);
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
@@ -327,7 +279,7 @@ Ext.define('Ext.ux.ResultSet', {
                     '</div>',
                 '</tpl>',
             ],
-            store: getSearchResultStore(this.data, cols),
+            store: store,
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
             itemSelector: 'div.bookitem',
@@ -362,6 +314,55 @@ Ext.define('Ext.ux.ResultSet', {
         
         Ext.apply(this, defConfig);
         this.callParent();
+    },
+    
+    getSearchColumnStore: function(data)
+    {
+        var columns = Ext.create('Ext.data.Store', {
+            model: 'Ext.ux.SearchColumnModel',
+            data: data.columns
+        });
+        
+        return columns;
+    },
+
+    getSearchResultStore: function(data, columns)
+    {
+        var store = Ext.create('Ext.data.ArrayStore', {
+            fields: function()
+            {
+                var cols = columns.getRange();
+                var fields = [];
+                for (var i = 0; i < cols.length; i++)
+                {
+                    fields[fields.length] = {name: cols[i].get('name')};
+                }
+                
+                return fields;
+            }(),
+            pageSize: 5,
+            data: data.records,
+            pagedSort: function(sorters, direction)
+            {
+                this.loadData(data.records);
+                var sorted = this.sort(sorters, direction);
+                this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize));
+                return sorted;
+            }
+        });
+        
+        store.on('load',
+            function(store, records, successful, operation)
+            {
+                this.loadData(data.records);
+                this.loadData(this.data.getRange().slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
+            },
+            store
+        );
+        
+        store.load();
+        
+        return store;
     }
 });
 
@@ -398,6 +399,7 @@ Ext.define('Ext.ux.SortComboBox', {
                 {
                     return { property: val, direction: (_this.getComponent(1).getValue() ? 'DESC' : 'ASC') }
                 }
+                
                 return null;
             }
         };
@@ -406,7 +408,7 @@ Ext.define('Ext.ux.SortComboBox', {
         
         this.callParent();
     }
-    });
+});
 
 Ext.define('Ext.ux.SortComboBoxField', {
     extend: 'Ext.form.field.ComboBox',
@@ -418,15 +420,15 @@ Ext.define('Ext.ux.SortComboBoxField', {
         
         var defConfig = {
             store: Ext.create('Ext.data.Store', {
-                    model: 'Ext.ux.SearchParameterModel',
-                    data: [{
-                        abbreviation: 'modified',
-                        name: 'Date last modified'
-                    },{
-                        abbreviation: 'uploaded',
-                        name: 'Date uploaded'
-                    }].concat(bookProperties)
-                }),
+                model: 'Ext.ux.SearchParameterModel',
+                data: [{
+                    abbreviation: 'modified',
+                    name: 'Date last modified'
+                },{
+                    abbreviation: 'uploaded',
+                    name: 'Date uploaded'
+                }].concat(bookProperties)
+            }),
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbreviation',
@@ -450,27 +452,10 @@ Ext.define('Ext.ux.SearchResultView', {
     alias: 'widget.searchresults',
     requires: ['*'],
     
-    initComponent: function() {
+    initComponent: function()
+    {
         var _this = this;
-
-        function sort()
-        {
-            var current = _this.down('[xtype=sortcombobox]');
-            var sorters = [];
-            do
-            {
-                var val = current.getSorter();
-                if (val)
-                {
-                    sorters[sorters.length] = val;
-                }
-            } while(current = current.nextSibling('[xtype=sortcombobox]'));
-            var results = _this.down('[xtype=searchresultset]');
-            if (results)
-            {
-                results.store.pagedSort(sorters);
-            }
-        };
+        var sort = function() { _this.sort(); };
         
         var defConfig = {
             title: 'Search results',
@@ -497,31 +482,62 @@ Ext.define('Ext.ux.SearchResultView', {
                 xtype: 'panel',
                 name: 'results',
                 border: 0
-            }],
-            setData: function(data) {
-                _this.down('[name=results]').removeAll();
-                _this.down('[name=results]').add([{
-                    xtype: 'searchresultset',
-                    data: data
-                }]);
-                _this.down('[name=results]').add([{
-                    xtype: 'pagingtoolbar',
-                    store: _this.down('[name=results]').getComponent(0).getStore(),
-                    displayInfo: true,
-                    displayMsg: 'Displaying results {0} - {1} of {2}',
-                    emptyMsg: 'No books found'
-                }]);
-                
-                _this.down('[name=results]').down('[xtype=pagingtoolbar]').remove('refresh');
-                _this.down('[name=results]').down('[xtype=pagingtoolbar]').add({id: 'refresh', enable: Ext.emptyFn});
-                
-                sort();
-            }
+            }]
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    sort: function()
+    {
+        var current = this.down('[xtype=sortcombobox]');
+        var sorters = [];
+        do
+        {
+            var val = current.getSorter();
+            if (val)
+            {
+                sorters[sorters.length] = val;
+            }
+        } while (current = current.nextSibling('[xtype=sortcombobox]'));
+        
+        var results = this.down('[xtype=searchresultset]');
+        if (results)
+        {
+            results.store.pagedSort(sorters);
+        }
+    },
+    
+    setData: function(data)
+    {
+        var results = this.down('[name=results]');
+        
+        results.removeAll();
+        results.add({
+            xtype: 'searchresultset',
+            data: data
+        });
+        
+        var currentToolbar = this.down('pagingtoolbar');
+        results.removeDocked(currentToolbar);
+        results.addDocked({
+            xtype: 'pagingtoolbar',
+            docked: 'top',
+            store: results.getComponent(0).getStore(),
+            displayInfo: true,
+            displayMsg: 'Displaying books {0} - {1} of {2}',
+            emptyMsg: 'No books found'
+        });
+        
+        // TODO: Add sorting buttons to docked toolbar.
+        // TODO: Use normal store instead of array store, so that refresh works. 
+        
+        //_this.down('[name=results]').down('[xtype=pagingtoolbar]').remove('refresh');
+        //_this.down('[name=results]').down('[xtype=pagingtoolbar]').add({id: 'refresh', enable: Ext.emptyFn});
+        
+        this.sort();
     }
 });
 

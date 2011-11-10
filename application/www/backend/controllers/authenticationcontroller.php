@@ -23,7 +23,7 @@ class AuthenticationController extends Controller
         // Login.
         $user = Authentication::getInstance()->login($username, $password);
         
-        return array('userId' => $user->getId());
+        return $user->getValues(); // TODO: just get the important ones..
     }
     
     public function actionLogout($data)

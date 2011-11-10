@@ -78,37 +78,35 @@ Ext.define('Ext.ux.EditProfileForm', {
                 }
             }],
             
-            buttons: [{
-                xtype: 'button',
-                formBind: true,
-                disabled: true,
-                text: 'Update',
-                width: 140,
-                handler: function()
-                {
-                    var form = _this.getForm();
-                    if (form.isValid())
-                    {
-                        _this.saveModel(_this,
-                            function()
-                            {
-                                var window = this.up('window');
-                                if (window)
-                                {
-                                    window.close();
-                                }
-                            });
-                    }
-                }
-            }],
+            submitButtonText: 'Save',
             
-            model: Ext.ux.UserModel,
-            modelId: Authentication.getInstance().getUserId()
+            model: Authentication.getInstance().getUserModel()
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    submit: function()
+    {
+        var form = this.getForm();
+        if (form.isValid())
+        {
+            this.saveModel(this,
+                function()
+                {
+                    // Fire model changed event.
+                    Authentication.getInstance().modelChanged();
+                    
+                    // Close window above us, if any.
+                    var window = this.up('window');
+                    if (window)
+                    {
+                        window.close();
+                    }
+                });
+        }
     }
 });
 

@@ -9,8 +9,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
     initComponent: function() 
     {
         var topRegion = {
-            height: 50,
-            border: false,
             tbar: [/*{
                 text: 'Book',
                 menu: [{
@@ -32,15 +30,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 },
                 name: 'search'
             },{
-                text: 'Book 100',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('book', [100], true);
-                    }
-                },
-                name: 'book100'
-            },{
                 text: 'Users',
                 listeners: {
                     click: function()
@@ -49,15 +38,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                 },
                 name: 'users'
-            },{
-                text: 'View profile',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('viewprofile', ['Renze'], true);
-                    }
-                },
-                name: 'viewprofile'
             },{
                 text: 'Register',
                 listeners: {
@@ -76,46 +56,30 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                 },
                 name: 'upload'
-            },{
-                text: 'Edit profile',
-                listeners: {
-                    click: function()
-                    {
-                        Authentication.showEditProfileWindow();
-                    }
-                },
-                name: 'editprofile'
-            },{
-                text: 'Viewer settings',
-                listeners: {
-                    click: function()
-                    {
-                        Ext.ux.Viewer.showSettingsWindow();
-                    }
-                },
-                name: 'viewersettings'
             }, '->', {
-                text: 'Options',
+                text: '',
                 menu: [{
+                    text: 'Logout...',
+                    iconCls: 'logout-icon',
+                    listeners: {
+                        click: function()
+                        {
+                        Authentication.getInstance().logout();
+                        }
+                    }
+                },{
                     text: 'Edit profile...',
+                    iconCls: 'user-icon',
                     listeners: {
                         click: function()
                         {
                             Authentication.showEditProfileWindow();
                         }
                     }
-                },{
-                    text: 'Viewer settings...',
-                    listeners: {
-                        click: function()
-                        {
-                            Ext.ux.Viewer.showSettingsWindow();
-                        }
-                    }
-                }]
-            },/*{
-                text: 'Help'
-            }, '-', */{
+                }],
+                name: 'logout',
+                hidden: true
+            }, {
                 text: 'Login',
                 listeners: {
                     click: function()
@@ -124,24 +88,30 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                 },
                 name: 'login'
-            },{
-                text: 'Logout',
-                listeners: {
-                    click: function()
-                    {
-                        Authentication.getInstance().logout();
+            }, '-', {
+                text: 'Options',
+                menu: [{
+                    text: 'Viewer settings...',
+                    iconCls: 'settings-icon',
+                    listeners: {
+                        click: function()
+                        {
+                            Ext.ux.Viewer.showSettingsWindow();
+                        }
                     }
-                },
-                name: 'logout',
-                hidden: true
-            }]
+                }/*,{
+                    text: 'Help...'
+                }*/]
+            }],
+            border: false,
+            height: 120,
+            cls: 'header',
+            html: '<h1>Collaboratory</h1>'
         };
         
         var bottomRegion = {
             xtype: 'tabpanel',
-            flex: 1,
-            activeTab: 0,
-            plain: true
+            flex: 1
         };
         
         var _this = this;
@@ -155,8 +125,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         Ext.apply(this, defConfig);
         
-        Authentication.getInstance().getEventDispatcher().bind('change', this,
-            this.onAuthenticationChange);
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+        eventDispatcher.bind('modelchange', this, this.onAuthenticationModelChange);
         
         this.eventDispatcher = new EventDispatcher();
         
@@ -169,6 +140,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
         this.tabs = this.items.get(1);
+        
+        this.openTab('welcome', [], true);
     },
     
     getEventDispatcher: function()
@@ -185,6 +158,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
             
             // Default settings.
             closable: true,
+            
+            // Enable scrolling.
+            autoScroll: true,
             
             // Tab listeners.
             listeners: {
@@ -271,8 +247,27 @@ Ext.define('Ext.ux.ApplicationViewport', {
             case 'upload':
                 // Add a upload tab.
                 Ext.apply(tabConfig, {
-                    title: 'upload',
-                    xtype: 'uploadform'
+                    title: 'Upload',
+                    xtype: 'uploadform',
+                    border: false,
+                    frame: false
+                });
+                
+                break;
+            
+            case 'welcome':
+                // Add a welcome tab.
+                Ext.apply(tabConfig, {
+                    title: 'Welcome',
+                    closable: false
+                });
+                
+                break;
+            
+            case 'info':
+                // Add an info tab.
+                Ext.apply(tabConfig, {
+                    title: 'Info',
                 });
                 
                 break;
@@ -355,6 +350,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
         {
             this.down("[name='logout']").hide();
             this.down("[name='login']").show();
+        }
+    },
+    
+    onAuthenticationModelChange: function(event, authentication)
+    {
+        if (authentication.isLoggedOn())
+        {
+            this.down("[name=logout]").setText('Logged on as <b>' + escape(authentication.getFullName()) + '</b>');
         }
     }
 });

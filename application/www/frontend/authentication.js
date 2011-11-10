@@ -19,6 +19,7 @@ function Authentication()
 Authentication.prototype.eventDispatcher;
 Authentication.prototype.loggedOn;
 Authentication.prototype.userId;
+Authentication.prototype.user;
 
 Authentication.prototype.keepAliveInterval;
 
@@ -62,6 +63,28 @@ Authentication.prototype.isLoggedOn = function()
 Authentication.prototype.getUserId = function()
 {
     return this.loggedOn ? this.userId : 0;
+}
+
+Authentication.prototype.getUserModel = function()
+{
+    return this.user;
+}
+
+Authentication.prototype.setUserModel = function(model)
+{
+    this.user = model;
+    
+    this.eventDispatcher.trigger('modelchange', this);
+}
+
+Authentication.prototype.modelChanged = function()
+{
+    this.eventDispatcher.trigger('modelchange', this);
+}
+
+Authentication.prototype.getFullName = function()
+{
+    return this.loggedOn ? (this.user.get('firstName') + ' ' + this.user.get('lastName')) : '';
 }
 
 Authentication.prototype.requireLogin = function(obj, onSuccess, onError)
@@ -195,6 +218,9 @@ Authentication.prototype.logout = function(showPrompt)
                 this.keepAliveInterval = undefined;
             }
             
+            // Set new user model.
+            this.setUserModel(undefined);
+            
             // Trigger logout.
             this.eventDispatcher.trigger('change', this);
             this.eventDispatcher.trigger('logout', this);
@@ -236,12 +262,15 @@ Authentication.prototype.login = function(username, password, obj, onSuccess, on
             // We are logged on.
             this.loggedOn = true;
             
-            // Set user id.
+            // Set user id and model.
             this.userId = data.userId;
             
             // Create keep-alive interval.
             var _this = this;
             this.keepAliveInterval = setInterval(function() { _this.keepAlive(); }, 10000);
+            
+            // Set new user model.
+            this.setUserModel(new Ext.ux.UserModel(data));
             
             // Trigger login.
             this.eventDispatcher.trigger('change', this);

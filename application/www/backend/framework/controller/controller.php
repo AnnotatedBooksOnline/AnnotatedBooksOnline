@@ -104,7 +104,7 @@ abstract class Controller
     protected static function getString($data, $key,
         $default = '', $trim = true, $maxLength = -1)
     {
-        $value = isset($data[$key]) ? $data[$key] : $default;
+        $value = isset($data[$key]) ? (string) $data[$key] : $default;
         
         if ($trim)
         {

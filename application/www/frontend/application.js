@@ -199,6 +199,8 @@ Application.prototype.registerActions = function()
                 case 'viewprofile':
                 case 'register':
                 case 'upload':
+                case 'welcome':
+                case 'info':
                     // These are tab actions, so close the windows.
                     Ext.WindowManager.each(
                         function(window)
@@ -240,6 +242,8 @@ Application.prototype.tabNeedsAuthentication = function(type)
         case 'book':
         case 'search':
         case 'register':
+        case 'welcome':
+        case 'info':
             return false;
     }
     

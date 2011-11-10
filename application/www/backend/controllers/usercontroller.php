@@ -19,10 +19,11 @@ class UserController extends Controller
     Load:
         - id
         - page
-        - start
+        - offset
         - limit
-        - sort: [ {property, direction}, {property, direction}, .. ]
-        - filter: ?
+        - sorters: [ {column, direction}, {column, direction}, .. ]
+        - groupers: ?
+        - filters: ?
     
     Save:
         - record: {id, ..}
@@ -76,8 +77,8 @@ class UserController extends Controller
                  getFirstRow()->
                  getValue('total');
         
-        $start = self::getInteger($data, 'start', 0,      true, 0, $total);
-        $limit = self::getInteger($data, 'limit', $total, true, 0, $total);
+        $limit  = self::getInteger($data, 'limit',  $total, true, 0, $total);
+        $offset = self::getInteger($data, 'offset', 0,      true, 0, $total);
         
         $query = Query::select(
             'userId',
@@ -92,35 +93,41 @@ class UserController extends Controller
             'rank'
         )
         ->from('Users')
-        ->limit($limit, $start);
+        ->limit($limit, $offset);
         
         $bindings = array();
         
-        if (isset($data['filter']))
+        $filters = self::getArray($data, 'filters');
+        if (isset($data['filters']))
         {
             $filterProperties = array();
-            foreach (json_decode(self::getString($data, 'filter'), true) as $f)
+            foreach ($filters as $filter)
             {
-                if (isset($f['property']) && isset($f['value']))
+                $column = self::getString($filter, 'column');
+                $value  = self::getString($filter, 'value');
+                if ($column && $value)
                 {
-                    array_push($filterProperties, self::getString($f, 'property') . ' = :' . self::getString($f, 'property'));
-                    $bindings[self::getString($f, 'property')] = self::getString($f, 'value');
+                    $filterProperties[] = $column. ' = :' . $value; // TODO: check column ?
+                    $bindings[$column] = $value;
                 }
             }
             
-            if (count($filterProperties) > 0)
+            if ($filterProperties)
             {
                 $query = $query->where($filterProperties);
             }
         }
         
-        if (isset($data['sort']))
+        $sorters = self::getArray($data, 'sorters');
+        if ($sorters)
         {
-            foreach (json_decode(self::getString($data, 'sort'), true) as $s)
+            foreach ($sorters as $sorting)
             {
-                if (isset($s['property']) && isset($s['direction']))
+                $column    = self::getString($sorting, 'column');
+                $direction = self::getString($sorting, 'direction');
+                if ($column && $direction)
                 {
-                    $query = $query->orderBy(self::getString($s, 'property'), self::getString($s, 'direction'));
+                    $query = $query->orderBy($column, $direction); // TODO: check column ?
                 }
             }
         }
@@ -164,7 +171,7 @@ class UserController extends Controller
             'email'       => $email,
             'firstName'   => $firstName,
             'lastName'    => $lastName,
-            'password'    => $password,
+            //'password'    => $password,
             'affiliation' => $affiliation,
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
@@ -180,7 +187,7 @@ class UserController extends Controller
         $user->save();
         
         return array(
-            'records' => $values,
+            'records' => $user->getValues(),
             'total'   => 1
         );
     }
@@ -218,7 +225,7 @@ class UserController extends Controller
         $user->setValues($values);
         $user->save();
         
-        return array('records' => $values); // TODO: Should this also just be one?
+        return array('records' => $values); // TODO: Set new userId.
         
         // TODO: Create a pending user.
     }
