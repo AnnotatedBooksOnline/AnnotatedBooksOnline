@@ -37,7 +37,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         Application.getInstance().gotoTab('users', [], true);
                     }
                 },
-                name: 'users'
+                name: 'users',
+                hidden: true
             },{
                 text: 'Register',
                 listeners: {
@@ -343,13 +344,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         if (authentication.isLoggedOn())
         {
+            this.down("[name='users']").show();
+            this.down("[name='upload']").show();
             this.down("[name='logout']").show();
             this.down("[name='login']").hide();
+            this.down("[name='register']").hide();
         }
         else
         {
+            this.down("[name='users']").hide();
+            this.down("[name='upload']").hide();
             this.down("[name='logout']").hide();
             this.down("[name='login']").show();
+            this.down("[name='register']").show();
         }
     },
     
