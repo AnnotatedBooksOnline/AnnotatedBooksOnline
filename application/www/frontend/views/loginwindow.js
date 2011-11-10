@@ -39,7 +39,7 @@ Ext.define('Ext.ux.LoginForm', {
             Authentication.getInstance().login(values.username, values.password, this,
                 function()
                 {
-                    this.up('window').close();
+                    // Authentication will close this window.
                 },
                 function(code, message, trace)
                 {

@@ -5,7 +5,14 @@ require_once 'framework/helpers/singleton.php';
 require_once 'framework/helpers/session.php';
 require_once 'model/user/user.php';
 
-class NotLoggedOnError extends ExceptionBase { }
+// Exceptions.
+class NotLoggedOnException extends ExceptionBase
+{
+    public function __construct()
+    {
+        parent::__construct('logon-required');
+    }
+}
 
 /**
  * Authentication utility class.
@@ -70,7 +77,7 @@ class Authentication extends Singleton
         $currentUser = $this->getUser();
         if ($currentUser != null)
         {
-            // TODO
+            $this->logout();
         }
         
         $this->user        = User::fromUsernameAndPassword($username, $password);
@@ -131,7 +138,7 @@ class Authentication extends Singleton
     {
         if (!Authentication::getInstance()->isLoggedOn())
         {
-            throw new NotLoggedOnError('logon-required');
+            throw new NotLoggedOnException();
         }
     }
 }

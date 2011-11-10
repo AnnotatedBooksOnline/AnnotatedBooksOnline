@@ -31,8 +31,8 @@ Authentication.prototype.constructor = function()
 {
     this.eventDispatcher = new EventDispatcher();
     
-    // Initialize.
-    this.initialize();
+    this.userId   = 0;
+    this.loggedOn = false;
 }
 
 /*
@@ -44,6 +44,10 @@ Authentication.getInstance = function()
     if (Authentication.instance === undefined)
     {
         Authentication.instance = new Authentication();
+    
+        // Initialize here, so that methods that need an instance of the singleton
+        // will get it without recursively initializing.
+        Authentication.instance.initialize();
     }
     
     return Authentication.instance;
@@ -62,7 +66,7 @@ Authentication.prototype.isLoggedOn = function()
 
 Authentication.prototype.getUserId = function()
 {
-    return this.loggedOn ? this.userId : 0;
+    return this.userId;
 }
 
 Authentication.prototype.getUserModel = function()
@@ -72,13 +76,20 @@ Authentication.prototype.getUserModel = function()
 
 Authentication.prototype.setUserModel = function(model)
 {
+    // Set model.
     this.user = model;
+    
+    // Set user id.
+    this.userId = model ? model.get('userId') : 0;
     
     this.eventDispatcher.trigger('modelchange', this);
 }
 
 Authentication.prototype.modelChanged = function()
 {
+    // Refetch user id.
+    this.userId = this.user.get('userId');
+    
     this.eventDispatcher.trigger('modelchange', this);
 }
 
@@ -205,18 +216,17 @@ Authentication.showEditProfileWindow = function()
 
 Authentication.prototype.logout = function(showPrompt)
 {
+    // Check if logged on.
+    if (!this.loggedOn)
+    {
+        return;
+    }
+    
     // Logout callback, called after request has been done.
     var callback = function(data)
         {
             // Set us logged out.
             this.loggedOn = false;
-            
-            // Clear keep-alive interval
-            if (this.keepAliveInterval !== undefined)
-            {
-                clearInterval(this.keepAliveInterval);
-                this.keepAliveInterval = undefined;
-            }
             
             // Set new user model.
             this.setUserModel(undefined);
@@ -239,8 +249,8 @@ Authentication.prototype.logout = function(showPrompt)
                     if (button == 'yes')
                     {
                         // Send logout request.
-                        RequestManager.getInstance().request('Authentication', 'logout', {}, _this,
-                            callback);
+                        RequestManager.getInstance().request('Authentication', 'logout', null,
+                            _this, callback);
                     }
                 }
         });
@@ -248,7 +258,7 @@ Authentication.prototype.logout = function(showPrompt)
     else
     {
         // Send logout request without prompting.
-        RequestManager.getInstance().request('Authentication', 'logout', {}, this, callback);
+        RequestManager.getInstance().request('Authentication', 'logout', null, this, callback);
     }
 }
 
@@ -259,22 +269,8 @@ Authentication.prototype.login = function(username, password, obj, onSuccess, on
         this,
         function(data)
         {
-            // We are logged on.
-            this.loggedOn = true;
-            
-            // Set user id and model.
-            this.userId = data.userId;
-            
-            // Create keep-alive interval.
-            var _this = this;
-            this.keepAliveInterval = setInterval(function() { _this.keepAlive(); }, 10000);
-            
-            // Set new user model.
-            this.setUserModel(new Ext.ux.UserModel(data));
-            
-            // Trigger login.
-            this.eventDispatcher.trigger('change', this);
-            this.eventDispatcher.trigger('login', this);
+            // Log in.
+            this.loginInternally(data);
             
             // Call success handler
             if (onSuccess !== undefined)
@@ -290,10 +286,74 @@ Authentication.prototype.login = function(username, password, obj, onSuccess, on
 
 Authentication.prototype.initialize = function()
 {
-    this.loggedOn = false;
+    // Create keep-alive interval.
+    this.keepAlive();
 }
 
 Authentication.prototype.keepAlive = function()
 {
-    RequestManager.getInstance().request('KeepAlive', 'keepalive');
+    var data = {userId: this.loggedOn ? this.userId : 0};
+    RequestManager.getInstance().request('Authentication', 'keepalive', data, this,
+        function(data)
+        {
+            // Check if there is a mismatch between client and server.
+            if (data && data.action)
+            {
+                if (data.action == 'logout')
+                {
+                    if (this.loggedOn)
+                    {
+                        // TODO: make special time out window, that by deactivation will close.
+                        
+                        // Show login window, to give the user one last chance.
+                        this.loggedOn = false;
+                        this.requireLogin(this,
+                            function()
+                            {
+                                // User logged in, keep alive.
+                                this.keepAlive();
+                            },
+                            function()
+                            {
+                                // Use cancelled, logout and keep alive.
+                                this.loggedOn = true;
+                                this.logout(false);
+                                this.keepAlive();
+                            }, true);
+                        
+                        // Skip current time out.
+                        return;
+                    }
+                }
+                else if (data.action == 'login')
+                {
+                    // Log in with new or different credentials.
+                    this.loginInternally(data.user);
+                }
+            }
+            
+            // Keep alive in 10 seconds.
+            var _this = this;
+            setTimeout(function() { _this.keepAlive(); }, 10000);
+        });
+}
+
+Authentication.prototype.loginInternally = function(user)
+{
+    // We are logged on.
+    this.loggedOn = true;
+    
+    // Set new user model.
+    this.setUserModel(new Ext.ux.UserModel(user));
+    
+    // Trigger login.
+    this.eventDispatcher.trigger('change', this);
+    this.eventDispatcher.trigger('login', this);
+    
+    // Close login window if open.
+    if (Authentication.loginWindow !== undefined)
+    {
+        Authentication.loginWindow.close();
+        Authentication.loginWindow = undefined;
+    }
 }

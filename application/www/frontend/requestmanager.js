@@ -65,31 +65,39 @@ RequestManager.prototype.request = function(controller, action, data, object, on
     }
 }
 
+/*
+ * Private methods.
+ */
+
 RequestManager.prototype.flush = function()
 {
     var requests  = this.requests;
     this.requests = [];
     
-    for (var i in requests)
+    for (var i = 0; i < requests.length; ++i)
     {
-        var request = requests[i];
-        
         var _this = this;
-        Ext.Ajax.request({
-            // Url parameters appended here, because data may be null, in which case
-            // the params would be considered POST parameters instead of GET parameters.
-            url: '/backend/?controller=' + request.controller + '&action=' + request.action,
-            jsonData: request.data,
-            method: 'POST',
-            success: function(result, req)
+        var newScope = function(request)
             {
-                _this.onRequestFinished(request, true, result.responseText);
-            },
-            failure: function(result, req)
-            {
-                _this.onRequestFinished(request, false, result.responseText);
-            }
-        });
+                Ext.Ajax.request({
+                    // Url parameters appended here, because data may be null, in which case
+                    // the params would be considered POST parameters instead of GET parameters.
+                    url: '/backend/?controller=' + request.controller + '&action=' + request.action,
+                    jsonData: request.data,
+                    method: 'POST',
+                    success: function(result, req)
+                    {
+                        _this.onRequestFinished(request, true, result.responseText);
+                    },
+                    failure: function(result, req)
+                    {
+                        _this.onRequestFinished(request, false, result.responseText);
+                    }
+                });
+            };
+        
+        // Introduce new scope, see: http://www.mennovanslooten.nl/blog/post/62
+        newScope(requests[i]);
     }
 }
 

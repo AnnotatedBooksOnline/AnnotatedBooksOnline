@@ -44,12 +44,16 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             items: [{
                 xtype: 'propertygrid',
                 propertyNames: {
+                    userId: 'Identifier',
+                    username: 'Username',
                     email: 'Email',
                     firstName: 'First name',
                     lastName: 'Last name',
                     affiliation: 'Affiliation',
                     occupation: 'Occupation',
-                    website: 'Website'
+                    website: 'Website',
+                    homeAddress: 'Address',
+                    rank: 'Rank',
                 },
                 source: {},
                 listeners: {

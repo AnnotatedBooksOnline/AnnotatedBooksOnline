@@ -31,4 +31,33 @@ class AuthenticationController extends Controller
         // Logout.
         Authentication::getInstance()->logout();
     }
+    
+    public function actionKeepAlive($data)
+    {
+        // Get a authentication instance.
+        $auth = Authentication::getInstance();
+        
+        // Get user id on client.
+        $userId = self::getInteger($data, 'userId');
+        
+        // Check user.
+        $user = $auth->getUser();
+        if ($userId)
+        {
+            if ($user === null)
+            {
+                return array('action' => 'logout');
+            }
+            else if ($user->getId() === $userId)
+            {
+                return;
+            }
+        }
+        else if ($user === null)
+        {
+            return;
+        }
+        
+        return array('action' => 'login', 'user' => $user->getValues()); // TODO: just get the important ones..
+    }
 }

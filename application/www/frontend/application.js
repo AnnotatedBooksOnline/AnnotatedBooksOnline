@@ -113,8 +113,8 @@ Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
 Application.prototype.initialize = function()
 {
     // Get authentication and request manager instances.
-    this.authentication = Authentication.getInstance();
     this.requestManager = RequestManager.getInstance();
+    this.authentication = Authentication.getInstance();
     
     // Initialize history and quicktips.
     Ext.History.init();
