@@ -89,7 +89,7 @@ Ext.define('Ext.ux.UserListPanel', {
                     displayInfo: true,
                     displayMsg: 'Displaying users {0} - {1} of {2}',
                     emptyMsg: 'No users to display'
-                }),
+                },
                 listeners: {
                     itemclick: function(view, record)
                     {
