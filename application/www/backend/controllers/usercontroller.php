@@ -107,7 +107,7 @@ class UserController extends Controller
                 $value  = self::getString($filter, 'value');
                 if ($column && $value)
                 {
-                    $filterProperties[] = $column. ' = :' . $value; // TODO: check column ?
+                    $filterProperties[] = $column. ' = :' . $column; // TODO: check column ?
                     $bindings[$column] = $value;
                 }
             }
