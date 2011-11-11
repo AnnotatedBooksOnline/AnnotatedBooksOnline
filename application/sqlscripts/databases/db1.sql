@@ -145,6 +145,7 @@ CREATE TABLE "BookLanguages"
 CREATE TABLE "Books"
 (
     "bookId" serial NOT NULL,
+    "title" varchar(100) NOT NULL,
     "bindingId" serial NOT NULL,
     "minYear" smallint NOT NULL,
     "maxYear" smallint NOT NULL,
