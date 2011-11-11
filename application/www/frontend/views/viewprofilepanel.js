@@ -28,9 +28,15 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     {
                         if (properties[property] == undefined)
                         {
-                            data[property] = undefined;
+                            delete data[property];
                         }
                     }
+                    _this.down('[xtype=propertygrid]').getStore().sort([{
+                        sortFn: function()
+                        {
+                            return 0;
+                        }
+                    }]);
                     _this.down('[xtype=propertygrid]').setSource(data);
                 }
             },
@@ -44,7 +50,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             items: [{
                 xtype: 'propertygrid',
                 propertyNames: {
-                    userId: 'Identifier',
+                    // userId: 'Identifier',
                     username: 'Username',
                     email: 'Email',
                     firstName: 'First name',
@@ -53,7 +59,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     occupation: 'Occupation',
                     website: 'Website',
                     homeAddress: 'Address',
-                    rank: 'Rank',
+                    // rank: 'Rank',
                 },
                 source: {},
                 listeners: {
