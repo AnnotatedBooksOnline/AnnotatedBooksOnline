@@ -21,6 +21,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     text: 'Close'
                 }]
             },*/{
+                text: 'Register',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('register', [], true);
+                    }
+                },
+                name: 'register'
+            },{
                 text: 'Search',
                 listeners: {
                     click: function()
@@ -37,16 +46,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         Application.getInstance().gotoTab('users', [], true);
                     }
                 },
-                name: 'users'
-            },{
-                text: 'Register',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('register', [], true);
-                    }
-                },
-                name: 'register'
+                name: 'users',
+                hidden: true
             },{
                 text: 'Upload',
                 listeners: {
@@ -55,7 +56,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         Application.getInstance().gotoTab('upload', [], true);
                     }
                 },
-                name: 'upload'
+                name: 'upload',
+                hidden: true
+            },{
+                text: 'Info',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().openTab('info', [], true);
+                    }
+                },
+                name: 'info'
             }, '->', {
                 text: '',
                 menu: [{
@@ -64,7 +75,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     listeners: {
                         click: function()
                         {
-                        Authentication.getInstance().logout();
+                            Authentication.getInstance().logout();
                         }
                     }
                 },{
@@ -259,6 +270,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a welcome tab.
                 Ext.apply(tabConfig, {
                     title: 'Welcome',
+                    xtype: 'welcomepanel',
                     closable: false
                 });
                 
@@ -268,6 +280,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an info tab.
                 Ext.apply(tabConfig, {
                     title: 'Info',
+                    xtype: 'infopanel'
                 });
                 
                 break;
@@ -343,13 +356,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         if (authentication.isLoggedOn())
         {
+            this.down("[name='users']").show();
+            this.down("[name='upload']").show();
             this.down("[name='logout']").show();
             this.down("[name='login']").hide();
+            this.down("[name='register']").hide();
         }
         else
         {
+            this.down("[name='users']").hide();
+            this.down("[name='upload']").hide();
             this.down("[name='logout']").hide();
             this.down("[name='login']").show();
+            this.down("[name='register']").show();
         }
     },
     
