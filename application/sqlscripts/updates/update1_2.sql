@@ -12,6 +12,14 @@ ALTER TABLE "Users"
 ALTER TABLE "Users"
    ALTER COLUMN "rank" SET DEFAULT 50;
    
+
+-- TEIFiles should belong to either a book or binding. Not necessarily both.
+ALTER TABLE "TEIFiles"
+   ALTER COLUMN "bookId" DROP NOT NULL;
+ALTER TABLE "TEIFiles"
+   ALTER COLUMN "bindingId" DROP NOT NULL;
+ALTER TABLE "TEIFiles" ADD UNIQUE ("bookId", "bindingId");
+
    
 -- Many foreign keys automatically got a default that generates a new ID (because they were given the serial type instead of integer).
 -- This is incorrect and error prone, therefore those should be removed.
@@ -38,3 +46,9 @@ ALTER TABLE "TEIFiles"
    ALTER COLUMN "bookId" DROP DEFAULT;
 ALTER TABLE "TEIFiles"
    ALTER COLUMN "bindingId" DROP DEFAULT;
+ALTER TABLE "TEIFiles"
+   ALTER COLUMN "bindingId" DROP DEFAULT;
+ALTER TABLE "Authors"
+   ALTER COLUMN "authorId" DROP DEFAULT;
+ALTER TABLE "Authors"
+   ALTER COLUMN "bookId" DROP DEFAULT;
