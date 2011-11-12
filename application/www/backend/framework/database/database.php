@@ -761,4 +761,15 @@ class Query
             throw new QueryFormatException($errorId);
         }
     }
+    
+    /**
+     * Unsafe aggregate function. Handle with care!
+     */
+    public function unsafeAggregate($function, $expression, $as)
+    {
+        $this->columns[] =  $function . '(' . $expression . ') AS ' .
+            $this->escapeIdentifier($as);
+        
+        return $this;
+    }
 }
