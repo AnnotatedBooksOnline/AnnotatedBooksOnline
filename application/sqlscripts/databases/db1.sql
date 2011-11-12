@@ -6,7 +6,7 @@ CREATE TABLE "Users"
 (
     "userId" serial NOT NULL,
     "username" varchar(30) NOT NULL,
-    "passwordHash" character(40) NOT NULL,
+    "passwordHash" varchar(255) NOT NULL,
     "email" varchar(255) NOT NULL,
     "firstName" varchar(50),
     "lastName" varchar(50),
@@ -110,6 +110,7 @@ CREATE TABLE "Bindings"
 (
     "bindingId" serial NOT NULL,
     "libraryId" serial NOT NULL,
+    "title" varchar(100) NOT NULL,
     "signature" character(255) NOT NULL,
     "summary" text,
     "pagesToFirst" integer NOT NULL,

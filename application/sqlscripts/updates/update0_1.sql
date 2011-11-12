@@ -6,6 +6,9 @@ ALTER TABLE "PendingUsers" ADD PRIMARY KEY ("userId");
 -- Add title column which I also had forgotten.
 ALTER TABLE "Books" ADD COLUMN title varchar(100) NOT NULL;
 
+-- Provide more room for password hashes.
+ALTER TABLE "Users" ALTER "passwordHash" TYPE varchar(255);
+
 -- Allow books to have multiple languages.
 ALTER TABLE "Books" DROP COLUMN "language";
 ALTER TABLE "BindingLanguages" DROP CONSTRAINT "BindingLanguages_pkey";
