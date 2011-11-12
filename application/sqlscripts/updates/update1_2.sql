@@ -1,11 +1,16 @@
+-- Bindings should also have titles.
+ALTER TABLE "Bindings" ADD COLUMN title varchar(100) NOT NULL;
+ALTER TABLE "Bindings"
+    ALTER COLUMN "signature" TYPE varchar(255);
+
 -- Add some defaults to user for convenience.
 
 ALTER TABLE "Users"
-   ALTER COLUMN active SET DEFAULT '0';
+   ALTER COLUMN "active" SET DEFAULT '0';
 ALTER TABLE "Users"
-   ALTER COLUMN banned SET DEFAULT '0';
+   ALTER COLUMN "banned" SET DEFAULT '0';
 ALTER TABLE "Users"
-   ALTER COLUMN rank SET DEFAULT 50;
+   ALTER COLUMN "rank" SET DEFAULT 50;
    
    
 -- Many foreign keys automatically got a default that generates a new ID (because they were given the serial type instead of integer).
