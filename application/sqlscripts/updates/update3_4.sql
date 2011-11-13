@@ -9,3 +9,8 @@ ALTER TABLE "BookLanguages" ADD UNIQUE ("bindingId", "language", "bookId");
 
 -- E-mails have a maximum length of 256 rather than 255.
 ALTER TABLE "Users" ALTER email TYPE character varying(256);
+
+-- Default of Users.rank should be 10, not 50.
+ALTER TABLE "Users"
+   ALTER COLUMN rank SET DEFAULT 10;
+
