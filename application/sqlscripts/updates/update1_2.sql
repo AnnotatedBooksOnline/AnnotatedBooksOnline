@@ -4,7 +4,6 @@ ALTER TABLE "Bindings"
     ALTER COLUMN "signature" TYPE varchar(255);
 
 -- Add some defaults to user for convenience.
-
 ALTER TABLE "Users"
    ALTER COLUMN "active" SET DEFAULT '0';
 ALTER TABLE "Users"
@@ -23,7 +22,6 @@ ALTER TABLE "TEIFiles" ADD UNIQUE ("bookId", "bindingId");
    
 -- Many foreign keys automatically got a default that generates a new ID (because they were given the serial type instead of integer).
 -- This is incorrect and error prone, therefore those should be removed.
-
 ALTER TABLE "BannedUsers"
    ALTER COLUMN "userId" DROP DEFAULT;
 ALTER TABLE "Bindings"
