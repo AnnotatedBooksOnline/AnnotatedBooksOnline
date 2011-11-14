@@ -9,6 +9,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
     initComponent: function() 
     {
         var topRegion = {
+            xtype: 'panel',
+            height: 95,
+            cls: 'header',
+            html: '<h1>Collaboratory</h1>'
+        };
+        
+        var centerRegion = {
             tbar: [/*{
                 text: 'Book',
                 menu: [{
@@ -21,15 +28,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     text: 'Close'
                 }]
             },*/{
-                text: 'Register',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('register', [], true);
-                    }
-                },
-                name: 'register'
-            },{
                 text: 'Search',
                 listeners: {
                     click: function()
@@ -99,7 +97,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                 },
                 name: 'login'
-            }, '-', {
+            }, {
+                text: 'Register',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('register', [], true);
+                    }
+                },
+                name: 'register'
+            }/*, '-', {
                 text: 'Options',
                 menu: [{
                     text: 'Viewer settings...',
@@ -110,14 +117,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.ux.Viewer.showSettingsWindow();
                         }
                     }
-                }/*,{
+                },{
                     text: 'Help...'
-                }*/]
-            }],
-            border: false,
-            height: 120,
-            cls: 'header',
-            html: '<h1>Collaboratory</h1>'
+                }]
+            }*/],
+            border: false
         };
         
         var bottomRegion = {
@@ -131,7 +135,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 type: 'vbox',
                 align: 'stretch'
             },
-            items: [topRegion, bottomRegion]
+            items: [topRegion, centerRegion, bottomRegion]
         };
         
         Ext.apply(this, defConfig);
@@ -149,8 +153,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         this.callParent();
         
-        this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
-        this.tabs = this.items.get(1);
+        this.menu = this.items.get(1); // NOTE: this is the panel, should be the toolbar..
+        this.tabs = this.items.get(2);
         
         this.openTab('welcome', [], true);
     },
