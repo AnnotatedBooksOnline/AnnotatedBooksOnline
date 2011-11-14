@@ -11,7 +11,7 @@ var bookProperties = [{
 },{
     abbreviation: 'author',
     name: 'Author'
-},{
+}/*,{
     abbreviation: 'place',
     name: 'Place published'
 },{
@@ -38,7 +38,7 @@ var bookProperties = [{
 },{
     abbreviation: 'summary',
     name: 'Summary'
-}];
+}*/];
 
 Ext.define('Ext.ux.SearchParameterModel', {
     extend: 'Ext.data.Model',
@@ -585,7 +585,7 @@ Ext.define('Ext.ux.BookSearchPanel', {
                     var onSuccess = function(data)
                     {
                         // Set resulting data on search results panel.
-                        this.ownerCt.down('[xtype=searchresults]').setData(data);
+                        this.down('[xtype=searchresults]').setData(data);
                     };
                     
                     RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
