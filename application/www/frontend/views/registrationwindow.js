@@ -187,7 +187,23 @@ Ext.define('Ext.ux.RegistrationForm', {
         var form = this.getForm();
         if (form.isValid())
         {
-            this.saveModel();
+            this.saveModel(null, function()
+            {
+                Ext.MessageBox.alert('Registration complete', 'You have successfully registered. You may now login.', function()
+                {
+                    var tabs = Application.getInstance().viewport.getTabsInfo();
+                    for (var i = 0; i < tabs.length; i++)
+                    {
+                        if (tabs[i].type == 'register')
+                        {
+                            Application.getInstance().viewport.closeTab(i);
+                        }
+                    }
+                });
+            }, function()
+            {
+                Ext.MessageBox.alert('Registration failed', 'Something went wrong while registering. Please try again later.');
+            });
         }
     }
 });
