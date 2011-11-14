@@ -124,10 +124,10 @@ Ext.define('Ext.form.field.SearchComboBox', {
                     data: [{
                         abbreviation: 'select',
                         name: '-Select-'
-                    },{
+                    }/*,{
                         abbreviation: 'any',
                         name: 'Any'
-                    }].concat(bookProperties)
+                    }*/].concat(bookProperties)
                 }),
             queryMode: 'local',
             displayField: 'name',
@@ -601,7 +601,7 @@ Ext.define('Ext.ux.BookSearchPanel', {
         this.callParent();
         
         var firstField = this.getComponent(0).down('[name=type]');
-        firstField.select('any');
+        firstField.select('title');
         firstField.fireEvent('select',firstField,{});
     }
 });
