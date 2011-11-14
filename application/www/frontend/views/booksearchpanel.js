@@ -389,7 +389,7 @@ Ext.define('Ext.ux.SortComboBox', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-left: 5px;',
-                fieldLabel: 'Inverted',
+                //fieldLabel: 'Inverted',
                 labelAlign: 'right'
             }],
             getSorter: function()
@@ -460,12 +460,28 @@ Ext.define('Ext.ux.SearchResultView', {
         var defConfig = {
             title: 'Search results',
             border: 0,
+            layout: {
+                type: 'hbox',
+                align: 'top'
+            },
             items: [{
+                xtype: 'panel',
+                name: 'results',
+                border: 0,
+                flex: 1
+            },{
                 xtype: 'panel',
                 name: 'sort',
                 border: 0,
-                style: 'padding: 10px;',
+                flex: 0,
+                width: 200,
+                bodyPadding: 10,
                 items: [{
+                    xtype: 'panel',
+                    border: 0,
+                    html: '<h2>Sorting</h2>',
+                    style: 'margin-bottom: 10px'
+                },{
                     xtype: 'sortcombobox',
                     fieldLabel: 'Sort by',
                     sortFn: sort
@@ -478,10 +494,6 @@ Ext.define('Ext.ux.SearchResultView', {
                     fieldLabel: 'then',
                     sortFn: sort
                 }]
-            },{
-                xtype: 'panel',
-                name: 'results',
-                border: 0
             }]
         };
         
@@ -591,8 +603,7 @@ Ext.define('Ext.ux.BookSearchPanel', {
                     RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
                 }
             },{
-                xtype: 'searchresults',
-                title: 'Search results'
+                xtype: 'searchresults'
             }]
         };
         
