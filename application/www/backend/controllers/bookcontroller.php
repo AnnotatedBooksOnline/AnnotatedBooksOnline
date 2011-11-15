@@ -34,12 +34,10 @@ class BookController extends Controller
                 switch ((string) $selector['type'])
                 {
                     case 'year':
-                        if (isset($value['from']) && isset($value['to']))
-                        {
-                            $query = $query->where('books.maxYear >= :from' . $c, 'books.minYear <= :to' . $c);
-                            $binds[':from' . $c] = $value['from'];
-                            $binds[':to' . $c] = $value['to'];
-                        }
+                        $query = $query->where('books.maxYear >= :from' . $c);
+                        $binds[':from' . $c] = self::getInteger($value, 'from', -16535);
+                        $query = $query->where('books.minYear <= :to' . $c);
+                        $binds[':to' . $c] = self::getInteger($value, 'to', 16534);
                         break;
                     case 'title':
                         $cc = 0;

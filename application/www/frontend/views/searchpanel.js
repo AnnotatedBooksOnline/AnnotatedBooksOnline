@@ -11,7 +11,7 @@ var bookProperties = [{
 },{
     abbreviation: 'author',
     name: 'Author'
-},{
+}/*,{
     abbreviation: 'place',
     name: 'Place published'
 },{
@@ -38,7 +38,7 @@ var bookProperties = [{
 },{
     abbreviation: 'summary',
     name: 'Summary'
-}];
+}*/];
 
 Ext.define('Ext.ux.SearchParameterModel', {
     extend: 'Ext.data.Model',
@@ -129,10 +129,10 @@ Ext.define('Ext.form.field.SearchComboBox', {
             data: [{
                 abbreviation: 'select',
                 name: '- Select -'
-            },{
+            }/*,{
                 abbreviation: 'any',
                 name: 'Any'
-            }].concat(bookProperties)
+            }*/].concat(bookProperties)
         });
         
         var defConfig = {
@@ -419,7 +419,7 @@ Ext.define('Ext.ux.SortComboBox', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-left: 5px;',
-                fieldLabel: 'Inverted',
+                //fieldLabel: 'Inverted',
                 labelAlign: 'right'
             }],
             getSorter: function()
@@ -497,11 +497,28 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         var defConfig = {
             title: 'Search results',
             border: false,
+            layout: {
+                type: 'hbox',
+                align: 'top'
+            },
             items: [{
+                xtype: 'panel',
+                name: 'results',
+                border: false,
+                flex: 1
+            },{
+                xtype: 'panel',
                 name: 'sort',
                 border: false,
-                style: 'padding: 10px;',
+                flex: 0,
+                width: 200,
+                bodyPadding: 10,
                 items: [{
+                    xtype: 'panel',
+                    border: 0,
+                    html: '<h2>Sorting</h2>',
+                    style: 'margin-bottom: 10px'
+                },{
                     xtype: 'sortcombobox',
                     fieldLabel: 'Sort by',
                     sortFn: sort
@@ -514,9 +531,6 @@ Ext.define('Ext.ux.SearchResultsPanel', {
                     fieldLabel: 'then',
                     sortFn: sort
                 }]
-            },{
-                name: 'results',
-                border: false
             }]
         };
         
@@ -615,14 +629,14 @@ Ext.define('Ext.ux.SearchPanel', {
                     var onSuccess = function(data)
                     {
                         // Set resulting data on search results panel.
-                        this.ownerCt.down('searchresultspanel').setData(data);
+                        this.down('searchresultspanel').setData(data);
                     };
                     
                     RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
                 }
             },{
                 xtype: 'searchresultspanel',
-                title: 'Search results'
+                //title: 'Search results'
             }]
         };
         
@@ -631,7 +645,7 @@ Ext.define('Ext.ux.SearchPanel', {
         this.callParent();
         
         var firstField = this.getComponent(0).down('[name=type]');
-        firstField.select('any');
+        firstField.select('title');
         firstField.fireEvent('select',firstField,{});
     }
 });

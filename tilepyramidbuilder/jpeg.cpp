@@ -8,11 +8,30 @@
 
 using namespace std;
 
+// Function used to override error/log message handler so that warnings are fatal.
+void handleJPEGMessage(j_common_ptr cinfo, int msg_level)
+{
+    if(msg_level <= -1)
+    {
+        // Warning or error.
+        cinfo->err->error_exit(cinfo);
+    }
+    else
+    {
+        //Print trace message only when in debug mode.
+#ifdef DEBUG_MODE
+        cinfo->err->output_message(cinfo);
+#endif
+    }
+}
+
 JPEGReader::JPEGReader()
 {
     initialized = false;
     file = NULL;
     decinfo.err = jpeg_std_error(&jerr);
+    jerr.emit_message = &handleJPEGMessage;
+    
     jpeg_create_decompress(&decinfo);
 }
 
@@ -86,6 +105,7 @@ JPEGWriter::JPEGWriter(const FileParameters &params)
 
     jpeg_create_compress(&cinfo);
     cinfo.err = jpeg_std_error(&jerr);
+    jerr.emit_message = &handleJPEGMessage;
     
     //Use RGB
     cinfo.input_components = 3;

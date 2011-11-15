@@ -198,7 +198,29 @@ Ext.define('Ext.ux.RegistrationForm', {
                 this,
                 function()
                 {
+                    /*
+                    NOTE: this has been superseded by the new implementation of a message card.
+                    Ext.MessageBox.alert('Registration complete', 'You have successfully registered. You may now login.',
+                        function()
+                        {
+                            var tabs = Application.getInstance().viewport.getTabsInfo();
+                            for (var i = 0; i < tabs.length; i++)
+                            {
+                                if (tabs[i].type == 'register')
+                                {
+                                    Application.getInstance().viewport.closeTab(i);
+                                }
+                            }
+                        });
+                    */
                     this.up('registrationpanel').onAfterRegistration(this.getModel());
+                },
+                function()
+                {
+                    // NOTE: should we do this for everything, or a make a generic message at
+                    // NOTE: a higher level?
+                    Ext.MessageBox.alert('Registration failed',
+                        'Something went wrong while registering. Please try again later.');
                 }
             );
         }
