@@ -227,7 +227,7 @@ CREATE TABLE "Authors"
     "changedOn" timestamp,
     "changedBy" varchar(30),
 
-    PRIMARY KEY ("authorId", "bookId),
+    PRIMARY KEY ("authorId", "bookId"),
     FOREIGN KEY ("authorId")
         REFERENCES "Persons",
     FOREIGN KEY ("bookId")

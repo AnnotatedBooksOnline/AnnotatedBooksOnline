@@ -5,7 +5,6 @@
 Ext.define('Ext.ux.LoginForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.loginform',
-    requires: ['*'], // TODO: specify
 
     initComponent: function() 
     {
@@ -43,7 +42,7 @@ Ext.define('Ext.ux.LoginForm', {
                 },
                 function(code, message, trace)
                 {
-                    // Show and error.
+                    // Show an error.
                     Ext.Msg.show({
                         title: 'Login failed.',
                         msg: 'Combination of username and password could not be found.',
@@ -56,7 +55,7 @@ Ext.define('Ext.ux.LoginForm', {
 });
 
 Ext.define('Ext.ux.LoginWindow', {
-    extend: 'Ext.window.Window',
+    extend: 'Ext.ux.WindowBase',
 
     initComponent: function() 
     {

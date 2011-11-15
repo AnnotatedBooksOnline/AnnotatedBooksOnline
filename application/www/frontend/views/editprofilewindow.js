@@ -111,7 +111,7 @@ Ext.define('Ext.ux.EditProfileForm', {
 });
 
 Ext.define('Ext.ux.EditProfileWindow', {
-    extend: 'Ext.window.Window',
+    extend: 'Ext.ux.WindowBase',
 
     initComponent: function() 
     {

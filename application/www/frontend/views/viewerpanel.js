@@ -5,7 +5,6 @@
 Ext.define('Ext.ux.ViewerSettingsForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.viewersettingsform',
-    requires: ['*'], // TODO: specify
 
     initComponent: function() 
     {
@@ -46,7 +45,7 @@ Ext.define('Ext.ux.ViewerSettingsForm', {
 });
 
 Ext.define('Ext.ux.ViewerSettingsWindow', {
-    extend: 'Ext.window.Window',
+    extend: 'Ext.ux.WindowBase',
 
     initComponent: function() 
     {
@@ -74,7 +73,6 @@ Ext.define('Ext.ux.ViewerSettingsWindow', {
 Ext.define('Ext.ux.Viewer', {
     extend: 'Ext.Panel',
     alias: 'widget.viewerpanel',
-    requires: [], //TODO: border layout
 
     initComponent: function()
     {

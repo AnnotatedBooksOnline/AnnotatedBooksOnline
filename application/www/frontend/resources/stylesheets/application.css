@@ -14,3 +14,14 @@
 {
 	font-size: 25pt;
 }
+
+a
+{
+	text-decoration: underline;
+	color: #15498B;
+}
+
+a:hover
+{
+	text-decoration: none;
+}

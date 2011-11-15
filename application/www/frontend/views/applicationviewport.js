@@ -208,7 +208,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a search tab.
                 Ext.apply(tabConfig, {
                     title: 'Search',
-                    xtype: 'booksearch'
+                    xtype: 'searchpanel'
                 });
                 
                 break;
@@ -243,7 +243,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         plain: true,
                         flex: 1
                     },{
-                        xtype: 'registrationform',
+                        xtype: 'registrationpanel',
+                        border: false,
                         width: 800,
                         height: 400
                     },{
