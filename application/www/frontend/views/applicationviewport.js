@@ -10,13 +10,12 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         var topRegion = {
             xtype: 'panel',
-            height: 95,
+            border: false,
+            height: 120,
             cls: 'header',
-            html: '<h1>Collaboratory</h1>'
-        };
-        
-        var centerRegion = {
-            tbar: [/*{
+            html: '<h1>Collaboratory</h1>',
+            
+            bbar: [/*{
                 text: 'Book',
                 menu: [{
                     text: 'Save current page...'
@@ -61,7 +60,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 listeners: {
                     click: function()
                     {
-                        Application.getInstance().openTab('info', [], true);
+                        Application.getInstance().gotoTab('info', [], true);
                     }
                 },
                 name: 'info'
@@ -106,7 +105,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                 },
                 name: 'register'
-            }/*, '-', {
+            }, '-', {
                 text: 'Options',
                 menu: [{
                     text: 'Viewer settings...',
@@ -117,10 +116,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.ux.Viewer.showSettingsWindow();
                         }
                     }
-                },{
+                }/*,{
                     text: 'Help...'
-                }]
-            }*/],
+                }*/]
+            }],
             border: false
         };
         
@@ -135,7 +134,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 type: 'vbox',
                 align: 'stretch'
             },
-            items: [topRegion, centerRegion, bottomRegion]
+            items: [topRegion, bottomRegion]
         };
         
         Ext.apply(this, defConfig);
@@ -153,8 +152,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         this.callParent();
         
-        this.menu = this.items.get(1); // NOTE: this is the panel, should be the toolbar..
-        this.tabs = this.items.get(2);
+        this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
+        this.tabs = this.items.get(1);
         
         this.openTab('welcome', [], true);
     },
@@ -205,9 +204,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 break;
                 
-            case 'profile':
-                break;
-                
             case 'search':
                 // Add a search tab.
                 Ext.apply(tabConfig, {
@@ -237,7 +233,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'register':
-                // Add a registration form.
+                // Add a registration panel.
                 Ext.apply(tabConfig, {
                     title: 'Registration',
                     layout: 'hbox',
@@ -261,12 +257,26 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
             
             case 'upload':
-                // Add a upload tab.
+                // Add an upload panel.
                 Ext.apply(tabConfig, {
                     title: 'Upload',
-                    xtype: 'uploadform',
-                    border: false,
-                    frame: false
+                    layout: 'hbox',
+                    bodyPadding: 10,
+                    items: [{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    },{
+                        xtype: 'uploadform',
+                        border: false,
+                        width: 800,
+                        height: 600,
+                        autoScroll: true,
+                    },{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    }]
                 });
                 
                 break;
