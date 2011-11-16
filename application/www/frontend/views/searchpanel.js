@@ -307,6 +307,7 @@ Ext.define('Ext.ux.SearchResultsView', {
 //            overItemCls: 'x-item-over',
             itemSelector: 'div.bookitem',
             emptyText: 'No books found.',
+            prepareData: function(data) { _this.prepareData(data); },
             listeners: {
                 itemclick: function(view, record)
                 {
