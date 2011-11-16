@@ -14,9 +14,9 @@ CREATE TABLE "Users"
     "occupation" varchar(50),
     "website" varchar(255),
     "homeAddress" varchar(255),
-    "active" bit(1) NOT NULL,
-    "banned" bit(1) NOT NULL,
-    "rank" smallint NOT NULL,
+    "active" bit(1) NOT NULL DEFAULT '0',
+    "banned" bit(1) NOT NULL DEFAULT '0',
+    "rank" smallint NOT NULL DEFAULT 50,
     
     "createdOn" timestamp,
     "createdBy" varchar(30),
@@ -110,7 +110,6 @@ CREATE TABLE "Bindings"
 (
     "bindingId" serial NOT NULL,
     "libraryId" serial NOT NULL,
-    "title" varchar(100) NOT NULL,
     "signature" character(255) NOT NULL,
     "summary" text,
     "pagesToFirst" integer NOT NULL,
@@ -227,7 +226,7 @@ CREATE TABLE "Authors"
     "changedOn" timestamp,
     "changedBy" varchar(30),
 
-    PRIMARY KEY ("authorId", "bookId"),
+    PRIMARY KEY ("authorId", "bookId),
     FOREIGN KEY ("authorId")
         REFERENCES "Persons",
     FOREIGN KEY ("bookId")

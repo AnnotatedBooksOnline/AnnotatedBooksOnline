@@ -1,5 +1,5 @@
 /*
- * Search panel class.
+ * Search models and properties.
  */
 
 var bookProperties = [{
@@ -11,7 +11,7 @@ var bookProperties = [{
 },{
     abbreviation: 'author',
     name: 'Author'
-},{
+}/*,{
     abbreviation: 'place',
     name: 'Place published'
 },{
@@ -38,7 +38,7 @@ var bookProperties = [{
 },{
     abbreviation: 'summary',
     name: 'Summary'
-}];
+}*/];
 
 Ext.define('Ext.ux.SearchParameterModel', {
     extend: 'Ext.data.Model',
@@ -65,15 +65,16 @@ Ext.define('Ext.ux.SearchColumnModel', {
     }]
 });
 
-Ext.define('Ext.form.field.YearBetweenField', {
+/*
+ * Year between field class.
+ */
+
+Ext.define('Ext.ux.YearBetweenField', {
     extend: 'Ext.container.Container',
     alias: 'widget.yearbetweenfield',
-    requires: ['*'],
     
     initComponent: function()
     {
-        var _this = this;
-        
         var defConfig = {
             layout: {
                 type: 'hbox'
@@ -94,41 +95,49 @@ Ext.define('Ext.form.field.YearBetweenField', {
             },{
                 name: 'to',
                 fieldLabel: 'and'
-            }],
-            
-            getValue: function()
-            {
-                return { from: _this.down('[name=from]').getValue(), to: _this.down('[name=to]').getValue() };
-            }
+            }]
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    getValue: function()
+    {
+        var value = {
+            from: this.down('[name=from]').getValue(), 
+            to:   this.down('[name=to]').getValue()
+        };
+        
+        return value;
     }
 });
+
+/*
+ * Search combobox class.
+ */
 
 Ext.define('Ext.form.field.SearchComboBox', {
     extend: 'Ext.form.field.ComboBox',
     alias: 'widget.searchcombobox',
-    requires: ['*'], // TODO: specify
     
     initComponent: function()
     {
-        var _this = this;
+        var store = Ext.create('Ext.data.Store', {
+            model: 'Ext.ux.SearchParameterModel',
+            data: [{
+                abbreviation: 'select',
+                name: '- Select -'
+            }/*,{
+                abbreviation: 'any',
+                name: 'Any'
+            }*/].concat(bookProperties)
+        });
         
         var defConfig = {
             width: 200,
-            store: Ext.create('Ext.data.Store', {
-                    model: 'Ext.ux.SearchParameterModel',
-                    data: [{
-                        abbreviation: 'select',
-                        name: '-Select-'
-                    },{
-                        abbreviation: 'any',
-                        name: 'Any'
-                    }].concat(bookProperties)
-                }),
+            store: store,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'abbreviation',
@@ -145,9 +154,9 @@ Ext.define('Ext.form.field.SearchComboBox', {
                             break;
                             
                         case 'select':
-                            if (this.ownerCt.next('[xtype=searchfield]') != null)
+                            if (this.ownerCt.next('searchfield') != null)
                             {
-                                this.up('[xtype=searchpanel]').remove(this.ownerCt);
+                                this.up('searchfieldspanel').remove(this.ownerCt);
                             }
                             
                             break;
@@ -157,12 +166,12 @@ Ext.define('Ext.form.field.SearchComboBox', {
                             break;
                     }
                     
-                    var searchPanel = this.up('[xtype=searchpanel]');
+                    var searchFieldsPanel = this.up('searchfieldspanel');
                     
-                    if (searchPanel && searchPanel.getComponent(searchPanel.items.length-1).
+                    if (searchFieldsPanel && searchFieldsPanel.getComponent(searchFieldsPanel.items.length-1).
                         down('[name=type]').getValue() != 'select')
                     {
-                        searchPanel.add([{xtype: 'searchfield'}]);
+                        searchFieldsPanel.add([{xtype: 'searchfield'}]);
                     }
                 }
             }
@@ -176,15 +185,16 @@ Ext.define('Ext.form.field.SearchComboBox', {
     }
 });
 
+/*
+ * Search field class.
+ */
+
 Ext.define('Ext.ux.SearchField', {
     extend: 'Ext.container.Container',
     alias: 'widget.searchfield',
-    requires: ['*'], // TODO: specify
     
     initComponent: function()
     {
-        var _this = this;
-        
         var defConfig = {
             layout: {
                 type: 'hbox'
@@ -212,33 +222,41 @@ Ext.define('Ext.ux.SearchField', {
                 {
                     if (this.ownerCt.getComponent(0).getValue() != 'select')
                     {
-                        this.up('[xtype=searchpanel]').remove(this.ownerCt);
+                        this.up('searchfieldspanel').remove(this.ownerCt);
                     }
                 }
-            }],
-            
-            getValue: function()
-            {
-                return { type: _this.down('[name=type]').getValue(), value: _this.down('[name=value]').getValue() };
-            }
+            }]
         }
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+            
+    getValue: function()
+    {
+        value = {
+            type:  this.down('[name=type]').getValue(),
+            value: this.down('[name=value]').getValue()
+        };
+        
+        return value;
     }
 });
 
-Ext.define('Ext.ux.SearchPanel', {
+/*
+ * Search fields panel class.
+ */
+
+Ext.define('Ext.ux.SearchFieldsPanel', {
     extend: 'Ext.Panel',
-    alias: 'widget.searchpanel',
-    requires: ['*'], // TODO: specify
+    alias: 'widget.searchfieldspanel',
     
     initComponent: function() 
     {
         var _this = this;
         var defConfig = {
-            border: 0,
+            border: false,
             bodyPadding: 10,
             
             items: [{
@@ -256,15 +274,20 @@ Ext.define('Ext.ux.SearchPanel', {
     }
 });
 
-Ext.define('Ext.ux.SearchResultSet', {
+/*
+ * Search results view class.
+ */
+
+Ext.define('Ext.ux.SearchResultsView', {
     extend: 'Ext.view.View',
-    alias: 'widget.searchresultset',
+    alias: 'widget.searchresultsview',
 
     initComponent: function()
     {
-        var cols  = this.getSearchColumnStore(this.data);
-        var store = this.getSearchResultStore(this.data, cols);
+        var cols  = this.getColumnStore(this.data);
+        var store = this.getResultStore(this.data, cols);
         
+        var _this = this;
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
@@ -284,23 +307,7 @@ Ext.define('Ext.ux.SearchResultSet', {
 //            overItemCls: 'x-item-over',
             itemSelector: 'div.bookitem',
             emptyText: 'No books found.',
-            prepareData: function(data)
-            {
-                var properties = '';
-                for (var field in data)
-                {
-                    var col = cols.findRecord('name', field);
-                    if (col && col.get('desc') && col.get('show'))
-                    {
-                        properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
-                                    + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
-                    }
-                }
-                
-                data['properties'] = properties;
-                
-                return data;
-            },
+            prepareData: function(data) { _this.prepareData(data); },
             listeners: {
                 itemclick: function(view, record)
                 {
@@ -316,17 +323,35 @@ Ext.define('Ext.ux.SearchResultSet', {
         this.callParent();
     },
     
-    getSearchColumnStore: function(data)
+    prepareData: function(data)
     {
-        var columns = Ext.create('Ext.data.Store', {
+        var properties = '';
+        for (var field in data)
+        {
+            var col = cols.findRecord('name', field);
+            if (col && col.get('desc') && col.get('show'))
+            {
+                properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
+                            + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
+            }
+        }
+        
+        data['properties'] = properties;
+        
+        return data;
+    },
+    
+    getColumnStore: function(data)
+    {
+        var store = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.SearchColumnModel',
             data: data.columns
         });
         
-        return columns;
+        return store;
     },
 
-    getSearchResultStore: function(data, columns)
+    getResultStore: function(data, columns)
     {
         var store = Ext.create('Ext.data.ArrayStore', {
             fields: function()
@@ -346,7 +371,8 @@ Ext.define('Ext.ux.SearchResultSet', {
             {
                 this.loadData(data.records);
                 var sorted = this.sort(sorters, direction);
-                this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize));
+                this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize,
+                    this.currentPage * this.pageSize));
                 return sorted;
             }
         });
@@ -355,7 +381,8 @@ Ext.define('Ext.ux.SearchResultSet', {
             function(store, records, successful, operation)
             {
                 this.loadData(data.records);
-                this.loadData(this.data.getRange().slice((this.currentPage-1)*this.pageSize, (this.currentPage)*this.pageSize));
+                this.loadData(this.data.getRange().slice((this.currentPage - 1)  *this.pageSize,
+                    this.currentPage * this.pageSize));
             },
             store
         );
@@ -366,10 +393,13 @@ Ext.define('Ext.ux.SearchResultSet', {
     }
 });
 
+/*
+ * Sort combobox class.
+ */
+
 Ext.define('Ext.ux.SortComboBox', {
     extend: 'Ext.container.Container',
     alias: 'widget.sortcombobox',
-    requires: ['*'],
 
     initComponent: function() {
         var _this = this;
@@ -389,15 +419,15 @@ Ext.define('Ext.ux.SortComboBox', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-left: 5px;',
-                fieldLabel: 'Inverted',
+                //fieldLabel: 'Inverted',
                 labelAlign: 'right'
             }],
             getSorter: function()
             {
-                var val = _this.getComponent(0).getValue();
-                if (val)
+                var value = _this.getComponent(0).getValue();
+                if (value)
                 {
-                    return { property: val, direction: (_this.getComponent(1).getValue() ? 'DESC' : 'ASC') }
+                    return { property: value, direction: (_this.getComponent(1).getValue() ? 'DESC' : 'ASC') }
                 }
                 
                 return null;
@@ -409,6 +439,10 @@ Ext.define('Ext.ux.SortComboBox', {
         this.callParent();
     }
 });
+
+/*
+ * Sort combobox field class.
+ */
 
 Ext.define('Ext.ux.SortComboBoxField', {
     extend: 'Ext.form.field.ComboBox',
@@ -447,10 +481,13 @@ Ext.define('Ext.ux.SortComboBoxField', {
     }
 });
 
-Ext.define('Ext.ux.SearchResultView', {
+/*
+ * Search results panel class.
+ */
+
+Ext.define('Ext.ux.SearchResultsPanel', {
     extend: 'Ext.Panel',
-    alias: 'widget.searchresults',
-    requires: ['*'],
+    alias: 'widget.searchresultspanel',
     
     initComponent: function()
     {
@@ -459,13 +496,29 @@ Ext.define('Ext.ux.SearchResultView', {
         
         var defConfig = {
             title: 'Search results',
-            border: 0,
+            border: false,
+            layout: {
+                type: 'hbox',
+                align: 'top'
+            },
             items: [{
                 xtype: 'panel',
+                name: 'results',
+                border: false,
+                flex: 1
+            },{
+                xtype: 'panel',
                 name: 'sort',
-                border: 0,
-                style: 'padding: 10px;',
+                border: false,
+                flex: 0,
+                width: 200,
+                bodyPadding: 10,
                 items: [{
+                    xtype: 'panel',
+                    border: 0,
+                    html: '<h2>Sorting</h2>',
+                    style: 'margin-bottom: 10px'
+                },{
                     xtype: 'sortcombobox',
                     fieldLabel: 'Sort by',
                     sortFn: sort
@@ -478,10 +531,6 @@ Ext.define('Ext.ux.SearchResultView', {
                     fieldLabel: 'then',
                     sortFn: sort
                 }]
-            },{
-                xtype: 'panel',
-                name: 'results',
-                border: 0
             }]
         };
         
@@ -492,7 +541,7 @@ Ext.define('Ext.ux.SearchResultView', {
     
     sort: function()
     {
-        var current = this.down('[xtype=sortcombobox]');
+        var current = this.down('sortcombobox');
         var sorters = [];
         do
         {
@@ -501,9 +550,9 @@ Ext.define('Ext.ux.SearchResultView', {
             {
                 sorters[sorters.length] = val;
             }
-        } while (current = current.nextSibling('[xtype=sortcombobox]'));
+        } while (current = current.nextSibling('sortcombobox'));
         
-        var results = this.down('[xtype=searchresultset]');
+        var results = this.down('searchresultsview');
         if (results)
         {
             results.store.pagedSort(sorters);
@@ -516,7 +565,7 @@ Ext.define('Ext.ux.SearchResultView', {
         
         results.removeAll();
         results.add({
-            xtype: 'searchresultset',
+            xtype: 'searchresultsview',
             data: data
         });
         
@@ -542,13 +591,12 @@ Ext.define('Ext.ux.SearchResultView', {
 });
 
 /*
- * Book search panel class.
+ * Search panel class.
  */
 
-Ext.define('Ext.ux.BookSearchPanel', {
+Ext.define('Ext.ux.SearchPanel', {
     extend: 'Ext.Panel',
-    alias: 'widget.booksearch',
-    requires: ['*'], // TODO: specify
+    alias: 'widget.searchpanel',
     
     initComponent: function() 
     {
@@ -557,12 +605,8 @@ Ext.define('Ext.ux.BookSearchPanel', {
             title: 'Search',
             
             items: [{
-                xtype: 'panel',
                 title: 'Search',
-                border: 0,
-                items: [{
-                    xtype: 'searchpanel'
-                }]
+                xtype: 'searchfieldspanel'
             },{
                 xtype: 'button',
                 text: 'Search',
@@ -572,12 +616,12 @@ Ext.define('Ext.ux.BookSearchPanel', {
                 {
                     // Get search fields.
                     var fields = [];
-                    for (var i = 0; i < _this.down('[xtype=searchpanel]').items.length; ++i)
+                    for (var i = 0; i < _this.down('searchfieldspanel').items.length; ++i)
                     {
-                        var val = _this.down('[xtype=searchpanel]').items.get(i).getValue();
+                        var val = _this.down('searchfieldspanel').items.get(i).getValue();
                         if (val.type != 'select')
                         {
-                            fields[fields.length] = _this.down('[xtype=searchpanel]').items.get(i).getValue();
+                            fields[fields.length] = _this.down('searchfieldspanel').items.get(i).getValue();
                         }
                     }
                     
@@ -585,14 +629,14 @@ Ext.define('Ext.ux.BookSearchPanel', {
                     var onSuccess = function(data)
                     {
                         // Set resulting data on search results panel.
-                        this.ownerCt.down('[xtype=searchresults]').setData(data);
+                        this.down('searchresultspanel').setData(data);
                     };
                     
                     RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
                 }
             },{
-                xtype: 'searchresults',
-                title: 'Search results'
+                xtype: 'searchresultspanel',
+                //title: 'Search results'
             }]
         };
         
@@ -601,7 +645,7 @@ Ext.define('Ext.ux.BookSearchPanel', {
         this.callParent();
         
         var firstField = this.getComponent(0).down('[name=type]');
-        firstField.select('any');
+        firstField.select('title');
         firstField.fireEvent('select',firstField,{});
     }
 });

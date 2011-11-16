@@ -9,7 +9,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
     initComponent: function() 
     {
         var topRegion = {
-            tbar: [/*{
+            xtype: 'panel',
+            border: false,
+            height: 120,
+            cls: 'header',
+            html: '<h1>Collaboratory</h1>',
+            
+            bbar: [/*{
                 text: 'Book',
                 menu: [{
                     text: 'Save current page...'
@@ -21,15 +27,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     text: 'Close'
                 }]
             },*/{
-                text: 'Register',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('register', [], true);
-                    }
-                },
-                name: 'register'
-            },{
                 text: 'Search',
                 listeners: {
                     click: function()
@@ -63,7 +60,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 listeners: {
                     click: function()
                     {
-                        Application.getInstance().openTab('info', [], true);
+                        Application.getInstance().gotoTab('info', [], true);
                     }
                 },
                 name: 'info'
@@ -99,6 +96,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                 },
                 name: 'login'
+            }, {
+                text: 'Register',
+                listeners: {
+                    click: function()
+                    {
+                        Application.getInstance().gotoTab('register', [], true);
+                    }
+                },
+                name: 'register'
             }, '-', {
                 text: 'Options',
                 menu: [{
@@ -114,10 +120,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     text: 'Help...'
                 }*/]
             }],
-            border: false,
-            height: 120,
-            cls: 'header',
-            html: '<h1>Collaboratory</h1>'
+            border: false
         };
         
         var bottomRegion = {
@@ -201,14 +204,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 break;
                 
-            case 'profile':
-                break;
-                
             case 'search':
                 // Add a search tab.
                 Ext.apply(tabConfig, {
                     title: 'Search',
-                    xtype: 'booksearch'
+                    xtype: 'searchpanel'
                 });
                 
                 break;
@@ -233,7 +233,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'register':
-                // Add a registration form.
+                // Add a registration panel.
                 Ext.apply(tabConfig, {
                     title: 'Registration',
                     layout: 'hbox',
@@ -243,7 +243,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         plain: true,
                         flex: 1
                     },{
-                        xtype: 'registrationform',
+                        xtype: 'registrationpanel',
+                        border: false,
                         width: 800,
                         height: 400
                     },{
@@ -256,12 +257,26 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
             
             case 'upload':
-                // Add a upload tab.
+                // Add an upload panel.
                 Ext.apply(tabConfig, {
                     title: 'Upload',
-                    xtype: 'uploadform',
-                    border: false,
-                    frame: false
+                    layout: 'hbox',
+                    bodyPadding: 10,
+                    items: [{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    },{
+                        xtype: 'uploadform',
+                        border: false,
+                        width: 800,
+                        height: 600,
+                        autoScroll: true,
+                    },{
+                        border: false,
+                        plain: true,
+                        flex: 1
+                    }]
                 });
                 
                 break;

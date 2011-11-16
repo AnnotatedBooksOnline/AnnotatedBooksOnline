@@ -95,7 +95,7 @@ Authentication.prototype.modelChanged = function()
 
 Authentication.prototype.getFullName = function()
 {
-    return this.loggedOn ? (this.user.get('firstName') + ' ' + this.user.get('lastName')) : '';
+    return this.loggedOn ? this.user.getFullName() : '';
 }
 
 Authentication.prototype.requireLogin = function(obj, onSuccess, onError)

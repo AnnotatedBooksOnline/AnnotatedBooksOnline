@@ -24,5 +24,10 @@ Ext.define('Ext.ux.UserModel', {
     proxy: {
         type: 'requestmanager',
         controller: 'User'
+    },
+    
+    getFullName: function()
+    {
+        return this.get('firstName') + ' ' + this.get('lastName');
     }
 });
