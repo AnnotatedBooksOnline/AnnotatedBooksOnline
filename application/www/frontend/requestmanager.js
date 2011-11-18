@@ -82,7 +82,7 @@ RequestManager.prototype.flush = function()
                 Ext.Ajax.request({
                     // Url parameters appended here, because data may be null, in which case
                     // the params would be considered POST parameters instead of GET parameters.
-                    url: '/backend/?controller=' + request.controller + '&action=' + request.action,
+                    url: 'backend/?controller=' + request.controller + '&action=' + request.action,
                     jsonData: request.data,
                     method: 'POST',
                     success: function(result, req)
