@@ -307,7 +307,22 @@ Ext.define('Ext.ux.SearchResultsView', {
 //            overItemCls: 'x-item-over',
             itemSelector: 'div.bookitem',
             emptyText: 'No books found.',
-            prepareData: function(data) { _this.prepareData(data); },
+            prepareData: function(data) { 
+                var properties = '';
+                for (var field in data)
+                {
+                    var col = cols.findRecord('name', field);
+                    if (col && col.get('desc') && col.get('show'))
+                    {
+                        properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
+                                    + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
+                    }
+                }
+                
+                data['properties'] = properties;
+                
+                return data;
+            },
             listeners: {
                 itemclick: function(view, record)
                 {
@@ -322,7 +337,7 @@ Ext.define('Ext.ux.SearchResultsView', {
         Ext.apply(this, defConfig);
         this.callParent();
     },
-    
+    /*
     prepareData: function(data)
     {
         var properties = '';
@@ -339,7 +354,7 @@ Ext.define('Ext.ux.SearchResultsView', {
         data['properties'] = properties;
         
         return data;
-    },
+    },*/
     
     getColumnStore: function(data)
     {
