@@ -13,7 +13,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             border: false,
             height: 120,
             cls: 'header',
-            html: '<h1>Collaboratory</h1>',
+            html: '<h1>Collaboratory</h1><div align="left">#COLLABVERSION#</div>',
             
             bbar: [/*{
                 text: 'Book',
