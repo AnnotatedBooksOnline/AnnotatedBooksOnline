@@ -3,6 +3,7 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
+require_once 'model/user/usersearchlist.php';
 
 /**
  * Book controller class.
@@ -47,24 +48,7 @@ class UserController extends Controller
             $user = new User($id);
         
             // TODO: Do a security check on id!
-            
-            /*
-            // TODO: Return just these values:
-            
-            array(
-                'userId'
-                'username',
-                'email',
-                'firstName',
-                'lastName',
-                'affiliation',
-                'occupation',
-                'website',
-                'homeAddress',
-                'rank'
-            )
-            */
-            
+           
             return array('records' => $user->getValues(), 'total' => 1);
         }
         
@@ -234,12 +218,7 @@ class UserController extends Controller
     {
         $username = self::getString($data, 'username', '', true, 25);
         
-        $total = Query::select('userId')->
-                 from('Users')->
-                 where('username = :username')->
-                 execute(array('username' => $username))->
-                 getAmount();
-        
-        return (bool) $total;
+        // Return <code>true</code> if there is atleast 1 user with the specified username.
+        return (bool)UserSearchList::findUsers($username)->getAmount();
     }
 }
