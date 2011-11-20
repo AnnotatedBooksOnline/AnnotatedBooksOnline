@@ -215,6 +215,6 @@ class UserController extends Controller
         $username = self::getString($data, 'username', '', true, 25);
         
         // Return <code>true</code> if there is atleast 1 user with the specified username.
-        return (bool)UserSearchList::findUsers(array('username' => $username))->getAmount();
+        return (bool)UserSearchList::findUsers(array('username' => $username), null, null, null)->getAmount();
     }
 }
