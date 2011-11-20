@@ -9,7 +9,10 @@
 #include "common.h"
 
 #include "imagereaderwriter.h"
-#include <jpeglib.h>
+
+extern "C" {
+    #include <jpeglib.h>
+}
 
 class JPEGReader : public ImageReader
 {
