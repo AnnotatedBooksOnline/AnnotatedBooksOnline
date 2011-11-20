@@ -10,6 +10,10 @@ require_once 'model/user/usersearchlist.php';
  */
 class UserController extends Controller
 {
+    /**
+     * 
+     * 
+     */
     protected function __construct()
     {
         ;
@@ -37,50 +41,38 @@ class UserController extends Controller
     
     */
     
+    /**
+    *
+    *
+    */
     public function actionLoad($data)
     {
-        // Check whether logged on.
+        // Assert that the user is authenticated. 
         Authentication::assertLoggedOn();
         
+        // Determine the total number of users.
+        $total = UserSearchList::findUserCount();
+        
+        // Retrieve the user id of a specific user from the request.
         $id = self::getInteger($data, 'id', 0);
-        if ($id)
-        {
-            $user = new User($id);
         
-            // TODO: Do a security check on id!
-           
-            return array('records' => $user->getValues(), 'total' => 1);
-        }
-        
-        // TODO: Do a security check on user kind!
-        
-        $total = Query::select()->
-                 count('userId', 'total')->
-                 from('Users')->
-                 execute()->
-                 getFirstRow()->
-                 getValue('total');
-        
+        // Retrieve the limit and offset for the search from the request.
         $limit  = self::getInteger($data, 'limit',  $total, true, 0, $total);
         $offset = self::getInteger($data, 'offset', 0,      true, 0, $total);
         
-        $query = Query::select(
-            'userId',
-            'username',
-            'email',
-            'firstName',
-            'lastName',
-            'affiliation',
-            'occupation',
-            'website',
-            'homeAddress',
-            'rank'
-        )
-        ->from('Users')
-        ->limit($limit, $offset);
+        // Determine id a specific user was requested. If this is the case retrieve this user from the database
+        // and return.
+        if ($id)
+        {
+            $user = new User($id);
+            // TODO: Do a security check on id!
+            return array('records' => $user->getValues(), 'total' => 1);
+        }
         
-        $bindings = array();
+        // TODO: Do a security check on user kind
         
+        // Retrieve the search filters from the request.
+        $arguments = array();
         $filters = self::getArray($data, 'filters');
         if (isset($data['filters']))
         {
@@ -91,17 +83,13 @@ class UserController extends Controller
                 $value  = self::getString($filter, 'value');
                 if ($column && $value)
                 {
-                    $filterProperties[] = $column. ' = :' . $column; // TODO: check column ?
-                    $bindings[$column] = $value;
+                    $arguments[$column] = $value;
                 }
-            }
-            
-            if ($filterProperties)
-            {
-                $query = $query->where($filterProperties);
-            }
+            }            
         }
         
+        // Retrieve the sortings from the request.
+        $order = array();
         $sorters = self::getArray($data, 'sorters');
         if ($sorters)
         {
@@ -111,25 +99,25 @@ class UserController extends Controller
                 $direction = self::getString($sorting, 'direction');
                 if ($column && $direction)
                 {
-                    $query = $query->orderBy($column, $direction); // TODO: check column ?
+                    $order[$column] = $direction;
                 }
             }
         }
         
-        $result = $query->execute($bindings)->getIterator();
-        
-        $records = array();
-        foreach ($result as $user)
-        {
-            $records[] = $user->getValues();
-        }
-        
+        // Query the Users table.
+        $result = UserSearchList::findUsers($arguments, $offset, $limit, $order);
+
+        // Return the results.
         return array(
-            'records' => $records,
+            'records' => $result->asArrays(),
             'total'   => $total
         );
     }
     
+    /**
+    *
+    *
+    */
     public function actionSave($data)
     {
         // Check whether logged on.
@@ -176,6 +164,10 @@ class UserController extends Controller
         );
     }
     
+    /**
+     *
+     *
+     */
     public function actionCreate($data)
     {
         $record = self::getArray($data, 'record');
@@ -214,11 +206,15 @@ class UserController extends Controller
         // TODO: Create a pending user.
     }
     
+    /**
+     * 
+     * 
+     */
     public function actionUsernameExists($data)
     {
         $username = self::getString($data, 'username', '', true, 25);
         
         // Return <code>true</code> if there is atleast 1 user with the specified username.
-        return (bool)UserSearchList::findUsers($username)->getAmount();
+        return (bool)UserSearchList::findUsers(array('username' => $username))->getAmount();
     }
 }

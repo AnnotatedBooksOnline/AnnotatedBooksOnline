@@ -57,6 +57,17 @@ class ResultSet implements IteratorAggregate
         
         return new ResultSetRow($row);
     }
+    
+    public function asArrays() 
+    {
+        
+        $records = array();
+        foreach ($this->getIterator() as $row)
+        {
+            $records[] = $row->getValues();
+        }    
+        return $records;
+    }
 }
 
 /**
