@@ -82,7 +82,8 @@ class BookController extends Controller
                 $book->getValue('bookId'),
                 $book->getValue('title'),
                 $year,
-                $book->getValue('authorNames')
+                $book->getValue('authorNames'),
+                'tiles/tile_0_0_0.jpg'
             );
         }
         
@@ -104,6 +105,10 @@ class BookController extends Controller
                     'name' => 'author',
                     'desc' => 'Author',
                     'show' => true
+                ), array(
+                    'name' => 'thumbnail',
+                    'desc' => 'Thumbnail',
+                    'show' => 'false'
                 )
             ),
             'records' => $records
