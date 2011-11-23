@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ENVIRONMENT="systeemtest"
-BRANCH="master"
 VERSION_TO_DEPLOY="increment_A_1_test1"
 
 echo "Removing old version"
@@ -12,7 +11,7 @@ git clone /home/git/application.git/
 
 echo "Checking out branch..."
 cd application
-git checkout -b $master $VERSION_TO_DEPLOY 
+git checkout $VERSION_TO_DEPLOY 
 cd ..
 
 echo "Deploying application..."
