@@ -66541,7 +66541,7 @@ Ext.define('Ext.form.field.Text', {
             return;
         }
 
-        if(!Ext.isGecko && e.isSpecialKey() && !charCode){
+        if(!Ext.isGecko && e.isSpecialKey() && (Ext.isOpera || !charCode)){
             return;
         }
         if(!this.maskRe.test(charCode)){
