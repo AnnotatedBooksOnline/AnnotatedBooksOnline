@@ -16,15 +16,15 @@ function Book()
 }
 
 //members
-Book.prototype.id;
+Book.prototype.bookId;
 
 Book.prototype.documents;
 
 //constructor
-Book.prototype.constructor = function(id)
+Book.prototype.constructor = function(bookId)
 {
     //set members
-    this.id = id;
+    this.bookId = bookId;
     
     //initialize
     this.initialize();
@@ -57,12 +57,11 @@ Book.prototype.getDocuments = function()
 
 Book.prototype.initialize = function()
 {
+	//alert("test");
     this.documents = [
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5)  //256, 256, 20 for Google maps
+        new Document(151, 225, 5, this.bookId, 1), //256, 256, 20 for Google maps
+        new Document(151, 225, 5, this.bookId, 2), //256, 256, 20 for Google maps
+        new Document(151, 225, 5, this.bookId, 3), //256, 256, 20 for Google maps
+        new Document(151, 225, 5, this.bookId, 4), //256, 256, 20 for Google maps
     ];
 }

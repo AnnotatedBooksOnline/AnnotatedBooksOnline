@@ -30,6 +30,9 @@ Document.prototype.levelSizes;
 Document.prototype.levelVisible;
 Document.prototype.levelTimers;
 
+Document.prototype.bookId;
+Document.prototype.scanId;
+
 //NOTE: should we have some previous state? like current position, rotation, etc?
 
 //constants
@@ -37,8 +40,11 @@ Document.tileSize    = 256;
 Document.invTileSize = 1 / Document.tileSize;
 
 //constructor
-Document.prototype.constructor = function(width, height, maxZoomLevel)
+Document.prototype.constructor = function(width, height, maxZoomLevel, bookId, scanId)
 {
+	this.bookId = bookId;
+	this.scanId = scanId;
+	
     //set members
     this.dimensions   = {width: width, height: height};
     this.maxZoomLevel = maxZoomLevel;
@@ -191,8 +197,8 @@ Document.prototype.addVisibleTiles =
                 //img.src = 'file://C:/Users/gerbenvv/Dropbox/SoftwareProject/Documentatie klant/Voorbeelden/Gabriel Harveys Livy/tiles/' +
                 //    'page1_' + zoomLevel + '_' + col + '_' + row + '.jpg;
                 
-                img.src = 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-                
+                img.src = 'tiles/' + this.bookId + '/' + this.scanId + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
+                //alert(image.src);
                 //img.onload = function(event) {
                 //    var event  = event || window.event;
                 //    var target = event.target || event.srcElement;
