@@ -59,10 +59,10 @@ Book.prototype.initialize = function()
 {
     this.documents = [
         new Document(151, 225, 5), //256, 256, 20 for Google maps
+/*        new Document(151, 225, 5), //256, 256, 20 for Google maps
         new Document(151, 225, 5), //256, 256, 20 for Google maps
         new Document(151, 225, 5), //256, 256, 20 for Google maps
         new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5), //256, 256, 20 for Google maps
-        new Document(151, 225, 5)  //256, 256, 20 for Google maps
+        new Document(151, 225, 5)  //256, 256, 20 for Google maps*/
     ];
 }
