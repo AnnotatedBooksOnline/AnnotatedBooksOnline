@@ -12,21 +12,20 @@ Ext.define('Ext.ux.ThumbnailView', {
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
-                	'<div class="thumbnail" style="cursor: pointer;">',
-                		'<div style="position: relative; float: left; top: 10px; left: 10px;">',
-                			'<img src="{thumbnail}" />',
-                			'{rect}',
-                		'</div>',
-                	'</div>',
+                    '<div class="thumbnail" style="">',
+                        //'<div style="float: left; width: 50px; height: 67px; margin-right: 10px;">',
+                        //    '<img src="{thumbnail}" style="width: 50px; height: 67px;"/>',
+                        //'</div>',
+                        //'<div style="float: left; margin-top: 10px;">',
+                        //    '<table>{properties}</table>',
+                        //'</div>',
+                        //'<div style="clear: both;"></div>',
+                    '</div>',
                 '</tpl>',
             ],
+            store: this.getStore(),
             itemSelector: 'div.thumbnail',
-            listeners: {
-                itemclick: function(view, record)
-                {
-                	
-                }
-            }
+            
         };
         
         Ext.apply(this, defConfig);
@@ -34,9 +33,16 @@ Ext.define('Ext.ux.ThumbnailView', {
         this.callParent();
     },
     
-
+    getStore: function(data)
+    {
+        var store = Ext.create('Ext.data.Store', {
+            model: 'Ext.ux.PageModel',
+            //data: data.columns
+        });
+        
+        return store;
+    },
 });
-
 
 Ext.define('Ext.ux.NavigationPanel', {
     extend: 'Ext.Panel',
@@ -44,28 +50,24 @@ Ext.define('Ext.ux.NavigationPanel', {
     requires: [], //TODO: sepcify
 
     initComponent: function()
-    {	
-    	var fields = [];
-        for (var i = 0; i < this.book.getDocumentAmount(); i++)
-        {
-        	var document = this.book.getDocuments()[i];
-        	fields[i] = ['tiles/' + document.bookId + '/' + document.scanId + '/tile_0_0_0.jpg', 
-        	             i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : ''];
-        }
-        
+    {
         var defConfig = {
             title: 'Navigation',
             //layout: 'accordion',
-            items: [{
-            		xtype: 'thumbnailview',
-            		store: Ext.create('Ext.data.ArrayStore', {
-                		id:'testStore',
-                    	fields:['thumbnail', 'rect'],
-                    	pageSize:10,
-                    	data:fields
-                    })
-
-                }]
+            //items: [{
+            //    title: 'Pages',
+            //    xtype: 'thumbnailview'
+            //}],
+            //*
+            html:
+                '<div style="position: relative; float: left; top: 10px; left: 10px;">' +
+                '<img src="tiles/tile_0_0_0.jpg" />' +
+                '<div id="test" style="position: absolute; border: 2px solid red;">' +
+                '</div></div>'// +
+                //'<div style="position: relative; float: left; top: 10px; left: 10px;">' +
+                //'<img src="tiles/tile_0_0_0.jpg" />' +
+                //'<div id="test2" style="position: absolute; border: 2px solid red;">' +
+                //'</div></div>'//*/
         };
         
         Ext.apply(this, defConfig);

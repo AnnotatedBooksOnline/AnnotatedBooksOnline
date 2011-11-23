@@ -76,18 +76,16 @@ Ext.define('Ext.ux.Viewer', {
 
     initComponent: function()
     {
-        var _this = this;
-
         var westRegion = {
             region: 'west',
             xtype: 'navigationpanel',
             collapsible: true,
             split: true,
             width: 200,
-            cls: 'navigation-panel',
-            book: _this.book
+            cls: 'navigation-panel'
         };
         
+        var _this = this;
         var centerRegion = {
             region: 'center',
             xtype: 'viewportpanel',
