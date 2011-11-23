@@ -17,7 +17,7 @@ class BookController extends Controller
     public function actionSearch($data)
     {
         $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear'))
-            ->unsafeAggregate('array_accum', 'DISTINCT "personsList"."name"', 'authorNames')
+            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "personsList"."name"), \', \'', 'authorNames')
             ->from('Books books')
             ->join('Authors authorsList', array('books.bookId = authorsList.bookId'), 'LEFT')
             ->join('Persons personsList', array('authorsList.authorId = personsList.personId'), 'LEFT')
@@ -70,7 +70,6 @@ class BookController extends Controller
         foreach ($result as $book)
         {
             Log::debug('%s', print_r($book->getValues(), true));
-            $authors = implode(', ', explode(',', trim($book->getValue('authorNames'), '{}')));
             if ($book->getValue('minYear') == $book->getValue('maxYear'))
             {
                 $year = $book->getValue('minYear');
@@ -83,7 +82,7 @@ class BookController extends Controller
                 $book->getValue('bookId'),
                 $book->getValue('title'),
                 $year,
-                $authors
+                $book->getValue('authorNames')
             );
         }
         
