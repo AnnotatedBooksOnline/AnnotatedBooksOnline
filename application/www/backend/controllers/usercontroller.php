@@ -212,9 +212,21 @@ class UserController extends Controller
      */
     public function actionUsernameExists($data)
     {
-        $username = self::getString($data, 'username', '', true, 25);
+        $username = self::getString($data, 'username', '', true, 30);
         
         // Return <code>true</code> if there is atleast 1 user with the specified username.
         return (bool)UserSearchList::findUsers(array('username' => $username), null, null, null)->getAmount();
+    }
+    
+    /**
+     * 
+     * 
+     */
+    public function actionEmailExists($data)
+    {
+        $email = self::getString($data, 'email', '', true, 255);
+        
+        // Return <code>true</code> if there is atleast 1 user with the specified email.
+        return (bool)UserSearchList::findUsers(array('email' => $email), null, null, null)->getAmount();
     }
 }
