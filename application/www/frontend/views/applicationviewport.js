@@ -269,7 +269,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         xtype: 'uploadform',
                         border: false,
                         width: 800,
-                        height: 700,
                         autoScroll: true
                     },{
                         border: false,
