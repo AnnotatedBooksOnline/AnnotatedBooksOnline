@@ -51,12 +51,10 @@ Ext.define('Ext.ux.RegistrationForm', {
             },{
                 name: 'firstName',
                 fieldLabel: 'First name',
-                allowBlank: true,
                 maxLength: 50
             },{
                 name: 'lastName',
                 fieldLabel: 'Last name',
-                allowBlank: true,
                 maxLength: 50
             },{
                 name: 'affiliation',
