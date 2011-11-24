@@ -73,13 +73,22 @@ Application.prototype.addHistoryAction = function(action, data)
 Application.prototype.openTab = function(type, data, activateTab)
 {
     // Check if allowed type.
-    if (!this.authentication.isLoggedOn() && this.tabNeedsAuthentication(type))
+    if (!this.authentication.isLoggedOn())
     {
-        this.authentication.requireLogin(this, function()
-            {
-                // Redirect call.
-                this.viewport.openTab(type, data, activateTab);
-            });
+        if (this.tabNeedsAuthentication(type))
+        {
+            this.authentication.requireLogin(this, function()
+                {
+                    // Redirect call.
+                    this.viewport.openTab(type, data, activateTab);
+                });
+            
+            return;
+        }
+    }
+    else if (this.tabNeedsNoAuthentication(type))
+    {
+        // TODO: Show a message?
         
         return;
     }
@@ -91,13 +100,22 @@ Application.prototype.openTab = function(type, data, activateTab)
 Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
 {
     // Check if allowed type.
-    if (!this.authentication.isLoggedOn() && this.tabNeedsAuthentication(type))
+    if (!this.authentication.isLoggedOn())
     {
-        this.authentication.requireLogin(this, function()
-            {
-                // Redirect call.
-                this.viewport.openTab(type, data, openIfNotAvailable);
-            });
+        if (this.tabNeedsAuthentication(type))
+        {
+            this.authentication.requireLogin(this, function()
+                {
+                    // Redirect call.
+                    this.viewport.openTab(type, data, openIfNotAvailable);
+                });
+            
+            return;
+        }
+    }
+    else if (this.tabNeedsNoAuthentication(type))
+    {
+        // TODO: Show a message?
         
         return;
     }
@@ -150,7 +168,7 @@ Application.prototype.initialize = function()
             // Get action and data from token.
             var parts  = token.split('-');
             var action = parts[0];
-            var data   = parts.splice(1) || [];
+            var data   = parts.slice(1) || [];
             
             // Set current token.
             _this.currentToken = token;
@@ -219,17 +237,23 @@ Application.prototype.registerActions = function()
 
 Application.prototype.onAuthenticationChange = function(event, authentication)
 {
-    if (!authentication.isLoggedOn())
+    var loggedOn = authentication.isLoggedOn();
+    
+    // Close all tabs that need authentication in case of a logout and
+    // close all tabs that need no authentication in case of a login.
+    var tabsInfo = this.viewport.getTabsInfo();
+    for (var i = tabsInfo.length - 1; i >= 0; --i)
     {
-        // Close all tabs that need authentication.
-        var tabsInfo = this.viewport.getTabsInfo();
-        for (var i = tabsInfo.length - 1; i >= 0; --i)
+        if (!loggedOn)
         {
-            // Close tab if it needs authentication.
             if (this.tabNeedsAuthentication(tabsInfo[i].type))
             {
                 this.viewport.closeTab(i);
             }
+        }
+        else if (this.tabNeedsNoAuthentication(tabsInfo[i].type))
+        {
+            this.viewport.closeTab(i);
         }
     }
 }
@@ -248,6 +272,18 @@ Application.prototype.tabNeedsAuthentication = function(type)
     }
     
     return true;
+}
+
+Application.prototype.tabNeedsNoAuthentication = function(type)
+{
+    // Specify a blacklist here.
+    switch (type)
+    {
+        case 'register':
+            return true;
+    }
+    
+    return false;
 }
 
 // Start application.

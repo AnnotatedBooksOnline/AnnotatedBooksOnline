@@ -57,7 +57,6 @@ Book.prototype.getDocuments = function()
 
 Book.prototype.initialize = function()
 {
-	//alert("test");
     this.documents = [
         new Document(151, 225, 5, this.bookId, 1), //256, 256, 20 for Google maps
         new Document(151, 225, 5, this.bookId, 2), //256, 256, 20 for Google maps

@@ -135,10 +135,10 @@ Ext.define('Ext.ux.Viewer', {
                     cls: 'total-text'
                 }, '-', {
                     iconCls: 'next-icon',
-                    tooltip: 'Go to next page',
+                    tooltip: 'Go to next page'
                 },{
                     iconCls: 'last-icon',
-                    tooltip: 'Go to last page',
+                    tooltip: 'Go to last page'
                 }, '-', {
                     iconCls: 'refresh-icon',
                     tooltip: 'Reset viewer',
@@ -272,6 +272,6 @@ Ext.define('Ext.ux.Viewer', {
                     }
                 });
             Ext.ux.Viewer.settingsWindow.show();
-        },
+        }
     }
 });

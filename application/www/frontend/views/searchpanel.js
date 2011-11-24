@@ -235,7 +235,7 @@ Ext.define('Ext.ux.SearchField', {
             
     getValue: function()
     {
-        value = {
+        var value = {
             type:  this.down('[name=type]').getValue(),
             value: this.down('[name=value]').getValue()
         };
@@ -284,8 +284,8 @@ Ext.define('Ext.ux.SearchResultsView', {
 
     initComponent: function()
     {
-        var cols  = this.getColumnStore(this.data);
-        var store = this.getResultStore(this.data, cols);
+        this.cols  = this.getColumnStore(this.data);
+        this.store = this.getResultStore(this.data, this.cols);
         
         var _this = this;
         var defConfig = {
@@ -302,27 +302,10 @@ Ext.define('Ext.ux.SearchResultsView', {
                     '</div>',
                 '</tpl>',
             ],
-            store: store,
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
             itemSelector: 'div.bookitem',
             emptyText: 'No books found.',
-            prepareData: function(data) { 
-                var properties = '';
-                for (var field in data)
-                {
-                    var col = cols.findRecord('name', field);
-                    if (col && col.get('desc') && col.get('show'))
-                    {
-                        properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
-                                    + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
-                    }
-                }
-                
-                data['properties'] = properties;
-                
-                return data;
-            },
             listeners: {
                 itemclick: function(view, record)
                 {
@@ -337,13 +320,13 @@ Ext.define('Ext.ux.SearchResultsView', {
         Ext.apply(this, defConfig);
         this.callParent();
     },
-    /*
+    
     prepareData: function(data)
     {
         var properties = '';
         for (var field in data)
         {
-            var col = cols.findRecord('name', field);
+            var col = this.cols.findRecord('name', field);
             if (col && col.get('desc') && col.get('show'))
             {
                 properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
@@ -354,7 +337,7 @@ Ext.define('Ext.ux.SearchResultsView', {
         data['properties'] = properties;
         
         return data;
-    },*/
+    },
     
     getColumnStore: function(data)
     {
@@ -650,7 +633,7 @@ Ext.define('Ext.ux.SearchPanel', {
                     RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
                 }
             },{
-                xtype: 'searchresultspanel',
+                xtype: 'searchresultspanel'//,
                 //title: 'Search results'
             }]
         };

@@ -184,5 +184,5 @@ Ext.define('Ext.ux.Welcome', {
             this.down("[name='login']").show();
             this.down("[name='register']").show();
         }
-    },
+    }
 });

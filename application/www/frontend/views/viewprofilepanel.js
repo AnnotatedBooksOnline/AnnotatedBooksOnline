@@ -58,7 +58,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     affiliation: 'Affiliation',
                     occupation: 'Occupation',
                     website: 'Website',
-                    homeAddress: 'Address',
+                    homeAddress: 'Address'//,
                     // rank: 'Rank',
                 },
                 source: {},
@@ -68,7 +68,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                         return false;
                     }
                 },
-                hideHeaders : true
+                hideHeaders: true
             }
             // TODO: add information like last added annotation, forum post, ...
             ]

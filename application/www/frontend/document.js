@@ -42,12 +42,12 @@ Document.invTileSize = 1 / Document.tileSize;
 //constructor
 Document.prototype.constructor = function(width, height, maxZoomLevel, bookId, scanId)
 {
-	this.bookId = bookId;
-	this.scanId = scanId;
-	
     //set members
     this.dimensions   = {width: width, height: height};
     this.maxZoomLevel = maxZoomLevel;
+    
+    this.bookId = bookId;
+    this.scanId = scanId;
     
     //create dom
     this.base.constructor.call(this, '<div class="tiles"></div>');
@@ -68,6 +68,16 @@ Document.prototype.getDimensions = function()
 Document.prototype.getMaxZoomLevel = function()
 {
     return this.maxZoomLevel;
+}
+
+Document.prototype.supportsContinuousZoom = function()
+{
+    return hasTransforms;
+}
+
+Document.prototype.supportsRotation = function()
+{
+    return hasTransforms;
 }
 
 Document.prototype.update = function(position, zoomLevel, rotation, area)
@@ -197,8 +207,9 @@ Document.prototype.addVisibleTiles =
                 //img.src = 'file://C:/Users/gerbenvv/Dropbox/SoftwareProject/Documentatie klant/Voorbeelden/Gabriel Harveys Livy/tiles/' +
                 //    'page1_' + zoomLevel + '_' + col + '_' + row + '.jpg;
                 
-                img.src = 'tiles/' + this.bookId + '/' + this.scanId + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-                //alert(image.src);
+                //img.src = 'tiles/' + this.bookId + '/' + this.scanId + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
+                img.src = 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
+                
                 //img.onload = function(event) {
                 //    var event  = event || window.event;
                 //    var target = event.target || event.srcElement;
@@ -257,8 +268,7 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
     //check if there are no tiles anymore
     var offset = this.levelOffsets[zoomLevel];
     
-    
-    
+    // Reset container its offset it it's empty.
     if (levelContainer.childNodes.length === 0)
     {
         offset.x = startCol * Document.tileSize;
@@ -266,10 +276,6 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
         
         this.levelOffsets[zoomLevel] = offset;
     }
-    
-    
-    
-    
     
     /*
     
@@ -303,42 +309,22 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
         scaledSin,  scaledCos, x1 * scaledSin + y1 * scaledCos + y2
     ];
     
-    
-    
-    if (false && isIE) //NOTE: not IE9+, it can do -ms-transform
+    if (hasTransforms)
     {
-        //SizingMethod='auto expand', 
-        
-        levelContainer.style.filter =
-            "progid:DXImageTransform.Microsoft.Matrix(FilterType=nearest, " + //bilinear
-            "M11=" + matrix[0] + ", M12=" + matrix[1] + ", M21=" + matrix[3] + ", M22=" + matrix[4] + ", " +
-            "dX=" + matrix[2] + ", dY=" + matrix[5] + ")";
-        
-        levelContainer.style.zIndex = 0;
-        levelContainer.style.width  = "1000px";
-        levelContainer.style.height = "1000px";
-        
-        //width: 5000px;
-        //height: 5000px;
-        //filter: progid:DXImageTransform.Microsoft.Matrix(FilterType=bilinear,  M11=0.7, M21=0.7, M12=-0.7, M22=0.7, dX=200, dY=100);
-    }
-    else if (true) //if (browser can do transform)
-    {
-        
-        
-        
         var px = isFF ? 'px' : '';
         var temp = [matrix[0], matrix[3], matrix[1], matrix[4], matrix[2] + px, matrix[5] + px].join(',');
-        var transform = "matrix(" + temp + ")"; //TODO: firefox, add px
-        
-        
-        
+        var transform = 'matrix(' + temp + ')';
         
         levelContainer.style.transform       = transform;
         levelContainer.style.webkitTransform = transform;
         levelContainer.style.MozTransform    = transform;
         levelContainer.style.OTransform      = transform;
         levelContainer.style.msTransform     = transform;
+    }
+    else
+    {
+        levelContainer.style.left = matrix[2] + 'px';
+        levelContainer.style.top  = matrix[5] + 'px';
     }
     
     //show container and set opacity
@@ -404,17 +390,18 @@ Document.prototype.updateLevels = function(area)
             
             container.style.display = "none";
             
-            if (false && isIE) //NOTE: not IE9+, it can do -ms-transform
-            {
-                container.style.filter = "";
-            }
-            else if (true) //if (browser can do transform)
+            if (hasTransforms)
             {
                 container.style.transform       = "";
                 container.style.webkitTransform = "";
                 container.style.MozTransform    = "";
                 container.style.OTransform      = "";
                 container.style.msTransform     = "";
+            }
+            else
+            {
+                container.style.left = "";
+                container.style.top  = "";
             }
             
             this.levelVisible[i] = false;

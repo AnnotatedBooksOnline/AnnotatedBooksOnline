@@ -4,7 +4,6 @@
 
 Ext.define('Ext.ux.ApplicationViewport', {
     extend: 'Ext.Viewport',
-    requires: ['*'], // TODO: specify
     
     initComponent: function() 
     {
@@ -13,7 +12,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             border: false,
             height: 120,
             cls: 'header',
-            html: '<h1>Collaboratory</h1><div align="left">#COLLABVERSION#</div>',
+            html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
             
             bbar: [/*{
                 text: 'Book',
@@ -116,7 +115,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.ux.Viewer.showSettingsWindow();
                         }
                     }
-                }/*,{
+                }/*,{ // TODO: Make a help functionality.
                     text: 'Help...'
                 }*/]
             }],
@@ -271,7 +270,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         border: false,
                         width: 800,
                         height: 600,
-                        autoScroll: true,
+                        autoScroll: true
                     },{
                         border: false,
                         plain: true,
@@ -371,19 +370,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         if (authentication.isLoggedOn())
         {
-            this.down("[name='users']").show();
-            this.down("[name='upload']").show();
-            this.down("[name='logout']").show();
-            this.down("[name='login']").hide();
-            this.down("[name='register']").hide();
+            this.down("[name=users]").show();
+            this.down("[name=upload]").show();
+            this.down("[name=logout]").show();
+            this.down("[name=login]").hide();
+            this.down("[name=register]").hide();
         }
         else
         {
-            this.down("[name='users']").hide();
-            this.down("[name='upload']").hide();
-            this.down("[name='logout']").hide();
-            this.down("[name='login']").show();
-            this.down("[name='register']").show();
+            this.down("[name=users]").hide();
+            this.down("[name=upload]").hide();
+            this.down("[name=logout]").hide();
+            this.down("[name=login]").show();
+            this.down("[name=register]").show();
         }
     },
     

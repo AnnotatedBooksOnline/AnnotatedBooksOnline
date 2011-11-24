@@ -86,27 +86,30 @@ Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
     //var fraction = viewerWidth / this.dimensions.width;//Math.min(.., viewerHeight / this.dimensions.height);
     //var newZoomLevel = this.zoomLevel + Math.log(fraction) / Math.LN2;
     
-    
+    //var zoomPosition = {
+    //    x: viewerWidth  / 2 - deltaDimensions.x / 2,
+    //    y: viewerHeight / 2 - deltaDimensions.y / 2
+    //};
     //var deltaZoomLevel 
+    
+    //this.zoom(newZoomLevel, zoomPosition);
+    
     
     var newZoomLevel = this.zoomLevel + (//Math.min(
         Math.log(viewerWidth  / this.dimensions.width)//,
         //Math.log(viewerHeight / this.dimensions.height)
     ) / Math.LN2;
     
-    
-    
-    var zoomPosition = {
-        x: viewerWidth  / 2 - deltaDimensions.x / 2,
-        y: viewerHeight / 2 - deltaDimensions.y / 2
-    };
+    // Round zoom level if no continuous zoom is supported.
+    if (!this.document.supportsContinuousZoom())
+    {
+        newZoomLevel = Math.round(newZoomLevel);
+    }
     
     this.dimensions = {width: viewerWidth, height: viewerHeight};
     
     this.dom.width(viewerWidth + "px");
     this.dom.height(viewerHeight + "px");
-    
-    //this.zoom(newZoomLevel, zoomPosition);
     
     this.update(undefined, newZoomLevel);
 }
@@ -151,6 +154,12 @@ Viewport.prototype.zoom = function(newZoomLevel, viewportPosition)
     else if (newZoomLevel > this.maxZoomLevel)
     {
         newZoomLevel = this.maxZoomLevel;
+    }
+    
+    // Round zoom level if no continuous zoom is supported.
+    if (!this.document.supportsContinuousZoom())
+    {
+        newZoomLevel = Math.round(newZoomLevel);
     }
     
     //calculate new zoom factor
@@ -242,7 +251,7 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     
     
     
-    //check zoom level
+    // Check zoom level.
     if (newZoomLevel < 0)
         newZoomLevel = 0;
     else if (newZoomLevel > this.maxZoomLevel)
@@ -348,7 +357,7 @@ Viewport.prototype.doDragging = function(event)
     //check for rotation
     var deltaRotation = 0;
     var newPosition;
-    if (this.spaceDown)
+    if (this.spaceDown && this.document.supportsRotation())
     {
         //get offset of viewport dom
         var domOffset = this.dom.offset();
@@ -457,9 +466,20 @@ Viewport.prototype.scrollToZoom = function(event)
 {
     //calculate scroll amount (0.75 is one normal step)
     var amount = event.detail ? event.detail * -1 : event.wheelDelta / 40;
+    amount /= 0.75;
+    
+    // Zoom one level if no continuous zoom is supported.
+    if (!this.document.supportsContinuousZoom())
+    {
+        amount = (amount < 0) ? -1 : 1;
+    }
+    else
+    {
+        amount *= 0.2;
+    }
     
     //get new zoom level
-    var newZoomLevel = this.zoomLevel + amount / 0.75 * 0.2;
+    var newZoomLevel = this.zoomLevel + amount;
     
     //get offset of viewport dom
     var domOffset = this.dom.offset();

@@ -79,7 +79,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
             action:    operation.action,
             records:   operation.records,
             operation: operation,
-            scope:     scope,
+            scope:     scope
         });
         
         // Write record to jsonData.

@@ -84,3 +84,9 @@ function escape(str)
 
 var isIE = navigator.userAgent.indexOf("MSIE")    != -1;
 var isFF = navigator.userAgent.indexOf("Firefox") != -1;
+
+/*
+ * Feature detection.
+ */
+
+var hasTransforms = Modernizr.csstransforms;

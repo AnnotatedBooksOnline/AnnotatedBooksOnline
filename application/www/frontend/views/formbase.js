@@ -35,7 +35,7 @@ Ext.define('Ext.ux.FormBase', {
             
             fieldDefaults: {
                 allowBlank: false
-            },
+            }
         };
         
         Ext.apply(this, defConfig);

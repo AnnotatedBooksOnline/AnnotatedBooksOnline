@@ -1,23 +1,22 @@
 /*
- * Edit profile class.
+ * Edit profile window class.
  */
 
 Ext.define('Ext.ux.EditProfileForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.editprofileform',
-    requires: ['*'], // TODO: specify
     
     initComponent: function() 
     {
         var _this = this;
         
         var defConfig = {
-            items: [{
+            items: [/*{
                 name: 'username',
                 fieldLabel: 'Username',
                 minLength: 6,
                 maxLength: 40
-            },{
+            },*/{ // TODO: Do we not have to revalidate the new email address?
                 name: 'email',
                 fieldLabel: 'Email Address',
                 vtype: 'email',
@@ -55,26 +54,91 @@ Ext.define('Ext.ux.EditProfileForm', {
                 inputType: 'password',
                 style: 'margin-top: 15px',
                 minLength: 8,
-                maxLength: 32
+                maxLength: 32,
+                
+                validator: function(value)
+                {
+                    var password          = _this.down('[name=password]');
+                    var newPassword       = _this.down('[name=newPassword]');
+                    var repeatNewPassword = _this.down('[name=repeatNewPassword]');
+                    
+                    // Set required fields.
+                    var previousAllowBlank = password.allowBlank;
+                    var newAllowBlank =
+                        !(value || newPassword.getValue() || repeatNewPassword.getValue());
+                    
+                    if (previousAllowBlank != newAllowBlank)
+                    {
+                        password.allowBlank = repeatNewPassword.allowBlank = newPassword.allowBlank =
+                            newAllowBlank;
+                        
+                        password.validate();
+                        newPassword.validate();
+                        repeatNewPassword.validate();
+                    }
+                    
+                    return true;
+                }
             },{
                 name: 'newPassword',
                 fieldLabel: 'New password',
                 allowBlank: true,
                 inputType: 'password',
                 minLength: 8,
-                maxLength: 32
+                maxLength: 32,
+                
+                validator: function(value)
+                {
+                    var password          = _this.down('[name=password]');
+                    var newPassword       = _this.down('[name=newPassword]');
+                    var repeatNewPassword = _this.down('[name=repeatNewPassword]');
+                    
+                    // Set required fields.
+                    var previousAllowBlank = password.allowBlank;
+                    var newAllowBlank =
+                        !(password.getValue() || value || repeatNewPassword.getValue());
+                    
+                    if (previousAllowBlank != newAllowBlank)
+                    {
+                        password.allowBlank = repeatNewPassword.allowBlank = newPassword.allowBlank =
+                            newAllowBlank;
+                        
+                        password.validate();
+                        newPassword.validate();
+                        repeatNewPassword.validate();
+                    }
+                    
+                    return true;
+                }
             },{
-                name: 'repeatnewpassword',
+                name: 'repeatNewPassword',
                 fieldLabel: 'Repeat password',
                 allowBlank: true,
                 inputType: 'password',
                 
-                // Custom validator implementation - checks that the value matches what was entered
-                // into the new password field.
                 validator: function(value)
                 {
-                    var password = this.previousSibling('[name=newPassword]');
-                    return (value === password.getValue()) ? true : 'Passwords do not match.';
+                    var password          = _this.down('[name=password]');
+                    var newPassword       = _this.down('[name=newPassword]');
+                    var repeatNewPassword = _this.down('[name=repeatNewPassword]');
+                    
+                    // Set required fields.
+                    var previousAllowBlank = password.allowBlank;
+                    var newAllowBlank =
+                        !(password.getValue() || newPassword.getValue() || value);
+                    
+                    if (previousAllowBlank != newAllowBlank)
+                    {
+                        password.allowBlank = repeatNewPassword.allowBlank = newPassword.allowBlank =
+                            newAllowBlank;
+                        
+                        password.validate();
+                        newPassword.validate();
+                        repeatNewPassword.validate();
+                    }
+                    
+                    // Check whether our value matches the other new password field its value.
+                    return (value === newPassword.getValue()) ? true : 'Passwords do not match.';
                 }
             }],
             

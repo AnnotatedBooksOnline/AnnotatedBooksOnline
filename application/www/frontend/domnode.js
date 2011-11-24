@@ -34,6 +34,8 @@ DomNode.prototype.insert = function(element, before)
     
     if (before !== undefined)
         before = (before.dom !== undefined) ? before.dom.get(0) : $(before).get(0);
+    else
+        before = null;
     
     element.insertBefore(this.dom.get(0), before);
 }
