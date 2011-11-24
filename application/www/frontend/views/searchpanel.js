@@ -84,17 +84,40 @@ Ext.define('Ext.ux.YearBetweenField', {
                 xtype: 'numberfield',
                 allowDecimals: false,
                 autoStripChars: true,
+                allowNegative: false,
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-right: 5px;',
+                minLength: 4,
+                maxLength: 4,
                 allowBlank: true
             },
             items: [{
                 name: 'from',
-                fieldLabel: 'Between'
+                fieldLabel: 'Between',
+                listeners: {
+                    'change': function(f, from) {
+                        var to = this.nextSibling('[name=to]');
+                        if (to.getValue() == null || parseInt(from) > parseInt(to.getValue())) 
+                        {
+                            to.setValue(from);
+                        }
+                        return;
+                    }
+                }
             },{
                 name: 'to',
-                fieldLabel: 'and'
+                fieldLabel: 'and',
+                listeners: {
+                    'change': function(t, to) {
+                        var from = this.previousSibling('[name=from]');
+                        if (from.getValue() == null || parseInt(to) < parseInt(from.getValue())) 
+                        {
+                            from.setValue(to);
+                        }
+                        return;
+                    }
+                }
             }]
         };
         
