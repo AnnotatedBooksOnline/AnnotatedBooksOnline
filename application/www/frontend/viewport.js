@@ -413,13 +413,13 @@ Viewport.prototype.stopDragging = function(event)
     //stop dragging
     this.mouseDown = false;
     
-    //check for rotation
-    if (this.spaceDown)
-        return;
-    
     //show normal cursor
     $(document.body).removeClass("dragging");
     this.dom.removeClass("dragging");
+    
+    //check for rotation
+    if (this.spaceDown)
+        return;
     
     //calculate new position
     var newPosition = {
