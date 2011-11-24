@@ -39,24 +39,22 @@ Ext.define('Ext.ux.RegistrationForm', {
         var defConfig = {
             items: [{
                 name: 'username',
-                fieldLabel: 'Username',
+                fieldLabel: 'Username *',
                 vtype: 'uniqueUsername',
                 minLength: 6,
                 maxLength: 30
             },{
                 name: 'email',
-                fieldLabel: 'Email Address',
+                fieldLabel: 'Email Address *',
                 vtype: 'email',
                 maxLength: 255
             },{
                 name: 'firstName',
-                fieldLabel: 'First name',
-                allowBlank: true,
+                fieldLabel: 'First name *',
                 maxLength: 50
             },{
                 name: 'lastName',
-                fieldLabel: 'Last name',
-                allowBlank: true,
+                fieldLabel: 'Last name *',
                 maxLength: 50
             },{
                 name: 'affiliation',
@@ -81,14 +79,14 @@ Ext.define('Ext.ux.RegistrationForm', {
                 maxLength: 555
             },{
                 name: 'password',
-                fieldLabel: 'Password',
+                fieldLabel: 'Password *',
                 inputType: 'password',
                 style: 'margin-top: 15px',
                 minLength: 8,
                 maxLength: 32
             },{
                 name: 'repeatPassword',
-                fieldLabel: 'Repeat password',
+                fieldLabel: 'Repeat password *',
                 inputType: 'password',
                 
                 // Custom validator implementation - checks that the value matches what was entered

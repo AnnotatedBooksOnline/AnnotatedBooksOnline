@@ -59,7 +59,8 @@ Ext.define('Ext.ux.Welcome', {
             text: 'Login',
             scale: 'large',
             width: buttonWidth,
-            handler: function() {
+            handler: function()
+            {
                 Authentication.showLoginWindow();
             }
         };
@@ -72,7 +73,8 @@ Ext.define('Ext.ux.Welcome', {
             iconCls: 'logout-icon',
             hidden: true,
             width: buttonWidth,
-            handler: function() {
+            handler: function()
+            {
                 Authentication.getInstance().logout();
             }
         };
@@ -83,7 +85,8 @@ Ext.define('Ext.ux.Welcome', {
             text: 'Register',
             scale: 'large',
             width: buttonWidth,
-            handler: function() {
+            handler: function()
+            {
                 Application.getInstance().gotoTab('register', [], true);
             }
         };
@@ -94,7 +97,8 @@ Ext.define('Ext.ux.Welcome', {
             text: 'Search',
             scale: 'large',
             width: buttonWidth,
-            handler: function() {
+            handler: function()
+            {
                 Application.getInstance().openTab('search', [], true);
             }
         };
@@ -106,7 +110,8 @@ Ext.define('Ext.ux.Welcome', {
             scale: 'large',
             hidden: true,
             width: buttonWidth,
-            handler: function() {
+            handler: function()
+            {
                 Application.getInstance().gotoTab('upload', [], true);
             }
         };
@@ -117,7 +122,8 @@ Ext.define('Ext.ux.Welcome', {
             text: 'Info',
             scale: 'large',
             width: buttonWidth,
-            handler: function() {
+            handler: function()
+            {
                 Application.getInstance().gotoTab('info', [], true);
             }
         };
@@ -129,7 +135,8 @@ Ext.define('Ext.ux.Welcome', {
             scale: 'large',
             hidden: true,
             width: buttonWidth,
-            handler: function() {
+            handler: function()
+            {
                 // TODO: change 'info' to 'moderate' page, doesn't exist at this moment
                 Application.getInstance().gotoTab('info', [], true);
             }
@@ -150,7 +157,7 @@ Ext.define('Ext.ux.Welcome', {
                 },
                 items: [
                     registerButton, loginButton, logoutButton, searchButton,
-                    uploadButton, infoButton, moderateButton
+                    /*uploadButton, */infoButton, moderateButton
                 ]
             }, text]
         };
@@ -170,19 +177,19 @@ Ext.define('Ext.ux.Welcome', {
     {
         if (authentication.isLoggedOn())
         {
-            //this.down("[name='users']").show();
-            this.down("[name='upload']").show();
-            this.down("[name='logout']").show();
-            this.down("[name='login']").hide();
-            this.down("[name='register']").hide();
+            //this.down('[name=users]').show();
+            //this.down('[name=upload]').show();
+            this.down('[name=logout]').show();
+            this.down('[name=login]').hide();
+            this.down('[name=register]').hide();
         }
         else
         {
-            //this.down("[name='users']").hide();
-            this.down("[name='upload']").hide();
-            this.down("[name='logout']").hide();
-            this.down("[name='login']").show();
-            this.down("[name='register']").show();
+            //this.down('[name=users]').hide();
+            //this.down('[name=upload]').hide();
+            this.down('[name=logout]').hide();
+            this.down('[name=login]').show();
+            this.down('[name=register]').show();
         }
     }
 });

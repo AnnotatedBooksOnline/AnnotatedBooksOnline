@@ -10,7 +10,7 @@ Ext.define('Ext.ux.ViewerSettingsForm', {
     {
         var _this = this;
         var defConfig = {
-            items: [{
+            items: [/*{
                 name: 'somexitingsetting',
                 fieldLabel: 'Some exiting setting',
                 minLength: 6
@@ -18,6 +18,9 @@ Ext.define('Ext.ux.ViewerSettingsForm', {
                 name: 'anotherxitingsetting',
                 fieldLabel: 'Another exiting setting',
                 minLength: 8
+            }*/
+            {
+                html: 'There are currently no configurable settings.'
             }],
             
             buttons: [{
@@ -77,7 +80,7 @@ Ext.define('Ext.ux.Viewer', {
     initComponent: function()
     {
         var _this = this;
-
+        
         var westRegion = {
             region: 'west',
             xtype: 'navigationpanel',

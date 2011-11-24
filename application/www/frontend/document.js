@@ -19,6 +19,8 @@ Document.prototype = new DomNode;
 Document.prototype.base = DomNode.prototype;
 
 //members
+Document.prototype.scanId;
+
 Document.prototype.dom;
 
 Document.prototype.dimensions;
@@ -30,9 +32,6 @@ Document.prototype.levelSizes;
 Document.prototype.levelVisible;
 Document.prototype.levelTimers;
 
-Document.prototype.bookId;
-Document.prototype.scanId;
-
 //NOTE: should we have some previous state? like current position, rotation, etc?
 
 //constants
@@ -40,14 +39,13 @@ Document.tileSize    = 256;
 Document.invTileSize = 1 / Document.tileSize;
 
 //constructor
-Document.prototype.constructor = function(width, height, maxZoomLevel, bookId, scanId)
+Document.prototype.constructor = function(scanId, width, height, maxZoomLevel)
 {
     //set members
+    this.scanId = scanId;
+    
     this.dimensions   = {width: width, height: height};
     this.maxZoomLevel = maxZoomLevel;
-    
-    this.bookId = bookId;
-    this.scanId = scanId;
     
     //create dom
     this.base.constructor.call(this, '<div class="tiles"></div>');
@@ -203,9 +201,6 @@ Document.prototype.addVisibleTiles =
                 //hostIndex = (hostIndex + 1) & 3; //0-3
                 //var baseUrl = 'http://khm' + hostIndex + '.google.nl/kh/v=92&';
                 //img.src = baseUrl + 'x=' + googleCol + '&y=' + googleRow + '&z=' + googleDepth + '&s=Gali';
-                
-                //img.src = 'file://C:/Users/gerbenvv/Dropbox/SoftwareProject/Documentatie klant/Voorbeelden/Gabriel Harveys Livy/tiles/' +
-                //    'page1_' + zoomLevel + '_' + col + '_' + row + '.jpg;
                 
                 //img.src = 'tiles/' + this.bookId + '/' + this.scanId + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
                 img.src = 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';

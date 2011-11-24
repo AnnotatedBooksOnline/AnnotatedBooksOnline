@@ -17,6 +17,7 @@ Ext.define('Ext.ux.ThumbnailView', {
                          i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : ''];
         }
         
+        // TODO: Use page store.
         var store = Ext.create('Ext.data.ArrayStore', {
             id: 'testStore',
             fields: ['thumbnail', 'rect'],
@@ -36,6 +37,7 @@ Ext.define('Ext.ux.ThumbnailView', {
                     '</div>',
                 '</tpl>',
             ],
+            store: store, //this.getStore(),
             itemSelector: 'div.thumbnail',
             autoScroll: true,
             listeners: {
@@ -49,6 +51,16 @@ Ext.define('Ext.ux.ThumbnailView', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    getStore: function(data)
+    {
+        var store = Ext.create('Ext.data.Store', {
+            model: 'Ext.ux.PageModel',
+            //data: data.columns
+        });
+        
+        return store;
     }
 });
 
