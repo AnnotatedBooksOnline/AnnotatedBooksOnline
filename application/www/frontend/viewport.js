@@ -176,6 +176,7 @@ Viewport.prototype.reset = function()
     ) / Math.LN2;
     
     this.zoom(newZoomLevel);
+    this.zoom(newZoomLevel); // TODO: Most likely due to rounding errors, a second zoom operation is necessary for the correct result.
 }
 
 Viewport.prototype.setDocument = function(document)
