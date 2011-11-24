@@ -34,7 +34,8 @@ Ext.define('Ext.ux.FormBase', {
             },
             
             fieldDefaults: {
-                allowBlank: false
+                allowBlank: false,
+                labelWidth: 120
             },
         };
         
