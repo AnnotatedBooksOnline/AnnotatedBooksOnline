@@ -5,7 +5,6 @@
 Ext.define('Ext.ux.UploadForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.uploadform',
-    requires: ['*'], // TODO: specify
     
     initComponent: function() 
     {

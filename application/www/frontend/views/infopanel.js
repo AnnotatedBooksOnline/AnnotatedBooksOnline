@@ -5,7 +5,6 @@
 Ext.define('Ext.ux.Info', {
     extend: 'Ext.form.Panel',
     alias: 'widget.infopanel',
-    requires: ['*'], // TODO: specify
     bodyPadding: 10,
     // TODO: get from database
     items: {

@@ -5,7 +5,6 @@
 Ext.define('Ext.ux.UserListPanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.userlistpanel',
-    requires: ['*'], // TODO: specify
     
     initComponent: function() 
     {

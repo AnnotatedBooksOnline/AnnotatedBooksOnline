@@ -5,7 +5,6 @@
 Ext.define('Ext.ux.ViewProfilePanel', {
     extend: 'Ext.form.Panel',
     alias: 'widget.viewprofilepanel',
-    requires: ['*'], // TODO: specify
     
     initComponent: function() 
     {

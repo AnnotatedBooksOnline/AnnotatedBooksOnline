@@ -124,7 +124,7 @@ Ext.define('Ext.form.field.SearchComboBox', {
     
     initComponent: function()
     {
-        var store = Ext.create('Ext.data.Store', {
+        var store = Ext.create('Ext.ux.Store', { 
             model: 'Ext.ux.SearchParameterModel',
             data: [{
                 abbreviation: 'select',
@@ -341,7 +341,7 @@ Ext.define('Ext.ux.SearchResultsView', {
     
     getColumnStore: function(data)
     {
-        var store = Ext.create('Ext.data.Store', {
+        var store = Ext.create('Ext.ux.Store', {
             model: 'Ext.ux.SearchColumnModel',
             data: data.columns
         });
@@ -451,7 +451,7 @@ Ext.define('Ext.ux.SortComboBoxField', {
         var _this = this;
         
         var defConfig = {
-            store: Ext.create('Ext.data.Store', {
+            store: Ext.create('Ext.ux.Store', {
                 model: 'Ext.ux.SearchParameterModel',
                 data: [{
                     abbreviation: 'modified',
