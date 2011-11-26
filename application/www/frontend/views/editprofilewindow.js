@@ -15,11 +15,11 @@ Ext.define('Ext.ux.EditProfileForm', {
                 name: 'username',
                 fieldLabel: 'Username',
                 minLength: 6,
-                maxLength: 40
-            },*/{ // TODO: Do we not have to revalidate the new email address?
+                maxLength: 30
+            },*/{
                 name: 'email',
                 fieldLabel: 'Email Address',
-                vtype: 'email',
+                vtype: 'checkEmail',
                 maxLength: 256
             },{
                 name: 'firstName',

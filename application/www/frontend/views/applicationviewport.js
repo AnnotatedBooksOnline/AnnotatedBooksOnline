@@ -263,7 +263,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         xtype: 'registrationpanel',
                         border: false,
                         width: 800,
-                        height: 400
+                        height: 355
                     },{
                         border: false,
                         plain: true,
@@ -287,7 +287,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         xtype: 'uploadform',
                         border: false,
                         width: 800,
-                        height: 600,
                         autoScroll: true
                     },{
                         border: false,

@@ -5,7 +5,6 @@
 Ext.define('Ext.ux.InformationPanel', {
     extend: 'Ext.grid.Panel',
     alias : 'widget.informationpanel',
-    requires: [], //TODO: sepcify
 
     initComponent: function()
     {

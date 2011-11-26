@@ -129,7 +129,7 @@ class UserController extends Controller
         $record = self::getArray($data, 'record');
         
         $userId      = self::getInteger($record, 'userId', 0);
-        $username    = self::getString($record, 'username', '', true, 25);
+        $username    = self::getString($record, 'username', '', true, 30);
         $email       = self::getString($record, 'email', '', true, 255);
         $firstName   = self::getString($record, 'firstName', '', true, 50);
         $lastName    = self::getString($record, 'lastName', '', true, 50);
@@ -173,7 +173,7 @@ class UserController extends Controller
     {
         $record = self::getArray($data, 'record');
         
-        $username    = self::getString($record, 'username', '', true, 25);
+        $username    = self::getString($record, 'username', '', true, 30);
         $email       = self::getString($record, 'email', '', true, 255);
         $firstName   = self::getString($record, 'firstName', '', true, 50);
         $lastName    = self::getString($record, 'lastName', '', true, 50);
@@ -213,10 +213,22 @@ class UserController extends Controller
     public function actionUsernameExists($data)
     {
         // Fetch username.
-        $username = self::getString($data, 'username', '', true, 25);
+        $username = self::getString($data, 'username', '', true, 30);
         
         // Return true if there is atleast one user with the specified username.
         return (bool) UserSearchList::findUsers(array('username' => $username), null, null, null)->
+            getAmount();
+    }
+    
+    /**
+     * Checks whether an email address already exists.
+     */
+    public function actionEmailExists($data)
+    {
+        $email = self::getString($data, 'email', '', true, 255);
+        
+        // Return <code>true</code> if there is atleast 1 user with the specified email.
+        return (bool) UserSearchList::findUsers(array('email' => $email), null, null, null)->
             getAmount();
     }
 }

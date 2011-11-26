@@ -1,30 +1,4 @@
 /*
- * Username uniqueness check.
- */
-
-Ext.apply(Ext.form.VTypes, {
-    uniqueUsername: function(value, field)
-    {
-        // Send existance check request.
-        RequestManager.getInstance().request(
-            'User',
-            'usernameExists',
-            {username: value},
-            this,
-            function(data)
-            {
-                if (data)
-                {
-                    field.markInvalid('Username already in use');
-                }
-            }
-        );
-        
-        return true;
-    }
-});
-
-/*
  * Registration window class.
  */
 
@@ -46,7 +20,7 @@ Ext.define('Ext.ux.RegistrationForm', {
             },{
                 name: 'email',
                 fieldLabel: 'Email Address *',
-                vtype: 'email',
+                vtype: 'emailCheck',
                 maxLength: 255
             },{
                 name: 'firstName',

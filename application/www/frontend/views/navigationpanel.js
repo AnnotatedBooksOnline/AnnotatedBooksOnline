@@ -58,7 +58,7 @@ Ext.define('Ext.ux.ThumbnailView', {
     // NOTE: Name seems to be internally used!
     getStore: function(data)
     {
-        var store = Ext.create('Ext.data.Store', {
+        var store = Ext.create('Ext.ux.Store', {
             model: 'Ext.ux.PageModel',
             //data: data.columns
         });

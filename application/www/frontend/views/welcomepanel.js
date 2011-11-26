@@ -157,7 +157,7 @@ Ext.define('Ext.ux.Welcome', {
                 },
                 items: [
                     registerButton, loginButton, logoutButton, searchButton,
-                    /*uploadButton, */infoButton, moderateButton
+                    uploadButton, infoButton, moderateButton
                 ]
             }, text]
         };
