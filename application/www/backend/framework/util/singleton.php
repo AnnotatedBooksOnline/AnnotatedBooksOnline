@@ -1,7 +1,7 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/helpers/exceptionbase.php';
+require_once 'framework/util/exceptionbase.php';
 
 // Exceptions
 class SingletonException extends ExceptionBase { }

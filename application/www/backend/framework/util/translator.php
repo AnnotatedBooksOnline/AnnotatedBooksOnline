@@ -1,7 +1,7 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/helpers/singleton.php';
+require_once 'framework/util/singleton.php';
 
 /**
  * Translator class.

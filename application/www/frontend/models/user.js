@@ -23,7 +23,8 @@ Ext.define('Ext.ux.UserModel', {
     ],
     proxy: {
         type: 'requestmanager',
-        controller: 'User'
+        controller: 'User',
+        model: 'Ext.ux.UserModel'
     },
     
     getFullName: function()

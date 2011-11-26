@@ -166,10 +166,14 @@ Viewport.prototype.zoom = function(newZoomLevel, viewportPosition)
     var newInvZoomFactor = Math.pow(2, -newZoomLevel);
     
     //set factor of how much to subtract mouse position
-    var factor = (this.zoomFactor * newInvZoomFactor - 1) * this.invZoomFactor;
+    //var factor = (this.zoomFactor * newInvZoomFactor - 1) * this.invZoomFactor;
+    var factor = newInvZoomFactor - this.invZoomFactor;
     
     //calculate new topleft position
-    var newPosition = {x: this.position.x - viewportPosition.x * factor, y: this.position.y - viewportPosition.y * factor};
+    var newPosition = {
+        x: this.position.x - viewportPosition.x * factor,
+        y: this.position.y - viewportPosition.y * factor
+    };
     
     //update viewport
     this.update(newPosition, newZoomLevel);
@@ -184,8 +188,9 @@ Viewport.prototype.reset = function()
         Math.log((this.dimensions.height * 0.8) / this.documentDimensions.height)
     ) / Math.LN2;
     
+    // Zoom twice, to converge to a stable result.
     this.zoom(newZoomLevel);
-    this.zoom(newZoomLevel); // TODO: Most likely due to rounding errors, a second zoom operation is necessary for the correct result.
+    this.zoom(newZoomLevel);
 }
 
 Viewport.prototype.setDocument = function(document)

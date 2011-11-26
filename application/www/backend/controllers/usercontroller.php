@@ -42,9 +42,8 @@ class UserController extends Controller
     */
     
     /**
-    *
-    *
-    */
+     * Loads user(s).
+     */
     public function actionLoad($data)
     {
         // Assert that the user is authenticated. 
@@ -60,16 +59,18 @@ class UserController extends Controller
         $limit  = self::getInteger($data, 'limit',  $total, true, 0, $total);
         $offset = self::getInteger($data, 'offset', 0,      true, 0, $total);
         
-        // Determine id a specific user was requested. If this is the case retrieve this user from the database
-        // and return.
+        // Determine id a specific user was requested. If this is the case retrieve this
+        // user from the database and return.
         if ($id)
         {
             $user = new User($id);
+            
             // TODO: Do a security check on id!
+            
             return array('records' => $user->getValues(), 'total' => 1);
         }
         
-        // TODO: Do a security check on user kind
+        // TODO: Do a security check on user kind.
         
         // Retrieve the search filters from the request.
         $arguments = array();
@@ -115,9 +116,9 @@ class UserController extends Controller
     }
     
     /**
-    *
-    *
-    */
+     *
+     *
+     */
     public function actionSave($data)
     {
         // Check whether logged on.
@@ -207,14 +208,15 @@ class UserController extends Controller
     }
     
     /**
-     * 
-     * 
+     * Checks whether a username already exists.
      */
     public function actionUsernameExists($data)
     {
+        // Fetch username.
         $username = self::getString($data, 'username', '', true, 25);
         
-        // Return <code>true</code> if there is atleast 1 user with the specified username.
-        return (bool)UserSearchList::findUsers(array('username' => $username), null, null, null)->getAmount();
+        // Return true if there is atleast one user with the specified username.
+        return (bool) UserSearchList::findUsers(array('username' => $username), null, null, null)->
+            getAmount();
     }
 }

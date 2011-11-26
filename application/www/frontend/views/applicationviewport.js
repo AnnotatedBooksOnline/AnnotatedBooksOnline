@@ -188,20 +188,38 @@ Ext.define('Ext.ux.ApplicationViewport', {
         {
             case 'book':
                 // Data is supposed to be a book id here.
-                var id = data[0];
-                if (!id)
+                var bookId = data[0];
+                if (!bookId)
                 {
                     return;
                 }
                 
-                // Add a book tab.
-                Ext.apply(tabConfig, {
-                    title: 'Book ' + id,
-                    xtype: 'viewerpanel',
-                    book: new Book(id) // NOTE: This will be asynchronious...
-                });
+                // Fetch book.
+                Book.createFromId(bookId, this,
+                    function(book)
+                    {
+                        // Add a book tab.
+                        Ext.apply(tabConfig, {
+                            xtype: 'viewerpanel',
+                            title: 'Book ' + book.getModel().get('title'), // TODO: Move to viewerpanel?
+                            book: book
+                        });
+                        
+                        // Add tab.
+                        var newTab = this.tabs.add(tabConfig);
+                        
+                        // Activate tab.
+                        if (activateTab !== false)
+                        {
+                            this.tabs.setActiveTab(newTab);
+                        }
+                    },
+                    function()
+                    {
+                        // TODO: Show an error.
+                    });
                 
-                break;
+                return;
                 
             case 'search':
                 // Add a search tab.

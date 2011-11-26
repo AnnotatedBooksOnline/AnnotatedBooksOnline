@@ -14,6 +14,31 @@ class BookController extends Controller
         ;
     }
     
+    /**
+     * Loads book(s).
+     */
+    public function actionLoad($data)
+    {
+        // Retrieve the book id of a specific book from the request.
+        $id = self::getInteger($data, 'id', 0);
+        
+        // Determine id a specific book was requested. If this is the case retrieve this book
+        // from the database and return.
+        if ($id)
+        {
+            return array('records' => array(
+                'bookId' => $id,
+                'title' => 'Foo bar',
+                'scans' => array(
+                    array('scanId' => 1, 'width' => 151, 'height' => 225, 'zoomLevels' => 6)
+                )
+            ), 'total' => 1);
+        }
+    }
+    
+    /**
+     * Searches for books.
+     */
     public function actionSearch($data)
     {
         $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear'))

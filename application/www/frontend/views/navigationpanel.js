@@ -9,9 +9,10 @@ Ext.define('Ext.ux.ThumbnailView', {
     initComponent: function()
     {
         var fields = [];
-        for (var i = 0; i < this.book.getDocumentAmount(); i++)
+        for (var i = 0; i < this.book.getScanAmount(); i++)
         {
-            var document = this.book.getDocuments()[i];
+            var document = this.book.getScans()[i];
+            
             //fields[i] = ['tiles/' + document.bookId + '/' + document.scanId + '/tile_0_0_0.jpg',
             fields[i] = ['tiles/tile_0_0_0.jpg',
                          i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : ''];
@@ -53,6 +54,8 @@ Ext.define('Ext.ux.ThumbnailView', {
         this.callParent();
     },
     
+    /*
+    // NOTE: Name seems to be internally used!
     getStore: function(data)
     {
         var store = Ext.create('Ext.data.Store', {
@@ -62,6 +65,7 @@ Ext.define('Ext.ux.ThumbnailView', {
         
         return store;
     }
+    */
 });
 
 Ext.define('Ext.ux.NavigationPanel', {

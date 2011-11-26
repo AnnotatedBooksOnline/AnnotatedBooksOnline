@@ -1,0 +1,10 @@
+#
+# Apache access file.
+#
+
+# Enable the rewriting engine.
+RewriteEngine On
+
+# Rewrite everyting to index.php.
+# TODO: Remove tiles from the list.
+RewriteRule !(tiles|frontend)/.* index.php [L]

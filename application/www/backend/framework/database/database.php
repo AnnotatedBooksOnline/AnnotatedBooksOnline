@@ -1,8 +1,8 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/helpers/singleton.php';
-require_once 'framework/helpers/configuration.php';
+require_once 'framework/util/singleton.php';
+require_once 'framework/util/configuration.php';
 require_once 'framework/database/resultset.php';
 
 // Exceptions.
@@ -420,6 +420,18 @@ class Query
         return $this;
     }
     
+    /**
+     * Unsafe aggregate function. Handle with care!
+     */
+    public function unsafeAggregate($function, $expression, $as) // TODO: Remove this workaround.
+    {
+        $this->columns[] =  $function . '(' . $expression . ') AS ' .
+            $this->escapeIdentifier($as);
+        
+        return $this;
+    }
+    
+    
     /*
      * Tables.
      */
@@ -641,6 +653,10 @@ class Query
     {
         // Get conditions.
         $conditions = $this->handleConditions($conditions, $joinWithAnd);
+        if (!$conditions)
+        {
+            return;
+        }
         
         // Add clauses to having clause.
         if ($this->havingClause)
@@ -657,6 +673,10 @@ class Query
     {
         // Get conditions.
         $conditions = $this->handleConditions($conditions, $joinWithAnd);
+        if (!$conditions)
+        {
+            return;
+        }
         
         // Add clauses to where clause.
         if ($this->whereClause)
@@ -760,16 +780,5 @@ class Query
         {
             throw new QueryFormatException($errorId);
         }
-    }
-    
-    /**
-     * Unsafe aggregate function. Handle with care!
-     */
-    public function unsafeAggregate($function, $expression, $as)
-    {
-        $this->columns[] =  $function . '(' . $expression . ') AS ' .
-            $this->escapeIdentifier($as);
-        
-        return $this;
     }
 }

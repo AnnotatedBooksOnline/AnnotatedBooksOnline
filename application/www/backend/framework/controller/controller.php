@@ -1,10 +1,10 @@
 <?php
 //[[GPL]]
 
-require 'framework/helpers/exceptionbase.php';
-require 'framework/helpers/configuration.php';
-require 'framework/helpers/translator.php';
-require 'framework/helpers/log.php';
+require 'framework/util/exceptionbase.php';
+require 'framework/util/configuration.php';
+require 'framework/util/translator.php';
+require 'framework/util/log.php';
 
 // Exceptions
 class ControllerException extends ExceptionBase { }
@@ -19,37 +19,60 @@ abstract class Controller
      */
     public static function handleRequest()
     {
+        // Check whether method is post.
+        $postMethod = ($_SERVER['REQUEST_METHOD'] == 'POST');
+        
         try
         {
-            //TODO: (GVV) handle multiple requests:
-            //TODO: (GVV) controller=multirequest, data=[{controller: '..', action: '..', data: [..]}, ..]
-            //TODO: (GVV) handle file uploads, with: output=json/html + custom ExtJS form action?
+            // TODO: (GVV) Handle multiple requests:
+            // TODO: (GVV) Controller=multirequest, data=[{controller: '..', action: '..', data: [..]}, ..].
+            // TODO: (GVV) Handle file uploads, with: output=json/html + custom ExtJS form action?
             
             // Determine the name of the controller and try to create an instance of the controller class.
-            $controllerName = isset($_GET['controller']) ? $_GET['controller'] : '';
+            $controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'Main';
+            $controllerName = preg_replace('/[^\w]+/', '', $controllerName);
             $controller = self::createInstance($controllerName);
             
             // Determine the name of action to call and the corresponding method in the controller.
-            $actionName = isset($_GET['action']) ? $_GET['action'] : '';
+            $actionName = isset($_GET['action']) ? $_GET['action'] : 'index';
+            $actionName = preg_replace('/[^\w]+/', '', $actionName);
             $methodName = 'action' . ucfirst($actionName);
             
             // Determine if the action method exists in the controller.
             if (method_exists($controller, $methodName))
             {
-                // Get the request JSON data.
-                $input = json_decode(file_get_contents('php://input'), true);
-                
                 // Log a messsage.
-                Log::info("Handling action action '%s' of controller '%s'.", $actionName, $controllerName);
+                Log::info("Handling action '%s' of controller '%s'.", $actionName, $controllerName);
+                
+                // Calculate start time.
+                $start = microtime(true);
+                
+                // Get the request JSON data or request parameters.
+                $input = $postMethod ? json_decode(file_get_contents('php://input'), true) : $_GET;
                 
                 // Call the action handler method.
                 $output = $controller->{$methodName}($input);
-        
-                // Set the appropriate content type for a JSON response.
-                header('Content-Type: application/json');
                 
-                // Return the result as a JSON object.
-                echo json_encode($output);
+                // Handle output.
+                if ($postMethod)
+                {
+                    // Set the appropriate content type for a JSON response.
+                    header('Content-Type: application/json');
+                    
+                    // Return the result as a JSON object.
+                    echo json_encode($output);
+                }
+                else if ($output)
+                {
+                    echo $output;
+                }
+                
+                // Calculate end time.
+                $end = microtime(true);
+                
+                // Log a messsage.
+                Log::debug("Action '%s' of controller '%s' took %dms.",
+                    $actionName, $controllerName, round(1000 * ($end - $start)));
             }
             else
             {
@@ -58,11 +81,29 @@ abstract class Controller
         }
         catch (Exception $e)
         {
-            // Set the appropriate content type for a JSON response.
-            header('Content-Type: application/json');
+            // Handle exception.
+            $exception = self::handleException($e);
             
-            // Handle exception and output result array as JSON.
-            echo json_encode(self::handleException($e));
+            // Show exception.
+            if ($postMethod)
+            {
+                // Set the appropriate content type for a JSON response.
+                header('Content-Type: application/json');
+                
+                // Handle exception and output result array as JSON.
+                echo json_encode(self::handleException($e));
+            }
+            else
+            {
+                // Show exception as HTML.
+                echo '<h1>' . htmlspecialchars($exception['message']) . '</h1>';
+                echo '<b>Code:</b> ' . htmlspecialchars($exception['code']) . '<br />';
+                
+                if (isset($exception['trace']))
+                {
+                    echo '<b>Stack trace:</b><br />' . htmlspecialchars($exception['trace']);
+                }
+            }
         }
     }
     
@@ -75,11 +116,11 @@ abstract class Controller
      */
     public static function createInstance($type)
     {
-        $type = strtolower($type);
+        $lowerType = strtolower($type);
         
-        if (file_exists('controllers/' . $type . 'controller.php'))
+        if (file_exists('controllers/' . $lowerType . 'controller.php'))
         {
-            require_once 'controllers/' . $type . 'controller.php';
+            require_once 'controllers/' . $lowerType . 'controller.php';
             
             $className = $type . 'Controller';
             return new $className;

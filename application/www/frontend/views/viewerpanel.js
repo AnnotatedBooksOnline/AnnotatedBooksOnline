@@ -85,8 +85,7 @@ Ext.define('Ext.ux.Viewer', {
             region: 'west',
             xtype: 'navigationpanel',
             collapsible: true,
-            split: true,
-            width: 200,
+            width: 180,
             cls: 'navigation-panel',
             book: _this.book
         };
@@ -134,7 +133,7 @@ Ext.define('Ext.ux.Viewer', {
                     allowBlank: false
                 },{
                     xtype: 'tbtext',
-                    text: 'of ' + _this.book.getDocumentAmount(),
+                    text: 'of ' + _this.book.getScanAmount(),
                     cls: 'total-text'
                 }, '-', {
                     iconCls: 'next-icon',
@@ -167,7 +166,6 @@ Ext.define('Ext.ux.Viewer', {
             xtype: 'informationpanel',
             collapsible: true,
             collapsed: true,
-            split: true,
             width: 200
         };
         

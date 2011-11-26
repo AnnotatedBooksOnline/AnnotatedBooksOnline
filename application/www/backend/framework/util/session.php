@@ -1,8 +1,8 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/helpers/singleton.php';
-require_once 'framework/helpers/configuration.php';
+require_once 'framework/util/singleton.php';
+require_once 'framework/util/configuration.php';
 
 /**
  * Represents the current user session.

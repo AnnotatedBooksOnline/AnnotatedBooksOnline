@@ -118,9 +118,9 @@ Ext.define('Ext.ux.YearBetweenField', {
  * Search combobox class.
  */
 
-Ext.define('Ext.form.field.SearchComboBox', {
+Ext.define('Ext.ux.SearchComboBoxField', {
     extend: 'Ext.form.field.ComboBox',
-    alias: 'widget.searchcombobox',
+    alias: 'widget.searchcomboboxfield',
     
     initComponent: function()
     {
@@ -206,7 +206,7 @@ Ext.define('Ext.ux.SearchField', {
                 allowBlank: true
             },
             items: [{
-                xtype: 'searchcombobox',
+                xtype: 'searchcomboboxfield',
                 name: 'type'
             },{
                 xtype: 'textfield',

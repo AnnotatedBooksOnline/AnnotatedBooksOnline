@@ -4,33 +4,35 @@
 
 Ext.define('Ext.ux.AnnotationModel', {
     extend: 'Ext.data.Model',
-    idProperty: 'id',
-    fields: ['id', 'pageId'],
+    idProperty: 'annId',
+    fields: ['annId', 'scanId'],
     
     proxy: {
         type: 'requestmanager',
-        controller: 'Annotation'
+        controller: 'Annotation',
+        model: 'Ext.ux.AnnotationModel'
     }
 });
 
 /*
- * Page model.
+ * Scan model.
  */
 
-Ext.define('Ext.ux.PageModel', {
+Ext.define('Ext.ux.ScanModel', {
     extend: 'Ext.data.Model',
-    idProperty: 'id',
-    fields: ['id', 'bookId', 'index'],
+    idProperty: 'scanId',
+    fields: ['scanId', 'bookId', 'index', 'status', 'width', 'height', 'zoomLevels'],
 
     hasMany: {
         model: 'Ext.ux.AnnotationModel',
-        name : 'annotations',
-        filterProperty: 'pageId'
+        name: 'annotations',
+        filterProperty: 'scanId'
     },
     
     proxy: {
         type: 'requestmanager',
-        controller: 'Page'
+        controller: 'Scan',
+        model: 'Ext.ux.ScanModel'
     }
 });
 
@@ -40,18 +42,19 @@ Ext.define('Ext.ux.PageModel', {
 
 Ext.define('Ext.ux.BookModel', {
     extend: 'Ext.data.Model',
-    idProperty: 'id',
-    fields: ['id', 'bindingId', 'title'],
+    idProperty: 'bookId',
+    fields: ['bookId', 'bindingId', 'title', 'minYear', 'maxYear', 'publisher'],
 
     hasMany: {
-        model: 'Ext.ux.PageModel',
-        name : 'pages',
+        model: 'Ext.ux.ScanModel',
+        name: 'scans',
         filterProperty: 'bookId'
     },
     
     proxy: {
         type: 'requestmanager',
-        controller: 'Book'
+        controller: 'Book',
+        model: 'Ext.ux.BookModel'
     }
 });
 
@@ -62,16 +65,17 @@ Ext.define('Ext.ux.BookModel', {
 Ext.define('Ext.ux.BindingModel', {
     extend: 'Ext.data.Model',
     idProperty: 'id',
-    fields: ['id', 'title'],
+    fields: ['bindingId', 'title'],
 
     hasMany: {
         model: 'Ext.ux.BookModel',
-        name : 'books',
+        name: 'books',
         filterProperty: 'bindingId'
     },
     
     proxy: {
         type: 'requestmanager',
-        controller: 'Binding'
+        controller: 'Binding',
+        model: 'Ext.ux.BindingModel'
     }
 });

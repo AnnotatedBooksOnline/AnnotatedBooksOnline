@@ -10,19 +10,19 @@
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/application.css" />
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/viewport.css" />
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/icons.css" />
-        <script type="text/javascript" src="frontend/extjs/bootstrap.js"></script>
-        <script type="text/javascript" src="frontend/jquery-1.6.4.min.js"></script>
-        <script type="text/javascript" src="frontend/modernizr.js"></script>
-        <script type="text/javascript" src="frontend/common.js"></script>
-        <script type="text/javascript" src="frontend/eventdispatcher.js"></script>
-        <script type="text/javascript" src="frontend/domnode.js"></script>
-        <script type="text/javascript" src="frontend/document.js"></script>
-        <script type="text/javascript" src="frontend/book.js"></script>
-        <script type="text/javascript" src="frontend/viewport.js"></script>
-        <script type="text/javascript" src="frontend/requestmanager.js"></script>
-        <script type="text/javascript" src="frontend/requestmanagerproxy.js"></script>
-        <script type="text/javascript" src="frontend/authentication.js"></script>
-        <script type="text/javascript" src="frontend/application.js"></script>
+        <script type="text/javascript" src="frontend/extjs/ext-all.js"></script>
+        <script type="text/javascript" src="frontend/util/jquery-1.6.4.min.js"></script>
+        <script type="text/javascript" src="frontend/util/modernizr.min.js"></script>
+        <script type="text/javascript" src="frontend/logic/common.js"></script>
+        <script type="text/javascript" src="frontend/logic/eventdispatcher.js"></script>
+        <script type="text/javascript" src="frontend/logic/domnode.js"></script>
+        <script type="text/javascript" src="frontend/logic/document.js"></script>
+        <script type="text/javascript" src="frontend/logic/book.js"></script>
+        <script type="text/javascript" src="frontend/logic/viewport.js"></script>
+        <script type="text/javascript" src="frontend/logic/requestmanager.js"></script>
+        <script type="text/javascript" src="frontend/logic/requestmanagerproxy.js"></script>
+        <script type="text/javascript" src="frontend/logic/authentication.js"></script>
+        <script type="text/javascript" src="frontend/logic/application.js"></script>
         <script type="text/javascript" src="frontend/models/user.js"></script>
         <script type="text/javascript" src="frontend/models/book.js"></script>
         <script type="text/javascript" src="frontend/views/formbase.js"></script>
@@ -46,7 +46,7 @@
         <!-- History form. -->
         <form id="history-form" class="x-hide-display">
             <input type="hidden" id="x-history-field" />
-            <iframe id="x-history-frame"></iframe>
+            <iframe id="x-history-frame" src="javascript:'';"></iframe>
         </form>
     </body>
 </html>

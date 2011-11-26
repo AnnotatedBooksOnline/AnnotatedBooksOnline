@@ -1,9 +1,0 @@
-#
-# Apache access file.
-#
-
-# Enable the rewriting engine.
-RewriteEngine On
-
-# Rewrite everyting to index.php
-RewriteRule .* index.php [L]

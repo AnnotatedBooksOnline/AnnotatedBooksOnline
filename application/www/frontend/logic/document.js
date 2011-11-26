@@ -39,13 +39,17 @@ Document.tileSize    = 256;
 Document.invTileSize = 1 / Document.tileSize;
 
 //constructor
-Document.prototype.constructor = function(scanId, width, height, maxZoomLevel)
+Document.prototype.constructor = function(scanId, width, height, zoomLevels, getImageUrl)
 {
+    // TODO: reverse zoom levels and make width/height be defined at level 0
+    
     //set members
     this.scanId = scanId;
     
     this.dimensions   = {width: width, height: height};
-    this.maxZoomLevel = maxZoomLevel;
+    this.maxZoomLevel = zoomLevels - 1;
+    
+    this.getImageUrl = getImageUrl;
     
     //create dom
     this.base.constructor.call(this, '<div class="tiles"></div>');
@@ -170,7 +174,6 @@ Document.prototype.addVisibleTiles =
     var fragment = document.createDocumentFragment();
     
     //add new tiles
-    var hostIndex = 0;
     for (var row = startRow; row <= endRow; ++row)
     {
         for (var col = startCol; col <= endCol; ++col)
@@ -188,35 +191,23 @@ Document.prototype.addVisibleTiles =
                 
                 img.style.left    = x + 'px';
                 img.style.top     = y + 'px';
+                
+                img.src = this.getImageUrl(row, col, zoomLevel);
+                
                 //img.style.width   = Document.tileSize + 'px';
                 //img.style.height  = Document.tileSize + 'px';
                 
                 //img.style.display = 'none';
                 
-                //get google maps coordinates
-                //var googleCol   = col;
-                //var googleRow   = row;
-                //var googleDepth = zoomLevel;
-                
-                //hostIndex = (hostIndex + 1) & 3; //0-3
-                //var baseUrl = 'http://khm' + hostIndex + '.google.nl/kh/v=92&';
-                //img.src = baseUrl + 'x=' + googleCol + '&y=' + googleRow + '&z=' + googleDepth + '&s=Gali';
-                
-                //img.src = 'tiles/' + this.bookId + '/' + this.scanId + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-                img.src = 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-                
                 //img.onload = function(event) {
                 //    var event  = event || window.event;
                 //    var target = event.target || event.srcElement;
                 //    
-                //    target.style.display = "";
+                //    target.style.display = '';
                 //};
                 
                 //add it to the fragment
                 fragment.appendChild(img);
-                
-                //http://mt0.google.com/vt/lyrs=h@160000000&hl=en&x=
-                //http://khm0.google.nl/kh/v=92&x
             }
         }
     }
@@ -274,6 +265,8 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
     
     /*
     
+    Build transformation matrix from the following transformations:
+    
     translate(x2, y2) . scale(s) . rotate(r) . translate(x1, y1)
     
     =
@@ -287,6 +280,13 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
     s * cos r    s * -sin r    x1 * s * cos r + y1 * s * -sin r + x2
     s * sin r    s *  cos r    x1 * s * sin r + y1 * s *  cos r + y2
     0            0             1
+    
+    legend:
+    
+    x1, y1: level offset
+    r:      rotation
+    s:      scale
+    x2, y2: position
     
     */
     
@@ -324,7 +324,7 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
     
     //show container and set opacity
     if (!this.levelVisible[zoomLevel])
-        levelContainer.style.display = "";
+        levelContainer.style.display = '';
     
     //clear current timer
     if (this.levelTimers[zoomLevel] !== undefined)
@@ -383,20 +383,20 @@ Document.prototype.updateLevels = function(area)
         {
             var container = this.levelContainers[i];
             
-            container.style.display = "none";
+            container.style.display = 'none';
             
             if (hasTransforms)
             {
-                container.style.transform       = "";
-                container.style.webkitTransform = "";
-                container.style.MozTransform    = "";
-                container.style.OTransform      = "";
-                container.style.msTransform     = "";
+                container.style.transform       = '';
+                container.style.webkitTransform = '';
+                container.style.MozTransform    = '';
+                container.style.OTransform      = '';
+                container.style.msTransform     = '';
             }
             else
             {
-                container.style.left = "";
-                container.style.top  = "";
+                container.style.left = '';
+                container.style.top  = '';
             }
             
             this.levelVisible[i] = false;
