@@ -107,6 +107,12 @@ Ext.define('Ext.ux.RegistrationForm', {
         
         Ext.apply(this, defConfig);
         
+        this.listeners = {
+            validitychange: function(comp, valid) {
+                this.down('button').setDisabled(!valid);
+            }
+        };
+        
         this.callParent();
     },
     
