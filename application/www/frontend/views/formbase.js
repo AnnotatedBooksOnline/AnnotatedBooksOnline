@@ -4,7 +4,6 @@
 
 Ext.define('Ext.ux.FormBase', {
     extend: 'Ext.form.Panel',
-    requires: ['*'], // TODO: specify
     
     initComponent: function() 
     {
