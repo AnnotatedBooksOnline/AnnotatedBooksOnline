@@ -231,8 +231,10 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, mainLevel
     var startCol = Math.max(0, Math.floor(area.topLeft.x * zoomFactor * Document.invTileSize));
     var startRow = Math.max(0, Math.floor(area.topLeft.y * zoomFactor * Document.invTileSize));
     
-    var endCol = Math.min(size.cols - 1, Math.floor(area.bottomRight.x * zoomFactor * Document.invTileSize));
-    var endRow = Math.min(size.rows - 1, Math.floor(area.bottomRight.y * zoomFactor * Document.invTileSize));
+    var endCol = Math.min(size.cols - 1,
+                          Math.floor(area.bottomRight.x * zoomFactor * Document.invTileSize));
+    var endRow = Math.min(size.rows - 1,
+                          Math.floor(area.bottomRight.y * zoomFactor * Document.invTileSize));
     
     
     

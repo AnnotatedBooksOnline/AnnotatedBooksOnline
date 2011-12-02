@@ -244,7 +244,11 @@ Viewport.prototype.initialize = function()
     
     //add mouse scroll event for firefox
     if (window.addEventListener)
-        this.dom.get(0).addEventListener('DOMMouseScroll', function(event) { _this.scrollToZoom(event); }, false);
+    {
+        this.dom.get(0).addEventListener('DOMMouseScroll', function(event) { 
+            _this.scrollToZoom(event); 
+        }, false);
+    }
 }
 
 Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
@@ -286,7 +290,8 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     
     if (areaWidth < this.dimensions.width)
     {
-        var centerOffset = {x: this.documentDimensions.width * 0.5, y: this.documentDimensions.height * 0.5};
+        var centerOffset = {x: this.documentDimensions.width * 0.5, 
+                            y: this.documentDimensions.height * 0.5};
         var rotatedCenterOffset = rotatePoint(centerOffset, newRotation);
         
         newPosition.x = rotatedCenterOffset.x - this.dimensions.width * 0.5 * newInvZoomLevel;
@@ -298,7 +303,8 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     
     if (areaHeight < this.dimensions.height)
     {
-        var centerOffset = {x: this.documentDimensions.width * 0.5, y: this.documentDimensions.height * 0.5};
+        var centerOffset = {x: this.documentDimensions.width * 0.5, 
+                            y: this.documentDimensions.height * 0.5};
         var rotatedCenterOffset = rotatePoint(centerOffset, newRotation);
         
         newPosition.y = rotatedCenterOffset.y - this.dimensions.height * 0.5 * newInvZoomLevel;
@@ -336,7 +342,8 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     
     
     //dispatch event
-    this.eventDispatcher.trigger('change', this.position, this.zoomLevel, this.rotation, this.visibleArea);
+    this.eventDispatcher.trigger('change', this.position, this.zoomLevel, this.rotation, 
+                                 this.visibleArea);
     
     
     //DEBUG: show zoom and position
@@ -369,7 +376,8 @@ Viewport.prototype.doDragging = function(event)
         return;
     
     //calculate delta and set new mouse position
-    this.deltaPosition = {x: event.pageX - this.mousePosition.x, y: event.pageY - this.mousePosition.y};
+    this.deltaPosition = {x: event.pageX - this.mousePosition.x,
+                          y: event.pageY - this.mousePosition.y};
     this.mousePosition = {x: event.pageX, y: event.pageY};
     
     //check for rotation
@@ -393,7 +401,8 @@ Viewport.prototype.doDragging = function(event)
         };
         
         //calculate rotation of mouse
-        var mouseRotation = Math.atan2(mouseOffset.y - centerOffset.y, mouseOffset.x - centerOffset.x);
+        var mouseRotation = Math.atan2(mouseOffset.y - centerOffset.y, 
+                                       mouseOffset.x - centerOffset.x);
         
         if (this.mouseRotation === undefined)
         {
@@ -407,7 +416,8 @@ Viewport.prototype.doDragging = function(event)
         }
         
         //calculate center position
-        var centerPosition = {x: this.position.x + centerOffset.x, y: this.position.y + centerOffset.y};
+        var centerPosition = {x: this.position.x + centerOffset.x,
+                              y: this.position.y + centerOffset.y};
         
         //rotate center position
         centerPosition = rotatePoint(centerPosition, deltaRotation);
