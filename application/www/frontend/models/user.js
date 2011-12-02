@@ -19,7 +19,7 @@ Ext.define('Ext.ux.UserModel', {
        
        // Passwords are needed for registration and profile. Not filled when fetching a user.
        {name: 'password'},
-       {name: 'newPassword'},
+       {name: 'newPassword'}
     ],
     proxy: {
         type: 'requestmanager',

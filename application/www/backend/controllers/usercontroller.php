@@ -225,10 +225,23 @@ class UserController extends Controller
      */
     public function actionEmailExists($data)
     {
+        // Fetch email.
         $email = self::getString($data, 'email', '', true, 255);
         
         // Return <code>true</code> if there is atleast 1 user with the specified email.
         return (bool) UserSearchList::findUsers(array('email' => $email), null, null, null)->
             getAmount();
+    }
+    
+    /**
+     * Deletes an user.
+     */
+    public function actionDeleteUser($data)
+    {
+        // Fetch username.
+        $username = self::getString($data, 'username', '', true, 30);
+        
+        // Deletes the user from the database with this username.
+        // TODO: delete from db.
     }
 }
