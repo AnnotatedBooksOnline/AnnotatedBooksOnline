@@ -19,10 +19,6 @@ Document.prototype = new DomNode;
 Document.prototype.base = DomNode.prototype;
 
 //members
-Document.prototype.scanId;
-
-Document.prototype.dom;
-
 Document.prototype.dimensions;
 Document.prototype.maxZoomLevel;
 
@@ -32,27 +28,26 @@ Document.prototype.levelSizes;
 Document.prototype.levelVisible;
 Document.prototype.levelTimers;
 
-//NOTE: should we have some previous state? like current position, rotation, etc?
+//NOTE: should we have some state? like current position, rotation, etc?
 
 //constants
 Document.tileSize    = 256;
 Document.invTileSize = 1 / Document.tileSize;
 
 //constructor
-Document.prototype.constructor = function(scanId, width, height, zoomLevels, getImageUrl)
+Document.prototype.constructor = function(width, height, zoomLevels, getImageUrl)
 {
-    // TODO: reverse zoom levels and make width/height be defined at level 0
+    // TODO: reverse zoom levels and make width/height be defined at level 0.
+    // TODO: remove scan id.
     
     //set members
-    this.scanId = scanId;
-    
     this.dimensions   = {width: width, height: height};
     this.maxZoomLevel = zoomLevels - 1;
     
     this.getImageUrl = getImageUrl;
     
     //create dom
-    this.base.constructor.call(this, '<div class="tiles"></div>');
+    this.base.constructor.call(this, '<div class="document"></div>');
     
     //initialize
     this.initialize();
@@ -215,7 +210,7 @@ Document.prototype.addVisibleTiles =
     levelContainer.appendChild(fragment);
 }
 
-Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
+Document.prototype.updateLevel = function(area, zoomLevel, levelScale, mainLevel)
 {
     
     //get level container
@@ -281,12 +276,12 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
     s * sin r    s *  cos r    x1 * s * sin r + y1 * s *  cos r + y2
     0            0             1
     
-    legend:
+    Legend:
     
     x1, y1: level offset
     r:      rotation
-    s:      scale
-    x2, y2: position
+    s:      level scale
+    x2, y2: scaled position
     
     */
     
@@ -335,7 +330,7 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, delta)
     
     //check whether to postpone updating tiles
     var zooming = !this.levelVisible[zoomLevel];
-    if (!delta && !zooming)
+    if (mainLevel && !zooming)
     {
         //add new tiles
         this.addVisibleTiles(levelContainer, zoomLevel, remainingTiles, offset, startRow, endRow, startCol, endCol);
@@ -371,9 +366,9 @@ Document.prototype.updateLevels = function(area)
     var scale = this.zoomFactor / ceiledZoomFactor;
     
     //handle three main levels
-    this.updateLevel(area, ceiledZoomLevel,     scale,      0);
-    this.updateLevel(area, ceiledZoomLevel - 1, scale * 2, -1);
-    this.updateLevel(area, ceiledZoomLevel - 2, scale * 4, -2);
+    this.updateLevel(area, ceiledZoomLevel,     scale,     true);
+    this.updateLevel(area, ceiledZoomLevel - 1, scale * 2, false);
+    this.updateLevel(area, ceiledZoomLevel - 2, scale * 4, false);
     
     //hide all levels above current zoom level, show all level above it
     for (var i = 0; i < this.levelContainers.length; ++i)

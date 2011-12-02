@@ -4,24 +4,24 @@
 
 .header .x-panel-body
 {
-	background: url(../images/header.png) 20px 7px no-repeat;
-	padding: 25px 0px 0px 130px;
-	background-color: #E7ECF3;
-	color: #15498B;
+    background: url(../images/header.png) 20px 7px no-repeat;
+    padding: 25px 0px 0px 130px;
+    background-color: #E7ECF3;
+    color: #15498B;
 }
 
 .header .x-panel-body h1
 {
-	font-size: 25pt;
+    font-size: 25pt;
 }
 
 a
 {
-	text-decoration: underline;
-	color: #15498B;
+    text-decoration: underline;
+    color: #15498B;
 }
 
 a:hover
 {
-	text-decoration: none;
+    text-decoration: none;
 }

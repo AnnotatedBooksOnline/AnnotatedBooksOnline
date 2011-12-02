@@ -19,7 +19,6 @@ Viewport.prototype = new DomNode;
 Viewport.prototype.base = DomNode.prototype;
 
 //members
-Viewport.prototype.dom;
 Viewport.prototype.dimensions;
 
 Viewport.prototype.eventDispatcher;
@@ -39,6 +38,9 @@ Viewport.prototype.rotation      = 0;
 Viewport.prototype.zoomLevel     = 0;
 Viewport.prototype.zoomFactor    = 1;
 Viewport.prototype.invZoomFactor = 1;
+
+//constants
+Viewport.margin = 20;
 
 //constructor
 Viewport.prototype.constructor = function(width, height, document)
@@ -218,6 +220,16 @@ Viewport.prototype.initialize = function()
     //append document to our dom
     this.document.insert(this);
     
+    
+    
+    // DEBUG: Add an overlay.
+    
+    //this.overlay = new PolygonOverlay();
+    //this.overlay.insert(this);
+    
+    
+    
+    
     //initialize viewport
     this.reset();
     
@@ -248,30 +260,18 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     if (newRotation === undefined)
         newRotation = this.rotation;
     
-    
-    
-    
-    
-    //TODO: move checking to Document, make it a common function for TextDocument and TilePyramidDocument.
-    
-    
-    
-    
     // Check zoom level.
     if (newZoomLevel < 0)
         newZoomLevel = 0;
     else if (newZoomLevel > this.maxZoomLevel)
         newZoomLevel = this.maxZoomLevel;
     
-    //round new zoom level to one tens
-    //newZoomLevel = Math.round(newZoomLevel * 10) / 10; //TODO: find a way around ceiling problem
-    
     //calculate zoom factor
     var newZoomFactor   = Math.pow(2, newZoomLevel);
     var newInvZoomLevel = 1 / newZoomFactor;
     
     //do some bounds checking, and center document if smaller than viewport
-    var scaledMargin = 20 * newInvZoomLevel; //TODO: make margin setting
+    var scaledMargin = Viewport.margin * newInvZoomLevel;
     
     var topLeft     = {x: -scaledMargin, y: -scaledMargin};
     var bottomRight = {
@@ -308,6 +308,9 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     else if (newPosition.y > (documentBox.bottomRight.y - this.dimensions.height * newInvZoomLevel))
         newPosition.y = documentBox.bottomRight.y - this.dimensions.height * newInvZoomLevel;
     
+    
+    
+    
     //set new zoom level and factors
     this.zoomLevel     = newZoomLevel;
     this.zoomFactor    = newZoomFactor;
@@ -320,8 +323,17 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     //get visible area
     this.visibleArea = this.getVisibleArea();
     
-    //DEBUG: update document
+    
+    
+    
+    //update document
     this.document.update(this.position, this.zoomLevel, this.rotation, this.visibleArea);
+    
+    
+    // DEBUG: Update overlay.
+    //this.overlay.update(this.position, this.zoomLevel, this.rotation, this.visibleArea);
+    
+    
     
     //dispatch event
     this.eventDispatcher.trigger('change', this.position, this.zoomLevel, this.rotation, this.visibleArea);

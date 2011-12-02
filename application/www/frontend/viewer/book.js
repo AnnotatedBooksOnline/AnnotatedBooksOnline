@@ -101,7 +101,6 @@ Book.prototype.initialize = function()
 Book.documentFromScan = function(scan)
 { 
     return new Document(
-        scan.get('scanId'),
         scan.get('width'),
         scan.get('height'),
         scan.get('zoomLevels'),
