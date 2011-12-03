@@ -52,7 +52,7 @@ Ext.define('Ext.ux.ThumbnailView', {
         Ext.apply(this, defConfig);
         
         this.callParent();
-    },
+    }//,
     
     /*
     // NOTE: Name seems to be internally used!
