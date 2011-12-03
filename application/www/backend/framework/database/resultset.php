@@ -52,7 +52,8 @@ class ResultSet implements IteratorAggregate
         $row = $this->statement->fetch(PDO::FETCH_ASSOC);
         if (!$row)
         {
-            // TODO: Throw error.
+            $err = $this->statement->errorInfo();
+            throw new DatabaseException('fetch-failed', $err[2]);
         }
         
         return new ResultSetRow($row);

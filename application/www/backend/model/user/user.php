@@ -12,6 +12,22 @@ class UserNotFoundException extends ExceptionBase
     }
 }
 
+class UserBannedException extends ExceptionBase
+{
+    public function __construct($username)
+    {
+        parent::__construct('user-banned', $username);
+    }
+}
+
+class UserStillPendingException extends ExceptionBase
+{
+    public function __construct($username)
+    {
+        parent::__construct('user-pending', $username);
+    }
+}
+
 /**
  * Class representing a user entity.
  */
@@ -104,9 +120,8 @@ class User extends Entity
     }
     
     /**
-     * Gets the table name.
-     *
-     * @return  The table name.
+     * Saves the entity to the database. A database row is inserted if the entity does not exist
+     * in the database yet. A database row is updated if the entity exists in the database.
      */
     public function save()
     {

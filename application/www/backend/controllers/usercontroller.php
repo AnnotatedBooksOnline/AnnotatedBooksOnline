@@ -226,7 +226,7 @@ class UserController extends Controller
     public function actionEmailExists($data)
     {
         // Fetch email.
-        $email = self::getString($data, 'email', '', true, 255);
+        $email = self::getString($data, 'email', '', true, 256);
         
         // Return <code>true</code> if there is atleast 1 user with the specified email.
         return (bool) UserSearchList::findUsers(array('email' => $email), null, null, null)->
@@ -242,6 +242,49 @@ class UserController extends Controller
         $username = self::getString($data, 'username', '', true, 30);
         
         // Deletes the user from the database with this username.
-        // TODO: delete from db.
+        $query = Query::delete('Users')->where('username = :username');
+        
+        $query->execute(array('username' => $username));
     }
+    
+    /**
+     * Bans a user.
+     */
+    public function actionBanUser($data)
+    {
+        // Fetch username.
+        $username = self::getString($data, 'username', '', true, 30);
+        
+        // Sets the ban flag for this user.
+        $query = Query::update('Users', array('banned' => '1'))->where('username = :username');
+        
+        $query->execute(array('username' => $username));
+    }
+    
+    /**
+     * Activates a pending user by setting the active-flag and removing the PendingUser entry.
+     */
+//     public function actionBanUser($data)
+//     {
+//         // Fetch username.
+//         $username = self::getString($data, 'username', '', true, 30);
+        
+//         //TODO: Determine user id.
+//         $uid = NULL;
+        
+        
+//         //Start a transaction.
+//         Database::getInstance()->startTransaction();
+        
+//         // Sets the active flag for this user.
+//         $query = Query::update('Users', array('active' => '1'))->where('userId = :uid');
+//         $query->execute(array('uid' => $uid));
+        
+//         // Erases this user's column from the PendingUser table.
+//         $query = Query::delete('PendingUsers')->where('userId = :uid');
+//         $query->execute(array('uid' => $uid));
+        
+//         // Commit the transaction.
+//         Database::getInstance()->commit();
+//     }
 }
