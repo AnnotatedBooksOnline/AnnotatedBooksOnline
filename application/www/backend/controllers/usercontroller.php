@@ -201,10 +201,14 @@ class UserController extends Controller
         $user = new User();
         $user->setValues($values);
         $user->save();
+        // TODO: Set new userId.
         
-        return array('records' => $values); // TODO: Set new userId.
+        // Now create a pending user.
+        //$puser = PendingUser::fromUser($user);
+        //$puser->save();
         
-        // TODO: Create a pending user.
+        
+        return array('records' => $values); 
     }
     
     /**

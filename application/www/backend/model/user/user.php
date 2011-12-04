@@ -34,9 +34,9 @@ class UserStillPendingException extends ExceptionBase
 class User extends Entity
 {
     /** Rank constants. */
-    const RANK_NONE      = 0;
+    const RANK_NONE      = 0; //TODO: Should be 10 (asumming with RANK_NONE a regular registered user is meant)
     const RANK_MODERATOR = 1;
-    const RANK_ADMIN     = 2;
+    const RANK_ADMIN     = 2; //TODO: Should be 50
     
     /** User id. */
     protected $userId;
