@@ -52,7 +52,8 @@ class ResultSet implements IteratorAggregate
         $row = $this->statement->fetch(PDO::FETCH_ASSOC);
         if (!$row)
         {
-            // TODO: Throw error.
+            $err = $this->statement->errorInfo();
+            throw new DatabaseException('fetch-failed', $err[2]);
         }
         
         return new ResultSetRow($row);
@@ -166,7 +167,8 @@ class ResultSetRow
         // }
     }
 
-    // TODO: get value as number, date, blob etc.
+    
+    // TODO: get value as date, blob etc.
 
     /**
      * Returns an associative array with the column names and corresponding alues.

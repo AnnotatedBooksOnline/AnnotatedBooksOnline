@@ -240,10 +240,7 @@ class Query
         $this->clear();
         
         $this->kind = $kind;
-    }
-    
-    
-    
+    }    
     
     
     /*
@@ -278,10 +275,37 @@ class Query
     */
     
     
+    /*
+     * Helper methods for inserting specific kinds of data.
+     */
     
+    /**
+     * Converts a Unix timestamp to a string representing a date (not a time) that can be used in
+     * database queries.
+     * 
+     *  @param $timestamp A Unix timestamp (seconds since the epoch), or null if you want to get 
+     *                    the current date.
+     *  
+     *  @return string    A string representing the date in which the timestamp lies. Can be used 
+     *                    in database queries.
+     */
+    public static function toDate($timestamp = null)
+    {
+        if($timestamp === null)
+            $timestamp = time();
+        
+        return date('Y-m-d', $timestamp);
+    }
     
-    
-    
+    /**
+     * Converts a string representation of a date to a Unix timestamp of the first second of that 
+     * date.
+     */
+    public static function fromDate($date)
+    {
+        //TODO: test
+        return strtotime($date);
+    }
     
     /*
      * Helper methods.
@@ -580,8 +604,7 @@ class Query
      */
     
     /**
-     * Builds the query. It does not clear the query 
-     * afterwards.
+     * Builds the query. It does not clear the query afterwards.
      * 
      * @return  The full SQL query.
      * 
