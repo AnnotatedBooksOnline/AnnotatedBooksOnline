@@ -170,7 +170,7 @@ class User extends Entity
     private static function secureHash($password)
     {
         // Generate a salt based on the user ID. This salt does not have to be secure.
-        //$salt = md5('user' . $password); // TODO: use salt.
+        //$salt = md5('user' . $password); 
         
         // Use Blowfish with 1024 passes to generate a sufficiently secure password.
         //$algorithm = '$2a';

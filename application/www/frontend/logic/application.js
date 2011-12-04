@@ -88,8 +88,6 @@ Application.prototype.openTab = function(type, data, activateTab)
     }
     else if (this.tabNeedsNoAuthentication(type))
     {
-        // TODO: Show a message?
-        
         return;
     }
     
@@ -115,8 +113,6 @@ Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
     }
     else if (this.tabNeedsNoAuthentication(type))
     {
-        // TODO: Show a message?
-        
         return;
     }
     
@@ -268,6 +264,7 @@ Application.prototype.tabNeedsAuthentication = function(type)
         case 'register':
         case 'welcome':
         case 'info':
+        case 'upload':
             return false;
     }
     

@@ -43,8 +43,6 @@ function rotatePoint(point, angle)
 // Gets bounding box of a rotated bounding box.
 function rotateBoundingBox(aabb, angle)
 {
-    // TODO: Optimize this.
-    
     // Calculate topright and bottomleft.
     var topRight    = {x: aabb.bottomRight.x, y: aabb.topLeft.y};
     var bottomLeft  = {x: aabb.topLeft.x, y: aabb.bottomRight.y};

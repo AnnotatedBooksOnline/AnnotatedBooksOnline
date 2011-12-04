@@ -278,7 +278,6 @@ Ext.define('Ext.ux.UploadForm', {
         };
         
         var defConfig = {
-            // TODO : width/dimensions
             items: [{
                 xtype: 'fieldset',
                 title: 'Upload',
