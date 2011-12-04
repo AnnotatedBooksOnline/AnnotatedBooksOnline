@@ -266,7 +266,7 @@ class UserController extends Controller
     }
     
     /**
-     * Activates a pending user by setting the active-flag and removing the PendingUser entry.
+     * Activates a pending user by setting the active-flag and removing the PendingUser entry. 
      */
     public function actionActivateUser($data)
     {

@@ -7,6 +7,9 @@ require_once 'framework/database/entity.php';
  */
 class PendingUser extends Entity
 {
+    /** PendingUser id */
+    protected $pendingUserId;
+    
     /** User id. */
     protected $userId;
     
@@ -36,9 +39,9 @@ class PendingUser extends Entity
      */
     private static function generateConfirmationCode($user)
     {
-        // Since the only real requirement for confirmation codes should be uniqueness (or at least
-        // having a one in a gazillion chance of not being unique) I'll simply take the MD5-hash of 
-        // the username, the time and a smiley face.
+        // Since the only real requirements for confirmation codes should be uniqueness (or at least
+        // having a one in a gazillion chance of not being unique) and not being directly guessable
+        // I'll simply take the MD5-hash of the username, the time and a smiley face.
 
         return md5($user->getUserName() . time() . ':)');
     }
@@ -47,7 +50,8 @@ class PendingUser extends Entity
      * Constructs a new PendingUser based on an existing User. This method will also generate a 
      * confirmation code and set a expiration date. 
      * 
-     * This new pending user can subsequently be saved to create a new database entry.
+     * This new pending user can subsequently be saved to create a new database entry or update an
+     * existing one.
      * 
      * @return PendingUser The new pending user.
      */
@@ -81,7 +85,7 @@ class PendingUser extends Entity
      */
     public static function getPrimaryKeys()
     {
-        return array('userId');
+        return array('pendingUserId');
     }
     
     /**
@@ -89,7 +93,7 @@ class PendingUser extends Entity
      */
     public static function getColumns()
     {
-        return array('confirmationCode', 'expirationDate');
+        return array('userId', 'confirmationCode', 'expirationDate');
     }
     
     // Getters and setters.
