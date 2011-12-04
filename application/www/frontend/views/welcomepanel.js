@@ -163,7 +163,6 @@ Ext.define('Ext.ux.Welcome', {
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
         eventDispatcher.bind('change', this, this.onAuthenticationChange);
         
-        // TODO: Say "Hello, <user>" or so.
         //eventDispatcher.bind('modelchange', this, this.onAuthenticationModelChange);
         
         this.callParent();

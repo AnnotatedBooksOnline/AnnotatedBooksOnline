@@ -115,9 +115,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.ux.Viewer.showSettingsWindow();
                         }
                     }
-                }/*,{ // TODO: Make a help functionality.
-                    text: 'Help...'
-                }*/]
+                }]
             }],
             border: false
         };

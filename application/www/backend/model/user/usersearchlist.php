@@ -64,8 +64,6 @@ class UserSearchList
             {
                 if (isset($selectColumns[$column]))
                 {
-                    // TODO: Ordering by multiple columns does not yet work..
-                    
                     $query->orderBy($column, $order);
                 }
             }
