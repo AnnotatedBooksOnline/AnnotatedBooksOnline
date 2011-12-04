@@ -240,10 +240,7 @@ class Query
         $this->clear();
         
         $this->kind = $kind;
-    }
-    
-    
-    
+    }    
     
     
     /*
@@ -277,15 +274,10 @@ class Query
     
     */
     
-    
-    
-    
-    
-    
-    
     /*
      * Helper methods.
      */
+    
     
     /**
      * Clears all query elements that have been set.
@@ -580,8 +572,7 @@ class Query
      */
     
     /**
-     * Builds the query. It does not clear the query 
-     * afterwards.
+     * Builds the query. It does not clear the query afterwards.
      * 
      * @return  The full SQL query.
      * 

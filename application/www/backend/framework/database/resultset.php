@@ -167,7 +167,8 @@ class ResultSetRow
         // }
     }
 
-    // TODO: get value as number, date, blob etc.
+    
+    // TODO: get value as date, blob etc.
 
     /**
      * Returns an associative array with the column names and corresponding alues.

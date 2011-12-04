@@ -6,7 +6,7 @@ require_once 'util/authentication.php';
 require_once 'model/user/usersearchlist.php';
 
 /**
- * Book controller class.
+ * User controller class.
  */
 class UserController extends Controller
 {
@@ -264,27 +264,23 @@ class UserController extends Controller
     /**
      * Activates a pending user by setting the active-flag and removing the PendingUser entry.
      */
-//     public function actionBanUser($data)
-//     {
-//         // Fetch username.
-//         $username = self::getString($data, 'username', '', true, 30);
+    public function actionActivateUser($data)
+    {
+        // Fetch user id.
+        $uid = self::getInteger($data, 'id');
         
-//         //TODO: Determine user id.
-//         $uid = NULL;
+        //Start a transaction.
+        Database::getInstance()->startTransaction();
         
+        // Sets the active flag for this user.
+        $query = Query::update('Users', array('active' => '1'))->where('userId = :uid');
+        $query->execute(array('uid' => $uid));
         
-//         //Start a transaction.
-//         Database::getInstance()->startTransaction();
+        // Erases this user's column from the PendingUser table.
+        $query = Query::delete('PendingUsers')->where('userId = :uid');
+        $query->execute(array('uid' => $uid));
         
-//         // Sets the active flag for this user.
-//         $query = Query::update('Users', array('active' => '1'))->where('userId = :uid');
-//         $query->execute(array('uid' => $uid));
-        
-//         // Erases this user's column from the PendingUser table.
-//         $query = Query::delete('PendingUsers')->where('userId = :uid');
-//         $query->execute(array('uid' => $uid));
-        
-//         // Commit the transaction.
-//         Database::getInstance()->commit();
-//     }
+        // Commit the transaction.
+        Database::getInstance()->commit();
+    }
 }
