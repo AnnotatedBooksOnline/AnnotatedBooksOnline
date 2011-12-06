@@ -68,7 +68,7 @@ class BookController extends Controller
                         $cc = 0;
                         foreach (explode(' ', $value) as $word)
                         {
-                            $query = $query->where('books.title LIKE :word'. $c . '_' . $cc);
+                            $query = $query->where('books.title ILIKE :word'. $c . '_' . $cc);
                             $binds[':word'. $c . '_' . $cc] = '%' . $word . '%';
                             $cc++;
                         }
@@ -77,10 +77,14 @@ class BookController extends Controller
                         $cc = 0;
                         foreach (explode(' ', $value) as $word)
                         {
-                            $query = $query->where('personsFind.name LIKE :author'. $c . '_' . $cc);
+                            $query = $query->where('personsFind.name ILIKE :author'. $c . '_' . $cc);
                             $binds[':author'. $c . '_' . $cc] = '%' . $word . '%';
                             $cc++;
                         }
+                        break;
+                    case 'any':
+                        $query = $query->whereFulltext('books.title', ':any' . $c); // TODO: change column to index
+                        $binds[':any' . $c] = $value;
                         break;
                     default:
                         break;

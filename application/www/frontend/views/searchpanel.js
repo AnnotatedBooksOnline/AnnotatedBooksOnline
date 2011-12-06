@@ -152,10 +152,10 @@ Ext.define('Ext.ux.SearchComboBoxField', {
             data: [{
                 abbreviation: 'select',
                 name: '- Select -'
-            }/*,{
+            },{
                 abbreviation: 'any',
                 name: 'Any'
-            }*/].concat(bookProperties)
+            }].concat(bookProperties)
         });
         
         var defConfig = {
