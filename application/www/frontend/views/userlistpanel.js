@@ -92,9 +92,12 @@ Ext.define('Ext.ux.UserListPanel', {
                 listeners: {
                     itemclick: function(view, record)
                     {
-                        // Open user in a new tab.
-                        var name = record.get('username');
-                        Application.getInstance().gotoTab('viewprofile', [name], true);
+                        // Open user in a new tab if not clicked on 'email' or 'website'.
+                        if (record.get('dataIndex')!='email' && record.get('dataIndex')!='website')
+                        {
+                            var name = record.get('username');
+                            Application.getInstance().gotoTab('viewprofile', [name], true);
+                        }
                     }
                 }
             }]

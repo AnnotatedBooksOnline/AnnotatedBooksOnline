@@ -1,9 +1,7 @@
 /*
  * Scan fieldcontainer class
  */
-
-
- Ext.define('Ext.ux.ScanFieldcontainer', {
+Ext.define('Ext.ux.ScanFieldcontainer', {
     extend: 'Ext.form.FieldContainer',
     alias: 'widget.scanfieldcontainer',
     initComponent: function() {
@@ -127,8 +125,12 @@ Ext.define('Ext.ux.BookFieldset', {
                                 allowDecimals: false,
                                 listeners: {
                                     'change': function(f, from) {
+                                        // On change, check if this value ('from') is larger than
+                                        // the 'to' value -> change 'to' to 'from' in that case.
+                                        // This will also happen if 'to' value is empty.
                                         var to = this.nextSibling('[name=to]');
-                                        if (to.getValue() == null || parseInt(from) > parseInt(to.getValue())) 
+                                        if (to.getValue() == null ||
+                                            parseInt(from) > parseInt(to.getValue())) 
                                         {
                                             to.setValue(from);
                                         }
@@ -151,8 +153,12 @@ Ext.define('Ext.ux.BookFieldset', {
                                 margins: '0 0 0 10',
                                 listeners: {
                                     'change': function(t, to) {
+                                        // On change, check if this value ('to') is lower than
+                                        // the 'from' value -> change 'from' to 'to' in that case.
+                                        // This will also happen if 'from' value is empty.
                                         var from = this.previousSibling('[name=from]');
-                                        if (from.getValue() == null || parseInt(to) < parseInt(from.getValue())) 
+                                        if (from.getValue() == null
+                                            || parseInt(to) < parseInt(from.getValue())) 
                                         {
                                             from.setValue(to);
                                         }
@@ -236,7 +242,6 @@ Ext.define('Ext.ux.BookFieldset', {
 /*
  * Upload panel class.
  */
-
 Ext.define('Ext.ux.UploadForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.uploadform',
@@ -273,7 +278,6 @@ Ext.define('Ext.ux.UploadForm', {
         };
         
         var defConfig = {
-            // TODO : width/dimensions
             items: [{
                 xtype: 'fieldset',
                 title: 'Upload',
@@ -333,6 +337,8 @@ Ext.define('Ext.ux.UploadForm', {
                             labelAlign: 'top',
                             validator: function(library)
                             {
+                                // Set signature + library false if the combination is already ina
+                                // the database.
                                 var signature = this.nextSibling('[name=signature]');
                                 if (librarySignatureCheck) 
                                 {
@@ -361,6 +367,8 @@ Ext.define('Ext.ux.UploadForm', {
                             labelAlign: 'top',
                             validator: function(signature)
                             {
+                                // Set signature + library false if the combination is already ina
+                                // the database.
                                 var library = this.previousSibling('[name=library]');
                                 if (librarySignatureCheck) 
                                 {
@@ -396,18 +404,17 @@ Ext.define('Ext.ux.UploadForm', {
                 name: 'books',
                 collapsible: true,
                 items: [{
-                        xtype: 'bookfieldset'
-                    },{
-                        xtype: 'button',
-                        text: 'Add book',
-                        width: 140,
-                        handler: function()
-                        {
-                            this.ownerCt.insert(0, [{xtype: 'bookfieldset'}]);
-                        }
-                    }]
+                    xtype: 'bookfieldset'
+                },{
+                    xtype: 'button',
+                    text: 'Add book',
+                    width: 140,
+                    handler: function()
+                    {
+                        this.ownerCt.insert(0, [{xtype: 'bookfieldset'}]);
+                    }
                 }]
-            //}]
+            }]
             ,
             
             submitButtonText: 'Save'

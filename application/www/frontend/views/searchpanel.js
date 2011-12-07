@@ -30,7 +30,7 @@ var bookProperties = [{
     abbreviation: 'signature',
     name: 'Signature'
 },{
-    abbreviation: 'provenance', // TODO: I really do not know how to make this a valid search variable. Added it anyhow. -- Bert
+    abbreviation: 'provenance',
     name: 'Provenance'
 },{
     abbreviation: 'annotlanguage',
@@ -147,15 +147,15 @@ Ext.define('Ext.ux.SearchComboBoxField', {
     
     initComponent: function()
     {
-        var store = Ext.create('Ext.ux.Store', { 
+        var store = Ext.create('Ext.data.Store', { 
             model: 'Ext.ux.SearchParameterModel',
             data: [{
                 abbreviation: 'select',
                 name: '- Select -'
-            }/*,{
+            },{
                 abbreviation: 'any',
                 name: 'Any'
-            }*/].concat(bookProperties)
+            }].concat(bookProperties)
         });
         
         var defConfig = {
@@ -364,7 +364,7 @@ Ext.define('Ext.ux.SearchResultsView', {
     
     getColumnStore: function(data)
     {
-        var store = Ext.create('Ext.ux.Store', {
+        var store = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.SearchColumnModel',
             data: data.columns
         });
@@ -474,7 +474,7 @@ Ext.define('Ext.ux.SortComboBoxField', {
         var _this = this;
         
         var defConfig = {
-            store: Ext.create('Ext.ux.Store', {
+            store: Ext.create('Ext.data.Store', {
                 model: 'Ext.ux.SearchParameterModel',
                 data: [{
                     abbreviation: 'modified',
@@ -600,12 +600,6 @@ Ext.define('Ext.ux.SearchResultsPanel', {
             displayMsg: 'Displaying books {0} - {1} of {2}',
             emptyMsg: 'No books found'
         });
-        
-        // TODO: Add sorting buttons to docked toolbar.
-        // TODO: Use normal store instead of array store, so that refresh works. 
-        
-        //_this.down('[name=results]').down('[xtype=pagingtoolbar]').remove('refresh');
-        //_this.down('[name=results]').down('[xtype=pagingtoolbar]').add({id: 'refresh', enable: Ext.emptyFn});
         
         this.sort();
     }

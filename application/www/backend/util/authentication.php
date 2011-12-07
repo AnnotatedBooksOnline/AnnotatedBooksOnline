@@ -71,6 +71,11 @@ class Authentication extends Singleton
      * @param  $password  The password of the user to log in.
      *
      * @return  The new user.
+     * 
+     * @throws UserBannedException       If the user is banned.
+     * @throws UserStillPendingException If the user is not yet activated.
+     * @throws UserNotFoundException     If no user with the provided username/password 
+     *                                   combination exists.
      */
     public function login($username, $password)
     {
@@ -82,6 +87,15 @@ class Authentication extends Singleton
         
         $this->user        = User::fromUsernameAndPassword($username, $password);
         $this->fetchedUser = true;
+        
+        if($this->user->isBanned())
+        {
+            throw new UserBannedException($this->user->getUsername());
+        }
+        if(!$this->user->isActive())
+        {
+            throw new UserStillPendingException($this->user->getUsername());
+        }
         
         Session::getInstance()->setVar('userid', $this->getUser()->getId());
         

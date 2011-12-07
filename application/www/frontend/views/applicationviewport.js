@@ -115,9 +115,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.ux.Viewer.showSettingsWindow();
                         }
                     }
-                }/*,{ // TODO: Make a help functionality.
-                    text: 'Help...'
-                }*/]
+                }]
             }],
             border: false
         };
@@ -388,7 +386,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
         if (authentication.isLoggedOn())
         {
             this.down('[name=users]').show();
-            // this.down('[name=upload]').show(); // TODO: Hidden for Increment A
+            this.down('[name=upload]').show();
             this.down('[name=logout]').show();
             this.down('[name=login]').hide();
             this.down('[name=register]').hide();

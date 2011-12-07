@@ -108,6 +108,7 @@ Ext.define('Ext.ux.RegistrationForm', {
         Ext.apply(this, defConfig);
         
         this.listeners = {
+            // On validitychange, set the 'Register' button dis- or enabled (depending on validity)
             validitychange: function(comp, valid) {
                 this.down('button').setDisabled(!valid);
             }

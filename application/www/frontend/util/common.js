@@ -43,8 +43,6 @@ function rotatePoint(point, angle)
 // Gets bounding box of a rotated bounding box.
 function rotateBoundingBox(aabb, angle)
 {
-    // TODO: Optimize this.
-    
     // Calculate topright and bottomleft.
     var topRight    = {x: aabb.bottomRight.x, y: aabb.topLeft.y};
     var bottomLeft  = {x: aabb.topLeft.x, y: aabb.bottomRight.y};
@@ -56,13 +54,17 @@ function rotateBoundingBox(aabb, angle)
     var rotatedBottomLeft  = rotatePoint(bottomLeft,       angle);
     
     var topLeft = {
-        x: Math.min(Math.min(rotatedTopLeft.x, rotatedBottomRight.x), Math.min(rotatedTopRight.x, rotatedBottomLeft.x)),
-        y: Math.min(Math.min(rotatedTopLeft.y, rotatedBottomRight.y), Math.min(rotatedTopRight.y, rotatedBottomLeft.y))
+        x: Math.min(Math.min(rotatedTopLeft.x, rotatedBottomRight.x),
+                    Math.min(rotatedTopRight.x, rotatedBottomLeft.x)),
+        y: Math.min(Math.min(rotatedTopLeft.y, rotatedBottomRight.y),
+                    Math.min(rotatedTopRight.y, rotatedBottomLeft.y))
     };
     
     var bottomRight = {
-        x: Math.max(Math.max(rotatedTopLeft.x, rotatedBottomRight.x), Math.max(rotatedTopRight.x, rotatedBottomLeft.x)),
-        y: Math.max(Math.max(rotatedTopLeft.y, rotatedBottomRight.y), Math.max(rotatedTopRight.y, rotatedBottomLeft.y))
+        x: Math.max(Math.max(rotatedTopLeft.x, rotatedBottomRight.x),
+                    Math.max(rotatedTopRight.x, rotatedBottomLeft.x)),
+        y: Math.max(Math.max(rotatedTopLeft.y, rotatedBottomRight.y),
+                    Math.max(rotatedTopRight.y, rotatedBottomLeft.y))
     };
     
     return {topLeft: topLeft, bottomRight: bottomRight};

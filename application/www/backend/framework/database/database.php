@@ -240,10 +240,7 @@ class Query
         $this->clear();
         
         $this->kind = $kind;
-    }
-    
-    
-    
+    }    
     
     
     /*
@@ -278,10 +275,37 @@ class Query
     */
     
     
+    /*
+     * Helper methods for inserting specific kinds of data.
+     */
     
+    /**
+     * Converts a Unix timestamp to a string representing a date (not a time) that can be used in
+     * database queries.
+     * 
+     *  @param $timestamp A Unix timestamp (seconds since the epoch), or null if you want to get 
+     *                    the current date.
+     *  
+     *  @return string    A string representing the date in which the timestamp lies. Can be used 
+     *                    in database queries.
+     */
+    public static function toDate($timestamp = null)
+    {
+        if($timestamp === null)
+            $timestamp = time();
+        
+        return date('Y-m-d', $timestamp);
+    }
     
-    
-    
+    /**
+     * Converts a string representation of a date to a Unix timestamp of the first second of that 
+     * date.
+     */
+    public static function fromDate($date)
+    {
+        //TODO: test
+        return strtotime($date);
+    }
     
     /*
      * Helper methods.
@@ -494,8 +518,8 @@ class Query
      * contents will NOT be escaped or validated, so make sure they do not directly depend on user
      * input. Parameter markers should be used instead.
      * 
-     * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', '!=', '<>', 
-     * 'not is', 'not like', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
+     * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', 'ilike', '!=', '<>', 
+     * 'not is', 'not like', 'not ilike', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
      * 
      * The arguments are separated by a logical AND's. Use whereOr to separate them with OR's.
      */
@@ -523,6 +547,28 @@ class Query
     public function havingOr( /* $arg0, $arg1, ... $argn */ )
     {
         $this->handleHaving(func_get_args(), false);
+        
+        return $this;
+    }
+    
+    /**
+     * A specific WHERE implementation for fulltext searches.
+     */
+    public function whereFulltext($column, $query)
+    {
+        $column = $this->escapeIdentifier($column);
+        $query = $this->escapeIdentifier($query);
+        
+        $conditions = 'to_tsvector(\'english\', ' . $column . ') @@ plainto_tsquery(\'english\', ' . $query . ')';
+        // Add clauses to where clause.
+        if ($this->whereClause)
+        {
+            $this->whereClause .= "\nAND " . $conditions;
+        }
+        else
+        {
+            $this->whereClause = "\nWHERE " . $conditions;
+        }
         
         return $this;
     }
@@ -580,8 +626,7 @@ class Query
      */
     
     /**
-     * Builds the query. It does not clear the query 
-     * afterwards.
+     * Builds the query. It does not clear the query afterwards.
      * 
      * @return  The full SQL query.
      * 
@@ -699,7 +744,7 @@ class Query
         foreach ($conditions as $condition)
         {
             $matches = array();
-            if (preg_match('/^([a-z][\w\.]*)\s*(>=|<=|!=|<|>|==|=|is not|is|not like|like)\s*(.*?)$/i',
+            if (preg_match('/^([a-z][\w\.]*)\s*(>=|<=|!=|<|>|==|=|is not|is|not like|like|ilike|not ilike)\s*(.*?)$/i',
                 $condition, $matches))
             {
                 $identifier = $this->escapeIdentifier($matches[1]);
