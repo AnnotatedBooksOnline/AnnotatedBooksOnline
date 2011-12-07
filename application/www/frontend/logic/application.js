@@ -264,7 +264,7 @@ Application.prototype.tabNeedsAuthentication = function(type)
         case 'register':
         case 'welcome':
         case 'info':
-        case 'upload':
+        //case 'upload':
             return false;
     }
     
