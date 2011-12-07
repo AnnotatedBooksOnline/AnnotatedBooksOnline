@@ -4,47 +4,47 @@
 
 .previous-icon, .x-tbar-page-prev
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-prev.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-prev.gif) !important;
 }
 
 .x-item-disabled .previous-icon
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-prev-disabled.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-prev-disabled.gif) !important;
 }
 
 .next-icon, .x-tbar-page-next
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-next.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-next.gif) !important;
 }
 
 .x-item-disabled .next-icon
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-next-disabled.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-next-disabled.gif) !important;
 }
 
 .first-icon, .x-tbar-page-first
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-first.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-first.gif) !important;
 }
 
 .x-item-disabled .first-icon
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-first-disabled.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-first-disabled.gif) !important;
 }
 
 .last-icon, .x-tbar-page-last
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-last.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-last.gif) !important;
 }
 
 .x-item-disabled .last-icon
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/page-last-disabled.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/page-last-disabled.gif) !important;
 }
 
 .refresh-icon
 {
-    background-image: url(../../extjs/resources/themes/images/default/grid/refresh.gif) !important;
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/refresh.gif) !important;
 }
 
 .remove-icon
