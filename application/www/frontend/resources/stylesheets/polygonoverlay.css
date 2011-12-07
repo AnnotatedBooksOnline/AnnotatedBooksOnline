@@ -1,0 +1,13 @@
+/*
+ * Polygon overlay stylesheet.
+ */
+
+.polygon
+{
+    cursor: pointer;
+}
+
+.corner
+{
+    cursor: pointer;
+}

@@ -16,7 +16,7 @@ function Document()
 }
 
 Document.prototype = new DomNode;
-Document.prototype.base = DomNode.prototype;
+Document.base = DomNode.prototype;
 
 //members
 Document.prototype.dimensions;
@@ -47,7 +47,7 @@ Document.prototype.constructor = function(width, height, zoomLevels, getImageUrl
     this.getImageUrl = getImageUrl;
     
     //create dom
-    this.base.constructor.call(this, '<div class="document"></div>');
+    Document.base.constructor.call(this, '<div class="document"></div>');
     
     //initialize
     this.initialize();

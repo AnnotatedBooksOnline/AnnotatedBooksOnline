@@ -16,7 +16,7 @@ function Viewport()
 }
 
 Viewport.prototype = new DomNode;
-Viewport.prototype.base = DomNode.prototype;
+Viewport.base = DomNode.prototype;
 
 //members
 Viewport.prototype.dimensions;
@@ -57,7 +57,7 @@ Viewport.prototype.constructor = function(width, height, document)
     };
     
     //create dom
-    this.base.constructor.call(this, '<div class="viewport"></div>');
+    Viewport.base.constructor.call(this, '<div class="viewport"></div>');
     
     //initialize
     this.initialize();
@@ -224,8 +224,8 @@ Viewport.prototype.initialize = function()
     
     // DEBUG: Add an overlay.
     
-    //this.overlay = new PolygonOverlay();
-    //this.overlay.insert(this);
+    this.overlay = new PolygonOverlay();
+    this.overlay.insert(this);
     
     
     
@@ -331,7 +331,7 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     
     
     // DEBUG: Update overlay.
-    //this.overlay.update(this.position, this.zoomLevel, this.rotation, this.visibleArea);
+    this.overlay.update(this.position, this.zoomLevel, this.rotation, this.visibleArea);
     
     
     
@@ -383,7 +383,7 @@ Viewport.prototype.doDragging = function(event)
         //calculate mouse position within viewport in document dimensions
         var mouseOffset = {
             x: (event.pageX - domOffset.left) * this.invZoomFactor,
-            y: (event.pageY - domOffset.top) * this.invZoomFactor
+            y: (event.pageY - domOffset.top)  * this.invZoomFactor
         };
         
         //calculate center offset of viewport document dimensions
