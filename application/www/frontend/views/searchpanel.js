@@ -513,7 +513,6 @@ Ext.define('Ext.ux.SearchResultsPanel', {
     initComponent: function()
     {
         var _this = this;
-        var sort = function() { _this.sort(); };
         
         var defConfig = {
             title: 'Search results',
@@ -527,31 +526,6 @@ Ext.define('Ext.ux.SearchResultsPanel', {
                 name: 'results',
                 border: false,
                 flex: 1
-            },{
-                xtype: 'panel',
-                name: 'sort',
-                border: false,
-                flex: 0,
-                width: 200,
-                bodyPadding: 10,
-                items: [{
-                    xtype: 'panel',
-                    border: 0,
-                    html: '<h2>Sorting</h2>',
-                    style: 'margin-bottom: 10px'
-                },{
-                    xtype: 'sortcombobox',
-                    fieldLabel: 'Sort by',
-                    sortFn: sort
-                },{
-                    xtype: 'sortcombobox',
-                    fieldLabel: 'then',
-                    sortFn: sort
-                },{
-                    xtype: 'sortcombobox',
-                    fieldLabel: 'then',
-                    sortFn: sort
-                }]
             }]
         };
         
@@ -562,7 +536,7 @@ Ext.define('Ext.ux.SearchResultsPanel', {
     
     sort: function()
     {
-        var current = this.down('sortcombobox');
+        var current = this.up('searchpanel').down('sortcombobox');
         var sorters = [];
         do
         {
@@ -616,9 +590,10 @@ Ext.define('Ext.ux.SearchPanel', {
     initComponent: function() 
     {
         var _this = this;
-        var defConfig = {
-            title: 'Search',
-            
+        
+        var centerRegion = {
+            region: 'center',
+            xtype: 'panel',
             items: [{
                 title: 'Search',
                 xtype: 'searchfieldspanel'
@@ -655,11 +630,55 @@ Ext.define('Ext.ux.SearchPanel', {
             }]
         };
         
+        var sort = function()
+        {
+            _this.down('searchresultspanel').sort();
+        };
+        
+        var westRegion = {
+            region: 'west',
+            xtype: 'panel',
+            collapsible: true,
+            title: 'Advanced options',
+            items: {
+                xtype: 'panel',
+                name: 'sort',
+                border: false,
+                title: 'Sorting options',
+                flex: 0,
+                width: 200,
+                bodyPadding: 10,
+                items: [{
+                    xtype: 'panel',
+                    border: 0,
+                    html: '<h2>Sort by:</h2>',
+                    style: 'margin-bottom: 10px'
+                },{
+                    xtype: 'sortcombobox',
+                    sortFn: sort
+                },{
+                    xtype: 'sortcombobox',
+                    sortFn: sort
+                },{
+                    xtype: 'sortcombobox',
+                    sortFn: sort
+                }]
+            }
+        };
+        
+        var defConfig = {
+            title: 'Search',
+            layout: {
+                type: 'border'
+            },
+            items: [westRegion, centerRegion]
+        };
+        
         Ext.apply(this, defConfig);
         
         this.callParent();
         
-        var firstField = this.getComponent(0).down('[name=type]');
+        var firstField = this.down('[name=type]');
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});
     }
