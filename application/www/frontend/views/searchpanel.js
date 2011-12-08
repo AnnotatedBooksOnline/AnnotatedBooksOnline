@@ -660,7 +660,7 @@ Ext.define('Ext.ux.SearchPanel', {
         this.callParent();
         
         var firstField = this.getComponent(0).down('[name=type]');
-        firstField.select('title');
+        firstField.select('any');
         firstField.fireEvent('select',firstField,{});
     }
 });
