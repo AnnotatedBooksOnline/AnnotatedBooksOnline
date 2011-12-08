@@ -234,6 +234,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                 name: 'summary',
                 anchor: '100%',
                 labelAlign: 'top',
+                grow: true,
                 allowBlank: true
             }]
         };
