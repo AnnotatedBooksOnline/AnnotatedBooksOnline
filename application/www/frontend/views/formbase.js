@@ -81,12 +81,12 @@ Ext.define('Ext.ux.FormBase', {
         
         // Focus first field.
         var _this = this;
-        setTimeout(
+        /*setTimeout(
             function()
             {
                 var field = _this.getComponent(0);
                 field.focus(true, true);
-            }, 10);
+            }, 10);*/
     },
     
     setModel: function(model, id)
