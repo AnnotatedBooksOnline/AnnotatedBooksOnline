@@ -164,13 +164,20 @@ Ext.define('Ext.ux.BindingFieldSet', {
                             // Set signature + library false if the combination is already ina
                             // the database.
                             var signature = this.nextSibling('[name=signature]');
-                            if (librarySignatureCheck) 
+                            if (signature === null)
                             {
-                                librarySignatureCheck = false;
-                                signature.validate();
-                                librarySignatureCheck = true;
+                                return true;
                             }
-                            return checkLibrarySignature(library, signature.getValue());
+                            else 
+                            {
+                                if (librarySignatureCheck) 
+                                {
+                                    librarySignatureCheck = false;
+                                    signature.validate();
+                                    librarySignatureCheck = true;
+                                }
+                                return checkLibrarySignature(library, signature.getValue());
+                            }
                         }
                     },{
                         fieldLabel: 'Provenance',
@@ -194,13 +201,20 @@ Ext.define('Ext.ux.BindingFieldSet', {
                             // Set signature + library false if the combination is already ina
                             // the database.
                             var library = this.previousSibling('[name=library]');
-                            if (librarySignatureCheck) 
+                            if (library === null)
                             {
-                                librarySignatureCheck = false;
-                                library.validate();
-                                librarySignatureCheck = true;
+                                return true;
                             }
-                            return checkLibrarySignature(library.getValue(), signature);
+                            else 
+                            {
+                                if (librarySignatureCheck) 
+                                {
+                                    librarySignatureCheck = false;
+                                    library.validate();
+                                    librarySignatureCheck = true;
+                                }
+                                return checkLibrarySignature(library.getValue(), signature);
+                            }
                         }
                     },{
                         xtype: 'combobox', 
