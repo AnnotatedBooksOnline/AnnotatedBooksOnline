@@ -50,6 +50,7 @@ class BookController extends Controller
             ->join('Persons personsFind', array('authorsFind.authorId = personsFind.personId'), 'LEFT')
             ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear');
         $binds = array();
+        $headline = "";
         $c = 0;
         foreach ($data as $selector)
         {
@@ -65,6 +66,7 @@ class BookController extends Controller
                         $binds[':to' . $c] = self::getInteger($value, 'to', 16534);
                         break;
                     case 'title':
+                        if (trim($value) == "") break;
                         $cc = 0;
                         foreach (explode(' ', $value) as $word)
                         {
@@ -74,6 +76,7 @@ class BookController extends Controller
                         }
                         break;
                     case 'author':
+                        if (trim($value) == "") break;
                         $cc = 0;
                         foreach (explode(' ', $value) as $word)
                         {
@@ -83,14 +86,22 @@ class BookController extends Controller
                         }
                         break;
                     case 'any':
-                        $query = $query->whereFulltext('books.title', ':any' . $c); // TODO: change column to index
+                        if (trim($value) == "") break;
+                        $query = $query->whereFulltext(array('books.title', 'personsFind.name'), ':any' . $c); // TODO: change column to index
                         $binds[':any' . $c] = $value;
+                        $headline .= " " . $value;
                         break;
                     default:
                         break;
                 }
                 $c++;
             }
+        }
+        
+        if ($headline != "")
+        {
+            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT personsList.name), \', \')'), ':headline', 'headline');
+            $binds[':headline'] = $headline;
         }
         
         $result = $query->execute($binds);
@@ -112,7 +123,8 @@ class BookController extends Controller
                 $book->getValue('title'),
                 $year,
                 $book->getValue('authorNames'),
-                'tiles/tile_0_0_0.jpg'
+                'tiles/tile_0_0_0.jpg',
+                $book->getValue('headline')
             );
         }
         
@@ -138,6 +150,10 @@ class BookController extends Controller
                     'name' => 'thumbnail',
                     'desc' => 'Thumbnail',
                     'show' => 'false'
+                ), array(
+                    'name' => 'headline',
+                    'desc' => 'Headline',
+                    'show' => $headline != "" // Only show if there are headlines.
                 )
             ),
             'records' => $records

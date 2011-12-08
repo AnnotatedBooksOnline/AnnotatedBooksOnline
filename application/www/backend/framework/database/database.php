@@ -444,6 +444,24 @@ class Query
         return $this;
     }
     
+    public function headline($columns, $query, $as)
+    {
+        if (is_array($columns))
+        {
+            $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
+        }
+        else
+        {
+            $columns = $this->escapeIdentifier($columns);
+        }
+        $query = $this->escapeIdentifier($query);
+        
+        $this->columns[] = 'ts_headline(\'english\', ' . $columns . ', plainto_tsquery(\'english\', ' . $query . ')) AS ' . 
+            $this->escapeIdentifier($as);
+            
+        return $this;
+    }
+    
     /**
      * Unsafe aggregate function. Handle with care!
      */
@@ -554,12 +572,19 @@ class Query
     /**
      * A specific WHERE implementation for fulltext searches.
      */
-    public function whereFulltext($column, $query)
+    public function whereFulltext($columns, $query)
     {
-        $column = $this->escapeIdentifier($column);
+        if (is_array($columns))
+        {
+            $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
+        }
+        else
+        {
+            $columns = $this->escapeIdentifier($columns);
+        }
         $query = $this->escapeIdentifier($query);
         
-        $conditions = 'to_tsvector(\'english\', ' . $column . ') @@ plainto_tsquery(\'english\', ' . $query . ')';
+        $conditions = 'to_tsvector(\'english\', ' . $columns . ') @@ plainto_tsquery(\'english\', ' . $query . ')';
         // Add clauses to where clause.
         if ($this->whereClause)
         {
@@ -791,7 +816,8 @@ class Query
             return $identifier;
         }
         
-        return preg_replace('/(?<![:\w])(\w+)(?![\(\w])/', '"\1"', $identifier);
+        // DISTINCT, when used as a keyword, should not be escaped.
+        return preg_replace('/(?<![.])"(distinct)"(?![.])/i', '\1', preg_replace('/(?<![:\w])(\w+)(?![\(\w])/', '"\1"', $identifier));
     }
     
     // Flattens arguments to an array.
