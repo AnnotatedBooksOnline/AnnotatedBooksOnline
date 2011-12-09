@@ -499,7 +499,7 @@ Polygon.prototype.addCorner = function(vertex)
         "stroke-width": 0,
         opacity: 1,
         listeners: {
-            'mousedown': function(event)
+            'mousedown': function(v, event)
             {
                 _this.onMouseDown(vertex);
                 
