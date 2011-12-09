@@ -64,11 +64,17 @@ abstract class Entity
         {
             // TODO: Set default columns.
             
+               // Get the SQL statement to insert this entity and execute the statement prepared.
+               $this->getInsertQuery()->execute($this->getValues(false));
+               
+//             TODO: Code below for fetching primary keys. Test this.
+//             $row = $this->getInsertQuery(true)->execute($this->getValues(false))->getFirstRow();
             
-            // Get the SQL statement to insert this entity and execute the statement prepared.
-            $this->getInsertQuery()->execute($this->getValues(false));
-            
-            // TODO: Get primary keys and set them.
+//             // Acquire the primary keys.
+//             foreach($this->getPrimaryKeys() as $pkey)
+//             {
+//                 $this->{pkey} = $row->getValue($pkey);
+//             }
         }
         else
         {
@@ -184,10 +190,13 @@ abstract class Entity
     
     /**
      * Returns the query needed to insert this entity into the database.
+     * 
+     * @param $returning If true, a RETURNING clause is added to the query which returns all
+     *                   primary keys.
      *
      * @return  Query to insert this entity in the database.
      */
-    protected function getInsertQuery()
+    protected function getInsertQuery($returning = false)
     {
         // Get columns and table name.
         $columns   = array_merge($this->getColumns(), $this->getDefaultColumns());
@@ -202,7 +211,18 @@ abstract class Entity
         $values = array_map($callback, $columns);
         
         // Create query.
-        return Query::insert($tableName, array_combine($columns, $values));
+        $query = Query::insert($tableName, array_combine($columns, $values));
+        
+        // Add returning statement.
+        if($returning)
+        {
+            foreach($this->getPrimaryKeys() as $pkey)
+            {
+                $query->returning($pkey);
+            }
+        }
+        
+        return $query;
     }
     
     /**
