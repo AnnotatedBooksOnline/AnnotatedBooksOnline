@@ -37,7 +37,21 @@ class Scan extends Entity
         }
     }
     
-    //TODO
+    /**
+     * Creates a new empty scan with its status set to STATUS_ENQUEUED and saves it.
+     * 
+     * @return The entity of the newly created scan, with its primary key set.
+     */
+    public static function createEmptyScan()
+    {
+        $scan = new Scan();
+        
+        // Uninitialized variables will, when inserted using the query builder, be treated as NULL.
+        $scan->status = Scan::STATUS_ENQUEUED; 
+        $scan->save();
+        
+        return $scan;
+    }
     
     
     /**

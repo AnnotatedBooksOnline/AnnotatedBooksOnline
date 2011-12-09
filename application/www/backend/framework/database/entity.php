@@ -68,7 +68,6 @@ abstract class Entity
             // Get the SQL statement to insert this entity and execute the statement prepared.
             $this->getInsertQuery()->execute($this->getValues(false));
             
-            
             // TODO: Get primary keys and set them.
         }
         else
