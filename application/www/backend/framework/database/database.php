@@ -470,7 +470,7 @@ class Query
     {
         if (is_array($columns))
         {
-            $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
+            $columns = implode(' || \' \' || ', array_map(array($this, 'coalesceEmpty'), array_map(array($this, 'escapeIdentifier'), $columns)));
         }
         else
         {
@@ -591,6 +591,11 @@ class Query
         return $this;
     }
     
+    private function coalesceEmpty($identifier)
+    {
+        return 'COALESCE(' . $identifier . ', \'\')';
+    }
+    
     /**
      * A specific WHERE implementation for fulltext searches.
      */
@@ -598,7 +603,7 @@ class Query
     {
         if (is_array($columns))
         {
-            $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
+            $columns = implode(' || \' \' || ', array_map(array($this, 'coalesceEmpty'), array_map(array($this, 'escapeIdentifier'), $columns)));
         }
         else
         {
