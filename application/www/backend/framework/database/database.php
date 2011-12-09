@@ -18,6 +18,9 @@ class Database extends Singleton
     /** PDO resource. */
     private $pdo;
     
+    /** Transaction counter */
+    private $transact;
+    
     protected function __construct()
     {
         $config = Configuration::getInstance();
@@ -26,6 +29,8 @@ class Database extends Singleton
         $this->pdo = new PDO($config->getString('database-dsn'),
                              $config->getString('database-username'),
                              $config->getString('database-password'));
+        
+        $this->transact = 0;
     }
     
     public function __destruct()
@@ -50,10 +55,12 @@ class Database extends Singleton
      *
      */
     public function startTransaction()
-    {
-        // TODO: stack transactions by keeping a counter.
-        
-        if (!$this->pdo->beginTransaction())
+    {        
+        if ($this->pdo->beginTransaction())
+        {
+            ++$this->transact;
+        }
+        else
         {
             throw new DatabaseException('transaction-start');
         }
@@ -85,9 +92,24 @@ class Database extends Singleton
      */
     public function commit()
     {
-        if (!$this->pdo->commit())
+        if($this->transact > 0 && $this->pdo->commit())
+        {
+            --$this->transact;
+        }
+        else
         {
             throw new DatabaseException('transaction-commit');
+        }
+    }
+    
+    /**
+     * Commits all currently stacked transactions.
+     */
+    public function commitAll()
+    {
+        while($this->transact > 0)
+        {
+            $this->commit();
         }
     }
 

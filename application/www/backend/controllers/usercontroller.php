@@ -206,7 +206,8 @@ class UserController extends Controller
         // Now create a pending user.
         //$puser = PendingUser::fromUser($user);
         //$puser->save();
-        
+        //TODO: Notify user of confirmation code by e-mail.
+        //TODO: Transaction for $user->save() and $puser->save()? But how to determine the user id then?
         
         return array('records' => $values); 
     }
