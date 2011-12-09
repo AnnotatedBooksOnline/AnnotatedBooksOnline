@@ -179,6 +179,7 @@ class Database extends Singleton
  *                    represent numeric SQL values. This might not, however, be possible with some
  *                    other types (like hexadecimal strings representing BLOB's). Use parameter 
  *                    markers for these.
+ *                    Variables that are NULL will be interpreted as a SQL NULL.
  *  
  *  - Parameter marker: Either a single '?' or a string which first character is a ':', followed by
  *                      some identifier representing a parameter name. You can only use one style 
@@ -252,6 +253,9 @@ class Query
     
     /** String representing the limit and offset clauses. */
     private $limitClause;
+    
+    /** String representing the RETURNING-clause. */
+    private $returningClause;
     
     /**
      * Constructs a new query. Acquires an instance of the the database, which 
@@ -338,14 +342,15 @@ class Query
      */
     public function clear()
     {
-        $this->columns       = array();
-        $this->tables        = array();
-        $this->joinClause    = '';
-        $this->whereClause   = '';
-        $this->havingClause  = '';
-        $this->groupByClause = '';
-        $this->orderByClause = '';
-        $this->limitClause   = '';
+        $this->columns         = array();
+        $this->tables          = array();
+        $this->joinClause      = '';
+        $this->whereClause     = '';
+        $this->havingClause    = '';
+        $this->groupByClause   = '';
+        $this->orderByClause   = '';
+        $this->limitClause     = '';
+        $this->returningClause = '';
         
         return $this;
     }
@@ -363,6 +368,8 @@ class Query
      * @param array $columns A (possibly empty) array of SQL Identifiers representing columns to limit
      *                    the result of the selection to.
      */
+    
+    // TODO: Should not be variadic.
     public static function select( /* $arg0, $arg1, ... $argn */ )
     {
         $query = new Query('SELECT');
@@ -661,6 +668,31 @@ class Query
         
 		return $this;
 	}
+	
+	/**
+	 * Specifies a column to be added to the RETURNING clause.
+	 * 
+	 * RETURNING is a very useful PostgreSQL feature. See also the PostgreSQL documentation at
+	 * http://www.postgresql.org/docs/9.1/static/sql-insert.html
+	 * 
+	 * @param string $column The name of the column of which the value should be added to the result
+	 *                       set. 
+	 */
+	public function returning($column)
+	{
+	    if($this->returningClause == '')
+	    {
+	        // New returning clause.
+	        $this->returningClause .= '\nRETURNING ';
+	    }
+	    else
+	    {
+	        // Expanding an existing one.
+	        $this->returningClause .= ', ';
+	    }
+	    
+	    $this->returningClause .= $this->escapeIdentifier($column);
+	}
     
     /*
      * Execution.
@@ -736,6 +768,7 @@ class Query
         $query .= $this->groupByClause;
         $query .= $this->orderByClause;
         $query .= $this->limitClause;
+        $query .= $this->returningClause;
         
         return $query;
     }
@@ -821,6 +854,12 @@ class Query
     // Escapes a value, returns parameter markers unchanged.
     private function escapeValue($value)
     {
+        // If null or initialized, return 'NULL'.
+        if($value === null)
+        {
+            return 'NULL';
+        }
+        
         // Explicitly cast to string.
         $value = (string) $value;
         

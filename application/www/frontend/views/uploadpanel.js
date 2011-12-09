@@ -1,10 +1,11 @@
 /*
- * Scan fieldcontainer class.
+ * Scan field container class.
  */
-Ext.define('Ext.ux.ScanFieldcontainer', {
+Ext.define('Ext.ux.ScanFieldContainer', {
     extend: 'Ext.form.FieldContainer',
     alias: 'widget.scanfieldcontainer',
-    initComponent: function() {
+    initComponent: function()
+    {
         var _this = this;
         
         var defConfig = {
@@ -44,7 +45,8 @@ Ext.define('Ext.ux.UploadFieldSet', {
     alias: 'widget.uploadfieldset',
     title: 'Upload',
     collapsible: true,
-    initComponent: function() {
+    initComponent: function()
+    {
         var _this = this;
         
         var defConfig = {
@@ -89,11 +91,11 @@ Ext.define('Ext.ux.UploadFieldSet', {
                         {
                             this.ownerCt.insert(this.ownerCt.items.length-1, 
                                                 [{xtype: 'scanfieldcontainer'}]);
-                            Ext.Msg.alert('File uploaded!', value);
+                            Ext.Msg.alert('File uploaded.', value);
                         }
                         else
                         {
-                            Ext.Msg.alert('Wrong extension!', 'File must be JPG, JPEG, TIF or TIFF (lower case is accepted).');
+                            Ext.Msg.alert('Wrong extension.', 'File must be a jpeg or a tiff image.');
                         }
                     }
                 }
@@ -114,7 +116,8 @@ Ext.define('Ext.ux.BindingFieldSet', {
     alias: 'widget.bindingfieldset',
     title: 'Binding',
     collapsible: true,
-    initComponent: function() {
+    initComponent: function()
+    {
         var _this = this;
         
         var librarySignatureCheck = true;
@@ -234,6 +237,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                 name: 'summary',
                 anchor: '100%',
                 labelAlign: 'top',
+                grow: true,
                 allowBlank: true
             }]
         };
@@ -281,7 +285,8 @@ Ext.define('Ext.ux.BookFieldset', {
                             anchor: '98%',
                             labelAlign: 'top',
                             listeners: {
-                                'change': function(t, title) {
+                                'change': function(t, title)
+                                {
                                     if (title == "")
                                     {
                                         _this.setTitle('Book: ?');
@@ -313,7 +318,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                 allowNegative: false,
                                 allowDecimals: false,
                                 listeners: {
-                                    'change': function(f, from) {
+                                    'change': function(f, from)
+                                    {
                                         // On change, check if this value ('from') is larger than
                                         // the 'to' value -> change 'to' to 'from' in that case.
                                         // This will also happen if 'to' value is empty.
@@ -341,7 +347,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                 allowDecimals: false,
                                 margins: '0 0 0 10',
                                 listeners: {
-                                    'change': function(t, to) {
+                                    'change': function(t, to)
+                                    {
                                         // On change, check if this value ('to') is lower than
                                         // the 'from' value -> change 'from' to 'to' in that case.
                                         // This will also happen if 'from' value is empty.
@@ -384,7 +391,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                     allowNegative: false,
                                     allowDecimals: false,
                                     listeners: {
-                                        'change': function (f, start) {
+                                        'change': function (f, start)
+                                        {
                                             // On change, check if this value ('start') is larger than
                                             // the 'end' value -> change 'end' to 'start' in that case.
                                             // This will also happen if 'end' value is empty.
@@ -422,7 +430,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                     allowDecimals: false,
                                     margins: '0 0 0 10',
                                     listeners: {
-                                        'change': function (t, end) {
+                                        'change': function (t, end)
+                                        {
                                             // On change, check if this value ('end') is lower than
                                             // the 'start' value -> change 'start' to 'end' in that case.
                                             // This will also happen if 'start' value is empty.
@@ -517,7 +526,8 @@ Ext.define('Ext.ux.BooksFieldSet', {
     alias: 'widget.booksfieldset',
     title: 'Books',
     collapsible: true,
-    initComponent: function() {
+    initComponent: function()
+    {
         var _this = this;
         
         // TODO: get this from database (this table is not yet in the model)
@@ -580,18 +590,16 @@ Ext.define('Ext.ux.UploadForm', {
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
+                        {
+                            if (button == 'yes')
                             {
-                                if (button == 'yes')
-                                {
-                                    // Reset the form
-                                    _this.getForm().reset(); 
-                                }
+                                // Reset the form
+                                _this.getForm().reset(); 
                             }
+                        }
                     });
                 }
-            }]
-            ,
-            
+            }],
             submitButtonText: 'Save'
         };
         

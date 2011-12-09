@@ -23,7 +23,7 @@ class PendingUser extends Entity
     
     /**
      * Constructs a pending user.
-     * @param $uid If null, a new pending user will be created. Otherwise one with the provided 
+     * @param $uid If null, an empty pending user will be created. Otherwise one with the provided 
      * 	           userId will be loaded.
      */
     public function __construct($uid = null)

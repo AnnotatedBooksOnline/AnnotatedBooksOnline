@@ -152,19 +152,6 @@ class ResultSetRow
     public function getValue($columnName)
     {
         return isset($this->row[$columnName]) ? $this->row[$columnName] : null;
-        
-        // NOTE: (GVV) Getting this case insensitive is too much overhead,
-        // NOTE: (GVV) and really should not be needed as I made the columns case sensitive.
-        // NOTE: (GVV) Also, the query builder also makes names case sensitive.
-        
-        // if (isset($this->rowCase[strtoupper($columnName)]))
-        // {
-        //     return $this->row[$this->rowCase[strtoupper($columnName)]];
-        // }
-        // else
-        // {
-        //     return null;
-        // }
     }
 
     
