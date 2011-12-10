@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 -- Bindings should also have titles.
 ALTER TABLE "Bindings" ADD COLUMN title varchar(100) NOT NULL;
 ALTER TABLE "Bindings"
@@ -50,3 +52,6 @@ ALTER TABLE "Authors"
    ALTER COLUMN "authorId" DROP DEFAULT;
 ALTER TABLE "Authors"
    ALTER COLUMN "bookId" DROP DEFAULT;
+   
+COMMIT;
+

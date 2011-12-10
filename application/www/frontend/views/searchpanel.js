@@ -11,34 +11,34 @@ var bookProperties = [{
 },{
     abbreviation: 'author',
     name: 'Author'
-}/*,{
+},{
     abbreviation: 'place',
     name: 'Place published'
 },{
     abbreviation: 'publisher',
     name: 'Publisher'
-},{
+}/*,{
     abbreviation: 'version',
     name: 'Version'
 },{
     abbreviation: 'language',
     name: 'Language'
-},{
+}*/,{
     abbreviation: 'library',
     name: 'Library'
 },{
     abbreviation: 'signature',
     name: 'Signature'
-},{
+}/*,{
     abbreviation: 'provenance',
     name: 'Provenance'
 },{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'
-},{
+}*/,{
     abbreviation: 'summary',
     name: 'Summary'
-}*/];
+}];
 
 Ext.define('Ext.ux.SearchParameterModel', {
     extend: 'Ext.data.Model',

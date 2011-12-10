@@ -1,22 +1,10 @@
--- Add Uploads table.
+BEGIN TRANSACTION;
 
-CREATE TABLE "Uploads"
-(
-    "uploadId" serial NOT NULL,
-    "userId" serial NOT NULL,
-    "token" varchar(48) NOT NULL,
-    "filename" varchar(255) NOT NULL,
-    "size" integer NOT NULL,
-    "timestamp" timestamp NOT NULL,
-    "status" smallint NOT NULL,
-    
-    "createdOn" timestamp,
-    "createdBy" varchar(30),
-    "changedOn" timestamp,
-    "changedBy" varchar(30),
+-- Adds a scanType column to Scans.
 
-    PRIMARY KEY ("uploadId"),
-    UNIQUE ("token"),
-    FOREIGN KEY ("userId")
-        REFERENCES "Users"
-);
+ALTER TABLE "Scans" ADD COLUMN "scanType" character(4);
+UPDATE "Scans" SET "scanType" = '' WHERE "scanType" IS NULL;
+ALTER TABLE "Scans" ALTER COLUMN "scanType" SET NOT NULL;
+ALTER TABLE "Scans" ADD CHECK ("scanType" = 'jpeg' OR "scanType" = 'tiff' OR "scanType" = '');
+
+COMMIT;

@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 -- Add settings table.
 
 CREATE TABLE "Settings"
@@ -12,3 +14,6 @@ CREATE TABLE "Settings"
     
     PRIMARY KEY ("settingName")
 );
+
+COMMIT;
+

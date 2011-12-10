@@ -41,20 +41,22 @@ class BookController extends Controller
      */
     public function actionSearch($data)
     {
-        $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear'))
+        $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.summary', 'bindings.signature', 'libraries.libraryName'))
             ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "personsList"."name"), \', \'', 'authorNames')
             ->from('Books books')
+            ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
+            ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
             ->join('Authors authorsList', array('books.bookId = authorsList.bookId'), 'LEFT')
             ->join('Persons personsList', array('authorsList.authorId = personsList.personId'), 'LEFT')
             ->join('Authors authorsFind', array('books.bookId = authorsFind.bookId'), 'LEFT')
             ->join('Persons personsFind', array('authorsFind.authorId = personsFind.personId'), 'LEFT')
-            ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear');
+            ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
         $binds = array();
         $headline = "";
         $c = 0;
         foreach ($data as $selector)
         {
-            if (isset($selector['type']) && isset($selector['value']))
+            if (isset($selector['type']) && isset($selector['value']) && (is_array($selector['value']) || trim($selector['value']) != ""))
             {
                 $value = $selector['value'];
                 switch ((string) $selector['type'])
@@ -66,30 +68,37 @@ class BookController extends Controller
                         $binds[':to' . $c] = self::getInteger($value, 'to', 16534);
                         break;
                     case 'title':
-                        if (trim($value) == "") break;
-                        $cc = 0;
-                        foreach (explode(' ', $value) as $word)
-                        {
-                            $query = $query->where('books.title ILIKE :word'. $c . '_' . $cc);
-                            $binds[':word'. $c . '_' . $cc] = '%' . $word . '%';
-                            $cc++;
-                        }
+                        $query = $query->whereFulltext('books.title', ':title'. $c);
+                        $binds[':title'. $c] = $value;
                         break;
                     case 'author':
-                        if (trim($value) == "") break;
-                        $cc = 0;
-                        foreach (explode(' ', $value) as $word)
-                        {
-                            $query = $query->where('personsFind.name ILIKE :author'. $c . '_' . $cc);
-                            $binds[':author'. $c . '_' . $cc] = '%' . $word . '%';
-                            $cc++;
-                        }
+                        $query = $query->whereFulltext('personsFind.name', ':author'. $c);
+                        $binds[':author'. $c] = $value;
                         break;
                     case 'any':
-                        if (trim($value) == "") break;
-                        $query = $query->whereFulltext(array('books.title', 'personsFind.name'), ':any' . $c); // TODO: change column to index
+                        $query = $query->whereFulltext(array('books.title', 'personsFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), ':any' . $c); // TODO: change column to index
                         $binds[':any' . $c] = $value;
                         $headline .= " " . $value;
+                        break;
+                    case 'place':
+                        $query = $query->whereFulltext('books.placePublished', ':place'. $c);
+                        $binds[':place'. $c] = $value;
+                        break;
+                    case 'publisher':
+                        $query = $query->whereFulltext('books.publisher', ':publisher'. $c);
+                        $binds[':publisher'. $c] = $value;
+                        break;
+                    case 'summary':
+                        $query = $query->whereFulltext('bindings.summary', ':summary'. $c);
+                        $binds[':summary'. $c] = $value;
+                        break;
+                    case 'library':
+                        $query = $query->whereFulltext('libraries.libraryName', ':library'. $c);
+                        $binds[':library'. $c] = $value;
+                        break;
+                    case 'signature':
+                        $query = $query->where('bindings.signature ILIKE :signature'. $c);
+                        $binds[':signature'. $c] = '%' . trim($value) . '%';
                         break;
                     default:
                         break;
@@ -100,7 +109,7 @@ class BookController extends Controller
         
         if ($headline != "")
         {
-            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT personsList.name), \', \')'), ':headline', 'headline');
+            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT personsList.name), \', \')', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), ':headline', 'headline');
             $binds[':headline'] = $headline;
         }
         

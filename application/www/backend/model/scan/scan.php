@@ -9,14 +9,20 @@ require_once 'framework/database/entity.php';
 class Scan extends Entity
 {
     /** Scan status constants. */
-    const STATUS_AVAILABLE  = 0;
-    const STATUS_ENQUEUED   = 1;
-    const STATUS_PROCESSING = 2;
-    const STATUS_ERROR      = 3;
-    const STATUS_DELETED    = 4;
+    const STATUS_AVAILABLE  = 0; // Scan is available and viewable.
+    const STATUS_PENDING    = 1; // Scan is new and waiting to be processed. 
+    const STATUS_PROCESSING = 2; // Scan is currently being processed.
+    const STATUS_ERROR      = 3; // Processing the scan has failed.
+    const STATUS_DELETED    = 4; // This scan has been deleted by the uploader or a moderator/admin.
+    const STATUS_PROCESSED  = 5; // Scan is fully processed, but some settings might not be set yet.
+    
+    /** Scan type constants. */
+    const IMGTYPE_JPEG = "jpeg";
+    const IMGTYPE_TIFF = "tiff";
     
     protected $scanId;
     protected $bookId;
+    protected $scanType;
     protected $page;
     protected $status;
     protected $width;
@@ -41,18 +47,24 @@ class Scan extends Entity
     /**
      * Creates a new empty scan with its status set to enqueued and saves it.
      * 
-     * @return The entity of the newly created scan, with its primary key set.
+     * @param $scanType The image type of the input image, should be either "tiff" or "jpeg". 
+     * 
+     * @return The entity of the newly created scan, which is saved and therefor has its primary 
+     *         key set.
      */
-    public static function createEmptyScan()
+    public static function createEmptyScan($scanType)
     {
         $scan = new Scan();
         
         // Uninitialized variables will, when inserted using the query builder, be treated as NULL.
-        $scan->status = Scan::STATUS_ENQUEUED;  // TODO: Should be STATUS_ERROR at first.
+        $scan->status = Scan::STATUS_PENDING; 
+        $scan->scanType = $scanType;
         $scan->save();
         
         return $scan;
     }
+    
+    // TODO: more helpers.
     
     /**
      * Get the name of the corresponding table.
@@ -75,7 +87,7 @@ class Scan extends Entity
      */
     public static function getColumns()
     {
-        return array('bookId', 'page', 'status', 'width', 'height', 'zoomLevel');
+        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel');
     }
     
     // Getters and setters.
@@ -84,6 +96,9 @@ class Scan extends Entity
     
     public function getBookId()    { return $bookId;      }
     public function setBookId($id) { $this->bookId = $id; }
+    
+    public function getScanType()      { return $this->scanType;  }
+    public function setScanType($type) { $this->scanType = $type; }
     
     public function getPage()      { return $page;        }
     public function setPage($page) { $this->page = $page; }

@@ -473,12 +473,14 @@ class Query
     public function headline($columns, $query, $as)
     {
         $columns = self::argsToArray($columns);
-        $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
+        $columns = implode(' || \' \' || ',
+            array_map(array($this, 'coalesceEmpty'),
+                array_map(array($this, 'escapeIdentifier'), $columns)));
         
         $query = $this->escapeIdentifier($query); // TODO: Can't we make an abstraction of the query?
         
-        $this->columns[] = 'ts_headline(\'english\', ' . $columns . ', plainto_tsquery(\'english\', ' . $query . ')) AS ' . 
-            $this->escapeIdentifier($as);
+        $this->columns[] = 'ts_headline(\'english\', ' . $columns .
+            ', plainto_tsquery(\'english\', ' . $query . ')) AS ' . $this->escapeIdentifier($as);
             
         return $this;
     }
@@ -617,22 +619,25 @@ class Query
         return $this;
     }
     
+    private function coalesceEmpty($identifier)
+    {
+        return 'COALESCE(' . $identifier . ', \'\')';
+    }
+    
     /**
      * A specific where implementation for fulltext searches.
      */
     public function whereFulltext($columns, $query)
     {
-        if (is_array($columns))
-        {
-            $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
-        }
-        else
-        {
-            $columns = $this->escapeIdentifier($columns);
-        }
+        $columns = self::argsToArray($columns);
+        $columns = implode(' || \' \' || ',
+            array_map(array($this, 'coalesceEmpty'),
+                array_map(array($this, 'escapeIdentifier'), $columns)));
+        
         $query = $this->escapeIdentifier($query);
         
-        $conditions = 'to_tsvector(\'english\', ' . $columns . ') @@ plainto_tsquery(\'english\', ' . $query . ')';
+        $conditions = 'to_tsvector(\'english\', ' . $columns .
+            ') @@ plainto_tsquery(\'english\', ' . $query . ')';
         
         // Add clauses to where clause.
         if ($this->whereClause)

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-g++ -O3 *.cpp -o pyramid_builder -ljpeg -ltiff
+g++ -O3 *.cpp -o bin/builder -ljpeg -ltiff
