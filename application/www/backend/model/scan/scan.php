@@ -9,11 +9,11 @@ require_once 'framework/database/entity.php';
 class Scan extends Entity
 {
     /** Scan status constants. */
-    const STATUS_AVAILABLE = 0;
-    const STATUS_ENQUEUED = 1;
+    const STATUS_AVAILABLE  = 0;
+    const STATUS_ENQUEUED   = 1;
     const STATUS_PROCESSING = 2;
-    const STATUS_ERROR = 3;
-    const STATUS_DELETED = 4;
+    const STATUS_ERROR      = 3;
+    const STATUS_DELETED    = 4;
     
     protected $scanId;
     protected $bookId;
@@ -23,22 +23,23 @@ class Scan extends Entity
     protected $height;
     protected $zoomLevel;
     
-    
     /**
-    * Constructs a scan entity.
-    * @param $sid If null, an empty entity will be created. Otherwise one with the provided scanId
-    *             will be loaded.
-    */
-    public function __construct($sid = null)
+     * Constructs a scan entity.
+     *
+     * @param $id  Id of the scan. Default (null) will create a new scan.
+     */
+    public function __construct($id = null)
     {
-        if($sid !== null)
+        if ($id !== null)
         {
+            $this->scanId = $id;
+            
             $this->load();
         }
     }
     
     /**
-     * Creates a new empty scan with its status set to STATUS_ENQUEUED and saves it.
+     * Creates a new empty scan with its status set to enqueued and saves it.
      * 
      * @return The entity of the newly created scan, with its primary key set.
      */
@@ -47,16 +48,15 @@ class Scan extends Entity
         $scan = new Scan();
         
         // Uninitialized variables will, when inserted using the query builder, be treated as NULL.
-        $scan->status = Scan::STATUS_ENQUEUED; 
+        $scan->status = Scan::STATUS_ENQUEUED;  // TODO: Should be STATUS_ERROR at first.
         $scan->save();
         
         return $scan;
     }
     
-    
     /**
-    * Get the name of the corresponding table.
-    */
+     * Get the name of the corresponding table.
+     */
     public static function getTableName()
     {
         return 'Scans';
@@ -78,24 +78,28 @@ class Scan extends Entity
         return array('bookId', 'page', 'status', 'width', 'height', 'zoomLevel');
     }
     
-    
     // Getters and setters.
-    public function getId() {return $scanId;}
-    public function setId($id) {$this->scanId = $id;}
+    public function getId()    { return $scanId;      }
+    public function setId($id) { $this->scanId = $id; }
     
-    public function getBookId() {return $bookId;}
-    public function setBookId($id) {$this->bookId = $id;}
+    public function getBookId()    { return $bookId;      }
+    public function setBookId($id) { $this->bookId = $id; }
     
-    public function getPage() {return $page;}
-    public function setPage($page) {$this->page = $page;}
+    public function getPage()      { return $page;        }
+    public function setPage($page) { $this->page = $page; }
     
-    public function getStatus() {return $status;}
-    public function setStatus($s) {$this->status = $s;}
+    public function getStatus()   { return $status;     }
+    public function setStatus($s) { $this->status = $s; }
     
-    public function getWidth() {return $this->width;}
-    public function getHeight() {return $this->height;}
-    public function setDimensions($width, $height){$this->width = $width; $this->height = $height;}
+    public function getWidth()  { return $this->width;  }
+    public function getHeight() { return $this->height; }
     
-    public function getZoomLevel() {return $this->zoomLevel;}
-    public function setZoomLevel($z) {$this->zoomLevel = $z;}
+    public function setDimensions($width, $height)
+    {
+        $this->width  = $width;
+        $this->height = $height;
+    }
+    
+    public function getZoomLevel()       { return $this->zoomLevel;   }
+    public function setZoomLevel($level) { $this->zoomLevel = $level; }
 }

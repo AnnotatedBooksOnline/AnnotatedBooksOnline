@@ -254,7 +254,7 @@ class Query
     /** String representing the limit and offset clauses. */
     private $limitClause;
     
-    /** String representing the RETURNING-clause. */
+    /** String representing the returning clause. */
     private $returningClause;
     
     /**
@@ -365,11 +365,8 @@ class Query
      * columns to be selected. If a single select with no argument or an empty array has been made,
      * all columns will be selected.
      * 
-     * @param array $columns A (possibly empty) array of SQL Identifiers representing columns to limit
-     *                    the result of the selection to.
+     * @param ... SQL Identifiers representing columns to limit the result of the selection to.
      */
-    
-    // TODO: Should not be variadic.
     public static function select( /* $arg0, $arg1, ... $argn */ )
     {
         $query = new Query('SELECT');
@@ -475,21 +472,43 @@ class Query
     
     public function headline($columns, $query, $as)
     {
-        if (is_array($columns))
-        {
-            $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
-        }
-        else
-        {
-            $columns = $this->escapeIdentifier($columns);
-        }
-        $query = $this->escapeIdentifier($query);
+        $columns = self::argsToArray($columns);
+        $columns = implode(' || \' \' || ', array_map(array($this, 'escapeIdentifier'), $columns));
+        
+        $query = $this->escapeIdentifier($query); // TODO: Can't we make an abstraction of the query?
         
         $this->columns[] = 'ts_headline(\'english\', ' . $columns . ', plainto_tsquery(\'english\', ' . $query . ')) AS ' . 
             $this->escapeIdentifier($as);
             
         return $this;
     }
+	
+	/**
+	 * Specifies a column to be added to the returning clause.
+	 * 
+	 * Returning is a very useful PostgreSQL feature. See also the PostgreSQL documentation at
+	 * http://www.postgresql.org/docs/9.1/static/sql-insert.html
+	 * 
+	 * @param string ... The names of the column of which the value should be added to the result
+	 *                   set. 
+	 */
+	public function returning()
+	{
+	    $columns = self::argsToArray(func_get_args());
+        
+        if ($this->returningClause == '')
+	    {
+	        // Set returning clause.
+	        $this->returningClause .= "\nRETURNING ";
+	    }
+	    else
+	    {
+	        // Expanding an existing one.
+	        $this->returningClause .= ', ';
+	    }
+	    
+	    $this->returningClause .= implode(', ', array_map(array($this, 'escapeIdentifier'), $columns));
+	}
     
     /**
      * Unsafe aggregate function. Handle with care!
@@ -599,7 +618,7 @@ class Query
     }
     
     /**
-     * A specific WHERE implementation for fulltext searches.
+     * A specific where implementation for fulltext searches.
      */
     public function whereFulltext($columns, $query)
     {
@@ -614,6 +633,7 @@ class Query
         $query = $this->escapeIdentifier($query);
         
         $conditions = 'to_tsvector(\'english\', ' . $columns . ') @@ plainto_tsquery(\'english\', ' . $query . ')';
+        
         // Add clauses to where clause.
         if ($this->whereClause)
         {
@@ -662,31 +682,6 @@ class Query
         $this->orderByClause .= "\nORDER BY " . $this->escapeIdentifier($column) . ' ' . $direction;
         
 		return $this;
-	}
-	
-	/**
-	 * Specifies a column to be added to the RETURNING clause.
-	 * 
-	 * RETURNING is a very useful PostgreSQL feature. See also the PostgreSQL documentation at
-	 * http://www.postgresql.org/docs/9.1/static/sql-insert.html
-	 * 
-	 * @param string $column The name of the column of which the value should be added to the result
-	 *                       set. 
-	 */
-	public function returning($column)
-	{
-	    if($this->returningClause == '')
-	    {
-	        // New returning clause.
-	        $this->returningClause .= '\nRETURNING ';
-	    }
-	    else
-	    {
-	        // Expanding an existing one.
-	        $this->returningClause .= ', ';
-	    }
-	    
-	    $this->returningClause .= $this->escapeIdentifier($column);
 	}
     
     /*

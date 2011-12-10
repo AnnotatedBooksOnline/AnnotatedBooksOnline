@@ -406,7 +406,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
         if (authentication.isLoggedOn())
         {
             this.down('[name=logout]').setText('Logged on as <b>' + escape(authentication.getFullName()) + '</b>');
-            Ext.Msg.alert('Status', 'Login succesful!');
         }
     }
 });

@@ -65,6 +65,23 @@ class Authentication extends Singleton
     }
     
     /**
+     * Gets the user id of the currently logged on user.
+     *
+     * @return  The user id.
+     */
+    public function getUserId()
+    {
+        $user = $this->getUser();
+        
+        if ($user === null)
+        {
+            throw new NotLoggedOnException();
+        }
+        
+        return $user->getId();
+    }
+    
+    /**
      * Logs a user in.
      *
      * @param  $username  The username of the user to log in.

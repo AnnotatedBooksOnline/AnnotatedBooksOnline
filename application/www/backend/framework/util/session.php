@@ -20,11 +20,15 @@ class Session extends Singleton
      */
     protected function __construct()
     {
-        // Start the session.
-        if (!isset($_SESSION))
+        // Set session id from POST vars if available.
+        $sessionName = session_name();
+        if (isset($_POST[$sessionName]))
         {
-            session_start();
+            session_id($_POST[$sessionName]);
         }
+        
+        // Start the session.
+        session_start();
         
         // Get prefix
         $this->prefix = Configuration::getInstance()->getString('session-prefix');

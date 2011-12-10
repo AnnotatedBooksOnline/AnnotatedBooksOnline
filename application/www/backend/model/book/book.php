@@ -4,9 +4,9 @@
 require_once 'framework/database/entity.php';
 
 /**
- * Class representing a binding entity.
+ * Class representing a book entity.
  */
-class Binding extends Entity
+class Book extends Entity
 {
     
 }
