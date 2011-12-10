@@ -1,6 +1,7 @@
 <?php
 
 require_once 'framework/util/singleton.php';
+require_once 'framework/util/configuration.php';
 require_once 'framework/util/log.php';
 require_once 'framework/database/database.php';
 
@@ -32,33 +33,61 @@ class PyramidBuilder extends Singleton
     /**
      * Runs the pyramid builder on an image. Blocks until the image has been completely processed.
      * 
-     * @param $image_id   The database identifier and filename of the scan.
-     * @param $image_type The type of the scan. Should be a Scan::IMGTYPE_* constant.
+     * @param $scanid   int The database identifier and filename of the scan.
+     * @param $scantype int The type of the scan. Should be a Scan::IMGTYPE_* constant.
      * 
      * @throws PyramidBuilderException When the builder returns with a nonzero error code, meaning 
      *                                 an error has occured.
      */
-    private function run($image_id, $image_type)
+    private function run($scanid, $scantype)
     {
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
         
-        $imgfile = $conf->getString('image-input-path', '.') . '/' . $image_id;
+        $imgfile = $conf->getString('image-input-path', '.') . '/' . $scanid;
         
         $output = array();
         $rval = 0;
         $outpath = $conf->getString('tile-output-path', '.');
         $quality = $conf->getInteger('tile-quality', 60);
         $builderpath = $conf->getString('builder-path', './builder');
+        $tileformat = $scanid . '_%z_%x_%y.%e';
         
         // Execute builder.
-        $command = "$builderpath -q $quality -i $image_type -p $outpath $image_id";
+        $command = "$builderpath -q $quality -i $scantype -p $outpath -f $tileformat $scanid";
         exec($command, output, rval);
         
         // Check return value to see whether operation succeeded.
         if($rval != 0)
         {
             throw new PyramidBuilderExeption('builder-failed', $output);
+        }
+    }
+    
+    /**
+     * Creates a thumbnail from a scan with a certain ID. This scan should have already been 
+     * successfully processed.
+     * 
+     * @param int $scanid The ID the processed scan to create a thumbnail from.
+     */
+    private function createThumbnail($scanid)
+    {
+        $conf = Configuration::getInstance();
+        
+        // Determine paths.
+        $thumb = $conf->getString('thumbnail-path', '.')  . $scanid . 'jpg';
+        $tile = $conf->getString('tile-output-path', '.') . $scanid . '_0_0_0.jpg';
+        
+        // Determine thumbnail dimensions.
+        $width = $conf->getInteger('thumbnail-width', 100);
+        $height = $conf->getInteger('thumbnail-height', 100);
+        
+        // Create thumbnail.
+        $success = imagecopyresized($thumb, $tile, 0, 0, 0, 0, $width, $height, 256, 256);
+        
+        if(!$success)
+        {
+            Log::error('Failed creating thumbnail of scan with ID %d.', $scanid);
         }
     }
     
@@ -126,8 +155,9 @@ class PyramidBuilder extends Singleton
                 // Process the image.
                 $this->run($scanid, $scan->getScanType());
                 
-                // TODO: Make thumbnail.
-                
+                // Create a thumbnail.
+                $this->createThumbnail($scanid); 
+                                
                 // No exception, therefore success!
                 $scan->setStatus(Scan::STATUS_PROCESSED);
                 $scan->save();
