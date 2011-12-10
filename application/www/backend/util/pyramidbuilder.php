@@ -1,5 +1,9 @@
 <?php
 
+require_once 'framework/util/singleton.php';
+require_once 'framework/util/log.php';
+require_once 'framework/database/database.php';
+
 /**
  * An exception thrown when the pyramid builder fails for some reason.
  */
@@ -7,7 +11,6 @@ class PyramidBuilderException extends ExceptionBase
 {
     
 }
-
 
 /**
  * A class that can be used to register newly uploaded scans which will be put in a queue to be processed.
@@ -18,10 +21,9 @@ class PyramidBuilder extends Singleton
     protected static $instance;
     
     
-    /** An SplQueue of image filenames representing scans waiting to be processed. */
+    /** An SplQueue of scan id's representing scans waiting to be processed. */
     private $queue;
      
-    
     protected function __construct()
     {
         $this->queue = new SplQueue();
@@ -30,21 +32,18 @@ class PyramidBuilder extends Singleton
     /**
      * Runs the pyramid builder on an image. Blocks until the image has been completely processed.
      * 
-     * @param string The file name of the image. If it does not start with a '/' the 'input-path' 
-     *               configuration is prepended. Otherwise it is seen as the full path of the image.
+     * @param $image_id   The database identifier and filename of the scan.
+     * @param $image_type The type of the scan. Should be a Scan::IMGTYPE_* constant.
      * 
      * @throws PyramidBuilderException When the builder returns with a nonzero error code, meaning 
      *                                 an error has occured.
      */
-    private function run($image)
+    private function run($image_id, $image_type)
     {
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
         
-        if($image[0] != '/')
-        {
-            $image = $conf->getString('image-input-path', '.') . '/' . $image;
-        }
+        $imgfile = $conf->getString('image-input-path', '.') . '/' . $image_id;
         
         $output = array();
         $rval = 0;
@@ -53,7 +52,7 @@ class PyramidBuilder extends Singleton
         $builderpath = $conf->getString('builder-path', './builder');
         
         // Execute builder.
-        $command = "$builderpath -q $quality -p $outpath $image";
+        $command = "$builderpath -q $quality -i $image_type -p $outpath $image_id";
         exec($command, output, rval);
         
         // Check return value to see whether operation succeeded.
@@ -63,6 +62,131 @@ class PyramidBuilder extends Singleton
         }
     }
     
+    /**
+     * When the builder crashes while processing a scan but does not succeed to set its error flag,
+     * this method can be used to change the PROCESSING status of every scan to ERROR.
+     * 
+     * NOTE: Only call this when there are no other threads running the PyramidBuilder 
+     * simultaniously.
+     * 
+     * TODO: Let this remove erronous input or output files.
+     */
+    public function resolveInconsistencies()
+    {
+        Query::update('Scans', array('status', Scan::STATUS_ERROR))
+                ->where('status = ' . Scan::STATUS_PROCESSING)
+                ->execute();
+    }
     
+    /**
+     * First checks whether the queue is empty and, if so, fills it with new scans.
+     * 
+     * Then all scans in the queue are processed one by one.
+     * 
+     * @throws Exception If processing a single scan fails or another error occurs while doing so.
+     *                   The method will try to set that scan's status to ERROR. There might be 
+     *                   other scans left in the queue, so calling doIteration again will make
+     *                   it continue with the rest.
+     *                   
+     */
+    public function doIteration()
+    {
+        // Check whether there is an image in the queue.
+        if($this->queue->isEmpty())
+        {            
+            // Queue should be updated by all scans in the database with a PENDING status.
+            $result = Query::select('scanId', 'scanType')
+                            ->from('Scans')
+                            ->where('status = ' . Scan::STATUS_PENDING)
+                            ->execute();
+            
+            foreach($result as $row)
+            {
+                $this->queue->enqueue(new ScanImage($row->getValue('scanId'), 
+                                       $row->getValue('scanType')));
+            }
+        }
+        
+        
+        // Now process contents of the queue, if any.
+        while(!$this->queue->isEmpty())
+        {
+            // Now dequeue an image for processing.
+            $scanid = $this->queue->dequeue();
+            
+            // Load the corresponding scan entity.
+            $scan = new Scan($scanid);
+            
+            try
+            {
+                // Set status to PROCESSING and save.
+                $scan->setStatus(Scan::STATUS_PROCESSING);
+                $scan->save();
+                
+                // Process the image.
+                $this->run($scanid, $scan->getScanType());
+                
+                // TODO: Make thumbnail.
+                
+                // No exception, therefore success!
+                $scan->setStatus(Scan::STATUS_PROCESSED);
+                $scan->save();
+            }
+            catch(Exception $ex)
+            {
+                // Something went wrong. Set the error status.
+                $scan->setStatus(Scan::STATUS_ERROR);
+                throw $ex;
+            }
+        }
+    }
     
+    /**
+     * Continuously keep running the pyramid builder.
+     * 
+     * NOTE: This method calls resolveInconsistencies every 20 rounds, so make sure only a single 
+     * thread is executing runBuilder at a time.
+     * 
+     * @param int $iteration_pause The timeout in seconds after each iteration.
+     */
+    public function runBuilder($iteration_pause = 5)
+    {       
+        $round = 0;
+        
+        while(true)
+        {
+            // Call resolveInconsistencies every 20 rounds.
+            if($round >= 20)
+            {
+                $this->resolveInconsistencies();
+                $round = 0;
+            }
+            
+            try
+            {
+                // TODO: Parallel iterations might be beneficial?
+                
+                // Do a single iteration.
+                $this->doIteration();
+            }
+            catch(PyramidBuilderException $pex)
+            {
+                // Log builder error. Probably a mistake on the part of the user.
+                Log::warn('Pyramid builder error:\n%s', $pex->getMessage());
+            }
+            catch(Exception $ex)
+            {
+                // Log other exceptions.
+                Log::error('Miscelanous error while processing scans:\n%s', $ex);
+            }
+            
+            ++$round;
+            
+            // Timeout.
+            if(sleep($iteration_pause) !== 0)
+            {
+                Log::warn('Builder sleep() was interrupted.');
+            }
+        }
+    }
 }

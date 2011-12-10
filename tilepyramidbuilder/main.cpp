@@ -26,7 +26,7 @@ void showUsage(char *command)
          << "Formats:\n"
          << "  <string>     A sequence of characters\n"
          << "  <num>        A positive number\n"
-         << "  <type>       'jpg', 'tiff' or 'auto'\n"
+         << "  <type>       'jpeg', 'tiff' or 'auto'\n"
          << "  <path>       A path to a directory\n"
          << "  <color>      A color, eg: '#FF0', '#FFFF00', 'white', or '255,255,0'\n\n"
          << "Examples:\n"
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
         BuilderSettings settings = DEFAULT_BUILDER_SETTINGS;
         
         //Input settings
-        if (input_type == "jpg")
+        if (input_type == "jpg" || input_type == "jpeg")
             settings.input_type = BuilderSettings::JPEG_INPUT;
         else if (input_type == "tiff")
             settings.input_type = BuilderSettings::TIFF_INPUT;
