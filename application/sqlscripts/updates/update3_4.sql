@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 -- The Book/binding <-> language relation now has its own primary key. 
 -- Also, bookId is now nullable since a binding can have a language that one of its books does not have. 
 ALTER TABLE "BookLanguages" DROP CONSTRAINT "BookLanguages_pkey";
@@ -13,4 +15,6 @@ ALTER TABLE "Users" ALTER email TYPE character varying(256);
 -- Default of Users.rank should be 10, not 50.
 ALTER TABLE "Users"
    ALTER COLUMN rank SET DEFAULT 10;
+
+COMMIT;
 

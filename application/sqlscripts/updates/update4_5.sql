@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 -- Adds annotation table (currently only with transcriptions and polygons)
 
 CREATE TABLE "Annotations"
@@ -18,3 +20,6 @@ CREATE TABLE "Annotations"
     FOREIGN KEY ("bookID")
         REFERENCES "Books"
 );
+
+COMMIT;
+
