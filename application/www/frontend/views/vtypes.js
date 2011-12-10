@@ -29,9 +29,9 @@ Ext.apply(Ext.form.VTypes, {
  */
 
 Ext.apply(Ext.form.VTypes, {
-    emailCheck: function(value, field)
+    checkEmail: function(value, field)
     {
-        // Check if the email is a correct email address
+        // Check if the email is a correct email address.
         var emailRegExp = /^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/;
     
         if (!emailRegExp.test(value))

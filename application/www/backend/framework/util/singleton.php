@@ -22,7 +22,7 @@ abstract class Singleton
      */
     public static function getInstance()
     {
-        if (!isset(self::$instance))
+        if (!isset(static::$instance))
         {
             $className = get_called_class();
             static::$instance = new $className;
