@@ -3,14 +3,17 @@
  */
 
 var bookProperties = [{
-    abbreviation: 'year',
-    name: 'Year of publication'
-},{
     abbreviation: 'title',
-    name: 'Title'
+    name: 'Title',
+    defaultOn: true
 },{
     abbreviation: 'author',
-    name: 'Author'
+    name: 'Author',
+    defaultOn: true
+},{
+    abbreviation: 'year',
+    name: 'Year of publication',
+    defaultOn: true
 },{
     abbreviation: 'place',
     name: 'Place published'
@@ -28,7 +31,8 @@ var bookProperties = [{
     name: 'Library'
 },{
     abbreviation: 'signature',
-    name: 'Signature'
+    name: 'Signature',
+    defaultOn: true
 }/*,{
     abbreviation: 'provenance',
     name: 'Provenance'
@@ -88,7 +92,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-right: 5px;',
-                minLength: 4,
+                minLength: 3,
                 maxLength: 4,
                 allowBlank: true
             },
@@ -308,7 +312,7 @@ Ext.define('Ext.ux.SearchResultsView', {
 
     initComponent: function()
     {
-        this.cols  = this.getColumnStore(this.data);
+        this.cols  = this.getColumnStore(this.cols);
         this.store = this.getResultStore(this.data, this.cols);
         
         var _this = this;
@@ -326,6 +330,7 @@ Ext.define('Ext.ux.SearchResultsView', {
                     '</div>',
                 '</tpl>',
             ],
+            fullData: this.data,
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
             itemSelector: 'div.bookitem',
@@ -367,7 +372,7 @@ Ext.define('Ext.ux.SearchResultsView', {
     {
         var store = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.SearchColumnModel',
-            data: data.columns
+            data: data
         });
         
         return store;
@@ -562,7 +567,8 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         results.removeAll();
         results.add({
             xtype: 'searchresultsview',
-            data: data
+            data: data,
+            cols: this.up('searchpanel').down('[name=parameters]').getColumns()
         });
         
         var currentToolbar = this.down('pagingtoolbar');
@@ -577,6 +583,15 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         });
         
         this.sort();
+    },
+    updateColumns: function()
+    {
+        var view = this.down('[name=results]').down('searchresultsview');
+        
+        if (view != null)
+        {
+            this.setData(view.fullData);
+        }
     }
 });
 
@@ -639,9 +654,10 @@ Ext.define('Ext.ux.SearchPanel', {
         var westRegion = {
             region: 'west',
             xtype: 'panel',
+            layout: 'vbox',
             collapsible: true,
             title: 'Advanced options',
-            items: {
+            items: [{
                 xtype: 'panel',
                 name: 'sort',
                 border: false,
@@ -664,7 +680,70 @@ Ext.define('Ext.ux.SearchPanel', {
                     xtype: 'sortcombobox',
                     sortFn: sort
                 }]
-            }
+            },{
+                xtype: 'panel',
+                name: 'parameters',
+                title: 'Result options',
+                border: false,
+                flex: 0,
+                width: 200,
+                bodyPadding: 10,
+                items: function()
+                {
+                    var items = [];
+                    var props = bookProperties.concat([{
+                        abbreviation: 'headline',
+                        name: 'Headline',
+                        defaultOn: true
+                    }]);
+                    
+                    for (var i = 0; i < props.length; i++)
+                    {
+                        items[i] = {
+                            xtype: 'checkbox',
+                            fieldLabel: props[i].name,
+                            labelSeparator: '',
+                            labelWidth: '150',
+                            checked: props[i].defaultOn == true,
+                            resultField: props[i].abbreviation,
+                            getColumn: function()
+                            {
+                                return {
+                                    desc: this.fieldLabel,
+                                    name: this.resultField,
+                                    show: this.getValue()
+                                };
+                            },
+                            listeners: {
+                                change: function ()
+                                {
+                                    this.up('searchpanel').down('searchresultspanel').updateColumns();
+                                }
+                            }
+                        };
+                    }
+                    return items;
+                }(),
+                getColumns: function()
+                {
+                    var cols = [];
+                    for (var i = 0; i < this.items.length; i++)
+                    {
+                        cols[i] = this.items.get(i).getColumn();
+                    }
+                    cols[cols.length] = {
+                        desc: 'Thumbnail',
+                        name: 'thumbnail',
+                        show: false
+                    };
+                    cols[cols.length] = {
+                        desc: 'Identifier',
+                        name: 'id',
+                        show: false
+                    };
+                    return cols;
+                }
+            }]
         };
         
         var defConfig = {
