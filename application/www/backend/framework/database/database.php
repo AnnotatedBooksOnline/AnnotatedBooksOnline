@@ -149,6 +149,8 @@ class Database extends Singleton
      * 
      * @param callback $callback The function to execute as a transaction. May contain calls to 
      *                           this method for recursive transactions.
+     *                           
+     * @return mixed Returns whatever value the callback returns, if any.
      * 
      * @throws Exception Rethrows exceptions from the callback.
      */
@@ -157,8 +159,9 @@ class Database extends Singleton
         $this->startTransaction();
         try
         {
-            call_user_func($callback);
+            $returned = call_user_func($callback);
             $this->commit();
+            return $returned;
         }
         catch(Exception $ex)
         {

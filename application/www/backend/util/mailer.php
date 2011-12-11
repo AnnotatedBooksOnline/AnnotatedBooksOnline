@@ -43,9 +43,7 @@ class Mailer extends Singleton
                     . ' <'     . Configuration::getInstance()->getString('from-address') 
                     . '>\r\n';
         
-        Log::debug('....');
         $success = mail($recipient, $subject, $message, $fromheader);
-        Log::debug('!!!!');
         if(!$success)
         {
             throw new MailException('mail-failed', $recipient);
@@ -73,6 +71,8 @@ class Mailer extends Singleton
         {
             throw new MailException('illegal-confirmation-code', $code);
         }
+        
+        // TODO: Insert user information in message.
         
         // Insert the activation link into the message.
         $linkpos = strpos($basemessage, '[LINK]');
