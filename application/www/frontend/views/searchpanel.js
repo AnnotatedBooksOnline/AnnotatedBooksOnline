@@ -319,22 +319,21 @@ Ext.define('Ext.ux.SearchResultsView', {
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
-                    '<div class="bookitem" style="border: 1px solid #DDD; margin: 10px; cursor: pointer;">',
-                        '<div style="float: left; width: 50px; height: 67px; margin-right: 10px;">',
-                            '<img src="{thumbnail}" style="width: 50px; height: 67px;"/>',
-                        '</div>',
-                        '<div style="float: left; margin-top: 10px;">',
-                            '<table>{properties}</table>',
-                        '</div>',
-                        '<div style="clear: both;"></div>',
-                    '</div>',
+                    '<table class="bookitem" style="margin: 10px; cursor: pointer;">',
+                        '<tr>',
+                            '<td><img src="{thumbnail}" style="width: 50px; height: 67px;"/></td>',
+                            '<td><table style="margin: 5px; margin-left: 10px">{properties}</table></td>',
+                        '</tr>',
+                    '</table>',
+                    '<hr style="margin: 0px;">',
                 '</tpl>',
             ],
             fullData: this.data,
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
-            itemSelector: 'div.bookitem',
+            itemSelector: 'table.bookitem',
             emptyText: 'No books found.',
+            region: 'center',
             listeners: {
                 itemclick: function(view, record)
                 {
@@ -356,7 +355,7 @@ Ext.define('Ext.ux.SearchResultsView', {
         for (var field in data)
         {
             var col = this.cols.findRecord('name', field);
-            if (col && col.get('desc') && col.get('show'))
+            if (col && col.get('desc') && col.get('show') && data[field] != null && data[field].length != "")
             {
                 properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
                             + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
@@ -393,10 +392,10 @@ Ext.define('Ext.ux.SearchResultsView', {
                 return fields;
             }(),
             pageSize: 5,
-            data: data.records,
+            data: data,
             pagedSort: function(sorters, direction)
             {
-                this.loadData(data.records);
+                this.loadData(data);
                 var sorted = this.sort(sorters, direction);
                 this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize,
                     this.currentPage * this.pageSize));
@@ -407,8 +406,8 @@ Ext.define('Ext.ux.SearchResultsView', {
         store.on('load',
             function(store, records, successful, operation)
             {
-                this.loadData(data.records);
-                this.loadData(this.data.getRange().slice((this.currentPage - 1)  *this.pageSize,
+                this.loadData(data);
+                this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize,
                     this.currentPage * this.pageSize));
             },
             store
@@ -523,15 +522,12 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         var defConfig = {
             title: 'Search results',
             border: false,
-            layout: {
-                type: 'hbox',
-                align: 'top'
-            },
+            layout: 'border',
             items: [{
                 xtype: 'panel',
                 name: 'results',
                 border: false,
-                flex: 1
+                region: 'center'
             }]
         };
         
@@ -610,6 +606,7 @@ Ext.define('Ext.ux.SearchPanel', {
         var centerRegion = {
             region: 'center',
             xtype: 'panel',
+            autoScroll: true,
             items: [{
                 title: 'Search',
                 xtype: 'searchfieldspanel'
@@ -654,16 +651,15 @@ Ext.define('Ext.ux.SearchPanel', {
         var westRegion = {
             region: 'west',
             xtype: 'panel',
-            layout: 'vbox',
             collapsible: true,
             title: 'Advanced options',
+            autoScroll: true,
+            width: 210,
             items: [{
                 xtype: 'panel',
                 name: 'sort',
                 border: false,
                 title: 'Sorting options',
-                flex: 0,
-                width: 200,
                 bodyPadding: 10,
                 items: [{
                     xtype: 'panel',
@@ -685,8 +681,6 @@ Ext.define('Ext.ux.SearchPanel', {
                 name: 'parameters',
                 title: 'Result options',
                 border: false,
-                flex: 0,
-                width: 200,
                 bodyPadding: 10,
                 items: function()
                 {

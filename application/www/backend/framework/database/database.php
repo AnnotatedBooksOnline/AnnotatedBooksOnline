@@ -923,7 +923,7 @@ class Query
     {
         if (!is_array($args))
         {
-            return $args;
+            return array($args);
         }
         
         $result = array();
