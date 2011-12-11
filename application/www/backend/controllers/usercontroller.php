@@ -193,7 +193,7 @@ class UserController extends Controller
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => '0',
+            'active'      => '1', //'0',
             'banned'      => '0', // TODO: Typing, to allow a boolean.
             'rank'        => User::RANK_ADMIN //TODO: Regular user rank.
         );
@@ -209,8 +209,8 @@ class UserController extends Controller
             $user->save();
             
             // Now create a pending user.
-            $puser = PendingUser::fromUser($user);
-            $puser->save();
+//             $puser = PendingUser::fromUser($user);
+//             $puser->save();
         });
         
         
