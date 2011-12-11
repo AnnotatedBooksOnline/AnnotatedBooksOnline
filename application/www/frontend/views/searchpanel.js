@@ -332,7 +332,6 @@ Ext.define('Ext.ux.SearchResultsView', {
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
             itemSelector: 'table.bookitem',
-            emptyText: 'No books found.',
             region: 'center',
             listeners: {
                 itemclick: function(view, record)
@@ -560,25 +559,43 @@ Ext.define('Ext.ux.SearchResultsPanel', {
     {
         var results = this.down('[name=results]');
         
-        results.removeAll();
-        results.add({
-            xtype: 'searchresultsview',
-            data: data,
-            cols: this.up('searchpanel').down('[name=parameters]').getColumns()
-        });
-        
         var currentToolbar = this.down('pagingtoolbar');
-        results.removeDocked(currentToolbar);
-        results.addDocked({
-            xtype: 'pagingtoolbar',
-            docked: 'top',
-            store: results.getComponent(0).getStore(),
-            displayInfo: true,
-            displayMsg: 'Displaying books {0} - {1} of {2}',
-            emptyMsg: 'No books found'
-        });
+        if (currentToolbar != null)
+        {
+            results.removeDocked(currentToolbar);
+        }
         
-        this.sort();
+        results.removeAll();
+        
+        if (data.length > 0)
+        {
+            results.add({
+                xtype: 'searchresultsview',
+                data: data,
+                cols: this.up('searchpanel').down('[name=parameters]').getColumns()
+            });
+            
+            results.addDocked({
+                xtype: 'pagingtoolbar',
+                docked: 'top',
+                store: results.getComponent(0).getStore(),
+                displayInfo: true,
+                displayMsg: 'Displaying books {0} - {1} of {2}'
+            });
+            
+            results.down('pagingtoolbar').refresh.hide();
+            
+            this.sort();
+        }
+        else
+        {
+            results.add({
+                xtype: 'panel',
+                border: false,
+                bodyPadding: 10,
+                html: 'No results matching your search were found.'
+            });
+        }
     },
     updateColumns: function()
     {
@@ -638,8 +655,7 @@ Ext.define('Ext.ux.SearchPanel', {
                     RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
                 }
             },{
-                xtype: 'searchresultspanel'//,
-                //title: 'Search results'
+                xtype: 'searchresultspanel'
             }]
         };
         
@@ -667,8 +683,8 @@ Ext.define('Ext.ux.SearchPanel', {
                 collapsible: true,
                 items: [{
                     xtype: 'panel',
-                    border: 0,
-                    html: '<h2>Sort by:</h2>',
+                    border: false,
+                    html: 'Sort by:',
                     style: 'margin-bottom: 10px'
                 },{
                     xtype: 'sortcombobox',
@@ -689,7 +705,13 @@ Ext.define('Ext.ux.SearchPanel', {
                 collapsible: true,
                 items: function()
                 {
-                    var items = [];
+                    var items = [{
+                        xtype: 'panel',
+                        border: false,
+                        html: 'Show:',
+                        style: 'margin-bottom: 5px;'
+                    }];
+                    
                     var props = bookProperties.concat([{
                         abbreviation: 'headline',
                         name: 'Headline',
@@ -698,17 +720,15 @@ Ext.define('Ext.ux.SearchPanel', {
                     
                     for (var i = 0; i < props.length; i++)
                     {
-                        items[i] = {
+                        items[i+1] = {
                             xtype: 'checkbox',
-                            fieldLabel: props[i].name,
-                            labelSeparator: '',
-                            labelWidth: '150',
+                            boxLabel: props[i].name,
                             checked: props[i].defaultOn == true,
                             resultField: props[i].abbreviation,
                             getColumn: function()
                             {
                                 return {
-                                    desc: this.fieldLabel,
+                                    desc: this.boxLabel,
                                     name: this.resultField,
                                     show: this.getValue()
                                 };
@@ -726,9 +746,9 @@ Ext.define('Ext.ux.SearchPanel', {
                 getColumns: function()
                 {
                     var cols = [];
-                    for (var i = 0; i < this.items.length; i++)
+                    for (var i = 0; i < this.items.length-1; i++)
                     {
-                        cols[i] = this.items.get(i).getColumn();
+                        cols[i] = this.items.get(i+1).getColumn();
                     }
                     cols[cols.length] = {
                         desc: 'Thumbnail',
