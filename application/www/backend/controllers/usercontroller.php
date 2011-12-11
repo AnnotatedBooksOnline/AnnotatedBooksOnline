@@ -4,6 +4,7 @@
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
 require_once 'model/user/usersearchlist.php';
+require_once 'model/user/pendinguser.php';
 
 /**
  * User controller class.
@@ -188,26 +189,32 @@ class UserController extends Controller
             'email'       => $email,
             'firstName'   => $firstName,
             'lastName'    => $lastName,
-            'password'    => $password,
             'affiliation' => $affiliation,
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => '1', // TODO: Activation.
+            'active'      => '0',
             'banned'      => '0', // TODO: Typing, to allow a boolean.
             'rank'        => User::RANK_ADMIN
         );
+     
+        // Create user and pendinguser entries in a transaction.
+        Database::getInstance()->doTransaction(
+        function() use ($values, $password)
+        {  
+            // Create user entry.
+            $user = new User();
+            $user->setValues($values);
+            $user->setPassword($password);
+            $user->save();
+            
+            // Now create a pending user.
+            $puser = PendingUser::fromUser($user);
+            $puser->save();
+        });
         
-        $user = new User();
-        $user->setValues($values);
-        $user->save();
-        // TODO: Set new userId.
         
-        // Now create a pending user.
-        //$puser = PendingUser::fromUser($user);
-        //$puser->save();
         //TODO: Notify user of confirmation code by e-mail.
-        //TODO: Transaction for $user->save() and $puser->save()? But how to determine the user id then?
         
         return array('records' => $values); 
     }

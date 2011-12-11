@@ -72,6 +72,8 @@ abstract class Entity
             {
                 $this->{$key} = $row->getValue($key);
             }
+            
+            
         }
         else
         {
@@ -92,7 +94,12 @@ abstract class Entity
     {
         foreach ($values as $name => $value)
         {
-            $this->{'set' . ucfirst($name)}($value);
+            // Tom: I changed this because the previous solution was more error-prone.
+            // Now you do have to manually use the setPassword function when you want to set a 
+            // password rather than a password hash, but this prevents problems with setters that
+            // have are not present or have been inconsistantly named.
+            $this->{$name} = $value;
+            //$this->{'set' . ucfirst($name)}($value);
         }
     }
     

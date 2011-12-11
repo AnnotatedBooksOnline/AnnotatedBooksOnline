@@ -42,6 +42,8 @@ class Database extends Singleton
     }
 
     /**
+     * DEPRECATED: use doTransaction instead.
+     * 
      * Starts a database transaction.
      *
      * After calling this method, all query functions will no longer immediately commit their
@@ -67,6 +69,8 @@ class Database extends Singleton
     }
 
     /**
+     * DEPRECATED: use doTransaction instead.
+     * 
      * Checks whether currently in a transaction.
      *
      * @return A boolean indicating whether currently in a transaction.
@@ -80,6 +84,8 @@ class Database extends Singleton
     }
 
     /**
+     * DEPRECATED: use doTransaction instead.
+     * 
      * Commits the current transaction.
      *
      * Commits the current transaction, finalizing all changes made to the database. The transaction
@@ -103,6 +109,8 @@ class Database extends Singleton
     }
     
     /**
+     * DEPRECATED: use doTransaction instead.
+     * 
      * Commits all currently stacked transactions.
      */
     public function commitAll()
@@ -114,6 +122,8 @@ class Database extends Singleton
     }
 
     /**
+     * DEPRECATED: use doTransaction instead.
+     * 
      * Rolls back a transaction.
      *
      * Undoes all queries made in the current transaction. The transaction will have ended, so \
@@ -127,6 +137,33 @@ class Database extends Singleton
         if (!$this->pdo->rollBack())
         {
             throw new DatabaseException('transaction-rollback');
+        }
+    }
+    
+    /**
+     * Exception-safe transaction handler. 
+     * 
+     * Starts a transaction and executes the provided callback. If that callback terminates 
+     * normally the transaction is committed, if it throws an exception however the transaction 
+     * will be rolled back and it is rethrown.
+     * 
+     * @param callback $callback The function to execute as a transaction. May contain calls to 
+     *                           this method for recursive transactions.
+     * 
+     * @throws Exception Rethrows exceptions from the callback.
+     */
+    public function doTransaction($callback)
+    {
+        $this->startTransaction();
+        try
+        {
+            call_user_func($callback);
+            $this->commit();
+        }
+        catch(Exception $ex)
+        {
+            $this->rollBack();
+            throw $ex;
         }
     }
     

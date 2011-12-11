@@ -61,14 +61,12 @@ class PendingUser extends Entity
         
         // Expiration dates are set to one week after the current day.
         $expdate = Query::toDate(time() + 604800);
-        
         $values = array(
                     'userId' => $user->getId(),
                     'confirmationCode' => self::generateConfirmationCode($user),
                     'expirationDate' => $expdate);
         
         $result->setValues($values);
-        
         return $result;
     }
     
