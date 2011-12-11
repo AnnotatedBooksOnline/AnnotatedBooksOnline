@@ -44,7 +44,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                 name: 'website',
                 fieldLabel: 'Website',
                 allowBlank: true,
-                vtype: 'url',
+                vtype: 'checkURL',
                 maxLength: 255
             },{
                 name: 'homeAddress',
