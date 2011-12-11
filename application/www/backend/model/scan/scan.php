@@ -9,14 +9,14 @@ require_once 'framework/database/entity.php';
 class Scan extends Entity
 {
     /** Scan status constants. */
-    const STATUS_AVAILABLE = 0;  // Scan is available and viewable.
-    const STATUS_PENDING = 1;    // Scan is new and waiting to be processed. 
+    const STATUS_AVAILABLE  = 0; // Scan is available and viewable.
+    const STATUS_PENDING    = 1; // Scan is new and waiting to be processed. 
     const STATUS_PROCESSING = 2; // Scan is currently being processed.
-    const STATUS_ERROR = 3;      // Processing the scan has failed.
-    const STATUS_DELETED = 4;    // This scan has been deleted by the uploader or a moderator/admin.
-    const STATUS_PROCESSED = 5;  // Scan is fully processed, but some settings might not be set yet.
+    const STATUS_ERROR      = 3; // Processing the scan has failed.
+    const STATUS_DELETED    = 4; // This scan has been deleted by the uploader or a moderator/admin.
+    const STATUS_PROCESSED  = 5; // Scan is fully processed, but some settings might not be set yet.
     
-    /** ScanType constants. */
+    /** Scan type constants. */
     const IMGTYPE_JPEG = "jpeg";
     const IMGTYPE_TIFF = "tiff";
     
@@ -29,22 +29,23 @@ class Scan extends Entity
     protected $height;
     protected $zoomLevel;
     
-    
     /**
-    * Constructs a scan entity.
-    * @param $sid If null, an empty entity will be created. Otherwise one with the provided scanId
-    *             will be loaded.
-    */
-    public function __construct($sid = null)
+     * Constructs a scan entity.
+     *
+     * @param $id  Id of the scan. Default (null) will create a new scan.
+     */
+    public function __construct($id = null)
     {
-        if($sid !== null)
+        if ($id !== null)
         {
+            $this->scanId = $id;
+            
             $this->load();
         }
     }
     
     /**
-     * Creates a new empty scan with its status set to STATUS_ENQUEUED and saves it.
+     * Creates a new empty scan with its status set to enqueued and saves it.
      * 
      * @param $scanType The image type of the input image, should be either "tiff" or "jpeg". 
      * 
@@ -66,8 +67,8 @@ class Scan extends Entity
     // TODO: more helpers.
     
     /**
-    * Get the name of the corresponding table.
-    */
+     * Get the name of the corresponding table.
+     */
     public static function getTableName()
     {
         return 'Scans';
@@ -89,27 +90,31 @@ class Scan extends Entity
         return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel');
     }
     
-    
     // Getters and setters.
-    public function getId() {return $this->scanId;}
-    public function setId($id) {$this->scanId = $id;}
+    public function getId()    { return $scanId;      }
+    public function setId($id) { $this->scanId = $id; }
     
-    public function getBookId() {return $this->bookId;}
-    public function setBookId($id) {$this->bookId = $id;}
+    public function getBookId()    { return $bookId;      }
+    public function setBookId($id) { $this->bookId = $id; }
     
-    public function getScanType() {return $this->scanType;}
-    public function setScanType($type) {$this->scanType = $type;}
+    public function getScanType()      { return $this->scanType;  }
+    public function setScanType($type) { $this->scanType = $type; }
     
-    public function getPage() {return $this->page;}
-    public function setPage($page) {$this->page = $page;}
+    public function getPage()      { return $page;        }
+    public function setPage($page) { $this->page = $page; }
     
-    public function getStatus() {return $this->status;}
-    public function setStatus($s) {$this->status = $s;}
+    public function getStatus()   { return $status;     }
+    public function setStatus($s) { $this->status = $s; }
     
-    public function getWidth() {return $this->width;}
-    public function getHeight() {return $this->height;}
-    public function setDimensions($width, $height){$this->width = $width; $this->height = $height;}
+    public function getWidth()  { return $this->width;  }
+    public function getHeight() { return $this->height; }
     
-    public function getZoomLevel() {return $this->zoomLevel;}
-    public function setZoomLevel($z) {$this->zoomLevel = $z;}
+    public function setDimensions($width, $height)
+    {
+        $this->width  = $width;
+        $this->height = $height;
+    }
+    
+    public function getZoomLevel()       { return $this->zoomLevel;   }
+    public function setZoomLevel($level) { $this->zoomLevel = $level; }
 }

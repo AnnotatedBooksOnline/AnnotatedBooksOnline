@@ -1,114 +1,4 @@
 /*
- * Scan field container class.
- */
-Ext.define('Ext.ux.ScanFieldContainer', {
-    extend: 'Ext.form.FieldContainer',
-    alias: 'widget.scanfieldcontainer',
-    initComponent: function()
-    {
-        var _this = this;
-        
-        var defConfig = {
-            layout: 'hbox',
-            combineErrors: true,
-            defaultType: 'label',
-            items: [{
-                text: 'This is a scan'
-            },{
-                // TODO: add percentage
-                text: 'Some percentage..',
-                margins: '0 0 0 10'
-            },{
-                xtype: 'button',
-                text: 'Delete scan',
-                disabled: false,
-                width: 140,
-                margins: '0 0 0 10',
-                handler: function()
-                {
-                    _this.destroy();
-                }
-            }]
-        };
-        
-        Ext.apply(this, defConfig);
-        
-        this.callParent();
-    }
-});
-
-/*
- * Upload fieldset class.
- */
-Ext.define('Ext.ux.UploadFieldSet', {
-    extend: 'Ext.form.FieldSet',
-    alias: 'widget.uploadfieldset',
-    title: 'Upload',
-    collapsible: true,
-    initComponent: function()
-    {
-        var _this = this;
-        
-        var defConfig = {
-            items: [{
-                xtype: 'fieldcontainer',
-                layout: 'hbox',
-                combineErrors: true,
-                defaultType: 'filefield',
-                items: [{
-                    emptyText: 'Select an XML-file',
-                    fieldLabel: 'XML *',
-                    name: 'xml-path',
-                    buttonText: 'Browse...',
-                    validator: function(value)
-                    {
-                        return (value.substr(value.length-4).toLowerCase() === ".xml")
-                            ? true 
-                            : 'File must be XML.';
-                    }
-                },{
-                    // TODO: add percentage
-                    xtype: 'label',
-                    text: 'Some percentage..',
-                    margins: '0 0 0 10'
-                }]
-            },{
-                xtype: 'label',
-                text: 'Scans *:'
-            },{
-                xtype: 'filefield',
-                buttonOnly: true,
-                fieldLabel: 'Add scan',
-                buttonText: 'Browse...',
-                listeners: {
-                    'change': function (fb, value)
-                    {
-                        var extension = value.substr(value.length-5).toLowerCase();
-                        if (extension === ".tiff" 
-                         || extension === ".jpeg" 
-                         || extension.substr(1) === ".jpg"
-                         || extension.substr(1) === ".tif")
-                        {
-                            this.ownerCt.insert(this.ownerCt.items.length-1, 
-                                                [{xtype: 'scanfieldcontainer'}]);
-                            Ext.Msg.alert('File uploaded.', value);
-                        }
-                        else
-                        {
-                            Ext.Msg.alert('Wrong extension.', 'File must be a jpeg or a tiff image.');
-                        }
-                    }
-                }
-            }]
-        };
-        
-        Ext.apply(this, defConfig);
-        
-        this.callParent();
-    }
-});
-
-/*
  * Binding fieldset class.
  */
 Ext.define('Ext.ux.BindingFieldSet', {
@@ -179,6 +69,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                                     signature.validate();
                                     librarySignatureCheck = true;
                                 }
+                                
                                 return checkLibrarySignature(library, signature.getValue());
                             }
                         }
@@ -216,6 +107,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                                     library.validate();
                                     librarySignatureCheck = true;
                                 }
+                                
                                 return checkLibrarySignature(library.getValue(), signature);
                             }
                         }
@@ -259,9 +151,9 @@ Ext.define('Ext.ux.BookFieldset', {
     initComponent: function() {
         var _this = this;
     
-        // TODO: get this from database
+        // TODO: get this from database.
         var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['nl', 'Dutch'],['en', 'English'],['de', 'German']],
+            data: [['nl', 'Dutch'], ['en', 'English'], ['de', 'German']],
             fields: ['value', 'text'],
             sortInfo: {
                 field: 'text',
@@ -530,9 +422,9 @@ Ext.define('Ext.ux.BooksFieldSet', {
     {
         var _this = this;
         
-        // TODO: get this from database (this table is not yet in the model)
+        // TODO: get this from database. (this table is not yet in the model)
         var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['nl', 'Dutch'],['en', 'English'],['de', 'German']],
+            data: [['nl', 'Dutch'], ['en', 'English'], ['de', 'German']],
             fields: ['value', 'text'],
             sortInfo: {
                 field: 'text',
@@ -550,7 +442,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 margin: '0 0 10 0',
                 handler: function()
                 {
-                    this.ownerCt.insert(this.ownerCt.items.length-1, [{xtype: 'bookfieldset'}]);
+                    this.ownerCt.insert(this.ownerCt.items.length - 1, [{xtype: 'bookfieldset'}]);
                 }
             }]
         };
@@ -574,7 +466,7 @@ Ext.define('Ext.ux.UploadForm', {
         
         var defConfig = {
             items: [{
-                xtype: 'uploadfieldset'
+                xtype: 'scanpanel',
             },{
                 xtype: 'bindingfieldset'
             },{
@@ -586,14 +478,14 @@ Ext.define('Ext.ux.UploadForm', {
                     Ext.Msg.show({
                         title: 'Are you sure?',
                         msg: 'You are about to reset the complete form. Data will be lost and ' +
-                             'can\'t be undone. Are you sure?',
+                             'this action can\'t be undone. Are you sure?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
                         {
                             if (button == 'yes')
                             {
-                                // Reset the form
+                                // Reset the form.
                                 _this.getForm().reset(); 
                             }
                         }

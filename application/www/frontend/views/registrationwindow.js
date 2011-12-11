@@ -19,8 +19,8 @@ Ext.define('Ext.ux.RegistrationForm', {
                 maxLength: 30
             },{
                 name: 'email',
-                fieldLabel: 'Email Address *',
-                vtype: 'emailCheck',
+                fieldLabel: 'Email address *',
+                vtype: 'checkEmail',
                 maxLength: 255
             },{
                 name: 'firstName',

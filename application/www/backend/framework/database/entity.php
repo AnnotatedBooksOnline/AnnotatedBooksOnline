@@ -64,17 +64,14 @@ abstract class Entity
         {
             // TODO: Set default columns.
             
-            // Get the SQL statement to insert this entity and execute the statement prepared.
-            $this->getInsertQuery()->execute($this->getValues(false));
-               
-//             TODO: Code below for fetching primary keys. Test this.
-//             $row = $this->getInsertQuery(true)->execute($this->getValues(false))->getFirstRow();
+            // Get the SQL statement to insert this entity and execute the statement .
+            $row = $this->getInsertQuery(true)->execute($this->getValues(false))->getFirstRow();
             
-//             // Acquire the primary keys.
-//             foreach($this->getPrimaryKeys() as $pkey)
-//             {
-//                 $this->{pkey} = $row->getValue($pkey);
-//             }
+            // Acquire the primary keys.
+            foreach ($this->getPrimaryKeys() as $key)
+            {
+                $this->{$key} = $row->getValue($key);
+            }
         }
         else
         {
@@ -191,7 +188,7 @@ abstract class Entity
     /**
      * Returns the query needed to insert this entity into the database.
      * 
-     * @param $returning If true, a RETURNING clause is added to the query which returns all
+     * @param $returning If true, a returning clause is added to the query which returns all
      *                   primary keys.
      *
      * @return  Query to insert this entity in the database.
@@ -214,11 +211,11 @@ abstract class Entity
         $query = Query::insert($tableName, array_combine($columns, $values));
         
         // Add returning statement.
-        if($returning)
+        if ($returning)
         {
-            foreach($this->getPrimaryKeys() as $pkey)
+            foreach ($this->getPrimaryKeys() as $key)
             {
-                $query->returning($pkey);
+                $query->returning($key);
             }
         }
         

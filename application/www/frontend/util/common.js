@@ -80,6 +80,27 @@ function escape(str)
                replace(/\n/g, '<br />');
 }
 
+// Gets all cookies.
+function getCookies()
+{
+    var cookies = [];
+    
+    // Walk through parts.
+    var parts = document.cookie.split(";");
+    for (var i = parts.length - 1; i >= 0; --i)
+    {
+        var cookie = parts[i].split('=');
+        
+        // Trim spaces from name and value, and decode them.
+        var name  = decodeURIComponent(cookie[0].replace(/^\s+|\s+$/g, ''));
+        var value = decodeURIComponent(cookie[1].replace(/^\s+|\s+$/g, ''));
+        
+        cookies.push({name: name, value: value});
+    }
+    
+    return cookies;
+}
+
 /*
  * Browser detection.
  */

@@ -1,3 +1,5 @@
+BEGIN TRANSACTION;
+
 -- Add an aggregate function for making arrays.
 DROP AGGREGATE IF EXISTS array_accum (anyelement);
 CREATE AGGREGATE array_accum (anyelement)
@@ -6,3 +8,6 @@ CREATE AGGREGATE array_accum (anyelement)
     stype = anyarray,
     initcond = '{}'
 );
+
+COMMIT;
+

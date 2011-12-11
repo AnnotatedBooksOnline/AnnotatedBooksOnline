@@ -191,7 +191,8 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                     
                     var searchFieldsPanel = this.up('searchfieldspanel');
                     
-                    if (searchFieldsPanel && searchFieldsPanel.getComponent(searchFieldsPanel.items.length-1).
+                    if (searchFieldsPanel &&
+                        searchFieldsPanel.getComponent(searchFieldsPanel.items.length - 1).
                         down('[name=type]').getValue() != 'select')
                     {
                         searchFieldsPanel.add([{xtype: 'searchfield'}]);

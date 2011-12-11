@@ -1,4 +1,6 @@
--- Widens the confirmation code somewhat so an MD-5 hash can fit in.
+BEGIN TRANSACTION;
+
+-- Widens the confirmation code somewhat so an MD5 hash can fit in.
 
 ALTER TABLE "PendingUsers" ALTER "confirmationCode" TYPE character(32);
 
@@ -8,3 +10,6 @@ ALTER TABLE "PendingUsers" DROP CONSTRAINT "PendingUsers_pkey";
 ALTER TABLE "PendingUsers" ADD COLUMN "pendingUserId" serial NOT NULL;
 ALTER TABLE "PendingUsers" ADD PRIMARY KEY ("pendingUserId");
 ALTER TABLE "PendingUsers" ADD UNIQUE ("userId");
+
+COMMIT;
+
