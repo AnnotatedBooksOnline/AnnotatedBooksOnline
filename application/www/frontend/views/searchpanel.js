@@ -651,16 +651,20 @@ Ext.define('Ext.ux.SearchPanel', {
         var westRegion = {
             region: 'west',
             xtype: 'panel',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
             collapsible: true,
             title: 'Advanced options',
-            autoScroll: true,
-            width: 210,
+            width: 200,
             items: [{
                 xtype: 'panel',
                 name: 'sort',
                 border: false,
                 title: 'Sorting options',
                 bodyPadding: 10,
+                collapsible: true,
                 items: [{
                     xtype: 'panel',
                     border: 0,
@@ -682,6 +686,7 @@ Ext.define('Ext.ux.SearchPanel', {
                 title: 'Result options',
                 border: false,
                 bodyPadding: 10,
+                collapsible: true,
                 items: function()
                 {
                     var items = [];
