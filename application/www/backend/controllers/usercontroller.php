@@ -199,7 +199,7 @@ class UserController extends Controller
         );
      
         // Create user and pendinguser entries in a transaction.
-        Database::getInstance()->doTransaction(
+        $puser = Database::getInstance()->doTransaction(
         function() use ($values, $password)
         {  
             // Create user entry.
@@ -211,10 +211,11 @@ class UserController extends Controller
             // Now create a pending user.
 //             $puser = PendingUser::fromUser($user);
 //             $puser->save();
+//             return $puser;
         });
         
         
-        //TODO: Notify user of confirmation code by e-mail.
+        //Mailer::getInstance()->sendActivationMail($puser);
         
         return array('records' => $values); 
     }

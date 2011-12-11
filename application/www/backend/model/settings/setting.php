@@ -39,7 +39,7 @@ class Setting extends Entity
      * 
      * @return string The value of the setting.
      */
-    public static function getSettingValue($setting, $default = null)
+    public static function getSetting($setting, $default = null)
     {
         $entity = new Setting();
         $entity->settingName = $setting;
@@ -62,7 +62,7 @@ class Setting extends Entity
      * @param string $setting The name of the setting.
      * @param string $value   The new value of the setting.
      */
-    public static function setSettingValue($setting, $value)
+    public static function setSetting($setting, $value)
     {
         $entity = new Setting($setting);
         $entity->settingValue = $value;
