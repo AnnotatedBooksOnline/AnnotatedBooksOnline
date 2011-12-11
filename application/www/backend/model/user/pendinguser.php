@@ -99,8 +99,11 @@ class PendingUser extends Entity
     
     // Getters and setters.
     
-    public function getId() {return $this->userId;}
-    public function setId($id) {$this->userId = id;}
+    public function getId() {return $this->pendingUserId;}
+    public function setId($id) {$this->pendingUserId = id;}
+    
+    public function getUserId() {return $this->userId;}
+    public function setUserId($id) {$this->userId = $id;}
     
     public function getConfirmationCode() {return $this->confirmationCode;}
     public function setConfirmationCode($code) {$this->confirmationCode = $code;}
