@@ -45,7 +45,7 @@ Ext.define('Ext.ux.LoginForm', {
                     // Show an error.
                     Ext.Msg.show({
                         title: 'Login failed.',
-                        msg: 'Combination of username and password could not be found.',
+                        msg: message, //'Combination of username and password could not be found.',
                         icon: Ext.Msg.ERROR,
                         buttons: Ext.Msg.OK
                     });

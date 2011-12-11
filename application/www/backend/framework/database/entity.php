@@ -64,8 +64,8 @@ abstract class Entity
         {
             // TODO: Set default columns.
             
-               // Get the SQL statement to insert this entity and execute the statement prepared.
-               $this->getInsertQuery()->execute($this->getValues(false));
+            // Get the SQL statement to insert this entity and execute the statement prepared.
+            $this->getInsertQuery()->execute($this->getValues(false));
                
 //             TODO: Code below for fetching primary keys. Test this.
 //             $row = $this->getInsertQuery(true)->execute($this->getValues(false))->getFirstRow();
