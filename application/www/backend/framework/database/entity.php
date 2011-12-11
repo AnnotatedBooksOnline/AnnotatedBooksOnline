@@ -72,8 +72,6 @@ abstract class Entity
             {
                 $this->{$key} = $row->getValue($key);
             }
-            
-            
         }
         else
         {

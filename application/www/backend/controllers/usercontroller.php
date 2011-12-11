@@ -195,7 +195,7 @@ class UserController extends Controller
             'website'     => $website,
             'active'      => '0',
             'banned'      => '0', // TODO: Typing, to allow a boolean.
-            'rank'        => User::RANK_ADMIN
+            'rank'        => User::RANK_ADMIN //TODO: Regular user rank.
         );
      
         // Create user and pendinguser entries in a transaction.

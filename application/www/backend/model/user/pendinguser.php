@@ -70,10 +70,13 @@ class PendingUser extends Entity
         return $result;
     }
     
+    
+    // Table info.
+    
     /**
      * Get the name of the corresponding table.
      */
-    public static function getTableName()
+    protected static function getTableName()
     {
         return 'PendingUsers';
     }
@@ -81,7 +84,7 @@ class PendingUser extends Entity
     /**
      * Get an array with the primary keys.
      */
-    public static function getPrimaryKeys()
+    protected static function getPrimaryKeys()
     {
         return array('pendingUserId');
     }
@@ -89,7 +92,7 @@ class PendingUser extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    public static function getColumns()
+    protected static function getColumns()
     {
         return array('userId', 'confirmationCode', 'expirationDate');
     }

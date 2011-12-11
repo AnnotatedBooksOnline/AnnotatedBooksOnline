@@ -130,14 +130,12 @@ class ResultSetIterator implements Iterator
 class ResultSetRow
 {
     private $row;
-    //private $rowCase;
 
     public function __construct($row)
     {
         foreach ($row as $key => $val)
         {
             $this->row[$key] = $val;
-            // $this->rowCase[strtoupper($key)] = $key;
         }
     }
 
@@ -158,10 +156,7 @@ class ResultSetRow
     // TODO: get value as date, blob etc.
 
     /**
-     * Returns an associative array with the column names and corresponding alues.
-     *
-     * Note that the column names are converted to upper case.
-     *
+     * Returns an associative array with the column names and corresponding alues.     *
      */
     public function getValues()
     {
