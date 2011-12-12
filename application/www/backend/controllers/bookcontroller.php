@@ -215,10 +215,8 @@ class BookController extends Controller
         for ($i = 0; $i < $num; $i++)
         {
             $result['exact'][] = array(
-//                'like' => $exacts[1][$i] == '-' ? ' !~* ' : ' ~* ',
-//                'value' => '(^|[^[:alpha:]])' . preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)' // Not working until database framework is altered.
-                'like' => $exacts[1][$i] == '-' ? ' NOT LIKE ' : ' LIKE ',
-                'value' => '%' . preg_replace('/[^\w\s]/', '_', trim($exacts[2][$i])) . '%'
+                'like' => $exacts[1][$i] == '-' ? ' !~* ' : ' ~* ',
+                'value' => '(^|[^[:alpha:]])' . preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)'
             );
         }
         $headline = 

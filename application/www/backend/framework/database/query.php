@@ -653,7 +653,9 @@ class Query
                 'not like',
                 'like',
                 'ilike',
-                'not ilike'
+                'not ilike',
+                '!~[*]',
+                '~[*]'
             );
             
             // Handle operator.
