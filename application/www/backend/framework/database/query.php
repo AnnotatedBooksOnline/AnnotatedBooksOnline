@@ -511,7 +511,7 @@ class Query
      * Execution.
      */
     
-    public function execute($arguments, $types = null)
+    public function execute($arguments = array(), $types = null)
     {
         return Database::getInstance()->execute($this->build(), $arguments, $types);
     }
