@@ -15,13 +15,14 @@ Ext.define('Ext.ux.ThumbnailView', {
             
             //fields[i] = ['tiles/' + document.scanId + '/tile_0_0_0.jpg',
             fields[i] = ['tiles/tile_0_0_0.jpg',
-                         i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : ''];
+                         i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : '',
+                         i];
         }
         
         // TODO: Use page store.
         var store = Ext.create('Ext.data.ArrayStore', {
             id: 'testStore',
-            fields: ['thumbnail', 'rect'],
+            fields: ['thumbnail', 'rect', 'page'],
             pageSize: 10,
             data: fields
         });
@@ -38,13 +39,15 @@ Ext.define('Ext.ux.ThumbnailView', {
                     '</div>',
                 '</tpl>',
             ],
+            style: 'height: 100%', // For scrollbars to appear correctly.
             store: store, //this.getStore(),
             itemSelector: 'div.thumbnail',
             autoScroll: true,
             listeners: {
                 itemclick: function(view, record)
                 {
-                    
+                    var page = record.get('page');
+                    this.up('navigationpanel').gotoPageNumber(page);
                 }
             }
         };
@@ -52,6 +55,12 @@ Ext.define('Ext.ux.ThumbnailView', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    changeIndex: function(oldPage, newPage)
+    {
+        this.getStore().getAt(oldPage).set('rect', '');
+        this.getStore().getAt(newPage).set('rect', '<div id="test" style="position: absolute; border: 2px solid red;"></div>');
     }//,
     
     /*
@@ -105,6 +114,16 @@ Ext.define('Ext.ux.NavigationPanel', {
     
     gotoPageNumber: function(number)
     {
-        ;
+        this.up('viewerpanel').setPage(number);
+    },
+    
+    setPage: function(number)
+    {
+        this.down('thumbnailview').changeIndex(this.currentPage(), number);
+    },
+    
+    currentPage: function()
+    {
+        return this.up('viewerpanel').getPage();
     }
 });
