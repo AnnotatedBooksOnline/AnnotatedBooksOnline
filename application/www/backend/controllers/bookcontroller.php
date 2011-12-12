@@ -186,17 +186,17 @@ class BookController extends Controller
                 $year = $book->getValue('minYear') . ' - ' . $book->getValue('maxYear');
             }
             $records[] = array(
-                $book->getValue('title'),
-                $book->getValue('authorNames'),
-                $year,
-                $book->getValue('placePublished'),
-                $book->getValue('publisher'),
-                $book->getValue('libraryName'),
-                $book->getValue('signature'),
-                $book->getValue('summary'),
-                $book->getValue('headline'),
+                (string)$book->getValue('title'),
+                (string)$book->getValue('authorNames'),
+                (string)$year,
+                (string)$book->getValue('placePublished'),
+                (string)$book->getValue('publisher'),
+                (string)$book->getValue('libraryName'),
+                (string)$book->getValue('signature'),
+                (string)$book->getValue('summary'),
+                (string)$book->getValue('headline'),
                 'tiles/tile_0_0_0.jpg',
-                $book->getValue('bookId')
+                (string)$book->getValue('bookId')
             );
         }
         
