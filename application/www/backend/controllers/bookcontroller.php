@@ -92,6 +92,34 @@ class BookController extends Controller
         $binds = array();
         $headline = "";
         $c = 0;
+        
+        $addFulltext = function($name, $columns, $value, $addheadline = false) use (&$query, &$binds, &$c, &$headline)
+        {
+            $split = BookController::splitFulltextQuery($value);
+
+            if ($split['rest'] != '')
+            {
+                $query = $query->whereFulltext($columns, $name . $c);
+                $binds[$name . $c] = $split['rest'];
+            }
+            
+            if (!is_array($columns))
+            {
+                $e = $split['exact'];
+                for ($i = 0; $i < count($e); $i++)
+                {
+                    $query = $query->where($columns . $e[$i]['like'] . $name . $c . '_' . $i);
+                    $binds[$name . $c . '_' . $i] = $e[$i]['value'];
+                }
+            }
+            
+            if ($addheadline)
+            {
+                $headline = ($headline != '' ? ' & ' : '') . $split['headline'];
+            }
+            Log::debug("Parsed search query: %s\n", print_r(BookController::splitFulltextQuery($value), true));
+        };
+        
         foreach ($data as $selector)
         {
             if (isset($selector['type']) && isset($selector['value']) && (is_array($selector['value']) || trim($selector['value']) != ""))
@@ -106,33 +134,25 @@ class BookController extends Controller
                         $binds[':to' . $c] = self::getInteger($value, 'to', 16534);
                         break;
                     case 'title':
-                        $query = $query->whereFulltext('books.title', ':title'. $c);
-                        $binds[':title'. $c] = $value;
+                        $addFulltext(':title', 'books.title', $value);
                         break;
                     case 'author':
-                        $query = $query->whereFulltext('personsFind.name', ':author'. $c);
-                        $binds[':author'. $c] = $value;
+                        $addFulltext(':author', 'personsFind.name', $value);
                         break;
                     case 'any':
-                        $query = $query->whereFulltext(array('books.title', 'personsFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), ':any' . $c); // TODO: change column to index
-                        $binds[':any' . $c] = $value;
-                        $headline .= " " . $value;
+                        $addFulltext(':any', array('books.title', 'personsFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), $value, true); // TODO: change column to index
                         break;
                     case 'place':
-                        $query = $query->whereFulltext('books.placePublished', ':place'. $c);
-                        $binds[':place'. $c] = $value;
+                        $addFulltext(':place', 'books.placePublished', $value);
                         break;
                     case 'publisher':
-                        $query = $query->whereFulltext('books.publisher', ':publisher'. $c);
-                        $binds[':publisher'. $c] = $value;
+                        $addFulltext(':publisher', 'books.publisher', $value);
                         break;
                     case 'summary':
-                        $query = $query->whereFulltext('bindings.summary', ':summary'. $c);
-                        $binds[':summary'. $c] = $value;
+                        $addFulltext(':summary', 'bindings.summary', $value);
                         break;
                     case 'library':
-                        $query = $query->whereFulltext('libraries.libraryName', ':library'. $c);
-                        $binds[':library'. $c] = $value;
+                        $addFulltext(':library', 'libraries.libraryName', $value);
                         break;
                     case 'signature':
                         $query = $query->where('bindings.signature ILIKE :signature'. $c);
@@ -179,7 +199,61 @@ class BookController extends Controller
                 $book->getValue('bookId')
             );
         }
-                
+        
         return $records;
+    }
+    
+    /**
+     * Splits a fulltext user-input query into distinct queries.
+     */
+    public static function splitFulltextQuery($query)
+    {
+        $exacts = array();
+        $num = preg_match_all('/([+-]?)"([^"]+)"/', $query, $exacts, PREG_PATTERN_ORDER);
+        $result = array();
+        $result['exact'] = array();
+        for ($i = 0; $i < $num; $i++)
+        {
+            $result['exact'][] = array(
+//                'like' => $exacts[1][$i] == '-' ? ' !~* ' : ' ~* ',
+//                'value' => '(^|[^[:alpha:]])' . preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)' // Not working until database framework is altered.
+                'like' => $exacts[1][$i] == '-' ? ' NOT LIKE ' : ' LIKE ',
+                'value' => '%' . preg_replace('/[^\w\s]/', '_', trim($exacts[2][$i])) . '%'
+            );
+        }
+        $headline = 
+            explode(' ',
+            trim(
+            preg_replace('/\s+/', ' ',
+            preg_replace('/[^\w\s!-]/', ' ', 
+            preg_replace('/[-](?!\w)/', '',
+            preg_replace('/(?<!\w)[-](?=\w)/', '!',
+            preg_replace('/[!|&+]/', '',
+            preg_replace('/([+-]?)"([^"]+)"/', '',
+            $query
+        ))))))));
+        $result['rest'] = implode(' & ', $headline);
+        
+        if ($headline[0] == "")
+        {
+            $headline = array();
+        }
+        
+        for ($i = 0; $i < $num; $i++)
+        {
+            if ($exacts[1][$i] != '-')
+            {
+                $headline[] = 
+                    implode(' & ',
+                    explode(' ',
+                    trim(
+                    preg_replace('/\s+/', ' ',
+                    preg_replace('/[^\w\s-]/', ' ', 
+                    $exacts[2][$i]
+                )))));
+            }
+        }
+        $result['headline'] = implode(' & ', $headline);
+        return $result;
     }
 }
