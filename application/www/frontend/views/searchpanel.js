@@ -1,3 +1,5 @@
+"use strict";
+
 /*
  * Search models and properties.
  */
@@ -127,7 +129,7 @@ Ext.define('Ext.ux.YearBetweenField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
     
     getValue: function()
@@ -207,7 +209,7 @@ Ext.define('Ext.ux.SearchComboBoxField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
         
         this.setValue('select');
     }
@@ -258,7 +260,7 @@ Ext.define('Ext.ux.SearchField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
             
     getValue: function()
@@ -294,7 +296,7 @@ Ext.define('Ext.ux.SearchFieldsPanel', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
         
         var firstField = this.getComponent(0).down('[name=type]');
         firstField.select('any');
@@ -345,7 +347,7 @@ Ext.define('Ext.ux.SearchResultsView', {
         };
         
         Ext.apply(this, defConfig);
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
     
     prepareData: function(data)
@@ -461,7 +463,7 @@ Ext.define('Ext.ux.SortComboBox', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     }
 });
 
@@ -502,7 +504,7 @@ Ext.define('Ext.ux.SortComboBoxField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     }
 });
 
@@ -532,7 +534,7 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
     
     sort: function()
@@ -583,7 +585,7 @@ Ext.define('Ext.ux.SearchResultsPanel', {
                 displayMsg: 'Displaying books {0} - {1} of {2}'
             });
             
-            results.down('pagingtoolbar').refresh.hide();
+            results.down('pagingtoolbar').down('[itemId=refresh]').hide();
             
             this.sort();
         }
@@ -775,7 +777,7 @@ Ext.define('Ext.ux.SearchPanel', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
         
         var firstField = this.down('[name=type]');
         firstField.select('any');
