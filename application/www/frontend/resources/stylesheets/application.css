@@ -4,15 +4,45 @@
 
 .header .x-panel-body
 {
-    background: url(../images/header.png) 20px 7px no-repeat;
-    padding: 25px 0px 0px 130px;
     background-color: #E7ECF3;
     color: #15498B;
+}
+
+.header-logo .x-panel-body
+{
+    background: url(../images/header.png) 20px 18px no-repeat;
 }
 
 .header .x-panel-body h1
 {
     font-size: 25pt;
+    padding-top: 25px;
+}
+
+.header .menubutton
+{
+    margin-right: 5px;
+    height: 35px;
+    padding-top: 9px;
+    min-width: 100px;
+    text-align: center;
+}
+
+.header .profilebutton
+{
+    height: 25px;
+    padding-top: 3px;
+    min-width: 80px;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.header .menuseparator
+{
+    margin-left: 5px;
+    margin-right: 10px;
+    border-left: 1px solid #99BCE8;
+    height: 35px;
 }
 
 a
@@ -30,3 +60,4 @@ a:hover
 {
     background-image: none;
 }
+
