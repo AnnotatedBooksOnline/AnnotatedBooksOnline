@@ -56,16 +56,17 @@ abstract class Entity
      */
     public function save()
     {
-        // Initialize the database connection and start a transaction
-        //Database::getInstance()->startTransaction();
-        
         // Determine if this is a fresh entity which has to be inserted into the database.
         if (!$this->arePrimaryKeysFilled())
         {
             // TODO: Set default columns.
             
+            // Get values and types.
+            $values = $this->getValues(false);
+            $types  = $this->getTypes();
+            
             // Get the SQL statement to insert this entity and execute the statement .
-            $row = $this->getInsertQuery(true)->execute($this->getValues(false))->getFirstRow();
+            $row = $this->getInsertQuery(true)->execute($values, $types)->getFirstRow();
             
             // Acquire the primary keys.
             foreach ($this->getPrimaryKeys() as $key)
@@ -75,12 +76,13 @@ abstract class Entity
         }
         else
         {
+            // Get values and types.
+            $values = $this->getValues();
+            $types  = $this->getTypes();
+            
             // Get the SQL statement to update this entity and execute the statement prepared.
-            $this->getUpdateQuery()->execute($this->getValues());
+            $this->getUpdateQuery()->execute($values, $types);
         }
-        
-        // Commit the database transaction.
-        //Database::getInstance()->commit();
     }
     
     /**
@@ -96,8 +98,24 @@ abstract class Entity
             // Now you do have to manually use the setPassword function when you want to set a 
             // password rather than a password hash, but this prevents problems with setters that
             // have are not present or have been inconsistantly named.
-            $this->{$name} = $value;
-            //$this->{'set' . ucfirst($name)}($value);
+            //$this->{$name} = $value;
+            
+            // Gerben: If a setter does not exist, an error should be thrown.
+            // Setters really should be used here, as we want checking of the values.
+            // Also, they should be consistently named.
+            
+            // Get function name.
+            $functionName = 'set' . ucfirst($name);
+            
+            // Check if it exists, and call it.
+            if (method_exists($this, $functionName))
+            {
+                $this->{$functionName}($value);
+            }
+            else
+            {
+                throw new EntityException('entity-column-cannot-be-set', $name);
+            }
         }
     }
     
@@ -122,6 +140,22 @@ abstract class Entity
         
         return $values;
     }
+    
+    private function getTypes($default = true)
+    {
+        $types = $this->getColumnTypes();
+        if ($default)
+        {
+            $defaultTypes = $this->getDefaultColumnTypes();
+            if ($defaultTypes !== null)
+            {
+                return ($types === null) ? $defaultTypes : array_merge($types, $defaultTypes);
+            }
+        }
+        
+        return $types;
+    }
+    
     
     /**
      * Gets all primary key values of this entity.
@@ -165,6 +199,31 @@ abstract class Entity
     protected function getDefaultColumns()
     {
         return array('createdOn', 'changedOn', 'createdBy', 'changedBy');
+    }
+    
+    /**
+     * Gets all the default column types, per column.
+     *
+     * @return  Array of all default column types.
+     */
+    protected function getDefaultColumnTypes()
+    {
+        return array(
+            'createdOn' => 'timestamp',
+            'changedOn' => 'timestamp',
+            'createdBy' => 'string',
+            'changedBy' => 'string'
+        );
+    }
+    
+    /**
+     * Gets all the column types, per column, including primary keys.
+     *
+     * @return  Array of all column types.
+     */
+    protected function getColumnTypes()
+    {
+        return null;
     }
     
     /**
@@ -287,7 +346,7 @@ abstract class Entity
      *
      * @return  The table name.
      */
-    protected static function getTableName()
+    protected function getTableName()
     {
         throw new EntityException('entity-function-not-implemented');
     }
@@ -297,7 +356,7 @@ abstract class Entity
      *
      * @return  Array of all primary keys.
      */
-    protected static function getPrimaryKeys()
+    protected function getPrimaryKeys()
     {
         throw new EntityException('entity-function-not-implemented');
     }
@@ -307,7 +366,7 @@ abstract class Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected static function getColumns()
+    protected function getColumns()
     {
         throw new EntityException('entity-function-not-implemented');
     }

@@ -3,8 +3,8 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
-require_once 'model/user/usersearchlist.php';
-require_once 'model/user/pendinguser.php';
+require_once 'models/user/usersearchlist.php';
+require_once 'models/user/pendinguser.php';
 
 /**
  * User controller class.
@@ -127,6 +127,8 @@ class UserController extends Controller
         
         // TODO: Do a security check on id!
         
+        // TODO: Handle changing of passwords.
+        
         $record = self::getArray($data, 'record');
         
         $userId      = self::getInteger($record, 'userId', 0);
@@ -151,9 +153,9 @@ class UserController extends Controller
             'homeAddress' => $homeAddress,
             'website'     => $website,
             'homeAddress' => '',
-            'active'      => '1', // TODO: Activation
-            'banned'      => '0', // TODO: Typing, to allow a boolean.
-            'rank'        => User::RANK_ADMIN
+            'active'      => true, // TODO: Activation.
+            'banned'      => false,
+            'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
         
         $user = new User($userId);
@@ -161,8 +163,8 @@ class UserController extends Controller
         $user->save();
         
         return array(
-            'records' => $user->getValues(),
-            'total'   => 1
+            'records' => $user->getValues(), // TODO: Not all of them.
+            'total'   => 1,
         );
     }
     
@@ -189,23 +191,23 @@ class UserController extends Controller
             'email'       => $email,
             'firstName'   => $firstName,
             'lastName'    => $lastName,
+            'password'    => $password,
             'affiliation' => $affiliation,
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => '1', //'0',
-            'banned'      => '0', // TODO: Typing, to allow a boolean.
-            'rank'        => User::RANK_ADMIN //TODO: Regular user rank.
+            'active'      => true,
+            'banned'      => false,
+            'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
      
         // Create user and pendinguser entries in a transaction.
         $puser = Database::getInstance()->doTransaction(
-        function() use ($values, $password)
+        function() use ($values)
         {  
             // Create user entry.
             $user = new User();
             $user->setValues($values);
-            $user->setPassword($password);
             $user->save();
             
             // Now create a pending user.
@@ -241,7 +243,7 @@ class UserController extends Controller
         // Fetch email.
         $email = self::getString($data, 'email', '', true, 256);
         
-        // Return <code>true</code> if there is atleast 1 user with the specified email.
+        // Return true if there is atleast 1 user with the specified email.
         return (bool) UserSearchList::findUsers(array('email' => $email), null, null, null)->
             getAmount();
     }
@@ -251,8 +253,15 @@ class UserController extends Controller
      */
     public function actionDeleteUser($data)
     {
+        // Check whether logged on.
+        Authentication::assertLoggedOn();
+        
+        // TODO: Do a security check!
+        
         // Fetch username.
         $username = self::getString($data, 'username', '', true, 30);
+        
+        // TODO: Move code below to user model.
         
         // Deletes the user from the database with this username.
         $query = Query::delete('Users')->where('username = :username');
@@ -265,11 +274,18 @@ class UserController extends Controller
      */
     public function actionBanUser($data)
     {
+        // Check whether logged on.
+        Authentication::assertLoggedOn();
+        
+        // TODO: Do a security check!
+        
         // Fetch username.
         $username = self::getString($data, 'username', '', true, 30);
         
+        // TODO: Move code below to user model.
+        
         // Sets the ban flag for this user.
-        $query = Query::update('Users', array('banned' => '1'))->where('username = :username');
+        $query = Query::update('Users', array('banned' => true))->where('username = :username');
         
         $query->execute(array('username' => $username));
     }
@@ -279,19 +295,26 @@ class UserController extends Controller
      */
     public function actionActivateUser($data)
     {
-        // Fetch user id.
-        $uid = self::getInteger($data, 'id');
+        // Check whether logged on.
+        Authentication::assertLoggedOn();
         
-        //Start a transaction.
+        // TODO: Do a security check!
+        
+        // Fetch user id.
+        $userId = self::getInteger($data, 'id');
+        
+        // TODO: Move code below to user model.
+        
+        // Start a transaction.
         Database::getInstance()->startTransaction();
         
-        // Sets the active flag for this user.
-        $query = Query::update('Users', array('active' => '1'))->where('userId = :uid');
-        $query->execute(array('uid' => $uid));
+        // Set the active flag for this user.
+        $query = Query::update('Users', array('active' => true))->where('userId = :userId');
+        $query->execute(array('userId' => $userId));
         
-        // Erases this user's column from the PendingUser table.
-        $query = Query::delete('PendingUsers')->where('userId = :uid');
-        $query->execute(array('uid' => $uid));
+        // Erase this user's column from the pending users table.
+        $query = Query::delete('PendingUsers')->where('userId = :userId');
+        $query->execute(array('userId' => $userId));
         
         // Commit the transaction.
         Database::getInstance()->commit();

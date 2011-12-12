@@ -1,18 +1,18 @@
 <?php
+//[[GPL]]
 
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
-require_once 'model/settings/setting.php';
-require_once 'model/user/user.php';
+require_once 'models/settings/setting.php';
+require_once 'models/user/user.php';
 require_once 'framework/util/log.php';
 
-class MailException extends ExceptionBase
-{
-    
-}
+// Exceptions.
+class MailerException extends ExceptionBase { }
+// NOTE: Maybe we want this to be a utility class instead of a singleton.
 
 /**
- * General helper class for sending e-mails from the collaboratory to users.
+ * General helper class for sending e-mails.
  */
 class Mailer extends Singleton
 {
@@ -22,10 +22,7 @@ class Mailer extends Singleton
     /**
      * Constructor.
      */
-    protected function __construct()
-    {
-        
-    }
+    protected function __construct() { }
     
     /**
      * Sends an e-mail. Opens up and closes an SMTP connection and therefore is not very suitable
@@ -37,7 +34,7 @@ class Mailer extends Singleton
      * 
      * @throws MailException When an e-mail is not accepted for delivery.
      */
-    public function sendMail($recipient, $subject, $message)
+    public static function sendMail($recipient, $subject, $message)
     {
         $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name') 
                     . ' <'     . Configuration::getInstance()->getString('from-address') 
@@ -46,14 +43,13 @@ class Mailer extends Singleton
         $success = mail($recipient, $subject, $message, $fromheader);
         if(!$success)
         {
-            throw new MailException('mail-failed', $recipient);
+            throw new MailerException('mail-failed', $recipient);
         }
         
         Log::info('Mail to "%s" accepted for delivery.', $recipient);
     }
     
-    
-    public function sendActivationMail($puser)
+    public static function sendActivationMail($puser)
     {
         // Retrieve associated User entity.
         $user = new User($puser->getUserId());
@@ -69,7 +65,7 @@ class Mailer extends Singleton
         // a hexadecimal numer of 32 digits.
         if(strlen($code) != 32 || preg_match('/^([0-9]|[a-f])/') == 1)
         {
-            throw new MailException('illegal-confirmation-code', $code);
+            throw new MailerException('illegal-confirmation-code', $code);
         }
         
         // TODO: Insert user information in message.

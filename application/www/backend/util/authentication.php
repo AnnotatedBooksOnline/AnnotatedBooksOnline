@@ -3,7 +3,7 @@
 
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/session.php';
-require_once 'model/user/user.php';
+require_once 'models/user/user.php';
 
 // Exceptions.
 class NotLoggedOnException extends ExceptionBase
@@ -48,9 +48,9 @@ class Authentication extends Singleton
         {
             $session = Session::getInstance();
             
-            if ($session->exists('userid'))
+            if ($session->exists('userId'))
             {
-                $userId = $session->getVar('userid');
+                $userId = $session->getVar('userId');
                 $this->user = new User($userId);
             }
             else
@@ -78,7 +78,7 @@ class Authentication extends Singleton
             throw new NotLoggedOnException();
         }
         
-        return $user->getId();
+        return $user->getUserId();
     }
     
     /**
@@ -114,7 +114,7 @@ class Authentication extends Singleton
             throw new UserStillPendingException($this->user->getUsername());
         }
         
-        Session::getInstance()->setVar('userid', $this->getUser()->getId());
+        Session::getInstance()->setVar('userId', $this->getUser()->getUserId());
         
         return $this->user;
     }
@@ -125,7 +125,7 @@ class Authentication extends Singleton
     public function logout()
     {
         $session = Session::getInstance();
-        $session->unsetVar('userid');
+        $session->unsetVar('userId');
         
         $this->user        = null;
         $this->fetchedUser = true;
@@ -145,7 +145,7 @@ class Authentication extends Singleton
         }
         else
         {
-            return Session::getInstance()->exists('userid');
+            return Session::getInstance()->exists('userId');
         }
     }
     

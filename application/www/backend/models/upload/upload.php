@@ -12,6 +12,7 @@ class Upload extends Entity
     const STATUS_AVAILABLE = 0;
     const STATUS_ERROR     = 1;
     
+    /** Fields. */
     protected $uploadId;
     protected $userId;
     protected $token;
@@ -48,16 +49,13 @@ class Upload extends Entity
     {
         $upload = new Upload();
         
-        // Obtain timestamp.
-        $timestamp = time();
-        
         // Create new upload with default settings.
         $upload->userId    = $userId;
         $upload->token     = md5(uniqid(true));
         $upload->filename  = $filename;
         $upload->size      = $size;
-        $upload->timestamp = $timestamp;
-        $upload->status    = Upload::STATUS_ERROR;
+        $upload->timestamp = time();
+        $upload->status    = self::STATUS_ERROR;
         $upload->save();
         
         return $upload;
@@ -66,7 +64,7 @@ class Upload extends Entity
     /**
      * Sets a newly generated token.
      */
-    public function setNewToken()
+    public function generateNewToken()
     {
         $this->token = md5(uniqid(true));
     }
@@ -74,7 +72,7 @@ class Upload extends Entity
     /**
      * Get the name of the corresponding table.
      */
-    public static function getTableName()
+    public function getTableName()
     {
         return 'Uploads';
     }
@@ -82,7 +80,7 @@ class Upload extends Entity
     /**
      * Get an array with the primary keys.
      */
-    public static function getPrimaryKeys()
+    public function getPrimaryKeys()
     {
         return array('uploadId');
     }
@@ -90,19 +88,39 @@ class Upload extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    public static function getColumns()
+    public function getColumns()
     {
         return array('uploadId', 'userId', 'token', 'filename', 'size', 'timestamp', 'status');
     }
     
-    // Getters and setters.
-    public function getId()    { return $uploadId;      }
-    public function setId($id) { $this->uploadId = $id; }
+    /**
+     * Gets all the column types, per column, including primary keys.
+     *
+     * @return  Array of all column types.
+     */
+    protected function getColumnTypes()
+    {
+        return array(
+            'uploadId'  => 'int',
+            'userId'    => 'int',
+            'token'     => 'string',
+            'filename'  => 'string',
+            'size'      => 'int',
+            'timestamp' => 'timestamp',
+            'status'    => 'int',
+        );
+    }
     
-    public function getToken() { return $token; }
+    /*
+     * Getters and setters.
+     */
+    
+    public function getUploadId() { return $this->uploadId; }
+    
+    public function getToken() { return $this->token; }
     
     // TODO: Add all getters/setters.
     
-    public function getStatus()        { return $status;          }
+    public function getStatus()        { return $this->status;    }
     public function setStatus($status) { $this->status = $status; }
 }
