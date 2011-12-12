@@ -1,3 +1,5 @@
+"use strict";
+
 /*
  * Search models and properties.
  */
@@ -127,7 +129,7 @@ Ext.define('Ext.ux.YearBetweenField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
     
     getValue: function()
@@ -207,7 +209,7 @@ Ext.define('Ext.ux.SearchComboBoxField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
         
         this.setValue('select');
     }
@@ -258,7 +260,7 @@ Ext.define('Ext.ux.SearchField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
             
     getValue: function()
@@ -294,7 +296,7 @@ Ext.define('Ext.ux.SearchFieldsPanel', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
         
         var firstField = this.getComponent(0).down('[name=type]');
         firstField.select('any');
@@ -319,22 +321,20 @@ Ext.define('Ext.ux.SearchResultsView', {
         var defConfig = {
             tpl: [
                 '<tpl for=".">',
-                    '<div class="bookitem" style="border: 1px solid #DDD; margin: 10px; cursor: pointer;">',
-                        '<div style="float: left; width: 50px; height: 67px; margin-right: 10px;">',
-                            '<img src="{thumbnail}" style="width: 50px; height: 67px;"/>',
-                        '</div>',
-                        '<div style="float: left; margin-top: 10px;">',
-                            '<table>{properties}</table>',
-                        '</div>',
-                        '<div style="clear: both;"></div>',
-                    '</div>',
+                    '<table class="bookitem" style="margin: 10px; cursor: pointer;">',
+                        '<tr>',
+                            '<td><img src="{thumbnail}" style="width: 50px; height: 67px;"/></td>',
+                            '<td><table style="margin: 5px; margin-left: 10px">{properties}</table></td>',
+                        '</tr>',
+                    '</table>',
+                    '<hr style="margin: 0px;">',
                 '</tpl>',
             ],
             fullData: this.data,
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
-            itemSelector: 'div.bookitem',
-            emptyText: 'No books found.',
+            itemSelector: 'table.bookitem',
+            region: 'center',
             listeners: {
                 itemclick: function(view, record)
                 {
@@ -347,7 +347,7 @@ Ext.define('Ext.ux.SearchResultsView', {
         };
         
         Ext.apply(this, defConfig);
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
     
     prepareData: function(data)
@@ -356,7 +356,7 @@ Ext.define('Ext.ux.SearchResultsView', {
         for (var field in data)
         {
             var col = this.cols.findRecord('name', field);
-            if (col && col.get('desc') && col.get('show'))
+            if (col && col.get('desc') && col.get('show') && data[field] != null && data[field].length != "")
             {
                 properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
                             + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
@@ -393,10 +393,10 @@ Ext.define('Ext.ux.SearchResultsView', {
                 return fields;
             }(),
             pageSize: 5,
-            data: data.records,
+            data: data,
             pagedSort: function(sorters, direction)
             {
-                this.loadData(data.records);
+                this.loadData(data);
                 var sorted = this.sort(sorters, direction);
                 this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize,
                     this.currentPage * this.pageSize));
@@ -407,8 +407,8 @@ Ext.define('Ext.ux.SearchResultsView', {
         store.on('load',
             function(store, records, successful, operation)
             {
-                this.loadData(data.records);
-                this.loadData(this.data.getRange().slice((this.currentPage - 1)  *this.pageSize,
+                this.loadData(data);
+                this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize,
                     this.currentPage * this.pageSize));
             },
             store
@@ -463,7 +463,7 @@ Ext.define('Ext.ux.SortComboBox', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     }
 });
 
@@ -504,7 +504,7 @@ Ext.define('Ext.ux.SortComboBoxField', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     }
 });
 
@@ -523,21 +523,18 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         var defConfig = {
             title: 'Search results',
             border: false,
-            layout: {
-                type: 'hbox',
-                align: 'top'
-            },
+            layout: 'border',
             items: [{
                 xtype: 'panel',
                 name: 'results',
                 border: false,
-                flex: 1
+                region: 'center'
             }]
         };
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
     },
     
     sort: function()
@@ -564,25 +561,43 @@ Ext.define('Ext.ux.SearchResultsPanel', {
     {
         var results = this.down('[name=results]');
         
-        results.removeAll();
-        results.add({
-            xtype: 'searchresultsview',
-            data: data,
-            cols: this.up('searchpanel').down('[name=parameters]').getColumns()
-        });
-        
         var currentToolbar = this.down('pagingtoolbar');
-        results.removeDocked(currentToolbar);
-        results.addDocked({
-            xtype: 'pagingtoolbar',
-            docked: 'top',
-            store: results.getComponent(0).getStore(),
-            displayInfo: true,
-            displayMsg: 'Displaying books {0} - {1} of {2}',
-            emptyMsg: 'No books found'
-        });
+        if (currentToolbar != null)
+        {
+            results.removeDocked(currentToolbar);
+        }
         
-        this.sort();
+        results.removeAll();
+        
+        if (data.length > 0)
+        {
+            results.add({
+                xtype: 'searchresultsview',
+                data: data,
+                cols: this.up('searchpanel').down('[name=parameters]').getColumns()
+            });
+            
+            results.addDocked({
+                xtype: 'pagingtoolbar',
+                docked: 'top',
+                store: results.getComponent(0).getStore(),
+                displayInfo: true,
+                displayMsg: 'Displaying books {0} - {1} of {2}'
+            });
+            
+            results.down('pagingtoolbar').down('[itemId=refresh]').hide();
+            
+            this.sort();
+        }
+        else
+        {
+            results.add({
+                xtype: 'panel',
+                border: false,
+                bodyPadding: 10,
+                html: 'No results matching your search were found.'
+            });
+        }
     },
     updateColumns: function()
     {
@@ -610,6 +625,7 @@ Ext.define('Ext.ux.SearchPanel', {
         var centerRegion = {
             region: 'center',
             xtype: 'panel',
+            autoScroll: true,
             items: [{
                 title: 'Search',
                 xtype: 'searchfieldspanel'
@@ -641,8 +657,7 @@ Ext.define('Ext.ux.SearchPanel', {
                     RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
                 }
             },{
-                xtype: 'searchresultspanel'//,
-                //title: 'Search results'
+                xtype: 'searchresultspanel'
             }]
         };
         
@@ -654,21 +669,24 @@ Ext.define('Ext.ux.SearchPanel', {
         var westRegion = {
             region: 'west',
             xtype: 'panel',
-            layout: 'vbox',
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
             collapsible: true,
             title: 'Advanced options',
+            width: 200,
             items: [{
                 xtype: 'panel',
                 name: 'sort',
                 border: false,
                 title: 'Sorting options',
-                flex: 0,
-                width: 200,
                 bodyPadding: 10,
+                collapsible: true,
                 items: [{
                     xtype: 'panel',
-                    border: 0,
-                    html: '<h2>Sort by:</h2>',
+                    border: false,
+                    html: 'Sort by:',
                     style: 'margin-bottom: 10px'
                 },{
                     xtype: 'sortcombobox',
@@ -685,12 +703,17 @@ Ext.define('Ext.ux.SearchPanel', {
                 name: 'parameters',
                 title: 'Result options',
                 border: false,
-                flex: 0,
-                width: 200,
                 bodyPadding: 10,
+                collapsible: true,
                 items: function()
                 {
-                    var items = [];
+                    var items = [{
+                        xtype: 'panel',
+                        border: false,
+                        html: 'Show:',
+                        style: 'margin-bottom: 5px;'
+                    }];
+                    
                     var props = bookProperties.concat([{
                         abbreviation: 'headline',
                         name: 'Headline',
@@ -699,17 +722,15 @@ Ext.define('Ext.ux.SearchPanel', {
                     
                     for (var i = 0; i < props.length; i++)
                     {
-                        items[i] = {
+                        items[i+1] = {
                             xtype: 'checkbox',
-                            fieldLabel: props[i].name,
-                            labelSeparator: '',
-                            labelWidth: '150',
+                            boxLabel: props[i].name,
                             checked: props[i].defaultOn == true,
                             resultField: props[i].abbreviation,
                             getColumn: function()
                             {
                                 return {
-                                    desc: this.fieldLabel,
+                                    desc: this.boxLabel,
                                     name: this.resultField,
                                     show: this.getValue()
                                 };
@@ -727,9 +748,9 @@ Ext.define('Ext.ux.SearchPanel', {
                 getColumns: function()
                 {
                     var cols = [];
-                    for (var i = 0; i < this.items.length; i++)
+                    for (var i = 0; i < this.items.length-1; i++)
                     {
-                        cols[i] = this.items.get(i).getColumn();
+                        cols[i] = this.items.get(i+1).getColumn();
                     }
                     cols[cols.length] = {
                         desc: 'Thumbnail',
@@ -756,7 +777,7 @@ Ext.define('Ext.ux.SearchPanel', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
+        this.superclass.initComponent.apply(this, []);
         
         var firstField = this.down('[name=type]');
         firstField.select('any');

@@ -15,7 +15,7 @@ Ext.apply(Ext.form.VTypes, {
             {
                 if (data)
                 {
-                    field.markInvalid('Username already in use');
+                    field.markInvalid('Username already in use.');
                 }
             }
         );
@@ -36,6 +36,7 @@ Ext.apply(Ext.form.VTypes, {
     
         if (!emailRegExp.test(value))
         {
+            field.markInvalid('Not a valid email address. The format should be \'me@email.com');
             return false;
         }
         
@@ -49,10 +50,32 @@ Ext.apply(Ext.form.VTypes, {
             {
                 if (data)
                 {
-                    field.markInvalid('Email already in use');
+                    field.markInvalid('Email already in use.');
+                    return false;
                 }
             }
         );
+        
+        return true;
+    }
+});
+
+/*
+ * URL parsing check.
+ */
+
+Ext.apply(Ext.form.VTypes, {
+    checkURL: function(value, field)
+    {
+        // Check if the url is a correct url.
+        // Use this instead of url, because this one also allows url's without 'http://'
+        var urlRegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+    
+        if (!urlRegExp.test(value))
+        {
+            field.markInvalid('Not a valid url. The format should be \'http://www.url.com\' or \'www.url.com/moreinformation\'.');
+            return false;
+        }
         
         return true;
     }

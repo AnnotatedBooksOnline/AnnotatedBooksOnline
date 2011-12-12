@@ -683,7 +683,7 @@ class Query
     private function escapeValue($value)
     {
         // If null or initialized, return 'NULL'.
-        if ($value === null)
+        if($value === null)
         {
             return 'NULL';
         }

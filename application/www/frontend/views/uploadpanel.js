@@ -189,6 +189,97 @@ Ext.define('Ext.ux.BookFieldset', {
                                     }
                                 }
                             }
+                        },{
+                            xtype: 'fieldcontainer',
+                            layout: 'hbox',
+                            fieldLabel: 'Pages *',
+                            anchor: '98%',
+                            labelAlign: 'top',
+                            items: [{
+                                xtype: 'numberfield',
+                                name: 'start',
+                                width: 63,
+                                allowNegative: false,
+                                allowDecimals: false,
+                                listeners: {
+                                    'change': function (f, start)
+                                    {
+                                        // On change, check if this value ('start') is larger than
+                                        // the 'end' value -> change 'end' to 'start' in that case.
+                                        // This will also happen if 'end' value is empty.
+                                        var end = this.nextSibling('[name=end]');
+                                        if (end.getValue() == null ||
+                                            parseInt(start) > parseInt(end.getValue())) 
+                                        {
+                                            end.setValue(start);
+                                        }
+                                        
+                                        // On change, check if this value ('start') is smaller than
+                                        // the 'end' value of the book before this one -> change 'end' 
+                                        // to 'start' in that case.
+                                        var endOfBookBefore = this.previousNode('[name=end]');
+                                        if (endOfBookBefore != undefined &&
+                                            (endOfBookBefore.getValue() == null ||
+                                             parseInt(start) < parseInt(endOfBookBefore.getValue()))) 
+                                        {
+                                            endOfBookBefore.setValue(start);
+                                        }
+                                        
+                                        return;
+                                    }
+                                }
+                            },{
+                                xtype: 'label',
+                                text: '-',
+                                margins: '0 0 0 10'
+                            },{
+                                xtype: 'numberfield',
+                                hideLabel: true,
+                                name: 'end',
+                                width: 63,
+                                allowNegative: false,
+                                allowDecimals: false,
+                                margins: '0 0 0 10',
+                                listeners: {
+                                    'change': function (t, end)
+                                    {
+                                        // On change, check if this value ('end') is lower than
+                                        // the 'start' value -> change 'start' to 'end' in that case.
+                                        // This will also happen if 'start' value is empty.
+                                        var start = this.previousSibling('[name=start]');
+                                        if (start.getValue() == null
+                                            || parseInt(end) < parseInt(start.getValue())) 
+                                        {
+                                            start.setValue(end);
+                                        }
+                                        
+                                        // On change, check if this value ('end') is smaller than
+                                        // the 'start' value of the book after this one -> change 
+                                        // 'start' to 'end' in that case.
+                                        var startOfBookAfter = this.nextNode('[name=start]');
+                                        if (startOfBookAfter != undefined &&
+                                            (startOfBookAfter.getValue() == null ||
+                                             parseInt(end) > parseInt(startOfBookAfter.getValue()))) 
+                                        {
+                                            startOfBookAfter.setValue(end);
+                                        }
+                                        
+                                        return;
+                                    }
+                                }
+                            }]
+                        },{
+                            fieldLabel: 'Author',
+                            name: 'author',
+                            anchor: '98%',
+                            allowBlank: true,
+                            labelAlign: 'top'
+                        },{
+                            fieldLabel: 'Publisher/printer',
+                            name: 'publisher',
+                            anchor: '98%',
+                            allowBlank: true,
+                            labelAlign: 'top'
                         }]
                     },{
                         xtype: 'container',
@@ -254,121 +345,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                     }
                                 }
                             }]
-                        }]
-                    }]
-                },{
-                xtype: 'container',
-                anchor: '100%',
-                layout: 'column',
-                    items: [{
-                        xtype: 'container',
-                        columnWidth: .5,
-                        layout: 'anchor',
-                        defaultType: 'textfield',
-                        items: [{
-                            xtype: 'container',
-                            columnWidth: .5,
-                            layout: 'anchor',
-                            defaultType: 'textfield',
-                            items: [{
-                                xtype: 'fieldcontainer',
-                                layout: 'hbox',
-                                fieldLabel: 'Pages *',
-                                anchor: '100%',
-                                labelAlign: 'top',
-                                items: [{
-                                    xtype: 'numberfield',
-                                    name: 'start',
-                                    width: 63,
-                                    allowNegative: false,
-                                    allowDecimals: false,
-                                    listeners: {
-                                        'change': function (f, start)
-                                        {
-                                            // On change, check if this value ('start') is larger than
-                                            // the 'end' value -> change 'end' to 'start' in that case.
-                                            // This will also happen if 'end' value is empty.
-                                            var end = this.nextSibling('[name=end]');
-                                            if (end.getValue() == null ||
-                                                parseInt(start) > parseInt(end.getValue())) 
-                                            {
-                                                end.setValue(start);
-                                            }
-                                            
-                                            // On change, check if this value ('start') is smaller than
-                                            // the 'end' value of the book before this one -> change 'end' 
-                                            // to 'start' in that case.
-                                            var endOfBookBefore = this.previousNode('[name=end]');
-                                            if (endOfBookBefore != undefined &&
-                                                (endOfBookBefore.getValue() == null ||
-                                                 parseInt(start) < parseInt(endOfBookBefore.getValue()))) 
-                                            {
-                                                endOfBookBefore.setValue(start);
-                                            }
-                                            
-                                            return;
-                                        }
-                                    }
-                                },{
-                                    xtype: 'label',
-                                    text: '-',
-                                    margins: '0 0 0 10'
-                                },{
-                                    xtype: 'numberfield',
-                                    hideLabel: true,
-                                    name: 'end',
-                                    width: 63,
-                                    allowNegative: false,
-                                    allowDecimals: false,
-                                    margins: '0 0 0 10',
-                                    listeners: {
-                                        'change': function (t, end)
-                                        {
-                                            // On change, check if this value ('end') is lower than
-                                            // the 'start' value -> change 'start' to 'end' in that case.
-                                            // This will also happen if 'start' value is empty.
-                                            var start = this.previousSibling('[name=start]');
-                                            if (start.getValue() == null
-                                                || parseInt(end) < parseInt(start.getValue())) 
-                                            {
-                                                start.setValue(end);
-                                            }
-                                            
-                                            // On change, check if this value ('end') is smaller than
-                                            // the 'start' value of the book after this one -> change 
-                                            // 'start' to 'end' in that case.
-                                            var startOfBookAfter = this.nextNode('[name=start]');
-                                            if (startOfBookAfter != undefined &&
-                                                (startOfBookAfter.getValue() == null ||
-                                                 parseInt(end) > parseInt(startOfBookAfter.getValue()))) 
-                                            {
-                                                startOfBookAfter.setValue(end);
-                                            }
-                                            
-                                            return;
-                                        }
-                                    }
-                                }]
-                            }]
                         },{
-                            fieldLabel: 'Author',
-                            name: 'author',
-                            anchor: '98%',
-                            allowBlank: true,
-                            labelAlign: 'top'
-                        },{
-                            fieldLabel: 'Publisher/printer',
-                            name: 'publisher',
-                            anchor: '98%',
-                            allowBlank: true,
-                            labelAlign: 'top'
-                        }]
-                    },{
-                        xtype: 'container',
-                        columnWidth: .5,
-                        layout: 'anchor',
-                        defaultType: 'textfield',
-                        items: [{
                             xtype: 'combobox', 
                             fieldLabel: 'Languages *',
                             name: 'languages',
@@ -391,16 +368,6 @@ Ext.define('Ext.ux.BookFieldset', {
                             labelAlign: 'top'
                         }]
                     }]
-                },{
-                    xtype: 'button',
-                    //disabled: true,
-                    text: 'Delete book',
-                    width: 140,
-                    margin: '5 0 10 0',
-                    handler: function()
-                    {
-                        _this.destroy();
-                    }
                 }]
             };
         
