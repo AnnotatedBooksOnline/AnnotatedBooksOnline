@@ -153,7 +153,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     items: [{
                         xtype: 'panel',
                         border: false,
-                        html: '<h1>Collaboratory</h1>',
+                        html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
                         flex: 1
                     },{
                         xtype: 'panel',
