@@ -103,9 +103,10 @@ Book.documentFromScan = function(scan)
     return new Document(
         scan.get('width'),
         scan.get('height'),
-        scan.get('zoomLevels'),
+        scan.get('zoomLevel'),
         function(row, col, zoomLevel)
         {
+            // return 'tiles/' + scan.get('scanId') + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
             return 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
         }
     );

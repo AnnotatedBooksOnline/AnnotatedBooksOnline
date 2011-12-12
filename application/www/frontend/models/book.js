@@ -21,7 +21,7 @@ Ext.define('Ext.ux.AnnotationModel', {
 Ext.define('Ext.ux.ScanModel', {
     extend: 'Ext.data.Model',
     idProperty: 'scanId',
-    fields: ['scanId', 'bookId', 'index', 'status', 'width', 'height', 'zoomLevels'],
+    fields: ['scanId', 'bookId', 'index', 'status', 'width', 'height', 'zoomLevel'],
 
     hasMany: {
         model: 'Ext.ux.AnnotationModel',

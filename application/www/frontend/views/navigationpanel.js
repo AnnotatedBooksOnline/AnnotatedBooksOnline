@@ -13,7 +13,7 @@ Ext.define('Ext.ux.ThumbnailView', {
         {
             var document = this.book.getScans()[i];
             
-            //fields[i] = ['tiles/' + document.bookId + '/' + document.scanId + '/tile_0_0_0.jpg',
+            //fields[i] = ['tiles/' + document.scanId + '/tile_0_0_0.jpg',
             fields[i] = ['tiles/tile_0_0_0.jpg',
                          i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : ''];
         }

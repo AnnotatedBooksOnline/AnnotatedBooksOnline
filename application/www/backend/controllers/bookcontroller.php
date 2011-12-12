@@ -4,6 +4,15 @@
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
 
+// Exceptions.
+class BookNotFoundException extends ExceptionBase
+{
+    public function __construct($bookId)
+    {
+        parent::__construct('book-not-found', $bookId);
+    }
+}
+
 /**
  * Book controller class.
  */
@@ -24,14 +33,43 @@ class BookController extends Controller
         
         // Determine id a specific book was requested. If this is the case retrieve this book
         // from the database and return.
+        
+        $title = Query::select('books.title')
+            ->from('Books books')
+            ->where('books.bookId = :id')
+            ->execute(array(':id' => $id));
+        
+        if ($title->getAmount() != 1)
+        {
+            throw new BookNotFoundException($id);
+        }
+        $title = $title->getFirstRow()->getValue('title');
+        
+        $scans = Query::select('scans.scanId', 'scans.width', 'scans.height', 'scans.zoomLevel')
+            ->from('Scans scans')
+            ->where('scans.bookId = :id')
+            ->execute(array(':id' => $id));
+        
+        $scanResult = array();
+        foreach ($scans as $scan)
+        {
+            $scanResult[] = $scan->getValues();
+        }
+        
+        // TODO: remove this - for testing purposes only.
+        if (count($scanResult) == 0)
+        {
+            $scanResult = array(
+                array('scanId' => 1, 'width' => 151, 'height' => 225, 'zoomLevel' => 6)
+            );
+        }
+        
         if ($id)
         {
             return array('records' => array(
                 'bookId' => $id,
-                'title' => 'Foo bar',
-                'scans' => array(
-                    array('scanId' => 1, 'width' => 151, 'height' => 225, 'zoomLevels' => 6)
-                )
+                'title' => $title,
+                'scans' => $scanResult
             ), 'total' => 1);
         }
     }
