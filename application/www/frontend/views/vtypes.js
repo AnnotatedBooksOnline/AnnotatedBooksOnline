@@ -40,6 +40,12 @@ Ext.apply(Ext.form.VTypes, {
             return false;
         }
         
+        if (Authentication.getInstance().isLoggedOn()
+            && value == Authentication.getInstance().getUserModel().get('email'))
+        {
+            return true;
+        }
+        
         // Send existance check request.
         RequestManager.getInstance().request(
             'User',
@@ -69,7 +75,7 @@ Ext.apply(Ext.form.VTypes, {
     {
         // Check if the url is a correct url.
         // Use this instead of url, because this one also allows url's without 'http://'
-        var urlRegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+        var urlRegExp = /^((https?|ftp):\/\/)?[a-zA-Z0-9-.]+\.([a-zA-Z0-9]){2,4}([[\]a-zA-Z0-9/+=#%&_\.~?\-!]*)$/i;
     
         if (!urlRegExp.test(value))
         {
@@ -80,3 +86,4 @@ Ext.apply(Ext.form.VTypes, {
         return true;
     }
 });
+

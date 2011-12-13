@@ -455,7 +455,7 @@ class Query
         $query = $this->escapeIdentifier($query);
         
         $conditions = 'to_tsvector(\'english\', ' . $columns .
-            ') @@ plainto_tsquery(\'english\', ' . $query . ')';
+            ') @@ to_tsquery(\'english\', ' . $query . ')';
         
         // Add clauses to where clause.
         if ($this->whereClause)
@@ -653,7 +653,9 @@ class Query
                 'not like',
                 'like',
                 'ilike',
-                'not ilike'
+                'not ilike',
+                '!~[*]',
+                '~[*]'
             );
             
             // Handle operator.
@@ -723,7 +725,7 @@ class Query
     {
         if (!is_array($args))
         {
-            return $args;
+            return array($args);
         }
         
         $result = array();
