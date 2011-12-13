@@ -38,16 +38,19 @@ abstract class Entity
         $resultSet = $this->getSelectQuery()->execute($this->getPrimaryKeyValues());
         
         // Determine if the entity was found in the database.
-        if ($resultSet->getAmount() != 1) 
+        if ($resultSet->getAmount() != 1)
         {
             throw new EntityException('entity-record-not-found');
         }
         
         // Store result in our members.
-        foreach ($resultSet->getFirstRow()->getValues() as $name => $value)
+        $values = $resultSet->getFirstRow()->getValues($this->getTypes());
+        foreach ($values as $name => $value)
         {
             $this->{$name} = $value;
         }
+        
+        Log::debug("Fetched values:\n%s", var_export($values, true));
     }
     
     /**
@@ -69,9 +72,10 @@ abstract class Entity
             $row = $this->getInsertQuery(true)->execute($values, $types)->getFirstRow();
             
             // Acquire the primary keys.
-            foreach ($this->getPrimaryKeys() as $key)
+            $keyValues = $row->getValues($types);
+            foreach ($keyValues as $key => $value)
             {
-                $this->{$key} = $row->getValue($key);
+                $this->{$key} = $value;
             }
         }
         else

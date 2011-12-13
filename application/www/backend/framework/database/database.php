@@ -194,6 +194,12 @@ class Database extends Singleton
     
     /**
      * Executes query.
+     *
+     * @param $query      Query to execute.
+     * @param $arguments  Arguments to bind to query.
+     * @param $types      Types of those arguments.
+     *
+     * @return  Result set.
      */
     public function execute($query, $arguments = array(), $types = null)
     {
@@ -208,7 +214,7 @@ class Database extends Singleton
             $type = ($types !== null) ?
                 (isset($types[$name]) ? $types[$name] : 'string') : 'string';
             
-            $typedValue = $this->valueToType($value, $type);
+            $typedValue = self::valueToType($value, $type);
             
             $statement->bindValue(
                 $name,
@@ -230,24 +236,45 @@ class Database extends Singleton
         return new ResultSet($statement);
     }
     
-    public function columnsToTypes($values, $types)
+    /**
+     * Converts database data to normal data.
+     *
+     * @param $value  Value to convert.
+     * @param $type   Type of the value.
+     *
+     * @return  Resulting value.
+     */
+    public static function convertFromType($value, $type)
+    {
+        return self::valueFromType($value, $type);
+    }
+    
+    /**
+     * Converts database data to normal data.
+     *
+     * @param $values  Values to convert.
+     * @param $types   Types of those values.
+     *
+     * @return  Resulting values.
+     */
+    public static function convertFromTypes($values, $types)
     {
         foreach ($values as $name => $value)
         {
             $type = ($types !== null) ?
                 (isset($types[$name]) ? $types[$name] : 'string') : 'string';
             
-            $values[$name] = $this->valueToType($value, $type);
+            $values[$name] = self::valueFromType($value, $type);
         }
         
         return $values;
     }
     
     /*
-     * Helper methods for inserting specific kinds of data.
+     * Helper methods for converting specific kinds of data.
      */
     
-    public function valueFromType($value, $type)
+    private static function valueFromType($value, $type)
     {
         if ($value === null)
         {
@@ -279,7 +306,7 @@ class Database extends Singleton
         }
     }
     
-    public function valueToType($value, $type)
+    private static function valueToType($value, $type)
     {
         if ($value === null)
         {
@@ -314,7 +341,7 @@ class Database extends Singleton
         }
     }
     
-    private function parameterTypeFromType($value, $type)
+    private static function parameterTypeFromType($value, $type)
     {
         if ($value === null)
         {
