@@ -294,7 +294,7 @@ Authentication.prototype.keepAlive = function()
 {
     var data = {userId: this.loggedOn ? this.userId : 0};
     RequestManager.getInstance().request('Authentication', 'keepalive', data, this,
-        function(data)
+        function(data) // Callback on success.
         {
             // Check if there is a mismatch between client and server.
             if (data && data.action)
@@ -333,6 +333,12 @@ Authentication.prototype.keepAlive = function()
             }
             
             // Keep alive in 10 seconds.
+            var _this = this;
+            setTimeout(function() { _this.keepAlive(); }, 10000);
+        },
+        function(data) // Callback on failure.
+        {
+            // There is nothing we can do. Try again in 10 seconds.
             var _this = this;
             setTimeout(function() { _this.keepAlive(); }, 10000);
         });
