@@ -164,14 +164,28 @@ Ext.define('Ext.ux.Viewer', {
                     allowNegative: false,
                     allowDecimals: false,
                     autoStripChars: true,
-                    allowBlank: false,
+                    validator: function(value)
+                    {
+                        if (value <= _this.book.getScanAmount() && value >= 1)
+                        {
+                            return true;
+                        }
+                        return 'Enter a page between 1 and ' + _this.book.getScanAmount() + ' inclusive.';
+                    },
                     listeners: {
-                        change: function()
+                        blur: function()
                         {
                             var val = this.getValue();
                             if (val <= _this.book.getScanAmount() && val >= 1)
                             {
                                 this.up('viewerpanel').setPage(val-1);
+                            }
+                        },
+                        specialkey: function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER)
+                            {
+                                field.fireEvent('blur');
                             }
                         }
                     }
