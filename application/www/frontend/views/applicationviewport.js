@@ -8,46 +8,100 @@ Ext.define('Ext.ux.ApplicationViewport', {
     initComponent: function() 
     {
         var profileBox = [{
-            text: '',
-            menu: [{
-                text: 'Logout...',
-                iconCls: 'logout-icon',
-                listeners: {
-                    click: function()
-                    {
-                        Authentication.getInstance().logout();
-                    }
-                }
-            },{
-                text: 'Edit profile...',
-                iconCls: 'user-icon',
-                listeners: {
-                    click: function()
-                    {
-                        Authentication.showEditProfileWindow();
-                    }
-                }
-            }],
-            name: 'logout',
-            hidden: true
+            xtype: 'panel',
+            border: false,
+            html: 'Welcome, Guest',
+            cls: 'profiletext',
+            name: 'welcometext',
+            width: 200,
+            setName: function(name)
+            {
+                this.body.update('Welcome, ' + escape(name));
+            }
         }, {
-            text: 'Login',
-            listeners: {
-                click: function()
-                {
-                    Authentication.showLoginWindow();
-                }
+            xtype: 'panel',
+            border: false,
+            layout: {
+                type: 'table',
+                columns: 2
             },
-            name: 'login'
-        }, {
-            text: 'Register',
-            listeners: {
-                click: function()
-                {
-                    Application.getInstance().gotoTab('register', [], true);
+            items: [{
+                xtype: 'panel',
+                width: 100,
+                border: false,
+                items: {
+                    text: 'Register',
+                    listeners: {
+                        click: function()
+                        {
+                            Application.getInstance().gotoTab('register', [], true);
+                        }
+                    },
+                    name: 'register',
+                    xtype: 'button',
+                    cls: 'profilebutton'
                 }
-            },
-            name: 'register'
+            }, {
+                xtype: 'panel',
+                width: 100,
+                border: false,
+                items: [{
+                    text: 'Login',
+                    listeners: {
+                        click: function()
+                        {
+                            Authentication.showLoginWindow();
+                        }
+                    },
+                    name: 'login',
+                    xtype: 'button',
+                    cls: 'profilebutton'
+                }, {
+                    text: 'Logout',
+                    iconCls: 'logout-icon',
+                    listeners: {
+                        click: function()
+                        {
+                            Authentication.getInstance().logout();
+                        }
+                    },
+                    name: 'logout',
+                    hidden: true,
+                    xtype: 'button',
+                    cls: 'profilebutton'
+                }]
+            }, {
+                xtype: 'container'
+            }, {
+                xtype: 'panel',
+                width: 100,
+                border: false,
+                items: [{
+                    text: 'Edit profile',
+                    iconCls: 'user-icon',
+                    listeners: {
+                        click: function()
+                        {
+                            Authentication.showEditProfileWindow();
+                        }
+                    },
+                    name: 'profile',
+                    xtype: 'button',
+                    cls: 'profilebutton',
+                    hidden: true
+                }, {
+                    text: 'Forgot pass?',
+                    listeners: {
+                        click: function()
+                        {
+                            alert('Function not yet implemented.');
+                        }
+                    },
+                    name: 'password',
+                    xtype: 'button',
+                    cls: 'profilebutton'
+                }]
+            }]
         }];
         
         var menuBox = [/*{
@@ -145,7 +199,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 items: [{
                     xtype: 'panel',
                     border: false,
-                    height: 80,
+                    height: 87,
                     layout: {
                         type: 'hbox',
                         align: 'stretch'
@@ -158,7 +212,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     },{
                         xtype: 'panel',
                         border: false,
-                        bodyPadding: 10,
+                        style: 'padding-top: 10px; padding-right: 10px;',
                         defaults: {
                             xtype: 'button',
                             cls: 'profilebutton'
@@ -450,16 +504,20 @@ Ext.define('Ext.ux.ApplicationViewport', {
             this.down('[name=users]').show();
             this.down('[name=upload]').show();
             this.down('[name=logout]').show();
+            this.down('[name=profile]').show();
             this.down('[name=login]').hide();
             this.down('[name=register]').hide();
+            this.down('[name=password]').hide();
         }
         else
         {
             this.down('[name=users]').hide();
             this.down('[name=upload]').hide();
             this.down('[name=logout]').hide();
+            this.down('[name=profile]').hide();
             this.down('[name=login]').show();
             this.down('[name=register]').show();
+            this.down('[name=password]').show();
         }
     },
     
@@ -467,7 +525,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         if (authentication.isLoggedOn())
         {
-            this.down('[name=logout]').setText('Logged on as ' + escape(authentication.getFullName()));
+            this.down('[name=welcometext]').setName(authentication.getFullName());
+        }
+        else
+        {
+            this.down('[name=welcometext]').setName('Guest');
         }
     }
 });
