@@ -298,7 +298,7 @@ class Database extends Singleton
             case 'time':
             case 'timestamp':
                 // TODO: Test this.
-                return strtotime($date);
+                return strtotime($value);
                 
             case 'string':
             default:

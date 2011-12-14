@@ -3,6 +3,9 @@
 
 require_once 'framework/database/entity.php';
 
+// Exceptions.
+class UploadException extends ExceptionBase { }
+
 /**
  * Class representing an upload entity.
  */
@@ -79,10 +82,10 @@ class Upload extends Entity
      *
      * @throws EntityException  If upload could not be found.
      */
-    public function fromToken($token)
+    public static function fromToken($token)
     {
         // Fetch upload.
-        $resultSet = Query::select('*')
+        $resultSet = Query::select('uploadId')
             ->from('Uploads')
             ->where('token = :token')
             ->execute(array('token' => $token));
@@ -98,6 +101,59 @@ class Upload extends Entity
         
         // Load upload by id.
         return new Upload($uploadId);
+    }
+    
+    public function delete()
+    {
+        parent::delete();
+        
+        // Remove upload file.
+        $location = $this->getFileLocation();
+        if (file_exists($location))
+        {
+            unlink($location);
+        }
+    }
+    
+    /**
+     * Get the contents of the upload.
+     *
+     * @return  Upload file contents.
+     */
+    public function getContent()
+    {
+        return file_get_contents($this->getFileLocation());
+    }
+    
+    /**
+     * Set the contents of the upload.
+     *
+     * @param $filename  Filename with new content.
+     * @param $move      Whether to move file. Otherwise a copy is assumed.
+     */
+    public function setContent($filename, $move = false)
+    {
+        if ($move)
+        {
+            $retval = rename($filename, $this->getFileLocation());
+        }
+        else
+        {
+            $retval = copy($filename, $this->getFileLocation());
+        }
+        
+        if (!$retval)
+        {
+            throw new UploadException('upload-set-content-failed');
+        }
+    }
+    
+    /**
+     * Get the file location of this upload.
+     */
+    public function getFileLocation()
+    {
+        return 'uploads/' . $this->token . '.upload';
     }
     
     /**
@@ -121,7 +177,7 @@ class Upload extends Entity
      */
     public function getColumns()
     {
-        return array('uploadId', 'userId', 'token', 'filename', 'size', 'timestamp', 'status');
+        return array('userId', 'token', 'filename', 'size', 'timestamp', 'status');
     }
     
     /**
@@ -148,9 +204,19 @@ class Upload extends Entity
     
     public function getUploadId() { return $this->uploadId; }
     
+    public function getUserId()    { return $this->userId; }
+    public function setUserId($id) { $this->userId = $id;  }
+    
     public function getToken() { return $this->token; }
     
-    // TODO: Add all getters/setters.
+    public function getFilename()          { return $this->filename;      }
+    public function setFilename($filename) { $this->filename = $filename; }
+    
+    public function getSize()      { return $this->size;  }
+    public function setSize($size) { $this->size = $size; }
+    
+    public function getTimestamp()           { return $this->timestamp;       }
+    public function setTimestamp($timestamp) { $this->timestamp = $timestamp; }
     
     public function getStatus()        { return $this->status;    }
     public function setStatus($status) { $this->status = $status; }

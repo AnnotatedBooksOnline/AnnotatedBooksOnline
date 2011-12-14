@@ -49,8 +49,6 @@ abstract class Entity
         {
             $this->{$name} = $value;
         }
-        
-        Log::debug("Fetched values:\n%s", var_export($values, true));
     }
     
     /**
@@ -87,6 +85,21 @@ abstract class Entity
             // Get the SQL statement to update this entity and execute the statement prepared.
             $this->getUpdateQuery()->execute($values, $types);
         }
+    }
+    
+    /**
+     * Deletes the entity from the database.
+     */
+    public function delete()
+    {
+        // Determine if the primary keys are filled.
+        if (!$this->arePrimaryKeysFilled())
+        {
+            throw new EntityException('entity-primary-keys-not-set');
+        }
+        
+        // Delete entity.
+        $this->getDeleteQuery()->execute($this->getPrimaryKeyValues());
     }
     
     /**
@@ -159,7 +172,6 @@ abstract class Entity
         
         return $types;
     }
-    
     
     /**
      * Gets all primary key values of this entity.

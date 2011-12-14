@@ -197,7 +197,7 @@ Ext.define('Ext.ux.BookFieldset', {
                             labelAlign: 'top',
                             items: [{
                                 xtype: 'numberfield',
-                                name: 'start',
+                                name: 'pageStart',
                                 width: 63,
                                 allowNegative: false,
                                 allowDecimals: false,
@@ -207,7 +207,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         // On change, check if this value ('start') is larger than
                                         // the 'end' value -> change 'end' to 'start' in that case.
                                         // This will also happen if 'end' value is empty.
-                                        var end = this.nextSibling('[name=end]');
+                                        var end = this.nextSibling('[name=pageEnd]');
                                         if (end.getValue() == null ||
                                             parseInt(start) > parseInt(end.getValue())) 
                                         {
@@ -217,7 +217,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         // On change, check if this value ('start') is smaller than
                                         // the 'end' value of the book before this one -> change 'end' 
                                         // to 'start' in that case.
-                                        var endOfBookBefore = this.previousNode('[name=end]');
+                                        var endOfBookBefore = this.previousNode('[name=pageEnd]');
                                         if (endOfBookBefore != undefined &&
                                             (endOfBookBefore.getValue() == null ||
                                              parseInt(start) < parseInt(endOfBookBefore.getValue()))) 
@@ -235,7 +235,7 @@ Ext.define('Ext.ux.BookFieldset', {
                             },{
                                 xtype: 'numberfield',
                                 hideLabel: true,
-                                name: 'end',
+                                name: 'pageEnd',
                                 width: 63,
                                 allowNegative: false,
                                 allowDecimals: false,
@@ -246,7 +246,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         // On change, check if this value ('end') is lower than
                                         // the 'start' value -> change 'start' to 'end' in that case.
                                         // This will also happen if 'start' value is empty.
-                                        var start = this.previousSibling('[name=start]');
+                                        var start = this.previousSibling('[name=pageStart]');
                                         if (start.getValue() == null
                                             || parseInt(end) < parseInt(start.getValue())) 
                                         {
@@ -256,7 +256,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         // On change, check if this value ('end') is smaller than
                                         // the 'start' value of the book after this one -> change 
                                         // 'start' to 'end' in that case.
-                                        var startOfBookAfter = this.nextNode('[name=start]');
+                                        var startOfBookAfter = this.nextNode('[name=pageStart]');
                                         if (startOfBookAfter != undefined &&
                                             (startOfBookAfter.getValue() == null ||
                                              parseInt(end) > parseInt(startOfBookAfter.getValue()))) 
@@ -356,7 +356,7 @@ Ext.define('Ext.ux.BookFieldset', {
                             labelAlign: 'top'
                         },{
                             fieldLabel: 'Place published',
-                            name: 'placepublished',
+                            name: 'placePublished',
                             anchor: '100%',
                             allowBlank: true,
                             labelAlign: 'top'
@@ -438,9 +438,12 @@ Ext.define('Ext.ux.UploadForm', {
                 xtype: 'bindingfieldset'
             },{
                 xtype: 'booksfieldset'
-            },{
+            }],
+            
+            buttons: [{
                 xtype: 'button',
                 text: 'Reset',
+                width: 140,
                 handler: function() {
                     Ext.Msg.show({
                         title: 'Are you sure?',
@@ -452,22 +455,42 @@ Ext.define('Ext.ux.UploadForm', {
                         {
                             if (button == 'yes')
                             {
-                                // Reset the form.
-                                _this.getForm().reset(); 
+                                _this.reset();
                             }
                         }
                     });
                 }
-            }],
-            submitButtonText: 'Save'
+            },{
+                xtype: 'button',
+                //formBind: true,
+                //disabled: true,
+                text: 'Save',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
+                }
+            }]
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
     },
+    
     submit: function()
     {
         this.setLoading("Uploading...", true);
+        
+        var values = this.getValues();
+        
+        //alert(this.getValues(false));
+    },
+    
+    reset: function()
+    {
+        this.callParent();
+        
+        // TODO: Also reset scans panel.
     }
 });

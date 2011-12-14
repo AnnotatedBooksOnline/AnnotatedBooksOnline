@@ -153,7 +153,7 @@ class ResultSetRow
     {
         $value = isset($this->row[$name]) ? $this->row[$name] : null;
         
-        return ($type !== null) ? Database::convertFromType($this->row, $type) : $value;
+        return ($type !== null) ? Database::convertFromType($value, $type) : $value;
     }
 
     /**
