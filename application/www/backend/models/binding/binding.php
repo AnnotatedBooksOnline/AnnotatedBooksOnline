@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
+require_once 'booklist.php';
 
 /**
  * Class representing a binding entity.
@@ -27,7 +28,8 @@ class Binding extends Entity
     /** Number of pages to the last page of the binding. */
     protected $pagesFromLast;
     
-
+    /** Books for this binding. */
+    protected $bookList;
     
     /**
      * Constructs a binding by id.
@@ -42,6 +44,8 @@ class Binding extends Entity
     
             $this->load();
         }
+        
+        $bookList = new BookList();
     }
     
     /**
@@ -92,6 +96,19 @@ class Binding extends Entity
         );
     }
     
+    /**
+     * 
+     * Enter description here ...
+     */
+    public function saveDetails() 
+    {
+        
+        // Save the book list.
+        $bookList->setBindingId($bindingId);
+        $bookList->save();
+        
+    }
+    
     public function getBindingId()         { return $this->bindingId; }
     public function setBindingId($bindingId)     { $this->bindingId = $bindingId; }
     
@@ -110,5 +127,6 @@ class Binding extends Entity
     public function getPagesFromLast()       { return $this->pagesFromLast; }
     public function setPagesFromLast($pagesFromLast) { $this->pagesFromLast = $pagesFromLast; }
     
-
+    public function getBookList()       { return $this->bookList; }
+    public function setBookList($bookList) { $this->bookList = $bookList; }
 }

@@ -102,6 +102,7 @@ class Book extends Entity
                 'printVersion'     => 'integer'
         );
     }
+ 
     
     public function getBookId()         { return $this->bookId; }
     public function setBookId($bookId)  { $this->bookId = $bookId; }

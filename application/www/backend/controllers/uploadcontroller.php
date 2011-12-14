@@ -5,6 +5,11 @@ require_once 'framework/controller/controller.php';
 require_once 'models/upload/upload.php';
 require_once 'util/authentication.php';
 
+require_once 'models/book/book.php';
+require_once 'models/book/booklist.php';
+require_once 'models/book/binding.php';
+
+
 /**
  * Upload controller class.
  */
@@ -62,5 +67,24 @@ class UploadController extends Controller
         
         // Die to prevent AJAX data to be outputted.
         exit;
+    }
+    
+    /**
+    * Temporary method for implementing upload handling. To be renamed / moved later.
+    */
+    public function actionUpload($data)
+    {
+        $binding = new Binding();
+        // Fill binding details
+        
+        // Create the books
+        for ($i = 0;$i < 10; $i++) {
+            $book = new Book();
+            // Fill the book details.
+            $binding->getBookList()->addEntity($book);
+        }
+        
+        // Save everything;
+        $binding->save();
     }
 }
