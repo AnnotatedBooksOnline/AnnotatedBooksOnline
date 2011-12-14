@@ -11,15 +11,6 @@ require_once 'models/user/pendinguser.php';
  */
 class UserController extends Controller
 {
-    /**
-     * 
-     * 
-     */
-    protected function __construct()
-    {
-        ;
-    }
-    
     /*
     
     Load:
@@ -243,9 +234,20 @@ class UserController extends Controller
         // Fetch email.
         $email = self::getString($data, 'email', '', true, 256);
         
-        // Return true if there is atleast 1 user with the specified email.
-        return (bool) UserSearchList::findUsers(array('email' => $email), null, null, null)->
-            getAmount();
+        // Fetch user id of currently logged on user.
+        $user = Authentication::getInstance()->getUser();
+        $userId = ($user !== null) ? $user->getUserId() : 0;
+        
+        // Create selection query.
+        $query = Query::select('userId')
+            ->from('Users')
+            ->where('userId != :userId', 'email = :email');
+        
+        // Check if there are rows returned.
+        return (bool) $query->execute(
+            array('userId' => $userId, 'email' => $email),
+            array('userId' => 'int', 'email' => 'string')
+        )->getAmount();
     }
     
     /**

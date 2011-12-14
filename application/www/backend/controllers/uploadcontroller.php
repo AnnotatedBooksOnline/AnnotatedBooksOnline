@@ -5,11 +5,6 @@ require_once 'framework/controller/controller.php';
 require_once 'models/upload/upload.php';
 require_once 'util/authentication.php';
 
-require_once 'models/book/book.php';
-require_once 'models/book/booklist.php';
-require_once 'models/book/binding.php';
-
-
 /**
  * Upload controller class.
  */

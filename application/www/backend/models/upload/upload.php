@@ -51,11 +51,12 @@ class Upload extends Entity
         
         // Create new upload with default settings.
         $upload->userId    = $userId;
-        $upload->token     = md5(uniqid(true));
         $upload->filename  = $filename;
         $upload->size      = $size;
         $upload->timestamp = time();
         $upload->status    = self::STATUS_ERROR;
+        
+        $upload->generateNewToken();
         $upload->save();
         
         return $upload;
@@ -67,6 +68,36 @@ class Upload extends Entity
     public function generateNewToken()
     {
         $this->token = md5(uniqid(true));
+    }
+    
+    /**
+     * Gets an upload by a token.
+     *
+     * @param $token  Token to lookup upload by.
+     *
+     * @return  Upload of that token or null.
+     *
+     * @throws EntityException  If upload could not be found.
+     */
+    public function fromToken($token)
+    {
+        // Fetch upload.
+        $resultSet = Query::select('*')
+            ->from('Uploads')
+            ->where('token = :token')
+            ->execute(array('token' => $token));
+        
+        // Check amount of rows returned.
+        if ($resultSet->getAmount() != 1)
+        {
+            return null;
+        }
+        
+        // Get upload id.
+        $uploadId = $resultSet->getFirstRow()->getValue('uploadId', 'int');
+        
+        // Load upload by id.
+        return new Upload($uploadId);
     }
     
     /**
