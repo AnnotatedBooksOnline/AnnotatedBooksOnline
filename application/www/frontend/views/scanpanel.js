@@ -30,22 +30,33 @@ Ext.define('Ext.ux.UploadGrid', {
     
     setStatus: function(id, status)
     {
+        if (status == 'success')
+        {
+            this.setProgress(id, 100);
+        }
+        
         this.getUploadById(id).set('status', status);
     },
     
     setProgress: function(id, progress)
     {
+        // Do not go back in progress.
+        if ((progress > 0) && (progress <= this.progressById[id]))
+        {
+            return;
+        }
+        
+        // Set progress for rendering progressbar.
+        this.progressById[id] = progress;
+        
         // Get progressbar component.
         var progressBar = Ext.getCmp(id);
         
         // Update progress bar.
         if (progressBar)
         {
-            progressBar.updateProgress(progress / 100, '', true);
+            progressBar.updateProgress(progress / 100, Math.round(progress) + '%', true);
         }
-        
-        // Set progress for rendering progressbar.
-        this.progressById[id] = progress / 100;
     },
     
     getUploads: function()
@@ -85,6 +96,11 @@ Ext.define('Ext.ux.UploadGrid', {
                     
                     var id = 'loaded-' + upload.token;
                     
+                    if (upload.status == 'success')
+                    {
+                        this.setProgress(id, 100);
+                    }
+                    
                     this.addUploadWithToken(
                         id,
                         upload.token,
@@ -93,11 +109,6 @@ Ext.define('Ext.ux.UploadGrid', {
                         upload.status,
                         replaceIfSameFilename
                     );
-                    
-                    if (upload.status == 'success')
-                    {
-                        this.setProgress(id, 100);
-                    }
                 }
             }
         );
@@ -147,7 +158,10 @@ Ext.define('Ext.ux.UploadGrid', {
                     width: 150,
                     resizable: false,
                     sortable: false,
-                    renderer: this.renderProgressBar
+                    renderer: function()
+                    {
+                        return _this.renderProgressBar.apply(_this, arguments);
+                    }
                 },
                 {header: 'Status', dataIndex: 'status', renderer: this.renderStatus},
                 {
@@ -195,35 +209,33 @@ Ext.define('Ext.ux.UploadGrid', {
         
         // Render progressbar delayed.
         var _this = this;
-        (function newScope(id)
+        setTimeout(function()
             {
-                setTimeout(function()
-                    {
-                        // Empty div as there may be an older progressbar.
-                        $('#' + id).empty();
-                        
-                        // Get progress. Note that value does not contain this, it contains
-                        // nothing as we do not want to couple the progress value to the progressbar
-                        // immediately because that generates too many rerenders.
-                        var progress = _this.progressById[id] || 0;
-                        
-                        try
-                        {
-                            new Ext.ProgressBar({
-                                renderTo: id,
-                                id: id,
-                                value: progress,
-                                animate: false
-                            });
-                        }
-                        catch (e)
-                        {
-                            // Record might already have been removed/replaced.
-                        }
-                    }, 1);
-            })(id);
+                // Empty div as there may be an older progressbar.
+                $('#' + id).empty();
+                
+                // Get progress. Note that value does not contain this, it contains
+                // nothing as we do not want to couple the progress value to the progressbar
+                // immediately because that generates too many rerenders.
+                var progress = _this.progressById[id] || 0;
+                
+                try
+                {
+                    new Ext.ProgressBar({
+                        renderTo: id,
+                        id: id,
+                        value: progress / 100,
+                        animate: false,
+                        text: Math.round(progress) + '%'
+                    });
+                }
+                catch (e)
+                {
+                    // Record might already have been removed/replaced.
+                }
+            }, 1);
         
-        return '<div style="height: 20px;" id="' + id + '"></div>';
+        return '<div style="height: 22px;" id="' + id + '"></div>';
     },
     
     renderStatus: function(value)
@@ -327,7 +339,7 @@ Ext.define('Ext.ux.ScanPanel', {
                 title: 'Scans',
                 xtype: 'uploadgrid',
                 height: 200,
-                margin: '0 0 10 0'
+                margin: '0 0 12 0'
             },{
                 xtype: 'container',
                 layout: {
@@ -428,9 +440,9 @@ Ext.define('Ext.ux.ScanPanel', {
                 {
                     _this.onFileUploadError(file.id, code, message);
                 },
-            upload_success_handler: function(file)
+            upload_success_handler: function(file, data, receivedResponse)
                 {
-                    _this.onFileUploadSuccess(file.id);
+                    _this.onFileUploadSuccess(file.id, data, receivedResponse);
                 }
         });
     },
@@ -455,10 +467,16 @@ Ext.define('Ext.ux.ScanPanel', {
         this.grid.setProgress(id, progress);
     },
     
-    onFileUploadSuccess: function(id)
+    onFileUploadSuccess: function(id, data, receivedResponse)
     {
-        this.grid.setProgress(id, 100);
-        this.grid.setStatus(id, 'success');
+        if (receivedResponse && (data === 'success'))
+        {
+            this.grid.setStatus(id, 'success');
+        }
+        else
+        {
+            this.grid.setStatus(id, 'error');
+        }
     },
     
     onFileUploadError: function(id, code, message)

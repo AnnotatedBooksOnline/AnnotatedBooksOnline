@@ -462,8 +462,8 @@ Ext.define('Ext.ux.UploadForm', {
                 }
             },{
                 xtype: 'button',
-                //formBind: true,
-                //disabled: true,
+                formBind: true,
+                disabled: true,
                 text: 'Save',
                 width: 140,
                 handler: function()
