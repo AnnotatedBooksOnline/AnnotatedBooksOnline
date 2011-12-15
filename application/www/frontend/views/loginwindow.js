@@ -65,7 +65,7 @@ Ext.define('Ext.ux.LoginWindow', {
             width: 400,
             height: 200,
             closable: true,
-            resizable: true,
+            resizable: false,
             draggable: true,
             constrain: true,
             modal: true,

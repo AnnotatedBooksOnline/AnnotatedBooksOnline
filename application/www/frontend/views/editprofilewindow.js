@@ -185,8 +185,9 @@ Ext.define('Ext.ux.EditProfileWindow', {
             width: 600,
             height: 400,
             closable: true,
-            resizable: true,
+            resizable: false,
             draggable: true,
+            constrain: true,
             modal: true,
             border: true,
             items: [{
