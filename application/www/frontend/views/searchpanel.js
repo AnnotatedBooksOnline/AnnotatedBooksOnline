@@ -35,10 +35,10 @@ var bookProperties = [{
     abbreviation: 'signature',
     name: 'Signature',
     defaultOn: true
-}/*,{
+},{
     abbreviation: 'provenance',
     name: 'Provenance'
-},{
+}/*,{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'
 }*/,{
