@@ -94,8 +94,6 @@ Ext.define('Ext.ux.YearBetweenField', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-right: 5px;',
-                minLength: 3,
-                maxLength: 4,
                 allowBlank: true
             },
             items: [{
