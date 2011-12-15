@@ -120,7 +120,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         labelAlign: 'top',
                         store: store,
                         multiSelect: true,
-                        allowBlank: true
+                        allowBlank: true,
+                        forceSelection: true,
+                        editable: false
                     }]   
                 }]
             },{
@@ -353,7 +355,9 @@ Ext.define('Ext.ux.BookFieldset', {
                             multiSelect: true,
                             store: store,
                             anchor: '100%',
-                            labelAlign: 'top'
+                            labelAlign: 'top',
+                            editable: false,
+                            forceSelection: true
                         },{
                             fieldLabel: 'Place published',
                             name: 'placePublished',

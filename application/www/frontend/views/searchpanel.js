@@ -169,6 +169,7 @@ Ext.define('Ext.ux.SearchComboBoxField', {
             displayField: 'name',
             valueField: 'abbreviation',
             forceSelection: true,
+            editable: false,
             listeners: {
                 select: function(combo)
                 {
@@ -495,6 +496,7 @@ Ext.define('Ext.ux.SortComboBoxField', {
             displayField: 'name',
             valueField: 'abbreviation',
             forceSelection: true,
+            editable: false,
             listeners: {
                 select: function(combo)
                 {
