@@ -80,14 +80,19 @@ class BookController extends Controller
     public function actionSearch($data)
     {
         $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.summary', 'bindings.signature', 'libraries.libraryName'))
-            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "personsList"."name"), \', \'', 'authorNames')
+            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pAuthorList"."name"), \', \'', 'authorNames')
+            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pProvenanceList"."name"), \', \'', 'provenanceNames')
             ->from('Books books')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
             ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
             ->join('Authors authorsList', array('books.bookId = authorsList.bookId'), 'LEFT')
-            ->join('Persons personsList', array('authorsList.authorId = personsList.personId'), 'LEFT')
+            ->join('Persons pAuthorList', array('authorsList.authorId = pAuthorList.personId'), 'LEFT')
             ->join('Authors authorsFind', array('books.bookId = authorsFind.bookId'), 'LEFT')
-            ->join('Persons personsFind', array('authorsFind.authorId = personsFind.personId'), 'LEFT')
+            ->join('Persons pAuthorFind', array('authorsFind.authorId = pAuthorFind.personId'), 'LEFT')
+            ->join('Provenances provenancesList', array('bindings.bindingId = provenancesList.bindingId'), 'LEFT')
+            ->join('Persons pProvenanceList', array('provenancesList.personId = pProvenanceList.personId'), 'LEFT')
+            ->join('Provenances provenancesFind', array('bindings.bindingId = provenancesFind.bindingId'), 'LEFT')
+            ->join('Persons pProvenanceFind', array('provenancesFind.personId = pProvenanceFind.personId'), 'LEFT')
             ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
         $binds = array();
         $headline = "";
@@ -137,10 +142,13 @@ class BookController extends Controller
                         $addFulltext(':title', 'books.title', $value);
                         break;
                     case 'author':
-                        $addFulltext(':author', 'personsFind.name', $value);
+                        $addFulltext(':author', 'pAuthorFind.name', $value);
+                        break;
+                    case 'provenance':
+                        $addFulltext(':provenance', 'pProvenanceFind.name', $value);
                         break;
                     case 'any':
-                        $addFulltext(':any', array('books.title', 'personsFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), $value, true); // TODO: change column to index
+                        $addFulltext(':any', array('books.title', 'pAuthorFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'pProvenanceFind.name', 'libraries.libraryName', 'bindings.signature'), $value, true); // TODO: change column to index
                         break;
                     case 'place':
                         $addFulltext(':place', 'books.placePublished', $value);
@@ -167,7 +175,7 @@ class BookController extends Controller
         
         if ($headline != "")
         {
-            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT personsList.name), \', \')', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), ':headline', 'headline');
+            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT pAuthorList.name), \', \')', 'books.publisher', 'books.placePublished', 'bindings.summary', 'array_to_string(array_accum(DISTINCT pProvenanceList.name), \', \')', 'libraries.libraryName', 'bindings.signature'), ':headline', 'headline');
             $binds[':headline'] = $headline;
         }
         
@@ -193,6 +201,7 @@ class BookController extends Controller
                 (string)$book->getValue('publisher'),
                 (string)$book->getValue('libraryName'),
                 (string)$book->getValue('signature'),
+                (string)$book->getValue('provenanceNames'),
                 (string)$book->getValue('summary'),
                 (string)$book->getValue('headline'),
                 'tiles/tile_0_0_0.jpg',

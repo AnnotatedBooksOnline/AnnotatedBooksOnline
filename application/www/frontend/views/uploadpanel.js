@@ -199,7 +199,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                 xtype: 'numberfield',
                                 name: 'pageStart',
                                 width: 63,
-                                allowNegative: false,
+                                minValue: 1,
                                 allowDecimals: false,
                                 listeners: {
                                     'change': function (f, start)
@@ -237,7 +237,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                 hideLabel: true,
                                 name: 'pageEnd',
                                 width: 63,
-                                allowNegative: false,
+                                minValue: 1,
                                 allowDecimals: false,
                                 margins: '0 0 0 10',
                                 listeners: {
@@ -298,7 +298,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                 width: 63,
                                 minLength: 4,
                                 maxLength: 4,
-                                allowNegative: false,
+                                minValue: 1000,
                                 allowDecimals: false,
                                 listeners: {
                                     'change': function(f, from)
@@ -326,7 +326,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                 width: 63,
                                 minLength: 4,
                                 maxLength: 4,
-                                allowNegative: false,
+                                minValue: 1000,
                                 allowDecimals: false,
                                 margins: '0 0 0 10',
                                 listeners: {

@@ -35,10 +35,10 @@ var bookProperties = [{
     abbreviation: 'signature',
     name: 'Signature',
     defaultOn: true
-}/*,{
+},{
     abbreviation: 'provenance',
     name: 'Provenance'
-},{
+}/*,{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'
 }*/,{
@@ -94,8 +94,6 @@ Ext.define('Ext.ux.YearBetweenField', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-right: 5px;',
-                minLength: 3,
-                maxLength: 4,
                 allowBlank: true
             },
             items: [{
@@ -452,7 +450,7 @@ Ext.define('Ext.ux.SortComboBox', {
             getSorter: function()
             {
                 var value = _this.getComponent(0).getValue();
-                if (value)
+                if (value && value != 'none')
                 {
                     return { property: value, direction: (_this.getComponent(1).getValue() ? 'DESC' : 'ASC') }
                 }
@@ -483,10 +481,13 @@ Ext.define('Ext.ux.SortComboBoxField', {
             store: Ext.create('Ext.data.Store', {
                 model: 'Ext.ux.SearchParameterModel',
                 data: [{
+                    abbreviation: 'none',
+                    name: '- Select -'
+                }/*,{
                     abbreviation: 'modified',
                     name: 'Date last modified'
-                },{
-                    abbreviation: 'uploaded',
+                }*/,{
+                    abbreviation: 'id',
                     name: 'Date uploaded'
                 }].concat(bookProperties)
             }),
@@ -497,7 +498,10 @@ Ext.define('Ext.ux.SortComboBoxField', {
             listeners: {
                 select: function(combo)
                 {
-                    _this.ownerCt.sortFn();
+                    if (_this.ownerCt != undefined)
+                    {
+                        _this.ownerCt.sortFn();
+                    }
                 }
             }
         };
@@ -505,6 +509,9 @@ Ext.define('Ext.ux.SortComboBoxField', {
         Ext.apply(this, defConfig);
         
         this.superclass.initComponent.apply(this, []);
+        
+        this.select('none');
+        this.fireEvent('select',this,{});
     }
 });
 
