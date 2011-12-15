@@ -445,7 +445,7 @@ class Query
     /**
      * A specific where implementation for fulltext searches.
      */
-    public function whereFulltext($columns, $query)
+    public function whereFulltext($columns, $query, $orNull = false)
     {
         $columns = self::argsToArray($columns);
         $columns = implode(' || \' \' || ',
@@ -456,6 +456,11 @@ class Query
         
         $conditions = 'to_tsvector(\'english\', ' . $columns .
             ') @@ to_tsquery(\'english\', ' . $query . ')';
+            
+        if ($orNull)
+        {
+            $conditions = '(' . $conditions . ' OR ' . $columns . ' ~* \'^\s*$\')';
+        }
         
         // Add clauses to where clause.
         if ($this->whereClause)
@@ -712,9 +717,9 @@ class Query
             return $identifier;
         }
         
-        // Escape all column names. 'DISTINCT', when used as a keyword, should not be escaped.
+        // Escape all column names. 'DISTINCT' or 'NULL', when used as a keyword, should not be escaped.
         return preg_replace(
-            array('/(?<![:\w])(\w+)(?![\(\w])/', '/(?<!\.)"(distinct)"(?!\.)/i'),
+            array('/(?<![:\w])(\w+)(?![\(\w])/', '/(?<!\.)"(distinct|null)"(?!\.)/i'),
             array('"\1"', '\1'),
             $identifier
         );

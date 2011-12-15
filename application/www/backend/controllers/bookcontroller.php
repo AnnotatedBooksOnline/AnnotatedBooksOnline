@@ -98,35 +98,61 @@ class BookController extends Controller
         $headline = "";
         $c = 0;
         
+        /*
+         * Adds a fulltext search to the query.
+         */
         $addFulltext = function($name, $columns, $value, $addheadline = false) use (&$query, &$binds, &$c, &$headline)
         {
+            // Decompose the textual query
             $split = BookController::splitFulltextQuery($value);
-
+            
+            // Process the non-exact selectors.
             if ($split['rest'] != '')
             {
-                $query = $query->whereFulltext($columns, $name . $c);
+                $onlyNegative = true;
+                foreach (explode(' & ', $split['rest']) as $k => $v)
+                {
+                    if (trim($v) != '' && $v[0] != '!')
+                    {
+                        $onlyNegative = false;
+                        break;
+                    }
+                }
+                $query = $query->whereFulltext($columns, $name . $c, $onlyNegative);
                 $binds[$name . $c] = $split['rest'];
             }
             
+            // Process the exact selectors.
             if (!is_array($columns))
             {
                 $e = $split['exact'];
                 for ($i = 0; $i < count($e); $i++)
                 {
-                    $query = $query->where($columns . $e[$i]['like'] . $name . $c . '_' . $i);
+                    if ($e[$i]['positive'])
+                    {
+                        $query = $query->where($columns . $e[$i]['like'] . $name . $c . '_' . $i);
+                    }
+                    else
+                    {
+                        $query = $query->whereOr($columns . $e[$i]['like'] . $name . $c . '_' . $i,
+                            $columns . ' IS NULL');
+                    }
                     $binds[$name . $c . '_' . $i] = $e[$i]['value'];
                 }
             }
             
+            // Process headlines.
             if ($addheadline)
             {
                 $headline = ($headline != '' ? ' & ' : '') . $split['headline'];
             }
-            Log::debug("Parsed search query: %s\n", print_r(BookController::splitFulltextQuery($value), true));
+            Log::debug("Parsed search query: %s\n", print_r($split, true));
         };
         
+        // Process all search selectors and add them to the query.
         foreach ($data as $selector)
         {
+            // If any data is missing or invalid, do not process the selector.
             if (isset($selector['type']) && isset($selector['value']) && (is_array($selector['value']) || trim($selector['value']) != ""))
             {
                 $value = $selector['value'];
@@ -173,6 +199,7 @@ class BookController extends Controller
             }
         }
         
+        // Request a headline if necessary.
         if ($headline != "")
         {
             $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT pAuthorList.name), \', \')', 'books.publisher', 'books.placePublished', 'bindings.summary', 'array_to_string(array_accum(DISTINCT pProvenanceList.name), \', \')', 'libraries.libraryName', 'bindings.signature'), ':headline', 'headline');
@@ -181,6 +208,7 @@ class BookController extends Controller
         
         $result = $query->execute($binds);
         
+        // Output the results.
         $records = array();
         foreach ($result as $book)
         {
@@ -225,7 +253,8 @@ class BookController extends Controller
         {
             $result['exact'][] = array(
                 'like' => $exacts[1][$i] == '-' ? ' !~* ' : ' ~* ',
-                'value' => '(^|[^[:alpha:]])' . preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)'
+                'value' => '(^|[^[:alpha:]])' . preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)',
+                'positive' => $exacts[1][$i] != '-'
             );
         }
         $headline = 
