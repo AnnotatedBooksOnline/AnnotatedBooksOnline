@@ -110,7 +110,7 @@ class BookController extends Controller
             if ($split['rest'] != '')
             {
                 $onlyNegative = true;
-                foreach (explode(' ', $split['rest']) as $k => $v)
+                foreach (explode(' & ', $split['rest']) as $k => $v)
                 {
                     if (trim($v) != '' && $v[0] != '!')
                     {
