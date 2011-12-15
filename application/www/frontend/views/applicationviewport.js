@@ -7,104 +7,98 @@ Ext.define('Ext.ux.ApplicationViewport', {
     
     initComponent: function() 
     {
-        var profileBox = [{
-            xtype: 'panel',
+        var userItems = [{
+            colspan: 2,
             border: false,
-            html: 'Welcome, Guest',
-            cls: 'profiletext',
+            html: 'Welcome, <b>Guest</b>',
+            cls: 'user-text',
             name: 'welcometext',
-            width: 200,
+            width: 300,
             setName: function(name)
             {
-                this.body.update('Welcome, ' + escape(name));
+                this.body.update('Welcome, <b>' + escape(name) + '</b>');
             }
-        }, {
-            xtype: 'panel',
-            border: false,
-            layout: {
-                type: 'table',
-                columns: 2
-            },
-            items: [{
-                xtype: 'panel',
-                width: 100,
-                border: false,
-                items: {
-                    text: 'Register',
-                    listeners: {
-                        click: function()
-                        {
-                            Application.getInstance().gotoTab('register', [], true);
-                        }
-                    },
-                    name: 'register',
-                    xtype: 'button',
-                    cls: 'profilebutton'
+        },{
+            xtype: 'container',
+            width: 180,
+            rowspan: 5
+        },{
+            xtype: 'button',
+            text: 'Login',
+            width: 120,
+            height: 25,
+            iconCls: 'login-icon',
+            listeners: {
+                click: function()
+                {
+                    Authentication.showLoginWindow();
                 }
-            }, {
-                xtype: 'panel',
-                width: 100,
-                border: false,
-                items: [{
-                    text: 'Login',
-                    listeners: {
-                        click: function()
-                        {
-                            Authentication.showLoginWindow();
-                        }
-                    },
-                    name: 'login',
-                    xtype: 'button',
-                    cls: 'profilebutton'
-                }, {
-                    text: 'Logout',
-                    iconCls: 'logout-icon',
-                    listeners: {
-                        click: function()
-                        {
-                            Authentication.getInstance().logout();
-                        }
-                    },
-                    name: 'logout',
-                    hidden: true,
-                    xtype: 'button',
-                    cls: 'profilebutton'
-                }]
-            }, {
-                xtype: 'container'
-            }, {
-                xtype: 'panel',
-                width: 100,
-                border: false,
-                items: [{
-                    text: 'Edit profile',
-                    iconCls: 'user-icon',
-                    listeners: {
-                        click: function()
-                        {
-                            Authentication.showEditProfileWindow();
-                        }
-                    },
-                    name: 'profile',
-                    xtype: 'button',
-                    cls: 'profilebutton',
-                    hidden: true
-                }, {
-                    text: 'Forgot pass?',
-                    listeners: {
-                        click: function()
-                        {
-                            alert('Function not yet implemented.');
-                        }
-                    },
-                    name: 'password',
-                    xtype: 'button',
-                    cls: 'profilebutton'
-                }]
-            }]
+            },
+            name: 'login',
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Forgot password?',
+            iconCls: 'passwordforgotten-icon',
+            width: 120,
+            height: 25,
+            listeners: {
+                click: function()
+                {
+                    alert('Function not yet implemented.');
+                }
+            },
+            name: 'password',
+            xtype: 'button',
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Register',
+            width: 120,
+            height: 25,
+            iconCls: 'register-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTab('register', [], true);
+                }
+            },
+            name: 'register',
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Logout',
+            width: 120,
+            height: 25,
+            iconCls: 'logout-icon',
+            listeners: {
+                click: function()
+                {
+                    Authentication.getInstance().logout();
+                }
+            },
+            name: 'logout',
+            hidden: true,
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Edit profile',
+            width: 120,
+            height: 25,
+            iconCls: 'user-icon',
+            listeners: {
+                click: function()
+                {
+                    Authentication.showEditProfileWindow();
+                }
+            },
+            name: 'profile',
+            xtype: 'button',
+            cls: 'user-button',
+            hidden: true
         }];
         
-        var menuBox = [/*{
+        var menuButtons = [/*{
             text: 'Book',
             menu: [{
                 text: 'Save current page...'
@@ -117,6 +111,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             }]
         },*/{
             text: 'Search',
+            iconCls: 'search-icon',
             listeners: {
                 click: function()
                 {
@@ -126,6 +121,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             name: 'search'
         },{
             text: 'Upload',
+            iconCls: 'upload-icon',
             listeners: {
                 click: function()
                 {
@@ -136,9 +132,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
             hidden: true
         },{
             xtype: 'tbseparator',
-            cls: 'menuseparator'
+            cls: 'menu-separator'
         },{
             text: 'Info',
+            iconCls: 'info-icon',
             listeners: {
                 click: function()
                 {
@@ -148,9 +145,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
             name: 'info'
         },{
             xtype: 'tbseparator',
-            cls: 'menuseparator'
+            cls: 'menu-separator'
         },{
             text: 'Options',
+            iconCls: 'settings-icon',
             menu: [{
                 text: 'Viewer settings...',
                 iconCls: 'settings-icon',
@@ -163,6 +161,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             }]
         },{
             text: 'Users',
+            iconCls: 'users-icon',
             listeners: {
                 click: function()
                 {
@@ -175,64 +174,46 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         var topRegion = {
             xtype: 'panel',
+            border: false,
             layout: {
                 type: 'hbox',
                 align: 'stretch'
             },
-            border: false,
             height: 120,
             cls: 'header',
-            
-            items: [{
-                xtype: 'panel',
-                border: false,
+            items: [{ // Header logo.
+                xtype: 'container',
                 width: 120,
                 cls: 'header-logo'
-            },{
-                xtype: 'panel',
-                border: false,
+            },{ //Title, with menu below.
+                xtype: 'container',
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
                 },
                 flex: 1,
                 items: [{
-                    xtype: 'panel',
-                    border: false,
+                    xtype: 'container',
                     height: 87,
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
-                    },
-                    items: [{
-                        xtype: 'panel',
-                        border: false,
-                        html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
-                        flex: 1
-                    },{
-                        xtype: 'panel',
-                        border: false,
-                        style: 'padding-top: 10px; padding-right: 10px;',
-                        defaults: {
-                            xtype: 'button',
-                            cls: 'profilebutton'
-                        },
-                        layout: {
-                            type: 'vbox',
-                            align: 'stretchMax'
-                        },
-                        items: profileBox
-                    }]
+                    html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
                 },{
-                    xtype: 'panel',
-                    border: false,
+                    xtype: 'container',
                     defaults: {
                         xtype: 'button',
-                        cls: 'menubutton'
+                        cls: 'menu-button'
                     },
                     layout: 'hbox',
-                    items: menuBox
+                    items: menuButtons
                 }]
+            },{ // User items.
+                border: false,
+                bodyPadding: 10,
+                width: 320,
+                layout: {
+                    type: 'table',
+                    columns: 2
+                },
+                items: userItems
             }]
         };
         
