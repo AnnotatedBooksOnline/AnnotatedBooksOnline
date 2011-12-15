@@ -142,7 +142,7 @@ class UploadController extends Controller
         // Save file.
         $upload->save();
         
-        // Die to prevent AJAX data to be outputted.
-        exit;
+        // Upload succeeded.
+        return 'success';
     }
 }

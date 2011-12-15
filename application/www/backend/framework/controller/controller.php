@@ -19,8 +19,8 @@ abstract class Controller
      */
     public static function handleRequest()
     {
-        // Check whether method is post.
-        $postMethod = ($_SERVER['REQUEST_METHOD'] == 'POST');
+        // Check whether we want to use the post method.
+        $postMethod = ($_SERVER['REQUEST_METHOD'] == 'POST') && empty($_FILES);
         
         try
         {
@@ -42,7 +42,8 @@ abstract class Controller
             if (method_exists($controller, $methodName))
             {
                 // Log a messsage.
-                Log::info("Handling action '%s' of controller '%s'.", $actionName, $controllerName);
+                Log::info("Handling action '%s' of controller '%s', method is '%s'.",
+                    $actionName, $controllerName, $postMethod ? 'post' : 'get');
                 
                 // Calculate start time.
                 $start = microtime(true);
