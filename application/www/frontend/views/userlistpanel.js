@@ -21,18 +21,18 @@ Ext.define('Ext.ux.UserListPanel', {
         
         function renderEmail(email)
         {
-            return '<a href="mailto:' + email + '">' + email + '</a>';
+            return '<a href="mailto:' + email + '" target="_blank">' + email + '</a>';
         }
         
         function renderWebsite(website)
         {
             if (website.substr(0, 4) === 'http') 
             {
-                return '<a href="' + website + '">' + website + '</a>';
+                return '<a href="' + website + '" target="_blank">' + website + '</a>';
             } 
             else
             {
-                return '<a href="http://' + website + '">' + website + '</a>';
+                return '<a href="http://' + website + '" target="_blank">' + website + '</a>';
             }
         }
         
