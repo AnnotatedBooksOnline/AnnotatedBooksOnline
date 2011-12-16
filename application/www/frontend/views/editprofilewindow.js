@@ -19,17 +19,18 @@ Ext.define('Ext.ux.EditProfileForm', {
             },*/{
                 name: 'email',
                 fieldLabel: 'Email Address',
+                allowBlank: false,
                 vtype: 'checkEmail',
                 maxLength: 256
             },{
                 name: 'firstName',
                 fieldLabel: 'First name',
-                allowBlank: true,
+                allowBlank: false,
                 maxLength: 50
             },{
                 name: 'lastName',
                 fieldLabel: 'Last name',
-                allowBlank: true,
+                allowBlank: false,
                 maxLength: 50
             },{
                 name: 'affiliation',
