@@ -669,7 +669,7 @@ class Query
             {
                 $identifier = $this->escapeIdentifier($matches[1]);
                 $operator   = $matches[2];
-                $value      = $this->escapeValue($matches[3]);
+                $value      = $this->escapeIdentifier($matches[3]); // TODO: Determine somehow whether identifier or value.
                 
                 $clauses[] = $identifier . ' ' . $operator . ' ' . $value;
             }

@@ -95,6 +95,8 @@ class PyramidBuilder extends Singleton
      */
     private function createThumbnail($scanid)
     {
+        // TODO: Use ImageShack instead.
+        
         $conf = Configuration::getInstance();
         
         // Determine paths.
@@ -126,8 +128,8 @@ class PyramidBuilder extends Singleton
     public function resolveInconsistencies()
     {
         Query::update('Scans', array('status', Scan::STATUS_ERROR))
-                ->where('status = ' . Scan::STATUS_PROCESSING)
-                ->execute();
+                ->where('status = :status')
+                ->execute(array('status' => Scan::STATUS_PROCESSING));
     }
     
     /**
@@ -151,8 +153,8 @@ class PyramidBuilder extends Singleton
             // Queue should be updated by all scans in the database with a PENDING status.
             $result = Query::select('scanId', 'scanType')
                             ->from('Scans')
-                            ->where('status = ' . Scan::STATUS_PENDING)
-                            ->execute();
+                            ->where('status = :status')
+                            ->execute(array('status' => Scan::STATUS_PENDING));
             
             foreach($result as $row)
             {
