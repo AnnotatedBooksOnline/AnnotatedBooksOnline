@@ -68,7 +68,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     }
                 },
                 hideHeaders: true
-            },{
+            }/*,{
                 xtype: 'button',
                 text: 'Delete user',
                 id: 'delete',
@@ -101,7 +101,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                             }
                     });
                 }
-            }
+            }*/
             // TODO: add information like last added annotation, forum post, ...
             ]
         };
