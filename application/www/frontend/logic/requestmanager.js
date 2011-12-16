@@ -205,11 +205,14 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
         trace = trace || '(not available)';
         
         // Call error callback.
+        var result;
         if (request.onError !== undefined)
         {
-            request.onError.call(request.object, code, message, trace);
+            result = request.onError.call(request.object, code, message, trace);
         }
-        else
+        
+        // Show an error if error handler did not handle this error.
+        if (result !== false)
         {
             RequestManager.showErrorMessage(code, message, trace);
         }

@@ -20,7 +20,7 @@ class UserBannedException extends ExceptionBase
     }
 }
 
-class UserStillPendingException extends ExceptionBase
+class UserPendingException extends ExceptionBase
 {
     public function __construct($username)
     {
@@ -100,9 +100,15 @@ class User extends Entity
      * @param  $password  Password of the user.
      *
      * @return  The matching user.
+     * 
+     * @throws UserBannedException    If the user is banned.
+     * @throws UserPendingException   If the user is not yet activated.
+     * @throws UserNotFoundException  If no user with the provided username/password 
+     *                                combination exists.
      */
     public static function fromUsernameAndPassword($username, $password)
     {
+        // Get user id from username and password.
         $query = Query::select('userId')->
                  from('Users')->
                  where('username = :username', 'passwordHash = :hash');
@@ -117,7 +123,20 @@ class User extends Entity
             throw new UserNotFoundException($username);
         }
         
-        return new User($resultSet->getFirstRow()->getValue('userId'));
+        // Fetch user.
+        $user = new User($resultSet->getFirstRow()->getValue('userId', 'int'));
+        
+        // Check for if user is banned or inactive.
+        if ($user->isBanned())
+        {
+            throw new UserBannedException($username);
+        }
+        else if (!$user->isActive())
+        {
+            throw new UserPendingException($username);
+        }
+        
+        return $user;
     }
     
     /**
