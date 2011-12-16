@@ -6,6 +6,7 @@ $backendPath = dirname(__FILE__) . '/../../application/www/backend/';
 chdir($backendPath);
 set_include_path($backendPath);
 
+require_once 'framework/util/translator.php';
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
 require_once 'framework/util/log.php';
@@ -96,6 +97,7 @@ class PyramidBuilder extends Singleton
     private function createThumbnail($scanid)
     {
         // TODO: Use ImageShack instead.
+        return;
         
         $conf = Configuration::getInstance();
         
@@ -127,7 +129,7 @@ class PyramidBuilder extends Singleton
      */
     public function resolveInconsistencies()
     {
-        Query::update('Scans', array('status', Scan::STATUS_ERROR))
+        Query::update('Scans', array('status' => Scan::STATUS_ERROR))
                 ->where('status = :status')
                 ->execute(array('status' => Scan::STATUS_PROCESSING));
     }
@@ -253,4 +255,4 @@ class PyramidBuilder extends Singleton
 }
 
 // Test.
-PyramidBuilder::getInstance()->doIteration();
+PyramidBuilder::getInstance()->runBuilder();
