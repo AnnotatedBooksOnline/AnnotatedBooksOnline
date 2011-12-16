@@ -4,6 +4,7 @@
 class PDF
 {
     private $path = '/tmp/tiles/tile';
+    private $dpi = 150;
     
     private $objects = array();
     private $numObjects = 0;
@@ -16,7 +17,7 @@ class PDF
 
     /**
      * Creates a new PDF based on the given scan. When possible, the resolution
-     * will be at least 150 dpi.
+     * will be at least the configured dpi.
      *
      * scan: the scan to turn into a PDF
      * dimensions: the page dimensions
@@ -219,10 +220,10 @@ class PDF
         $w = $this->scan['width'];
         $h = $this->scan['height'];
         
-        // Calculate the desired zoomlevel for 150 dpi.
-        for ($zoomLevel = 0; $zoomLevel < $z; $zoomLevel++)
+        // Calculate the desired zoomlevel for the configured dpi.
+        for ($zoomLevel = 0; $zoomLevel < $z - 1; $zoomLevel++)
         {
-            if (min($w, $h) * pow(2, $zoomLevel) * 72 / 150 >= min($pw, $ph))
+            if (min($w, $h) * pow(2, $zoomLevel) * 72 / $this->dpi >= min($pw, $ph))
             {
                 break;
             }
@@ -264,3 +265,4 @@ class PDF
         $this->makePDF($catalogId);
     }
 }
+
