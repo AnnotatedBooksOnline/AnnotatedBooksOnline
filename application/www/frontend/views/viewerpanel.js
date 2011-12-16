@@ -253,6 +253,28 @@ Ext.define('Ext.ux.Viewer', {
                     listeners: {
                         click: function() { Ext.ux.Viewer.showSettingsWindow(); }
                     }
+                }, '-', {
+                    iconCls: 'save-icon',
+                    tooltip: 'Save this page as PDF',
+                    listeners: {
+                        click: function()
+                        {
+                            try
+                            {
+                                Ext.destroy(Ext.get('pageDownloadIframe'));
+                            }
+                            catch(e) {}
+                            Ext.DomHelper.append(document.body, {
+                                tag: 'iframe',
+                                id:'pageDownloadIframe',
+                                frameBorder: 0,
+                                width: 0,
+                                height: 0,
+                                style: 'display:none;visibility:hidden;height:0px;',
+                                src: '?controller=Book&action=PDF&scan=' + _this.book.getScan(this.up('viewerpanel').getPage()).get('scanId')
+                            });
+                        }
+                    }
                 }
             ]
         };
