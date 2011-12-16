@@ -3,7 +3,7 @@
 
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
-require_once 'models/settings/setting.php';
+require_once 'models/setting/setting.php';
 require_once 'models/user/user.php';
 require_once 'framework/util/log.php';
 
@@ -46,7 +46,7 @@ class Mailer extends Singleton
             throw new MailerException('mail-failed', $recipient);
         }
         
-        Log::info('Mail to "%s" accepted for delivery.', $recipient);
+        Log::info('Mail to "%s" accepted for delivery:\n\n%s', $recipient, $message);
     }
     
     public static function sendActivationMail($puser)
@@ -63,7 +63,7 @@ class Mailer extends Singleton
         
         // For the sake of security, confirm the validity of the confirmation code, which should be
         // a hexadecimal numer of 32 digits.
-        if(strlen($code) != 32 || preg_match('/^([0-9]|[a-f])/') == 1)
+        if(strlen($code) != 32 || preg_match('/[^a-f^0-9]/', $code) == 1)
         {
             throw new MailerException('illegal-confirmation-code', $code);
         }

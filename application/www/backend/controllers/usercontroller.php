@@ -5,6 +5,7 @@ require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
 require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
+require_once 'util/mailer.php';
 
 /**
  * User controller class.
@@ -206,7 +207,6 @@ class UserController extends Controller
 //             $puser->save();
 //             return $puser;
         });
-        
         
         //Mailer::getInstance()->sendActivationMail($puser);
         

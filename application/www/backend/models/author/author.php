@@ -10,7 +10,7 @@ class Author extends Entity
 {
     
     /** Person. */
-    protected $authorId;
+    protected $personId;
     
     /** Book. */
     protected $bookId;
@@ -21,12 +21,12 @@ class Author extends Entity
      *
      * @param  $id  Id of the author. Default (null) will create a new author.
      */
-    public function __construct($authorId = null, $bookId = null)
+    public function __construct($personId = null, $bookId = null)
     {
         if ($id !== null)
         {
             $this->bookId = $bookId;
-            $this->authorId = $authorId;
+            $this->personId = $personId;
             $this->load();
         }
     }
@@ -48,7 +48,7 @@ class Author extends Entity
      */
     protected function getPrimaryKeys()
     {
-        return array('authorId', 'bookId');
+        return array('personId', 'bookId');
     }
     
     /**
@@ -58,7 +58,7 @@ class Author extends Entity
      */
     protected function getColumns()
     {
-        return array('authorId', 'bookId');
+        return array('personId', 'bookId');
     }
     
     /**
@@ -69,7 +69,7 @@ class Author extends Entity
     protected function getColumnTypes()
     {
         return array(
-                    'authorId'         => 'int',
+                    'personId'         => 'int',
                     'bookId'           => 'int'
         );
     }
@@ -77,7 +77,7 @@ class Author extends Entity
     public function getBookId()         { return $this->bookId; }
     public function setBookId($bookId)     { $this->bookId = $bookId; }
     
-    public function getAuthorId() { return $this->authorId; }
-    public function setAuthorId($authorId) { $this->authorId = $authorId; }
+    public function getPersonId() { return $this->personId; }
+    public function setPersonId($personId) { $this->personId = $personId; }
 
 }

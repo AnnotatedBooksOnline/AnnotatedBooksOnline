@@ -8,10 +8,10 @@ require_once 'framework/database/entity.php';
  */
 class Setting extends Entity
 {
-    /** Setting its name. */
+    /** Name of the setting. */
     protected $settingName;
     
-    /** Setting its value. */
+    /** Value of the setting. */
     protected $settingValue;
     
     /**
@@ -68,7 +68,7 @@ class Setting extends Entity
     /**
      * Get the name of the corresponding table.
      */
-    public static function getTableName()
+    public function getTableName()
     {
         return 'Settings';
     }
@@ -76,7 +76,7 @@ class Setting extends Entity
     /**
      * Get an array with the primary keys.
      */
-    public static function getPrimaryKeys()
+    public function getPrimaryKeys()
     {
         return array('settingName');
     }
@@ -84,7 +84,7 @@ class Setting extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    public static function getColumns()
+    public function getColumns()
     {
         return array('settingValue');
     }

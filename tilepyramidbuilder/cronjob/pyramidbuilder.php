@@ -1,9 +1,16 @@
 <?php
 
+// Set backend as current working directory and include path.
+$backendPath = dirname(__FILE__) . '/../../application/www/backend/';
+
+chdir($backendPath);
+set_include_path($backendPath);
+
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
 require_once 'framework/util/log.php';
 require_once 'framework/database/database.php';
+require_once 'models/scan/scan.php';
 
 /**
  * An exception thrown when the pyramid builder fails for some reason.
@@ -53,15 +60,31 @@ class PyramidBuilder extends Singleton
         $builderpath = $conf->getString('builder-path', './builder');
         $tileformat = $scanid . '_%z_%x_%y.%e';
         
+        // Prepend current working directory to paths if necessary.
+        if(!$builderpath[0] != '/')
+        {
+            $builderpath = getcwd() . '/' . $builderpath;
+        }
+        if(!$imgfile[0] != '/')
+        {
+            $imgfile = getcwd() . '/' . $imgfile;
+        }
+        if(!$outpath[0] != '/')
+        {
+            $outpath = getcwd() . '/' . $outpath;
+        }
+        
         // Execute builder.
-        $command = "$builderpath -q $quality -i $scantype -p $outpath -f $tileformat $scanid";
-        exec($command, output, rval);
+        $command = "$builderpath -q $quality -i $scantype -p $outpath -f $tileformat $imgfile";
+        Log::debug('Running builder.');
+        exec($command, $output, $rval);
         
         // Check return value to see whether operation succeeded.
         if($rval != 0)
         {
-            throw new PyramidBuilderExeption('builder-failed', $output);
+            throw new PyramidBuilderException('builder-failed', print_r($output, true));
         }
+        Log::debug('done');
     }
     
     /**
@@ -72,6 +95,8 @@ class PyramidBuilder extends Singleton
      */
     private function createThumbnail($scanid)
     {
+        // TODO: Use ImageShack instead.
+        
         $conf = Configuration::getInstance();
         
         // Determine paths.
@@ -103,8 +128,8 @@ class PyramidBuilder extends Singleton
     public function resolveInconsistencies()
     {
         Query::update('Scans', array('status', Scan::STATUS_ERROR))
-                ->where('status = ' . Scan::STATUS_PROCESSING)
-                ->execute();
+                ->where('status = :status')
+                ->execute(array('status' => Scan::STATUS_PROCESSING));
     }
     
     /**
@@ -123,16 +148,18 @@ class PyramidBuilder extends Singleton
         // Check whether there is an image in the queue.
         if($this->queue->isEmpty())
         {            
+            Log::debug('Looking for new scans.');
+            
             // Queue should be updated by all scans in the database with a PENDING status.
             $result = Query::select('scanId', 'scanType')
                             ->from('Scans')
-                            ->where('status = ' . Scan::STATUS_PENDING)
-                            ->execute();
+                            ->where('status = :status')
+                            ->execute(array('status' => Scan::STATUS_PENDING));
             
             foreach($result as $row)
             {
-                $this->queue->enqueue(new ScanImage($row->getValue('scanId'), 
-                                       $row->getValue('scanType')));
+                $this->queue->enqueue($row->getValue('scanId'));
+                Log::info('Enqueued scan with ID ' . $row->getValue('scanId') . '.');
             }
         }
         
@@ -146,11 +173,13 @@ class PyramidBuilder extends Singleton
             // Load the corresponding scan entity.
             $scan = new Scan($scanid);
             
+            Log::debug('Processing ' . $scanid . '.');
+            
             try
             {
                 // Set status to PROCESSING and save.
-                $scan->setStatus(Scan::STATUS_PROCESSING);
-                $scan->save();
+//                 TODO: $scan->setStatus(Scan::STATUS_PROCESSING);
+//                 $scan->save();
                 
                 // Process the image.
                 $this->run($scanid, $scan->getScanType());
@@ -161,6 +190,8 @@ class PyramidBuilder extends Singleton
                 // No exception, therefore success!
                 $scan->setStatus(Scan::STATUS_PROCESSED);
                 $scan->save();
+                
+                Log::info('Succesfully processed scan with ID ' . $scanid . '.');
             }
             catch(Exception $ex)
             {
@@ -220,3 +251,6 @@ class PyramidBuilder extends Singleton
         }
     }
 }
+
+// Test.
+PyramidBuilder::getInstance()->doIteration();

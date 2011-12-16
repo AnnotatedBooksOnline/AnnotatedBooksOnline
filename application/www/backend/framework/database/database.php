@@ -369,4 +369,12 @@ class Database extends Singleton
                 return PDO::PARAM_STR;
         }
     }
+    
+    /**
+     * TODO
+     */
+    public function escape($value)
+    {
+        return $this->pdo->quote($value);
+    }
 }
