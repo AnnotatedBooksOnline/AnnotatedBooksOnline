@@ -22,19 +22,94 @@ abstract class Controller
         // Check whether we want to use the post method.
         $postMethod = ($_SERVER['REQUEST_METHOD'] == 'POST') && empty($_FILES);
         
+        // Set the appropriate content type for a JSON response.
+        if ($postMethod)
+        {
+            header('Content-Type: application/json');
+        }
+        
+        // Check for multiple requests.
+        $multiRequest = $postMethod && self::getBoolean($_GET, 'multiple');
+        if ($multiRequest)
+        {
+            // Get the request JSON data or request parameters.
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            // Handle requests.
+            $requests = is_array($input) ? $input : array($input);
+            $results  = array();
+            foreach ($requests as $request)
+            {
+                // Get action and controller names.
+                $controllerName = self::getString($request, 'controller', 'Main');
+                $actionName     = self::getString($request, 'action', 'index');
+                
+                // Get the request data.
+                $input = isset($request['data']) ? $request['data'] : null;
+                
+                // Handle request.
+                $success = self::handleSingleRequest($controllerName, $actionName, $input, $output);
+                
+                // Add result.
+                $results[] = array('success' => $success, 'data' => $output);
+            }
+            
+            // Show results as JSON.
+            echo json_encode($results);
+        }
+        else
+        {
+            // Get action and controller names.
+            $controllerName = self::getString($_GET, 'controller', 'Main');
+            $actionName     = self::getString($_GET, 'action', 'index');
+            
+            // Get the request JSON data or request parameters.
+            $input = $postMethod ? json_decode(file_get_contents('php://input'), true) : $_GET;
+            
+            // Handle request.
+            $success = self::handleSingleRequest($controllerName, $actionName, $input, $output);
+            
+            // Give back an error code if no success.
+            if (!$success)
+            {
+                header('HTTP/1.0 500 Internal Server Error');
+            }
+            
+            // Handle output.
+            if ($postMethod)
+            {
+                // Show output as JSON.
+                echo json_encode($output);
+            }
+            else if ($success)
+            {
+                // Just show output.
+                echo $output;
+            }
+            else
+            {
+                // Show exception as HTML.
+                echo '<h1>' . htmlspecialchars($output['message']) . '</h1>';
+                echo '<b>Code:</b> ' . htmlspecialchars($output['code']) . '<br />';
+                
+                if (isset($exception['trace']))
+                {
+                    echo '<b>Stack trace:</b><br />' . htmlspecialchars($exception['trace']);
+                }
+            }
+        }
+    }
+    
+    // Handles a single request.
+    private static function handleSingleRequest($controllerName, $actionName, &$input, &$output)
+    {
         try
         {
-            // TODO: (GVV) Handle multiple requests:
-            // TODO: (GVV) Controller=multirequest, data=[{controller: '..', action: '..', data: [..]}, ..].
-            // TODO: (GVV) Handle file uploads, with: output=json/html + custom ExtJS form action?
-            
-            // Determine the name of the controller and try to create an instance of the controller class.
-            $controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'Main';
+            // Determine the name of the controller and try to create an instance of the controller.
             $controllerName = preg_replace('/[^\w]+/', '', $controllerName);
             $controller = self::createInstance($controllerName);
             
             // Determine the name of action to call and the corresponding method in the controller.
-            $actionName = isset($_GET['action']) ? $_GET['action'] : 'index';
             $actionName = preg_replace('/[^\w]+/', '', $actionName);
             $methodName = 'action' . ucfirst($actionName);
             
@@ -42,31 +117,13 @@ abstract class Controller
             if (method_exists($controller, $methodName))
             {
                 // Log a messsage.
-                Log::info("Handling action '%s' of controller '%s', method is '%s'.",
-                    $actionName, $controllerName, $postMethod ? 'post' : 'get');
+                Log::info("Handling action '%s' of controller '%s'.", $actionName, $controllerName);
                 
                 // Calculate start time.
                 $start = microtime(true);
                 
-                // Get the request JSON data or request parameters.
-                $input = $postMethod ? json_decode(file_get_contents('php://input'), true) : $_GET;
-                
                 // Call the action handler method.
                 $output = $controller->{$methodName}($input);
-                
-                // Handle output.
-                if ($postMethod)
-                {
-                    // Set the appropriate content type for a JSON response.
-                    header('Content-Type: application/json');
-                    
-                    // Return the result as a JSON object.
-                    echo json_encode($output);
-                }
-                else if ($output)
-                {
-                    echo $output;
-                }
                 
                 // Calculate end time.
                 $end = microtime(true);
@@ -83,29 +140,12 @@ abstract class Controller
         catch (Exception $e)
         {
             // Handle exception.
-            $exception = self::handleException($e);
+            $output = self::handleException($e);
             
-            // Show exception.
-            if ($postMethod)
-            {
-                // Set the appropriate content type for a JSON response.
-                header('Content-Type: application/json');
-                
-                // Handle exception and output result array as JSON.
-                echo json_encode(self::handleException($e));
-            }
-            else
-            {
-                // Show exception as HTML.
-                echo '<h1>' . htmlspecialchars($exception['message']) . '</h1>';
-                echo '<b>Code:</b> ' . htmlspecialchars($exception['code']) . '<br />';
-                
-                if (isset($exception['trace']))
-                {
-                    echo '<b>Stack trace:</b><br />' . htmlspecialchars($exception['trace']);
-                }
-            }
+            return false;
         }
+        
+        return true;
     }
     
     /**
@@ -143,7 +183,7 @@ abstract class Controller
      *
      * @return  The sanitized string value.
      */
-    protected static function getString($data, $key,
+    protected static function getString(&$data, $key,
         $default = '', $trim = true, $maxLength = -1)
     {
         $value = isset($data[$key]) ? (string) $data[$key] : $default;
@@ -173,7 +213,7 @@ abstract class Controller
      *
      * @return  The sanitized integer value.
      */
-    protected static function getInteger($data, $key,
+    protected static function getInteger(&$data, $key,
         $default = 0, $positive = false, $minValue = null, $maxValue = null)
     {
         return (int) self::getDouble($data, $key, $default, $positive, $minValue, $maxValue);
@@ -191,7 +231,7 @@ abstract class Controller
      *
      * @return  The sanitized double value.
      */
-    protected static function getDouble($data, $key,
+    protected static function getDouble(&$data, $key,
         $default = 0, $positive = false, $minValue = null, $maxValue = null)
     {
         $value = isset($data[$key]) ? (double) $data[$key] : $default;
@@ -223,7 +263,7 @@ abstract class Controller
      *
      * @return  The sanitized boolean value.
      */
-    protected static function getBoolean($data, $key, $default = false)
+    protected static function getBoolean(&$data, $key, $default = false)
     {
         $value = isset($data[$key]) ? $data[$key] : $default;
         
@@ -240,7 +280,7 @@ abstract class Controller
      *
      * @return  The sanitized array value.
      */
-    protected static function getArray($data, $key, $default = array(), $maxLength = -1)
+    protected static function getArray(&$data, $key, $default = array(), $maxLength = -1)
     {
         $value = isset($data[$key]) ? $data[$key] : null;
         if (!is_array($value))
@@ -276,9 +316,6 @@ abstract class Controller
         // Log the exception.
         Log::error("An exception occured: message: '%s', code: '%s', stack trace:\n%s",
             $message, $code, $stackTrace);
-        
-        // Set error code.
-        header('HTTP/1.0 500 Internal Server Error');
         
         return $result;
     }
