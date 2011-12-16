@@ -57,6 +57,31 @@ class Configuration extends Singleton
     }
     
     /**
+    * Gets a string value denoting a path. If the path does not start with '/', the current 
+    * directory is prepended.
+    * 
+    * Note: only works with Unix-style paths.
+    *
+    * @param  $name     The name of the setting.
+    * @param  $default  The default of this setting. Defaults to an exception
+    *                   if no setting with the given name is found.
+    *
+    * @return  The setting its value.
+    *
+    * @throws  SettingNotFoundException  If the setting could not be found and there is no default.
+    */
+    public function getPath($name, $default = null)
+    {
+        $path = $this->getString($name, $default);
+        if(count($path) > 0 && !$path[0] != '/')
+        {
+            $path = getcwd() . '/' . $path;
+        }
+        
+        return $path;
+    }
+    
+    /**
      * Gets an integer value.
      *
      * @param  $name     The name of the setting.
