@@ -3,7 +3,7 @@
 
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
-require_once 'models/settings/setting.php';
+require_once 'models/setting/setting.php';
 require_once 'models/user/user.php';
 require_once 'framework/util/log.php';
 

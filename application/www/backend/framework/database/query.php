@@ -669,7 +669,7 @@ class Query
             {
                 $identifier = $this->escapeIdentifier($matches[1]);
                 $operator   = $matches[2];
-                $value      = $this->escapeIdentifier($matches[3]);
+                $value      = $this->escapeValue($matches[3]);
                 
                 $clauses[] = $identifier . ' ' . $operator . ' ' . $value;
             }
@@ -705,7 +705,7 @@ class Query
         }
         else
         {
-            return $this->pdo->quote($value);
+            return Database::getInstance()->escape($value);
         }
     }
     
