@@ -49,7 +49,7 @@ class Mailer extends Singleton
             throw new MailException('mail-failed', $recipient);
         }
         
-        Log::info('Mail to "%s" accepted for delivery.', $recipient);
+        Log::info('Mail to "%s" accepted for delivery:\n\n%s', $recipient, $message);
     }
     
     
@@ -67,7 +67,7 @@ class Mailer extends Singleton
         
         // For the sake of security, confirm the validity of the confirmation code, which should be
         // a hexadecimal numer of 32 digits.
-        if(strlen($code) != 32 || preg_match('/^([0-9]|[a-f])/') == 1)
+        if(strlen($code) != 32 || preg_match('/[^a-f^0-9]/', $code) == 1)
         {
             throw new MailException('illegal-confirmation-code', $code);
         }

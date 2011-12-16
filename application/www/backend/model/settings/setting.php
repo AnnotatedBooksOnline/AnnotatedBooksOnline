@@ -21,7 +21,7 @@ class Setting extends Entity
     */
     public function __construct($name = null)
     {
-        if($uid !== null)
+        if($name !== null)
         {
             $this->load();
         }
@@ -44,7 +44,7 @@ class Setting extends Entity
         $entity = new Setting();
         $entity->settingName = $setting;
         
-        $result = $entity->getSelectQuery()->execute();
+        $result = $entity->getSelectQuery()->execute($setting);
         
         if($result->getAmount() == 0)
         {
