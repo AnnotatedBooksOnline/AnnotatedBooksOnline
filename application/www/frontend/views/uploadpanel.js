@@ -372,6 +372,15 @@ Ext.define('Ext.ux.BookFieldset', {
                             labelAlign: 'top'
                         }]
                     }]
+                },{
+                    xtype: 'button',
+                    text: 'Delete book',
+                    width: 140,
+                    margin: '5 0 10 0',
+                    handler: function()
+                    {
+                        _this.destroy();
+                    }
                 }]
             };
         
