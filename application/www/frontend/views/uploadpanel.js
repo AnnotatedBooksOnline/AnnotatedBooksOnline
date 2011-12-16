@@ -504,6 +504,6 @@ Ext.define('Ext.ux.UploadForm', {
     {
         this.callParent();
         
-        // TODO: Also reset scans panel.
+        this.down('scanpanel').reset();
     }
 });
