@@ -94,7 +94,8 @@ Ext.define('Ext.ux.YearBetweenField', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-right: 5px;',
-                allowBlank: true
+                allowBlank: true,
+                enableKeyEvents: true
             },
             items: [{
                 name: 'from',
@@ -107,6 +108,14 @@ Ext.define('Ext.ux.YearBetweenField', {
                             to.setValue(from);
                         }
                         return;
+                    },
+                    specialkey: function(field, e)
+                    {
+                        if (e.getKey() == e.ENTER)
+                        {
+                            var button = this.up('searchpanel').down('[name=searchbutton]');
+                            button.search();
+                        }
                     }
                 }
             },{
@@ -120,6 +129,14 @@ Ext.define('Ext.ux.YearBetweenField', {
                             from.setValue(to);
                         }
                         return;
+                    },
+                    specialkey: function(field, e)
+                    {
+                        if (e.getKey() == e.ENTER)
+                        {
+                            var button = this.up('searchpanel').down('[name=searchbutton]');
+                            button.search();
+                        }
                     }
                 }
             }]
@@ -232,7 +249,17 @@ Ext.define('Ext.ux.SearchField', {
                 flex: 0,
                 style: 'margin-right: 15px;',
                 width: 500,
-                allowBlank: true
+                allowBlank: true,
+                listeners: {
+                    specialkey: function(field, e)
+                    {
+                        if (e.getKey() == e.ENTER)
+                        {
+                            var button = this.up('searchpanel').down('[name=searchbutton]');
+                            button.search();
+                        }
+                    }
+                }
             },
             items: [{
                 xtype: 'searchcomboboxfield',
@@ -641,9 +668,14 @@ Ext.define('Ext.ux.SearchPanel', {
             },{
                 xtype: 'button',
                 text: 'Search',
+                name: 'searchbutton',
                 width: 140,
                 style: 'margin: 10px;',
                 handler: function()
+                {
+                    this.search();
+                },
+                search: function()
                 {
                     // Get search fields.
                     var fields = [];
