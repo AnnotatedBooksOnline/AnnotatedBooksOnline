@@ -9,21 +9,12 @@ require_once 'framework/util/log.php';
 
 // Exceptions.
 class MailerException extends ExceptionBase { }
-// NOTE: Maybe we want this to be a utility class instead of a singleton.
 
 /**
  * General helper class for sending e-mails.
  */
-class Mailer extends Singleton
-{
-    /** Unique instance. */
-    protected static $instance;
-    
-    /**
-     * Constructor.
-     */
-    protected function __construct() { }
-    
+class Mailer
+{    
     /**
      * Sends an e-mail. Opens up and closes an SMTP connection and therefore is not very suitable
      * for 'mass mailing' a large numbers of users at once.
@@ -49,6 +40,15 @@ class Mailer extends Singleton
         Log::info('Mail to "%s" accepted for delivery:\n\n%s', $recipient, $message);
     }
     
+    /**
+     * Sends a standard activation mail to the specified PendingUser containing his or her 
+     * activation code.
+     * 
+     * @param PendingUser $puser The pending user entity.
+     * 
+     * @throws MailerException When something goes wrong, like the e-mail not being accepted for
+     *                         delivery. 
+     */
     public static function sendActivationMail($puser)
     {
         // Retrieve associated User entity.
@@ -67,16 +67,11 @@ class Mailer extends Singleton
         {
             throw new MailerException('illegal-confirmation-code', $code);
         }
-        
-        // TODO: Insert user information in message.
-        
-        // Insert the activation link into the message.
-        $linkpos = strpos($basemessage, '[LINK]');
-        if($linkpos === false)
-        {
-            throw new MailException();
-        }
-        $message = substr($basemessage, 0, $linkpos) . $link . substr($basemessage, $linkpos + 6);
+         
+        // Insert user info and the activation link into the e-mail.
+        $message = str_replace(
+                        array('[LINK]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]'),
+                        array($link, $user->getUsername(), $user->getFirstName(), $user->getLastName()));
         
         // Now send the e-mail.
         Log::info('Sending activation code to %s.', $user->getUsername(), $user->getEmail());

@@ -6,6 +6,7 @@ $backendPath = dirname(__FILE__) . '/../../application/www/backend/';
 chdir($backendPath);
 set_include_path($backendPath);
 
+
 require_once 'framework/util/translator.php';
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
@@ -244,5 +245,5 @@ class PyramidBuilder extends Singleton
     }
 }
 
-// Test.
+// Running the builder.
 PyramidBuilder::getInstance()->runBuilder();

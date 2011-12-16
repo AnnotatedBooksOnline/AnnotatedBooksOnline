@@ -208,7 +208,7 @@ class UserController extends Controller
 //             return $puser;
         });
         
-        //Mailer::getInstance()->sendActivationMail($puser);
+        //Mailer::sendActivationMail($puser);
         
         return array('records' => $values); 
     }
