@@ -141,8 +141,31 @@ Ext.define('Ext.ux.EditProfileForm', {
                     return (value === newPassword.getValue()) ? true : 'Passwords do not match.';
                 }
             }],
-            
-            submitButtonText: 'Save',
+            buttons: [{
+                xtype: 'button',
+                text: 'Cancel',
+                width: 140,
+                handler: function()
+                {
+                    Ext.WindowManager.each(
+                        function(window)
+                        {
+                            if (window instanceof Ext.window.Window)
+                                window.close();
+                        }
+                    );
+                }
+            },{
+                xtype: 'button',
+                formBind: true,
+                disabled: true,
+                text: 'Save',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
+                }
+            }],
             
             model: Authentication.getInstance().getUserModel()
         };
