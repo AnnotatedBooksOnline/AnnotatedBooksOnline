@@ -146,7 +146,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
         },{
             xtype: 'tbseparator',
             cls: 'menu-separator'
-        },{
+        },/*{
             text: 'Options',
             iconCls: 'settings-icon',
             menu: [{
@@ -159,7 +159,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                 }
             }]
-        },{
+        },*/{
             text: 'Users',
             iconCls: 'users-icon',
             listeners: {
