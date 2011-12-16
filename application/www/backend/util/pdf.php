@@ -1,9 +1,13 @@
 <?php
 //[[GPL]]
 
+require_once 'framework/util/configuration.php';
+require_once 'models/scan/scan.php';
+require_once 'models/book/book.php';
+
 class PDF
 {
-    private $path = '/tmp/tiles/tile';
+    private $path;
     private $dpi = 150;
     
     private $objects = array();
@@ -14,6 +18,9 @@ class PDF
     
     private $scan;
     private $imageAttr = array();
+    
+    private $title;
+    private $pageNr;
 
     /**
      * Creates a new PDF based on the given scan. When possible, the resolution
@@ -26,11 +33,17 @@ class PDF
      */
     public function __construct($scan, $dimensions = null)
     {
+        $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
+        
         $this->scan = array(
             'width' => $scan->getWidth(),
             'height' => $scan->getHeight(),
             'zoomLevel' => $scan->getZoomLevel()
         );
+        
+        $this->pageNr = $scan->getPage();
+        $book = new Book($scan->getBookId());
+        $this->title = $book->getTitle();
         
         if ($dimensions !== null &&
             is_array($dimensions) &&
@@ -56,9 +69,12 @@ class PDF
      */
     public function outputPDF()
     {
+        $filename = preg_replace('/[^a-zA-Z0-9_]/', '', 
+                    preg_replace('/ /', '_', $this->title))
+                    . '-' . $this->pageNr;
         header('Content-type: application/pdf');
         header('Content-length: ' . strlen($this->output));
-        header('Content-disposition: attachment; filename=scan.pdf');
+        header('Content-disposition: attachment; filename=' . $filename . '.pdf');
         
         echo $this->output;
     }
