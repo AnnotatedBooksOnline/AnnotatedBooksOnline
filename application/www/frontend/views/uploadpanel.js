@@ -222,7 +222,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         var endOfBookBefore = this.previousNode('[name=pageEnd]');
                                         if (endOfBookBefore != undefined &&
                                             (endOfBookBefore.getValue() == null ||
-                                             parseInt(start) < parseInt(endOfBookBefore.getValue()))) 
+                                             parseInt(start) <= parseInt(endOfBookBefore.getValue()))) 
                                         {
                                             endOfBookBefore.setValue(start);
                                         }
@@ -261,7 +261,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         var startOfBookAfter = this.nextNode('[name=pageStart]');
                                         if (startOfBookAfter != undefined &&
                                             (startOfBookAfter.getValue() == null ||
-                                             parseInt(end) > parseInt(startOfBookAfter.getValue()))) 
+                                             parseInt(end) >= parseInt(startOfBookAfter.getValue()))) 
                                         {
                                             startOfBookAfter.setValue(end);
                                         }
