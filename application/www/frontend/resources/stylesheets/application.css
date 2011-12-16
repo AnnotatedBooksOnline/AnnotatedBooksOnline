@@ -2,19 +2,53 @@
  * Application stylesheet.
  */
 
+/* Header styling. */
 .header .x-panel-body
 {
-    background: url(../images/header.png) 20px 7px no-repeat;
-    padding: 25px 0px 0px 130px;
     background-color: #E7ECF3;
     color: #15498B;
+}
+
+.header .header-logo
+{
+    background: url(../images/header.png) 20px 18px no-repeat;
 }
 
 .header .x-panel-body h1
 {
     font-size: 25pt;
+    padding-top: 25px;
 }
 
+.header .menu-button
+{
+    margin-right: 5px;
+    height: 28px;
+    padding-top: 5px;
+    min-width: 100px;
+    text-align: center;
+}
+
+.header .menu-separator
+{
+    margin-left: 5px;
+    margin-right: 10px;
+    border-left: 1px solid #99BCE8;
+    height: 28px;
+}
+
+.header .user-button
+{
+    margin-bottom: 4px;
+}
+
+.header .user-text
+{
+    text-align: right;
+    margin-bottom: 7px;
+}
+
+/* Style all hyperlinks. */
 a
 {
     text-decoration: underline;
@@ -26,6 +60,7 @@ a:hover
     text-decoration: none;
 }
 
+/* Disable dirty markers on grids. */
 .x-grid-dirty-cell
 {
     background-image: none;

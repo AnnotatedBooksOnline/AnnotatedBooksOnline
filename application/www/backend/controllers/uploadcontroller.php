@@ -2,7 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/controller/controller.php';
-require_once 'model/upload/upload.php';
+require_once 'models/upload/upload.php';
 require_once 'util/authentication.php';
 
 /**
@@ -29,9 +29,59 @@ class UploadController extends Controller
             $size
         );
         
-        // TODO: Make timestamp work: give entity column types.
-        
         return $upload->getToken();
+    }
+    
+    /**
+     * Fetches an upload token.
+     */
+    public function actionFetchUploads($data)
+    {
+        // Assert that the user is authenticated. 
+        Authentication::assertLoggedOn();
+        
+        $userId = Authentication::getInstance()->getUserId();
+        
+        $resultSet = Query::select('token', 'filename', 'size', 'status')
+            ->from('Uploads')
+            ->where('userId = :userId')
+            ->orderBy('filename')
+            ->execute(array('userId' => $userId), array('userId' => 'int'));
+        
+        $result = array();
+        foreach ($resultSet as $row)
+        {
+            $values = $row->getValues();
+            
+            $values['status'] =
+                ($values['status'] == Upload::STATUS_AVAILABLE) ? 'success' : 'error';
+            
+            $result[] = $values;
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Removed an upload
+     */
+    public function actionDelete($data)
+    {
+        // Assert that the user is authenticated. 
+        Authentication::assertLoggedOn();
+        
+        // Get token.
+        $token = self::getString($data, 'token');
+        
+        // Fetch upload by token.
+        $upload = Upload::fromToken($token);
+        if ($upload === null)
+        {
+            throw new UploadException('upload-token-not-found');
+        }
+        
+        // Delete upload.
+        $upload->delete();
     }
     
     /**
@@ -42,25 +92,57 @@ class UploadController extends Controller
         // Assert that the user is authenticated. 
         Authentication::assertLoggedOn();
         
-        /*
+        // Get token.
+        $token = self::getString($_POST, 'token');
         
-        TODO: Implement the following:
-        
-        --> Request for token: id, with filename=.., size=.., status=error, token=..
-        <-- Upload token
-        
-        --> File upload
-        <-- Error/success
-        
-        */
-        
-        // ..
-        if (isset($_FILES['file']))
+        // Fetch upload by token.
+        $upload = Upload::fromToken($token);
+        if ($upload === null)
         {
-            Log::debug("Uploading a file:\n%s", print_r($_FILES['file'], true));
+            throw new UploadException('upload-token-not-found');
         }
         
-        // Die to prevent AJAX data to be outputted.
-        exit;
+        // Get file.
+        $file = self::getArray($_FILES, 'file');
+        if (!isset($_FILES['file']))
+        {
+            throw new UploadException('upload-no-file');
+        }
+        
+        // Show some debug info.
+        Log::debug("Uploading a file:\n%s", print_r($file, true));
+        Log::debug("Uploading an upload:\n%s", print_r($upload->getValues(), true));
+        
+        // Check error.
+        $error = self::getInteger($file, 'error', -1);
+        if ($error !== UPLOAD_ERR_OK)
+        {
+            throw new UploadException('upload-failed');
+        }
+        
+        // Check user id.
+        $userId = Authentication::getInstance()->getUserId();
+        if ($upload->getUserId() !== $userId)
+        {
+            throw new UploadException('upload-not-of-user');
+        }
+        
+        // Set file as content.
+        $location = self::getString($file, 'tmp_name');
+        $upload->setContent($location, true);
+        
+        // Set values on file.
+        $upload->setValues(array(
+            'filename'  => self::getString($file, 'name'),
+            'size'      => self::getInteger($file, 'size'),
+            'status'    => Upload::STATUS_AVAILABLE,
+            'timestamp' => time(),
+        ));
+        
+        // Save file.
+        $upload->save();
+        
+        // Upload succeeded.
+        return 'success';
     }
 }

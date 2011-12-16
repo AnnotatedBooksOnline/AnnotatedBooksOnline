@@ -45,7 +45,7 @@ Ext.define('Ext.ux.EditProfileForm', {
                 name: 'website',
                 fieldLabel: 'Website',
                 allowBlank: true,
-                vtype: 'url',
+                vtype: 'checkURL',
                 maxLength: 256
             },{
                 name: 'password',
@@ -185,8 +185,9 @@ Ext.define('Ext.ux.EditProfileWindow', {
             width: 600,
             height: 400,
             closable: true,
-            resizable: true,
+            resizable: false,
             draggable: true,
+            constrain: true,
             modal: true,
             border: true,
             items: [{

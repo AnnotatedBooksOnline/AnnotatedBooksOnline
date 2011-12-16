@@ -7,117 +7,214 @@ Ext.define('Ext.ux.ApplicationViewport', {
     
     initComponent: function() 
     {
+        var userItems = [{
+            colspan: 2,
+            border: false,
+            html: 'Welcome, <b>Guest</b>',
+            cls: 'user-text',
+            name: 'welcometext',
+            width: 300,
+            setName: function(name)
+            {
+                this.body.update('Welcome, <b>' + escape(name) + '</b>');
+            }
+        },{
+            xtype: 'container',
+            width: 180,
+            rowspan: 5
+        },{
+            xtype: 'button',
+            text: 'Login',
+            width: 120,
+            height: 25,
+            iconCls: 'login-icon',
+            listeners: {
+                click: function()
+                {
+                    Authentication.showLoginWindow();
+                }
+            },
+            name: 'login',
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Forgot password?',
+            iconCls: 'passwordforgotten-icon',
+            width: 120,
+            height: 25,
+            listeners: {
+                click: function()
+                {
+                    alert('Function not yet implemented.');
+                }
+            },
+            name: 'password',
+            xtype: 'button',
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Register',
+            width: 120,
+            height: 25,
+            iconCls: 'register-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTab('register', [], true);
+                }
+            },
+            name: 'register',
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Logout',
+            width: 120,
+            height: 25,
+            iconCls: 'logout-icon',
+            listeners: {
+                click: function()
+                {
+                    Authentication.getInstance().logout();
+                }
+            },
+            name: 'logout',
+            hidden: true,
+            cls: 'user-button'
+        },{
+            xtype: 'button',
+            text: 'Edit profile',
+            width: 120,
+            height: 25,
+            iconCls: 'user-icon',
+            listeners: {
+                click: function()
+                {
+                    Authentication.showEditProfileWindow();
+                }
+            },
+            name: 'profile',
+            xtype: 'button',
+            cls: 'user-button',
+            hidden: true
+        }];
+        
+        var menuButtons = [/*{
+            text: 'Book',
+            menu: [{
+                text: 'Save current page...'
+            },{
+                text: 'Go to page...'
+            },{
+                text: 'Print...'
+            },{
+                text: 'Close'
+            }]
+        },*/{
+            text: 'Search',
+            iconCls: 'search-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().openTab('search', [], true);
+                }
+            },
+            name: 'search'
+        },{
+            text: 'Upload',
+            iconCls: 'upload-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTab('upload', [], true);
+                }
+            },
+            name: 'upload',
+            hidden: true
+        },{
+            xtype: 'tbseparator',
+            cls: 'menu-separator'
+        },{
+            text: 'Info',
+            iconCls: 'info-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTab('info', [], true);
+                }
+            },
+            name: 'info'
+        },{
+            xtype: 'tbseparator',
+            cls: 'menu-separator'
+        },{
+            text: 'Options',
+            iconCls: 'settings-icon',
+            menu: [{
+                text: 'Viewer settings...',
+                iconCls: 'settings-icon',
+                listeners: {
+                    click: function()
+                    {
+                        Ext.ux.Viewer.showSettingsWindow();
+                    }
+                }
+            }]
+        },{
+            text: 'Users',
+            iconCls: 'users-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTab('users', [], true);
+                }
+            },
+            name: 'users',
+            hidden: true
+        }];
+        
         var topRegion = {
             xtype: 'panel',
             border: false,
+            layout: {
+                type: 'hbox',
+                align: 'stretch'
+            },
             height: 120,
             cls: 'header',
-            html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
-            
-            bbar: [/*{
-                text: 'Book',
-                menu: [{
-                    text: 'Save current page...'
+            items: [{ // Header logo.
+                xtype: 'container',
+                width: 120,
+                cls: 'header-logo'
+            },{ //Title, with menu below.
+                xtype: 'container',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+                flex: 1,
+                items: [{
+                    xtype: 'container',
+                    height: 87,
+                    html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
                 },{
-                    text: 'Go to page...'
-                },{
-                    text: 'Print...'
-                },{
-                    text: 'Close'
+                    xtype: 'container',
+                    defaults: {
+                        xtype: 'button',
+                        cls: 'menu-button'
+                    },
+                    layout: 'hbox',
+                    items: menuButtons
                 }]
-            },*/{
-                text: 'Search',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().openTab('search', [], true);
-                    }
+            },{ // User items.
+                border: false,
+                bodyPadding: 10,
+                width: 320,
+                layout: {
+                    type: 'table',
+                    columns: 2
                 },
-                name: 'search'
-            },{
-                text: 'Users',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('users', [], true);
-                    }
-                },
-                name: 'users',
-                hidden: true
-            },{
-                text: 'Upload',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('upload', [], true);
-                    }
-                },
-                name: 'upload',
-                hidden: true
-            },{
-                text: 'Info',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('info', [], true);
-                    }
-                },
-                name: 'info'
-            }, '->', {
-                text: '',
-                menu: [{
-                    text: 'Logout...',
-                    iconCls: 'logout-icon',
-                    listeners: {
-                        click: function()
-                        {
-                            Authentication.getInstance().logout();
-                        }
-                    }
-                },{
-                    text: 'Edit profile...',
-                    iconCls: 'user-icon',
-                    listeners: {
-                        click: function()
-                        {
-                            Authentication.showEditProfileWindow();
-                        }
-                    }
-                }],
-                name: 'logout',
-                hidden: true
-            }, {
-                text: 'Login',
-                listeners: {
-                    click: function()
-                    {
-                        Authentication.showLoginWindow();
-                    }
-                },
-                name: 'login'
-            }, {
-                text: 'Register',
-                listeners: {
-                    click: function()
-                    {
-                        Application.getInstance().gotoTab('register', [], true);
-                    }
-                },
-                name: 'register'
-            }, '-', {
-                text: 'Options',
-                menu: [{
-                    text: 'Viewer settings...',
-                    iconCls: 'settings-icon',
-                    listeners: {
-                        click: function()
-                        {
-                            Ext.ux.Viewer.showSettingsWindow();
-                        }
-                    }
-                }]
-            }],
-            border: false
+                items: userItems
+            }]
         };
         
         var bottomRegion = {
@@ -388,16 +485,20 @@ Ext.define('Ext.ux.ApplicationViewport', {
             this.down('[name=users]').show();
             this.down('[name=upload]').show();
             this.down('[name=logout]').show();
+            this.down('[name=profile]').show();
             this.down('[name=login]').hide();
             this.down('[name=register]').hide();
+            this.down('[name=password]').hide();
         }
         else
         {
             this.down('[name=users]').hide();
             this.down('[name=upload]').hide();
             this.down('[name=logout]').hide();
+            this.down('[name=profile]').hide();
             this.down('[name=login]').show();
             this.down('[name=register]').show();
+            this.down('[name=password]').show();
         }
     },
     
@@ -405,7 +506,12 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         if (authentication.isLoggedOn())
         {
-            this.down('[name=logout]').setText('Logged on as <b>' + escape(authentication.getFullName()) + '</b>');
+            this.down('[name=welcometext]').setName(authentication.getFullName());
+        }
+        else
+        {
+            this.down('[name=welcometext]').setName('Guest');
         }
     }
 });
+

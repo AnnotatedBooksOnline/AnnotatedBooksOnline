@@ -4,6 +4,15 @@
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
 
+// Exceptions.
+class BookNotFoundException extends ExceptionBase
+{
+    public function __construct($bookId)
+    {
+        parent::__construct('book-not-found', $bookId);
+    }
+}
+
 /**
  * Book controller class.
  */
@@ -24,14 +33,43 @@ class BookController extends Controller
         
         // Determine id a specific book was requested. If this is the case retrieve this book
         // from the database and return.
+        
+        $title = Query::select('books.title')
+            ->from('Books books')
+            ->where('books.bookId = :id')
+            ->execute(array(':id' => $id));
+        
+        if ($title->getAmount() != 1)
+        {
+            throw new BookNotFoundException($id);
+        }
+        $title = $title->getFirstRow()->getValue('title');
+        
+        $scans = Query::select('scans.scanId', 'scans.width', 'scans.height', 'scans.zoomLevel')
+            ->from('Scans scans')
+            ->where('scans.bookId = :id')
+            ->execute(array(':id' => $id));
+        
+        $scanResult = array();
+        foreach ($scans as $scan)
+        {
+            $scanResult[] = $scan->getValues();
+        }
+        
+        // TODO: remove this - for testing purposes only.
+        if (count($scanResult) == 0)
+        {
+            $scanResult = array(
+                array('scanId' => 1, 'width' => 151, 'height' => 225, 'zoomLevel' => 6)
+            );
+        }
+        
         if ($id)
         {
             return array('records' => array(
                 'bookId' => $id,
-                'title' => 'Foo bar',
-                'scans' => array(
-                    array('scanId' => 1, 'width' => 151, 'height' => 225, 'zoomLevels' => 6)
-                )
+                'title' => $title,
+                'scans' => $scanResult
             ), 'total' => 1);
         }
     }
@@ -42,20 +80,79 @@ class BookController extends Controller
     public function actionSearch($data)
     {
         $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.summary', 'bindings.signature', 'libraries.libraryName'))
-            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "personsList"."name"), \', \'', 'authorNames')
+            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pAuthorList"."name"), \', \'', 'authorNames')
+            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pProvenanceList"."name"), \', \'', 'provenanceNames')
             ->from('Books books')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
             ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
             ->join('Authors authorsList', array('books.bookId = authorsList.bookId'), 'LEFT')
-            ->join('Persons personsList', array('authorsList.authorId = personsList.personId'), 'LEFT')
+            ->join('Persons pAuthorList', array('authorsList.authorId = pAuthorList.personId'), 'LEFT')
             ->join('Authors authorsFind', array('books.bookId = authorsFind.bookId'), 'LEFT')
-            ->join('Persons personsFind', array('authorsFind.authorId = personsFind.personId'), 'LEFT')
+            ->join('Persons pAuthorFind', array('authorsFind.authorId = pAuthorFind.personId'), 'LEFT')
+            ->join('Provenances provenancesList', array('bindings.bindingId = provenancesList.bindingId'), 'LEFT')
+            ->join('Persons pProvenanceList', array('provenancesList.personId = pProvenanceList.personId'), 'LEFT')
+            ->join('Provenances provenancesFind', array('bindings.bindingId = provenancesFind.bindingId'), 'LEFT')
+            ->join('Persons pProvenanceFind', array('provenancesFind.personId = pProvenanceFind.personId'), 'LEFT')
             ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
         $binds = array();
         $headline = "";
         $c = 0;
+        
+        /*
+         * Adds a fulltext search to the query.
+         */
+        $addFulltext = function($name, $columns, $value, $addheadline = false) use (&$query, &$binds, &$c, &$headline)
+        {
+            // Decompose the textual query
+            $split = BookController::splitFulltextQuery($value);
+            
+            // Process the non-exact selectors.
+            if ($split['rest'] != '')
+            {
+                $onlyNegative = true;
+                foreach (explode(' & ', $split['rest']) as $k => $v)
+                {
+                    if (trim($v) != '' && $v[0] != '!')
+                    {
+                        $onlyNegative = false;
+                        break;
+                    }
+                }
+                $query = $query->whereFulltext($columns, $name . $c, $onlyNegative);
+                $binds[$name . $c] = $split['rest'];
+            }
+            
+            // Process the exact selectors.
+            if (!is_array($columns))
+            {
+                $e = $split['exact'];
+                for ($i = 0; $i < count($e); $i++)
+                {
+                    if ($e[$i]['positive'])
+                    {
+                        $query = $query->where($columns . $e[$i]['like'] . $name . $c . '_' . $i);
+                    }
+                    else
+                    {
+                        $query = $query->whereOr($columns . $e[$i]['like'] . $name . $c . '_' . $i,
+                            $columns . ' IS NULL');
+                    }
+                    $binds[$name . $c . '_' . $i] = $e[$i]['value'];
+                }
+            }
+            
+            // Process headlines.
+            if ($addheadline)
+            {
+                $headline = ($headline != '' ? ' & ' : '') . $split['headline'];
+            }
+            Log::debug("Parsed search query: %s\n", print_r($split, true));
+        };
+        
+        // Process all search selectors and add them to the query.
         foreach ($data as $selector)
         {
+            // If any data is missing or invalid, do not process the selector.
             if (isset($selector['type']) && isset($selector['value']) && (is_array($selector['value']) || trim($selector['value']) != ""))
             {
                 $value = $selector['value'];
@@ -68,33 +165,28 @@ class BookController extends Controller
                         $binds[':to' . $c] = self::getInteger($value, 'to', 16534);
                         break;
                     case 'title':
-                        $query = $query->whereFulltext('books.title', ':title'. $c);
-                        $binds[':title'. $c] = $value;
+                        $addFulltext(':title', 'books.title', $value);
                         break;
                     case 'author':
-                        $query = $query->whereFulltext('personsFind.name', ':author'. $c);
-                        $binds[':author'. $c] = $value;
+                        $addFulltext(':author', 'pAuthorFind.name', $value);
+                        break;
+                    case 'provenance':
+                        $addFulltext(':provenance', 'pProvenanceFind.name', $value);
                         break;
                     case 'any':
-                        $query = $query->whereFulltext(array('books.title', 'personsFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), ':any' . $c); // TODO: change column to index
-                        $binds[':any' . $c] = $value;
-                        $headline .= " " . $value;
+                        $addFulltext(':any', array('books.title', 'pAuthorFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'pProvenanceFind.name', 'libraries.libraryName', 'bindings.signature'), $value, true); // TODO: change column to index
                         break;
                     case 'place':
-                        $query = $query->whereFulltext('books.placePublished', ':place'. $c);
-                        $binds[':place'. $c] = $value;
+                        $addFulltext(':place', 'books.placePublished', $value);
                         break;
                     case 'publisher':
-                        $query = $query->whereFulltext('books.publisher', ':publisher'. $c);
-                        $binds[':publisher'. $c] = $value;
+                        $addFulltext(':publisher', 'books.publisher', $value);
                         break;
                     case 'summary':
-                        $query = $query->whereFulltext('bindings.summary', ':summary'. $c);
-                        $binds[':summary'. $c] = $value;
+                        $addFulltext(':summary', 'bindings.summary', $value);
                         break;
                     case 'library':
-                        $query = $query->whereFulltext('libraries.libraryName', ':library'. $c);
-                        $binds[':library'. $c] = $value;
+                        $addFulltext(':library', 'libraries.libraryName', $value);
                         break;
                     case 'signature':
                         $query = $query->where('bindings.signature ILIKE :signature'. $c);
@@ -107,14 +199,16 @@ class BookController extends Controller
             }
         }
         
+        // Request a headline if necessary.
         if ($headline != "")
         {
-            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT personsList.name), \', \')', 'books.publisher', 'books.placePublished', 'bindings.summary', 'libraries.libraryName', 'bindings.signature'), ':headline', 'headline');
+            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT pAuthorList.name), \', \')', 'books.publisher', 'books.placePublished', 'bindings.summary', 'array_to_string(array_accum(DISTINCT pProvenanceList.name), \', \')', 'libraries.libraryName', 'bindings.signature'), ':headline', 'headline');
             $binds[':headline'] = $headline;
         }
         
         $result = $query->execute($binds);
         
+        // Output the results.
         $records = array();
         foreach ($result as $book)
         {
@@ -128,98 +222,74 @@ class BookController extends Controller
                 $year = $book->getValue('minYear') . ' - ' . $book->getValue('maxYear');
             }
             $records[] = array(
-                $book->getValue('title'),
-                $book->getValue('authorNames'),
-                $year,
-                'place',
-                'publisher',
-                'library',
-                'signature',
-                'summary',
-                $book->getValue('headline'),
+                (string)$book->getValue('title'),
+                (string)$book->getValue('authorNames'),
+                (string)$year,
+                (string)$book->getValue('placePublished'),
+                (string)$book->getValue('publisher'),
+                (string)$book->getValue('libraryName'),
+                (string)$book->getValue('signature'),
+                (string)$book->getValue('provenanceNames'),
+                (string)$book->getValue('summary'),
+                (string)$book->getValue('headline'),
                 'tiles/tile_0_0_0.jpg',
-                $book->getValue('bookId')
+                (string)$book->getValue('bookId')
             );
         }
         
-        return array(
-                'columns' => array(
-                array(
-                    'name' => 'id',
-                    'desc' => 'Identifier',
-                    'show' => false
-                ), array(
-                    'name' => 'title',
-                    'desc' => 'Title',
-                    'show' => true
-                ), array(
-                    'name' => 'year',
-                    'desc' => 'Year',
-                    'show' => true
-                ), array(
-                    'name' => 'author',
-                    'desc' => 'Author',
-                    'show' => true
-                ), array(
-                    'name' => 'thumbnail',
-                    'desc' => 'Thumbnail',
-                    'show' => 'false'
-                ), array(
-                    'name' => 'headline',
-                    'desc' => 'Headline',
-                    'show' => $headline != "" // Only show if there are headlines.
-                )
-            ),
-            'records' => $records
-        );
-                
+        return $records;
+    }
+    
+    /**
+     * Splits a fulltext user-input query into distinct queries.
+     */
+    public static function splitFulltextQuery($query)
+    {
+        $exacts = array();
+        $num = preg_match_all('/([+-]?)"([^"]+)"/', $query, $exacts, PREG_PATTERN_ORDER);
+        $result = array();
+        $result['exact'] = array();
+        for ($i = 0; $i < $num; $i++)
+        {
+            $result['exact'][] = array(
+                'like' => $exacts[1][$i] == '-' ? ' !~* ' : ' ~* ',
+                'value' => '(^|[^[:alpha:]])' . preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)',
+                'positive' => $exacts[1][$i] != '-'
+            );
+        }
+        $headline = 
+            explode(' ',
+            trim(
+            preg_replace('/\s+/', ' ',
+            preg_replace('/[^\w\s!-]/', ' ', 
+            preg_replace('/[-](?!\w)/', '',
+            preg_replace('/(?<!\w)[-](?=\w)/', '!',
+            preg_replace('/[!|&+]/', '',
+            preg_replace('/([+-]?)"([^"]+)"/', '',
+            $query
+        ))))))));
+        $result['rest'] = implode(' & ', $headline);
         
-        /*
-        return array(
-            'columns' => array(
-                array(
-                    'name' => 'id',
-                    'desc' => 'Identifier',
-                    'show' => false
-                ), array(
-                    'name' => 'title',
-                    'desc' => 'Title',
-                    'show' => true
-                ), array(
-                    'name' => 'author',
-                    'desc' => 'Author',
-                    'show' => true
-                ), array(
-                    'name' => 'year',
-                    'desc' => 'Year of publication',
-                    'show' => true
-                ), array(
-                    'name' => 'thumbnail',
-                    'desc' => 'Thumbnail',
-                    'show' => false
-                )
-            ),
-            'records' => array(
-                array(
-                    123,
-                    'Gabriel Harvey: his life, marginalia, and library',
-                    'Virginia F. Stern',
-                    1979,
-                    'http://bks4.books.google.nl/books?id=v8ghAAAAMAAJ&printsec=frontcover&img=1&zoom=1'
-                ), array(
-                    897,
-                    'Tax for the year 1811',
-                    'Commonwealth of Massachusetts',
-                    1811,
-                    'http://books.google.nl/googlebooks/images/no_cover_thumb.gif'
-                ), array(
-                    24,
-                    'Ancient critical essays upon English poets and poësy',
-                    'Gabriel Harvey et al.',
-                    1811,
-                    'http://bks4.books.google.nl/books?id=yDIJAAAAQAAJ&printsec=frontcover&img=1&zoom=1'
-                )
-            )
-        );*/
+        if ($headline[0] == "")
+        {
+            $headline = array();
+        }
+        
+        for ($i = 0; $i < $num; $i++)
+        {
+            if ($exacts[1][$i] != '-')
+            {
+                $headline[] = 
+                    implode(' & ',
+                    explode(' ',
+                    trim(
+                    preg_replace('/\s+/', ' ',
+                    preg_replace('/[^\w\s-]/', ' ', 
+                    $exacts[2][$i]
+                )))));
+            }
+        }
+        $result['headline'] = implode(' & ', $headline);
+        return $result;
     }
 }

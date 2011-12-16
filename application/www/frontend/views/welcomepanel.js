@@ -9,7 +9,8 @@ Ext.define('Ext.ux.Welcome', {
     initComponent: function() 
     {
         var text = {
-            // TODO: get from database
+            // TODO: Get from database.
+            
             xtype: 'container',
             items: {
                 style: 'text-align: justify;',
@@ -54,6 +55,7 @@ Ext.define('Ext.ux.Welcome', {
             name: 'login',
             text: 'Login',
             scale: 'large',
+            iconCls: 'login-icon',
             width: buttonWidth,
             handler: function()
             {
@@ -80,6 +82,7 @@ Ext.define('Ext.ux.Welcome', {
             name: 'register',
             text: 'Register',
             scale: 'large',
+            iconCls: 'register-icon',
             width: buttonWidth,
             handler: function()
             {
@@ -92,6 +95,7 @@ Ext.define('Ext.ux.Welcome', {
             name: 'search',
             text: 'Search',
             scale: 'large',
+            iconCls: 'search-icon',
             width: buttonWidth,
             handler: function()
             {
@@ -104,6 +108,7 @@ Ext.define('Ext.ux.Welcome', {
             name: 'upload',
             text: 'Upload',
             scale: 'large',
+            iconCls: 'upload-icon',
             hidden: true,
             width: buttonWidth,
             handler: function()
@@ -117,6 +122,7 @@ Ext.define('Ext.ux.Welcome', {
             name: 'info',
             text: 'Info',
             scale: 'large',
+            iconCls: 'info-icon',
             width: buttonWidth,
             handler: function()
             {
@@ -129,6 +135,7 @@ Ext.define('Ext.ux.Welcome', {
             name: 'moderate',
             text: 'Moderate',
             scale: 'large',
+            iconCls: 'moderate-icon',
             hidden: true,
             width: buttonWidth,
             handler: function()
@@ -143,7 +150,7 @@ Ext.define('Ext.ux.Welcome', {
             items: [{
                 xtype: 'container',
                 width: 500,
-                style: 'margin-bottom: 20px',
+                style: 'margin-bottom: 20px;',
                 layout: {
                     type: 'hbox',
                     pack: 'center'
@@ -152,7 +159,7 @@ Ext.define('Ext.ux.Welcome', {
                     style: 'margin-right: 5px;'
                 },
                 items: [
-                    registerButton, loginButton, logoutButton, searchButton,
+                    loginButton, registerButton, logoutButton, searchButton,
                     uploadButton, infoButton, moderateButton
                 ]
             }, text]

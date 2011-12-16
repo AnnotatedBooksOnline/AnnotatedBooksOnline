@@ -58,8 +58,9 @@ Ext.define('Ext.ux.ViewerSettingsWindow', {
             width: 600,
             height: 400,
             closable: true,
-            resizable: true,
+            resizable: false,
             draggable: true,
+            constrain: true,
             modal: true,
             border: true,
             items: [{
@@ -116,11 +117,45 @@ Ext.define('Ext.ux.Viewer', {
                 }, '-', {
                     iconCls: 'first-icon',
                     tooltip: 'Go to first page',
-                    disabled: true
+                    disabled: true,
+                    listeners: {
+                        click: function()
+                        {
+                            this.up('viewerpanel').setPage(0);
+                            this.nextSibling('textfield').setValue(1);
+                            this.setDisabled(true);
+                            var b = this.nextSibling('button');
+                            b.setDisabled(true);
+                            b = b.nextSibling('button');
+                            b.setDisabled(false);
+                            b = b.nextSibling('button');
+                            b.setDisabled(false);
+                        }
+                    }
                 },{
                     iconCls: 'previous-icon',
                     tooltip: 'Go to previous page',
-                    disabled: true
+                    disabled: true,
+                    listeners: {
+                        click: function()
+                        {
+                            var page = this.up('viewerpanel').getPage();
+                            if (page - 1 >= 0)
+                            {
+                                this.up('viewerpanel').setPage(page - 1);
+                                this.nextSibling('textfield').setValue(page);
+                            }
+                            if (page - 1 <= 0)
+                            {
+                                this.setDisabled(true);
+                                this.previousSibling('button').setDisabled(true);
+                            }
+                            var b = this.nextSibling('button');
+                            b.setDisabled(false);
+                            b = b.nextSibling('button');
+                            b.setDisabled(false);
+                        }
+                    }
                 }, '-', 'Page', {
                     xtype: 'textfield',
                     width: 30,
@@ -130,17 +165,79 @@ Ext.define('Ext.ux.Viewer', {
                     allowNegative: false,
                     allowDecimals: false,
                     autoStripChars: true,
-                    allowBlank: false
+                    validator: function(value)
+                    {
+                        if (value <= _this.book.getScanAmount() && value >= 1)
+                        {
+                            return true;
+                        }
+                        return 'Enter a page between 1 and ' + _this.book.getScanAmount() + ' inclusive.';
+                    },
+                    listeners: {
+                        blur: function()
+                        {
+                            var val = this.getValue();
+                            if (val <= _this.book.getScanAmount() && val >= 1)
+                            {
+                                this.up('viewerpanel').setPage(val-1);
+                            }
+                        },
+                        specialkey: function(field, e)
+                        {
+                            if (e.getKey() == e.ENTER)
+                            {
+                                field.fireEvent('blur');
+                            }
+                        }
+                    }
                 },{
                     xtype: 'tbtext',
                     text: 'of ' + _this.book.getScanAmount(),
                     cls: 'total-text'
                 }, '-', {
                     iconCls: 'next-icon',
-                    tooltip: 'Go to next page'
+                    tooltip: 'Go to next page',
+                    disabled: _this.book.getScanAmount() == 1,
+                    listeners: {
+                        click: function()
+                        {
+                            var pages = _this.book.getScanAmount();
+                            var page = this.up('viewerpanel').getPage();
+                            if (page + 1 < pages)
+                            {
+                                this.up('viewerpanel').setPage(page + 1);
+                                this.previousSibling('textfield').setValue(page + 2);
+                            }
+                            if (page + 2 >= pages)
+                            {
+                                this.setDisabled(true);
+                                this.nextSibling('button').setDisabled(true);
+                            }
+                            var b = this.previousSibling('button');
+                            b.setDisabled(false);
+                            b = b.previousSibling('button');
+                            b.setDisabled(false);
+                        }
+                    }
                 },{
                     iconCls: 'last-icon',
-                    tooltip: 'Go to last page'
+                    tooltip: 'Go to last page',
+                    disabled: _this.book.getScanAmount() == 1,
+                    listeners: {
+                        click: function()
+                        {
+                            var pages = _this.book.getScanAmount();
+                            this.up('viewerpanel').setPage(pages - 1);
+                            this.previousSibling('textfield').setValue(pages);
+                            this.setDisabled(true);
+                            var b = this.previousSibling('button');
+                            b.setDisabled(true);
+                            b = b.previousSibling('button');
+                            b.setDisabled(false);
+                            b = b.previousSibling('button');
+                            b.setDisabled(false);
+                        }
+                    }
                 }, '-', {
                     iconCls: 'refresh-icon',
                     tooltip: 'Reset viewer',
@@ -174,7 +271,8 @@ Ext.define('Ext.ux.Viewer', {
                 type: 'border',
                 padding: 5
             },
-            items: [westRegion, centerRegion, eastRegion]
+            items: [westRegion, centerRegion, eastRegion],
+            page: 0
         };
         
         Ext.apply(this, defConfig);
@@ -249,6 +347,31 @@ Ext.define('Ext.ux.Viewer', {
         this.book = book;
         
         this.viewport.setDocument(book.getDocument(0));
+        this.page = 0;
+    },
+    
+    setPage: function(number)
+    {
+        this.down('navigationpanel').setPage(number);
+        this.down('viewportpanel').setDocument(this.book.getDocument(number));
+        this.page = number;
+        var b = this.down('viewportpanel').down('button');
+        var p = number == 0;
+        var n = number == this.book.getScanAmount() - 1;
+        b.setDisabled(p);
+        b = b.nextSibling('button');
+        b.setDisabled(p);
+        b = b.nextSibling('textfield');
+        b.setValue(number + 1);
+        b = b.nextSibling('button');
+        b.setDisabled(n);
+        b = b.nextSibling('button');
+        b.setDisabled(n);
+    },
+    
+    getPage: function()
+    {
+        return this.page;
     },
     
     statics: {

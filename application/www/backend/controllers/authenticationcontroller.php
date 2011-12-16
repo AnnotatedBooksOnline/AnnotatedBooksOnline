@@ -9,11 +9,6 @@ require_once 'util/authentication.php';
  */
 class AuthenticationController extends Controller
 {
-    protected function __construct()
-    {
-        ;
-    }
-    
     public function actionLogin($data)
     {
         // Get fields.
@@ -48,7 +43,7 @@ class AuthenticationController extends Controller
             {
                 return array('action' => 'logout');
             }
-            else if ($user->getId() === $userId)
+            else if ($user->getUserId() === $userId)
             {
                 return;
             }

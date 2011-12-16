@@ -52,9 +52,24 @@
     background-image: url(../icons/cross.png)
 }
 
+.login-icon
+{
+    background-image: url(../icons/login.png)
+}
+
 .logout-icon
 {
     background-image: url(../icons/logout.png)
+}
+
+.register-icon
+{
+    background-image: url(../icons/register.png)
+}
+
+.passwordforgotten-icon
+{
+    background-image: url(../icons/passwordforgotten.png)
 }
 
 .user-icon
@@ -65,4 +80,24 @@
 .settings-icon
 {
     background-image: url(../icons/wrench.png);
+}
+
+.upload-icon
+{
+    background-image: url(../icons/uploadbook.png);
+}
+
+.users-icon
+{
+    background-image: url(../icons/users.png);
+}
+
+.search-icon
+{
+    background-image: url(../icons/search.png);
+}
+
+.info-icon
+{
+    background-image: url(../icons/info.png);
 }

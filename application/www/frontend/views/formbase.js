@@ -79,6 +79,8 @@ Ext.define('Ext.ux.FormBase', {
             this.setModel(this.model, this.modelId);
         }
         
+        // TODO: Make this work again.
+        
         // Focus first field.
         var _this = this;
         /*setTimeout(
@@ -188,5 +190,11 @@ Ext.define('Ext.ux.FormBase', {
     submit: function()
     {
         // Implement in subclass.
+    },
+    
+    reset: function()
+    {
+        // Reset the form.
+        this.getForm().reset(); 
     }
 });

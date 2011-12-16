@@ -15,7 +15,7 @@ Ext.apply(Ext.form.VTypes, {
             {
                 if (data)
                 {
-                    field.markInvalid('Username already in use');
+                    field.markInvalid('Username already in use.');
                 }
             }
         );
@@ -36,7 +36,14 @@ Ext.apply(Ext.form.VTypes, {
     
         if (!emailRegExp.test(value))
         {
+            field.markInvalid('Not a valid email address. The format should be \'me@email.com');
             return false;
+        }
+        
+        if (Authentication.getInstance().isLoggedOn()
+            && value == Authentication.getInstance().getUserModel().get('email'))
+        {
+            return true;
         }
         
         // Send existance check request.
@@ -49,7 +56,8 @@ Ext.apply(Ext.form.VTypes, {
             {
                 if (data)
                 {
-                    field.markInvalid('Email already in use');
+                    field.markInvalid('Email already in use.');
+                    return false;
                 }
             }
         );
@@ -57,3 +65,25 @@ Ext.apply(Ext.form.VTypes, {
         return true;
     }
 });
+
+/*
+ * URL parsing check.
+ */
+
+Ext.apply(Ext.form.VTypes, {
+    checkURL: function(value, field)
+    {
+        // Check if the url is a correct url.
+        // Use this instead of url, because this one also allows url's without 'http://'
+        var urlRegExp = /^((https?|ftp):\/\/)?[a-zA-Z0-9-.]+\.([a-zA-Z0-9]){2,4}([[\]a-zA-Z0-9/+=#%&_\.~?\-!]*)$/i;
+    
+        if (!urlRegExp.test(value))
+        {
+            field.markInvalid('Not a valid url. The format should be \'http://www.url.com\' or \'www.url.com/moreinformation\'.');
+            return false;
+        }
+        
+        return true;
+    }
+});
+
