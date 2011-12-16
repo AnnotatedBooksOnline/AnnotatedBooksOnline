@@ -224,8 +224,8 @@ Viewport.prototype.initialize = function()
     
     // DEBUG: Add an overlay.
     
-    this.overlay = new PolygonOverlay();
-    this.overlay.insert(this);
+    //this.overlay = new PolygonOverlay();
+    //this.overlay.insert(this);
     
     
     
@@ -337,7 +337,7 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     
     
     // DEBUG: Update overlay.
-    this.overlay.update(this.position, this.zoomLevel, this.rotation, this.visibleArea);
+    //this.overlay.update(this.position, this.zoomLevel, this.rotation, this.visibleArea);
     
     
     
