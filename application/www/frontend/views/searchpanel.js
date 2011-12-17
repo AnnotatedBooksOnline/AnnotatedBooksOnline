@@ -103,7 +103,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                 listeners: {
                     'change': function(f, from) {
                         var to = this.nextSibling('[name=to]');
-                        if (to.getValue() == null || parseInt(from) > parseInt(to.getValue())) 
+                        if (to.getValue() != null && parseInt(from) > parseInt(to.getValue())) 
                         {
                             to.setValue(from);
                         }
@@ -124,7 +124,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                 listeners: {
                     'change': function(t, to) {
                         var from = this.previousSibling('[name=from]');
-                        if (from.getValue() == null || parseInt(to) < parseInt(from.getValue())) 
+                        if (from.getValue() != null && parseInt(to) < parseInt(from.getValue())) 
                         {
                             from.setValue(to);
                         }
