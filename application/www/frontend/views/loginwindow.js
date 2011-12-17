@@ -42,13 +42,26 @@ Ext.define('Ext.ux.LoginForm', {
                 },
                 function(code, message, trace)
                 {
+                    switch (code)
+                    {
+                        case 'user-not-found':
+                        case 'user-banned':
+                        case 'user-pending':
+                            break;
+                            
+                        default:
+                            return true;
+                    }
+                    
                     // Show an error.
                     Ext.Msg.show({
                         title: 'Login failed.',
-                        msg: message, //'Combination of username and password could not be found.',
+                        msg: escape(message),
                         icon: Ext.Msg.ERROR,
                         buttons: Ext.Msg.OK
                     });
+                    
+                    return false;
                 });
         }
     }

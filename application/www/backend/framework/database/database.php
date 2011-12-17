@@ -29,7 +29,8 @@ class Database extends Singleton
         // Create a php data object using the settings from the configuration.
         $this->pdo = new PDO($config->getString('database-dsn'),
                              $config->getString('database-username'),
-                             $config->getString('database-password'));
+                             $config->getString('database-password'),
+                             array(PDO::ATTR_PERSISTENT => true));
         
         $this->transactionLevel = 0;
     }

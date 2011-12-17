@@ -341,6 +341,8 @@ Authentication.prototype.keepAlive = function()
             // There is nothing we can do. Try again in 10 seconds.
             var _this = this;
             setTimeout(function() { _this.keepAlive(); }, 10000);
+            
+            return false;
         });
 }
 
