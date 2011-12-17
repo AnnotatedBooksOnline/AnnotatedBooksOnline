@@ -410,6 +410,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 });
                 
                 break;
+            case 'activation':
+            	// Add an activation tab.
+                Ext.apply(tabConfig, {
+                    title: 'Activation',
+                    xtype: 'activationpanel',
+                });
+                
+                break;
             
             default:
                 throw new Error('Unknown tab type: \'' + type + '\'.');

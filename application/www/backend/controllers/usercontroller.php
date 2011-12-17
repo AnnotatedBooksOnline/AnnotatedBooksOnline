@@ -188,7 +188,7 @@ class UserController extends Controller
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => true,
+            'active'      => false,
             'banned'      => false,
             'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
@@ -203,12 +203,12 @@ class UserController extends Controller
             $user->save();
             
             // Now create a pending user.
-//             $puser = PendingUser::fromUser($user);
-//             $puser->save();
-//             return $puser;
+            $puser = PendingUser::fromUser($user);
+            $puser->save();
+            return $puser;
         });
         
-        //Mailer::sendActivationMail($puser);
+        Mailer::sendActivationMail($puser);
         
         return array('records' => $values); 
     }
@@ -293,7 +293,7 @@ class UserController extends Controller
     }
     
     /**
-     * Activates a pending user by setting the active-flag and removing the PendingUser entry. 
+     * Activates a pending user by setting the active-flag and removing the PendingUser entry.
      */
     public function actionActivateUser($data)
     {
@@ -308,17 +308,16 @@ class UserController extends Controller
         // TODO: Move code below to user model.
         
         // Start a transaction.
-        Database::getInstance()->startTransaction();
-        
-        // Set the active flag for this user.
-        $query = Query::update('Users', array('active' => true))->where('userId = :userId');
-        $query->execute(array('userId' => $userId));
-        
-        // Erase this user's column from the pending users table.
-        $query = Query::delete('PendingUsers')->where('userId = :userId');
-        $query->execute(array('userId' => $userId));
-        
-        // Commit the transaction.
-        Database::getInstance()->commit();
+        Database::getInstance()->doTransaction(
+        function() use ($userId)
+        {
+            // Set the active flag for this user.
+            $query = Query::update('Users', array('active' => true))->where('userId = :userId');
+            $query->execute(array('userId' => $userId));
+            
+            // Erase this user's column from the pending users table.
+            $query = Query::delete('PendingUsers')->where('userId = :userId');
+            $query->execute(array('userId' => $userId));
+        });
     }
 }

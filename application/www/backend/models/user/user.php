@@ -138,7 +138,7 @@ class User extends Entity
         
         return $user;
     }
-    
+   
     /**
      * Gets the table name.
      *
@@ -222,7 +222,7 @@ class User extends Entity
      * Getters and setters.
      */
     
-    public function getUserId() { return $this->userId; }
+    public function getUserId()    { return $this->userId; }
     
     public function setUsername($username) { $this->username = $username; }
     public function getUsername()          { return $this->username;      }

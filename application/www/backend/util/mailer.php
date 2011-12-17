@@ -71,10 +71,11 @@ class Mailer
         // Insert user info and the activation link into the e-mail.
         $message = str_replace(
                         array('[LINK]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]'),
-                        array($link, $user->getUsername(), $user->getFirstName(), $user->getLastName()));
+                        array($link, $user->getUsername(), $user->getFirstName(), $user->getLastName()),
+                        $basemessage);
         
         // Now send the e-mail.
-        Log::info('Sending activation code to %s.', $user->getUsername(), $user->getEmail());
-        $this->sendMail($recipient, $subject, $message);
+        Log::info('Sending activation code to %s.\nContents: %s.', $user->getEmail(), $message);
+        self::sendMail($recipient, $subject, $message);
     }
 }

@@ -65,7 +65,7 @@ class PendingUser extends Entity
         $expirationDate = time() + 7 * 24 * 60 * 60;
         
         $values = array(
-            'userId'           => $user->getId(),
+            'userId'           => $user->getUserId(),
             'confirmationCode' => self::generateConfirmationCode($user),
             'expirationDate'   => $expirationDate,
         );

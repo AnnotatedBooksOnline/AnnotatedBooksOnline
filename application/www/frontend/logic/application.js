@@ -215,6 +215,7 @@ Application.prototype.registerActions = function()
                 case 'upload':
                 case 'welcome':
                 case 'info':
+                case 'activation':
                     // These are tab actions, so close the windows.
                     Ext.WindowManager.each(
                         function(window)
