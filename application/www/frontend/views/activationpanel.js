@@ -8,8 +8,32 @@ Ext.define('Ext.ux.Activation', {
     
     initComponent: function() 
     {    	
+    	// Send request with activation token from URL.
+    	var token = this.tabInfo.data[0];
+    	var info = 'bla';
+    	RequestManager.getInstance().request(
+            'UserActivation',
+            'activateUser',
+            {token: token},
+            this,
+            function(success)
+            {
+                if (success)
+                {
+                    info = 'Yay!';
+                }
+                else
+                {
+                    info = 'Nay!';
+                }
+            },
+            function(data)
+            {
+            	info = 'Meh';
+            }
+        );
+    	
     	var text = {
-            // TODO: Get from database.
             
             xtype: 'container',
             items: {
@@ -18,7 +42,7 @@ Ext.define('Ext.ux.Activation', {
                 border: false,
                 width: 500,
                 flex: 0,
-                html: 'Hallo ' + this.tabInfo.data[0]
+                html: info
             }
         };
         

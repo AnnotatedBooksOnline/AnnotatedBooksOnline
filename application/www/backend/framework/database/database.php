@@ -114,21 +114,6 @@ class Database extends Singleton
     }
     
     /**
-     * Commits all currently stacked transactions.
-     */
-    /*
-    GERBEN: There should be no situation in which we want this to happen.
-    
-    public function commitAll()
-    {
-        while ($this->transactionLevel > 0)
-        {
-            $this->commit();
-        }
-    }
-    */
-    
-    /**
      * Rolls back a transaction.
      *
      * Undoes all queries made in the current transaction. The transaction will have ended, so \

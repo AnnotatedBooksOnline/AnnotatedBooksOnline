@@ -295,29 +295,25 @@ class UserController extends Controller
     /**
      * Activates a pending user by setting the active-flag and removing the PendingUser entry.
      */
-    public function actionActivateUser($data)
-    {
-        // Check whether logged on.
-        Authentication::assertLoggedOn();
+//     public function actionActivateUser($data)
+//     {        
         
-        // TODO: Do a security check!
+//         // Fetch user id.
+//         $userId = self::getInteger($data, 'id');
         
-        // Fetch user id.
-        $userId = self::getInteger($data, 'id');
+//         // TODO: Move code below to user model.
         
-        // TODO: Move code below to user model.
-        
-        // Start a transaction.
-        Database::getInstance()->doTransaction(
-        function() use ($userId)
-        {
-            // Set the active flag for this user.
-            $query = Query::update('Users', array('active' => true))->where('userId = :userId');
-            $query->execute(array('userId' => $userId));
+//         // Start a transaction.
+//         Database::getInstance()->doTransaction(
+//         function() use ($userId)
+//         {
+//             // Set the active flag for this user.
+//             $query = Query::update('Users', array('active' => true))->where('userId = :userId');
+//             $query->execute(array('userId' => $userId));
             
-            // Erase this user's column from the pending users table.
-            $query = Query::delete('PendingUsers')->where('userId = :userId');
-            $query->execute(array('userId' => $userId));
-        });
-    }
+//             // Erase this user's column from the pending users table.
+//             $query = Query::delete('PendingUsers')->where('userId = :userId');
+//             $query->execute(array('userId' => $userId));
+//         });
+//     }
 }
