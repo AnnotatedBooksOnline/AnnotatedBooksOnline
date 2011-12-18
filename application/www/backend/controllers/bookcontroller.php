@@ -307,7 +307,30 @@ class BookController extends Controller
         }
         catch (Exception $e)
         {
-            // Do nothing.
+            // Get exception info.
+            $stackTrace = $e->getTraceAsString();
+            $message    = $e->getMessage();
+            $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
+            
+            // Set result.
+            $result = array('message' => $message, 'code' => $code);
+            
+            // Set stacktrace if in debug mode.
+            if (Configuration::getInstance()->getBoolean('debug-mode', false))
+            {
+                $result['trace'] = $stackTrace;
+            }
+            
+            // Log the exception.
+            Log::error("An exception occured: message: '%s', code: '%s', stack trace:\n%s",
+                $message, $code, $stackTrace);
+            
+            return '<html><body><script>' . 
+                'var code = \'' . str_replace("\n", ' ', htmlspecialchars($result['code'], ENT_QUOTES)) . '\';' .
+                'var message = \'' . str_replace("\n", ' ', htmlspecialchars($result['message'], ENT_QUOTES)) . '\';' .
+                'var trace = \'' . str_replace("\n", ' ', htmlspecialchars($result['trace'], ENT_QUOTES)) . '\';' .
+                'parent.RequestManager.showErrorMessage(code, message, trace);' .
+                '</script></body></html>';
         }
         return '';
     }

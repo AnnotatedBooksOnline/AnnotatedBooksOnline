@@ -2,9 +2,19 @@
 //[[GPL]]
 
 require_once 'framework/util/configuration.php';
+require_once 'framework/util/exceptionbase.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
 //require_once 'models/binding/binding.php';
+
+// Exceptions.
+class PDFCreationFailedException extends ExceptionBase
+{
+    public function __construct()
+    {
+        parent::__construct('pdf-creation-failed');
+    }
+}
 
 class PDF
 {
@@ -470,8 +480,7 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
         
         if ($type != 'TrueTypeUnicode')
         {
-            error_log('Font format for ' . $fontName . ' not supported.');
-            die();
+            throw new PDFCreationFailedException();
         }
         
         $this->fontSizes[$name] = $cw;
