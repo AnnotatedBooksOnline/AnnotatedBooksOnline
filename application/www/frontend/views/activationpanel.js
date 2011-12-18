@@ -8,10 +8,11 @@ Ext.define('Ext.ux.Activation', {
     
     initComponent: function() 
     {    	
-    	// TODO ......
+    	// TODO ........
+    	
     	// Send request with activation token from URL.
-    	var token = this.tabInfo.data[0];
     	var info = 'bla';
+    	var token = this.tabInfo.data[0];
     	var _this = this;
     	RequestManager.getInstance().request(
             'UserActivation',
@@ -31,7 +32,7 @@ Ext.define('Ext.ux.Activation', {
             },
             function(data)
             {
-            	info = 'Meh';
+            	alert('Error!');
             }
         );
     	
@@ -44,7 +45,7 @@ Ext.define('Ext.ux.Activation', {
                 border: false,
                 width: 500,
                 flex: 0,
-                html: info
+                html: ''
             }
         };
         

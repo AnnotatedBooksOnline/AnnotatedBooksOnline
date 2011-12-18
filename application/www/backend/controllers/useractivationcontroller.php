@@ -18,9 +18,9 @@ class UserActivationController extends Controller
     public function actionActivateUser($data)
     {
         Log::info('User activation action.');
-        
+        Log::debug('!!! ' . print_r($data, true));
         // Fetch activation token.
-        $token = self::getInteger($data, 'token');
+        $token = self::getString($data, 'token');
         
         // Start a transaction.
         $success = Database::getInstance()->doTransaction(
@@ -30,6 +30,8 @@ class UserActivationController extends Controller
             $result = Query::select('pendingUserId', 'userId')->from('PendingUsers')
                                                               ->where('confirmationCode = :token')
                                                               ->execute(array('token' => $token));
+            
+            Log::debug('!!!' . $token);
             if($result->getAmount() != 1)
             {
                 // TODO: Exception or more informative return value?
@@ -38,8 +40,9 @@ class UserActivationController extends Controller
             }
             
             // Get id's.
-            $puser = $result->getFirstRow()->getValue('pendingUserId');
-            $user  = $result->getFirstRow()->getValue('userId');
+            $row = $result->getFirstRow();
+            $puser = $row->getValue('pendingUserId');
+            $user  = $row->getValue('userId');
             
             // Set the active flag for the user.
             $query = Query::update('Users', array('active' => true))->where('userId = :userId');
