@@ -45,6 +45,7 @@ class PDF
     
     private $scanInfo;
     private $imageAttr = array();
+    private $autoPrint = false;
     
     private $scan;
     private $book;
@@ -59,7 +60,7 @@ class PDF
      *    - width: the width in points (1/72 inch)
      *    - height: the height in points (1/72 inch)
      */
-    public function __construct($scan, $dimensions = null)
+    public function __construct($scan, $dimensions = null, $print = false)
     {
         $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
         
@@ -68,6 +69,8 @@ class PDF
             'height' => $scan->getHeight(),
             'zoomLevel' => $scan->getZoomLevel()
         );
+        
+        $this->autoPrint = $print;
         
         $this->scan = $scan;
         $this->book = new Book($scan->getBookId());
@@ -397,6 +400,16 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
             $this->writePage();
         }
         
+        $javascript = '';
+        if ($this->autoPrint)
+        {
+            $jsEmbedId = $this->newObject('');
+            $jsId = $this->newObject('<< /Names [(EmbeddedJS) ' . $jsEmbedId . ' 0 R] >>');
+            $this->updateObject($jsEmbedId, "<< /S /JavaScript /JS (print\(true\);) >>");
+            $javascript = '/Names << /JavaScript ' . $jsId . ' 0 R >>';
+        }
+        $this->catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $this->pagesId . ' 0 R /OpenAction [ ' . $this->pages[0] . ' 0 R /Fit ] ' . $javascript . ' >>');
+        
         $pages = implode(' 0 R ', array_values($this->pages)) . ' 0 R';
         $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
         $this->updateObject($this->resourcesId, "<< /XObject <<\n" . $this->resources . "\n>> /Font <<\n" . $this->fonts . "\n>> >>");
@@ -656,10 +669,6 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
         }
         
         $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $this->resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] >>');
-        if (count($this->pages) == 0)
-        {
-            $this->catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $this->pagesId . ' 0 R /OpenAction [ ' . $pageId . ' 0 R /Fit ] >>');
-        }
         $this->pages[] = $pageId;
         $this->resetPosition();
     }
