@@ -4,6 +4,7 @@
 require_once 'framework/util/configuration.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
+//require_once 'models/binding/binding.php';
 
 class PDF
 {
@@ -13,8 +14,8 @@ class PDF
     private $fontSize = 12;
     private $lineSpread = 2;
 
-    private $pageWidth = 595;
-    private $pageHeight = 842;
+    private $pageWidth;
+    private $pageHeight;
     
     private $objects = array();
     private $numObjects = 0;
@@ -30,12 +31,14 @@ class PDF
     private $pagesId = null;
     private $resourcesId = null;
     private $catalogId = null;
+    private $lastFontSize = null;
     
-    private $scan;
+    private $scanInfo;
     private $imageAttr = array();
     
-    private $title;
-    private $pageNr;
+    private $scan;
+    private $book;
+    private $binding;
 
     /**
      * Creates a new PDF based on the given scan. When possible, the resolution
@@ -48,23 +51,17 @@ class PDF
      */
     public function __construct($scan, $dimensions = null)
     {
-        if ($scan === null)
-        {
-            $this->test();
-            return;
-        }
-            
         $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
         
-        $this->scan = array(
+        $this->scanInfo = array(
             'width' => $scan->getWidth(),
             'height' => $scan->getHeight(),
             'zoomLevel' => $scan->getZoomLevel()
         );
         
-        $this->pageNr = $scan->getPage();
-        $book = new Book($scan->getBookId());
-        $this->title = $book->getTitle();
+        $this->scan = $scan;
+        $this->book = new Book($scan->getBookId());
+        //$this->binding = new Binding($book->getBindingId());
         
         if ($dimensions !== null &&
             is_array($dimensions) &&
@@ -81,6 +78,7 @@ class PDF
             $this->imageAttr['pageHeight'] = 842;
         }
         
+        $this->setPageSize($this->imageAttr['pageWidth'], $this->imageAttr['pageHeight']);
         $this->createPDF();
     }
 
@@ -91,8 +89,8 @@ class PDF
     public function outputPDF()
     {
         $filename = preg_replace('/[^a-zA-Z0-9_]/', '', 
-                    preg_replace('/ /', '_', $this->title))
-                    . '-' . $this->pageNr;
+                    preg_replace('/ /', '_', $this->book->getTitle()))
+                    . '-' . $this->scan->getPage();
         header('Content-type: application/pdf');
         header('Content-length: ' . strlen($this->output));
         header('Content-disposition: attachment; filename=' . $filename . '.pdf');
@@ -113,7 +111,16 @@ class PDF
      */
     private function createPDF()
     {
-        $z = $this->scan['zoomLevel'];
+        $this->addFont('DejaVuSans', 'dejavusans.php');
+        $this->font = 'DejaVuSans';
+        
+        $this->setFontSize(24);
+        $this->drawText($this->book->getTitle() . "\n\n", true);
+        $this->setFontSize(12);
+        $this->drawText("Page number: " . $this->scan->getPage());
+        $this->writePage();
+        
+        $z = $this->scanInfo['zoomLevel'];
         if ($z == 1)
         {
             $size = getimagesize($this->imageName(0, 0, 0));
@@ -128,8 +135,8 @@ class PDF
         $ts = $this->imageAttr['tileSize'];
         $pw = $this->imageAttr['pageWidth'];
         $ph = $this->imageAttr['pageHeight'];
-        $w = $this->scan['width'];
-        $h = $this->scan['height'];
+        $w = $this->scanInfo['width'];
+        $h = $this->scanInfo['height'];
         
         // Calculate the desired zoomlevel for the configured dpi.
         for ($zoomLevel = 0; $zoomLevel < $z - 1; $zoomLevel++)
@@ -171,9 +178,6 @@ class PDF
         
         $this->setPageSize($this->imageAttr['pageWidth'], $this->imageAttr['pageHeight']);
 
-        $this->addFont('DejaVuSans', 'dejavusans.php');
-        $this->font = 'DejaVuSans';
-        
         $this->drawText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet purus eu libero faucibus rhoncus. Sed nunc elit, interdum non tempor a, rutrum eu metus. Curabitur id tellus vitae leo sodales venenatis. Aenean pellentesque, lacus vel dictum imperdiet, quam nulla dictum turpis, id fringilla elit sem quis neque. Integer fringilla purus non erat aliquet a dapibus justo auctor. Donec magna sem, facilisis id porttitor id, vulputate a turpis. Morbi consequat aliquet dui eu tempor. Donec et tellus augue, at lacinia purus. Curabitur interdum mauris ac nulla tristique sollicitudin. Mauris eu purus ut nibh auctor aliquam sit amet a lacus.
 
 Integer dictum aliquet enim, sit amet viverra tellus luctus sit amet. Aliquam iaculis imperdiet auctor. Quisque vitae dui nec dolor tristique lacinia quis in lacus. Donec lacus risus, bibendum id accumsan sed, mattis ut neque. Nulla facilisi. Aliquam nulla sapien, feugiat ut dapibus semper, fringilla vitae neque. Fusce sit amet nulla sapien, ut vulputate risus. Nunc faucibus, odio eu blandit condimentum, tortor tortor consectetur ipsum, vel sagittis diam justo in ante. Sed vitae leo mauris, et ornare lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris venenatis urna id felis luctus vel luctus ligula vehicula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consequat lacus eget diam vestibulum adipiscing.
@@ -350,6 +354,10 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
      */
     private function fromUTF8($s)
     {
+        if (strlen($s) == 0)
+        {
+            return '()';
+        }
         $result = '';
         $s = mb_convert_encoding($s, 'UTF-16BE', 'UTF-8');
         foreach (str_split($s) as $char)
@@ -444,20 +452,30 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
         $this->y = $this->pageHeight - $this->textMargins - $this->fontSize;
     }
     
-    private function drawText($text)
+    private function drawText($text, $center = false)
     {
         if ($this->x === null || $this->y === null)
         {
             $this->resetPosition();
         }
+        if ($this->lastFontSize !== null)
+        {
+            $this->y += $this->lastFontSize - $this->fontSize;
+        }
+        $this->lastFontSize = $this->fontSize;
         $x = $this->x;
         $prevEnd = 0;
         $lastSpace = 0;
         $widthSinceSpace = 0;
         $length = strlen($text);
         $endOfString = false;
+        $endOfLine = false;
         for ($i = 0; $i < $length; $i++)
         {
+            if ($this->y <= $this->textMargins)
+            {
+                $this->writePage();
+            }
             $charWidth = isset($this->fontSizes[$this->font][ord($text[$i])]) ? $this->fontSizes[$this->font][ord($text[$i])] : 600;
             if ($text[$i] == ' ')
             {
@@ -468,7 +486,7 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
             {
                 if ($text[$lastSpace] != "\n")
                 {
-                    $x = $this->pageWidth;
+                    $endOfLine = true;
                 }
                 else
                 {
@@ -488,24 +506,35 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
                 $endOfString = true;
                 $lastSpace = $i + 1;
             }
-            if ($x >= $this->pageWidth - $this->textMargins || $endOfString)
+            if ($x >= $this->pageWidth - $this->textMargins || $endOfString || $endOfLine)
             {
-                error_log($x);
                 $this->draw('q');
-                $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
+                if ($center)
+                {
+                    $offset = ($this->pageWidth - 2 * $this->textMargins - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
+                    $this->draw('1 0 0 1 ' . ($this->x + $offset) . ' ' . $this->y . ' cm');
+                }
+                else
+                {
+                    $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
+                }
                 $this->draw('BT');
                 $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
-                $this->draw($this->fromUTF8(substr($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                if ($endOfString && $text[$i] == "\n")
+                {
+                    $this->draw($this->fromUTF8(substr($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                }
+                else
+                {
+                    $this->draw($this->fromUTF8(substr($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                }
                 $this->draw('ET');
                 $this->draw('Q');
                 $this->y -= $this->fontSize + $this->lineSpread;
                 $this->x = $this->textMargins;
                 $x = $this->x + $widthSinceSpace;
                 $prevEnd = $lastSpace + 1;
-            }
-            if ($this->y <= $this->textMargins)
-            {
-                $this->writePage();
+                $endOfLine = false;
             }
         }
     }
@@ -538,5 +567,11 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
         $this->pageWidth = $width;
         $this->pageHeight = $height;
     }    
+    
+    private function setFontSize($points)
+    {
+        $this->lastFontSize = $this->fontSize;
+        $this->fontSize = $points;
+    }
 }
 
