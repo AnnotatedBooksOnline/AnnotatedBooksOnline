@@ -326,6 +326,10 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
         $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
         $this->updateObject($this->resourcesId, "<< /XObject <<\n" . $this->resources . "\n>> /Font <<\n" . $this->fonts . "\n>> >>");
         
+        $infoId = $this->newObject("<<\n" .
+            "/Title " . $this->fromUTF8($this->book->getTitle()) . "\n" .
+            ">>");
+        
         $this->out('%PDF-1.7');
     
         $xref = "0000000000 65535 f \n";
@@ -343,7 +347,7 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
         $this->out('xref');
         $this->out('0 ' . ($this->numObjects + 1));
         $this->out($xref);
-        $this->out('trailer << /Size ' . ($this->numObjects + 1) . ' /Root ' . $this->catalogId . ' 0 R >>');
+        $this->out('trailer << /Size ' . ($this->numObjects + 1) . ' /Root ' . $this->catalogId . ' 0 R /Info ' . $infoId . ' 0 R >>');
         $this->out('startxref');
         $this->out($offset);
         $this->out('%%EOF');
