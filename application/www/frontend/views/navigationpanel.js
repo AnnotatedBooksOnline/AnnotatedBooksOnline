@@ -61,6 +61,9 @@ Ext.define('Ext.ux.ThumbnailView', {
     {
         this.getStore().getAt(oldPage).set('rect', '');
         this.getStore().getAt(newPage).set('rect', '<div id="test" style="position: absolute; border: 2px solid red;"></div>');
+        var top = this.getEl().dom.childNodes[newPage].offsetTop;
+        top -= this.getEl().dom.childNodes[0].offsetTop;
+        this.getEl().scrollTo('top', top, true);
     }//,
     
     /*
