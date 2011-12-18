@@ -188,7 +188,7 @@ class UserController extends Controller
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => true,
+            'active'      => false,
             'banned'      => false,
             'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
@@ -203,12 +203,12 @@ class UserController extends Controller
             $user->save();
             
             // Now create a pending user.
-//             $puser = PendingUser::fromUser($user);
-//             $puser->save();
-//             return $puser;
+            $puser = PendingUser::fromUser($user);
+            $puser->save();
+            return $puser;
         });
         
-        //Mailer::sendActivationMail($puser);
+        Mailer::sendActivationMail($puser);
         
         return array('records' => $values); 
     }
@@ -293,32 +293,26 @@ class UserController extends Controller
     }
     
     /**
-     * Activates a pending user by setting the active-flag and removing the PendingUser entry. 
+     * Sends an e-mail to the user containing a link with which he/she can enter a new password.
+     * 
+     * The only information a user needs to specify for this is an e-mail address.
      */
-    public function actionActivateUser($data)
+    public function actionPasswordForgotten($data)
     {
-        // Check whether logged on.
-        Authentication::assertLoggedOn();
+        // Retrieve the corresponding user.
+        $email = self::getString($data, 'email');
+        $user = User::fromEmailAddress($email);
+        if($user === null)
+        {
+            // TODO: exception
+            return;
+        }
         
-        // TODO: Do a security check!
+        // Specify a password restoration token for this user.
+        $user->setPasswordRestoreToken(Authentication::generateUniqueToken());
+        $user->save();
         
-        // Fetch user id.
-        $userId = self::getInteger($data, 'id');
-        
-        // TODO: Move code below to user model.
-        
-        // Start a transaction.
-        Database::getInstance()->startTransaction();
-        
-        // Set the active flag for this user.
-        $query = Query::update('Users', array('active' => true))->where('userId = :userId');
-        $query->execute(array('userId' => $userId));
-        
-        // Erase this user's column from the pending users table.
-        $query = Query::delete('PendingUsers')->where('userId = :userId');
-        $query->execute(array('userId' => $userId));
-        
-        // Commit the transaction.
-        Database::getInstance()->commit();
+        // Send an e-mail informing the user of the token.
+        Mailer::sendPasswordRestorationMail($user);
     }
 }

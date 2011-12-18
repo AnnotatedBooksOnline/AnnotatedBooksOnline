@@ -152,6 +152,17 @@ class Authentication extends Singleton
     }
     
     /**
+     * Generates a unique token that can be mailed to users and be part of an URL.
+     * 
+     * @return string A string representing a unique 32-digit hexadecimal number.
+     */
+    public static function generateUniqueToken()
+    {
+        // This value needs to be unique.
+        return md5(uniqid(true));
+    }
+    
+    /**
      * Asserts that the user is logged on.
      *
      * Throws an NotLoggedOnError in all other cases.
