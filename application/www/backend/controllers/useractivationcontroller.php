@@ -17,11 +17,13 @@ class UserActivationController extends Controller
      */
     public function actionActivateUser($data)
     {
+        Log::info('User activation action.');
+        
         // Fetch activation token.
         $token = self::getInteger($data, 'token');
         
         // Start a transaction.
-        Database::getInstance()->doTransaction(
+        $success = Database::getInstance()->doTransaction(
         function() use ($token)
         {
             // Determine to which user the  token belongs.
@@ -31,6 +33,7 @@ class UserActivationController extends Controller
             if($result->getAmount() != 1)
             {
                 // TODO: Exception or more informative return value?
+                Log::debug('Activation failed.');
                 return false;
             }
             
@@ -45,8 +48,11 @@ class UserActivationController extends Controller
             // Erase this user's column from the pending users table.
             $query = Query::delete('PendingUsers')->where('pendingUserId = :pendingUserId');
             $query->execute(array('pendingUserId' => $puser));
+            
+            Log::debug('Activation success.');
+            return true;
         });
         
-        return true;
+        return $success;
     }
 }

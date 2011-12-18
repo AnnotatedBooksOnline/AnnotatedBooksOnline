@@ -8,23 +8,25 @@ Ext.define('Ext.ux.Activation', {
     
     initComponent: function() 
     {    	
+    	// TODO ......
     	// Send request with activation token from URL.
     	var token = this.tabInfo.data[0];
     	var info = 'bla';
+    	var _this = this;
     	RequestManager.getInstance().request(
             'UserActivation',
             'activateUser',
             {token: token},
-            this,
+            _this,
             function(success)
             {
                 if (success)
                 {
-                    info = 'Yay!';
+                    alert('Yay!');
                 }
                 else
                 {
-                    info = 'Nay!';
+                    alert('Nay!');
                 }
             },
             function(data)
