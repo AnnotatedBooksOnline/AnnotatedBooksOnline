@@ -88,7 +88,6 @@ Ext.define('Ext.ux.NavigationPanel', {
     {
         var defConfig = {
             title: 'Navigation',
-            //layout: 'accordion',
             items: [{
                     xtype: 'thumbnailview',
                     book: this.book
