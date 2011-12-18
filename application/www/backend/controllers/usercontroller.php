@@ -293,27 +293,26 @@ class UserController extends Controller
     }
     
     /**
-     * Activates a pending user by setting the active-flag and removing the PendingUser entry.
+     * Sends an e-mail to the user containing a link with which he/she can enter a new password.
+     * 
+     * The only information a user needs to specify for this is an e-mail address.
      */
-//     public function actionActivateUser($data)
-//     {        
+    public function actionPasswordForgotten($data)
+    {
+        // Retrieve the corresponding user.
+        $email = self::getString($data, 'email');
+        $user = User::fromEmailAddress($email);
+        if($user === null)
+        {
+            // TODO: exception
+            return;
+        }
         
-//         // Fetch user id.
-//         $userId = self::getInteger($data, 'id');
+        // Specify a password restoration token for this user.
+        $user->setPasswordRestoreToken(Authentication::generateUniqueToken());
+        $user->save();
         
-//         // TODO: Move code below to user model.
-        
-//         // Start a transaction.
-//         Database::getInstance()->doTransaction(
-//         function() use ($userId)
-//         {
-//             // Set the active flag for this user.
-//             $query = Query::update('Users', array('active' => true))->where('userId = :userId');
-//             $query->execute(array('userId' => $userId));
-            
-//             // Erase this user's column from the pending users table.
-//             $query = Query::delete('PendingUsers')->where('userId = :userId');
-//             $query->execute(array('userId' => $userId));
-//         });
-//     }
+        // Send an e-mail informing the user of the token.
+        Mailer::sendPasswordRestorationMail($user);
+    }
 }

@@ -27,8 +27,8 @@ class Mailer
      */
     public static function sendMail($recipient, $subject, $message)
     {
-        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name') 
-                    . ' <'     . Configuration::getInstance()->getString('from-address') 
+        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name', 'Collaboratory for the History of Reading') 
+                    . ' <'     . Configuration::getInstance()->getString('from-address', 'no-reply@sp.urandom.nl') 
                     . '>\r\n';
         
         $success = mail($recipient, $subject, $message, $fromheader);
@@ -59,7 +59,7 @@ class Mailer
         $recipient = $user->getEmail();
         $basemessage = Setting::getSetting('activation-mail-message');
         $code = $puser->getConfirmationCode();
-        $link = Configuration::getInstance()->getString('activation-url') . $code;
+        $link = Configuration::getInstance()->getString('activation-url', 'http://localhost/sp/#activation-') . $code;
         
         // For the sake of security, confirm the validity of the confirmation code, which should be
         // a hexadecimal numer of 32 digits.
@@ -78,4 +78,11 @@ class Mailer
         Log::info('Sending activation code to %s.\nContents: %s.', $user->getEmail(), $message);
         self::sendMail($recipient, $subject, $message);
     }
+    
+    
+    public static function sendPasswordRestorationMail($user)
+    {
+        // TODO
+    }
+    
 }

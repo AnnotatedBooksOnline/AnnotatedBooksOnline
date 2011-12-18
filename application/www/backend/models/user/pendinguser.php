@@ -38,15 +38,6 @@ class PendingUser extends Entity
     }
     
     /**
-     * Generates a new unique confirmation code for the specified user.
-     */
-    private static function generateConfirmationCode($user)
-    {
-        // This value needs to be unique.
-        return md5(uniqid(true));
-    }
-    
-    /**
      * Constructs a new PendingUser based on an existing User. This method will also generate a 
      * confirmation code and set a expiration date. 
      * 
@@ -66,7 +57,7 @@ class PendingUser extends Entity
         
         $values = array(
             'userId'           => $user->getUserId(),
-            'confirmationCode' => self::generateConfirmationCode($user),
+            'confirmationCode' => Authentication::generateUniqueToken(),
             'expirationDate'   => $expirationDate,
         );
         
