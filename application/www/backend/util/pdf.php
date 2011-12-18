@@ -198,6 +198,71 @@ Aenean ut augue ac magna aliquet facilisis ac vitae tellus. Nulla ac magna sit a
 
 Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis interdum urna est ut diam. Suspendisse vitae turpis nec eros egestas auctor et non leo. Sed ullamcorper, nunc at interdum gravida, arcu odio aliquet neque, ac varius nunc dolor vitae velit. Vestibulum eu ligula velit. Nunc consectetur gravida dolor nec iaculis. Curabitur diam arcu, mattis eget lobortis quis, scelerisque vel nibh. Praesent facilisis fermentum mauris, lacinia vehicula purus scelerisque sed. Nulla tristique dolor ut nibh faucibus fringilla. Donec eget felis ut mi ornare hendrerit. Vivamus libero ligula, adipiscing et mollis et, dapibus eu augue. ');
 
+        $this->writePage();
+
+        $this->setFontSize(18);
+        $this->drawText("Testing UTF-8 text rendering\n", true);
+        $this->setFontSize(12);
+        $this->drawText('From Laȝamon\'s Brut (The Chronicles of England, Middle English, West Midlands):
+
+    An preost wes on leoden, Laȝamon was ihoten
+    He wes Leovenaðes sone -- liðe him be Drihten.
+    He wonede at Ernleȝe at æðelen are chirechen,
+    Uppen Sevarne staþe, sel þar him þuhte,
+    Onfest Radestone, þer he bock radde. 
+
+From the Tagelied of Wolfram von Eschenbach (Middle High German):
+
+    Sîne klâwen durh die wolken sint geslagen,
+    er stîget ûf mit grôzer kraft,
+    ich sih in grâwen tägelîch als er wil tagen,
+    den tac, der im geselleschaft
+    erwenden wil, dem werden man,
+    den ich mit sorgen în verliez.
+    ich bringe in hinnen, ob ich kan.
+    sîn vil manegiu tugent michz leisten hiez.
+
+Some lines of Odysseus Elytis (Greek):
+
+    Monotonic:
+
+    Τη γλώσσα μου έδωσαν ελληνική
+    το σπίτι φτωχικό στις αμμουδιές του Ομήρου.
+    Μονάχη έγνοια η γλώσσα μου στις αμμουδιές του Ομήρου.
+
+    από το Άξιον Εστί
+    του Οδυσσέα Ελύτη
+    
+    Polytonic:
+
+    Τὴ γλῶσσα μοῦ ἔδωσαν ἑλληνικὴ 
+    τὸ σπίτι φτωχικὸ στὶς ἀμμουδιὲς τοῦ Ὁμήρου.
+    Μονάχη ἔγνοια ἡ γλῶσσα μου στὶς ἀμμουδιὲς τοῦ Ὁμήρου.
+
+    ἀπὸ τὸ Ἄξιον ἐστί
+    τοῦ Ὀδυσσέα Ἐλύτη
+
+The first stanza of Pushkin\'s Bronze Horseman (Russian):
+
+    На берегу пустынных волн
+    Стоял он, дум великих полн,
+    И вдаль глядел. Пред ним широко
+    Река неслася; бедный чёлн
+    По ней стремился одиноко.
+    По мшистым, топким берегам
+    Чернели избы здесь и там,
+    Приют убогого чухонца;
+    И лес, неведомый лучам
+    В тумане спрятанного солнца,
+    Кругом шумел.
+
+Šota Rustaveli\'s Veṗxis Ṭq̇aosani, ̣︡Th, The Knight in the Tiger\'s Skin (Georgian):
+
+    ვეპხის ტყაოსანი შოთა რუსთაველი
+
+    ღმერთსი შემვედრე, ნუთუ კვლა დამხსნას სოფლისა შრომასა, ცეცხლს, წყალსა და მიწასა, ჰაერთა თანა მრომასა; მომცნეს ფრთენი და აღვფრინდე, მივჰხვდე მას ჩემსა ნდომასა, დღისით და ღამით ვჰხედვიდე მზისა ელვათა კრთომაასა. 
+');
+
         // Produce the final PDF file.
         $this->makePDF();
     }
@@ -372,6 +437,30 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
     }
     
     /**
+     * Creates a PDF-formatted UTF-16BE string from the given UTF-16BE array.
+     */
+    private function fromUTF16BEArray($s)
+    {
+        if (count($s) == 0)
+        {
+            return '()';
+        }
+        $result = '';
+        foreach ($s as $char)
+        {
+            $result .= sprintf('%02X%02X', ord($char[0]), ord($char[1]));
+        }
+        return '<FEFF' . $result . '>';
+    }
+    
+    private function toUTF16BEArray($text)
+    {
+        $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+        $text = array_chunk(str_split($text), 2);
+        return $text;
+    }
+    
+    /**
      * Adds a font for drawing text.
      */
     private function addFont($fontName, $fontFile)
@@ -467,78 +556,78 @@ Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis inter
             $this->y += $this->lastFontSize - $this->fontSize;
         }
         $this->lastFontSize = $this->fontSize;
-        $x = $this->x;
-        $prevEnd = 0;
-        $lastSpace = 0;
-        $widthSinceSpace = 0;
-        $length = strlen($text);
-        $endOfString = false;
-        $endOfLine = false;
-        for ($i = 0; $i < $length; $i++)
+        
+        $lines = mb_split("\n", $text);
+        foreach($lines as $text)
         {
-            if ($this->y <= $this->textMargins)
+            if (strlen($text) == 0)
             {
-                $this->writePage();
-            }
-            $charWidth = isset($this->fontSizes[$this->font][ord($text[$i])]) ? $this->fontSizes[$this->font][ord($text[$i])] : 600;
-            if ($text[$i] == ' ')
-            {
-                $lastSpace = $i;
-                $widthSinceSpace = 0;
-            }
-            else if ($text[$i] == "\n")
-            {
-                if ($text[$lastSpace] != "\n")
-                {
-                    $endOfLine = true;
-                }
-                else
-                {
-                    $this->y -= $this->fontSize + $this->lineSpread;
-                    $prevEnd++;
-                }
-                $lastSpace = $i;
-                $widthSinceSpace = 0;
-            }
-            else
-            {
-                $widthSinceSpace += $charWidth * $this->fontSize / 1000;
-            }
-            $x += $charWidth * $this->fontSize / 1000;
-            if ($i == $length - 1)
-            {
-                $endOfString = true;
-                $lastSpace = $i + 1;
-            }
-            if ($x >= $this->pageWidth - $this->textMargins || $endOfString || $endOfLine)
-            {
-                $this->draw('q');
-                if ($center)
-                {
-                    $offset = ($this->pageWidth - 2 * $this->textMargins - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
-                    $this->draw('1 0 0 1 ' . ($this->x + $offset) . ' ' . $this->y . ' cm');
-                }
-                else
-                {
-                    $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
-                }
-                $this->draw('BT');
-                $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
-                if ($endOfString && $text[$i] == "\n")
-                {
-                    $this->draw($this->fromUTF8(substr($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                }
-                else
-                {
-                    $this->draw($this->fromUTF8(substr($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                }
-                $this->draw('ET');
-                $this->draw('Q');
                 $this->y -= $this->fontSize + $this->lineSpread;
                 $this->x = $this->textMargins;
-                $x = $this->x + $widthSinceSpace;
-                $prevEnd = $lastSpace + 1;
-                $endOfLine = false;
+                continue;
+            }
+            
+            $text = $this->toUTF16BEArray($text);
+            $length = count($text);
+        
+            $x = $this->x;
+            $prevEnd = 0;
+            $lastSpace = 0;
+            $widthSinceSpace = 0;
+            $endOfString = false;
+            $endOfLine = false;
+            for ($i = 0; $i < $length; $i++)
+            {
+                if ($this->y <= $this->textMargins)
+                {
+                    $this->writePage();
+                }
+                $charOrd = ord($text[$i][0]) * 256 + ord($text[$i][1]);
+                $charWidth = isset($this->fontSizes[$this->font][$charOrd]) ? $this->fontSizes[$this->font][$charOrd] : 600;
+                if ($charOrd == ord(' '))
+                {
+                    $lastSpace = $i;
+                    $widthSinceSpace = 0;
+                }
+                else
+                {
+                    $widthSinceSpace += $charWidth * $this->fontSize / 1000;
+                }
+                $x += $charWidth * $this->fontSize / 1000;
+                if ($i == $length - 1)
+                {
+                    $endOfString = true;
+                    $lastSpace = $i + 1;
+                }
+                if ($x >= $this->pageWidth - $this->textMargins || $endOfString)
+                {
+                    $this->draw('q');
+                    if ($center)
+                    {
+                        $offset = ($this->pageWidth - 2 * $this->textMargins - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
+                        $this->draw('1 0 0 1 ' . ($this->x + $offset) . ' ' . $this->y . ' cm');
+                    }
+                    else
+                    {
+                        $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
+                    }
+                    $this->draw('BT');
+                    $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
+                    if ($endOfString && $text[$i][1] == "\n" && $text[$i][0] == "\0")
+                    {
+                        $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                    }
+                    else
+                    {
+                        $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                    }
+                    $this->draw('ET');
+                    $this->draw('Q');
+                    $this->y -= $this->fontSize + $this->lineSpread;
+                    $this->x = $this->textMargins;
+                    $x = $this->x + $widthSinceSpace;
+                    $prevEnd = $lastSpace + 1;
+                }
             }
         }
     }
