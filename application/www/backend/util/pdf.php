@@ -4,23 +4,41 @@
 require_once 'framework/util/configuration.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
+//require_once 'models/binding/binding.php';
 
 class PDF
 {
     private $path;
     private $dpi = 150;
+    private $textMargins = 72;
+    private $fontSize = 12;
+    private $lineSpread = 2;
+
+    private $pageWidth;
+    private $pageHeight;
     
     private $objects = array();
     private $numObjects = 0;
     private $resources = '';
     private $draws = '';
     private $output = '';
+    private $fonts = '';
+    private $font;
+    private $fontSizes = array();
+    private $x = null;
+    private $y = null;
+    private $pages = array();
+    private $pagesId = null;
+    private $resourcesId = null;
+    private $catalogId = null;
+    private $lastFontSize = null;
     
-    private $scan;
+    private $scanInfo;
     private $imageAttr = array();
     
-    private $title;
-    private $pageNr;
+    private $scan;
+    private $book;
+    private $binding;
 
     /**
      * Creates a new PDF based on the given scan. When possible, the resolution
@@ -35,15 +53,15 @@ class PDF
     {
         $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
         
-        $this->scan = array(
+        $this->scanInfo = array(
             'width' => $scan->getWidth(),
             'height' => $scan->getHeight(),
             'zoomLevel' => $scan->getZoomLevel()
         );
         
-        $this->pageNr = $scan->getPage();
-        $book = new Book($scan->getBookId());
-        $this->title = $book->getTitle();
+        $this->scan = $scan;
+        $this->book = new Book($scan->getBookId());
+        //$this->binding = new Binding($book->getBindingId());
         
         if ($dimensions !== null &&
             is_array($dimensions) &&
@@ -60,6 +78,7 @@ class PDF
             $this->imageAttr['pageHeight'] = 842;
         }
         
+        $this->setPageSize($this->imageAttr['pageWidth'], $this->imageAttr['pageHeight']);
         $this->createPDF();
     }
 
@@ -70,8 +89,8 @@ class PDF
     public function outputPDF()
     {
         $filename = preg_replace('/[^a-zA-Z0-9_]/', '', 
-                    preg_replace('/ /', '_', $this->title))
-                    . '-' . $this->pageNr;
+                    preg_replace('/ /', '_', $this->book->getTitle()))
+                    . '-' . $this->scan->getPage();
         header('Content-type: application/pdf');
         header('Content-length: ' . strlen($this->output));
         header('Content-disposition: attachment; filename=' . $filename . '.pdf');
@@ -85,6 +104,102 @@ class PDF
     public function getPDF()
     {
         return $this->output;
+    }
+    
+        /**
+     * Creates the PDF file based on the scan.
+     */
+    private function createPDF()
+    {
+        $this->addFont('DejaVuSans', 'dejavusans.php');
+        $this->font = 'DejaVuSans';
+        
+        $this->setFontSize(24);
+        $this->drawText($this->book->getTitle() . "\n\n", true);
+        $this->setFontSize(12);
+        $this->drawText("Page number: " . $this->scan->getPage());
+        $this->writePage();
+        
+        $z = $this->scanInfo['zoomLevel'];
+        if ($z == 1)
+        {
+            $size = getimagesize($this->imageName(0, 0, 0));
+            $this->imageAttr['tileSize'] = max($size[0], $size[1]);
+        }
+        else
+        {
+            $size = getimagesize($this->imageName(0, 0, 1));
+            $this->imageAttr['tileSize'] = $size[0];
+        }
+        
+        $ts = $this->imageAttr['tileSize'];
+        $pw = $this->imageAttr['pageWidth'];
+        $ph = $this->imageAttr['pageHeight'];
+        $w = $this->scanInfo['width'];
+        $h = $this->scanInfo['height'];
+        
+        // Calculate the desired zoomlevel for the configured dpi.
+        for ($zoomLevel = 0; $zoomLevel < $z - 1; $zoomLevel++)
+        {
+            if (min($w, $h) * pow(2, $zoomLevel) * 72 / $this->dpi >= min($pw, $ph))
+            {
+                break;
+            }
+        }
+        $cols = ceil($w * pow(2, $zoomLevel) / $ts);
+        $rows = ceil($h * pow(2, $zoomLevel) / $ts);
+        $this->imageAttr['zoomLevel'] = $zoomLevel;
+        $this->imageAttr['cols'] = $cols;
+        $this->imageAttr['rows'] = $rows;
+
+        // Calculate the scale of the images.
+        // Compensate for the possibility of the edge tiles being smaller.
+        $cornerSize = getimagesize($this->imageName($cols - 1, $rows - 1), $zoomLevel);
+        $compx = 1 - $cornerSize[0] / $ts;
+        $compy = 1 - $cornerSize[1] / $ts;
+        $scale = min($pw / ($cols - $compx), $ph / ($rows - $compy));
+        $this->imageAttr['compX'] = $compx;
+        $this->imageAttr['compY'] = $compy;
+        $this->imageAttr['scale'] = $scale;
+
+        // Add the tiles.
+        for ($y = 0; $y < $rows; $y++)
+        for ($x = 0; $x < $cols; $x++)
+        {
+            $tileWidth = $x == $cols - 1 ? $cornerSize[0] : $ts;
+            $tileHeight = $y == $rows - 1 ? $cornerSize[1] : $ts;
+            
+            $this->newTile($x, $y, $tileWidth, $tileHeight);
+        }
+
+        // Finalize the page.
+        $this->setPageSize($scale * ($cols - $compx), $scale * ($rows - $compy));
+        $this->writePage();
+        
+        $this->setPageSize($this->imageAttr['pageWidth'], $this->imageAttr['pageHeight']);
+
+        $this->drawText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet purus eu libero faucibus rhoncus. Sed nunc elit, interdum non tempor a, rutrum eu metus. Curabitur id tellus vitae leo sodales venenatis. Aenean pellentesque, lacus vel dictum imperdiet, quam nulla dictum turpis, id fringilla elit sem quis neque. Integer fringilla purus non erat aliquet a dapibus justo auctor. Donec magna sem, facilisis id porttitor id, vulputate a turpis. Morbi consequat aliquet dui eu tempor. Donec et tellus augue, at lacinia purus. Curabitur interdum mauris ac nulla tristique sollicitudin. Mauris eu purus ut nibh auctor aliquam sit amet a lacus.
+
+Integer dictum aliquet enim, sit amet viverra tellus luctus sit amet. Aliquam iaculis imperdiet auctor. Quisque vitae dui nec dolor tristique lacinia quis in lacus. Donec lacus risus, bibendum id accumsan sed, mattis ut neque. Nulla facilisi. Aliquam nulla sapien, feugiat ut dapibus semper, fringilla vitae neque. Fusce sit amet nulla sapien, ut vulputate risus. Nunc faucibus, odio eu blandit condimentum, tortor tortor consectetur ipsum, vel sagittis diam justo in ante. Sed vitae leo mauris, et ornare lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris venenatis urna id felis luctus vel luctus ligula vehicula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consequat lacus eget diam vestibulum adipiscing.
+
+Curabitur rutrum molestie erat, sit amet lacinia est condimentum eget. Integer euismod malesuada urna eu vestibulum. Donec pellentesque mollis varius. Curabitur sagittis tristique condimentum. Morbi nec sem augue, egestas vestibulum urna. Aenean purus neque, imperdiet non convallis ut, rhoncus vel urna. Mauris auctor tincidunt iaculis. In quis arcu lorem. Curabitur nec tellus velit. Quisque dapibus, quam et dictum sodales, eros neque rhoncus nibh, id lobortis nisl turpis eget arcu.
+
+Phasellus bibendum malesuada placerat. Suspendisse ac lectus in quam molestie volutpat vitae ac eros. Ut vel sem turpis. In porttitor purus sed sem congue fermentum. Vestibulum accumsan fringilla aliquet. Nullam erat sapien, malesuada eu mattis a, feugiat sit amet dolor. Donec viverra ligula at libero aliquet laoreet. Maecenas accumsan dignissim faucibus.
+
+Quisque quis neque sit amet mauris sollicitudin sagittis. Aliquam ut orci nisl, vel consectetur ligula. Nunc faucibus nulla ac nulla fringilla sed aliquet sapien vestibulum. Sed eu vehicula sapien. In varius, dui non tristique aliquam, lorem nisl bibendum quam, non euismod metus nisi quis sem. Vivamus urna lorem, euismod ornare lacinia nec, iaculis a neque. Ut vulputate urna at est dictum ac rhoncus felis varius. Pellentesque nec metus vitae lacus sodales lacinia eget quis massa.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod auctor suscipit. Aenean ut est sed metus eleifend sodales non vel sapien. Aliquam posuere ante sit amet tellus tempus bibendum malesuada ipsum dapibus. Cras eros justo, malesuada a pretium sed, consectetur vestibulum mauris. Aliquam erat volutpat. Praesent iaculis lectus vitae ante ultrices dictum euismod tortor fringilla. Etiam ac orci et libero lobortis porta. Integer tempus, tellus vel ornare elementum, risus magna dapibus turpis, eu dignissim purus odio eu risus. Etiam pulvinar sem sit amet ligula luctus sit amet commodo dui venenatis. Vestibulum molestie sodales consequat. Nullam velit turpis, dignissim ullamcorper euismod vitae, aliquam nec metus. Donec nec magna in mi gravida tempor. Aliquam erat volutpat. Fusce fermentum volutpat ante sed dictum. Ut vel venenatis enim.
+
+Praesent sollicitudin, dui nec blandit rhoncus, justo metus aliquam nulla, in euismod nibh mauris quis eros. In sagittis risus eu lorem vehicula nec porta sapien volutpat. Praesent congue blandit orci at mattis. Praesent posuere velit quis lacus tincidunt sed rhoncus leo ullamcorper. Aenean aliquet ligula quis eros vestibulum facilisis. Curabitur auctor dapibus elementum. Praesent pharetra facilisis nisi, et rutrum enim bibendum eget. Nulla nec elit nisl. Ut at mi ligula, eu viverra eros. Vivamus dapibus tempor mi, eget gravida nisl iaculis eget. Maecenas eget metus magna. Nullam sit amet nunc ac nunc scelerisque sollicitudin.
+
+Suspendisse potenti. Pellentesque nisi leo, euismod interdum feugiat nec, varius egestas velit. Curabitur a eros id est euismod fermentum. Nullam id odio nec dui auctor lobortis quis id nibh. Cras pretium aliquam est, et tristique erat condimentum non. Fusce ultrices placerat mi a convallis. Ut sollicitudin tellus in eros porttitor quis sagittis ante consequat. Mauris lacinia nunc convallis neque vehicula sit amet feugiat tellus hendrerit. Praesent feugiat ipsum ut diam suscipit ac viverra arcu tincidunt.
+
+Aenean ut augue ac magna aliquet facilisis ac vitae tellus. Nulla ac magna sit amet leo eleifend viverra et a nisi. Curabitur semper condimentum eleifend. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed elementum nisl ut turpis dapibus id volutpat urna consequat. Morbi ultricies molestie condimentum. Nulla facilisi. Aliquam quam ante, sollicitudin vel faucibus nec, placerat et nulla. Quisque pellentesque justo sed urna condimentum condimentum. Phasellus gravida, enim sit amet blandit dictum, nisi ligula imperdiet dolor, quis tempus massa magna eget justo. Fusce tortor metus, suscipit sit amet sodales fermentum, iaculis vel enim. Nulla facilisi. Praesent semper nisl eget dolor aliquet blandit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec ut libero metus.
+
+Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis interdum urna est ut diam. Suspendisse vitae turpis nec eros egestas auctor et non leo. Sed ullamcorper, nunc at interdum gravida, arcu odio aliquet neque, ac varius nunc dolor vitae velit. Vestibulum eu ligula velit. Nunc consectetur gravida dolor nec iaculis. Curabitur diam arcu, mattis eget lobortis quis, scelerisque vel nibh. Praesent facilisis fermentum mauris, lacinia vehicula purus scelerisque sed. Nulla tristique dolor ut nibh faucibus fringilla. Donec eget felis ut mi ornare hendrerit. Vivamus libero ligula, adipiscing et mollis et, dapibus eu augue. ');
+
+        // Produce the final PDF file.
+        $this->makePDF();
     }
     
     /**
@@ -106,6 +221,18 @@ class PDF
                               . $contents
                               . "\nendobj\n";
         return $this->numObjects;
+    }
+    
+    private function updateObject($id, $contents)
+    {
+        if ($id < $this->numObjects)
+        {
+            $this->objects[$id] = $id
+                                  . " 0 obj\n"
+                                  . $contents
+                                  . "\nendobj\n";
+            return $id;
+        }
     }
     
     /**
@@ -186,10 +313,19 @@ class PDF
     }
     
     /**
-     * Creates the final PDF based on the objects generated by createPDF.
+     * Creates the final PDF based on the previously generated pages / objects.
      */
-    private function makePDF($catalogId)
+    private function makePDF()
     {
+        if (strlen($this->draws) > 0)
+        {
+            $this->writePage();
+        }
+        
+        $pages = implode(' 0 R ', array_values($this->pages)) . ' 0 R';
+        $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
+        $this->updateObject($this->resourcesId, "<< /XObject <<\n" . $this->resources . "\n>> /Font <<\n" . $this->fonts . "\n>> >>");
+        
         $this->out('%PDF-1.7');
     
         $xref = "0000000000 65535 f \n";
@@ -207,78 +343,235 @@ class PDF
         $this->out('xref');
         $this->out('0 ' . ($this->numObjects + 1));
         $this->out($xref);
-        $this->out('trailer << /Size ' . ($this->numObjects + 1) . ' /Root ' . $catalogId . ' 0 R >>');
+        $this->out('trailer << /Size ' . ($this->numObjects + 1) . ' /Root ' . $this->catalogId . ' 0 R >>');
         $this->out('startxref');
         $this->out($offset);
         $this->out('%%EOF');
     }
-
+    
     /**
-     * Creates the PDF file based on the scan.
+     * Creates a PDF-formatted UTF-16BE string from the given UTF-8 string.
      */
-    private function createPDF()
+    private function fromUTF8($s)
     {
-        $z = $this->scan['zoomLevel'];
-        if ($z == 1)
+        if (strlen($s) == 0)
         {
-            $size = getimagesize($this->imageName(0, 0, 0));
-            $this->imageAttr['tileSize'] = max($size[0], $size[1]);
+            return '()';
         }
-        else
+        $result = '';
+        $s = mb_convert_encoding($s, 'UTF-16BE', 'UTF-8');
+        foreach (str_split($s) as $char)
         {
-            $size = getimagesize($this->imageName(0, 0, 1));
-            $this->imageAttr['tileSize'] = $size[0];
+            $result .= sprintf('%02X', ord($char));
+        }
+        return '<FEFF' . $result . '>';
+    }
+    
+    /**
+     * Adds a font for drawing text.
+     */
+    private function addFont($fontName, $fontFile)
+    {
+        $fontPath = 'util/fonts/';
+        include($fontPath . $fontFile);
+        
+        if ($type != 'TrueTypeUnicode')
+        {
+            error_log('Font format for ' . $fontName . ' not supported.');
+            die();
         }
         
-        $ts = $this->imageAttr['tileSize'];
-        $pw = $this->imageAttr['pageWidth'];
-        $ph = $this->imageAttr['pageHeight'];
-        $w = $this->scan['width'];
-        $h = $this->scan['height'];
-        
-        // Calculate the desired zoomlevel for the configured dpi.
-        for ($zoomLevel = 0; $zoomLevel < $z - 1; $zoomLevel++)
+        $this->fontSizes[$name] = $cw;
+        ksort($cw);
+        $prevchar = -1;
+        $w = '[ 0 [';
+        foreach ($cw as $char => $width)
         {
-            if (min($w, $h) * pow(2, $zoomLevel) * 72 / $this->dpi >= min($pw, $ph))
+            for ($c = $prevchar + 1; $c < $char; $c++)
             {
-                break;
+                $w .= ' ' . $dw;
+            }
+            $w .= ' ' . $width;
+            $prevchar = $char;
+        }
+        $w .= ' ] ]';
+        $fontFileId = $this->newStream('/Filter /FlateDecode /Length1 ' . $originalsize, file_get_contents($fontPath . $file));
+        $ctgId = $this->newStream('/Filter /FlateDecode', file_get_contents($fontPath . $ctg));
+        $fontDescId = $this->newObject("<<\n" .
+            "/Type /FontDescriptor\n" .
+            "/FontName /" . $name . "\n" .
+            "/Flags " . $desc['Flags'] . "\n" .
+            "/FontBBox " . $desc['FontBBox'] . "\n" .
+            "/ItalicAngle " . $desc['ItalicAngle'] . "\n" .
+            "/Ascent " . $desc['Ascent'] . "\n" .
+            "/Descent " . $desc['Descent'] . "\n" .
+            "/Leading " . $desc['Leading'] . "\n" .
+            "/CapHeight " . $desc['CapHeight'] . "\n" .
+            "/XHeight " . $desc['XHeight'] . "\n" .
+            "/StemV " . $desc['StemV'] . "\n" .
+            "/StemH " . $desc['StemH'] . "\n" .
+            "/AvgWidth " . $desc['AvgWidth'] . "\n" .
+            "/MaxWidth " . $desc['MaxWidth'] . "\n" .
+            "/MissingWidth " . $desc['MissingWidth'] . "\n" .
+            "/FontFile2 " . $fontFileId. " 0 R\n" .
+            ">>");
+        $descendantFontsId = $this->newObject("<<\n" .
+            "/Type /Font\n" .
+            "/Subtype /CIDFontType2\n" .
+            "/BaseFont /" . $name . "\n" .
+            "/CIDSystemInfo\n<<\n" .
+            "/Registry (Adobe)\n" .
+            "/Ordering (Identity)\n" .
+            "/Supplement 0\n" .
+            ">>\n" .
+            "/FontDescriptor " . $fontDescId . " 0 R\n" .
+            "/DW " . $dw . "\n" .
+            "/W " . $w . "\n" .
+            "/CIDToGIDMap " . $ctgId . " 0 R\n" .
+            ">>");
+        $fontId = $this->newObject("<<\n" .
+            "/Type /Font\n" .
+            "/Subtype /Type0\n" .
+            "/BaseFont /" . $name . "\n" .
+            "/Name /" . $fontName . "\n" .
+            "/Encoding /Identity-H\n" .
+            "/DescendantFonts [" . $descendantFontsId . " 0 R]\n" .
+            ">>");
+            
+        $this->fonts .= "/" . $fontName . " " . $fontId . " 0 R\n";
+            
+        return $cw;
+    }
+    
+    /**
+     * Sets the text position pointer to the upperleft corner.
+     */
+    private function resetPosition()
+    {
+        $this->x = $this->textMargins;
+        $this->y = $this->pageHeight - $this->textMargins - $this->fontSize;
+    }
+    
+    private function drawText($text, $center = false)
+    {
+        if ($this->x === null || $this->y === null)
+        {
+            $this->resetPosition();
+        }
+        if ($this->lastFontSize !== null)
+        {
+            $this->y += $this->lastFontSize - $this->fontSize;
+        }
+        $this->lastFontSize = $this->fontSize;
+        $x = $this->x;
+        $prevEnd = 0;
+        $lastSpace = 0;
+        $widthSinceSpace = 0;
+        $length = strlen($text);
+        $endOfString = false;
+        $endOfLine = false;
+        for ($i = 0; $i < $length; $i++)
+        {
+            if ($this->y <= $this->textMargins)
+            {
+                $this->writePage();
+            }
+            $charWidth = isset($this->fontSizes[$this->font][ord($text[$i])]) ? $this->fontSizes[$this->font][ord($text[$i])] : 600;
+            if ($text[$i] == ' ')
+            {
+                $lastSpace = $i;
+                $widthSinceSpace = 0;
+            }
+            else if ($text[$i] == "\n")
+            {
+                if ($text[$lastSpace] != "\n")
+                {
+                    $endOfLine = true;
+                }
+                else
+                {
+                    $this->y -= $this->fontSize + $this->lineSpread;
+                    $prevEnd++;
+                }
+                $lastSpace = $i;
+                $widthSinceSpace = 0;
+            }
+            else
+            {
+                $widthSinceSpace += $charWidth * $this->fontSize / 1000;
+            }
+            $x += $charWidth * $this->fontSize / 1000;
+            if ($i == $length - 1)
+            {
+                $endOfString = true;
+                $lastSpace = $i + 1;
+            }
+            if ($x >= $this->pageWidth - $this->textMargins || $endOfString || $endOfLine)
+            {
+                $this->draw('q');
+                if ($center)
+                {
+                    $offset = ($this->pageWidth - 2 * $this->textMargins - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
+                    $this->draw('1 0 0 1 ' . ($this->x + $offset) . ' ' . $this->y . ' cm');
+                }
+                else
+                {
+                    $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
+                }
+                $this->draw('BT');
+                $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
+                if ($endOfString && $text[$i] == "\n")
+                {
+                    $this->draw($this->fromUTF8(substr($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                }
+                else
+                {
+                    $this->draw($this->fromUTF8(substr($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                }
+                $this->draw('ET');
+                $this->draw('Q');
+                $this->y -= $this->fontSize + $this->lineSpread;
+                $this->x = $this->textMargins;
+                $x = $this->x + $widthSinceSpace;
+                $prevEnd = $lastSpace + 1;
+                $endOfLine = false;
             }
         }
-        $cols = ceil($w * pow(2, $zoomLevel) / $ts);
-        $rows = ceil($h * pow(2, $zoomLevel) / $ts);
-        $this->imageAttr['zoomLevel'] = $zoomLevel;
-        $this->imageAttr['cols'] = $cols;
-        $this->imageAttr['rows'] = $rows;
-
-        // Calculate the scale of the images.
-        // Compensate for the possibility of the edge tiles being smaller.
-        $cornerSize = getimagesize($this->imageName($cols - 1, $rows - 1), $zoomLevel);
-        $compx = 1 - $cornerSize[0] / $ts;
-        $compy = 1 - $cornerSize[1] / $ts;
-        $scale = min($pw / ($cols - $compx), $ph / ($rows - $compy));
-        $this->imageAttr['compX'] = $compx;
-        $this->imageAttr['compY'] = $compy;
-        $this->imageAttr['scale'] = $scale;
-
-        // Add the tiles.
-        for ($y = 0; $y < $rows; $y++)
-        for ($x = 0; $x < $cols; $x++)
+    }
+    
+    private function writePage()
+    {
+        $drawId = $this->newStream('/Filter /FlateDecode', gzcompress($this->draws));
+        $this->draws = '';
+        
+        if ($this->pagesId === null)
         {
-            $tileWidth = $x == $cols - 1 ? $cornerSize[0] : $ts;
-            $tileHeight = $y == $rows - 1 ? $cornerSize[1] : $ts;
-            
-            $this->newTile($x, $y, $tileWidth, $tileHeight);
+            $this->pagesId = $this->newObject('');
         }
-
-        // Add the objects to finalize the PDF.
-        $drawId = $this->newStream('', $this->draws);
-        $pagesId = $this->newObject('<< /Type /Pages /Count 1 /Kids [ ' . ($drawId + 2) . ' 0 R ] >>');
-        $firstPageId = $this->newObject('<< /Type /Page /Parent ' . $pagesId . ' 0 R /Resources ' . ($pagesId + 2) . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $scale * ($cols - $compx) . ' ' . $scale * ($rows - $compy) . ' ] >>');
-        $resourcesId = $this->newObject("<< /XObject <<\n" . $this->resources . "\n>> >>");
-        $catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $pagesId . ' 0 R /OpenAction [ ' . $firstPageId . ' 0 R /Fit ] >>');
-
-        // Produce the final PDF file.
-        $this->makePDF($catalogId);
+        if ($this->resourcesId === null)
+        {
+            $this->resourcesId = $this->newObject('');
+        }
+        
+        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $this->resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] >>');
+        if (count($this->pages) == 0)
+        {
+            $this->catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $this->pagesId . ' 0 R /OpenAction [ ' . $pageId . ' 0 R /Fit ] >>');
+        }
+        $this->pages[] = $pageId;
+        $this->resetPosition();
+    }
+    
+    private function setPageSize($width, $height)
+    {
+        $this->pageWidth = $width;
+        $this->pageHeight = $height;
+    }    
+    
+    private function setFontSize($points)
+    {
+        $this->lastFontSize = $this->fontSize;
+        $this->fontSize = $points;
     }
 }
 
