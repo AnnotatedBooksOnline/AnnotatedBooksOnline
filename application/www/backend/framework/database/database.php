@@ -29,7 +29,8 @@ class Database extends Singleton
         // Create a php data object using the settings from the configuration.
         $this->pdo = new PDO($config->getString('database-dsn'),
                              $config->getString('database-username'),
-                             $config->getString('database-password'));
+                             $config->getString('database-password'),
+                             array(PDO::ATTR_PERSISTENT => true));
         
         $this->transactionLevel = 0;
     }
@@ -111,21 +112,6 @@ class Database extends Singleton
             $this->pdo->exec('RELEASE SAVEPOINT LEVEL' . $this->transactionLevel);
         }
     }
-    
-    /**
-     * Commits all currently stacked transactions.
-     */
-    /*
-    GERBEN: There should be no situation in which we want this to happen.
-    
-    public function commitAll()
-    {
-        while ($this->transactionLevel > 0)
-        {
-            $this->commit();
-        }
-    }
-    */
     
     /**
      * Rolls back a transaction.

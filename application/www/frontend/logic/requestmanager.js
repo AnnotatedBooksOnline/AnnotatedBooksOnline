@@ -71,44 +71,109 @@ RequestManager.prototype.request = function(controller, action, data, object, on
 
 RequestManager.prototype.flush = function()
 {
+    // Fetch current requests and empty queue.
     var requests  = this.requests;
     this.requests = [];
     
-    for (var i = 0; i < requests.length; ++i)
+    // Bail if no requests.
+    if (requests.length === 0)
     {
+        return;
+    }
+    
+    var data, url, onSuccess, onError;
+    if (requests.length === 1)
+    {
+        var request = requests[0];
+        
+        // Set input data and url.
+        data = request.data;
+        url  = '?controller=' + request.controller + '&action=' + request.action;
+        
+        // Set success and error handlers.
         var _this = this;
-        var newScope = function(request)
+        onSuccess = function(result, req)
             {
-                Ext.Ajax.request({
-                    // Url parameters appended here, because data may be null, in which case
-                    // the params would be considered POST parameters instead of GET parameters.
-                    url: '?controller=' + request.controller + '&action=' + request.action,
-                    jsonData: request.data,
-                    method: 'POST',
-                    success: function(result, req)
-                    {
-                        _this.onRequestFinished(request, true, result.responseText);
-                    },
-                    failure: function(result, req)
-                    {
-                        _this.onRequestFinished(request, false, result.responseText);
-                    }
-                });
+                _this.onRequestFinished(request, true, result.responseText);
             };
         
-        // Introduce new scope, see: http://www.mennovanslooten.nl/blog/post/62
-        newScope(requests[i]);
+        onError = function(result, req)
+            {
+                _this.onRequestFinished(request, false, result.responseText);
+            };
     }
+    else
+    {
+        // Set input data.
+        data = [];
+        for (var i = 0; i < requests.length; ++i)
+        {
+            var request = requests[i];
+            
+            // Push data.
+            data.push({action: request.action, controller: request.controller, data: request.data});
+        }
+        
+        // Set multi request url.
+        url = '?multiple=1';
+        
+        // Set success and error handlers.
+        var _this = this;
+        
+        onError = function(result, req)
+            {
+                // Consider all requests failed.
+                for (var j = 0; j < requests.length; ++j)
+                {
+                    _this.onRequestFinished(requests[j], false, result.responseText);
+                }
+            };
+        
+        onSuccess = function(result, req)
+            {
+                // Parse data.
+                var data;
+                
+                try
+                {
+                    var data = Ext.JSON.decode(result.responseText);
+                }
+                catch (e)
+                {
+                    // Call error callback.
+                    onError(result, req);
+                    
+                    return;
+                }
+                
+                // Call finished handler for request.
+                for (var j = 0; j < requests.length; ++j)
+                {
+                    _this.onRequestFinished(requests[j], data[j].success, data[j].data, false);
+                }
+            };
+    }
+    
+    // Do the actual request.
+    var _this = this;
+    Ext.Ajax.request({
+        url: url,
+        jsonData: data,
+        method: 'POST',
+        success: onSuccess,
+        failure: onError
+    });
 }
 
-RequestManager.prototype.onRequestFinished = function(request, success, responseText)
+RequestManager.prototype.onRequestFinished = function(request, success, response, decode)
 {
     var data, message, code, trace;
     
     // Try to decode response text.
     try
     {
-        data = Ext.JSON.decode(responseText);
+        // Decode data.
+        data = (decode !== false) ? Ext.JSON.decode(response) : response;
         
         if (!success)
         {
@@ -123,7 +188,7 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
         
         code    = 'error';
         message = 'Server error.';
-        trace   = responseText;
+        trace   = response;
     }
     
     // Call the right callback.
@@ -140,11 +205,14 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
         trace = trace || '(not available)';
         
         // Call error callback.
+        var result;
         if (request.onError !== undefined)
         {
-            request.onError.call(request.object, code, message, trace);
+            result = request.onError.call(request.object, code, message, trace);
         }
-        else
+        
+        // Show an error if error handler did not handle this error.
+        if (result !== false)
         {
             RequestManager.showErrorMessage(code, message, trace);
         }

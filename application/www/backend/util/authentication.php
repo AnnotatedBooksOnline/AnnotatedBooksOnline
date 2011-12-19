@@ -89,10 +89,10 @@ class Authentication extends Singleton
      *
      * @return  The new user.
      * 
-     * @throws UserBannedException       If the user is banned.
-     * @throws UserStillPendingException If the user is not yet activated.
-     * @throws UserNotFoundException     If no user with the provided username/password 
-     *                                   combination exists.
+     * @throws UserBannedException    If the user is banned.
+     * @throws UserPendingException   If the user is not yet activated.
+     * @throws UserNotFoundException  If no user with the provided username/password 
+     *                                combination exists.
      */
     public function login($username, $password)
     {
@@ -104,15 +104,6 @@ class Authentication extends Singleton
         
         $this->user        = User::fromUsernameAndPassword($username, $password);
         $this->fetchedUser = true;
-        
-        if($this->user->isBanned())
-        {
-            throw new UserBannedException($this->user->getUsername());
-        }
-        if(!$this->user->isActive())
-        {
-            throw new UserStillPendingException($this->user->getUsername());
-        }
         
         Session::getInstance()->setVar('userId', $this->getUser()->getUserId());
         
@@ -178,6 +169,17 @@ class Authentication extends Singleton
     {
         $user = $this->getUser();
         return (isset($user) ? $user->getRank() : User::RANK_NONE);
+    }
+    
+    /**
+     * Generates a unique token that can be mailed to users and be part of an URL.
+     * 
+     * @return string A string representing a unique 32-digit hexadecimal number.
+     */
+    public static function generateUniqueToken()
+    {
+        // This value needs to be unique.
+        return md5(uniqid(true));
     }
     
     /**

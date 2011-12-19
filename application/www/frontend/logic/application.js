@@ -193,7 +193,7 @@ Application.prototype.registerActions = function()
     // Listen for history actions.
     this.eventDispatcher.bind('historychange', this, function(event, app, action, data)
         {
-            switch (action)
+    	    switch (action)
             {
                 case 'login':
                     Authentication.showLoginWindow();
@@ -215,6 +215,7 @@ Application.prototype.registerActions = function()
                 case 'upload':
                 case 'welcome':
                 case 'info':
+                case 'activation':
                     // These are tab actions, so close the windows.
                     Ext.WindowManager.each(
                         function(window)
@@ -223,7 +224,6 @@ Application.prototype.registerActions = function()
                                 window.close();
                         }
                     );
-                    
                     // Go to the given panel.
                     this.gotoTab(action, data, true);
                     break;
@@ -264,6 +264,7 @@ Application.prototype.tabNeedsAuthentication = function(type)
         case 'register':
         case 'welcome':
         case 'info':
+        case 'activation':
         //case 'upload':
             return false;
     }

@@ -3,7 +3,6 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
-require_once 'util/pdf.php';
 
 // Exceptions.
 class BookNotFoundException extends ExceptionBase
@@ -292,23 +291,5 @@ class BookController extends Controller
         }
         $result['headline'] = implode(' & ', $headline);
         return $result;
-    }
-    
-    public function actionPDF($data)
-    {
-        try
-        {
-            if (isset($data['scan']) && is_numeric($data['scan']))
-            {
-                $scan = new Scan($data['scan']);
-                $pdf = new PDF($scan);
-                $pdf->outputPDF();
-            }
-        }
-        catch (Exception $e)
-        {
-            // Do nothing.
-        }
-        return '';
     }
 }

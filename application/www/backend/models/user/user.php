@@ -20,7 +20,7 @@ class UserBannedException extends ExceptionBase
     }
 }
 
-class UserStillPendingException extends ExceptionBase
+class UserPendingException extends ExceptionBase
 {
     public function __construct($username)
     {
@@ -78,6 +78,9 @@ class User extends Entity
     /** Rank number. */
     protected $rank;
     
+    /** Password restoration token */
+    protected $passwordRestoreToken;
+    
     /**
      * Constructs a user by id.
      *
@@ -100,9 +103,15 @@ class User extends Entity
      * @param  $password  Password of the user.
      *
      * @return  The matching user.
+     * 
+     * @throws UserBannedException    If the user is banned.
+     * @throws UserPendingException   If the user is not yet activated.
+     * @throws UserNotFoundException  If no user with the provided username/password 
+     *                                combination exists.
      */
     public static function fromUsernameAndPassword($username, $password)
     {
+        // Get user id from username and password.
         $query = Query::select('userId')->
                  from('Users')->
                  where('username = :username', 'passwordHash = :hash');
@@ -117,7 +126,55 @@ class User extends Entity
             throw new UserNotFoundException($username);
         }
         
-        return new User($resultSet->getFirstRow()->getValue('userId'));
+        // Fetch user.
+        $user = new User($resultSet->getFirstRow()->getValue('userId', 'int'));
+        
+        // Check for if user is banned or inactive.
+        if ($user->isBanned())
+        {
+            throw new UserBannedException($username);
+        }
+        else if (!$user->isActive())
+        {
+            throw new UserPendingException($username);
+        }
+        
+        if($user->getPasswordRestoreToken() !== null)
+        {
+            // Apperantly the user remembered his/her password again. In that case we can remove
+            // the password token.
+            Log::info('Removing password restore token for ' . $username . '.');
+            $user->setPasswordRestoreToken(null);
+            $user->save();
+        }
+        
+        return $user;
+    }
+   
+    /**
+     * Creates a user entity based on an e-mail address.
+     * 
+     * @param string $email An e-mail address.
+     * 
+     * @return User The user entity with this e-mail address, or null if there is no user with
+     *              this e-mail.
+     */
+    public static function fromEmailAddress($email)
+    {
+        $result = Query::select('userId')
+                       ->from('Users')
+                       ->where(array('email = :email'))
+                       ->execute(array('email' => $email));
+        
+        if($result->rowCount() == 0)
+        {
+            return null;
+        }
+        else
+        {
+            $id = $result->getFirstRow()->getValue('userId');
+            return new User($id);
+        }
     }
     
     /**
@@ -232,7 +289,7 @@ class User extends Entity
      * Getters and setters.
      */
     
-    public function getUserId() { return $this->userId; }
+    public function getUserId()    { return $this->userId; }
     
     public function setUsername($username) { $this->username = $username; }
     public function getUsername()          { return $this->username;      }
@@ -271,4 +328,7 @@ class User extends Entity
     
     public function setRank($rank) { $this->rank = $rank; }
     public function getRank()      { return $this->rank;  }
+    
+    public function getPasswordRestoreToken()       { return $this->passwordRestoreToken;   }
+    public function setPasswordRestoreToken($token) { $this->passwordRestoreToken = $token; }
 }

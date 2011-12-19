@@ -103,7 +103,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                 listeners: {
                     'change': function(f, from) {
                         var to = this.nextSibling('[name=to]');
-                        if (to.getValue() == null || parseInt(from) > parseInt(to.getValue())) 
+                        if (to.getValue() != null && parseInt(from) > parseInt(to.getValue())) 
                         {
                             to.setValue(from);
                         }
@@ -124,7 +124,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                 listeners: {
                     'change': function(t, to) {
                         var from = this.previousSibling('[name=from]');
-                        if (from.getValue() == null || parseInt(to) < parseInt(from.getValue())) 
+                        if (from.getValue() != null && parseInt(to) < parseInt(from.getValue())) 
                         {
                             from.setValue(to);
                         }
@@ -506,19 +506,21 @@ Ext.define('Ext.ux.SortComboBoxField', {
     initComponent: function() {
         var _this = this;
         
+        var propertyData = [{
+            abbreviation: 'none',
+            name: '- Select -'
+        }/*,{
+            abbreviation: 'modified',
+            name: 'Date last modified'
+        }*/,{
+            abbreviation: 'id',
+            name: 'Date uploaded'
+        }].concat(bookProperties);
+        
         var defConfig = {
             store: Ext.create('Ext.data.Store', {
                 model: 'Ext.ux.SearchParameterModel',
-                data: [{
-                    abbreviation: 'none',
-                    name: '- Select -'
-                }/*,{
-                    abbreviation: 'modified',
-                    name: 'Date last modified'
-                }*/,{
-                    abbreviation: 'id',
-                    name: 'Date uploaded'
-                }].concat(bookProperties)
+                data: propertyData
             }),
             queryMode: 'local',
             displayField: 'name',
@@ -531,6 +533,31 @@ Ext.define('Ext.ux.SortComboBoxField', {
                     if (_this.ownerCt != undefined)
                     {
                         _this.ownerCt.sortFn();
+                        
+                        // Hide this value in the other search boxes.
+                        var usedProps = [];
+                        var current = this.up('searchpanel').down('sortcomboboxfield');
+                        do
+                        {
+                            if (current.getValue() != 'none')
+                            {
+                                usedProps[usedProps.length] = current.getValue();
+                            }
+                            current.getStore().loadData(propertyData);
+                        } while (current = current.nextNode('sortcomboboxfield'));
+                        current = this.up('searchpanel').down('sortcomboboxfield');
+                        do
+                        {
+                            var store = current.getStore();
+                            for (var i = 0; i < usedProps.length; i++)
+                            {
+                                if (current.getValue() != usedProps[i])
+                                {
+                                    var record = store.findExact('abbreviation', usedProps[i]);
+                                    store.removeAt(record);
+                                }
+                            }
+                        } while (current = current.nextNode('sortcomboboxfield'));
                     }
                 }
             }

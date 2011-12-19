@@ -131,9 +131,6 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         
         function onError(code, message, trace)
         {
-            // TODO: Remove this, we may want to capture errors later on.
-            RequestManager.showErrorMessage(code, message, trace);
-            
             var data = {code: code, message: message, trace: trace};
             
             _this.processResponse(false, operation, request, data, callback, scope);

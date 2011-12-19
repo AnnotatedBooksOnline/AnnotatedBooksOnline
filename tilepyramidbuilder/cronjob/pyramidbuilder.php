@@ -6,6 +6,8 @@ $backendPath = dirname(__FILE__) . '/../../application/www/backend/';
 chdir($backendPath);
 set_include_path($backendPath);
 
+
+require_once 'framework/util/translator.php';
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
 require_once 'framework/util/log.php';
@@ -51,28 +53,14 @@ class PyramidBuilder extends Singleton
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
         
-        $imgfile = $conf->getString('image-input-path', '.') . '/' . $scanid;
+        $imgfile = $conf->getPath('image-input-path', '.') . '/' . $scanid;
         
         $output = array();
         $rval = 0;
-        $outpath = $conf->getString('tile-output-path', '.');
+        $outpath = $conf->getPath('tile-output-path', '.');
         $quality = $conf->getInteger('tile-quality', 60);
-        $builderpath = $conf->getString('builder-path', './builder');
+        $builderpath = $conf->getPath('builder-path', './builder');
         $tileformat = $scanid . '_%z_%x_%y.%e';
-        
-        // Prepend current working directory to paths if necessary.
-        if(!$builderpath[0] != '/')
-        {
-            $builderpath = getcwd() . '/' . $builderpath;
-        }
-        if(!$imgfile[0] != '/')
-        {
-            $imgfile = getcwd() . '/' . $imgfile;
-        }
-        if(!$outpath[0] != '/')
-        {
-            $outpath = getcwd() . '/' . $outpath;
-        }
         
         // Execute builder.
         $command = "$builderpath -q $quality -i $scantype -p $outpath -f $tileformat $imgfile";
@@ -94,26 +82,30 @@ class PyramidBuilder extends Singleton
      * @param int $scanid The ID the processed scan to create a thumbnail from.
      */
     private function createThumbnail($scanid)
-    {
-        // TODO: Use ImageShack instead.
-        
+    {        
         $conf = Configuration::getInstance();
         
         // Determine paths.
-        $thumb = $conf->getString('thumbnail-path', '.')  . $scanid . 'jpg';
-        $tile = $conf->getString('tile-output-path', '.') . $scanid . '_0_0_0.jpg';
+        $thumb = $conf->getPath('thumbnail-path', '.')  . '/' . $scanid . 'jpg';
+        $tile = $conf->getPath('tile-output-path', '.') . '/' . $scanid . '_0_0_0.jpg';
         
         // Determine thumbnail dimensions.
         $width = $conf->getInteger('thumbnail-width', 100);
         $height = $conf->getInteger('thumbnail-height', 100);
         
+        Log::debug('Creating thumbnail for ' . $scanid);
+        
         // Create thumbnail.
-        $success = imagecopyresized($thumb, $tile, 0, 0, 0, 0, $width, $height, 256, 256);
+        $img = new Imagick($tile);
+        $success = $img->scaleImage($width, $height);
+        $img->writeImage($thumb);
         
         if(!$success)
         {
             Log::error('Failed creating thumbnail of scan with ID %d.', $scanid);
         }
+        
+        Log::info('Succesfully created thumbnail for ' . $scanid);
     }
     
     /**
@@ -127,7 +119,7 @@ class PyramidBuilder extends Singleton
      */
     public function resolveInconsistencies()
     {
-        Query::update('Scans', array('status', Scan::STATUS_ERROR))
+        Query::update('Scans', array('status' => Scan::STATUS_ERROR))
                 ->where('status = :status')
                 ->execute(array('status' => Scan::STATUS_PROCESSING));
     }
@@ -178,8 +170,8 @@ class PyramidBuilder extends Singleton
             try
             {
                 // Set status to PROCESSING and save.
-//                 TODO: $scan->setStatus(Scan::STATUS_PROCESSING);
-//                 $scan->save();
+                $scan->setStatus(Scan::STATUS_PROCESSING);
+                $scan->save();
                 
                 // Process the image.
                 $this->run($scanid, $scan->getScanType());
@@ -197,6 +189,7 @@ class PyramidBuilder extends Singleton
             {
                 // Something went wrong. Set the error status.
                 $scan->setStatus(Scan::STATUS_ERROR);
+                $scan->save();
                 throw $ex;
             }
         }
@@ -252,5 +245,5 @@ class PyramidBuilder extends Singleton
     }
 }
 
-// Test.
-PyramidBuilder::getInstance()->doIteration();
+// Running the builder.
+PyramidBuilder::getInstance()->runBuilder();

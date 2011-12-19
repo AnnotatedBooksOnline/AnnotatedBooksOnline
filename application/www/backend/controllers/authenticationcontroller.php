@@ -12,7 +12,7 @@ class AuthenticationController extends Controller
     public function actionLogin($data)
     {
         // Get fields.
-        $username = self::getString($data, 'username', '', true, 25);
+        $username = self::getString($data, 'username', '', true, 30);
         $password = self::getString($data, 'password', '', false, 32);
         
         // Login.

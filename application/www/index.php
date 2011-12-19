@@ -14,3 +14,4 @@ require 'framework/controller/controller.php';
 
 // Handle request.
 Controller::handleRequest();
+
