@@ -2,21 +2,20 @@
 //[[GPL]]
 
 require_once 'framework/util/configuration.php';
-require_once 'framework/util/exceptionbase.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
 //require_once 'models/binding/binding.php';
 
 // Exceptions.
-class PDFCreationFailedException extends ExceptionBase
+class PdfException extends ExceptionBase
 {
     public function __construct()
     {
-        parent::__construct('pdf-creation-failed');
+        parent::__construct();
     }
 }
 
-class PDF
+class Pdf
 {
     private $path;
     private $dpi = 150;
@@ -87,42 +86,26 @@ class PDF
         else
         {
             // Assume A4 paper size.
-            $this->imageAttr['pageWidth'] = 595;
+            $this->imageAttr['pageWidth']  = 595;
             $this->imageAttr['pageHeight'] = 842;
         }
         
         $this->setPageSize($this->imageAttr['pageWidth'], $this->imageAttr['pageHeight']);
-        $this->createPDF();
-    }
-
-    /**
-     * Outputs the PDF as a file for downloading.
-     * Also sets the correct headers for file download.
-     */
-    public function outputPDF()
-    {
-        $filename = preg_replace('/[^a-zA-Z0-9_]/', '', 
-                    preg_replace('/ /', '_', $this->book->getTitle()))
-                    . '-' . $this->scan->getPage();
-        header('Content-type: application/pdf');
-        header('Content-length: ' . strlen($this->output));
-        header('Content-disposition: attachment; filename=' . $filename . '.pdf');
-        
-        echo $this->output;
+        $this->create();
     }
 
     /**
      * Returns the generated PDF contents as a binary string for storage purposes.
      */
-    public function getPDF()
+    public function getContent()
     {
         return $this->output;
     }
     
-        /**
+    /**
      * Creates the PDF file based on the scan.
      */
-    private function createPDF()
+    private function create()
     {
         $this->addFont('DejaVuSans', 'dejavusans.php');
         $this->font = 'DejaVuSans';
@@ -277,7 +260,7 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
 ');
 
         // Produce the final PDF file.
-        $this->makePDF();
+        $this->make();
     }
     
     /**
@@ -393,7 +376,7 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
     /**
      * Creates the final PDF based on the previously generated pages / objects.
      */
-    private function makePDF()
+    private function make()
     {
         if (strlen($this->draws) > 0)
         {
@@ -493,7 +476,7 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
         
         if ($type != 'TrueTypeUnicode')
         {
-            throw new PDFCreationFailedException();
+            throw new PdfException('pdf-creation-failed');
         }
         
         $this->fontSizes[$name] = $cw;
@@ -685,4 +668,3 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
         $this->fontSize = $points;
     }
 }
-
