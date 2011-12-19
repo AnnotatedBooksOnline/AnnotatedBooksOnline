@@ -20,7 +20,7 @@ Application.prototype.viewport;
 
 Application.prototype.eventDispatcher;
 
-Application.prototype.currentToken;
+Application.prototype.currentToken = 'welcome';
 
 // Singleton instance.
 Application.instance;
@@ -161,6 +161,21 @@ Application.prototype.initialize = function()
     var _this = this;
     var historyChangeEventHandler = function(token)
         {
+            // Decode and trim token.
+            token = token ? decodeURIComponent(token.replace(/^\s+|\s+$/g, '')) : null;
+            
+            // Check for null token.
+            if (token === null)
+            {
+                token = 'welcome';
+            }
+            
+            // Bail out if current token.
+            if (token === _this.currentToken)
+            {
+                return;
+            }
+            
             // Get action and data from token.
             var parts  = token.split('-');
             var action = parts[0];
@@ -193,7 +208,7 @@ Application.prototype.registerActions = function()
     // Listen for history actions.
     this.eventDispatcher.bind('historychange', this, function(event, app, action, data)
         {
-    	    switch (action)
+            switch (action)
             {
                 case 'login':
                     Authentication.showLoginWindow();
