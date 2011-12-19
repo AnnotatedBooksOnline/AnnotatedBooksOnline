@@ -280,6 +280,21 @@ Authentication.prototype.login = function(username, password, obj, onSuccess, on
         }, onError);
 }
 
+Authentication.prototype.checkPassword = function(password, obj, onSuccess, onError)
+{
+    // Do a check password request.
+    RequestManager.getInstance().request('Authentication', 'checkPassword', {password: password},
+        this,
+        function(data)
+        {
+            // Call success handler
+            if (onSuccess !== undefined)
+            {
+                onSuccess.call(obj);
+            }
+        }, onError);
+}
+
 /*
  * Private methods.
  */
