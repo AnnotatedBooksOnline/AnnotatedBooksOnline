@@ -121,6 +121,35 @@ class User extends Entity
     }
     
     /**
+     * Checks the password of the userId.
+     *
+     * @param  $userId  UserId of the user.
+     * @param  $password  Password of the user.
+     *
+     * @return  Correctness of password.
+     */
+    public static function checkPassword($userId, $password)
+    {
+        $query = Query::select('userId')->
+                 from('Users')->
+                 where('userId = :userId', 'passwordHash = :hash');
+        
+        $resultSet = $query->execute(array(
+            'userId' => $userId,
+            'hash'   => self::secureHash($password)
+        ));
+        
+        if ($resultSet->getAmount() == 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
      * Gets the table name.
      *
      * @return  The table name.
