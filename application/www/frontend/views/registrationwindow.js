@@ -219,7 +219,7 @@ Ext.define('Ext.ux.RegistrationPanel', {
                 xtype: 'registrationform'
             },{
                 html: '',
-                bodyMargin: 10
+                bodyPadding: 10
             }]
         };
         

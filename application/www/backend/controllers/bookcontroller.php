@@ -3,7 +3,6 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
-require_once 'util/pdf.php';
 
 // Exceptions.
 class BookNotFoundException extends ExceptionBase
@@ -292,46 +291,5 @@ class BookController extends Controller
         }
         $result['headline'] = implode(' & ', $headline);
         return $result;
-    }
-    
-    public function actionPDF($data)
-    {
-        try
-        {
-            if (isset($data['scan']) && is_numeric($data['scan']))
-            {
-                $scan = new Scan($data['scan']);
-                $pdf = new PDF($scan);
-                $pdf->outputPDF();
-            }
-        }
-        catch (Exception $e)
-        {
-            // Get exception info.
-            $stackTrace = $e->getTraceAsString();
-            $message    = $e->getMessage();
-            $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
-            
-            // Set result.
-            $result = array('message' => $message, 'code' => $code);
-            
-            // Set stacktrace if in debug mode.
-            if (Configuration::getInstance()->getBoolean('debug-mode', false))
-            {
-                $result['trace'] = $stackTrace;
-            }
-            
-            // Log the exception.
-            Log::error("An exception occured: message: '%s', code: '%s', stack trace:\n%s",
-                $message, $code, $stackTrace);
-            
-            return '<html><body><script>' . 
-                'var code = \'' . str_replace("\n", ' ', htmlspecialchars($result['code'], ENT_QUOTES)) . '\';' .
-                'var message = \'' . str_replace("\n", ' ', htmlspecialchars($result['message'], ENT_QUOTES)) . '\';' .
-                'var trace = \'' . str_replace("\n", ' ', htmlspecialchars($result['trace'], ENT_QUOTES)) . '\';' .
-                'parent.RequestManager.showErrorMessage(code, message, trace);' .
-                '</script></body></html>';
-        }
-        return '';
     }
 }

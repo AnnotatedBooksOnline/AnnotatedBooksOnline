@@ -1,9 +1,6 @@
 <?php
 //[[GPL]]
 
-// Exceptions.
-//class SettingNotFoundException extends ExceptionBase { }
-
 /**
  * Cache entry class.
  */
@@ -18,9 +15,9 @@ class CacheEntry
      */
     public function __construct($key)
     {
-        $this->filename   = 'cache/' . $key . '.cache';
-        $this->dependency = 0;
-        $this->content    = null;
+        $this->filename            = 'cache/' . $key . '.cache';
+        $this->dependencyTimestamp = 0;
+        $this->content             = null;
     }
     
     /*

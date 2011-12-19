@@ -123,6 +123,26 @@ class Authentication extends Singleton
     }
     
     /**
+     * Checks a password of an user.
+     *
+     * @param  $password  The password of the user to check.
+     *
+     * @return true or false.
+     */
+    public function checkPassword($password)
+    {
+        $currentUser = $this->getUser();
+        if ($currentUser != null && User::checkPassword($this->getUserId(), $password)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
      * Checks whether a user is logged on.
      *
      * @return  Whether a user is logged on.
