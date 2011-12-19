@@ -391,20 +391,19 @@ Ext.define('Ext.ux.Viewer', {
                     listeners: {
                         click: function()
                         {
-                            try
-                            {
-                                Ext.destroy(Ext.get('pageDownloadIframe'));
-                            }
-                            catch(e) {}
-                            Ext.DomHelper.append(document.body, {
-                                tag: 'iframe',
-                                id:'pageDownloadIframe',
-                                frameBorder: 0,
-                                width: 0,
-                                height: 0,
-                                style: 'display:none;visibility:hidden;height:0px;',
-                                src: '?controller=Book&action=PDF&scan=' + _this.book.getScan(this.up('viewerpanel').getPage()).get('scanId')
-                            });
+                            var scanId = _this.book.getScan(this.up('viewerpanel').getPage()).get('scanId');
+                            
+                            RequestManager.getInstance().request(
+                                'Pdf',
+                                'generate',
+                                {scan: scanId},
+                                this,
+                                function(data)
+                                {
+                                    // Download just generated file.
+                                    window.location = '?controller=Pdf&action=download&scan=' + scanId;
+                                }
+                            );
                         }
                     }
                 }
