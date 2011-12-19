@@ -26,7 +26,7 @@ class AuthenticationController extends Controller
         // Logout.
         Authentication::getInstance()->logout();
     }
-{
+
     public function actionCheckPassword($data)
     {
         // Get field.
