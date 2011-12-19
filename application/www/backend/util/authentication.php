@@ -132,7 +132,7 @@ class Authentication extends Singleton
     public function checkPassword($password)
     {
         $currentUser = $this->getUser();
-        if ($currentUser != null && User::checkPassword($this->getUserId(), $password)
+        if (($currentUser != null) && User::checkPassword($this->getUserId(), $password))
         {
             return true;
         }
