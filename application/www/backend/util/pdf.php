@@ -6,6 +6,7 @@ require_once 'framework/util/cache.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
 //require_once 'models/binding/binding.php';
+require_once 'framework/util/log.php';
 
 // Exceptions.
 class PdfException extends ExceptionBase
@@ -31,6 +32,10 @@ class Pdf
     
     private $objectHandles = array();
     private $numObjects = 0;
+    private $bufferedObjectSizes = array();
+    private $buffer = "%PDF-1.7\n";
+    private $bufferSize = 9;
+    private $maxBufferSize;
     private $resources = '';
     private $draws = '';
     private $output = '';
@@ -48,6 +53,7 @@ class Pdf
     private $lastFontSize = null;
     private $scanAttr = array();
     private $unicodeId = null;
+    private $bookmarks = array();
     
     private $scan;
     private $book;
@@ -65,10 +71,14 @@ class Pdf
      *    - height: the height in points (1/72 inch)
      * print: whether to insert JavaScript to trigger printing on open
      */
-    public function __construct($scan, $cacheEntry = null, $dimensions = null, $print = false)
+    public function __construct($scan, $cacheEntry, $dimensions = null, $print = false)
     {
         $this->identifier = uniqid('pdf', true);
         $this->outputEntry = $cacheEntry;
+        $this->outputEntry->clear();
+        
+        // Use a safe maximal buffer size, knowing that the Cache will double the memory usage.
+        $this->maxBufferSize = $this->iniToBytes('memory_limit') / 4;
         
         $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
         
@@ -93,25 +103,97 @@ class Pdf
         $this->addFont('DejaVuSans', 'dejavusans.php');
         $this->font = 'DejaVuSans';
         
-        $this->createSingleScan($scan);
+        //$this->createSingleScan($scan);
+        $this->createBook($this->book, true);
+    }
+    
+    private function iniToBytes($config)
+    {
+        $val = trim(ini_get($config));
+        $last = strtolower($val[strlen($val)-1]);
+        switch($last) {
+            case 'g':
+                $val *= 1024;
+            case 'm':
+                $val *= 1024;
+            case 'k':
+                $val *= 1024;
+        }
+        return $val;
     }
 
     /**
-     * Returns the generated PDF contents as a binary string.
-     * Normally you do not want to use this, as it might use quite a lot of memory.
+     * Creates the PDF file bases on the book.
      */
-    public function getContent()
+    private function createBook($book, $transcriptions = null)
     {
-        if ($this->outputEntry === null)
+        $this->setFontSize(18);
+        $this->drawText($this->book->getTitle());
+        $this->y -= 20;
+        
+        $minYear = $this->book->getMinYear();
+        $maxYear = $this->book->getMaxYear();
+        $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
+        
+        $this->setFontSize(14);
+        $this->drawText('Authors, ' . $year); // TODO
+        $this->y -= 40;
+        
+        $this->setFontSize(12);
+        if ($this->book->getPlacePublished() != null)
         {
-            return $this->output;
+            $this->drawText($this->book->getPlacePublished());
         }
-        else
+        if ($this->book->getPublisher() != null)
         {
-            return $this->outputEntry->getContent();
+            $this->drawText($this->book->getPublisher());
         }
+        $this->drawText('Library, Signature');
+        $this->y -= 20;
+        
+        $this->drawText('Generated on ' . date('l, d M Y H:i:s T'));
+        $this->addLink($this->drawText('http://sp.urandom.nl/devtest/#book-2'), 'http://sp.urandom.nl/devtest/#book-2');
+        
+        if ($transcriptions != null)
+        {
+            $this->y -= 20;
+            $this->drawText('With transcriptions');
+        }
+        
+        $this->writePage();
+        
+        $scans = Scan::fromBook($book);
+        foreach($scans as $scan)
+        {
+            $this->scan = $scan;
+            $this->textMargins = 36; // 1,25 cm
+            $this->resetPosition();
+            
+            $scanWidth = $this->pageWidth - 2 * $this->textMargins;
+            $scanHeight = $this->pageHeight - 2* $this->textMargins - 28 - $this->fontSize;
+            
+            $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->pageHeight - $scanHeight - $this->textMargins));
+
+            $this->drawScan($scan, $scanWidth, $scanHeight);
+
+            if ($transcriptions !== null)
+            {
+                $points = array(array(10,10), array(60,50), array(110,10), array(110,110), array(60,150), array(10,110));
+                $this->drawAnnotationPolygon(1, $points);
+            }
+            
+            $this->draw('Q');
+            
+            $this->y = $this->textMargins;
+            
+            $this->drawText('Page ' . $scan->getPage());
+            $this->writePage();
+        }
+        $this->textMargins = 72; // 2,5 cm
+        $this->resetPosition();
+        
+        $this->make();
     }
-   
     /**
      * Creates the PDF file based on the scan.
      */
@@ -123,17 +205,17 @@ class Pdf
         $minYear = $this->book->getMinYear();
         $maxYear = $this->book->getMaxYear();
         $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
-        $title = 'Collaboratory';
+        $title = 'Collaboratory'; // TODO
         $title .= "\n" . implode(', ', array(
-            'Author',
+            'Author', // TODO
             $this->book->getTitle(),
             $year
         ));
         $title .= "\n" . implode(', ', array(
             $this->book->getPlacePublished() == null ? 'Place published' : $this->book->getPlacePublished(),
             $this->book->getPublisher() == null ? 'Publisher' : $this->book->getPublisher(),
-            'Library',
-            'Signature'
+            'Library', // TODO
+            'Signature' // TODO
         ));
         $title .= "\nPage number: " . $this->scan->getPage();
         $this->drawText($title);
@@ -143,9 +225,14 @@ class Pdf
         
         $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->pageHeight - $this->y - 28));
         
-        $points = array(array(10,10), array(60,50), array(110,10), array(110,110), array(60,150), array(10,110));
+
         $this->drawScan($this->scan, $scanWidth, $scanHeight);
-        $this->drawAnnotationPolygon(1, $points);
+
+        if ($transcriptions !== null)
+        {
+            $points = array(array(10,10), array(60,50), array(110,10), array(110,110), array(60,150), array(10,110));
+            $this->drawAnnotationPolygon(1, $points);
+        }
         
         $this->draw('Q');
         
@@ -191,11 +278,19 @@ class Pdf
         "/Rect [ " . vsprintf('%F %F %F %F', $area) . " ]\n" .
         "/Border [0 0 0]\n" .
         "/A << /S /URI /URI (" . $uri . ") /Type /Action >>\n" .
-        ">>");
+        ">>", true);
         if ($bottomline)
         {
             $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG S Q', $area[0], $area[1], $area[2], $area[1]));
         }
+    }
+    
+    /**
+     * Adds a bookmark to the current page for the index.
+     */
+    private function addBookmark($name)
+    {
+        $this->bookmarks[] = array($name, count($this->pages));
     }
     
     /**
@@ -351,13 +446,13 @@ class Pdf
     /**
      * Creates a new PDF object with the given contents.
      */
-    private function newObject($contents)
+    private function newObject($contents, $final = false)
     {
         $this->numObjects++;
-        return $this->updateObject($this->numObjects, $contents);
+        return $this->updateObject($this->numObjects, $contents, $final);
     }
     
-    private function updateObject($id, $contents)
+    private function updateObject($id, $contents, $final = false)
     {
         if ($id <= $this->numObjects)
         {
@@ -365,9 +460,29 @@ class Pdf
                    . " 0 obj\n"
                    . $contents
                    . "\nendobj\n";
-            $handle = array($this->identifier, $id);
-            $this->objectHandles[$id] = $handle;
-            Cache::getFileEntry($handle)->setContent($value);
+            if ($final)
+            {
+                $this->objectHandles[$id] = null;
+                $this->bufferedObjectSizes[$id] = strlen($value);
+                $this->buffer .= $value;
+                $this->bufferSize += $this->bufferedObjectSizes[$id];
+                if ($this->bufferSize > $this->maxBufferSize)
+                {
+                    $this->outputEntry->append($this->buffer);
+                    $this->buffer = '';
+                    $this->bufferSize = 0;
+                }
+            }
+            else
+            {
+                $handle = array($this->identifier, $id);
+                $this->objectHandles[$id] = $handle;
+                if ($handle === null)
+                {
+                    throw new PdfException('pdf-creation-error');
+                }
+                Cache::getFileEntry($handle)->setContent($value);
+            }
             return $id;
         }
     }
@@ -383,7 +498,7 @@ class Pdf
                               . ">>\n"
                               . "stream\n"
                               . $contents
-                              . "\nendstream");
+                              . "\nendstream", true);
     }
     
     /**
@@ -463,7 +578,7 @@ class Pdf
         if ($this->autoPrint)
         {
             $jsEmbedId = $this->newObject('');
-            $jsId = $this->newObject('<< /Names [(EmbeddedJS) ' . $jsEmbedId . ' 0 R] >>');
+            $jsId = $this->newObject('<< /Names [(EmbeddedJS) ' . $jsEmbedId . ' 0 R] >>', true);
             $this->updateObject($jsEmbedId, "<< /S /JavaScript /JS (print\(true\);) >>");
             $javascript = '/Names << /JavaScript ' . $jsId . ' 0 R >>';
         }
@@ -477,28 +592,34 @@ class Pdf
             "/Title " . $this->fromUTF8($this->book->getTitle()) . "\n" .
             ">>");
         
-        $this->out('%PDF-1.7');
-    
         $xref = "0000000000 65535 f \n";
 
         $offset = strlen($this->output);
         
-        $useForeignEntry = true;
-        if ($this->outputEntry === null)
-        {
-            $this->outputEntry = Cache::getFileEntry($this->identifier, 'output');
-            $useForeignEntry = false;
-        }
         $this->outputEntry->append($this->output);
         $this->output = '';
         
-        foreach ($this->objectHandles as $handle)
+        foreach ($this->bufferedObjectSizes as $key => $size)
         {
-            $xref .= sprintf("%010d 00000 n \n", $offset);
-            $entry = Cache::getFileEntry($handle);
-            $offset += $entry->getLength();
-            $this->outputEntry->append($entry->getContent());
-            $entry->clear();
+            $this->bufferedObjectSizes[$key] = $offset;
+            $offset += $size;
+        }
+        $this->outputEntry->append($this->buffer);
+        
+        foreach ($this->objectHandles as $key => $handle)
+        {
+            if ($handle === null)
+            {
+                $xref .= sprintf("%010d 00000 n \n", $this->bufferedObjectSizes[$key]);
+            }
+            else
+            {
+                $xref .= sprintf("%010d 00000 n \n", $offset);
+                $entry = Cache::getFileEntry($handle);
+                $offset += $entry->getLength();
+                $this->outputEntry->append($entry->getContent());
+                $entry->clear();
+            }
         }
         
         $this->out('xref');
@@ -518,15 +639,6 @@ class Pdf
             {
                 unset($this->$var);
             }
-        }
-        
-        if (!$useForeignEntry)
-        {
-            Log::debug('We should really be using a foreign CacheEntry here...');
-            $this->output = $this->outputEntry->getContent();
-            $this->outputEntry->clear();
-            unset($this->outputEntry);
-            $this->outputEntry = null;
         }
     }
     
@@ -651,7 +763,7 @@ class Pdf
             "/MaxWidth " . $desc['MaxWidth'] . "\n" .
             "/MissingWidth " . $desc['MissingWidth'] . "\n" .
             "/FontFile2 " . $fontFileId. " 0 R\n" .
-            ">>");
+            ">>", true);
         $descendantFontsId = $this->newObject("<<\n" .
             "/Type /Font\n" .
             "/Subtype /CIDFontType2\n" .
@@ -665,7 +777,7 @@ class Pdf
             "/DW " . $dw . "\n" .
             "/W " . $w . "\n" .
             "/CIDToGIDMap " . $ctgId . " 0 R\n" .
-            ">>");
+            ">>", true);
         $fontId = $this->newObject("<<\n" .
             "/Type /Font\n" .
             "/Subtype /Type0\n" .
@@ -674,7 +786,7 @@ class Pdf
             "/ToUnicode " . $this->unicodeId . " 0 R\n" .
             "/Encoding /Identity-H\n" .
             "/DescendantFonts [" . $descendantFontsId . " 0 R]\n" .
-            ">>");
+            ">>", true);
             
         $this->fonts .= "/" . $fontName . " " . $fontId . " 0 R\n";
             
@@ -807,8 +919,13 @@ class Pdf
         return array($minX, $minY, $maxX, $maxY);
     }
     
-    private function writePage()
+    private function writePage($enforce = true)
     {
+        if (!$enforce && $this->draws == '')
+        {
+            return;
+        }
+        
         $drawId = $this->newStream('/Filter /FlateDecode', gzcompress($this->draws));
         $this->draws = '';
         $annots = count($this->annots) == 0 ? '' : (' /Annots [ ' . implode(' 0 R ', $this->annots) . ' 0 R ] ');
@@ -823,7 +940,7 @@ class Pdf
             $this->resourcesId = $this->newObject('');
         }
         
-        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $this->resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] ' . $annots . '>>');
+        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $this->resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] ' . $annots . '>>', true);
         $this->pages[] = $pageId;
         $this->resetPosition();
     }
