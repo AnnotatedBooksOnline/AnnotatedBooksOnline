@@ -26,6 +26,7 @@ class Pdf
     private $fontSize = 12;
     private $lineSpread = 2;
     private $productName = 'Collaboratory';
+    private $productLogo = 'util/logo.jpg';
     
     private $pageWidth;
     private $pageHeight;
@@ -161,6 +162,11 @@ class Pdf
             $this->drawText('With transcriptions');
         }
         
+        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMargins, $this->textMargins, 0.5, 0.5);
+        $this->x = $x + 15;
+        $this->y = $y;
+        $this->drawText($this->productName);
+        
         $this->writePage();
         
         $scans = Scan::fromBook($book);
@@ -195,6 +201,7 @@ class Pdf
         
         $this->make();
     }
+    
     /**
      * Creates the PDF file based on the scan.
      */
@@ -251,6 +258,28 @@ class Pdf
     private function out($value)
     {
         $this->output .= $value . "\n";
+    }
+    
+    private function drawJPEGImage($file, $x, $y, $sx = 1, $sy = 1)
+    {
+        list($width, $height) = getimagesize($file);
+        
+        $objectNum = $this->newStream("/Subtype /Image\n"
+                                    . "/Width " . $width . "\n"
+                                    . "/Height " . $height . "\n"
+                                    . "/ColorSpace /DeviceRGB\n"
+                                    . "/BitsPerComponent 8\n"
+                                    . "/Filter /DCTDecode\n"
+                                    , file_get_contents($file));
+        $resourceName = $this->addResource($objectNum);
+        
+        $this->draw('q');
+        $this->draw('1 0 0 1 ' . $x . ' ' . $y . ' cm');
+        $this->draw($sx . ' 0 0 ' . $sy . ' 0 0 cm');
+        $this->draw($width . ' 0 0 ' . $height . ' 0 0 cm');
+        $this->draw($resourceName . ' Do Q');
+        
+        return array($x, $y, $x + $width * $sx, $y + $height * $sy);
     }
     
     /**
