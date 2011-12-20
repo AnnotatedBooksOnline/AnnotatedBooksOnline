@@ -42,10 +42,12 @@ class Pdf
     private $y = null;
     private $pages = array();
     private $pagesId = null;
+    private $annots = array();
     private $resourcesId = null;
     private $catalogId = null;
     private $lastFontSize = null;
     private $scanAttr = array();
+    private $unicodeId = null;
     
     private $scan;
     private $book;
@@ -148,10 +150,8 @@ class Pdf
         $this->draw('Q');
         
         $this->y -= $scanHeight + 2 * 28;
-        $this->drawText('<internet address> - generated ' . date('l, d M Y H:i:s T'));
-
-        // Finalize the page.
-        $this->writePage();
+        $this->addLink($this->drawText('http://sp.urandom.nl/devtest/#book-2', false, true), 'http://www.google.nl');
+        $this->drawText(' — ' . date('l, d M Y H:i:s T'));
         
         // Produce the final PDF file.
         $this->make();
@@ -178,6 +178,24 @@ class Pdf
             $circle[$i+1] = $circle[$i+1] * $r + $y;
         }
         $this->draw(vsprintf('%F %F m %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c h', $circle));
+    }
+    
+    /**
+     * Adds a Link Annotation to the specified area.
+     */
+    private function addLink($area, $uri, $bottomline = true)
+    {
+        $this->annots[] = $this->newObject("<<\n" .
+        "/Type /Annot\n" .
+        "/Subtype /Link\n" .
+        "/Rect [ " . vsprintf('%F %F %F %F', $area) . " ]\n" .
+        "/Border [0 0 0]\n" .
+        "/A << /S /URI /URI (" . $uri . ") /Type /Action >>\n" .
+        ">>");
+        if ($bottomline)
+        {
+            $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG S Q', $area[0], $area[1], $area[2], $area[1]));
+        }
     }
     
     /**
@@ -527,7 +545,7 @@ class Pdf
         {
             $result .= sprintf('%02X', ord($char));
         }
-        return '<FEFF' . $result . '>';
+        return '<' . $result . '>';
     }
     
     /**
@@ -544,7 +562,7 @@ class Pdf
         {
             $result .= sprintf('%02X%02X', ord($char[0]), ord($char[1]));
         }
-        return '<FEFF' . $result . '>';
+        return "<" . $result . '>';
     }
     
     private function toUTF16BEArray($text)
@@ -565,6 +583,38 @@ class Pdf
         if ($type != 'TrueTypeUnicode')
         {
             throw new PdfException('pdf-creation-failed');
+        }
+        
+        if ($this->unicodeId === null)
+        {
+            $table  = "/CIDInit /ProcSet findresource begin\n";
+            $table .= "12 dict begin\n";
+            $table .= "begincmap\n";
+            $table .= "/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def\n";
+            $table .= "/CMapName /Adobe-Identity-UCS def\n";
+            $table .= "/CMapType 2 def\n";
+            $table .= "/WMode 0 def\n";
+            $table .= "1 begincodespacerange\n";
+            $table .= "<0000> <FFFF>\n";
+            $table .= "endcodespacerange\n";
+            for ($i = 0; $i < 256; $i++)
+            {
+                if ($i % 100 == 0)
+                {
+                    if ($i != 0)
+                    {
+                        $table .= "endbfrange\n";
+                    }
+                    $table .= min(100, 256-$i) . " beginbfrange\n";
+                }
+                $table .= sprintf("<%02x00> <%02xff> <%02x00>\n", $i, $i, $i);
+            }
+            $table .= "endbfrange\n";
+            $table .= "endcmap\n";
+            $table .= "CMapName currentdict /CMap defineresource pop\n";
+            $table .= "end\n";
+            $table .= "end";
+            $this->unicodeId = $this->newStream('/Filter /FlateDecode', gzcompress($table));
         }
         
         $this->fontSizes[$name] = $cw;
@@ -621,6 +671,7 @@ class Pdf
             "/Subtype /Type0\n" .
             "/BaseFont /" . $name . "\n" .
             "/Name /" . $fontName . "\n" .
+            "/ToUnicode " . $this->unicodeId . " 0 R\n" .
             "/Encoding /Identity-H\n" .
             "/DescendantFonts [" . $descendantFontsId . " 0 R]\n" .
             ">>");
@@ -639,7 +690,7 @@ class Pdf
         $this->y = $this->pageHeight - $this->textMargins - $this->fontSize;
     }
     
-    private function drawText($text, $center = false)
+    private function drawText($text, $center = false, $omitNewLine = false)
     {
         if ($this->x === null || $this->y === null)
         {
@@ -651,13 +702,23 @@ class Pdf
         }
         $this->lastFontSize = $this->fontSize;
         
+        $minY = $this->y;
+        $maxY = $this->y + $this->fontSize;
+        $minX = $this->x;
+        $maxX = $this->x;
+        $tempX = $this->x;
+        
         $lines = mb_split("\n", $text);
-        foreach($lines as $text)
+        $numlines = count($lines);
+        for ($l = 0; $l < $numlines; $l++)
         {
+            $text = $lines[$l];
+            
             if (strlen($text) == 0)
             {
                 $this->y -= $this->fontSize + $this->lineSpread;
                 $this->x = $this->textMargins;
+                $tempX = $this->x;
                 continue;
             }
             
@@ -695,6 +756,12 @@ class Pdf
                 }
                 if ($x >= $this->pageWidth - $this->textMargins || $endOfString)
                 {
+                    $minY = min($this->y, $minY);
+                    if ($endOfString)
+                    {
+                        $maxX = max($x, $maxX);
+                        $tempX = max($x, $tempX);
+                    }
                     $this->draw('q');
                     if ($center)
                     {
@@ -717,19 +784,35 @@ class Pdf
                     }
                     $this->draw('ET');
                     $this->draw('Q');
-                    $this->y -= $this->fontSize + $this->lineSpread;
-                    $this->x = $this->textMargins;
+                    if (!$endOfString || $l < $numlines - 1 || !$omitNewLine)
+                    {
+                        $this->y -= $this->fontSize + $this->lineSpread;
+                        $this->x = $this->textMargins;
+                        $tempX = $this->x;
+                    }
                     $x = $this->x + $widthSinceSpace;
                     $prevEnd = $lastSpace + 1;
                 }
+                else
+                {
+                    $minX = min($x, $minX);
+                    $maxX = max($x, $maxX);
+                    $tempX = max($x, $tempX);
+                }
             }
         }
+        $this->x = $tempX;
+        $minY += ($this->fontInfo[$this->font]['Descent']) * $this->fontSize / 1000;
+        $maxY += ($this->fontInfo[$this->font]['Ascent'] - 1000) * $this->fontSize / 1000;
+        return array($minX, $minY, $maxX, $maxY);
     }
     
     private function writePage()
     {
         $drawId = $this->newStream('/Filter /FlateDecode', gzcompress($this->draws));
         $this->draws = '';
+        $annots = count($this->annots) == 0 ? '' : (' /Annots [ ' . implode(' 0 R ', $this->annots) . ' 0 R ] ');
+        $this->annots = array();
         
         if ($this->pagesId === null)
         {
@@ -740,7 +823,7 @@ class Pdf
             $this->resourcesId = $this->newObject('');
         }
         
-        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $this->resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] >>');
+        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $this->resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] ' . $annots . '>>');
         $this->pages[] = $pageId;
         $this->resetPosition();
     }
