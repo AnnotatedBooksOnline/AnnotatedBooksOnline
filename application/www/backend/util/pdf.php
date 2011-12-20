@@ -128,8 +128,8 @@ class Pdf
             $year
         ));
         $title .= "\n" . implode(', ', array(
-            $this->book->getPlacePublished(),
-            $this->book->getPublisher(),
+            $this->book->getPlacePublished() == null ? 'Place published' : $this->book->getPlacePublished(),
+            $this->book->getPublisher() == null ? 'Publisher' : $this->book->getPublisher(),
             'Library',
             'Signature'
         ));
@@ -137,9 +137,9 @@ class Pdf
         $this->drawText($title);
         
         $scanWidth = $this->pageWidth - 2 * $this->textMargins;
-        $scanHeight = $this->y - $this->textMargins - 2 * 28 - $this->fontSize;
+        $scanHeight = $this->y - $this->textMargins - 2 * 28;
         
-        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->pageHeight - $this->y - 28 + $this->fontSize));
+        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->pageHeight - $this->y - 28));
         
         $points = array(array(10,10), array(60,50), array(110,10), array(110,110), array(60,150), array(10,110));
         $this->drawScan($this->scan, $scanWidth, $scanHeight);
@@ -147,7 +147,7 @@ class Pdf
         
         $this->draw('Q');
         
-        $this->y -= $scanHeight + 2 * 28 + $this->fontSize;
+        $this->y -= $scanHeight + 2 * 28;
         $this->drawText('<internet address> - generated ' . date('l, d M Y H:i:s T'));
 
         // Finalize the page.
