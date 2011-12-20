@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/util/configuration.php';
+require_once 'framework/util/cache.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
 //require_once 'models/binding/binding.php';
@@ -17,16 +18,18 @@ class PdfException extends ExceptionBase
 
 class Pdf
 {
+    private $identifier;
     private $path;
     private $dpi = 250;
     private $textMargins = 72;
     private $fontSize = 12;
     private $lineSpread = 2;
-
+    
     private $pageWidth;
     private $pageHeight;
+    private $autoPrint = false;
     
-    private $objects = array();
+    private $objectHandles = array();
     private $numObjects = 0;
     private $resources = '';
     private $draws = '';
@@ -42,13 +45,13 @@ class Pdf
     private $resourcesId = null;
     private $catalogId = null;
     private $lastFontSize = null;
-    
     private $scanAttr = array();
-    private $autoPrint = false;
     
     private $scan;
     private $book;
     private $binding;
+    
+    private $outputEntry = null;
 
     /**
      * Creates a new PDF based on the given scan. When possible, the resolution
@@ -60,8 +63,11 @@ class Pdf
      *    - height: the height in points (1/72 inch)
      * print: whether to insert JavaScript to trigger printing on open
      */
-    public function __construct($scan, $dimensions = null, $print = false)
+    public function __construct($scan, $cacheEntry = null, $dimensions = null, $print = false)
     {
+        $this->identifier = uniqid('pdf', true);
+        $this->outputEntry = $cacheEntry;
+        
         $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
         
         $this->autoPrint = $print;
@@ -89,13 +95,21 @@ class Pdf
     }
 
     /**
-     * Returns the generated PDF contents as a binary string for storage purposes.
+     * Returns the generated PDF contents as a binary string.
+     * Normally you do not want to use this, as it might use quite a lot of memory.
      */
     public function getContent()
     {
-        return $this->output;
+        if ($this->outputEntry === null)
+        {
+            return $this->output;
+        }
+        else
+        {
+            return $this->outputEntry->getContent();
+        }
     }
-    
+   
     /**
      * Creates the PDF file based on the scan.
      */
@@ -322,21 +336,20 @@ class Pdf
     private function newObject($contents)
     {
         $this->numObjects++;
-        $this->objects[$this->numObjects] = $this->numObjects 
-                              . " 0 obj\n"
-                              . $contents
-                              . "\nendobj\n";
-        return $this->numObjects;
+        return $this->updateObject($this->numObjects, $contents);
     }
     
     private function updateObject($id, $contents)
     {
-        if ($id < $this->numObjects)
+        if ($id <= $this->numObjects)
         {
-            $this->objects[$id] = $id
-                                  . " 0 obj\n"
-                                  . $contents
-                                  . "\nendobj\n";
+            $value = $id
+                   . " 0 obj\n"
+                   . $contents
+                   . "\nendobj\n";
+            $handle = array($this->identifier, $id);
+            $this->objectHandles[$id] = $handle;
+            Cache::getFileEntry($handle)->setContent($value);
             return $id;
         }
     }
@@ -451,13 +464,23 @@ class Pdf
         $xref = "0000000000 65535 f \n";
 
         $offset = strlen($this->output);
-    
-        ksort($this->objects);
-        foreach ($this->objects as $key => $value)
+        
+        $useForeignEntry = true;
+        if ($this->outputEntry === null)
+        {
+            $this->outputEntry = Cache::getFileEntry($this->identifier, 'output');
+            $useForeignEntry = false;
+        }
+        $this->outputEntry->append($this->output);
+        $this->output = '';
+        
+        foreach ($this->objectHandles as $handle)
         {
             $xref .= sprintf("%010d 00000 n \n", $offset);
-            $offset += strlen($value);
-            $this->output .= $value;
+            $entry = Cache::getFileEntry($handle);
+            $offset += $entry->getLength();
+            $this->outputEntry->append($entry->getContent());
+            $entry->clear();
         }
         
         $this->out('xref');
@@ -467,6 +490,26 @@ class Pdf
         $this->out('startxref');
         $this->out($offset);
         $this->out('%%EOF');
+        
+        $this->outputEntry->append($this->output);
+        
+        // Unset all unneeded variables for memory savings.
+        foreach (array_keys(get_object_vars($this)) as $var)
+        {
+            if ($var != 'outputEntry')
+            {
+                unset($this->$var);
+            }
+        }
+        
+        if (!$useForeignEntry)
+        {
+            Log::debug('We should really be using a foreign CacheEntry here...');
+            $this->output = $this->outputEntry->getContent();
+            $this->outputEntry->clear();
+            unset($this->outputEntry);
+            $this->outputEntry = null;
+        }
     }
     
     /**

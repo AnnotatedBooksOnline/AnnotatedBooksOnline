@@ -23,15 +23,11 @@ class PdfController extends Controller
         $entry = Cache::getFileEntry('pdf', $scanId);
         
         // Check for expiration.
-        if ($entry->hasExpired() || true)
+        if ($entry->hasExpired())
         {
             // Generate PDF.
             $scan = new Scan($scanId);
-            $pdf = new Pdf($scan);
-            
-            // Set content.
-            $content = $pdf->getContent();
-            $entry->setContent($content);
+            $pdf = new Pdf($scan, $entry);
         }
         else
         {
