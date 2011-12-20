@@ -25,6 +25,7 @@ class Pdf
     private $textMargins = 72;
     private $fontSize = 12;
     private $lineSpread = 2;
+    private $productName = 'Collaboratory';
     
     private $pageWidth;
     private $pageHeight;
@@ -205,7 +206,7 @@ class Pdf
         $minYear = $this->book->getMinYear();
         $maxYear = $this->book->getMaxYear();
         $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
-        $title = 'Collaboratory'; // TODO
+        $title = $this->productName;
         $title .= "\n" . implode(', ', array(
             'Author', // TODO
             $this->book->getTitle(),
@@ -237,7 +238,7 @@ class Pdf
         $this->draw('Q');
         
         $this->y -= $scanHeight + 2 * 28;
-        $this->addLink($this->drawText('http://sp.urandom.nl/devtest/#book-2', false, true), 'http://www.google.nl');
+        $this->addLink($this->drawText('http://sp.urandom.nl/devtest/#book-2', false, true), 'http://sp.urandom.nl/devtest/#book-2');
         $this->drawText(' — ' . date('l, d M Y H:i:s T'));
         
         // Produce the final PDF file.
@@ -277,7 +278,7 @@ class Pdf
         "/Subtype /Link\n" .
         "/Rect [ " . vsprintf('%F %F %F %F', $area) . " ]\n" .
         "/Border [0 0 0]\n" .
-        "/A << /S /URI /URI (" . $uri . ") /Type /Action >>\n" .
+        "/A << /S /URI /URI " . $this->escapeString($uri) . " /Type /Action >>\n" .
         ">>", true);
         if ($bottomline)
         {
@@ -504,8 +505,9 @@ class Pdf
     /**
      * Adds a new PDF resource reference.
      */
-    private function addResource($name, $objectNum)
+    private function addResource($objectNum)
     {
+        $name = 'r' . $objectNum;
         $this->resources .= "/" . $name . " " . $objectNum . " 0 R\n";
         return "/" . $name;
     }
@@ -531,7 +533,7 @@ class Pdf
                                     . "/BitsPerComponent 8\n"
                                     . "/Filter /DCTDecode\n"
                                     , $file);
-        $resource = $this->addResource('tilex' . $x . 'y' . $y, $objectNum);
+        $resourceName = $this->addResource($objectNum);
 
         $scale = $this->scanAttr['scale'];
         $rows = $this->scanAttr['rows'];
@@ -547,7 +549,7 @@ class Pdf
         $this->draw('q');
         $this->draw($sx . ' 0 0 ' . $sy . ' 0 0 cm');
         $this->draw('1 0 0 1 ' . $ox . ' ' . $oy . ' cm');
-        $this->draw($resource . ' Do Q');
+        $this->draw($resourceName . ' Do Q');
         
         return $objectNum;
     }
@@ -586,15 +588,17 @@ class Pdf
         
         $pages = implode(' 0 R ', array_values($this->pages)) . ' 0 R';
         $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
-        $this->updateObject($this->resourcesId, "<< /XObject <<\n" . $this->resources . "\n>> /Font <<\n" . $this->fonts . "\n>> >>");
         
         $infoId = $this->newObject("<<\n" .
             "/Title " . $this->fromUTF8($this->book->getTitle()) . "\n" .
+            "/Author " . $this->fromUTF8('Author') . "\n" . // TODO
+            "/Creator " . $this->fromUTF8($this->productName) . "\n" .
+            "/CreationDate " . date("(\D:YmdHis)") . "\n" .
             ">>");
         
         $xref = "0000000000 65535 f \n";
 
-        $offset = strlen($this->output);
+        $offset = 9;
         
         $this->outputEntry->append($this->output);
         $this->output = '';
@@ -657,7 +661,7 @@ class Pdf
         {
             $result .= sprintf('%02X', ord($char));
         }
-        return '<' . $result . '>';
+        return '<FEFF' . $result . '>';
     }
     
     /**
@@ -675,6 +679,14 @@ class Pdf
             $result .= sprintf('%02X%02X', ord($char[0]), ord($char[1]));
         }
         return "<" . $result . '>';
+    }
+    
+    /**
+     * Creates a safe text string from the given string.
+     */
+    private function escapeString($text)
+    {
+        return '(' . strtr($text, array(')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r')) . ')';
     }
     
     private function toUTF16BEArray($text)
@@ -935,12 +947,10 @@ class Pdf
         {
             $this->pagesId = $this->newObject('');
         }
-        if ($this->resourcesId === null)
-        {
-            $this->resourcesId = $this->newObject('');
-        }
+        $resourcesId = $this->newObject("<< /XObject <<\n" . $this->resources . "\n>> /Font <<\n" . $this->fonts . "\n>> >>", true);
+        $this->resources = '';
         
-        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $this->resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] ' . $annots . '>>', true);
+        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] ' . $annots . '>>', true);
         $this->pages[] = $pageId;
         $this->resetPosition();
     }
