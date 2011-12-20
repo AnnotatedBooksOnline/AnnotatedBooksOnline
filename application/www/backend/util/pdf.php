@@ -18,7 +18,7 @@ class PdfException extends ExceptionBase
 class Pdf
 {
     private $path;
-    private $dpi = 150;
+    private $dpi = 250;
     private $textMargins = 72;
     private $fontSize = 12;
     private $lineSpread = 2;
@@ -34,6 +34,7 @@ class Pdf
     private $fonts = '';
     private $font;
     private $fontSizes = array();
+    private $fontInfo = array();
     private $x = null;
     private $y = null;
     private $pages = array();
@@ -42,8 +43,7 @@ class Pdf
     private $catalogId = null;
     private $lastFontSize = null;
     
-    private $scanInfo;
-    private $imageAttr = array();
+    private $scanAttr = array();
     private $autoPrint = false;
     
     private $scan;
@@ -58,20 +58,14 @@ class Pdf
      * dimensions: the page dimensions
      *    - width: the width in points (1/72 inch)
      *    - height: the height in points (1/72 inch)
+     * print: whether to insert JavaScript to trigger printing on open
      */
     public function __construct($scan, $dimensions = null, $print = false)
     {
         $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
         
-        $this->scanInfo = array(
-            'width' => $scan->getWidth(),
-            'height' => $scan->getHeight(),
-            'zoomLevel' => $scan->getZoomLevel()
-        );
-        
         $this->autoPrint = $print;
         
-        $this->scan = $scan;
         $this->book = new Book($scan->getBookId());
         //$this->binding = new Binding($book->getBindingId());
         
@@ -80,18 +74,18 @@ class Pdf
             isset($dimensions['width']) &&
             isset($dimensions['height']))
         {
-            $this->imageAttr['pageWidth'] = (int)$dimensions['width'];
-            $this->imageAttr['pageHeight'] = (int)$dimensions['height'];
+            $this->setPageSize($dimensions['width'], $dimensions['height']);
         }
         else
         {
-            // Assume A4 paper size.
-            $this->imageAttr['pageWidth']  = 595;
-            $this->imageAttr['pageHeight'] = 842;
+            $this->setPageSize(595, 842);
         }
         
-        $this->setPageSize($this->imageAttr['pageWidth'], $this->imageAttr['pageHeight']);
-        $this->create();
+        // Load the default font.
+        $this->addFont('DejaVuSans', 'dejavusans.php');
+        $this->font = 'DejaVuSans';
+        
+        $this->createSingleScan($scan);
     }
 
     /**
@@ -105,34 +99,98 @@ class Pdf
     /**
      * Creates the PDF file based on the scan.
      */
-    private function create()
+    private function createSingleScan($scan, $transcriptions = null)
     {
-        $this->addFont('DejaVuSans', 'dejavusans.php');
-        $this->font = 'DejaVuSans';
+        $this->scan = $scan;
+        $this->textMargins = 36; // 1,25 cm
         
-        $this->setFontSize(24);
-        $this->drawText($this->book->getTitle() . "\n\n", true);
-        $this->setFontSize(12);
-        $this->drawText("Page number: " . $this->scan->getPage());
+        $minYear = $this->book->getMinYear();
+        $maxYear = $this->book->getMaxYear();
+        $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
+        $title = 'Collaboratory';
+        $title .= "\n" . implode(', ', array(
+            'Author',
+            $this->book->getTitle(),
+            $year
+        ));
+        $title .= "\n" . implode(', ', array(
+            $this->book->getPlacePublished(),
+            $this->book->getPublisher(),
+            'Library',
+            'Signature'
+        ));
+        $title .= "\nPage number: " . $this->scan->getPage();
+        $this->drawText($title);
+        
+        $scanWidth = $this->pageWidth - 2 * $this->textMargins;
+        $scanHeight = $this->y - $this->textMargins - 2 * 28 - $this->fontSize;
+        
+        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->pageHeight - $this->y - 28 + $this->fontSize));
+        
+        $points = array(array(10,10), array(60,50), array(110,10), array(110,110), array(60,150), array(10,110));
+        $this->drawScan($this->scan, $scanWidth, $scanHeight);
+        $this->drawAnnotationPolygon(1, $points);
+        
+        $this->draw('Q');
+        
+        $this->y -= $scanHeight + 2 * 28 + $this->fontSize;
+        $this->drawText('<internet address> - generated ' . date('l, d M Y H:i:s T'));
+
+        // Finalize the page.
         $this->writePage();
         
-        $z = $this->scanInfo['zoomLevel'];
+        // Produce the final PDF file.
+        $this->make();
+    }
+    
+    /**
+     * Outputs raw data to the PDF output followed by a newline.
+     */
+    private function out($value)
+    {
+        $this->output .= $value . "\n";
+    }
+    
+    /**
+     * Creates a circle subpath with radius r centered at point (x,y).
+     */
+    private function putCircle($x, $y, $r)
+    {
+        $k = 4*(sqrt(2)-1)/3;
+        $circle = array(0, 0, 0, $k, 1-$k, 1, 1, 1, 1+$k, 1, 2, $k, 2, 0, 2, -$k, 1+$k, -1, 1, -1, 1-$k, -1, 0, -$k, 0, 0);
+        for ($i = 0; $i < count($circle); $i+=2)
+        {
+            $circle[$i] = $circle[$i] * $r + $x - $r;
+            $circle[$i+1] = $circle[$i+1] * $r + $y;
+        }
+        $this->draw(vsprintf('%F %F m %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c h', $circle));
+    }
+    
+    /**
+     * Draws the given scan with the given size.
+     */
+    private function drawScan($scan, $width, $height)
+    {
+        $z = $scan->getZoomLevel();
         if ($z == 1)
         {
-            $size = getimagesize($this->imageName(0, 0, 0));
-            $this->imageAttr['tileSize'] = max($size[0], $size[1]);
+            $size = getimagesize($this->tileName(0, 0, 0));
+            $this->scanAttr['tileSize'] = max($size[0], $size[1]);
         }
         else
         {
-            $size = getimagesize($this->imageName(0, 0, 1));
-            $this->imageAttr['tileSize'] = $size[0];
+            $size = getimagesize($this->tileName(0, 0, 1));
+            $this->scanAttr['tileSize'] = $size[0];
         }
         
-        $ts = $this->imageAttr['tileSize'];
-        $pw = $this->imageAttr['pageWidth'];
-        $ph = $this->imageAttr['pageHeight'];
-        $w = $this->scanInfo['width'];
-        $h = $this->scanInfo['height'];
+        $this->scanAttr['pageWidth'] = $width;
+        $this->scanAttr['pageHeight'] = $height;
+        
+        $ts = $this->scanAttr['tileSize'];
+        $pw = $width;
+        $ph = $height;
+        $w = $scan->getWidth();
+        $h = $scan->getHeight();
         
         // Calculate the desired zoomlevel for the configured dpi.
         for ($zoomLevel = 0; $zoomLevel < $z - 1; $zoomLevel++)
@@ -144,19 +202,25 @@ class Pdf
         }
         $cols = ceil($w * pow(2, $zoomLevel) / $ts);
         $rows = ceil($h * pow(2, $zoomLevel) / $ts);
-        $this->imageAttr['zoomLevel'] = $zoomLevel;
-        $this->imageAttr['cols'] = $cols;
-        $this->imageAttr['rows'] = $rows;
+        $this->scanAttr['zoomLevel'] = $zoomLevel;
+        $this->scanAttr['cols'] = $cols;
+        $this->scanAttr['rows'] = $rows;
 
         // Calculate the scale of the images.
         // Compensate for the possibility of the edge tiles being smaller.
-        $cornerSize = getimagesize($this->imageName($cols - 1, $rows - 1), $zoomLevel);
+        $cornerSize = getimagesize($this->tileName($cols - 1, $rows - 1), $zoomLevel);
         $compx = 1 - $cornerSize[0] / $ts;
         $compy = 1 - $cornerSize[1] / $ts;
         $scale = min($pw / ($cols - $compx), $ph / ($rows - $compy));
-        $this->imageAttr['compX'] = $compx;
-        $this->imageAttr['compY'] = $compy;
-        $this->imageAttr['scale'] = $scale;
+        $this->scanAttr['compX'] = $compx;
+        $this->scanAttr['compY'] = $compy;
+        $this->scanAttr['scale'] = $scale;
+
+        // Center the scan on the page.
+        $this->draw(sprintf('q 1 0 0 1 %F %F cm',
+            ($width - $scale * ($cols - $compx))/2,
+            ($height - $scale * ($rows - $compy))/2
+        ));
 
         // Add the tiles.
         for ($y = 0; $y < $rows; $y++)
@@ -167,108 +231,89 @@ class Pdf
             
             $this->newTile($x, $y, $tileWidth, $tileHeight);
         }
-
-        // Finalize the page.
-        $this->setPageSize($scale * ($cols - $compx), $scale * ($rows - $compy));
-        $this->writePage();
         
-        $this->setPageSize($this->imageAttr['pageWidth'], $this->imageAttr['pageHeight']);
-
-        $this->drawText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet purus eu libero faucibus rhoncus. Sed nunc elit, interdum non tempor a, rutrum eu metus. Curabitur id tellus vitae leo sodales venenatis. Aenean pellentesque, lacus vel dictum imperdiet, quam nulla dictum turpis, id fringilla elit sem quis neque. Integer fringilla purus non erat aliquet a dapibus justo auctor. Donec magna sem, facilisis id porttitor id, vulputate a turpis. Morbi consequat aliquet dui eu tempor. Donec et tellus augue, at lacinia purus. Curabitur interdum mauris ac nulla tristique sollicitudin. Mauris eu purus ut nibh auctor aliquam sit amet a lacus.
-
-Integer dictum aliquet enim, sit amet viverra tellus luctus sit amet. Aliquam iaculis imperdiet auctor. Quisque vitae dui nec dolor tristique lacinia quis in lacus. Donec lacus risus, bibendum id accumsan sed, mattis ut neque. Nulla facilisi. Aliquam nulla sapien, feugiat ut dapibus semper, fringilla vitae neque. Fusce sit amet nulla sapien, ut vulputate risus. Nunc faucibus, odio eu blandit condimentum, tortor tortor consectetur ipsum, vel sagittis diam justo in ante. Sed vitae leo mauris, et ornare lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris venenatis urna id felis luctus vel luctus ligula vehicula. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean consequat lacus eget diam vestibulum adipiscing.
-
-Curabitur rutrum molestie erat, sit amet lacinia est condimentum eget. Integer euismod malesuada urna eu vestibulum. Donec pellentesque mollis varius. Curabitur sagittis tristique condimentum. Morbi nec sem augue, egestas vestibulum urna. Aenean purus neque, imperdiet non convallis ut, rhoncus vel urna. Mauris auctor tincidunt iaculis. In quis arcu lorem. Curabitur nec tellus velit. Quisque dapibus, quam et dictum sodales, eros neque rhoncus nibh, id lobortis nisl turpis eget arcu.
-
-Phasellus bibendum malesuada placerat. Suspendisse ac lectus in quam molestie volutpat vitae ac eros. Ut vel sem turpis. In porttitor purus sed sem congue fermentum. Vestibulum accumsan fringilla aliquet. Nullam erat sapien, malesuada eu mattis a, feugiat sit amet dolor. Donec viverra ligula at libero aliquet laoreet. Maecenas accumsan dignissim faucibus.
-
-Quisque quis neque sit amet mauris sollicitudin sagittis. Aliquam ut orci nisl, vel consectetur ligula. Nunc faucibus nulla ac nulla fringilla sed aliquet sapien vestibulum. Sed eu vehicula sapien. In varius, dui non tristique aliquam, lorem nisl bibendum quam, non euismod metus nisi quis sem. Vivamus urna lorem, euismod ornare lacinia nec, iaculis a neque. Ut vulputate urna at est dictum ac rhoncus felis varius. Pellentesque nec metus vitae lacus sodales lacinia eget quis massa.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc euismod auctor suscipit. Aenean ut est sed metus eleifend sodales non vel sapien. Aliquam posuere ante sit amet tellus tempus bibendum malesuada ipsum dapibus. Cras eros justo, malesuada a pretium sed, consectetur vestibulum mauris. Aliquam erat volutpat. Praesent iaculis lectus vitae ante ultrices dictum euismod tortor fringilla. Etiam ac orci et libero lobortis porta. Integer tempus, tellus vel ornare elementum, risus magna dapibus turpis, eu dignissim purus odio eu risus. Etiam pulvinar sem sit amet ligula luctus sit amet commodo dui venenatis. Vestibulum molestie sodales consequat. Nullam velit turpis, dignissim ullamcorper euismod vitae, aliquam nec metus. Donec nec magna in mi gravida tempor. Aliquam erat volutpat. Fusce fermentum volutpat ante sed dictum. Ut vel venenatis enim.
-
-Praesent sollicitudin, dui nec blandit rhoncus, justo metus aliquam nulla, in euismod nibh mauris quis eros. In sagittis risus eu lorem vehicula nec porta sapien volutpat. Praesent congue blandit orci at mattis. Praesent posuere velit quis lacus tincidunt sed rhoncus leo ullamcorper. Aenean aliquet ligula quis eros vestibulum facilisis. Curabitur auctor dapibus elementum. Praesent pharetra facilisis nisi, et rutrum enim bibendum eget. Nulla nec elit nisl. Ut at mi ligula, eu viverra eros. Vivamus dapibus tempor mi, eget gravida nisl iaculis eget. Maecenas eget metus magna. Nullam sit amet nunc ac nunc scelerisque sollicitudin.
-
-Suspendisse potenti. Pellentesque nisi leo, euismod interdum feugiat nec, varius egestas velit. Curabitur a eros id est euismod fermentum. Nullam id odio nec dui auctor lobortis quis id nibh. Cras pretium aliquam est, et tristique erat condimentum non. Fusce ultrices placerat mi a convallis. Ut sollicitudin tellus in eros porttitor quis sagittis ante consequat. Mauris lacinia nunc convallis neque vehicula sit amet feugiat tellus hendrerit. Praesent feugiat ipsum ut diam suscipit ac viverra arcu tincidunt.
-
-Aenean ut augue ac magna aliquet facilisis ac vitae tellus. Nulla ac magna sit amet leo eleifend viverra et a nisi. Curabitur semper condimentum eleifend. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed elementum nisl ut turpis dapibus id volutpat urna consequat. Morbi ultricies molestie condimentum. Nulla facilisi. Aliquam quam ante, sollicitudin vel faucibus nec, placerat et nulla. Quisque pellentesque justo sed urna condimentum condimentum. Phasellus gravida, enim sit amet blandit dictum, nisi ligula imperdiet dolor, quis tempus massa magna eget justo. Fusce tortor metus, suscipit sit amet sodales fermentum, iaculis vel enim. Nulla facilisi. Praesent semper nisl eget dolor aliquet blandit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec ut libero metus.
-
-Donec aliquam, nisl eu dignissim fermentum, nibh mauris tempor lorem, quis interdum urna est ut diam. Suspendisse vitae turpis nec eros egestas auctor et non leo. Sed ullamcorper, nunc at interdum gravida, arcu odio aliquet neque, ac varius nunc dolor vitae velit. Vestibulum eu ligula velit. Nunc consectetur gravida dolor nec iaculis. Curabitur diam arcu, mattis eget lobortis quis, scelerisque vel nibh. Praesent facilisis fermentum mauris, lacinia vehicula purus scelerisque sed. Nulla tristique dolor ut nibh faucibus fringilla. Donec eget felis ut mi ornare hendrerit. Vivamus libero ligula, adipiscing et mollis et, dapibus eu augue. ');
-
-        $this->writePage();
-
-        $this->setFontSize(18);
-        $this->drawText("Testing UTF-8 text rendering\n", true);
-        $this->setFontSize(12);
-        $this->drawText('From Laȝamon\'s Brut (The Chronicles of England, Middle English, West Midlands):
-
-    An preost wes on leoden, Laȝamon was ihoten
-    He wes Leovenaðes sone -- liðe him be Drihten.
-    He wonede at Ernleȝe at æðelen are chirechen,
-    Uppen Sevarne staþe, sel þar him þuhte,
-    Onfest Radestone, þer he bock radde. 
-
-From the Tagelied of Wolfram von Eschenbach (Middle High German):
-
-    Sîne klâwen durh die wolken sint geslagen,
-    er stîget ûf mit grôzer kraft,
-    ich sih in grâwen tägelîch als er wil tagen,
-    den tac, der im geselleschaft
-    erwenden wil, dem werden man,
-    den ich mit sorgen în verliez.
-    ich bringe in hinnen, ob ich kan.
-    sîn vil manegiu tugent michz leisten hiez.
-
-Some lines of Odysseus Elytis (Greek):
-
-    Monotonic:
-
-    Τη γλώσσα μου έδωσαν ελληνική
-    το σπίτι φτωχικό στις αμμουδιές του Ομήρου.
-    Μονάχη έγνοια η γλώσσα μου στις αμμουδιές του Ομήρου.
-
-    από το Άξιον Εστί
-    του Οδυσσέα Ελύτη
-    
-    Polytonic:
-
-    Τὴ γλῶσσα μοῦ ἔδωσαν ἑλληνικὴ 
-    τὸ σπίτι φτωχικὸ στὶς ἀμμουδιὲς τοῦ Ὁμήρου.
-    Μονάχη ἔγνοια ἡ γλῶσσα μου στὶς ἀμμουδιὲς τοῦ Ὁμήρου.
-
-    ἀπὸ τὸ Ἄξιον ἐστί
-    τοῦ Ὀδυσσέα Ἐλύτη
-
-The first stanza of Pushkin\'s Bronze Horseman (Russian):
-
-    На берегу пустынных волн
-    Стоял он, дум великих полн,
-    И вдаль глядел. Пред ним широко
-    Река неслася; бедный чёлн
-    По ней стремился одиноко.
-    По мшистым, топким берегам
-    Чернели избы здесь и там,
-    Приют убогого чухонца;
-    И лес, неведомый лучам
-    В тумане спрятанного солнца,
-    Кругом шумел.
-
-Šota Rustaveli\'s Veṗxis Ṭq̇aosani, ̣︡Th, The Knight in the Tiger\'s Skin (Georgian):
-
-    ვეპხის ტყაოსანი შოთა რუსთაველი
-
-    ღმერთსი შემვედრე, ნუთუ კვლა დამხსნას სოფლისა შრომასა, ცეცხლს, წყალსა და მიწასა, ჰაერთა თანა მრომასა; მომცნეს ფრთენი და აღვფრინდე, მივჰხვდე მას ჩემსა ნდომასა, დღისით და ღამით ვჰხედვიდე მზისა ელვათა კრთომაასა. 
-');
-
-        // Produce the final PDF file.
-        $this->make();
+        $this->draw('Q');
     }
     
     /**
-     * Outputs raw data to the PDF output followed by a newline.
+     * Draws given points as an annotation polygon with number i.
      */
-    private function out($value)
+    private function drawAnnotationPolygon($i, $points)
     {
-        $this->output .= $value . "\n";
+        // Colors for the polygons in 'r g b' format.
+        $edgeColor = '0 0 0';
+        $circleColor = '0 0 0';
+        $circleFillColor = '0.9 0.9 0.9';
+        $firstCircleFillColor = '0.7 0.7 0.9';
+        
+        if (count($points) == 0)
+        {
+            return;
+        }
+        
+        $scale = $this->scanAttr['scale'];
+        $cols = $this->scanAttr['cols'];
+        $rows = $this->scanAttr['rows'];
+        $compx = $this->scanAttr['compX'];
+        $compy = $this->scanAttr['compY'];
+        $width = $this->scanAttr['pageWidth'];
+        $height = $this->scanAttr['pageHeight'];
+        
+        $this->draw(sprintf('q 1 0 0 1 %F %F cm',
+            ($width - $scale * ($cols - $compx))/2,
+            ($height - $scale * ($rows - $compy))/2
+        ));
+        
+        // Calculate X and Y scales.
+        $sx = $scale * ($cols - $compx) / $this->scan->getWidth();
+        $sy = $scale * ($rows - $compy) / $this->scan->getHeight();
+        
+        // Calculate the resulting scan height.
+        $ph = $scale * ($rows - $compy);
+        
+        $transformedPoints = array();
+        foreach($points as $p)
+        {
+            list($x, $y) = $p;
+            $transformedPoints[] = array($sx*$x, $ph-$sy*$y);
+        }
+        
+        // Draw the edges of the polygon as lines.
+        $this->draw('q 1 w');
+        $first = true;
+        foreach($transformedPoints as $p)
+        {
+            list($x, $y) = $p;
+            $this->draw($x . ' ' . $y . ($first ? ' m' : ' l'));
+            $first = false;
+        }
+        $this->draw('h');
+        $this->draw($edgeColor . ' RG S Q');
+        
+        // Draw the vertices of the polygon as points.
+        $first = true;
+        foreach($transformedPoints as $p)
+        {
+            list($x, $y) = $p;
+            $this->draw('q');
+            $this->putCircle($x, $y, $first ? 10 : 5);
+            $this->draw('1 w ' . ($first ? $firstCircleFillColor : $circleFillColor) . ' rg ' . $circleColor . ' RG B Q');
+            $first = false;
+        }
+        
+        // Draw the number of the annotation in the first vertex.
+        $num = str_split((string)$i);
+        $width = 0;
+        foreach ($num as $char)
+        {
+            $width += isset($this->fontSizes[$this->font][ord($char)]) ? $this->fontSizes[$this->font][ord($char)] : 600;
+        }
+        $width *= $this->fontSize / 1000;
+        list($x, $y) = $transformedPoints[0];
+        $this->draw('q 1 0 0 1 ' . ($x - $width / 2) . ' ' . ($y - $this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4) . ' cm');
+        $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET Q');
+        
+        $this->draw('Q');
     }
     
     /**
@@ -332,7 +377,7 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
      */
     private function newTile($x, $y, $width, $height)
     {
-        $file = file_get_contents($this->imageName($x, $y));
+        $file = file_get_contents($this->tileName($x, $y));
         $objectNum = $this->newStream("/Subtype /Image\n"
                                     . "/Width " . $width . "\n"
                                     . "/Height " . $height . "\n"
@@ -342,10 +387,10 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
                                     , $file);
         $resource = $this->addResource('tilex' . $x . 'y' . $y, $objectNum);
 
-        $scale = $this->imageAttr['scale'];
-        $rows = $this->imageAttr['rows'];
-        $tileSize = $this->imageAttr['tileSize'];
-        $compy = $this->imageAttr['compY'];
+        $scale = $this->scanAttr['scale'];
+        $rows = $this->scanAttr['rows'];
+        $tileSize = $this->scanAttr['tileSize'];
+        $compy = $this->scanAttr['compY'];
         
         $sx = $scale * $width / $tileSize;
         $sy = $scale * $height / $tileSize;
@@ -364,11 +409,11 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
     /**
      * Returns the filename of the image at the position requested.
      */
-    private function imageName($x, $y, $z = null)
+    private function tileName($x, $y, $z = null)
     {
         if ($z === null)
         {
-            $z = $this->imageAttr['zoomLevel'];
+            $z = $this->scanAttr['zoomLevel'];
         }
         return $this->path . '_' . $z . '_' . $x . '_' . $y . '.jpg';
     }
@@ -480,6 +525,7 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
         }
         
         $this->fontSizes[$name] = $cw;
+        $this->fontInfo[$name] = $desc;
         ksort($cw);
         $prevchar = -1;
         $w = '[ 0 [';
@@ -583,7 +629,7 @@ The first stanza of Pushkin\'s Bronze Horseman (Russian):
             $endOfLine = false;
             for ($i = 0; $i < $length; $i++)
             {
-                if ($this->y <= $this->textMargins)
+                if ($this->y < $this->textMargins)
                 {
                     $this->writePage();
                 }
