@@ -42,5 +42,7 @@ DomNode.prototype.insert = function(element, before)
 
 DomNode.prototype.remove = function()
 {
-    this.dom.remove();
+    var element = this.dom.get(0);
+    
+    element.parentNode.removeChild(element);
 }

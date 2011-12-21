@@ -26,6 +26,12 @@ function cancelEvent(event)
     return false;
 }
 
+// Creates a point.
+function createPoint(x, y)
+{
+    return {x: x, y: y};
+}
+
 // Rotates a point by an angle.
 function rotatePoint(point, angle)
 {
@@ -38,6 +44,18 @@ function rotatePoint(point, angle)
     };
     
     return result;
+}
+
+// Clones a point.
+function clonePoint(point)
+{
+    return {x: point.x, y: point.y};
+}
+
+// Creates a bounding box.
+function createBoundingBox(x, y, width, height)
+{
+    return {topRight: {x: x, y: y}, bottomLeft: {x: x + width, y: y + height}};
 }
 
 // Gets bounding box of a rotated bounding box.
@@ -68,6 +86,17 @@ function rotateBoundingBox(aabb, angle)
     };
     
     return {topLeft: topLeft, bottomRight: bottomRight};
+}
+
+// Clones a point.
+function cloneBoundingBox(aabb)
+{
+    var retval = {
+        topLeft:     {x: aabb.topLeft.x,     y: aabb.topLeft.y},
+        bottomRight: {x: aabb.bottomRight.x, y: aabb.bottomRight.y}
+    };
+    
+    return retval;
 }
 
 // Escapes a string for displaying.

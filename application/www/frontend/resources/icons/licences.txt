@@ -1,0 +1,12 @@
+- Farm-fresh by FatCow Web Hosting (Creative Commons Attribution 3.0)
+
+http://www.fatcow.com/free-icons
+
+
+- Silk icons by FAMFAMFAM (Creative Commons Attribution 3.0) with requirements:
+
+As an author, I would appreciate a reference to my authorship of the Silk icon
+set contents within a readme file or equivalent documentation for the software
+which includes the set or a subset of the icons contained within.
+
+http://www.famfamfam.com/lab/icons/silk/

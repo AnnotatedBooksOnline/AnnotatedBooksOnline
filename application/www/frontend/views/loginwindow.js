@@ -77,12 +77,6 @@ Ext.define('Ext.ux.LoginWindow', {
             layout: 'fit',
             width: 400,
             height: 200,
-            closable: true,
-            resizable: false,
-            draggable: true,
-            constrain: true,
-            modal: true,
-            border: true,
             items: [{
                 xtype: 'loginform'
             }]
