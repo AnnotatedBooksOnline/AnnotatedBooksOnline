@@ -65,3 +65,13 @@ a:hover
 {
     background-image: none;
 }
+
+.grid-valign-middle
+{
+    vertical-align: middle;
+}
+
+.grid-valign-bottom
+{
+    vertical-align: bottom;
+}

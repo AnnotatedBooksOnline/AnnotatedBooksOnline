@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
+require_once 'framework/database/database.php';
 
 /**
  * Class representing a scan entity.
@@ -62,6 +63,22 @@ class Scan extends Entity
         $scan->save();
         
         return $scan;
+    }
+    
+    public static function fromBook($book)
+    {
+        $result = Query::select('scanId')
+            ->from('Scans')
+            ->where('bookId = :book')
+            ->execute(array(':book' => $book->getBookId()));
+            
+        $scans = array();
+        
+        foreach($result as $scan)
+        {
+            $scans[] = new Scan($scan->getValue('scanId'));
+        }
+        return $scans;
     }
     
     // TODO: Add more helpers.

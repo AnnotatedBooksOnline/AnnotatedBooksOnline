@@ -243,7 +243,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                 handles: 'w'
             },
             collapsible: true,
-            collapsed: true,
+            collapsed: false,
             width: 300,
             minWidth: 300
         };

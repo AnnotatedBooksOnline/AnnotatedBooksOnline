@@ -134,6 +134,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
             width: 300,
             minWidth: 300,
             items: [{
+                xtype: 'annotationspanel',
                 title: 'Annotations'
             },{
                 title: 'Notes'

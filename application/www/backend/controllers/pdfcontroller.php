@@ -27,11 +27,7 @@ class PdfController extends Controller
         {
             // Generate PDF.
             $scan = new Scan($scanId);
-            $pdf = new Pdf($scan);
-            
-            // Set content.
-            $content = $pdf->getContent();
-            $entry->setContent($content);
+            $pdf = new Pdf($scan, $entry);
         }
         else
         {
