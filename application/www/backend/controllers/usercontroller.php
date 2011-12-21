@@ -68,7 +68,7 @@ class UserController extends Controller
         // Retrieve the search filters from the request.
         $arguments = array();
         $filters = self::getArray($data, 'filters');
-        if (isset($data['filters']))
+        gif (isset($data['filters']))
         {
             $filterProperties = array();
             foreach ($filters as $filter)
@@ -188,7 +188,7 @@ class UserController extends Controller
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => false,
+            'active'      => true, //TODO: false,
             'banned'      => false,
             'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
@@ -203,12 +203,12 @@ class UserController extends Controller
             $user->save();
             
             // Now create a pending user.
-            $puser = PendingUser::fromUser($user);
-            $puser->save();
-            return $puser;
+//            $puser = PendingUser::fromUser($user);
+//            $puser->save();
+//            return $puser;
         });
         
-        Mailer::sendActivationMail($puser);
+//        Mailer::sendActivationMail($puser);
         
         return array('records' => $values); 
     }
