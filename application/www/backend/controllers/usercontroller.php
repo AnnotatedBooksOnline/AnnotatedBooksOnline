@@ -68,7 +68,7 @@ class UserController extends Controller
         // Retrieve the search filters from the request.
         $arguments = array();
         $filters = self::getArray($data, 'filters');
-        if (isset($data['filters']))
+        gif (isset($data['filters']))
         {
             $filterProperties = array();
             foreach ($filters as $filter)
