@@ -216,8 +216,9 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, mainLevel
     //get level container
     var levelContainer = this.levelContainers[zoomLevel];
     if (!levelContainer)
+    {
         return;
-    
+    }
     
     
     
@@ -232,9 +233,9 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, mainLevel
     var startRow = Math.max(0, Math.floor(area.topLeft.y * zoomFactor * Document.invTileSize));
     
     var endCol = Math.min(size.cols - 1,
-                          Math.floor(area.bottomRight.x * zoomFactor * Document.invTileSize));
+        Math.floor(area.bottomRight.x * zoomFactor * Document.invTileSize));
     var endRow = Math.min(size.rows - 1,
-                          Math.floor(area.bottomRight.y * zoomFactor * Document.invTileSize));
+        Math.floor(area.bottomRight.y * zoomFactor * Document.invTileSize));
     
     
     
@@ -339,7 +340,6 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, mainLevel
     }
     else
     {
-    
         //set timer
         var _this = this;
         this.levelTimers[zoomLevel] = setTimeout(
@@ -350,7 +350,6 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, mainLevel
             },
             100
         );
-    
     }
     
     //set this level visible

@@ -74,16 +74,18 @@ Ext.apply(Ext.form.VTypes, {
     checkURL: function(value, field)
     {
         // Check if the url is a correct url.
-        // Use this instead of url, because this one also allows url's without 'http://'
-        var urlRegExp = /^((https?|ftp):\/\/)?[a-zA-Z0-9-.]+\.([a-zA-Z0-9]){2,4}([[\]a-zA-Z0-9/+=#%&_\.~?\-!]*)$/i;
-    
+        // Use this instead of url, because this one also allows url's without 'http://'.
+        // 
+        var urlRegExp = /^((http|ftp)[s]?:\/\/|www\.)[a-z\d-\.]+\.([a-z\d]){2,4}(\/|$)/i;
+        
         if (!urlRegExp.test(value))
         {
-            field.markInvalid('Not a valid url. The format should be \'http://www.url.com\' or \'www.url.com/moreinformation\'.');
+            field.markInvalid('Not a valid url. The format should be like ' +
+                '\'http://www.example.com\' or \'www.example.com/path/index.html\'.');
+            
             return false;
         }
         
         return true;
     }
 });
-

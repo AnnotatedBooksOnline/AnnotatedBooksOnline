@@ -219,7 +219,7 @@ Application.prototype.registerActions = function()
                     break;
                     
                 case 'viewersettings':
-                    Ext.ux.Viewer.showSettingsWindow();
+                    Ext.ux.ViewerPanel.showSettingsWindow();
                     break;
                     
                 case 'book':

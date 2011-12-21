@@ -5,9 +5,13 @@
 .viewport
 {
     background: #EEE;
-    cursor: url(../cursors/grab.cur), move;
     border: 1px solid #99BCE8 !important;
     border-top: none !important;
+}
+
+.draggable
+{
+    cursor: url(../cursors/grab.cur), move;
 }
 
 .dragging

@@ -1,5 +1,5 @@
 /*
- * Edit profile window class.
+ * Edit profile form class.
  */
 
 Ext.define('Ext.ux.EditProfileForm', {
@@ -212,6 +212,10 @@ Ext.define('Ext.ux.EditProfileForm', {
     }
 });
 
+/*
+ * Edit profile window class.
+ */
+
 Ext.define('Ext.ux.EditProfileWindow', {
     extend: 'Ext.ux.WindowBase',
 
@@ -222,12 +226,6 @@ Ext.define('Ext.ux.EditProfileWindow', {
             layout: 'fit',
             width: 600,
             height: 400,
-            closable: true,
-            resizable: false,
-            draggable: true,
-            constrain: true,
-            modal: true,
-            border: true,
             items: [{
                 xtype: 'editprofileform'
             }]
@@ -238,4 +236,3 @@ Ext.define('Ext.ux.EditProfileWindow', {
         this.callParent();
     }
 });
-

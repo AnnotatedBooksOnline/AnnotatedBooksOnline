@@ -5,49 +5,77 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Collaboratory</title>
+        
         <!-- As an optimization we load stylesheets first, then Javascript. -->
+        
+        <!-- Stylesheets. -->
         <link rel="stylesheet" type="text/css" href="frontend/external/extjs/resources/css/ext-all.css"/>
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/application.css" />
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/icons.css" />
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/viewer.css" />
         <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/polygonoverlay.css" />
-        <link rel="stylesheet" type="text/css" href="frontend/resources/stylesheets/viewer.css" />
+        
+        <!-- External code. -->
         <script type="text/javascript" src="frontend/external/extjs/ext-all.js"></script>
         <script type="text/javascript" src="frontend/external/jquery-1.6.4.min.js"></script>
         <script type="text/javascript" src="frontend/external/modernizr.min.js"></script>
         <script type="text/javascript" src="frontend/external/swfupload.js"></script>
+        
+        <!-- Utility logic. -->
         <script type="text/javascript" src="frontend/util/common.js"></script>
         <script type="text/javascript" src="frontend/util/eventdispatcher.js"></script>
         <script type="text/javascript" src="frontend/util/domnode.js"></script>
+        
+        <!-- Viewer logic. -->
         <script type="text/javascript" src="frontend/viewer/book.js"></script>
         <script type="text/javascript" src="frontend/viewer/document.js"></script>
         <script type="text/javascript" src="frontend/viewer/overlay.js"></script>
+        <script type="text/javascript" src="frontend/viewer/polygon.js"></script>
         <script type="text/javascript" src="frontend/viewer/polygonoverlay.js"></script>
+        <script type="text/javascript" src="frontend/viewer/annotationoverlay.js"></script>
         <script type="text/javascript" src="frontend/viewer/viewport.js"></script>
+        
+        <!-- Common logic. -->
         <script type="text/javascript" src="frontend/logic/requestmanager.js"></script>
         <script type="text/javascript" src="frontend/logic/requestmanagerproxy.js"></script>
         <script type="text/javascript" src="frontend/logic/authentication.js"></script>
         <script type="text/javascript" src="frontend/logic/application.js"></script>
+        
+        <!-- Models. -->
         <script type="text/javascript" src="frontend/models/user.js"></script>
         <script type="text/javascript" src="frontend/models/book.js"></script>
+        
+        <!-- View bases. -->
         <script type="text/javascript" src="frontend/views/vtypes.js"></script>
-        <script type="text/javascript" src="frontend/views/store.js"></script>
+        <script type="text/javascript" src="frontend/views/storebase.js"></script>
         <script type="text/javascript" src="frontend/views/formbase.js"></script>
         <script type="text/javascript" src="frontend/views/windowbase.js"></script>
+        
+        <!-- Viewer views. -->
+        <script type="text/javascript" src="frontend/views/viewersettingswindow.js"></script>
         <script type="text/javascript" src="frontend/views/viewportpanel.js"></script>
-        <script type="text/javascript" src="frontend/views/informationpanel.js"></script>
         <script type="text/javascript" src="frontend/views/navigationpanel.js"></script>
+        <script type="text/javascript" src="frontend/views/informationpanel.js"></script>
+        <script type="text/javascript" src="frontend/views/workspacepanel.js"></script>
         <script type="text/javascript" src="frontend/views/viewerpanel.js"></script>
+        
+        <!-- User views. -->
         <script type="text/javascript" src="frontend/views/loginwindow.js"></script>
-        <script type="text/javascript" src="frontend/views/registrationwindow.js"></script>
+        <script type="text/javascript" src="frontend/views/registrationpanel.js"></script>
         <script type="text/javascript" src="frontend/views/editprofilewindow.js"></script>
         <script type="text/javascript" src="frontend/views/viewprofilepanel.js"></script>
         <script type="text/javascript" src="frontend/views/userlistpanel.js"></script>
+        <script type="text/javascript" src="frontend/views/activationpanel.js"></script>
+        
+        <!-- Search views. -->
         <script type="text/javascript" src="frontend/views/searchpanel.js"></script>
+        
+        <!-- Upload views. -->
         <script type="text/javascript" src="frontend/views/scanpanel.js"></script>
         <script type="text/javascript" src="frontend/views/uploadpanel.js"></script>
+        
+        <!-- Other views. -->
         <script type="text/javascript" src="frontend/views/welcomepanel.js"></script>
-        <script type="text/javascript" src="frontend/views/activationpanel.js"></script>
         <script type="text/javascript" src="frontend/views/infopanel.js"></script>
         <script type="text/javascript" src="frontend/views/exportform.js"></script>
         <script type="text/javascript" src="frontend/views/annotationspanel.js"></script>

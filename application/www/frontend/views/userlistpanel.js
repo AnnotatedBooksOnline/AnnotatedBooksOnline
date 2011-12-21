@@ -10,11 +10,8 @@ Ext.define('Ext.ux.UserListPanel', {
     {
         var _this = this;
         
-        var store = Ext.create('Ext.data.Store', {
-            pageSize: 10,
+        var store = Ext.create('Ext.ux.StoreBase', {
             model: 'Ext.ux.UserModel',
-            remoteSort: true,
-            remoteFilter: true
         });
         
         store.loadPage(1);

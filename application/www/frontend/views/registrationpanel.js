@@ -1,5 +1,5 @@
 /*
- * Registration window class.
+ * Registration form class.
  */
 
 Ext.define('Ext.ux.RegistrationForm', {
@@ -206,6 +206,10 @@ Ext.define('Ext.ux.RegistrationForm', {
     }
 });
 
+/*
+ * Registration panel class.
+ */
+
 Ext.define('Ext.ux.RegistrationPanel', {
     extend: 'Ext.Panel',
     alias: 'widget.registrationpanel',
@@ -237,31 +241,5 @@ Ext.define('Ext.ux.RegistrationPanel', {
             'Click here to login.</a>');
         
         this.getLayout().setActiveItem(1);
-    }
-});
-
-Ext.define('Ext.ux.RegistrationWindow', {
-    extend: 'Ext.ux.WindowBase',
-
-    initComponent: function() 
-    {
-        var defConfig = {
-            title: 'Register an account',
-            layout: 'fit',
-            width: 600,
-            height: 400,
-            closable: true,
-            resizable: true,
-            draggable: true,
-            modal: true,
-            border: true,
-            items: [{
-                xtype: 'registrationpanel'
-            }]
-        };
-        
-        Ext.apply(this, defConfig);
-        
-        this.callParent();
     }
 });

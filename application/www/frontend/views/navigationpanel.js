@@ -47,7 +47,8 @@ Ext.define('Ext.ux.ThumbnailView', {
                 itemclick: function(view, record)
                 {
                     var page = record.get('page');
-                    this.up('navigationpanel').gotoPageNumber(page);
+                    
+                    this.up('navigationpanel').gotoPage(page);
                 }
             }
         };
@@ -59,18 +60,54 @@ Ext.define('Ext.ux.ThumbnailView', {
     
     changeIndex: function(oldPage, newPage)
     {
+        // TODO: Re-implement and improve.
+        
+        /*
+        if (this.timer === undefined)
+        {
+            var _this = this;
+            this.timer = setTimeout(
+                function()
+                {
+                    _this.timer = undefined;
+                    
+                    var area = _this.viewport.getVisibleArea();
+                    
+                    var topLeft = {
+                        x: Math.max(0, Math.min(151, Math.round(area.topLeft.x))),
+                        y: Math.max(0, Math.min(225, Math.round(area.topLeft.y)))
+                    };
+                    var bottomRight = {
+                        x: Math.min(151, Math.round(area.bottomRight.x)),
+                        y: Math.min(225, Math.round(area.bottomRight.y))
+                    };
+                    
+                    var test = document.getElementById("test");
+                    
+                    test.style.left   = topLeft.x + "px";
+                    test.style.top    = topLeft.y + "px";
+                    test.style.width  = (bottomRight.x - topLeft.x) + "px";
+                    test.style.height = (bottomRight.y - topLeft.y) + "px";
+                },
+                10
+            );
+        }
+        */
+        
+        /*
         this.getStore().getAt(oldPage).set('rect', '');
         this.getStore().getAt(newPage).set('rect', '<div id="test" style="position: absolute; border: 2px solid red;"></div>');
         var top = this.getEl().dom.childNodes[newPage].offsetTop;
         top -= this.getEl().dom.childNodes[0].offsetTop;
         this.getEl().scrollTo('top', top, true);
+        */
     }//,
     
     /*
     // NOTE: Name seems to be internally used!
     getStore: function(data)
     {
-        var store = Ext.create('Ext.ux.Store', {
+        var store = Ext.create('Ext.ux.StoreBase', {
             model: 'Ext.ux.PageModel',
             //data: data.columns
         });
@@ -89,9 +126,9 @@ Ext.define('Ext.ux.NavigationPanel', {
         var defConfig = {
             title: 'Navigation',
             items: [{
-                    xtype: 'thumbnailview',
-                    book: this.book
-                }]
+                xtype: 'thumbnailview',
+                book: this.book
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -114,9 +151,9 @@ Ext.define('Ext.ux.NavigationPanel', {
         //TODO: set book & document
     },
     
-    gotoPageNumber: function(number)
+    gotoPage: function(number)
     {
-        this.up('viewerpanel').setPage(number);
+        this.up('viewerpanel').gotoPage(number);
     },
     
     setPage: function(number)

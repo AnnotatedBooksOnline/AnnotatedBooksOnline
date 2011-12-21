@@ -2,6 +2,8 @@
  * Icons stylesheet.
  */
 
+/* Pagination icons. */
+
 .previous-icon, .x-tbar-page-prev
 {
     background-image: url(../../external/extjs/resources/themes/images/default/grid/page-prev.gif) !important;
@@ -42,15 +44,7 @@
     background-image: url(../../external/extjs/resources/themes/images/default/grid/page-last-disabled.gif) !important;
 }
 
-.refresh-icon
-{
-    background-image: url(../../external/extjs/resources/themes/images/default/grid/refresh.gif) !important;
-}
-
-.remove-icon
-{
-    background-image: url(../icons/cross.png)
-}
+/* User icons. */
 
 .login-icon
 {
@@ -77,6 +71,50 @@
     background-image: url(../icons/user.png)
 }
 
+.users-icon
+{
+    background-image: url(../icons/users.png);
+}
+
+/* Annotation action icons. */
+
+.drag-icon
+{
+    background-image: url(../icons/drag.png);
+}
+
+.rectangle-icon
+{
+    background-image: url(../icons/rectangle.png);
+}
+
+.polygon-icon
+{
+    background-image: url(../icons/polygon.png);
+}
+
+.erase-icon
+{
+    background-image: url(../icons/erase.png);
+}
+
+.vertex-icon
+{
+    background-image: url(../icons/vertex.png);
+}
+
+/* Other icons. */
+
+.refresh-icon
+{
+    background-image: url(../../external/extjs/resources/themes/images/default/grid/refresh.gif) !important;
+}
+
+.remove-icon
+{
+    background-image: url(../icons/cross.png)
+}
+
 .settings-icon
 {
     background-image: url(../icons/wrench.png);
@@ -85,11 +123,6 @@
 .upload-icon
 {
     background-image: url(../icons/uploadbook.png);
-}
-
-.users-icon
-{
-    background-image: url(../icons/users.png);
 }
 
 .search-icon
@@ -101,6 +134,7 @@
 {
     background-image: url(../icons/info.png);
 }
+
 .save-icon
 {
     background-image: url(../icons/disk.png);
