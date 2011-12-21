@@ -198,9 +198,9 @@ CREATE TABLE "Scans"
     "bookId" integer,
     "page" integer,
     "status" smallint NOT NULL DEFAULT 1,
-    "width" integer NOT NULL,
-    "height" integer NOT NULL,
-    "zoomLevel" integer NOT NULL,
+    "width" integer,
+    "height" integer,
+    "zoomLevel" integer,
     "scanType" character(4) NOT NULL,
     
     "createdOn" timestamp,

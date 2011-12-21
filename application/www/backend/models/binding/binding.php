@@ -29,6 +29,7 @@ class Binding extends Entity
     protected $pagesFromLast;
     
     /** Books for this binding. */
+    // TODO: Tom: waar is dit voor?
     protected $bookList;
     
     /**
