@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
+require_once 'framework/database/database.php';
 
 /**
  * Class representing a author entity. Associatieve between book and person.
@@ -23,12 +24,28 @@ class Author extends Entity
      */
     public function __construct($personId = null, $bookId = null)
     {
-        if ($id !== null)
+        if ($personId !== null && $bookId !== null)
         {
             $this->bookId = $bookId;
             $this->personId = $personId;
             $this->load();
         }
+    }
+    
+    public static function fromBook($book)
+    {
+        $result = Query::select('personId', 'bookId')
+            ->from('Authors')
+            ->where('bookId = :book')
+            ->execute(array(':book' => $book->getBookId()));
+            
+        $authors = array();
+        
+        foreach($result as $author)
+        {
+            $authors[] = new Author($author->getValue('personId'), $author->getValue('bookId'));
+        }
+        return $authors;
     }
     
     /**

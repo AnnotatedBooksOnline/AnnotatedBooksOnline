@@ -4,7 +4,7 @@
 require_once 'framework/database/entity.php';
 require_once 'framework/database/entitylist.php';
 
-require_once 'framework/database/book.php';
+require_once 'models/book/book.php';
 
 
 /**

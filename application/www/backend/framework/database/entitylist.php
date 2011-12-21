@@ -4,9 +4,6 @@
 require_once 'framework/database/database.php';
 require_once 'framework/database/entity.php';
 
-// Exceptions.
-class EntityException extends ExceptionBase { }
-
 /**
  * Abstract class for a list of entities database entity.
  */

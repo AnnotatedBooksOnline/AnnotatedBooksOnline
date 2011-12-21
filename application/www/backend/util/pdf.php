@@ -5,7 +5,11 @@ require_once 'framework/util/configuration.php';
 require_once 'framework/util/cache.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
-//require_once 'models/binding/binding.php';
+require_once 'models/annotation/annotation.php';
+require_once 'models/binding/binding.php';
+require_once 'models/library/library.php';
+require_once 'models/author/author.php';
+require_once 'models/person/person.php';
 require_once 'framework/util/log.php';
 
 // Exceptions.
@@ -87,7 +91,12 @@ class Pdf
         $this->autoPrint = $print;
         
         $this->book = new Book($scan->getBookId());
-        //$this->binding = new Binding($book->getBindingId());
+        $this->binding = new Binding($this->book->getBindingId());
+        $this->authors = implode(', ', array_map(function($author)
+        {
+            $person = new Person($author->getPersonId());
+            return $person->getName();
+        }, Author::fromBook($this->book)));
         
         if ($dimensions !== null &&
             is_array($dimensions) &&
@@ -138,7 +147,7 @@ class Pdf
         $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
         
         $this->setFontSize(14);
-        $this->drawText('Authors, ' . $year); // TODO
+        $this->drawText($this->authors . ', ' . $year);
         $this->y -= 40;
         
         $this->setFontSize(12);
@@ -150,7 +159,8 @@ class Pdf
         {
             $this->drawText($this->book->getPublisher());
         }
-        $this->drawText('Library, Signature');
+        $library = new Library($this->binding->getLibraryId());
+        $this->drawText($library->getLibraryName() . ', ' . $this->binding->getSignature());
         $this->y -= 20;
         
         $this->drawText('Generated on ' . date('l, d M Y H:i:s T'));
@@ -213,17 +223,18 @@ class Pdf
         $minYear = $this->book->getMinYear();
         $maxYear = $this->book->getMaxYear();
         $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
+        $library = new Library($this->binding->getLibraryId());
         $title = $this->productName;
         $title .= "\n" . implode(', ', array(
-            'Author', // TODO
+            $this->authors,
             $this->book->getTitle(),
             $year
         ));
         $title .= "\n" . implode(', ', array(
             $this->book->getPlacePublished() == null ? 'Place published' : $this->book->getPlacePublished(),
             $this->book->getPublisher() == null ? 'Publisher' : $this->book->getPublisher(),
-            'Library', // TODO
-            'Signature' // TODO
+            $library->getLibraryName(),
+            $this->binding->getSignature()
         ));
         $title .= "\nPage number: " . $this->scan->getPage();
         $this->drawText($title);
@@ -620,7 +631,7 @@ class Pdf
         
         $infoId = $this->newObject("<<\n" .
             "/Title " . $this->fromUTF8($this->book->getTitle()) . "\n" .
-            "/Author " . $this->fromUTF8('Author') . "\n" . // TODO
+            "/Author " . $this->fromUTF8($this->authors) . "\n" . 
             "/Creator " . $this->fromUTF8($this->productName) . "\n" .
             "/CreationDate " . date("(\D:YmdHis)") . "\n" .
             ">>");

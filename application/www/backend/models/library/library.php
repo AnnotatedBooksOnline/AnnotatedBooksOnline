@@ -31,7 +31,7 @@ class Library extends Entity
      */
     public function __construct($libraryId = null)
     {
-        if ($id !== null)
+        if ($libraryId !== null)
         {
             $this->libraryId = $libraryId;
             $this->load();

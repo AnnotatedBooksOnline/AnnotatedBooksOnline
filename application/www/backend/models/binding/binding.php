@@ -2,7 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
-require_once 'booklist.php';
+require_once 'models/book/booklist.php';
 
 /**
  * Class representing a binding entity.
