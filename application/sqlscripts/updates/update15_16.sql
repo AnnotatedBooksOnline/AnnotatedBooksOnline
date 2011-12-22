@@ -1,0 +1,1 @@
+alter table "Bindings" drop column title;
