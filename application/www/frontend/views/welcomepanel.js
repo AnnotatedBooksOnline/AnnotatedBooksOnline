@@ -18,6 +18,7 @@ Ext.define('Ext.ux.Welcome', {
                 width: 500,
                 flex: 1,
                 cls: 'plaintext',
+                style: 'height: 100%',
                 html: '<h2>Welcome</h2>' +
                       '<p>This project seeks to develop a virtual research ' +
                       'environment (or collaboratory) and publication platform for a young and ' +
