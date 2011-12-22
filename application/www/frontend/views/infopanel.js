@@ -8,12 +8,12 @@ Ext.define('Ext.ux.Info', {
     bodyPadding: 10,
     // TODO: get from database
     items: {
-        style: 'text-align: justify',
         xtype: 'panel',
         border: false,
-        flex: 0,
+        flex: 1,
         width: 500,
-        html: '<h1>About this collaboratory</h1><p>Lorem ipsum dolor sit amet, consectetur ' +
+        cls: 'plaintext',
+        html: '<h2>About this collaboratory</h2><p>Lorem ipsum dolor sit amet, consectetur ' +
         'adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ' +
         'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ' +
         'ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse ' +
