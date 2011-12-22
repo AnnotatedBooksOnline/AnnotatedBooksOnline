@@ -18,11 +18,20 @@ abstract class EntityList
     /**
      * 
      * Enter description here ...
+     */
+    public function __construct()
+    {
+        $this->entities = array();
+    }
+    
+    /**
+     * 
+     * Enter description here ...
      * @param unknown_type $entity
      */
     public function addEntity($entity) 
     {
-        array_push($entities, entity);
+        array_push($this->entities, $entity);
     }
     
     /**
@@ -31,7 +40,7 @@ abstract class EntityList
      */
     public function save()
     {
-        foreach ($entities as $entity) 
+        foreach ($this->entities as $entity) 
         {
             $entity->save();
         }
