@@ -13,7 +13,7 @@ require_once 'models/book/book.php';
 class BookList extends EntityList
 {
     public function setBindingId($bindingId) {
-        foreach ($entities as $entity)
+        foreach ($this->entities as $entity)
         {
             $entity->setBindingId($bindingId);
         }

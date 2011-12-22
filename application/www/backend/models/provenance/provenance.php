@@ -58,7 +58,7 @@ class Author extends Entity
      */
     protected function getColumns()
     {
-        return array('bindingId', 'personId');
+        return array();
     }
     
     /**

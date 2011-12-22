@@ -57,7 +57,7 @@ class Person extends Entity
      */
     protected function getColumns()
     {
-        return array('personId', 'name');
+        return array('name');
     }
     
     /**

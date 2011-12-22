@@ -65,7 +65,7 @@ class Library extends Entity
      */
     protected function getColumns()
     {
-        return array('libraryId', 'libraryName', 'libraryAddress', 'website', 'info');
+        return array('libraryName', 'libraryAddress', 'website', 'info');
     }
     
     /**

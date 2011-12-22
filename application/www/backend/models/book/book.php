@@ -79,7 +79,7 @@ class Book extends Entity
      */
     protected function getColumns()
     {
-        return array('bookId', 'title', 'bindingId', 'minYear', 'maxYear',
+        return array('title', 'bindingId', 'minYear', 'maxYear',
                      'preciseDate', 'placePublished', 'publisher', 'printVersion');
     }
     
@@ -129,6 +129,6 @@ class Book extends Entity
     public function setPublisher($publisher) { $this->publisher = $publisher; }
     
     public function getPrintVersion()       { return $this->printVersion; }
-    public function setPrintVersion($printVersion) { $this->printVersion = printVersion; }
+    public function setPrintVersion($printVersion) { $this->printVersion = $printVersion; }
     
 }

@@ -3,6 +3,7 @@
 
 require_once 'framework/database/entity.php';
 require_once 'models/book/booklist.php';
+require_once 'models/library/library.php';
 
 /**
  * Class representing a binding entity.
@@ -12,9 +13,6 @@ class Binding extends Entity
     
     /** Id of this binding. */
     protected $bindingId;
-    
-    /** Library this binding belongs to. */
-    protected $libraryId;
     
     /** Signature of the binding */
     protected $signature;
@@ -27,6 +25,9 @@ class Binding extends Entity
     
     /** Number of pages to the last page of the binding. */
     protected $pagesFromLast;
+    
+    /** Library */
+    protected $library;
     
     /** Books for this binding. */
     // TODO: Tom: waar is dit voor?
@@ -46,7 +47,7 @@ class Binding extends Entity
             $this->load();
         }
         
-        $bookList = new BookList();
+        $this->bookList = new BookList();
     }
     
     /**
@@ -76,7 +77,7 @@ class Binding extends Entity
      */
     protected function getColumns()
     {
-        return array('bindingId', 'libraryId', 'signature', 'summary', 'pagesToFirst',
+        return array('libraryId', 'signature', 'summary', 'pagesToFirst',
                          'pagesFromLast');
     }
     
@@ -98,15 +99,24 @@ class Binding extends Entity
     }
     
     /**
+    *
+    * TODO MathijsB : Move this to entity.php
+    */
+    public function saveWithDetails()
+    {
+        $this->save();
+        $this->saveDetails();
+    }
+    
+    /**
      * 
      * Enter description here ...
      */
     public function saveDetails() 
     {
-        
         // Save the book list.
-        $bookList->setBindingId($bindingId);
-        $bookList->save();
+        $this->bookList->setBindingId($this->bindingId);
+        $this->bookList->save();
         
     }
     
@@ -130,4 +140,5 @@ class Binding extends Entity
     
     public function getBookList()       { return $this->bookList; }
     public function setBookList($bookList) { $this->bookList = $bookList; }
+
 }
