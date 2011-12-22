@@ -512,6 +512,14 @@ class Query
         return $this;
     }
     
+    public function orderByMultiple($order) 
+    {
+        foreach ($order as $column => $order)
+        {
+            $query->orderBy($column, $order);
+        }
+    }
+    
     /*
      * Execution.
      */
