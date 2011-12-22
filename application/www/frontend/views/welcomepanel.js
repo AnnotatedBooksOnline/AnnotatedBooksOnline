@@ -15,10 +15,9 @@ Ext.define('Ext.ux.Welcome', {
             items: {
                 xtype: 'panel',
                 border: false,
-                width: 500,
                 flex: 1,
+                width: 500,
                 cls: 'plaintext',
-                style: 'height: 100%',
                 html: '<h2>Welcome</h2>' +
                       '<p>This project seeks to develop a virtual research ' +
                       'environment (or collaboratory) and publication platform for a young and ' +
@@ -47,8 +46,9 @@ Ext.define('Ext.ux.Welcome', {
                       'digital presentations and general publications. In order to expand this ' +
                       'structural network, the principal partners in the collaboratory will ' + 
                       'prepare an application for a Marie Curie Initial Training Network.</p>' + 
-                      '<img src="frontend/resources/images/princeton.png"/>' +
-                      '<img src="frontend/resources/images/uu.png"/>'
+                      '<img src="frontend/resources/images/princeton.png" style="height: 65px"/>' +
+                      '<img src="frontend/resources/images/cell.png" style="height: 100px"/>' +
+                      '<img src="frontend/resources/images/uu.png" style="height: 65px"/>'
             }
         };
         
