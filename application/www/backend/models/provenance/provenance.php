@@ -6,7 +6,7 @@ require_once 'framework/database/entity.php';
 /**
  * Class representing a provenance entity. Associatieve between binding and person.
  */
-class Author extends Entity
+class Provenance extends Entity
 {
     
     /** Binding. */
@@ -23,9 +23,9 @@ class Author extends Entity
      */
     public function __construct($bindingId = null, $personId = null)
     {
-        if ($id !== null)
+        if ($bindingId !== null && $personId !== null)
         {
-            $this->bindingId = $bookId;
+            $this->bindingId = $bindingId;
             $this->personId = $personId;
             $this->load();
         }
