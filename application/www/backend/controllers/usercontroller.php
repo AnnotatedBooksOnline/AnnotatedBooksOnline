@@ -7,6 +7,9 @@ require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
 require_once 'util/mailer.php';
 
+// Exceptions
+class RegistrationFailedException extends ExceptionBase { }
+
 /**
  * User controller class.
  */
@@ -193,12 +196,15 @@ class UserController extends Controller
             'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
         
-        // Check incoming values: username existance, email existance, no empty required fields.
+        // Check incoming values: username existance, email existance, correct pattern for 
+        // username, correct pattern for email and no empty required fields.
         if ($this->actionUsernameExists(array('username' => $username)) 
-         || $this->actionEmailExists(array('email' => $email)) 
+         || $this->actionEmailExists(array('email' => $email))
+         || !preg_match("/^[A-Za-z\d\._' ]*$/", $username)
+         || !preg_match("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", $email)
          || $username==="" || $email==="" || $firstName==="" || $lastName==="" || $password==="")
         {
-            return false;
+            throw new RegistrationFailedException('registration-failed');
         }
      
         // Create user and pendinguser entries in a transaction.
