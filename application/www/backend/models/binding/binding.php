@@ -31,6 +31,7 @@ class Binding extends Entity
     
     /** Books for this binding. */
     // TODO: Tom: waar is dit voor?
+    // TODO: Mathijs: Om de boeken bij de binding in te stoppen.
     protected $bookList;
     
     /**
@@ -96,16 +97,6 @@ class Binding extends Entity
                     'pagesToFirst'     => 'int',
                     'pagesFromLast'    => 'int'
         );
-    }
-    
-    /**
-    *
-    * TODO MathijsB : Move this to entity.php
-    */
-    public function saveWithDetails()
-    {
-        $this->save();
-        $this->saveDetails();
     }
     
     /**

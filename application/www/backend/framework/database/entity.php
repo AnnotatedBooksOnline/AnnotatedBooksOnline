@@ -88,6 +88,24 @@ abstract class Entity
     }
     
     /**
+    *
+    */
+    public function saveWithDetails()
+    {
+        $this->save();
+        $this->saveDetails();
+    }
+    
+    /**
+     *
+     * Enter description here ...
+     */
+    public function saveDetails()
+    {
+        ;
+    }
+    
+    /**
      * Deletes the entity from the database.
      */
     public function delete()

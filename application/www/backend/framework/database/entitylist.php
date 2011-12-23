@@ -37,12 +37,22 @@ abstract class EntityList
     /**
      * 
      * Enter description here ...
+     * @param unknown_type $index
+     */
+    public function entityAt($index)
+    {
+        return $this->entities[$index];
+    }
+    
+    /**
+     * 
+     * Enter description here ...
      */
     public function save()
     {
         foreach ($this->entities as $entity) 
         {
-            $entity->save();
+            $entity->saveWithDetails();
         }
     }    
     

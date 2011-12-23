@@ -2,6 +2,8 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
+require_once 'models/scan/scanlist.php';
+
 
 /**
  * Class representing a book entity.
@@ -37,6 +39,9 @@ class Book extends Entity
     /** Version of the book. */
     protected $printVersion;
     
+    /** List of all scans for this book. */
+    protected $scanList;
+    
     /**
     * Constructs a book by id.
     *
@@ -50,6 +55,8 @@ class Book extends Entity
     
             $this->load();
         }
+        
+        $this->scanList = new ScanList();
     }
     
     /**
@@ -102,6 +109,18 @@ class Book extends Entity
                 'printVersion'     => 'integer'
         );
     }
+    
+    /**
+     *
+     * Enter description here ...
+     */
+    public function saveDetails()
+    {
+        // Save the book list.
+        $this->scanList->setBookId($this->bookId);
+        $this->scanList->save();
+    
+    }
  
     
     public function getBookId()         { return $this->bookId; }
@@ -130,5 +149,8 @@ class Book extends Entity
     
     public function getPrintVersion()       { return $this->printVersion; }
     public function setPrintVersion($printVersion) { $this->printVersion = $printVersion; }
+    
+    public function getScanList() { return $this->scanList; }
+    public function setScanList($scanList) { $this->scanList = $scanList; }
     
 }

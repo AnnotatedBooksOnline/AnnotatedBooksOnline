@@ -4,19 +4,19 @@
 require_once 'framework/database/entity.php';
 require_once 'framework/database/entitylist.php';
 
-require_once 'models/book/book.php';
+require_once 'models/scan/scan.php';
 
 
 /**
  * Class representing a book entity.
  */
-class BookList extends EntityList
+class ScanList extends EntityList
 {
-    public function setBindingId($bindingId) 
+    public function setBookId($bookId) 
     {
         foreach ($this->entities as $entity)
         {
-            $entity->setBindingId($bindingId);
+            $entity->setBookId($bookId);
         }
     }
 }
