@@ -21,6 +21,7 @@ class Scan extends Entity
     const TYPE_JPEG = "jpeg";
     const TYPE_TIFF = "tiff";
     
+    /** Table attributes. */
     protected $scanId;
     protected $bookId;
     protected $scanType;
@@ -29,8 +30,8 @@ class Scan extends Entity
     protected $width;
     protected $height;
     protected $zoomLevel;
-    protected $fileName;
-    
+    protected $uploadId;
+
     /**
      * Constructs a scan entity.
      *
@@ -41,7 +42,6 @@ class Scan extends Entity
         if ($id !== null)
         {
             $this->scanId = $id;
-            
             $this->load();
         }
     }
@@ -106,7 +106,7 @@ class Scan extends Entity
      */
     public function getColumns()
     {
-        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'fileName');
+        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId');
     }
     
     /**
@@ -124,7 +124,7 @@ class Scan extends Entity
             'width'     => 'int',
             'height'    => 'int',
             'zoomLevel' => 'int',
-            'fileName' 	=> 'string',
+            'uploadId' 	=> 'int',
         );
     }
     
@@ -161,4 +161,7 @@ class Scan extends Entity
     
     public function getZoomLevel()       { return $this->zoomLevel;   }
     public function setZoomLevel($level) { $this->zoomLevel = $level; }
+    
+    public function getUploadId() { return $this->uploadId; }
+    public function setUploadId($uploadId) { $this->uploadId = $uploadId; }
 }

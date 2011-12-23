@@ -79,24 +79,24 @@ class BindingUploadController extends Controller
         // Create the provenance for the binding
         $provenance = new Provenance();
         // Find the specified provenance person in the database.
-        $existingProvenancePerson = PersonSearchList::findPersons(array('name' => $provenancePersonName), null, null, null);
+        $existingProvenancePerson = PersonSearchList::findPersons(array('name' => $provenancePersonName), null, null, null)->getFirstRow_();
             
         // Determine if the provenance person exists in the database. If this is the case the new binding should link to it. If not
         // the library needs to be created.
         if ($existingProvenancePerson) 
         {
             // Make the existing person link to the new provenance.
-            //$provenance->setPersonId($existingLibrary->getValue('personId'));
+            $provenance->setPersonId($existingProvenancePerson->getValue('personId'));
         } 
         else 
         {
             // Create a new person and save it in the database
-            //$provenancePerson = new Person();
-            //$provenancePerson->setName($provenancePersonName);
-            //$provenancePerson->save();
+            $provenancePerson = new Person();
+            $provenancePerson->setName($provenancePersonName);
+            $provenancePerson->save();
              
             // Make the new person link to the provenance.
-            //$provenance->setPersonId($provenancePerson->getPersonId());
+            $provenance->setPersonId($provenancePerson->getPersonId());
         }
 
         ////////////////////////////////////////////////////////////////////////////////////
@@ -143,21 +143,18 @@ class BindingUploadController extends Controller
             $upload = Upload::fromToken(self::getString($inputScan, 'token'));
             if (!isset($upload)) 
             {
-                throw new EntityException('upload-does-not-exist');
+                throw new ControllerException('upload-does-not-exist');
             }
-                
-            // Move the upload to the tile builder input path.
-            // TODO : Mathijs Dit werkt vanzelfsprekend niet zo fijn met transacties :)
-            $scanInputPath = Configuration::getInstance()->getString('scan-input-path');
-            $scanFilePath = $scanInputPath . $upload->getFilename();
-            copy($upload->getFileLocation(), $scanFilePath);
-            
+
             // Create the scan entity.
             $scan = new Scan();
             $scan->setStatus(Scan::STATUS_PENDING);
-            $scan->setScanType(Scan::TYPE_JPEG);
-            $scan->setFileName($upload->getFileName());
             $scan->setPage($pageNumber++);
+            $scan->setUploadId($upload->getUploadId());
+            $scan->setZoomLevel(0);
+            
+            // Identify the scan.
+            $this->identifyScan($scan, $upload);
             
             // Add the scan to the book.
             // TODO Mathijs : Add the scan to the correct book, right now all scans will be added to the first book.
@@ -167,12 +164,39 @@ class BindingUploadController extends Controller
             
         // Save the binding and all its attribute entities.
         $binding->saveWithDetails();
-            
-        // Delete all processed uploads.
-        foreach($processedUploads as $processedUpload)
-        {
-            $processedUpload->delete();
-        }
+           
+    }
+    
+    /**
+     * Fills a scans attributes based on an upload.
+     * @param $scan
+     * @param $upload
+     * @throws ControllerException
+     */
+    private function identifyScan($scan, $upload) 
+    {
+        
+        // Get an identification of the image using imagick.
+        $scanUploadImage = new Imagick($upload->getFileLocation());
+        $scanUploadImageIdentification = $scanUploadImage->identifyimage();
 
+        // Set image dimensions.
+        $scan->setDimensions($scanUploadImageIdentification['geometry']['width'],
+                             $scanUploadImageIdentification['geometry']['height']);
+                
+        // Determine if the upload is a JPEG file.
+        if (strpos($scanUploadImageIdentification['format'], "JPEG") !== false) 
+        {
+            $scan->setScanType(Scan::TYPE_JPEG);
+        } 
+        // Determine if the upload is a GIF file.
+        else if (strpos($scanUploadImageIdentification['format'], "TIFF") !== false) 
+        {
+            $scan->setScanType(Scan::TYPE_TIFF);
+        } 
+        else 
+        {
+            throw new ControllerException('unsupported-file-type');
+        }
     }
 }
