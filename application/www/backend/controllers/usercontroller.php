@@ -200,7 +200,7 @@ class UserController extends Controller
         // username, correct pattern for email and no empty required fields.
         if ($this->actionUsernameExists(array('username' => $username)) 
          || $this->actionEmailExists(array('email' => $email))
-         || !preg_match("/^[A-Za-z\d\._' ]*$/", $username)
+         || !preg_match("/^[A-Za-z\d\._'@ ]*$/", $username)
          || !preg_match("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", $email)
          || $username==="" || $email==="" || $firstName==="" || $lastName==="" || $password==="")
         {
