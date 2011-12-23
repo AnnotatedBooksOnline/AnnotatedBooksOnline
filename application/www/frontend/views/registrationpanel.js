@@ -14,7 +14,7 @@ Ext.define('Ext.ux.RegistrationForm', {
             items: [{
                 name: 'username',
                 fieldLabel: 'Username *',
-                vtype: 'uniqueUsername',
+                vtype: 'checkUsername',
                 minLength: 6,
                 maxLength: 30
             },{
