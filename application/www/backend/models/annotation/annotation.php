@@ -26,7 +26,7 @@ class Annotation extends Entity
     {
         if ($id !== null)
         {
-            $this->annId = $id;
+            $this->annotationID = $id;
             
             $this->load();
         }
@@ -74,7 +74,7 @@ class Annotation extends Entity
      */
     public function getColumns()
     {
-        return array('annotationID', 'bookID', 'page', 'polygon', 'transcriptionEng', 'transcriptionOrig');
+        return array('bookID', 'page', 'polygon', 'transcriptionEng', 'transcriptionOrig');
     }
     
     /**
@@ -88,7 +88,7 @@ class Annotation extends Entity
             'annotationID'      => 'int',
             'bookID'            => 'int',
             'page'              => 'int',
-            'polygon'           => 'string',
+            'polygon'           => 'lob',
             'transcriptionEng'  => 'string',
             'transcriptionOrig' => 'string'
         );

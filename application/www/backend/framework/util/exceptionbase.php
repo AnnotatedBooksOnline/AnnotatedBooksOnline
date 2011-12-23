@@ -1,6 +1,8 @@
 <?php
 //[[GPL]]
 
+require_once('framework/util/translator.php');
+
 /**
  * Exception base class.
  */
