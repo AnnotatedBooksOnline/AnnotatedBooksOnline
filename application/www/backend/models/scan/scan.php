@@ -71,6 +71,7 @@ class Scan extends Entity
         $result = Query::select('scanId')
             ->from('Scans')
             ->where('bookId = :book')
+            ->orderBy('page', 'ASC')
             ->execute(array(':book' => $book->getBookId()));
             
         $scans = array();
