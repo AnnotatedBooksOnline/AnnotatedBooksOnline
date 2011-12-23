@@ -1,0 +1,1 @@
+ALTER TABLE "Scans" ADD COLUMN "fileName" varchar(255);

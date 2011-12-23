@@ -29,6 +29,7 @@ class Scan extends Entity
     protected $width;
     protected $height;
     protected $zoomLevel;
+    protected $fileName;
     
     /**
      * Constructs a scan entity.
@@ -104,7 +105,7 @@ class Scan extends Entity
      */
     public function getColumns()
     {
-        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel');
+        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'fileName');
     }
     
     /**
@@ -122,6 +123,7 @@ class Scan extends Entity
             'width'     => 'int',
             'height'    => 'int',
             'zoomLevel' => 'int',
+            'fileName' 	=> 'string',
         );
     }
     
@@ -145,6 +147,10 @@ class Scan extends Entity
     
     public function getWidth()  { return $this->width;  }
     public function getHeight() { return $this->height; }
+    
+    public function getFileName()  { return $this->fileName; }
+    public function setFileName($fileName) { $this->fileName = $fileName; }
+    
     
     public function setDimensions($width, $height)
     {
