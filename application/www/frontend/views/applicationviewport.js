@@ -195,7 +195,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 items: [{
                     xtype: 'container',
                     height: 87,
-                    html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
+                    html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>'
                 },{
                     xtype: 'container',
                     defaults: {
@@ -414,7 +414,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             	// Add an activation tab.
                 Ext.apply(tabConfig, {
                     title: 'Activation',
-                    xtype: 'activationpanel',
+                    xtype: 'activationpanel'
                 });
                 
                 break;

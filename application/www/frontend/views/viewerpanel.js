@@ -137,7 +137,7 @@ Ext.define('Ext.ux.ViewerPanel', {
             },{
                 xtype: 'tbtext',
                 text: 'of ' + _this.getPageAmount(),
-                name: 'total-pages',
+                name: 'total-pages'
             }, '-', {
                 iconCls: 'next-icon',
                 tooltip: 'Go to next page',

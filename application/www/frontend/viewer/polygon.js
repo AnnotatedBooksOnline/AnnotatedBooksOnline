@@ -308,7 +308,7 @@ Polygon.prototype.onMouseOver = function()
 {
     this.content.setAttributes({
         fill: this.color,
-        opacity: .2,
+        opacity: .2
     }, true);
 }
 
@@ -316,7 +316,7 @@ Polygon.prototype.onMouseOut = function()
 {
     this.content.setAttributes({
         fill: 'none',
-        opacity: 0.1,
+        opacity: 0.1
     }, true);
 }
 

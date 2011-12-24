@@ -482,7 +482,7 @@ Ext.define('Ext.ux.UploadForm', {
         
         var defConfig = {
             items: [{
-                xtype: 'scanpanel',
+                xtype: 'scanpanel'
             },{
                 xtype: 'bindingfieldset'
             },{
