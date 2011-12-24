@@ -7,6 +7,9 @@ require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
 require_once 'util/mailer.php';
 
+// Exceptions
+class RegistrationFailedException extends ExceptionBase { }
+
 /**
  * User controller class.
  */
@@ -192,6 +195,17 @@ class UserController extends Controller
             'banned'      => false,
             'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
+        
+        // Check incoming values: username existance, email existance, correct pattern for 
+        // username, correct pattern for email and no empty required fields.
+        if ($this->actionUsernameExists(array('username' => $username)) 
+         || $this->actionEmailExists(array('email' => $email))
+         || !preg_match("/^[A-Za-z\d\._'@ ]*$/", $username)
+         || !preg_match("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", $email)
+         || $username==="" || $email==="" || $firstName==="" || $lastName==="" || $password==="")
+        {
+            throw new RegistrationFailedException('registration-failed');
+        }
      
         // Create user and pendinguser entries in a transaction.
         $puser = Database::getInstance()->doTransaction(
@@ -214,40 +228,51 @@ class UserController extends Controller
     }
     
     /**
-     * Checks whether a username already exists.
+     * Checks whether a username already exists as an username or email address.
      */
     public function actionUsernameExists($data)
     {
         // Fetch username.
-        $username = self::getString($data, 'username', '', true, 30);
+        $username = strtolower(self::getString($data, 'username', '', true, 30));
         
-        // Return true if there is atleast one user with the specified username.
-        return (bool) UserSearchList::findUsers(array('username' => $username), null, null, null)->
-            getAmount();
+        // Return true if there is atleast one user with the specified username or email.
+        return ((bool) UserSearchList::findUsers(array('username' => $username), null, null, null)->
+            getAmount())
+            || ((bool) UserSearchList::findUsers(array('email' => $username), null, null, null)->
+            getAmount());
     }
     
     /**
-     * Checks whether an email address already exists.
+     * Checks whether an email address already exists as an email adress or username.
      */
     public function actionEmailExists($data)
     {
         // Fetch email.
-        $email = self::getString($data, 'email', '', true, 256);
+        $email = strtolower(self::getString($data, 'email', '', true, 256));
         
         // Fetch user id of currently logged on user.
         $user = Authentication::getInstance()->getUser();
         $userId = ($user !== null) ? $user->getUserId() : 0;
         
-        // Create selection query.
-        $query = Query::select('userId')
+        // Create email selection query.
+        $emailQuery = Query::select('userId')
             ->from('Users')
             ->where('userId != :userId', 'email = :email');
         
+        // Create username selection query.
+        $usernameQuery = Query::select('userId')
+            ->from('Users')
+            ->where('userId != :userId', 'username = :username');
+        
         // Check if there are rows returned.
-        return (bool) $query->execute(
+        return ((bool) $emailQuery->execute(
             array('userId' => $userId, 'email' => $email),
             array('userId' => 'int', 'email' => 'string')
-        )->getAmount();
+        )->getAmount())
+            || ((bool) $usernameQuery->execute(
+            array('userId' => $userId, 'username' => $email),
+            array('userId' => 'int', 'username' => 'string')
+        )->getAmount());
     }
     
     /**

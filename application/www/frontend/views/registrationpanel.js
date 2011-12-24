@@ -14,7 +14,7 @@ Ext.define('Ext.ux.RegistrationForm', {
             items: [{
                 name: 'username',
                 fieldLabel: 'Username *',
-                vtype: 'uniqueUsername',
+                vtype: 'checkUsername',
                 minLength: 6,
                 maxLength: 30
             },{
@@ -194,7 +194,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                     */
                     this.up('registrationpanel').onAfterRegistration(this.getModel());
                 },
-                function()
+                function(data)
                 {
                     // NOTE: should we do this for everything, or a make a generic message at
                     // NOTE: a higher level?
