@@ -116,6 +116,26 @@ class BindingUploadController extends Controller
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getInteger($inputBook, 'printVersion'));
                 
+            // Find the book author
+            /*
+            $bookAuthor = self::getString($inputBook, 'placePublished');
+            $existingBookAuthorPerson = PersonSearchList::findPersons(array('name' => $bookAuthor), null, null, null)->getFirstRow_();
+            
+            if ($existingBookAuthorPerson)
+            {
+                // Create a new person and save it in the database
+                $provenancePerson = new Person();
+                $provenancePerson->setName($provenancePersonName);
+                $provenancePerson->save();
+                 
+                // Make the new person link to the provenance.
+                $provenance->setPersonId($provenancePerson->getPersonId());
+            }
+            else
+            {
+                
+            }*/
+            
             // Add the book to the binding.
             $binding->getBookList()->addEntity($book);
                 
