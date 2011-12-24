@@ -316,11 +316,29 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 return;
                 
+            case 'reorderscan':
+                // Add a view profile tab.
+                Ext.apply(tabConfig, {
+                    title: 'Upload (reorder scans)',
+                    xtype: 'reorderscanform'
+                });
+                
+                break;
+                
             case 'search':
                 // Add a search tab.
                 Ext.apply(tabConfig, {
                     title: 'Search',
                     xtype: 'searchpanel'
+                });
+                
+                break;
+                
+            case 'selectbook':
+                // Add a view profile tab.
+                Ext.apply(tabConfig, {
+                    title: 'Upload (select books)',
+                    xtype: 'selectbookform'
                 });
                 
                 break;
@@ -371,7 +389,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             case 'upload':
                 // Add an upload panel.
                 Ext.apply(tabConfig, {
-                    title: 'Upload',
+                    title: 'Upload (upload)',
                     layout: 'hbox',
                     bodyPadding: 10,
                     items: [{
@@ -411,7 +429,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 break;
             case 'activation':
-            	// Add an activation tab.
+                // Add an activation tab.
                 Ext.apply(tabConfig, {
                     title: 'Activation',
                     xtype: 'activationpanel'

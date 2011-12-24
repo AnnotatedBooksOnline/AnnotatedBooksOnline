@@ -125,15 +125,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         editable: false
                     }]   
                 }]
-            }/*,{
-                xtype: 'textareafield',
-                fieldLabel: 'Summary',
-                name: 'summary',
-                anchor: '100%',
-                labelAlign: 'top',
-                grow: true,
-                allowBlank: true
-            }*/]
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -301,7 +293,7 @@ Ext.define('Ext.ux.BookFieldset', {
                         items: [{
                             xtype: 'fieldcontainer',
                             layout: 'hbox',
-                            fieldLabel: 'Time period *',
+                            fieldLabel: 'Time period of publication *',
                             anchor: '100%',
                             labelAlign: 'top',
                             items: [{

@@ -228,6 +228,8 @@ Application.prototype.registerActions = function()
                 case 'viewprofile':
                 case 'register':
                 case 'upload':
+                case 'reorderscan':
+                case 'selectbook':
                 case 'welcome':
                 case 'info':
                 case 'activation':

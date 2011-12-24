@@ -43,38 +43,45 @@ Ext.define('Ext.ux.UserListPanel', {
                 },
                 columns: [{
                     text:      'Username',
+                    width:     200,
                     flex:      1,
                     sortable:  true,
                     dataIndex: 'username'
                 },{
                     text:      'E-mail',
                     width:     200,
+                    flex:      1,
                     sortable:  true,
                     renderer:  renderEmail,
                     dataIndex: 'email'
                 },{
                     text:      'First name',
                     width:     150,
+                    flex:      1,
                     sortable:  true,
                     dataIndex: 'firstName'
                 },{
                     text:      'Last name',
                     width:     150,
+                    flex:      1,
                     sortable:  true,
                     dataIndex: 'lastName'
                 },{
                     text:      'Affiliation',
                     width:     150,
+                    flex:      1,
                     sortable:  true,
                     dataIndex: 'affiliation'
                 },{
                     text:      'Occupation',
                     width:     150,
+                    flex:      1,
                     sortable:  true,
                     dataIndex: 'occupation'
                 },{
                     text:      'Website',
-                    width:     150,
+                    width:     200,
+                    flex:      1,
                     sortable:  true,
                     renderer:  renderWebsite,
                     dataIndex: 'website'
