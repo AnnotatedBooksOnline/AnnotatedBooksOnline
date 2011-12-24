@@ -6,7 +6,7 @@ BEGIN TRANSACTION;
 ALTER TABLE "Bindings" ALTER COLUMN "pagesToFirst" DROP NOT NULL;
 ALTER TABLE "Bindings" ALTER COLUMN "pagesFromLast" DROP NOT NULL;
 
-ALTER TABLE "Books" ADD COLUMN "firstPage" INT;
-ALTER TABLE "Books" ADD COLUMN "lastPage" INT;
+ALTER TABLE "Books" ADD COLUMN "firstPage" integer;
+ALTER TABLE "Books" ADD COLUMN "lastPage" integer;
 
 COMMIT;
