@@ -124,7 +124,7 @@ class Scan extends Entity
             'width'     => 'int',
             'height'    => 'int',
             'zoomLevel' => 'int',
-            'uploadId' 	=> 'int',
+            'uploadId'  => 'int'
         );
     }
     
@@ -162,6 +162,6 @@ class Scan extends Entity
     public function getZoomLevel()       { return $this->zoomLevel;   }
     public function setZoomLevel($level) { $this->zoomLevel = $level; }
     
-    public function getUploadId() { return $this->uploadId; }
-    public function setUploadId($uploadId) { $this->uploadId = $uploadId; }
+    public function getUploadId()    { return $this->uploadId; }
+    public function setUploadId($id) { $this->uploadId = $id;  }
 }

@@ -1,11 +1,6 @@
-ALTER TABLE "Scans" DROP COLUMN "fileName";
+BEGIN TRANSACTION;
 
-UPDATE "Scans" SET "width" = 0 WHERE "width" IS NULL;
-ALTER TABLE "Scans" ALTER COLUMN "width" SET NOT NULL;
-UPDATE "Scans" SET "height" = 0 WHERE "height" IS NULL;
-ALTER TABLE "Scans" ALTER COLUMN "height" SET NOT NULL;
-UPDATE "Scans" SET "zoomLevel" = 0 WHERE "zoomLevel" IS NULL;
-ALTER TABLE "Scans" ALTER COLUMN "zoomLevel" SET NOT NULL;
+-- Fixed a bug that could result in strange behavior when making a mistake while inserting into the uploads table.
+ALTER TABLE "Uploads" ALTER COLUMN "userId" DROP DEFAULT;
 
-ALTER TABLE "Scans" ADD COLUMN "uploadId" int;
-ALTER TABLE "Scans" ADD FOREIGN KEY ("uploadId") REFERENCES "Uploads";
+COMMIT;
