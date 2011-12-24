@@ -13,7 +13,6 @@ require_once 'framework/util/configuration.php';
 require_once 'framework/util/log.php';
 require_once 'framework/database/database.php';
 require_once 'models/scan/scan.php';
-require_once 'models/upload/upload.php';
 
 /**
  * An exception thrown when the pyramid builder fails for some reason.
@@ -49,26 +48,28 @@ class PyramidBuilder extends Singleton
      * @throws PyramidBuilderException When the builder returns with a nonzero error code, meaning 
      *                                 an error has occured.
      */
-    private function run($scan)
+    private function run($scanid, $scantype)
     {
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
         
-        //$imgfile = $conf->getString('install-base') . $conf->getString('image-input-path') . '/' . $scanid;
-	$upload = new Upload($scan->getUploadId());
-
-        $scantype = $scan->getScanType();
-	$imgfile = $conf->getString('install-base') . $conf->getString('upload-path') . $upload->getToken() . ".upload";
+        $imgfile = $conf->getPath('image-input-path', '.') . '/' . $scanid;
+        
         $output = array();
         $rval = 0;
-        $outpath = $conf->getString('install-base') . $conf->getString('tile-output-path');
+        $outpath = $conf->getPath('tile-output-path', '.') . '/' . $scanid;
         $quality = $conf->getInteger('tile-quality', 60);
-        $builderpath = $conf->getString('install-base') . $conf->getString('builder-path'); 
-        $tileformat = $scan->getScanId() . '_%z_%x_%y.%e';
+        $builderpath = $conf->getPath('builder-path', './builder');
+        $tileformat = '%z_%x_%y.%e';
+        
+        // Creatre the directory for the tiles.
+        if(!mkdir($outpath))
+        {
+            throw new PyramidBuilderException('mkdir-failed');
+        }
         
         // Execute builder.
         $command = "$builderpath -q $quality -i $scantype -p $outpath -f $tileformat $imgfile";
-	echo $command;
         Log::debug('Running builder.');
         exec($command, $output, $rval);
         
@@ -91,8 +92,8 @@ class PyramidBuilder extends Singleton
         $conf = Configuration::getInstance();
         
         // Determine paths.
-        $thumb = $conf->getString('install-base') . $conf->getString('thumbnail-path') . '/' . $scanid . 'jpg';
-        $tile = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scanid . '_0_0_0.jpg';
+        $thumb = $conf->getPath('thumbnail-path', '.')  . '/' . $scanid . 'jpg';
+        $tile = $conf->getPath('tile-output-path', '.') . '/' . $scanid . '/' . '0_0_0.jpg';
         
         // Determine thumbnail dimensions.
         $width = $conf->getInteger('thumbnail-width', 100);
@@ -179,7 +180,7 @@ class PyramidBuilder extends Singleton
                 $scan->save();
                 
                 // Process the image.
-                $this->run($scan);
+                $this->run($scanid, $scan->getScanType());
                 
                 // Create a thumbnail.
                 $this->createThumbnail($scanid); 
@@ -222,9 +223,7 @@ class PyramidBuilder extends Singleton
             }
             
             try
-            {
-                // TODO: Parallel iterations might be beneficial?
-                
+            {                
                 // Do a single iteration.
                 $this->doIteration();
             }
@@ -250,6 +249,5 @@ class PyramidBuilder extends Singleton
     }
 }
 
-date_default_timezone_set('Europe/Berlin');
 // Running the builder.
 PyramidBuilder::getInstance()->runBuilder();

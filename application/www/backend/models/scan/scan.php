@@ -30,7 +30,6 @@ class Scan extends Entity
     protected $width;
     protected $height;
     protected $zoomLevel;
-    protected $uploadId;
 
     /**
      * Constructs a scan entity.
@@ -106,7 +105,7 @@ class Scan extends Entity
      */
     public function getColumns()
     {
-        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId');
+        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel');
     }
     
     /**
@@ -124,7 +123,6 @@ class Scan extends Entity
             'width'     => 'int',
             'height'    => 'int',
             'zoomLevel' => 'int',
-            'uploadId' 	=> 'int',
         );
     }
     
@@ -161,7 +159,4 @@ class Scan extends Entity
     
     public function getZoomLevel()       { return $this->zoomLevel;   }
     public function setZoomLevel($level) { $this->zoomLevel = $level; }
-    
-    public function getUploadId() { return $this->uploadId; }
-    public function setUploadId($uploadId) { $this->uploadId = $uploadId; }
 }
