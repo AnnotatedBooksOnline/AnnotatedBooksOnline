@@ -38,13 +38,20 @@ mkdir bin
 cp -f application/tilepyramidbuilder/pyramid_builder bin/pyramid_builder
 
 echo "Deploying cronjob..."
-ps aux | grep "php pyramidbuilder" | grep $ENVIRONMENT | grep -v "grep" | awk '{print $2}' | xargs kill -9
+old_php_instance=$(ps aux | grep "php cronjob/pyramidbuilder" | grep "devtest" | grep -v "grep" | awk '{print $2}')
+
+# TODO : TBH I dont think this does what i want it to do :D
+if [ -n $old_php_instance ];
+then
+    echo "Found and killing old tilebuilder instance ${old_php_instance}"
+    kill -9 $old_php_instance
+else
+    echo "No old tilebuilder instance found"
+fi
+
 cp -rf application/tilepyramidbuilder/cronjob cronjob
-nohup php pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" &
-
 # TODO : Make it run under 'application'
-# sudo -u application nohup php pyramidbuilder.php "/var/www/html/devtest/backend" 2>/dev/null 1>/dev/null &
-
+nohup php cronjob/pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
 
 echo "Applying database scripts..."
 cd application/application/sqlscripts/updates
