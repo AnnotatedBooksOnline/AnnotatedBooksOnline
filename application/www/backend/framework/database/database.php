@@ -288,6 +288,7 @@ class Database extends Singleton
                 return strtotime($value);
                 
             case 'string':
+            case 'istring':
             default:
                 return (string) $value;
         }
@@ -323,6 +324,7 @@ class Database extends Singleton
                 return date('Y-m-d H:i:s', (int) $value);
                 
             case 'string':
+            case 'istring':
             default:
                 return (string) $value;
         }
@@ -352,6 +354,7 @@ class Database extends Singleton
             case 'time':
             case 'timestamp':
             case 'string':
+            case 'istring':
             default:
                 return PDO::PARAM_STR;
         }

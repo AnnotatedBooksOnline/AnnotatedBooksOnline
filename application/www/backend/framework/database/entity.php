@@ -252,6 +252,8 @@ abstract class Entity
     
     /**
      * Gets all the column types, per column, including primary keys.
+     * 
+     * Note: the type istring denotes a string that should be compared in a case insensitive manner.
      *
      * @return  Array of all column types.
      */
@@ -270,11 +272,20 @@ abstract class Entity
         // Get keys and table name.
         $keys      = $this->getPrimaryKeys();
         $tableName = $this->getTableName();
+        $types = $this->getTypes();
         
         // Set the conditions of the query.
-        $callback = function($value)
+        $callback = function($value) use ($types)
         {
-            return $value . ' = :' . $value;
+            if(isset($types[$value]) && $types[$value] == 'istring')
+            {
+                // Do a case-insensitive comparision for istrings.
+                return $value . 'ILIKE :' . $value;
+            }
+            else
+            {
+                return $value . ' = :' . $value;
+            }
         };
 
         $conditions = array_map($callback, $keys);
@@ -330,11 +341,20 @@ abstract class Entity
         // Get keys and table name.
         $keys      = $this->getPrimaryKeys();
         $tableName = $this->getTableName();
+        $types = $this->getTypes();
         
         // Set the conditions of the query.
-        $callback = function($value)
+        $callback = function($value) use ($types)
         {
-            return $value . ' = :' . $value;
+            if(isset($types[$value]) && $types[$value] == 'istring')
+            {
+                // Do a case-insensitive comparision for istrings.
+                return $value . 'ILIKE :' . $value;
+            }
+            else
+            {
+                return $value . ' = :' . $value;
+            }
         };
 
         $conditions = array_map($callback, $keys);
@@ -354,11 +374,20 @@ abstract class Entity
         $keys      = $this->getPrimaryKeys();
         $columns   = array_merge($this->getColumns(), $this->getDefaultColumns());
         $tableName = $this->getTableName();
+        $types = $this->getTypes();
         
-        // Set the set clause of the query.
-        $callback = function($value)
+        // Set the conditions of the query.
+        $callback = function($value) use ($types)
         {
-            return ':' . $value;
+            if(isset($types[$value]) && $types[$value] == 'istring')
+            {
+                // Do a case-insensitive comparision for istrings.
+                return $value . 'ILIKE :' . $value;
+            }
+            else
+            {
+                return $value . ' = :' . $value;
+            }
         };
 
         $values = array_map($callback, $columns);
