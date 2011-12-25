@@ -1,7 +1,7 @@
 <?php
 
-// Set backend as current working directory and include path.
-$backendPath = dirname(__FILE__) . '/../../application/www/backend/';
+// Get backend directory from php arguments.
+$backendPath = $argv[1]; 
 
 chdir($backendPath);
 set_include_path($backendPath);
