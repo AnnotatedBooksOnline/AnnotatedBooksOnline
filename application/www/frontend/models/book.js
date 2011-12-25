@@ -44,6 +44,12 @@ Ext.define('Ext.ux.BookModel', {
     extend: 'Ext.data.Model',
     idProperty: 'bookId',
     fields: ['bookId', 'bindingId', 'title', 'minYear', 'maxYear', 'author', 'languages', 'publisher', 'placePublished'],
+
+    hasMany: {
+        model: 'Ext.ux.ScanModel',
+        name: 'scans',
+        filterProperty: 'bindingId'
+    },
     
     proxy: {
         type: 'requestmanager',
