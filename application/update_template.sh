@@ -51,7 +51,12 @@ fi
 
 cp -rf application/tilepyramidbuilder/cronjob cronjob
 # TODO : Make it run under 'application'? Right now it is apache else update.php doesn't like it.
-sudo -u apache nohup php cronjob/pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
+if [ "$(whoami)" = "apache" ];
+then
+    nohup php cronjob/pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
+else
+    sudo -u apache nohup php cronjob/pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
+fi
 
 echo "Applying database scripts..."
 cd application/application/sqlscripts/updates
