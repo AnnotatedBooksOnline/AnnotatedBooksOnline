@@ -57,7 +57,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
         
         var defConfig = {
             items: [{
-                xtype: 'bindingfieldset'
+                xtype: 'bindinginformationfieldset'
             },{
                 xtype: 'reorderscanfieldset'
             }],

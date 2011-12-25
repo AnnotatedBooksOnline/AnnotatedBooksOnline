@@ -156,7 +156,7 @@ Ext.define('Ext.ux.SelectBookForm', {
         
         var defConfig = {
             items: [{
-                xtype: 'bindingfieldset'
+                xtype: 'bindinginformationfieldset'
             },{
                 xtype: 'booklistfieldset'
             },{

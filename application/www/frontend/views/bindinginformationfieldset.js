@@ -1,9 +1,9 @@
 /*
  * Binding fieldset class.
  */
-Ext.define('Ext.ux.BindingFieldSet', {
+Ext.define('Ext.ux.BindingInformationFieldSet', {
     extend: 'Ext.form.FieldSet',
-    alias: 'widget.bindingfieldset',
+    alias: 'widget.bindinginformationfieldset',
     title: 'Binding information',
     collapsible: true,
     initComponent: function()
