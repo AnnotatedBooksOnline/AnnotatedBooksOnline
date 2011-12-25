@@ -26,7 +26,7 @@ abstract class Entity
     /**
      * Loads this entity.
      */
-    protected function load()
+    public function load()
     {
         // Determine if the primary keys are filled.
         if (!$this->arePrimaryKeysFilled())
@@ -85,7 +85,7 @@ abstract class Entity
             // Get the SQL statement to update this entity and execute the statement prepared.
             $this->getUpdateQuery()->execute($values, $types);
         }
-    }
+    }    
     
     /**
     *
