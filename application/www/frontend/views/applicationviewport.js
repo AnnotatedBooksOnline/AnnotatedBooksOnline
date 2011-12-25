@@ -282,22 +282,22 @@ Ext.define('Ext.ux.ApplicationViewport', {
         switch (type)
         {
             case 'book':
-                // Data is supposed to be a book id here.
-                var bookId = data[0];
-                if (!bookId)
+                // Data is supposed to be a binding id here.
+                var bindingId = data[0];
+                if (!bindingId)
                 {
                     return;
                 }
                 
-                // Fetch book.
-                Book.createFromId(bookId, this,
-                    function(book)
+                // Fetch binding.
+                Binding.createFromId(bindingId, this,
+                    function(binding)
                     {
-                        // Add a book tab.
+                        // Add a viewer tab.
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
-                            title: 'Book ' + book.getModel().get('title'), // TODO: Move to viewerpanel?
-                            book: book
+                            title: 'Binding ' + binding.getModel().get('signature'), // TODO: Move to viewerpanel?
+                            book: binding
                         });
                         
                         // Add tab.

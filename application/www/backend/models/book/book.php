@@ -42,6 +42,9 @@ class Book extends Entity
     /** List of all scans for this book. */
     protected $scanList;
     
+    protected $firstPage;
+    protected $lastPage;
+    
     /**
     * Constructs a book by id.
     *
@@ -57,6 +60,57 @@ class Book extends Entity
         }
         
         $this->scanList = new ScanList();
+    }
+    
+    public static function fromBinding($binding)
+    {
+        $result = Query::select('bookId')
+            ->from('Books')
+            ->where('bindingId = :binding')
+            ->orderBy('firstPage', 'ASC')
+            ->execute(array(
+                ':binding' => $binding->getBindingId()
+            ));
+            
+        $books = array();
+        
+        foreach($result as $book)
+        {
+            $books[] = new Book($book->getValue('bookId'));
+        }
+        return $books;
+    }
+    
+    public static function fromBindingPage($binding, $range)
+    {
+        if (is_array($range))
+        {
+            $from = $range[0];
+            $to = $range[1];
+        }
+        else
+        {
+            $from = $range;
+            $to = $range;
+        }
+        
+        $result = Query::select('bookId')
+            ->from('Books')
+            ->where('bindingId = :binding', 'lastPage >= :from', 'firstPage <= :to')
+            ->orderBy('firstPage', 'ASC')
+            ->execute(array(
+                ':binding' => $binding->getBindingId(),
+                ':from' => $from,
+                ':to' => $to
+            ));
+            
+        $books = array();
+        
+        foreach($result as $book)
+        {
+            $books[] = new Book($book->getValue('bookId'));
+        }
+        return $books;
     }
     
     /**
@@ -87,7 +141,8 @@ class Book extends Entity
     protected function getColumns()
     {
         return array('title', 'bindingId', 'minYear', 'maxYear',
-                     'preciseDate', 'placePublished', 'publisher', 'printVersion');
+                     'preciseDate', 'placePublished', 'publisher', 'printVersion',
+                     'firstPage', 'lastPage');
     }
     
     /**
@@ -106,7 +161,9 @@ class Book extends Entity
                 'preciseDate'      => 'date',
                 'placePublished'   => 'string',
                 'publisher'        => 'string',
-                'printVersion'     => 'integer'
+                'printVersion'     => 'integer',
+                'firstPage'        => 'int',
+                'lastPage'         => 'int'
         );
     }
     
@@ -153,4 +210,10 @@ class Book extends Entity
     public function getScanList() { return $this->scanList; }
     public function setScanList($scanList) { $this->scanList = $scanList; }
     
+    public function getFirstPage() { return $this->firstPage; }
+    public function setFirstPage($page) { $this->firstPage = $page; }
+    
+    public function getLastPage() { return $this->lastPage; }
+    public function setLastPage($page) { $this->lastPage = $page; }
 }
+

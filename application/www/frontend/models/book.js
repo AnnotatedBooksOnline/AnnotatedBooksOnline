@@ -4,8 +4,8 @@
 
 Ext.define('Ext.ux.AnnotationModel', {
     extend: 'Ext.data.Model',
-    idProperty: 'annId',
-    fields: ['annId', 'scanId'],
+    idProperty: 'annotationId',
+    fields: ['annotationId', 'scanId'],
     
     proxy: {
         type: 'requestmanager',
@@ -45,12 +45,6 @@ Ext.define('Ext.ux.BookModel', {
     idProperty: 'bookId',
     fields: ['bookId', 'bindingId', 'title', 'minYear', 'maxYear', 'author', 'languages', 'publisher', 'placePublished'],
 
-    hasMany: {
-        model: 'Ext.ux.ScanModel',
-        name: 'scans',
-        filterProperty: 'bindingId'
-    },
-    
     proxy: {
         type: 'requestmanager',
         controller: 'Book',
@@ -59,6 +53,10 @@ Ext.define('Ext.ux.BookModel', {
     
     getTimePeriod: function()
     {
+        if (this.get('minYear') == this.get('maxYear'))
+        {
+            return this.get('minYear');
+        }
         return this.get('minYear') + ' - ' + this.get('maxYear');
     }
 });
@@ -90,3 +88,4 @@ Ext.define('Ext.ux.BindingModel', {
         model: 'Ext.ux.BindingModel'
     }
 });
+

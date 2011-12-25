@@ -3,6 +3,7 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
+require_once 'models/book/book.php';
 
 // Exceptions.
 class BookNotFoundException extends ExceptionBase
@@ -30,48 +31,11 @@ class BookController extends Controller
     {
         // Retrieve the book id of a specific book from the request.
         $id = self::getInteger($data, 'id', 0);
+
+        $book = new Book($id);
+        $book = $book->getValues(true, false);
         
-        // Determine id a specific book was requested. If this is the case retrieve this book
-        // from the database and return.
-        
-        $title = Query::select('books.title')
-            ->from('Books books')
-            ->where('books.bookId = :id')
-            ->execute(array(':id' => $id));
-        
-        if ($title->getAmount() != 1)
-        {
-            throw new BookNotFoundException($id);
-        }
-        $title = $title->getFirstRow()->getValue('title');
-        
-        $scans = Query::select('scans.scanId', 'scans.width', 'scans.height', 'scans.zoomLevel')
-            ->from('Scans scans')
-            ->where('scans.bookId = :id')
-            ->execute(array(':id' => $id));
-        
-        $scanResult = array();
-        foreach ($scans as $scan)
-        {
-            $scanResult[] = $scan->getValues();
-        }
-        
-        // TODO: remove this - for testing purposes only.
-        if (count($scanResult) == 0)
-        {
-            $scanResult = array(
-                array('scanId' => 1, 'width' => 151, 'height' => 225, 'zoomLevel' => 6)
-            );
-        }
-        
-        if ($id)
-        {
-            return array('records' => array(
-                'bookId' => $id,
-                'title' => $title,
-                'scans' => $scanResult
-            ), 'total' => 1);
-        }
+        return array('records' => $book, 'total' => 1);
     }
     
     /**
@@ -293,3 +257,4 @@ class BookController extends Controller
         return $result;
     }
 }
+

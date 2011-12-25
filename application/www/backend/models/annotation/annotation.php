@@ -36,10 +36,9 @@ class Annotation extends Entity
     {
         $result = Query::select('annotationId')
             ->from('Annotations')
-            ->where('bookId = :book', 'page = :page')
+            ->where('scanId = :scan')
             ->execute(array(
-                ':book' => $scan->getBookId(),
-                ':page' => $scan->getPage()
+                ':scan' => $scan->getScanId()
             ));
             
         $annotations = array();

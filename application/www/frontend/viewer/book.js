@@ -9,23 +9,23 @@
  */
 
 // Class definition.
-function Book()
+function Binding()
 {
     if (arguments.length)
         this.constructor.apply(this, arguments);
 }
 
 // Fields.
-Book.prototype.bookId;
+Binding.prototype.bindingId;
 
-Book.prototype.documents;
+Binding.prototype.documents;
 
 // Constructor.
-Book.prototype.constructor = function(model)
+Binding.prototype.constructor = function(model)
 {
     // Set members.
     this.model  = model;
-    this.bookId = model.get('bookId');
+    this.bindingId = model.get('bindingId');
     
     // Initialize.
     this.initialize();
@@ -35,24 +35,24 @@ Book.prototype.constructor = function(model)
  * Public methods.
  */
 
-Book.createFromId = function(bookId, obj, onSuccess, onError)
+Binding.createFromId = function(bindingId, obj, onSuccess, onError)
 {
     // On success, 
     var successCallback = function(model)
         {
-            var book = new Book(model);
+            var binding = new Binding(model);
             
-            onSuccess.call(this, book);
+            onSuccess.call(this, binding);
         };
     
-    Ext.ux.BookModel.load(bookId, {
+    Ext.ux.BindingModel.load(bindingId, {
         scope: obj,
         success: successCallback,
         failure: onError
     });
 }
 
-Book.prototype.getDocument = function(index)
+Binding.prototype.getDocument = function(index)
 {
     // TODO: Really do something here.
     //return new Document(1, 151, 225, 6);
@@ -61,28 +61,28 @@ Book.prototype.getDocument = function(index)
     // Create document if it does not exist yet.
     if (this.documents[index] === undefined)
     {
-        this.documents[index] = Book.documentFromScan(this.scans[index]);
+        this.documents[index] = Binding.documentFromScan(this.scans[index]);
     }
     
     return this.documents[index];
 }
 
-Book.prototype.getScan = function(index)
+Binding.prototype.getScan = function(index)
 {
     return this.scans[index];
 }
 
-Book.prototype.getScans = function()
+Binding.prototype.getScans = function()
 {
     return this.scans;
 }
 
-Book.prototype.getScanAmount = function()
+Binding.prototype.getScanAmount = function()
 {
     return this.scans.length;
 }
 
-Book.prototype.getModel = function()
+Binding.prototype.getModel = function()
 {
     return this.model;
 }
@@ -91,14 +91,14 @@ Book.prototype.getModel = function()
  * Private methods.
  */
 
-Book.prototype.initialize = function()
+Binding.prototype.initialize = function()
 {
     this.scans = this.model.scans().data.items;
     
     this.documents = new Array(this.scans.length);
 }
 
-Book.documentFromScan = function(scan)
+Binding.documentFromScan = function(scan)
 { 
     return new Document(
         scan.get('width'),
@@ -111,3 +111,4 @@ Book.documentFromScan = function(scan)
         }
     );
 }
+

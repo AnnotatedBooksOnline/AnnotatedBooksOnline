@@ -56,8 +56,11 @@ class PdfController extends Controller
         $entry->update();
         
         // Get scan and book for filename.
+        // TODO
         $scan = new Scan($scanId);
-        $book = new Book($scan->getBookId());
+        $binding = new Binding($scan->getBindingId());
+        $books = Book::fromBinding($binding);
+        $book = $books[0];
         
         // Calculate filename.
         $filename = preg_replace('/[^\w\-\., ()\[\]\']+/i', '',
@@ -75,3 +78,4 @@ class PdfController extends Controller
         $entry->output();
     }
 }
+

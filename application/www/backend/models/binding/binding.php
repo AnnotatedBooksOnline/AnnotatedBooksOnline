@@ -20,12 +20,6 @@ class Binding extends Entity
     /** Summary of the contents of the binding. */
     protected $summary;
     
-    /** Number of pages to first page of the binding. */
-    protected $pagesToFirst;
-    
-    /** Number of pages to the last page of the binding. */
-    protected $pagesFromLast;
-    
     /** Library */
     protected $library;
     
@@ -78,8 +72,7 @@ class Binding extends Entity
      */
     protected function getColumns()
     {
-        return array('libraryId', 'signature', 'summary', 'pagesToFirst',
-                         'pagesFromLast');
+        return array('libraryId', 'signature', 'summary');
     }
     
     /**
@@ -93,9 +86,7 @@ class Binding extends Entity
                     'bindingId'        => 'int',
                     'libraryId'        => 'int',
                     'signature'        => 'string',
-                    'summary'          => 'string',
-                    'pagesToFirst'     => 'int',
-                    'pagesFromLast'    => 'int'
+                    'summary'          => 'string'
         );
     }
     
@@ -123,13 +114,8 @@ class Binding extends Entity
     public function getSummary() { return $this->summary; }
     public function setSummary($summary) { $this->summary = $summary; }
 
-    public function getPagesToFirst()       { return $this->pagesToFirst; }
-    public function setPagesToFirst($pagesToFirst) { $this->pagesToFirst = $pagesToFirst; }
-    
-    public function getPagesFromLast()       { return $this->pagesFromLast; }
-    public function setPagesFromLast($pagesFromLast) { $this->pagesFromLast = $pagesFromLast; }
-    
     public function getBookList()       { return $this->bookList; }
     public function setBookList($bookList) { $this->bookList = $bookList; }
 
 }
+

@@ -92,8 +92,11 @@ class Pdf
         
         $this->autoPrint = $print;
         
-        $this->book = new Book($scan->getBookId());
-        $this->binding = new Binding($this->book->getBindingId());
+        
+        // TODO
+        $this->binding = new Binding($scan->getBindingId());
+        $books = Book::fromBinding($this->binding);
+        $this->book = $books[0];
         $this->authors = implode(', ', array_map(function($author)
         {
             $person = new Person($author->getPersonId());
@@ -1082,3 +1085,4 @@ class Pdf
         $this->fontSize = $points;
     }
 }
+
