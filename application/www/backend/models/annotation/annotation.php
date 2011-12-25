@@ -9,8 +9,8 @@ require_once 'framework/database/database.php';
  */
 class Annotation extends Entity
 {
-    protected $annotationID;
-    protected $bookID;
+    protected $annotationId;
+    protected $bookId;
     protected $page;
     protected $polygon;
     protected $transcriptionEng;
@@ -26,7 +26,7 @@ class Annotation extends Entity
     {
         if ($id !== null)
         {
-            $this->annotationID = $id;
+            $this->annotationId = $id;
             
             $this->load();
         }
@@ -34,9 +34,9 @@ class Annotation extends Entity
     
     public static function fromScan($scan)
     {
-        $result = Query::select('annotationID')
+        $result = Query::select('annotationId')
             ->from('Annotations')
-            ->where('bookID = :book', 'page = :page')
+            ->where('bookId = :book', 'page = :page')
             ->execute(array(
                 ':book' => $scan->getBookId(),
                 ':page' => $scan->getPage()
@@ -46,7 +46,7 @@ class Annotation extends Entity
         
         foreach($result as $annotation)
         {
-            $annotations[] = new Annotation($annotation->getValue('annotationID'));
+            $annotations[] = new Annotation($annotation->getValue('annotationId'));
         }
         return $annotations;
     }
@@ -66,7 +66,7 @@ class Annotation extends Entity
      */
     public function getPrimaryKeys()
     {
-        return array('annotationID');
+        return array('annotationId');
     }
     
     /**
@@ -74,7 +74,7 @@ class Annotation extends Entity
      */
     public function getColumns()
     {
-        return array('bookID', 'page', 'polygon', 'transcriptionEng', 'transcriptionOrig');
+        return array('bookId', 'page', 'polygon', 'transcriptionEng', 'transcriptionOrig');
     }
     
     /**
@@ -85,8 +85,8 @@ class Annotation extends Entity
     protected function getColumnTypes()
     {
         return array(
-            'annotationID'      => 'int',
-            'bookID'            => 'int',
+            'annotationId'      => 'int',
+            'bookId'            => 'int',
             'page'              => 'int',
             'polygon'           => 'lob',
             'transcriptionEng'  => 'string',
@@ -97,9 +97,9 @@ class Annotation extends Entity
     /*
      * Getters and setters.
      */
-    public function getAnnotationID() { return $this->annotationID; }
-    public function getBookID() { return $this->bookID; }
-    public function setBookID($bookID) { $this->bookID = $bookID; }
+    public function getannotationId() { return $this->annotationId; }
+    public function getBookID() { return $this->bookId; }
+    public function setBookID($bookId) { $this->bookId = $bookId; }
     public function getPage() { return $this->page; }
     public function setPage($page) { $this->page = $page; }
     public function getTranscriptionEng() { return $this->transcriptionEng; }
