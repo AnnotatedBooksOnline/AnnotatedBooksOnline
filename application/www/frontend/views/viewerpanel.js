@@ -175,15 +175,6 @@ Ext.define('Ext.ux.ViewerPanel', {
                 listeners: {
                     click: function() { Ext.ux.ViewerPanel.showSettingsWindow(); }
                 }
-            }, '-', {
-                iconCls: 'save-icon',
-                tooltip: 'Save this page as PDF',
-                listeners: {
-                    click: function()
-                    {
-                        _this.exportPdf();
-                    }
-                }
             }, '->', {
                 iconCls: 'drag-icon',
                 tooltip: 'Drag',
@@ -297,24 +288,6 @@ Ext.define('Ext.ux.ViewerPanel', {
     /*
      * Public methods.
      */
-    
-    exportPdf: function()
-    {
-        // Get scan id.
-        var scanId = this.book.getScan(this.pageNumber).get('scanId');
-        
-        RequestManager.getInstance().request(
-            'Pdf',
-            'generate',
-            {scan: scanId},
-            this,
-            function(data)
-            {
-                // Download just generated file.
-                window.location = '?controller=Pdf&action=download&scan=' + scanId;
-            }
-        );
-    },
     
     resetViewport: function()
     {

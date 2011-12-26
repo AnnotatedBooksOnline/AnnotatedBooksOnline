@@ -108,23 +108,24 @@ class Pdf
         {
             $scan = Scan::fromBindingPage($binding, $range);
             $book = Book::fromBindingPage($binding, $range);
-            $this->permanentLink = $this->productUrl . '#book-' . $book[0]->getBookId() . '-' . $scan[0]->getPage();
-            $this->createSingleScan($scan[0], $book[0], $binding, $transcriptions, $annotations);
+            $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scan[0]->getPage();
+            $this->createSingleScan($scan[0], isset($book[0]) ? $book[0] : null, $binding, $transcriptions, $annotations);
         }
         else
         {
-            $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId();
             if ($range === null)
             {
                 $scans = Scan::fromBinding($binding);
                 $books = Book::fromBinding($binding);
+                $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId();
             }
             else
             {
                 $scans = Scan::fromBindingPage($binding, $range);
                 $books = Book::fromBindingPage($binding, $range);
+                $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scans[0]->getPage();
             }
-            $this->createMultiple($scans, $books, $binding, $transcriptions, $annotations);
+            $this->createMultiple($scans, $books, $binding, $transcriptions, $annotations, $range !== null);
         }
     }
     
@@ -161,7 +162,7 @@ class Pdf
     /**
      * Creates the PDF file based on (a subset of) a binding.
      */
-    private function createMultiple($scans, $books, $binding, $transcriptions = false, $annotations = false)
+    private function createMultiple($scans, $books, $binding, $transcriptions = false, $annotations = false, $subset = false)
     {
         /*
         $this->startCountPages();
@@ -180,29 +181,26 @@ class Pdf
         if (count($books) == 1)
         {
             $this->setFontSize(18);
-            $this->drawText($book[0]->getTitle());
+            $this->drawText($books[0]->getTitle());
             $this->y -= 20;
             
-            $minYear = $book[0]->getMinYear();
-            $maxYear = $book[0]->getMaxYear();
-            $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
+            $minYear = $books[0]->getMinYear();
+            $maxYear = $books[0]->getMaxYear();
+            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
             
             $this->setFontSize(14);
-            $this->drawText($this->authors . ', ' . $year);
+            $this->drawText($this->getAuthorNames($books[0]) . ', ' . $year);
             $this->y -= 40;
             
             $this->setFontSize(12);
-            if ($book[0]->getPlacePublished() != null)
+            if ($books[0]->getPlacePublished() != null)
             {
-                $this->drawText($book[0]->getPlacePublished());
+                $this->drawText($books[0]->getPlacePublished());
             }
-            if ($book[0]->getPublisher() != null)
+            if ($books[0]->getPublisher() != null)
             {
-                $this->drawText($book[0]->getPublisher());
+                $this->drawText($books[0]->getPublisher());
             }
-            $library = new Library($binding->getLibraryId());
-            $this->drawText($library->getLibraryName() . ', ' . $binding->getSignature());
-            $this->y -= 20;
         }
         else
         {
@@ -210,18 +208,26 @@ class Pdf
             foreach ($books as $book)
             {
                 $this->drawText($book->getTitle());
+                $this->y -= 10;
             }
             $this->setFontSize(12);
             $this->y -= 40;
         }
+        $library = new Library($binding->getLibraryId());
+        $this->drawText($library->getLibraryName() . ', ' . $binding->getSignature());
+        $this->y -= 20;
         
         $this->drawText('Generated on ' . date('l, d M Y H:i:s T'));
         $this->addLink($this->drawText($this->permanentLink), $this->permanentLink);
         
+        $this->y -= 20;
         if ($transcriptions !== false)
         {
-            $this->y -= 20;
             $this->drawText('With transcriptions');
+        }
+        if ($subset !== false)
+        {
+            $this->drawText('Pages ' . $scans[0]->getPage() . ' – ' . $scans[count($scans)-1]->getPage());
         }
         
         list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.5, 0.5);
@@ -295,22 +301,25 @@ class Pdf
         $this->setPageMargin(36); // 1,25 cm
         
         // Draw the header.
-        $minYear = $book->getMinYear();
-        $maxYear = $book->getMaxYear();
-        $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
         $library = new Library($binding->getLibraryId());
         $title = $this->productName;
         $fields = array();
-        $fields[] = $this->authors;
-        $fields[] = $book->getTitle();
-        $fields[] = $year;
-        if ($book->getPlacePublished() != null)
+        if ($book !== null)
         {
-            $fields[] = $book->getPlacePublished();
-        }
-        if ($book->getPublisher() != null)
-        {
-            $fields[] = $book->getPublisher();
+            $minYear = $book->getMinYear();
+            $maxYear = $book->getMaxYear();
+            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
+            $fields[] = $this->authors;
+            $fields[] = $book->getTitle();
+            $fields[] = $year;
+            if ($book->getPlacePublished() != null)
+            {
+                $fields[] = $book->getPlacePublished();
+            }
+            if ($book->getPublisher() != null)
+            {
+                $fields[] = $book->getPublisher();
+            }
         }
         $fields[] = $library->getLibraryName();
         $fields[] = $binding->getSignature();
@@ -763,8 +772,8 @@ class Pdf
         $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
         
         $infoId = $this->newObject("<<\n" .
-            "/Title " . $this->fromUTF8($book->getTitle()) . "\n" .
-            "/Author " . $this->fromUTF8($this->getAuthorNames($book)) . "\n" . 
+            ($book !== null ? ("/Title " . $this->fromUTF8($book->getTitle()) . "\n" .
+            "/Author " . $this->fromUTF8($this->getAuthorNames($book)) . "\n") : '') . 
             "/Creator " . $this->fromUTF8($this->productName) . "\n" .
             "/CreationDate " . date("(\D:YmdHis)") . "\n" .
             ">>");
