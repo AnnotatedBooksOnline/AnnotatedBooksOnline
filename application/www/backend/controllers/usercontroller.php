@@ -9,6 +9,7 @@ require_once 'util/mailer.php';
 
 // Exceptions
 class RegistrationFailedException extends ExceptionBase { }
+class UserNotFoundException extends ExceptionBase { }
 
 /**
  * User controller class.
@@ -327,10 +328,9 @@ class UserController extends Controller
         // Retrieve the corresponding user.
         $email = self::getString($data, 'email');
         $user = User::fromEmailAddress($email);
-        if($user === null)
+        if($user == null)
         {
-            // TODO: exception
-            return;
+            throw new UserNotFoundException('email-not-found', $email);
         }
         
         // Specify a password restoration token for this user.
