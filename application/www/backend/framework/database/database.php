@@ -5,6 +5,7 @@ require_once 'framework/util/singleton.php';
 require_once 'framework/util/configuration.php';
 require_once 'framework/database/resultset.php';
 require_once 'framework/database/query.php';
+require_once 'framework/util/log.php';
 
 // Exceptions.
 class DatabaseException    extends ExceptionBase { }
@@ -278,7 +279,7 @@ class Database extends Singleton
                 return (int) $value;
                 
             case 'lob':
-                return $value;
+                return stream_get_contents($value);
                 
             case 'date':
             case 'time':
@@ -287,6 +288,7 @@ class Database extends Singleton
                 return strtotime($value);
                 
             case 'string':
+            case 'istring':
             default:
                 return (string) $value;
         }
@@ -322,6 +324,7 @@ class Database extends Singleton
                 return date('Y-m-d H:i:s', (int) $value);
                 
             case 'string':
+            case 'istring':
             default:
                 return (string) $value;
         }
@@ -351,6 +354,7 @@ class Database extends Singleton
             case 'time':
             case 'timestamp':
             case 'string':
+            case 'istring':
             default:
                 return PDO::PARAM_STR;
         }

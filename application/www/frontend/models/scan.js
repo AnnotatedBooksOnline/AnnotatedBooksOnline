@@ -5,7 +5,7 @@
 Ext.define('Ext.ux.ScanModel', {
     extend: 'Ext.data.Model',
     idProperty: 'scanId',
-    fields: ['scanId', 'bookId', 'index', 'status', 'width', 'height', 'zoomLevel'], // TODO: zoomLevel[s].
+    fields: ['scanId', 'bindingId', 'pageNumber', 'status', 'width', 'height', 'zoomLevel', 'uploadId'],
     
     hasMany: {
         model: 'Ext.ux.AnnotationModel',

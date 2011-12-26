@@ -13,12 +13,13 @@ Ext.define('Ext.ux.Welcome', {
             
             xtype: 'container',
             items: {
-                style: 'text-align: justify;',
                 xtype: 'panel',
                 border: false,
+                flex: 1,
                 width: 500,
-                flex: 0,
-                html: '<h1>Welcome</h1><p>This project seeks to develop a virtual research ' +
+                cls: 'plaintext',
+                html: '<h2>Welcome</h2>' +
+                      '<p>This project seeks to develop a virtual research ' +
                       'environment (or collaboratory) and publication platform for a young and ' +
                       'growing field in cultural history: the study of early modern reading ' +
                       'practices. Proceeding from the idea that reading constitutes a crucial ' +
@@ -44,7 +45,10 @@ Ext.define('Ext.ux.Welcome', {
                       'purposes, as well as for broader general interest by means of exhibitions, ' +
                       'digital presentations and general publications. In order to expand this ' +
                       'structural network, the principal partners in the collaboratory will ' + 
-                      'prepare an application for a Marie Curie Initial Training Network.</p>'
+                      'prepare an application for a Marie Curie Initial Training Network.</p>' + 
+                      '<img src="frontend/resources/images/princeton.png" style="height: 65px"/>' +
+                      '<img src="frontend/resources/images/cell.png" style="height: 100px"/>' +
+                      '<img src="frontend/resources/images/uu.png" style="height: 65px"/>'
             }
         };
         

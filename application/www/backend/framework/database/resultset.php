@@ -47,6 +47,18 @@ class ResultSet implements IteratorAggregate
         return $this->statement->rowCount();
     }
     
+    // TODO MathijsB : Find a good place / name for this method.
+    public function getFirstRow_()
+    {
+        $row = $this->statement->fetch(PDO::FETCH_ASSOC);
+        if (!$row)
+        {
+            return false;
+        }
+        
+        return new ResultSetRow($row);
+    }
+    
     public function getFirstRow()
     {
         $row = $this->statement->fetch(PDO::FETCH_ASSOC);

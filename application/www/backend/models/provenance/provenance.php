@@ -1,12 +1,12 @@
 <?php 
 //[[GPL]]
 
-require_once 'framework/database/entity.php';
+require_once 'framework/database/assocentity.php';
 
 /**
  * Class representing a provenance entity. Associatieve between binding and person.
  */
-class Author extends Entity
+class Provenance extends AssociativeEntity
 {
     
     /** Binding. */
@@ -17,17 +17,23 @@ class Author extends Entity
    
     
     /**
-     * Constructs an author by id.
-     *
-     * @param  $id  Id of the author. Default (null) will create a new author.
+     * 
      */
-    public function __construct($bindingId = null, $personId = null)
+    public function __construct($bindingId = null, $personId = null, $createnew = false)
     {
-        if ($id !== null)
+        if ($bindingId !== null && $personId !== null)
         {
-            $this->bindingId = $bookId;
+            $this->bindingId = $bindingId;
             $this->personId = $personId;
             $this->load();
+            if($createnew)
+            {
+                $this->save();
+            }
+            else
+            {
+                $this->load();
+            }
         }
     }
     
@@ -58,7 +64,7 @@ class Author extends Entity
      */
     protected function getColumns()
     {
-        return array('bindingId', 'personId');
+        return array();
     }
     
     /**

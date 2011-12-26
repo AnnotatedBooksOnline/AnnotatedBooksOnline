@@ -21,15 +21,17 @@ class Scan extends Entity
     const TYPE_JPEG = "jpeg";
     const TYPE_TIFF = "tiff";
     
+    /** Table attributes. */
     protected $scanId;
-    protected $bookId;
     protected $scanType;
     protected $page;
     protected $status;
     protected $width;
     protected $height;
     protected $zoomLevel;
-    
+    protected $uploadId;
+    protected $bindingId;
+
     /**
      * Constructs a scan entity.
      *
@@ -40,7 +42,6 @@ class Scan extends Entity
         if ($id !== null)
         {
             $this->scanId = $id;
-            
             $this->load();
         }
     }
@@ -65,12 +66,45 @@ class Scan extends Entity
         return $scan;
     }
     
-    public static function fromBook($book)
+    public static function fromBinding($binding)
     {
         $result = Query::select('scanId')
             ->from('Scans')
-            ->where('bookId = :book')
-            ->execute(array(':book' => $book->getBookId()));
+            ->where('bindingId = :binding')
+            ->orderBy('page', 'ASC')
+            ->execute(array(':binding' => $binding->getBindingId()));
+            
+        $scans = array();
+        
+        foreach($result as $scan)
+        {
+            $scans[] = new Scan($scan->getValue('scanId'));
+        }
+        return $scans;
+    }
+    
+    public static function fromBindingPage($binding, $range)
+    {
+        if (is_array($range))
+        {
+            $from = $range[0];
+            $to = $range[1];
+        }
+        else
+        {
+            $from = $range;
+            $to = $range;
+        }
+        
+        $result = Query::select('scanId')
+            ->from('Scans')
+            ->where('bindingId = :binding', 'page >= :from', 'page <= :to')
+            ->orderBy('page', 'ASC')
+            ->execute(array(
+                ':binding' => $binding->getBindingId(),
+                ':from' => $from,
+                ':to' => $to
+            ));
             
         $scans = array();
         
@@ -104,7 +138,7 @@ class Scan extends Entity
      */
     public function getColumns()
     {
-        return array('bookId', 'scanType', 'page', 'status', 'width', 'height', 'zoomLevel');
+        return array('scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'bindingId');
     }
     
     /**
@@ -115,13 +149,14 @@ class Scan extends Entity
     protected function getColumnTypes()
     {
         return array(
-            'bookId'    => 'int',
             'scanType'  => 'string',
             'page'      => 'int',
             'status'    => 'int',
             'width'     => 'int',
             'height'    => 'int',
             'zoomLevel' => 'int',
+            'uploadId'  => 'int',
+            'bindingId' => 'int'
         );
     }
     
@@ -130,9 +165,6 @@ class Scan extends Entity
      */
     
     public function getScanId() { return $this->scanId; }
-    
-    public function getBookId()    { return $this->bookId; }
-    public function setBookId($id) { $this->bookId = $id;  }
     
     public function getScanType()      { return $this->scanType;  }
     public function setScanType($type) { $this->scanType = $type; }
@@ -154,4 +186,11 @@ class Scan extends Entity
     
     public function getZoomLevel()       { return $this->zoomLevel;   }
     public function setZoomLevel($level) { $this->zoomLevel = $level; }
+    
+    public function getUploadId()    { return $this->uploadId; }
+    public function setUploadId($id) { $this->uploadId = $id;  }
+    
+    public function getBindingId()    { return $this->bindingId; }
+    public function setBindingId($id) { $this->bindingId = $id; }
 }
+

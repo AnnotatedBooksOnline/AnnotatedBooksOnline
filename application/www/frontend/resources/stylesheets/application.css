@@ -75,3 +75,30 @@ a:hover
 {
     vertical-align: bottom;
 }
+
+.plaintext h1
+{
+    font-size: 145%;
+    margin-bottom: 1em;
+    font-weight: bold;
+}
+
+.plaintext h2
+{
+    font-size: 120%;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.plaintext p
+{
+    margin-bottom: 0.5em;
+    text-align: justify;
+}
+
+.plaintext img
+{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}

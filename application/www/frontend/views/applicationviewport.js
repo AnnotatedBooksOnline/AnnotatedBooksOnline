@@ -195,7 +195,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 items: [{
                     xtype: 'container',
                     height: 87,
-                    html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>',
+                    html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>'
                 },{
                     xtype: 'container',
                     defaults: {
@@ -281,23 +281,31 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         switch (type)
         {
-            case 'book':
-                // Data is supposed to be a book id here.
-                var bookId = data[0];
-                if (!bookId)
+            case 'binding':
+                // Data is supposed to be a binding id here.
+                var bindingId = data[0];
+                if (!bindingId)
                 {
                     return;
                 }
                 
-                // Fetch book.
-                Book.createFromId(bookId, this,
-                    function(book)
+                // If given, go to the right page immediately.
+                var page = 0;
+                if (data.length > 1)
+                {
+                    page = data[1]-1;
+                }
+                
+                // Fetch binding.
+                Binding.createFromId(bindingId, this,
+                    function(binding)
                     {
-                        // Add a book tab.
+                        // Add a viewer tab.
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
-                            title: 'Book ' + book.getModel().get('title'), // TODO: Move to viewerpanel?
-                            book: book
+                            title: 'Binding ' + binding.getModel().get('signature'), // TODO: Move to viewerpanel?
+                            book: binding,
+                            page: page
                         });
                         
                         // Add tab.
@@ -316,11 +324,29 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 return;
                 
+            case 'reorderscan':
+                // Add a view profile tab.
+                Ext.apply(tabConfig, {
+                    title: 'Upload (reorder scans)',
+                    xtype: 'reorderscanform'
+                });
+                
+                break;
+                
             case 'search':
                 // Add a search tab.
                 Ext.apply(tabConfig, {
                     title: 'Search',
                     xtype: 'searchpanel'
+                });
+                
+                break;
+                
+            case 'selectbook':
+                // Add a view profile tab.
+                Ext.apply(tabConfig, {
+                    title: 'Upload (select books)',
+                    xtype: 'selectbookform'
                 });
                 
                 break;
@@ -374,7 +400,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             case 'upload':
                 // Add an upload panel.
                 Ext.apply(tabConfig, {
-                    title: 'Upload',
+                    title: 'Upload (upload)',
                     layout: 'hbox',
                     bodyPadding: 10,
                     items: [{
@@ -414,10 +440,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 break;
             case 'activation':
-            	// Add an activation tab.
+                // Add an activation tab.
                 Ext.apply(tabConfig, {
                     title: 'Activation',
-                    xtype: 'activationpanel',
+                    xtype: 'activationpanel'
                 });
                 
                 break;

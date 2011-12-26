@@ -4,7 +4,7 @@
 require_once 'framework/database/entity.php';
 require_once 'framework/database/entitylist.php';
 
-require_once 'framework/database/book.php';
+require_once 'models/book/book.php';
 
 
 /**
@@ -12,8 +12,9 @@ require_once 'framework/database/book.php';
  */
 class BookList extends EntityList
 {
-    public function setBindingId($bindingId) {
-        foreach ($entities as $entity)
+    public function setBindingId($bindingId) 
+    {
+        foreach ($this->entities as $entity)
         {
             $entity->setBindingId($bindingId);
         }

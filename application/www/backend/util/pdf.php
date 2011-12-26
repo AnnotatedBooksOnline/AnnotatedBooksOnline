@@ -5,7 +5,11 @@ require_once 'framework/util/configuration.php';
 require_once 'framework/util/cache.php';
 require_once 'models/scan/scan.php';
 require_once 'models/book/book.php';
-//require_once 'models/binding/binding.php';
+require_once 'models/annotation/annotation.php';
+require_once 'models/binding/binding.php';
+require_once 'models/library/library.php';
+require_once 'models/author/author.php';
+require_once 'models/person/person.php';
 require_once 'framework/util/log.php';
 
 // Exceptions.
@@ -27,6 +31,7 @@ class Pdf
     private $lineSpread = 2;
     private $productName = 'Collaboratory';
     private $productLogo = 'util/logo.jpg';
+    private $productUrl = 'http://sp.urandom.nl/devtest/';
     
     private $pageWidth;
     private $pageHeight;
@@ -56,11 +61,12 @@ class Pdf
     private $scanAttr = array();
     private $unicodeId = null;
     private $bookmarks = array();
+    private $headerText = '';
+    private $headerContinued = false;
+    private $pageHasText = false;
     
-    private $scan;
     private $book;
     private $binding;
-    
     private $outputEntry = null;
 
     /**
@@ -86,8 +92,16 @@ class Pdf
         
         $this->autoPrint = $print;
         
-        $this->book = new Book($scan->getBookId());
-        //$this->binding = new Binding($book->getBindingId());
+        
+        // TODO
+        $this->binding = new Binding($scan->getBindingId());
+        $books = Book::fromBinding($this->binding);
+        $this->book = $books[0];
+        $this->authors = implode(', ', array_map(function($author)
+        {
+            $person = new Person($author->getPersonId());
+            return $person->getName();
+        }, Author::fromBook($this->book)));
         
         if ($dimensions !== null &&
             is_array($dimensions) &&
@@ -105,8 +119,14 @@ class Pdf
         $this->addFont('DejaVuSans', 'dejavusans.php');
         $this->font = 'DejaVuSans';
         
-        //$this->createSingleScan($scan);
-        $this->createBook($this->book, true);
+        $this->createSingleScan($scan, true, true);
+        //$this->createBook($this->book, true, true);
+    }
+    
+    private function setHeaderText($text = '')
+    {
+        $this->headerText = $text;
+        $this->headerContinued = false;
     }
     
     private function iniToBytes($config)
@@ -127,7 +147,7 @@ class Pdf
     /**
      * Creates the PDF file bases on the book.
      */
-    private function createBook($book, $transcriptions = null)
+    private function createBook($book, $transcriptions = false, $annotations = false)
     {
         $this->setFontSize(18);
         $this->drawText($this->book->getTitle());
@@ -138,7 +158,7 @@ class Pdf
         $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
         
         $this->setFontSize(14);
-        $this->drawText('Authors, ' . $year); // TODO
+        $this->drawText($this->authors . ', ' . $year);
         $this->y -= 40;
         
         $this->setFontSize(12);
@@ -150,13 +170,14 @@ class Pdf
         {
             $this->drawText($this->book->getPublisher());
         }
-        $this->drawText('Library, Signature');
+        $library = new Library($this->binding->getLibraryId());
+        $this->drawText($library->getLibraryName() . ', ' . $this->binding->getSignature());
         $this->y -= 20;
         
         $this->drawText('Generated on ' . date('l, d M Y H:i:s T'));
-        $this->addLink($this->drawText('http://sp.urandom.nl/devtest/#book-2'), 'http://sp.urandom.nl/devtest/#book-2');
+        $this->addLink($this->drawText($this->productUrl . '#book-' . $book->getBookId()), $this->productUrl . '#book-' . $book->getBookId());
         
-        if ($transcriptions != null)
+        if ($transcriptions !== false)
         {
             $this->y -= 20;
             $this->drawText('With transcriptions');
@@ -172,21 +193,27 @@ class Pdf
         $scans = Scan::fromBook($book);
         foreach($scans as $scan)
         {
-            $this->scan = $scan;
+            if ($transcriptions !== false)
+            {
+                $anns = Annotation::fromScan($scan);
+            }
+            
             $this->textMargins = 36; // 1,25 cm
             $this->resetPosition();
             
             $scanWidth = $this->pageWidth - 2 * $this->textMargins;
-            $scanHeight = $this->pageHeight - 2* $this->textMargins - 28 - $this->fontSize;
+            $scanHeight = $this->pageHeight - 2 * $this->textMargins - 28 - $this->fontSize;
             
-            $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->pageHeight - $scanHeight - $this->textMargins));
+            $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->textMargins + $this->fontSize + 28));
 
             $this->drawScan($scan, $scanWidth, $scanHeight);
 
-            if ($transcriptions !== null)
+            if ($transcriptions !== false && $annotations !== false)
             {
-                $points = array(array(10,10), array(60,50), array(110,10), array(110,110), array(60,150), array(10,110));
-                $this->drawAnnotationPolygon(1, $points);
+                for ($i = 1; $i <= count($anns); $i++)
+                {
+                    $this->drawAnnotationPolygon($i, $anns[$i-1]->getPolygon(), $scan);
+                }
             }
             
             $this->draw('Q');
@@ -195,9 +222,15 @@ class Pdf
             
             $this->drawText('Page ' . $scan->getPage());
             $this->writePage();
+            
+            $this->textMargins = 72; // 2,5 cm
+            $this->resetPosition();
+            
+            if ($transcriptions !== false)
+            {
+                $this->drawTranscriptions($anns, $scan);
+            }
         }
-        $this->textMargins = 72; // 2,5 cm
-        $this->resetPosition();
         
         $this->make();
     }
@@ -205,48 +238,66 @@ class Pdf
     /**
      * Creates the PDF file based on the scan.
      */
-    private function createSingleScan($scan, $transcriptions = null)
+    private function createSingleScan($scan, $transcriptions = false, $annotations = false)
     {
-        $this->scan = $scan;
+        if ($transcriptions !== false)
+        {
+            $anns = Annotation::fromScan($scan);
+        }
+        
         $this->textMargins = 36; // 1,25 cm
         
+        // Draw the header.
         $minYear = $this->book->getMinYear();
         $maxYear = $this->book->getMaxYear();
         $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
+        $library = new Library($this->binding->getLibraryId());
         $title = $this->productName;
-        $title .= "\n" . implode(', ', array(
-            'Author', // TODO
-            $this->book->getTitle(),
-            $year
-        ));
-        $title .= "\n" . implode(', ', array(
-            $this->book->getPlacePublished() == null ? 'Place published' : $this->book->getPlacePublished(),
-            $this->book->getPublisher() == null ? 'Publisher' : $this->book->getPublisher(),
-            'Library', // TODO
-            'Signature' // TODO
-        ));
-        $title .= "\nPage number: " . $this->scan->getPage();
+        $fields = array();
+        $fields[] = $this->authors;
+        $fields[] = $this->book->getTitle();
+        $fields[] = $year;
+        if ($this->book->getPlacePublished() != null)
+        {
+            $fields[] = $this->book->getPlacePublished();
+        }
+        if ($this->book->getPublisher() != null)
+        {
+            $fields[] = $this->book->getPublisher();
+        }
+        $fields[] = $library->getLibraryName();
+        $fields[] = $this->binding->getSignature();
+        $title .= "\n" . implode(', ', $fields);
+        $title .= "\nPage number: " . $scan->getPage();
         $this->drawText($title);
         
+        // Draw the scan, with annotations if required.
         $scanWidth = $this->pageWidth - 2 * $this->textMargins;
         $scanHeight = $this->y - $this->textMargins - 2 * 28;
-        
-        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->pageHeight - $this->y - 28));
-        
-
-        $this->drawScan($this->scan, $scanWidth, $scanHeight);
-
-        if ($transcriptions !== null)
+        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->textMargins + $this->fontSize + 28));
+        $this->drawScan($scan, $scanWidth, $scanHeight);
+        if ($transcriptions !== false && $annotations !== false)
         {
-            $points = array(array(10,10), array(60,50), array(110,10), array(110,110), array(60,150), array(10,110));
-            $this->drawAnnotationPolygon(1, $points);
+            for ($i = 1; $i <= count($anns); $i++)
+            {
+                $this->drawAnnotationPolygon($i, $anns[$i-1]->getPolygon(), $scan);
+            }
         }
-        
         $this->draw('Q');
         
+        // Draw the footer.
         $this->y -= $scanHeight + 2 * 28;
-        $this->addLink($this->drawText('http://sp.urandom.nl/devtest/#book-2', false, true), 'http://sp.urandom.nl/devtest/#book-2');
+        $this->addLink($this->drawText($this->productUrl . '#book-' . $this->book->getBookId(), false, true), $this->productUrl . '#book-' . $this->book->getBookId());
         $this->drawText(' — ' . date('l, d M Y H:i:s T'));
+        
+        $this->writePage();
+        
+        $this->textMargins = 72; // 2,5 cm
+        $this->resetPosition();
+        if ($transcriptions !== false)
+        {
+            $this->drawTranscriptions($anns, $scan);
+        }
         
         // Produce the final PDF file.
         $this->make();
@@ -313,6 +364,30 @@ class Pdf
         {
             $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG S Q', $area[0], $area[1], $area[2], $area[1]));
         }
+    }
+    
+    private function drawTranscriptions($annotations, $scan)
+    {
+        if (count($annotations) == 0)
+        {
+            return;
+        }
+        
+        $this->setHeaderText('Transcriptions for page ' . $scan->getPage());
+        for ($i = 1; $i <= count($annotations); $i++)
+        {
+            $this->setFontSize(14);
+            $numPages = count($this->pages);
+            $this->drawText('Transcription ' . $i);
+            if ($numPages == count($this->pages))
+            {
+                $this->y -= 7;
+            }
+            $this->setFontSize(12);
+            $this->drawText($annotations[$i-1]->getTranscriptionOrig() . "\n");
+        }
+        $this->setHeaderText();
+        $this->writePage();
     }
     
     /**
@@ -395,13 +470,12 @@ class Pdf
     /**
      * Draws given points as an annotation polygon with number i.
      */
-    private function drawAnnotationPolygon($i, $points)
+    private function drawAnnotationPolygon($i, $points, $scan)
     {
         // Colors for the polygons in 'r g b' format.
         $edgeColor = '0 0 0';
         $circleColor = '0 0 0';
-        $circleFillColor = '0.9 0.9 0.9';
-        $firstCircleFillColor = '0.7 0.7 0.9';
+        $circleFillColor = '1.0 1.0 1.0';
         
         if (count($points) == 0)
         {
@@ -422,8 +496,8 @@ class Pdf
         ));
         
         // Calculate X and Y scales.
-        $sx = $scale * ($cols - $compx) / $this->scan->getWidth();
-        $sy = $scale * ($rows - $compy) / $this->scan->getHeight();
+        $sx = $scale * ($cols - $compx) / $scan->getWidth();
+        $sy = $scale * ($rows - $compy) / $scan->getHeight();
         
         // Calculate the resulting scan height.
         $ph = $scale * ($rows - $compy);
@@ -431,12 +505,11 @@ class Pdf
         $transformedPoints = array();
         foreach($points as $p)
         {
-            list($x, $y) = $p;
-            $transformedPoints[] = array($sx*$x, $ph-$sy*$y);
+            $transformedPoints[] = array($sx*$p['x'], $ph-$sy*$p['y']);
         }
         
         // Draw the edges of the polygon as lines.
-        $this->draw('q 1 w');
+        $this->draw('q 2 w');
         $first = true;
         foreach($transformedPoints as $p)
         {
@@ -447,16 +520,12 @@ class Pdf
         $this->draw('h');
         $this->draw($edgeColor . ' RG S Q');
         
-        // Draw the vertices of the polygon as points.
-        $first = true;
-        foreach($transformedPoints as $p)
-        {
-            list($x, $y) = $p;
-            $this->draw('q');
-            $this->putCircle($x, $y, $first ? 10 : 5);
-            $this->draw('1 w ' . ($first ? $firstCircleFillColor : $circleFillColor) . ' rg ' . $circleColor . ' RG B Q');
-            $first = false;
-        }
+        // Draw the first vertex of the polygon as point.
+        list($x, $y) = $transformedPoints[0];
+        $this->draw('q');
+        $this->putCircle($x, $y, 10);
+        $this->draw('1 w ' . $circleFillColor . ' rg ' . $circleColor . ' RG B Q');
+        $first = false;
         
         // Draw the number of the annotation in the first vertex.
         $num = str_split((string)$i);
@@ -620,7 +689,7 @@ class Pdf
         
         $infoId = $this->newObject("<<\n" .
             "/Title " . $this->fromUTF8($this->book->getTitle()) . "\n" .
-            "/Author " . $this->fromUTF8('Author') . "\n" . // TODO
+            "/Author " . $this->fromUTF8($this->authors) . "\n" . 
             "/Creator " . $this->fromUTF8($this->productName) . "\n" .
             "/CreationDate " . date("(\D:YmdHis)") . "\n" .
             ">>");
@@ -843,7 +912,7 @@ class Pdf
         $this->y = $this->pageHeight - $this->textMargins - $this->fontSize;
     }
     
-    private function drawText($text, $center = false, $omitNewLine = false)
+    private function drawText($text = '', $center = false, $omitNewLine = false)
     {
         if ($this->x === null || $this->y === null)
         {
@@ -854,6 +923,20 @@ class Pdf
             $this->y += $this->lastFontSize - $this->fontSize;
         }
         $this->lastFontSize = $this->fontSize;
+        
+        if ($this->headerText != '' && !$this->pageHasText)
+        {
+            $this->pageHasText = true;
+            $oldFontSize = $this->fontSize;
+            $this->setFontSize(12);
+            list(, $bottom) = $this->drawText($this->headerText .
+                ($this->headerContinued ? ' (continued)' : '') . 
+                "\n");
+            $bottom -= $this->fontInfo[$this->font]['Descent'] * $this->fontSize / 1000 * 0.5;
+            $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 0.5 w S Q', $this->textMargins, $bottom, $this->pageWidth - $this->textMargins, $bottom));
+            $this->setFontSize($oldFontSize);
+        }
+        $this->headerContinued = true;
         
         $minY = $this->y;
         $maxY = $this->y + $this->fontSize;
@@ -889,6 +972,11 @@ class Pdf
                 if ($this->y < $this->textMargins)
                 {
                     $this->writePage();
+                    if ($this->headerText != '')
+                    {
+                        $this->drawText();
+                        $this->y += $this->fontSize + $this->lineSpread;
+                    }
                 }
                 $charOrd = ord($text[$i][0]) * 256 + ord($text[$i][1]);
                 $charWidth = isset($this->fontSizes[$this->font][$charOrd]) ? $this->fontSizes[$this->font][$charOrd] : 600;
@@ -982,6 +1070,7 @@ class Pdf
         $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] ' . $annots . '>>', true);
         $this->pages[] = $pageId;
         $this->resetPosition();
+        $this->pageHasText = false;
     }
     
     private function setPageSize($width, $height)
@@ -996,3 +1085,4 @@ class Pdf
         $this->fontSize = $points;
     }
 }
+

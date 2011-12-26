@@ -1,10 +1,10 @@
 <?php
 //[[GPL]]
 
-require 'framework/util/exceptionbase.php';
-require 'framework/util/configuration.php';
-require 'framework/util/translator.php';
-require 'framework/util/log.php';
+require_once('framework/util/exceptionbase.php');
+require_once('framework/util/configuration.php');
+require_once('framework/util/translator.php');
+require_once('framework/util/log.php');
 
 // Exceptions
 class ControllerException extends ExceptionBase { }

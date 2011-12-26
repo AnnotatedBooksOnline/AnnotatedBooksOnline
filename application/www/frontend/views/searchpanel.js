@@ -367,8 +367,13 @@ Ext.define('Ext.ux.SearchResultsView', {
                 {
                     // Open book in a new tab.
                     var id = record.get('id');
-                    
-                    Application.getInstance().gotoTab('book', [id], true);
+                    Ext.ux.BookModel.load(id, {
+                        success: function(model)
+                        {
+                            var page = model.get('firstPage');
+                            Application.getInstance().gotoTab('binding', (page == null ? [id] : [id, page]), true);
+                        }
+                    });
                 }
             }
         };
@@ -853,3 +858,4 @@ Ext.define('Ext.ux.SearchPanel', {
         firstField.fireEvent('select',firstField,{});
     }
 });
+

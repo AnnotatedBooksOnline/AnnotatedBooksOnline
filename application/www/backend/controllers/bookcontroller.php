@@ -3,6 +3,8 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
+require_once 'models/book/book.php';
+require_once 'models/binding/binding.php';
 
 // Exceptions.
 class BookNotFoundException extends ExceptionBase
@@ -23,49 +25,33 @@ class BookController extends Controller
      */
     public function actionLoad($data)
     {
-        // Retrieve the book id of a specific book from the request.
-        $id = self::getInteger($data, 'id', 0);
-        
-        // Determine id a specific book was requested. If this is the case retrieve this book
-        // from the database and return.
-        
-        $title = Query::select('books.title')
-            ->from('Books books')
-            ->where('books.bookId = :id')
-            ->execute(array(':id' => $id));
-        
-        if ($title->getAmount() != 1)
+        if (isset($data['filters'])
+         && isset($data['filters'][0])
+         && isset($data['filters'][0]['column'])
+         && $data['filters'][0]['column'] == 'bindingId' 
+         && isset($data['filters'][0]['value']))
         {
-            throw new BookNotFoundException($id);
+            // Retrieve the binding id from the request
+            $bindingId = self::getInteger($data['filters'][0], 'value', 0);
+            $binding = new Binding($bindingId);
+            
+            $books = Book::fromBinding($binding);
+            $books = array_map(function($book)
+            {
+                return $book->getValues(true, false);
+            }, $books);
+            
+            return array('records' => $books, 'total' => count($books));
         }
-        $title = $title->getFirstRow()->getValue('title');
-        
-        $scans = Query::select('scans.scanId', 'scans.width', 'scans.height', 'scans.zoomLevel')
-            ->from('Scans scans')
-            ->where('scans.bookId = :id')
-            ->execute(array(':id' => $id));
-        
-        $scanResult = array();
-        foreach ($scans as $scan)
+        else
         {
-            $scanResult[] = $scan->getValues();
-        }
-        
-        // TODO: remove this - for testing purposes only.
-        if (count($scanResult) == 0)
-        {
-            $scanResult = array(
-                array('scanId' => 1, 'width' => 151, 'height' => 225, 'zoomLevel' => 6)
-            );
-        }
-        
-        if ($id)
-        {
-            return array('records' => array(
-                'bookId' => $id,
-                'title' => $title,
-                'scans' => $scanResult
-            ), 'total' => 1);
+            // Retrieve the book id of a specific book from the request.
+            $id = self::getInteger($data, 'id', 0);
+
+            $book = new Book($id);
+            $book = $book->getValues(true, false);
+            
+            return array('records' => $book, 'total' => 1);
         }
     }
     
@@ -288,3 +274,4 @@ class BookController extends Controller
         return $result;
     }
 }
+

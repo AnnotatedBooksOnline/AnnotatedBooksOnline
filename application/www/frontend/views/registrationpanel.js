@@ -14,7 +14,7 @@ Ext.define('Ext.ux.RegistrationForm', {
             items: [{
                 name: 'username',
                 fieldLabel: 'Username *',
-                vtype: 'uniqueUsername',
+                vtype: 'checkUsername',
                 minLength: 6,
                 maxLength: 30
             },{
@@ -194,7 +194,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                     */
                     this.up('registrationpanel').onAfterRegistration(this.getModel());
                 },
-                function()
+                function(data)
                 {
                     // NOTE: should we do this for everything, or a make a generic message at
                     // NOTE: a higher level?
@@ -236,9 +236,8 @@ Ext.define('Ext.ux.RegistrationPanel', {
     {
         var item = this.items.get(1);
         
-        item.update('Welcome to the collaboratory, ' + escape(model.getFullName()) + '. ' +
-            '<a href="#" title="" onclick="Authentication.showLoginWindow(); return false;">' +
-            'Click here to login.</a>');
+        item.update('Welcome to the collaboratory, ' + escape(model.getFullName()) + '.<br/>' +
+        		    'You should soon receive an e-mail with instructions on how to activate your account.');
         
         this.getLayout().setActiveItem(1);
     }

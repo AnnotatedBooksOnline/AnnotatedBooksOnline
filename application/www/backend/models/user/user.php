@@ -114,7 +114,7 @@ class User extends Entity
         // Get user id from username and password.
         $query = Query::select('userId')->
                  from('Users')->
-                 where('username = :username', 'passwordHash = :hash');
+                 where('username ILIKE :username', 'passwordHash = :hash');
         
         $resultSet = $query->execute(array(
             'username' => $username,
@@ -163,7 +163,7 @@ class User extends Entity
     {
         $result = Query::select('userId')
                        ->from('Users')
-                       ->where(array('email = :email'))
+                       ->where(array('email ILIKE :email'))
                        ->execute(array('email' => $email));
         
         if($result->rowCount() == 0)
@@ -247,9 +247,9 @@ class User extends Entity
     {
         return array(
             'userId'       => 'int',
-            'username'     => 'string',
+            'username'     => 'istring', // Usernames should be compared case-insensitive.
             'passwordHash' => 'string',
-            'email'        => 'string',
+            'email'        => 'istring',
             'firstName'    => 'string',
             'lastName'     => 'string',
             'affiliation'  => 'string',
@@ -261,6 +261,8 @@ class User extends Entity
             'rank'         => 'int',
         );
     }
+    
+    
     
     /**
      * Calculates a secure hash for the given password.

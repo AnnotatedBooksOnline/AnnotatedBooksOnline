@@ -2,6 +2,9 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
+require_once 'models/scan/scanlist.php';
+require_once 'models/binding/binding.php';
+
 
 /**
  * Class representing a book entity.
@@ -37,6 +40,9 @@ class Book extends Entity
     /** Version of the book. */
     protected $printVersion;
     
+    protected $firstPage;
+    protected $lastPage;
+    
     /**
     * Constructs a book by id.
     *
@@ -50,6 +56,58 @@ class Book extends Entity
     
             $this->load();
         }
+        
+    }
+    
+    public static function fromBinding($binding)
+    {
+        $result = Query::select('bookId')
+            ->from('Books')
+            ->where('bindingId = :binding')
+            ->orderBy('firstPage', 'ASC')
+            ->execute(array(
+                ':binding' => $binding->getBindingId()
+            ));
+            
+        $books = array();
+        
+        foreach($result as $book)
+        {
+            $books[] = new Book($book->getValue('bookId'));
+        }
+        return $books;
+    }
+    
+    public static function fromBindingPage($binding, $range)
+    {
+        if (is_array($range))
+        {
+            $from = $range[0];
+            $to = $range[1];
+        }
+        else
+        {
+            $from = $range;
+            $to = $range;
+        }
+        
+        $result = Query::select('bookId')
+            ->from('Books')
+            ->where('bindingId = :binding', 'lastPage >= :from', 'firstPage <= :to')
+            ->orderBy('firstPage', 'ASC')
+            ->execute(array(
+                ':binding' => $binding->getBindingId(),
+                ':from' => $from,
+                ':to' => $to
+            ));
+            
+        $books = array();
+        
+        foreach($result as $book)
+        {
+            $books[] = new Book($book->getValue('bookId'));
+        }
+        return $books;
     }
     
     /**
@@ -79,8 +137,9 @@ class Book extends Entity
      */
     protected function getColumns()
     {
-        return array('bookId', 'title', 'bindingId', 'minYear', 'maxYear',
-                     'preciseDate', 'placePublished', 'publisher', 'printVersion');
+        return array('title', 'bindingId', 'minYear', 'maxYear',
+                     'preciseDate', 'placePublished', 'publisher', 'printVersion',
+                     'firstPage', 'lastPage');
     }
     
     /**
@@ -99,8 +158,19 @@ class Book extends Entity
                 'preciseDate'      => 'date',
                 'placePublished'   => 'string',
                 'publisher'        => 'string',
-                'printVersion'     => 'integer'
+                'printVersion'     => 'integer',
+                'firstPage'        => 'int',
+                'lastPage'         => 'int'
         );
+    }
+    
+    /**
+     *
+     * Enter description here ...
+     */
+    public function saveDetails()
+    {
+        ;
     }
  
     
@@ -129,6 +199,12 @@ class Book extends Entity
     public function setPublisher($publisher) { $this->publisher = $publisher; }
     
     public function getPrintVersion()       { return $this->printVersion; }
-    public function setPrintVersion($printVersion) { $this->printVersion = printVersion; }
+    public function setPrintVersion($printVersion) { $this->printVersion = $printVersion; }
     
+    public function getFirstPage() { return $this->firstPage; }
+    public function setFirstPage($page) { $this->firstPage = $page; }
+    
+    public function getLastPage() { return $this->lastPage; }
+    public function setLastPage($page) { $this->lastPage = $page; }
 }
+

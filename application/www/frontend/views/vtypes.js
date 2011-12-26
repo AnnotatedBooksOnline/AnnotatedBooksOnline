@@ -1,10 +1,19 @@
 /*
- * Username uniqueness check.
+ * Username uniqueness check and username parsing check.
  */
 
 Ext.apply(Ext.form.VTypes, {
-    uniqueUsername: function(value, field)
+    checkUsername: function(value, field)
     {
+        // Check if the username is a correct username.
+        var usernameRegExp = /^[A-Za-z\d\._@' ]*$/;
+    
+        if (!usernameRegExp.test(value))
+        {
+            field.markInvalid('Not a valid username. An username may only contain numbers, letters (lowercase and uppercase), spaces, and symbols of this list: _.\'@');
+            return false;
+        }
+        
         // Send existance check request.
         RequestManager.getInstance().request(
             'User',
@@ -36,7 +45,7 @@ Ext.apply(Ext.form.VTypes, {
     
         if (!emailRegExp.test(value))
         {
-            field.markInvalid('Not a valid email address. The format should be \'me@email.com');
+            field.markInvalid('Not a valid email address. The format should be \'me@email.com\'.');
             return false;
         }
         

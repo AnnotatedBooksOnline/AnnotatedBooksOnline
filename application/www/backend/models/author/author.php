@@ -1,12 +1,13 @@
 <?php 
 //[[GPL]]
 
-require_once 'framework/database/entity.php';
+require_once 'framework/database/assocentity.php';
+require_once 'framework/database/database.php';
 
 /**
  * Class representing a author entity. Associatieve between book and person.
  */
-class Author extends Entity
+class Author extends AssociativeEntity
 {
     
     /** Person. */
@@ -17,18 +18,45 @@ class Author extends Entity
    
     
     /**
-     * Constructs an author by id.
+     * Constructs an author entity by a person and book id.
      *
-     * @param  $id  Id of the author. Default (null) will create a new author.
+     * @param id   $personId
+     * @param id   $bookId
+     * @param bool $createnew If true, a new author will be created if the specified one did not 
+     *                        exist yet. If one already exists, it doesn't really matter whether 
+     *                        this is true or false.
      */
-    public function __construct($personId = null, $bookId = null)
+    public function __construct($personId = null, $bookId = null, $createnew = false)
     {
-        if ($id !== null)
+        if ($personId !== null && $bookId !== null)
         {
             $this->bookId = $bookId;
             $this->personId = $personId;
-            $this->load();
+            if($createnew)
+            {
+                $this->save();
+            }
+            else
+            {
+                $this->load();
+            }
         }
+    }
+    
+    public static function fromBook($book)
+    {
+        $result = Query::select('personId', 'bookId')
+            ->from('Authors')
+            ->where('bookId = :book')
+            ->execute(array(':book' => $book->getBookId()));
+            
+        $authors = array();
+        
+        foreach($result as $author)
+        {
+            $authors[] = new Author($author->getValue('personId'), $author->getValue('bookId'), true);
+        }
+        return $authors;
     }
     
     /**
@@ -58,7 +86,7 @@ class Author extends Entity
      */
     protected function getColumns()
     {
-        return array('personId', 'bookId');
+        return array();
     }
     
     /**

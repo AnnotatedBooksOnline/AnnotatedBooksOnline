@@ -125,20 +125,22 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         editable: false
                     }]   
                 }]
-            },{
-                xtype: 'textareafield',
-                fieldLabel: 'Summary',
-                name: 'summary',
-                anchor: '100%',
-                labelAlign: 'top',
-                grow: true,
-                allowBlank: true
             }]
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    getBinding: function()
+    {
+        return {
+            library: this.down('[name=library]').getValue(),
+            provenance: this.down('[name=provenance]').getValue(),
+            signature: this.down('[name=signature]').getValue(),
+            languagesofannotations: this.down('[name=languagesofannotations]').getValue()
+        };
     }
 });
 
@@ -291,7 +293,7 @@ Ext.define('Ext.ux.BookFieldset', {
                         items: [{
                             xtype: 'fieldcontainer',
                             layout: 'hbox',
-                            fieldLabel: 'Time period *',
+                            fieldLabel: 'Time period of publication *',
                             anchor: '100%',
                             labelAlign: 'top',
                             items: [{
@@ -387,6 +389,22 @@ Ext.define('Ext.ux.BookFieldset', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    getBook: function()
+    {
+        return {
+            title: this.down('[name=title]').getValue(),
+            firstPage: this.down('[name=pageStart]').getValue(),
+            lastPage: this.down('[name=pageEnd]').getValue(),
+            author: this.down('[name=author]').getValue(),
+            publisher: this.down('[name=publisher]').getValue(),
+            minYear: this.down('[name=from]').getValue(),
+            maxYear: this.down('[name=to]').getValue(),
+            languages: this.down('[name=languages]').getValue(),
+            placePublished: this.down('[name=placePublished]').getValue(),
+            printVersion: this.down('[name=version]').getValue()
+        };
     }
 });
 
@@ -430,6 +448,16 @@ Ext.define('Ext.ux.BooksFieldSet', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    getBooks: function()
+    {
+        var books = [];
+        var current = this.down('bookfieldset');
+        do {
+            books[books.length] = current.getBook();
+        } while (current = current.nextSibling('bookfieldset'));
+        return books;
     }
 });
 
@@ -446,7 +474,7 @@ Ext.define('Ext.ux.UploadForm', {
         
         var defConfig = {
             items: [{
-                xtype: 'scanpanel',
+                xtype: 'scanpanel'
             },{
                 xtype: 'bindingfieldset'
             },{
@@ -481,7 +509,8 @@ Ext.define('Ext.ux.UploadForm', {
                 width: 140,
                 handler: function()
                 {
-                    _this.submit();
+                    _this.ownerCt.setLoading('Uploading...');
+                    _this.checkIntervalId = setInterval(function(){_this.checkCompleted();},1000);
                 }
             }]
         };
@@ -489,6 +518,38 @@ Ext.define('Ext.ux.UploadForm', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+    },
+    
+    checkCompleted: function()
+    {
+        var scans = this.down('scanpanel').getValues();
+        var waiting = false;
+        for (var i = 0; i < scans.length; i++)
+        {
+            if (scans[i].status != 'success' && scans[i].status != 'error')
+            {
+                waiting = true;
+                break;
+            }
+        }
+        if (!waiting)
+        {
+            clearInterval(this.checkIntervalId);
+            var binding = this.down('bindingfieldset').getBinding();
+            var books = this.down('booksfieldset').getBooks();
+            var scans = this.down('scanpanel').getValues();
+            var result = {binding: binding, books: books, scans: scans};
+            this.ownerCt.setLoading("Saving...");
+            RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+            {
+                this.ownerCt.setLoading(false);
+                Ext.Msg.alert('Upload', 'Binding added successfully.');
+            }, function()
+            {
+                this.ownerCt.setLoading(false);
+                return true;
+            });
+        }
     },
     
     submit: function()

@@ -1,4 +1,4 @@
--- 
+﻿-- 
 -- SQL for PostgreSQL. Database encoding must be UTF-8.
 -- 
 
@@ -114,6 +114,7 @@ CREATE TABLE "Bindings"
 (
     "bindingId" serial NOT NULL,
     "libraryId" integer NOT NULL,
+    "title" varchar(100) NOT NULL,
     "signature" character(255) NOT NULL,
     "summary" text,
     "pagesToFirst" integer NOT NULL,
@@ -198,9 +199,9 @@ CREATE TABLE "Scans"
     "bookId" integer,
     "page" integer,
     "status" smallint NOT NULL DEFAULT 1,
-    "width" integer NOT NULL,
-    "height" integer NOT NULL,
-    "zoomLevel" integer NOT NULL,
+    "width" integer,
+    "height" integer,
+    "zoomLevel" integer,
     "scanType" character(4) NOT NULL,
     
     "createdOn" timestamp,
@@ -212,6 +213,7 @@ CREATE TABLE "Scans"
     FOREIGN KEY ("bookId")
         REFERENCES "Books",
         
+    CONSTRAINT "Scans_check"
     CHECK ("status" <> 0 OR (
                  "bookId"    IS NOT NULL 
              AND "page"      IS NOT NULL 
@@ -219,6 +221,7 @@ CREATE TABLE "Scans"
              AND "height"    IS NOT NULL 
              AND "zoomLevel" IS NOT NULL
           )),
+    CONSTRAINT "Scans_check1"
     CHECK ("scanType" = 'jpeg' OR "scanType" = 'tiff')
 );
 

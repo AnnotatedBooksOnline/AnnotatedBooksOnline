@@ -43,32 +43,32 @@ Ext.define('Ext.ux.UserListPanel', {
                 store: store,
                 columns: [{
                     text:      'Username',
-                    flex:      1,
+                    flex:      2,
                     dataIndex: 'username'
                 },{
                     text:      'E-mail',
-                    width:     200,
+                    flex:      1,
                     renderer:  renderEmail,
                     dataIndex: 'email'
                 },{
                     text:      'First name',
-                    width:     150,
+                    flex:      1,
                     dataIndex: 'firstName'
                 },{
                     text:      'Last name',
-                    width:     150,
+                    flex:      2,
                     dataIndex: 'lastName'
                 },{
                     text:      'Affiliation',
-                    width:     150,
+                    flex:      1,
                     dataIndex: 'affiliation'
                 },{
                     text:      'Occupation',
-                    width:     150,
+                    flex:      1,
                     dataIndex: 'occupation'
                 },{
                     text:      'Website',
-                    width:     150,
+                    flex:      2,
                     renderer:  renderWebsite,
                     dataIndex: 'website'
                 }],
@@ -83,7 +83,7 @@ Ext.define('Ext.ux.UserListPanel', {
                     itemdblclick: function(view, record)
                     {
                         // Open user in a new tab if not clicked on 'email' or 'website'.
-                        if ((record.get('dataIndex') !== 'email') && (record.get('dataIndex') !== 'website'))
+                        if ((view.get('dataIndex') !== 'email') && (view.get('dataIndex') !== 'website'))
                         {
                             var name = record.get('username');
                             Application.getInstance().gotoTab('viewprofile', [name], true);

@@ -23,7 +23,7 @@ class Person extends Entity
      */
     public function __construct($personId = null)
     {
-        if ($id !== null)
+        if ($personId !== null)
         {
             $this->personId = $personId;
             $this->load();
@@ -57,7 +57,7 @@ class Person extends Entity
      */
     protected function getColumns()
     {
-        return array('personId', 'name');
+        return array('name');
     }
     
     /**

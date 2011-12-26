@@ -132,10 +132,20 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         
         Ext.apply(this, defConfig);
         this.callParent();
+    },
+    
+    afterRender: function()
+    {
+        this.callParent();
         
-        var langChooser = this.down('[name=langchoose]');
-        langChooser.select('eng');
-        langChooser.fireEvent('select', langChooser, {});
+        var _this = this;
+        
+        this.ownerCt.on('expand', function()
+        {
+            var langChooser = _this.down('[name=langchoose]');
+            langChooser.select('eng');
+            langChooser.fireEvent('select', langChooser, {});
+        }, {single: true});
     },
     
     setLanguage: function(lang)

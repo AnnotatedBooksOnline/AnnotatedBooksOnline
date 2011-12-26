@@ -2,7 +2,8 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
-require_once 'booklist.php';
+require_once 'models/book/booklist.php';
+require_once 'models/library/library.php';
 
 /**
  * Class representing a binding entity.
@@ -13,23 +14,22 @@ class Binding extends Entity
     /** Id of this binding. */
     protected $bindingId;
     
-    /** Library this binding belongs to. */
-    protected $libraryId;
-    
     /** Signature of the binding */
     protected $signature;
     
     /** Summary of the contents of the binding. */
     protected $summary;
     
-    /** Number of pages to first page of the binding. */
-    protected $pagesToFirst;
-    
-    /** Number of pages to the last page of the binding. */
-    protected $pagesFromLast;
+    /** Library */
+    protected $library;
     
     /** Books for this binding. */
+    // TODO: Tom: waar is dit voor?
+    // TODO: Mathijs: Om de boeken bij de binding in te stoppen.
     protected $bookList;
+    
+    /** List of all scans for this book. */
+    protected $scanList;
     
     /**
      * Constructs a binding by id.
@@ -45,7 +45,9 @@ class Binding extends Entity
             $this->load();
         }
         
-        $bookList = new BookList();
+        $this->bookList = new BookList();
+        $this->scanList = new ScanList();
+        
     }
     
     /**
@@ -75,8 +77,7 @@ class Binding extends Entity
      */
     protected function getColumns()
     {
-        return array('bindingId', 'libraryId', 'signature', 'summary', 'pagesToFirst',
-                         'pagesFromLast');
+        return array('libraryId', 'signature', 'summary');
     }
     
     /**
@@ -90,9 +91,7 @@ class Binding extends Entity
                     'bindingId'        => 'int',
                     'libraryId'        => 'int',
                     'signature'        => 'string',
-                    'summary'          => 'string',
-                    'pagesToFirst'     => 'int',
-                    'pagesFromLast'    => 'int'
+                    'summary'          => 'string'
         );
     }
     
@@ -102,11 +101,13 @@ class Binding extends Entity
      */
     public function saveDetails() 
     {
-        
         // Save the book list.
-        $bookList->setBindingId($bindingId);
-        $bookList->save();
+        $this->bookList->setBindingId($this->bindingId);
+        $this->bookList->save();
         
+        // Save the scan list.
+        $this->scanList->setBindingId($this->bindingId);
+        $this->scanList->save();
     }
     
     public function getBindingId()         { return $this->bindingId; }
@@ -121,12 +122,11 @@ class Binding extends Entity
     public function getSummary() { return $this->summary; }
     public function setSummary($summary) { $this->summary = $summary; }
 
-    public function getPagesToFirst()       { return $this->pagesToFirst; }
-    public function setPagesToFirst($pagesToFirst) { $this->pagesToFirst = $pagesToFirst; }
-    
-    public function getPagesFromLast()       { return $this->pagesFromLast; }
-    public function setPagesFromLast($pagesFromLast) { $this->pagesFromLast = $pagesFromLast; }
-    
     public function getBookList()       { return $this->bookList; }
     public function setBookList($bookList) { $this->bookList = $bookList; }
+    
+    public function getScanList() { return $this->scanList; }
+    public function setScanList($scanList) { $this->scanList = $scanList; }
+
 }
+

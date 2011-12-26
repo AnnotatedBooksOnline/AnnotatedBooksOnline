@@ -181,9 +181,9 @@ Ext.define('Ext.ux.EditProfileForm', {
         var form = this.getForm();
         if (form.isValid())
         {
-            Authentication.getInstance().checkPassword(form.down('[name=password]'), this,
+            /*Authentication.getInstance().checkPassword(form.down('[name=password]'), this,
                 function()
-                {
+                {*/
                     this.saveModel(this,
                         function()
                         {
@@ -197,7 +197,7 @@ Ext.define('Ext.ux.EditProfileForm', {
                                 window.close();
                             }
                         });
-                },
+                /*},
                 function(code, message, trace)
                 {
                     // Show an error.
@@ -207,7 +207,7 @@ Ext.define('Ext.ux.EditProfileForm', {
                         icon: Ext.Msg.ERROR,
                         buttons: Ext.Msg.OK
                     });
-                });
+                });*/
         }
     }
 });

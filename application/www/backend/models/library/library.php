@@ -31,7 +31,7 @@ class Library extends Entity
      */
     public function __construct($libraryId = null)
     {
-        if ($id !== null)
+        if ($libraryId !== null)
         {
             $this->libraryId = $libraryId;
             $this->load();
@@ -65,7 +65,7 @@ class Library extends Entity
      */
     protected function getColumns()
     {
-        return array('libraryId', 'libraryName', 'libraryAddress', 'website', 'info');
+        return array('libraryName', 'libraryAddress', 'website', 'info');
     }
     
     /**

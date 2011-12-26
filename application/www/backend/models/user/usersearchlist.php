@@ -47,7 +47,14 @@ class UserSearchList
         $whereValues = array();
         foreach ($conditions as $column => $value)
         {
-            $whereConditions[] = $column . ' = :' . $column;
+            if($column === 'username' || $column == 'email')
+            {
+                $whereConditions[] = $column . ' ILIKE :' . $column;
+            }
+            else
+            {
+                $whereConditions[] = $column . ' = :' . $column;
+            }
             $whereValues[$column] = $value;
         }
         
