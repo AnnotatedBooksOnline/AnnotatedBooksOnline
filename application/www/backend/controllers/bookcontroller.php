@@ -4,6 +4,7 @@
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
 require_once 'models/book/book.php';
+require_once 'models/binding/binding.php';
 
 // Exceptions.
 class BookNotFoundException extends ExceptionBase
@@ -29,13 +30,34 @@ class BookController extends Controller
      */
     public function actionLoad($data)
     {
-        // Retrieve the book id of a specific book from the request.
-        $id = self::getInteger($data, 'id', 0);
+        if (isset($data['filters'])
+         && isset($data['filters'][0])
+         && isset($data['filters'][0]['column'])
+         && $data['filters'][0]['column'] == 'bindingId' 
+         && isset($data['filters'][0]['value']))
+        {
+            // Retrieve the binding id from the request
+            $bindingId = self::getInteger($data['filters'][0], 'value', 0);
+            $binding = new Binding($bindingId);
+            
+            $books = Book::fromBinding($binding);
+            $books = array_map(function($book)
+            {
+                return $book->getValues(true, false);
+            }, $books);
+            
+            return array('records' => $books, 'total' => count($books));
+        }
+        else
+        {
+            // Retrieve the book id of a specific book from the request.
+            $id = self::getInteger($data, 'id', 0);
 
-        $book = new Book($id);
-        $book = $book->getValues(true, false);
-        
-        return array('records' => $book, 'total' => 1);
+            $book = new Book($id);
+            $book = $book->getValues(true, false);
+            
+            return array('records' => $book, 'total' => 1);
+        }
     }
     
     /**

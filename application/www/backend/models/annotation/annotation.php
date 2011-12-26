@@ -3,6 +3,7 @@
 
 require_once 'framework/database/entity.php';
 require_once 'framework/database/database.php';
+require_once 'models/scan/scan.php';
 
 /**
  * Class representing an annotation entity.

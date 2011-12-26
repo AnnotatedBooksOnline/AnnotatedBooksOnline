@@ -45,7 +45,7 @@ Binding.createFromId = function(bindingId, obj, onSuccess, onError)
             onSuccess.call(this, binding);
         };
     
-    Ext.ux.BindingModel.load(bindingId, {
+    Ext.ux.BindingModel.loadRecursive(bindingId, {
         scope: obj,
         success: successCallback,
         failure: onError

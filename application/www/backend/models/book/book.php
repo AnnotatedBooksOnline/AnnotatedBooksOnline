@@ -3,6 +3,7 @@
 
 require_once 'framework/database/entity.php';
 require_once 'models/scan/scanlist.php';
+require_once 'models/binding/binding.php';
 
 
 /**
