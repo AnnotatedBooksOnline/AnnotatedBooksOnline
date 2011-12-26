@@ -222,7 +222,7 @@ Application.prototype.registerActions = function()
                     Ext.ux.ViewerPanel.showSettingsWindow();
                     break;
                     
-                case 'book':
+                case 'binding':
                 case 'search':
                 case 'users':
                 case 'viewprofile':
@@ -276,7 +276,7 @@ Application.prototype.tabNeedsAuthentication = function(type)
     // Specify a whitelist here.
     switch (type)
     {
-        case 'book':
+        case 'binding':
         case 'search':
         case 'register':
         case 'welcome':
@@ -308,3 +308,4 @@ Ext.onReady(function()
         // Fetch an application instance to show it.
         Application.getInstance();
     });
+

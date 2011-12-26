@@ -281,7 +281,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         switch (type)
         {
-            case 'book':
+            case 'binding':
                 // Data is supposed to be a binding id here.
                 var bindingId = data[0];
                 if (!bindingId)

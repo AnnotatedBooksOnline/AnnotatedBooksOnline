@@ -22,9 +22,9 @@ Ext.define('Ext.ux.ExportForm', {
                     inputValue: 'scan',
                     checked: true
                 },{ 
-                    boxLabel: 'Export book',
+                    boxLabel: 'Export binding',
                     name: 'page',
-                    inputValue: 'book'
+                    inputValue: 'binding'
                 },{
                     boxLabel: 'Export range of scans',
                     name: 'page',
@@ -149,3 +149,4 @@ Ext.define('Ext.ux.WorkspacePanel', {
         this.callParent();
     }
 });
+
