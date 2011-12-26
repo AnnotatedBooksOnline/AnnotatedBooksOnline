@@ -139,7 +139,7 @@ class User extends Entity
             throw new UserPendingException($username);
         }
         
-        if(isset($user->getPasswordRestoreToken()))
+        if($user->getPasswordRestoreToken() !== null)
         {
             // Apperantly the user remembered his/her password again. In that case we can remove
             // the password token.
