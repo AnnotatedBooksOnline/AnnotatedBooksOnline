@@ -248,12 +248,12 @@ Annotations.prototype.initialize = function()
 {
     // Set available colors.
     this.allColors = [
-        '#FF0000', // Red.
-        '#00FF00', // Green.
-        '#0000FF', // Blue.
-        '#00FFFF', // Cyan.
-        '#FF00FF', // Magenta.
-        '#FFFF00', // Yellow.
+        '#DD0000', // Red.
+        '#00DD00', // Green.
+        '#0000DD', // Blue.
+        '#00DDDD', // Cyan.
+        '#DD00DD', // Magenta.
+        '#EEEE00', // Yellow.
         '#000000', // Black.
         '#FF8C00', // Orange.
         '#8B0000', // Dark red.
@@ -321,7 +321,7 @@ Annotations.prototype.initialize = function()
         });
     
     // Fetch first annotations.
-    this.scanId = this.viewer.getBook().getScanId(0);
+    this.scanId = this.viewer.getScanId();
     
     this.load();
 }
@@ -338,7 +338,7 @@ Annotations.prototype.popColor = function()
         // Return random color. Man, I like oneliners.
         // Read 'The Art of Computer Programming' volume 4 fascicle 1 to become a master at
         // bitwise oneliners.
-        return '#' + ('000000' + (~~(Math.random() * (1 << 24))).toString(16)).substr(-6);
+        return '#' + ('00000' + (~~(Math.random() * (1 << 24))).toString(16)).substr(-6);
     }
 }
 

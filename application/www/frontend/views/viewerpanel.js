@@ -5,7 +5,8 @@
  * - Viewport panel
  * - Information panel
  * - Workspace panel
- * - A book
+ * - A binding
+ * - A page number
  * 
  * Each of which knows of the viewer panel, and can rely on its existance.
  */
@@ -25,7 +26,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         var centerRegion = {
             region: 'center',
             xtype: 'viewportpanel',
-            document: _this.book.getDocument(0),
+            document: _this.binding.getDocument(0),
             cls: 'viewport-panel',
             tbar: [{
                 xtype: 'slider',
@@ -248,9 +249,18 @@ Ext.define('Ext.ux.ViewerPanel', {
     {
         // Set members.
         this.eventDispatcher = new EventDispatcher();
-        this.pageNumber      = 0;
         this.tool            = 'drag';
         
+        // Set page number.
+        if (this.pageNumber === undefined)
+        {
+            this.pageNumber = 0;
+        }
+        
+        // Constrain page number.
+        this.pageNumber = Math.max(0, Math.min(this.binding.getScanAmount(), this.pageNumber));
+        
+        // Render childs.
         this.callParent();
         
         // Fetch shortcuts to components.
@@ -267,7 +277,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         
         // Add information (west) and workspace (east) regions, as they rely on the data above.
         this.down('[name=west-region]').add({
-            // TODO: Move this to informationpanel
+            // TODO: Move this to informationpanel.
             
             border: false,
             layout: {
@@ -276,14 +286,14 @@ Ext.define('Ext.ux.ViewerPanel', {
             },
             items: [{
                 xtype: 'informationpanel',
-                title: 'Book information',
+                title: 'Binding information',
                 collapsed: false,
                 maxHeight: 200
             },{
                 xtype: 'navigationpanel',
                 cls: 'navigation-panel',
                 collapsed: false,
-                book: this.book
+                book: this.binding // TODO: Binding.
             }],
             
             viewer: this
@@ -297,6 +307,9 @@ Ext.define('Ext.ux.ViewerPanel', {
         // Get them
         this.information = this.down('navigationpanel');
         this.workspace   = this.down('workspacepanel');
+        
+        // Finally, we can go to the indicated page.
+        this.gotoPage(this.pageNumber);
     },
     
     afterViewportChange: function(event)
@@ -314,9 +327,9 @@ Ext.define('Ext.ux.ViewerPanel', {
      * Public methods.
      */
     
-    getBook: function()
+    getBinding: function()
     {
-        return this.book;
+        return this.binding;
     },
     
     getAnnotations: function()
@@ -347,12 +360,12 @@ Ext.define('Ext.ux.ViewerPanel', {
     
     getScanId: function()
     {
-        return this.book.getScanId(this.pageNumber);
+        return this.binding.getScanId(this.pageNumber);
     },
     
     getPageAmount: function()
     {
-        return this.book.getScanAmount();
+        return this.binding.getScanAmount();
     },
     
     exportPdf: function()
@@ -379,34 +392,20 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.viewport.reset();
     },
     
-    /*
-    setBook: function(book)
-    {
-        this.book = book;
-        
-        this.gotoPage(0);
-        
-        // TODO: Set total pages, destroy old book, some more stuff.
-        
-        // Trigger event.
-        this.eventDispatcher.trigger('bookchange', this, book);
-    },
-    */
-    
     gotoPage: function(number)
     {
         // Constrain page number.
-        number = Math.max(0, Math.min(this.book.getScanAmount(), number));
+        number = Math.max(0, Math.min(this.binding.getScanAmount(), number));
         
         // Set new page number.
         this.pageNumber = number;
         
         // Set viewport document.
-        this.viewport.setDocument(this.book.getDocument(number));
+        this.viewport.setDocument(this.binding.getDocument(number));
         
         // Update menu.
         var isFirst = (number == 0);
-        var isLast  = (number == this.book.getScanAmount() - 1);
+        var isLast  = (number == this.binding.getScanAmount() - 1);
         
         this.viewportPanel.down('[name=first-page]').setDisabled(isFirst);
         this.viewportPanel.down('[name=previous-page]').setDisabled(isFirst);

@@ -370,8 +370,10 @@ Ext.define('Ext.ux.SearchResultsView', {
                     Ext.ux.BookModel.load(id, {
                         success: function(model)
                         {
-                            var page = model.get('firstPage');
-                            Application.getInstance().gotoTab('binding', (page == null ? [id] : [id, page]), true);
+                            var pageNumber = model.get('firstPage');
+                            var bindingId  = model.get('bindingId');
+                            Application.getInstance().gotoTab('binding',
+                                (pageNumber === null ? [bindingId] : [bindingId, pageNumber]), true);
                         }
                     });
                 }

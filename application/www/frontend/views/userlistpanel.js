@@ -80,17 +80,15 @@ Ext.define('Ext.ux.UserListPanel', {
                     emptyMsg: 'No users to display'
                 },
                 listeners: {
-                    itemdblclick: function(view, record)
+                    itemdblclick: function(view, model)
                     {
                         // Open user in a new tab if not clicked on 'email' or 'website'.
-                        if ((view.get('dataIndex') !== 'email') && (view.get('dataIndex') !== 'website'))
+                        if ((model.get('dataIndex') !== 'email') && (model.get('dataIndex') !== 'website'))
                         {
-                            var name = record.get('username');
+                            var name = model.get('username');
                             Application.getInstance().gotoTab('viewprofile', [name], true);
                         }
                     }
-                    
-                    // TODO: Make enter key also go to record.
                 }
             }]
         };
