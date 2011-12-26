@@ -3,12 +3,12 @@
  */
 
 Ext.define('Ext.ux.VertexModel', {
-    extend: 'Ext.data.Model',
+    extend: 'Ext.ux.ModelBase',
     fields: ['x', 'y']
 });
 
 Ext.define('Ext.ux.AnnotationModel', {
-    extend: 'Ext.data.Model',
+    extend: 'Ext.ux.ModelBase',
     idProperty: 'annId',
     fields: ['annId', 'scanId', /* -- */ 'eng', 'orig' /* -- */], // TODO: Rename to real names.
     

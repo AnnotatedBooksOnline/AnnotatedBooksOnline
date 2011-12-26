@@ -289,12 +289,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     return;
                 }
                 
+                /*
+                
+                // TODO: Does not work as of now, due to design changes.
+                // TODO: Reimplement, call this: pageNumber.
+                
                 // If given, go to the right page immediately.
                 var page = 0;
                 if (data.length > 1)
                 {
                     page = data[1]-1;
                 }
+                
+                */
                 
                 // Fetch binding.
                 Binding.createFromId(bindingId, this,
@@ -304,8 +311,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
                             title: 'Binding ' + binding.getModel().get('signature'), // TODO: Move to viewerpanel?
-                            book: binding,
-                            page: page
+                            book: binding//,
+                            //page: page
                         });
                         
                         // Add tab.
@@ -439,6 +446,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 });
                 
                 break;
+                
             case 'activation':
                 // Add an activation tab.
                 Ext.apply(tabConfig, {
@@ -447,14 +455,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 });
                 
                 break;
+                
             case 'restorepass':
-            	// Add a password restoration tab.
-            	Ext.apply(tabConfig, {
+                // Add a password restore tab.
+                Ext.apply(tabConfig, {
                     title: 'Restore password',
                     xtype: 'restorepasswordpanel'
                 });
-            	
-            	break;
+                
+                break;
             
             default:
                 throw new Error('Unknown tab type: \'' + type + '\'.');
@@ -469,7 +478,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             this.tabs.setActiveTab(newTab);
         }
     },
-
+    
     gotoTab: function(type, data, openIfNotAvailable)
     {
         // Try to match the type and data
@@ -559,4 +568,3 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
     }
 });
-

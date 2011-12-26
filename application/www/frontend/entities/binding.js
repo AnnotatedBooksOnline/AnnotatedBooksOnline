@@ -70,6 +70,11 @@ Binding.prototype.getScan = function(index)
     return this.scans[index];
 }
 
+Binding.prototype.getScanId = function(index)
+{
+    return this.scans[index].getId();
+}
+
 Binding.prototype.getScans = function()
 {
     return this.scans;
