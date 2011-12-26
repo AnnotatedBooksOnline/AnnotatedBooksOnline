@@ -10,7 +10,7 @@ Ext.define('Ext.ux.Activation', {
     {    	
     	// TODO ........
     	
-    	var successConfig = 
+    	var config = 
     	{
                 bodyPadding: 10,
                 items: [{
@@ -26,47 +26,6 @@ Ext.define('Ext.ux.Activation', {
                     },
                     items: []
                 	},
-	                {
-	                    xtype: 'container',
-	                    items: {
-	                        style: 'text-align: justify;',
-	                        xtype: 'panel',
-	                        border: false,
-	                        width: 500,
-	                        flex: 0,
-	                        html: '<b>Yay!</b>'
-	                    }
-	                }
-                ]
-        };
-    	
-    	var failConfig = 
-    	{
-                bodyPadding: 10,
-                items: [{
-                    xtype: 'container',
-                    width: 500,
-                    style: 'margin-bottom: 20px;',
-                    layout: {
-                        type: 'hbox',
-                        pack: 'center'
-                    },
-                    defaults: {
-                        style: 'margin-right: 5px;'
-                    },
-                    items: []
-                	},
-	                {
-	                    xtype: 'container',
-	                    items: {
-	                        style: 'text-align: justify;',
-	                        xtype: 'panel',
-	                        border: false,
-	                        width: 500,
-	                        flex: 0,
-	                        html: '<b>Nay!</b>'
-	                    }
-	                }
                 ]
         };
     	
@@ -82,19 +41,46 @@ Ext.define('Ext.ux.Activation', {
             {
                 if (success)
                 {
-                	Ext.apply(_this, successConfig);
+                	_this.add({
+	                    xtype: 'container',
+	                    items: {
+	                        style: 'text-align: justify;',
+	                        xtype: 'panel',
+	                        border: false,
+	                        width: 500,
+	                        flex: 0,
+	                        html: 'Your account has been succesfully activated. ' +
+	                        	  '<a href="#" title="" onclick="Authentication.showLoginWindow(); return false;">' +
+	                              'Please click here to login.</a>'
+	                    }
+	                })
                 }
                 else
                 {
-                	Ext.apply(_this, failConfig);
+                	_this.add({
+	                    xtype: 'container',
+	                    items: {
+	                        style: 'text-align: justify;',
+	                        xtype: 'panel',
+	                        border: false,
+	                        width: 500,
+	                        flex: 0,
+	                        html: 'Your account could not be activated. Please try again or request a new confirmation ' +
+	                              'link by logging in.'
+	                    }
+	                })
                 }
+                
+                
+                
             },
             function(data)
             {
-            	Ext.apply(_this, failConfig);
+            	// TODO: on failure
             }
         );
         
+    	Ext.apply(_this, config);
     	this.callParent();
     }
 });
