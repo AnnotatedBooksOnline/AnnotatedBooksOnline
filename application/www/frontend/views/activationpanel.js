@@ -7,9 +7,7 @@ Ext.define('Ext.ux.Activation', {
     alias: 'widget.activationpanel',
     
     initComponent: function() 
-    {    	
-    	// TODO ........
-    	
+    {    	    	
     	var config = 
     	{
                 bodyPadding: 10,
@@ -76,7 +74,19 @@ Ext.define('Ext.ux.Activation', {
             },
             function(data)
             {
-            	// TODO: on failure
+            	// TODO ...
+            	_this.add({
+                    xtype: 'container',
+                    items: {
+                        style: 'text-align: justify;',
+                        xtype: 'panel',
+                        border: false,
+                        width: 500,
+                        flex: 0,
+                        html: 'Your account could not be activated. Please try again or request a new confirmation ' +
+                              'link by logging in.'
+                    }
+                })
             }
         );
         

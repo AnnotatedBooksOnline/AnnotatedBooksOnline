@@ -447,6 +447,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 });
                 
                 break;
+            case 'restorepass':
+            	// Add a password restoration tab.
+            	Ext.apply(tabConfig, {
+                    title: 'Restore password',
+                    xtype: 'restorepasswordpanel'
+                });
+            	
+            	break;
             
             default:
                 throw new Error('Unknown tab type: \'' + type + '\'.');
