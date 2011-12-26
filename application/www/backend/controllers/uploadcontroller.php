@@ -42,9 +42,10 @@ class UploadController extends Controller
         
         $userId = Authentication::getInstance()->getUserId();
         
-        $resultSet = Query::select('token', 'filename', 'size', 'status')
+        $resultSet = Query::select('token', 'filename', 'size', 'Scans.status AS status')
             ->from('Uploads')
-            ->where('userId = :userId')
+            ->join('Scans', "Scans.uploadId = Uploads.uploadId", "LEFT")
+            ->where('userId = :userId', "Scans.scanId = null")
             ->orderBy('filename')
             ->execute(array('userId' => $userId), array('userId' => 'int'));
         
