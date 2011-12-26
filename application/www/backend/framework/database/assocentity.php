@@ -25,8 +25,9 @@ abstract class AssociativeEntity extends Entity
             throw new EntityException('entity-primary-keys-not-set');
         }
         
-        // Get types.
+        // Get types and values.
         $types = $this->getTypes();
+        $values = $this->getValues();
         
         // First do a selection to check whether entry exists (unfortunately PostgreSQL does 
         // not directly support INSERT OR UPDATE). 
@@ -35,13 +36,12 @@ abstract class AssociativeEntity extends Entity
         if($result->getAmount() == 0)
         {
             // Entry does not exist, do an insertion.
-            $this->getInsertQuery(false)->execute($this->getValues(true), $types);
+            $this->getInsertQuery(false)->execute($values, $types);
         }
         else
         {
             // Update existing entry.
-            // TODO: I changed this a tiny bit not to make it throw an error. The behaviour might be incorrect, though. (Bert)
-            $this->getUpdateQuery()->execute($this->getValues(true), $types);
+            $this->getUpdateQuery()->execute($values, $types);
         }
     }
 }
