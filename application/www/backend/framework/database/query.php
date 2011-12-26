@@ -727,7 +727,7 @@ class Query
         
         // Escape all column names. 'DISTINCT' or 'NULL', when used as a keyword, should not be escaped.
         return preg_replace(
-            array('/(?<![:\w])(\w+)(?![\(\w])/', '/(?<!\.)"(distinct|null)"(?!\.)/i'),
+            array('/(?<![:\w])(\w+)(?![\(\w])/', '/(?<!\.)"(as|distinct|null)"(?!\.)/i'),
             array('"\1"', '\1'),
             $identifier
         );
