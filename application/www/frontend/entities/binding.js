@@ -109,8 +109,8 @@ Binding.documentFromScan = function(scan)
         scan.get('zoomLevel'),
         function(row, col, zoomLevel)
         {
-            // return 'tiles/' + scan.get('scanId') + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-            return 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
+            return 'tiles/' + scan.get('scanId') + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
+            //return 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
         }
     );
 }
