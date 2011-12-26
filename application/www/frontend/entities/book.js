@@ -16,6 +16,7 @@ function Book()
 }
 
 // Fields.
+Book.prototype.model;
 Book.prototype.bookId;
 
 Book.prototype.documents;
@@ -37,7 +38,7 @@ Book.prototype.constructor = function(model)
 
 Book.createFromId = function(bookId, obj, onSuccess, onError)
 {
-    // On success, 
+    // On success, create entity.
     var successCallback = function(model)
         {
             var book = new Book(model);
@@ -52,6 +53,12 @@ Book.createFromId = function(bookId, obj, onSuccess, onError)
     });
 }
 
+Book.prototype.getId = function()
+{
+    return this.bookId;
+}
+
+// TODO: Move to scan.
 Book.prototype.getDocument = function(index)
 {
     // TODO: Really do something here.
@@ -70,6 +77,12 @@ Book.prototype.getDocument = function(index)
 Book.prototype.getScan = function(index)
 {
     return this.scans[index];
+}
+
+// TODO: Remove.
+Book.prototype.getScanId = function(index)
+{
+    return this.scans[index].get('scanId');
 }
 
 Book.prototype.getScans = function()

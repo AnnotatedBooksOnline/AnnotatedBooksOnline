@@ -22,32 +22,6 @@ Ext.define('Ext.ux.ViewerPanel', {
     {
         var _this = this;
         
-        var westRegion = {
-            collapsible: true,
-            resizable: {
-                handles: 'e'
-            },
-            region: 'west',
-            title: 'Information',
-            layout: {
-                type: 'accordion',
-                multi: 'true'
-            },
-            width: 190,
-            minWidth: 190,
-            items: [{
-                xtype: 'informationpanel',
-                title: 'Book information',
-                collapsed: false,
-                maxHeight: 200
-            },{
-                xtype: 'navigationpanel',
-                cls: 'navigation-panel',
-                collapsed: false,
-                book: _this.book
-            }]
-        };
-        
         var centerRegion = {
             region: 'center',
             xtype: 'viewportpanel',
@@ -55,6 +29,7 @@ Ext.define('Ext.ux.ViewerPanel', {
             cls: 'viewport-panel',
             tbar: [{
                 xtype: 'slider',
+                name: 'zoom-slider',
                 hideLabel: true,
                 useTips: false,
                 x: 20,
@@ -236,24 +211,32 @@ Ext.define('Ext.ux.ViewerPanel', {
             }]
         };
         
+        var westRegion = {
+            region: 'west',
+            name: 'west-region',
+            split: true,
+            collapsible: true,
+            width: 190,
+            minWidth: 190,
+            layout: 'fit',
+            title: 'Information'
+        };
+        
         var eastRegion = {
             region: 'east',
-            xtype: 'workspacepanel',
-            resizable: {
-                handles: 'w'
-            },
+            name: 'east-region',
+            split: true,
             collapsible: true,
             collapsed: false,
             width: 300,
-            minWidth: 300
+            minWidth: 300,
+            layout: 'fit',
+            title: 'Workspace'
         };
         
         var defConfig = {
-            layout: {
-                type: 'border'
-            },
-            items: [westRegion, centerRegion, eastRegion],
-            page: 0
+            layout: 'border',
+            items: [westRegion, centerRegion, eastRegion]
         };
         
         Ext.apply(this, defConfig);
@@ -263,23 +246,58 @@ Ext.define('Ext.ux.ViewerPanel', {
     
     afterRender: function()
     {
+        // Set members.
+        this.eventDispatcher = new EventDispatcher();
+        this.pageNumber      = 0;
+        this.tool            = 'drag';
+        
         this.callParent();
         
-        this.information   = this.down('navigationpanel');
-        this.workspace     = this.down('workspacepanel');
+        // Fetch shortcuts to components.
         this.viewportPanel = this.down('viewportpanel');
         this.viewport      = this.viewportPanel.getViewport();
-        this.slider        = this.viewportPanel.dockedItems.get(0).items.get(0);
+        this.slider        = this.viewportPanel.down('[name=zoom-slider]');
         
-        this.annotations = new AnnotationOverlay(this.viewport);
-        this.viewport.addOverlay(this.annotations);
+        // Create annotations.
+        this.annotations = new Annotations(this);
         
-        this.pageNumber = 0;
-        
-        this.tool = 'drag';
-        
+        // Watch for change events on viewport.
         var eventDispatcher = this.viewport.getEventDispatcher();
         eventDispatcher.bind('change', this, this.afterViewportChange);
+        
+        // Add information (west) and workspace (east) regions, as they rely on the data above.
+        this.down('[name=west-region]').add({
+            // TODO: Move this to informationpanel
+            
+            border: false,
+            layout: {
+                type: 'accordion',
+                multi: 'true'
+            },
+            items: [{
+                xtype: 'informationpanel',
+                title: 'Book information',
+                collapsed: false,
+                maxHeight: 200
+            },{
+                xtype: 'navigationpanel',
+                cls: 'navigation-panel',
+                collapsed: false,
+                book: this.book
+            }],
+            
+            
+            viewer: this
+        });
+        
+        this.down('[name=east-region]').add({
+            xtype: 'workspacepanel',
+            viewer: this
+        });
+        
+        // Get them
+        this.information = this.down('navigationpanel');
+        this.workspace   = this.down('workspacepanel');
     },
     
     afterViewportChange: function(event)
@@ -297,10 +315,51 @@ Ext.define('Ext.ux.ViewerPanel', {
      * Public methods.
      */
     
+    getBook: function()
+    {
+        return this.book;
+    },
+    
+    getAnnotations: function()
+    {
+        return this.annotations;
+    },
+    
+    getEventDispatcher: function()
+    {
+        return this.eventDispatcher;
+    },
+    
+    getViewportEventDispatcher: function()
+    {
+        return this.viewport.getEventDispatcher();
+    },
+    
+    // Gets viewer its viewport. A viewer only ever has one.
+    getViewport: function()
+    {
+        return this.viewport;
+    },
+    
+    getPage: function()
+    {
+        return this.pageNumber;
+    },
+    
+    getScanId: function()
+    {
+        return this.book.getScanId(this.pageNumber);
+    },
+    
+    getPageAmount: function()
+    {
+        return this.book.getScanAmount();
+    },
+    
     exportPdf: function()
     {
         // Get scan id.
-        var scanId = this.book.getScan(this.pageNumber).get('scanId');
+        var scanId = this.getScanId();
         
         RequestManager.getInstance().request(
             'Pdf',
@@ -315,6 +374,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         );
     },
     
+    // Resets viewport.
     resetViewport: function()
     {
         this.viewport.reset();
@@ -328,6 +388,9 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.gotoPage(0);
         
         // TODO: Set total pages, destroy old book, some more stuff.
+        
+        // Trigger event.
+        this.eventDispatcher.trigger('bookchange', this, book);
     },
     */
     
@@ -352,18 +415,8 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.viewportPanel.down('[name=next-page]').setDisabled(isLast);
         this.viewportPanel.down('[name=last-page]').setDisabled(isLast);
         
-        // TODO: Should be the other way around, information panel should listen for changes.
-        this.information.setPage(number);
-    },
-    
-    getPage: function()
-    {
-        return this.pageNumber;
-    },
-    
-    getPageAmount: function()
-    {
-        return this.book.getScanAmount();
+        // Trigger event.
+        this.eventDispatcher.trigger('pagechange', this, number);
     },
     
     setTool: function(tool)

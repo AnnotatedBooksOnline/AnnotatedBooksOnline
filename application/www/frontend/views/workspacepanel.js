@@ -128,19 +128,19 @@ Ext.define('Ext.ux.WorkspacePanel', {
     initComponent: function()
     {
         var defConfig = {
-            title: 'Workspace',
-            collapsible: true,
-            collapsed: true,
-            width: 300,
-            minWidth: 300,
+            layout: 'fit',
+            border: false,
             items: [{
                 xtype: 'annotationspanel',
-                title: 'Annotations'
+                title: 'Annotations',
+                viewer: this.viewer
             },{
-                title: 'Notes'
+                title: 'Notes',
+                viewer: this.viewer
             },{
                 title: 'Export',
-                xtype: 'exportform'
+                xtype: 'exportform',
+                viewer: this.viewer
             }]
         };
         
