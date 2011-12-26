@@ -73,12 +73,12 @@ Ext.define('Ext.ux.ModelBase', {
         }
         
         // For all related entities (i.e. hasMany)...
-        for (var i = 0; i < assocs.length; i++)
+        for (var i = assocs.length - 1; i >= 0; --i)
         {
             // Load the associated (sub)store.
             var store = assocs[i].createStore().call(model);
             store.load({
-                callback: function(records, operation, success)
+                callback: function(models, operation, success)
                 {
                     // Check for failure.
                     if (!success)
@@ -88,11 +88,11 @@ Ext.define('Ext.ux.ModelBase', {
                     }
                     
                     // The store was loaded successfully. Now, find relations of every store record.
-                    store.each(function(record)
+                    store.each(function(model)
                     {
                         // Only Ext.ux.Model entities can be loaded recursively,
                         // as they have this function.
-                        if (record.loadAssocs === undefined)
+                        if (model.loadAssocs === undefined)
                         {
                             return;
                         }
@@ -101,7 +101,7 @@ Ext.define('Ext.ux.ModelBase', {
                         ++toBeDone;
                         
                         // Recurse.
-                        record.loadAssocs({
+                        model.loadAssocs({
                             success: onSuccess,
                             failure: onFailure
                         });

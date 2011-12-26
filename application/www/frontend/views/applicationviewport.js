@@ -289,19 +289,12 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     return;
                 }
                 
-                /*
-                
-                // TODO: Does not work as of now, due to design changes.
-                // TODO: Reimplement, call this: pageNumber.
-                
                 // If given, go to the right page immediately.
-                var page = 0;
+                var pageNumber = 0;
                 if (data.length > 1)
                 {
-                    page = data[1]-1;
+                    pageNumber = data[1] - 1;
                 }
-                
-                */
                 
                 // Fetch binding.
                 Binding.createFromId(bindingId, this,
@@ -310,9 +303,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         // Add a viewer tab.
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
-                            title: 'Binding ' + binding.getModel().get('signature'), // TODO: Move to viewerpanel?
-                            book: binding//,
-                            //page: page
+                            title: 'Binding ' + escape(binding.getModel().get('signature')), // TODO: Move to viewerpanel.
+                            binding: binding,
+                            pageNumber: pageNumber
                         });
                         
                         // Add tab.
