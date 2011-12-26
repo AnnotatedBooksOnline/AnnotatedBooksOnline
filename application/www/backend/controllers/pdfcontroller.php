@@ -16,18 +16,20 @@ class PdfController extends Controller
      */
     public function actionGenerate($data)
     {
-        // Get scan id.
-        $scanId = self::getInteger($data, 'scan');
+        // Get binding id.
+        $bindingId = self::getInteger($data, 'binding');
+        // TODO
+        $bindingId = 1;
         
         // Get cache entry.
-        $entry = Cache::getFileEntry('pdf', $scanId);
+        $entry = Cache::getFileEntry('pdf', $bindingId);
         
         // Check for expiration.
         if ($entry->hasExpired())
         {
             // Generate PDF.
-            $scan = new Scan($scanId);
-            $pdf = new Pdf($scan, $entry);
+            $binding = new Binding($bindingId);
+            $pdf = new Pdf($binding, $entry);
         }
         else
         {
@@ -41,10 +43,12 @@ class PdfController extends Controller
     public function actionDownload($data)
     {
         // Get scan id.
-        $scanId = self::getInteger($data, 'scan');
+        $bindingId = self::getInteger($data, 'binding');
+        // TODO
+        $bindingId = 1;
         
         // Get cache entry.
-        $entry = Cache::getFileEntry('pdf', $scanId);
+        $entry = Cache::getFileEntry('pdf', $bindingId);
         
         // Check for expiration.
         if ($entry->hasExpired())
@@ -56,9 +60,9 @@ class PdfController extends Controller
         $entry->update();
         
         // Get scan and book for filename.
-        // TODO
-        $scan = new Scan($scanId);
-        $binding = new Binding($scan->getBindingId());
+        $binding = new Binding($bindingId);
+        $scans = Scan::fromBinding($binding);
+        $scan = $scans[0];
         $books = Book::fromBinding($binding);
         $book = $books[0];
         
