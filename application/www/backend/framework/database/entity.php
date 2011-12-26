@@ -176,7 +176,7 @@ abstract class Entity
         return $values;
     }
     
-    private function getTypes($default = true)
+    protected function getTypes($default = true)
     {
         $types = $this->getColumnTypes();
         if ($default)
@@ -376,18 +376,10 @@ abstract class Entity
         $tableName = $this->getTableName();
         $types = $this->getTypes();
         
-        // Set the conditions of the query.
-        $callback = function($value) use ($types)
+        // Set the contents of the query.
+        $callback = function($value)
         {
-            if(isset($types[$value]) && $types[$value] == 'istring')
-            {
-                // Do a case-insensitive comparision for istrings.
-                return $value . 'ILIKE :' . $value;
-            }
-            else
-            {
-                return $value . ' = :' . $value;
-            }
+            return ':' . $value;
         };
 
         $values = array_map($callback, $columns);
@@ -434,3 +426,4 @@ abstract class Entity
         throw new EntityException('entity-function-not-implemented');
     }
 }
+
