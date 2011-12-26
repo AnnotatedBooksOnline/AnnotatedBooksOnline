@@ -17,6 +17,7 @@ function Authentication()
 
 // Fields.
 Authentication.prototype.eventDispatcher;
+
 Authentication.prototype.loggedOn;
 Authentication.prototype.userId;
 Authentication.prototype.user;
@@ -265,7 +266,10 @@ Authentication.prototype.logout = function(showPrompt)
 Authentication.prototype.login = function(username, password, obj, onSuccess, onError)
 {
     // Do a login request.
-    RequestManager.getInstance().request('Authentication', 'login', {username: username, password: password},
+    RequestManager.getInstance().request(
+        'Authentication',
+        'login',
+        {username: username, password: password},
         this,
         function(data)
         {
@@ -277,22 +281,21 @@ Authentication.prototype.login = function(username, password, obj, onSuccess, on
             {
                 onSuccess.call(obj);
             }
-        }, onError);
+        }, onError
+    );
 }
 
 Authentication.prototype.checkPassword = function(password, obj, onSuccess, onError)
 {
     // Do a check password request.
-    RequestManager.getInstance().request('Authentication', 'checkPassword', {password: password},
-        this,
-        function(data)
-        {
-            // Call success handler
-            if (onSuccess !== undefined)
-            {
-                onSuccess.call(obj);
-            }
-        }, onError);
+    RequestManager.getInstance().request(
+        'Authentication',
+        'checkPassword',
+        {password: password},
+        obj,
+        onSuccess,
+        onError
+    );
 }
 
 /*

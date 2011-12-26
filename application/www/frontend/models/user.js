@@ -21,6 +21,7 @@ Ext.define('Ext.ux.UserModel', {
        {name: 'password'},
        {name: 'newPassword'}
     ],
+    
     proxy: {
         type: 'requestmanager',
         controller: 'User',

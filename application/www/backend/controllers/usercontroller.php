@@ -79,7 +79,7 @@ class UserController extends Controller
                 {
                     $arguments[$column] = $value;
                 }
-            }            
+            }
         }
         
         // Retrieve the sortings from the request.
@@ -103,14 +103,13 @@ class UserController extends Controller
 
         // Return the results.
         return array(
-            'records' => $result->asArrays(),
+            'records' => $result->asArrays(), // TODO: Do not return everything.
             'total'   => $total
         );
     }
     
     /**
-     *
-     *
+     * Saves a user.
      */
     public function actionSave($data)
     {
@@ -161,8 +160,7 @@ class UserController extends Controller
     }
     
     /**
-     *
-     *
+     * Creates a user.
      */
     public function actionCreate($data)
     {

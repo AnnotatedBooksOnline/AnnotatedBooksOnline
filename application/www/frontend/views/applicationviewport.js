@@ -329,16 +329,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a users tab.
                 Ext.apply(tabConfig, {
                     title: 'Users',
-                    xtype: 'userlistpanel',
-                    border: false
+                    xtype: 'userlistpanel'
                 });
                 
                 break;
                 
             case 'viewprofile':
+                // TODO: data[0] may not even exist!
+                // TODO: Fetch user here.
+                // TODO: Handle non-existing users here.
+                
                 // Add a view profile tab.
                 Ext.apply(tabConfig, {
-                    title: 'Profile of ' + data[0],
+                    title: 'Profile of ' + escape(data[0]),
                     xtype: 'viewprofilepanel'
                 });
                 

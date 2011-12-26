@@ -18,11 +18,6 @@ class BookNotFoundException extends ExceptionBase
  */
 class BookController extends Controller
 {
-    protected function __construct()
-    {
-        ;
-    }
-    
     /**
      * Loads book(s).
      */
