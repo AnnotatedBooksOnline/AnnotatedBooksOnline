@@ -289,6 +289,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     return;
                 }
                 
+                // If given, go to the right page immediately.
+                var page = 0;
+                if (data.length > 1)
+                {
+                    page = data[1]-1;
+                }
+                
                 // Fetch binding.
                 Binding.createFromId(bindingId, this,
                     function(binding)
@@ -297,7 +304,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
                             title: 'Binding ' + binding.getModel().get('signature'), // TODO: Move to viewerpanel?
-                            book: binding
+                            book: binding,
+                            page: page
                         });
                         
                         // Add tab.

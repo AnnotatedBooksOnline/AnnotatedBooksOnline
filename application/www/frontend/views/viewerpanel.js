@@ -253,7 +253,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                 type: 'border'
             },
             items: [westRegion, centerRegion, eastRegion],
-            page: 0
+            page: _this.page
         };
         
         Ext.apply(this, defConfig);
@@ -274,7 +274,8 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.annotations = new AnnotationOverlay(this.viewport);
         this.viewport.addOverlay(this.annotations);
         
-        this.pageNumber = 0;
+        this.pageNumber = this.page;
+        this.gotoPage(this.page);
         
         this.tool = 'drag';
         
@@ -407,3 +408,4 @@ Ext.define('Ext.ux.ViewerPanel', {
         }
     }
 });
+
