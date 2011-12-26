@@ -45,6 +45,7 @@ Binding.createFromId = function(bindingId, obj, onSuccess, onError)
             onSuccess.call(this, binding);
         };
     
+    // Recursively load all information related to this binding.
     Ext.ux.BindingModel.loadRecursive(bindingId, {
         scope: obj,
         success: successCallback,
