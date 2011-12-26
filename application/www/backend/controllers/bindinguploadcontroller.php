@@ -23,6 +23,8 @@ class BindingUploadController extends Controller
      */
     public function actionUpload($data)
     {
+        Database::getInstance()->startTransaction();
+        
         //var_dump($data);
         // TODO: exceptions
         
@@ -161,7 +163,7 @@ class BindingUploadController extends Controller
                 
             // Retrieve the upload from the database and assert it exists.
             $upload = Upload::fromToken(self::getString($inputScan, 'token'));
-            if (!isset($upload)) 
+            if ($upload == null) 
             {
                 throw new ControllerException('upload-does-not-exist');
             }
@@ -178,13 +180,14 @@ class BindingUploadController extends Controller
             
             // Add the scan to the book.
             // TODO Mathijs : Add the scan to the correct book, right now all scans will be added to the first book.
-            $binding->getBookList()->entityAt(0)->getScanList()->addEntity($scan);
+            $binding->getScanList()->addEntity($scan);
                 
         }
             
         // Save the binding and all its attribute entities.
         $binding->saveWithDetails();
-           
+        
+        Database::getInstance()->commit();
     }
     
     /**

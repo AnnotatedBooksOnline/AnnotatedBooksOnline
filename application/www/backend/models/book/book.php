@@ -40,9 +40,6 @@ class Book extends Entity
     /** Version of the book. */
     protected $printVersion;
     
-    /** List of all scans for this book. */
-    protected $scanList;
-    
     protected $firstPage;
     protected $lastPage;
     
@@ -60,7 +57,6 @@ class Book extends Entity
             $this->load();
         }
         
-        $this->scanList = new ScanList();
     }
     
     public static function fromBinding($binding)
@@ -174,10 +170,7 @@ class Book extends Entity
      */
     public function saveDetails()
     {
-        // Save the book list.
-        $this->scanList->setBookId($this->bookId);
-        $this->scanList->save();
-    
+        ;
     }
  
     
@@ -207,9 +200,6 @@ class Book extends Entity
     
     public function getPrintVersion()       { return $this->printVersion; }
     public function setPrintVersion($printVersion) { $this->printVersion = $printVersion; }
-    
-    public function getScanList() { return $this->scanList; }
-    public function setScanList($scanList) { $this->scanList = $scanList; }
     
     public function getFirstPage() { return $this->firstPage; }
     public function setFirstPage($page) { $this->firstPage = $page; }

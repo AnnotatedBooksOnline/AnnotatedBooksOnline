@@ -28,6 +28,9 @@ class Binding extends Entity
     // TODO: Mathijs: Om de boeken bij de binding in te stoppen.
     protected $bookList;
     
+    /** List of all scans for this book. */
+    protected $scanList;
+    
     /**
      * Constructs a binding by id.
      *
@@ -43,6 +46,8 @@ class Binding extends Entity
         }
         
         $this->bookList = new BookList();
+        $this->scanList = new ScanList();
+        
     }
     
     /**
@@ -100,6 +105,9 @@ class Binding extends Entity
         $this->bookList->setBindingId($this->bindingId);
         $this->bookList->save();
         
+        // Save the scan list.
+        $this->scanList->setBindingId($this->bindingId);
+        $this->scanList->save();
     }
     
     public function getBindingId()         { return $this->bindingId; }
@@ -116,6 +124,9 @@ class Binding extends Entity
 
     public function getBookList()       { return $this->bookList; }
     public function setBookList($bookList) { $this->bookList = $bookList; }
+    
+    public function getScanList() { return $this->scanList; }
+    public function setScanList($scanList) { $this->scanList = $scanList; }
 
 }
 

@@ -12,11 +12,11 @@ require_once 'models/scan/scan.php';
  */
 class ScanList extends EntityList
 {
-    public function setBookId($bookId) 
+    public function setBindingId($bindingId) 
     {
         foreach ($this->entities as $entity)
         {
-            $entity->setBookId($bookId);
+            $entity->setBindingId($bindingId);
         }
     }
 }
