@@ -237,15 +237,57 @@ class Pdf
         
         $this->writePage();
         
+        $indexStart = count($this->pages);
         if (count($books) > 1)
         {
-            // TODO
-            $this->drawText('Index comes here.');
-            $this->writePage();
+            $this->startCountPages();
+            $this->setFontSize(18);
+            $this->drawText("Index\n");
+            foreach ($books as $book)
+            {
+                $this->textMarginR -= 30;
+                $this->setFontSize(14);
+                list(, $bottom) = $this->drawText($book->getTitle());
+                $this->textMarginR += 30;
+                $this->y -= 2;
+                
+                $minYear = $book->getMinYear();
+                $maxYear = $book->getMaxYear();
+                $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
+                
+                $this->setFontSize(12);
+                $this->textMarginL += 18;
+                $this->x = $this->textMarginL;
+                $this->drawText($this->getAuthorNames($book));
+                $this->drawText($year);
+                if ($book->getPlacePublished() != null)
+                {
+                    $this->drawText($book->getPlacePublished());
+                }
+                if ($book->getPublisher() != null)
+                {
+                    $this->drawText($book->getPublisher());
+                }
+                $this->y -= 20;
+                $this->textMarginL -= 18;
+                $this->x = $this->textMarginL;
+            }
+            $indexPages = $this->stopCountPages();
         }
         
+        $first = true;
         foreach($scans as $scan)
         {
+            // Add bookmarks for the index.
+            foreach($books as $book)
+            {
+                if ($first || $book->getFirstPage() == $scan->getPage())
+                {
+                    $this->addBookmark($book);
+                }
+                $first = false;
+            }
+            
             if ($transcriptions !== false)
             {
                 $anns = Annotation::fromScan($scan);
@@ -283,6 +325,62 @@ class Pdf
             {
                 $this->drawTranscriptions($anns, $scan);
             }
+        }
+        
+        if (count($books) > 1)
+        {
+            $this->setFontSize(18);
+            $this->drawText("Index\n");
+            foreach ($this->bookmarks as $bookmark)
+            {
+                $book = $bookmark[0];
+                $page = $bookmark[1] + $indexPages;
+                
+                $this->textMarginR -= 30;
+                $this->setFontSize(14);
+                list(, $bottom, , $top) = $this->drawText($book->getTitle());
+                $this->textMarginR += 30;
+                $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 1 w S Q', $this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $bottom));
+                $this->y -= 2;
+                
+                // Draw page number.
+                $bottom -= $this->fontInfo[$this->font]['Descent'] * $this->fontSize / 1000;
+                $this->setFontSize(12);
+                $width = $this->numberWidth($page);
+                $this->draw('q 1 0 0 1 ' . ($this->pageWidth - $this->textMarginR - $width) . ' ' . $bottom . ' cm');
+                $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$page) . ' Tj ET Q');
+                
+                $minYear = $book->getMinYear();
+                $maxYear = $book->getMaxYear();
+                $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
+                
+                $this->setFontSize(12);
+                $this->textMarginL += 18;
+                $this->x = $this->textMarginL;
+                $this->drawText($this->getAuthorNames($book));
+                $this->drawText($year);
+                if ($book->getPlacePublished() != null)
+                {
+                    $this->drawText($book->getPlacePublished());
+                }
+                if ($book->getPublisher() != null)
+                {
+                    $this->drawText($book->getPublisher());
+                }
+                $bottom = $this->y;
+                $this->textMarginL -= 18;
+                $this->x = $this->textMarginL;
+                $this->y -= 20;
+                $this->addLink(array($this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $top), null, false, $this->pages[$bookmark[1]-1]);
+            }
+            $this->writePage();
+            
+            //$this->pages = array_slice(array_splice($this->pages, $indexStart, 0, array_slice($this->pages, -$indexPages)), 0, count($this->pages));
+            $this->pages = array_merge(
+                array_slice($this->pages, 0, $indexStart),
+                array_slice($this->pages, -$indexPages),
+                array_slice($this->pages, $indexStart, count($this->pages) - $indexStart - $indexPages)
+            );
         }
         
         $this->make($books[0]);
@@ -429,14 +527,22 @@ class Pdf
     /**
      * Adds a Link Annotation to the specified area.
      */
-    private function addLink($area, $uri, $bottomline = true)
+    private function addLink($area, $uri, $bottomline = true, $pageId = null)
     {
+        if ($uri === null && $pageId !== null)
+        {
+            $action = "/Dest [ " . $pageId . " 0 R /Fit]\n";
+        }
+        else
+        {
+            $action = "/A << /S /URI /URI " . $this->escapeString($uri) . " /Type /Action >>\n";
+        }
         $this->annots[] = $this->newObject("<<\n" .
         "/Type /Annot\n" .
         "/Subtype /Link\n" .
         "/Rect [ " . vsprintf('%F %F %F %F', $area) . " ]\n" .
         "/Border [0 0 0]\n" .
-        "/A << /S /URI /URI " . $this->escapeString($uri) . " /Type /Action >>\n" .
+        $action .
         ">>", true);
         if ($bottomline)
         {
@@ -471,9 +577,9 @@ class Pdf
     /**
      * Adds a bookmark to the current page for the index.
      */
-    private function addBookmark($name)
+    private function addBookmark($book)
     {
-        $this->bookmarks[] = array($name, count($this->pages));
+        $this->bookmarks[] = array($book, count($this->pages) + 1);
     }
     
     /**
@@ -1023,7 +1129,7 @@ class Pdf
             $this->pageHasText = true;
             $oldFontSize = $this->fontSize;
             $this->setFontSize(12);
-            if (!$this->countPages)
+            if ($this->countPages)
             {
                 /*$numPages += */$this->drawText($this->headerText .
                     ($this->headerContinued ? ' (continued)' : '') . 
@@ -1085,14 +1191,7 @@ class Pdf
                     }
                     if ($this->headerText != '')
                     {
-                        if ($this->countPages)
-                        {
-                            // $numPages += $this->drawText('', false, false, true); TODO
-                        }
-                        else
-                        {
-                            $this->drawText();
-                        }
+                        $this->drawText();
                         $this->y += $this->fontSize + $this->lineSpread;
                     }
                 }
