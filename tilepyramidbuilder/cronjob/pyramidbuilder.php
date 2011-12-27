@@ -60,10 +60,10 @@ class PyramidBuilder extends Singleton
         $imgfile = $conf->getString('install-base') . $conf->getString('upload-path') . $upload->getToken() . ".upload";
         $output = array();
         $rval = 0;
-        $outpath = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/tile_' . $scan->getScanId();
+        $outpath = $conf->getString('install-base') . $conf->getString('tile-output-path') . $scan->getScanId();
         $quality = $conf->getInteger('tile-quality', 60);
         $builderpath = $conf->getString('install-base') . $conf->getString('builder-path'); 
-        $tileformat = '%z_%x_%y.%e';
+        $tileformat = 'tile_%z_%x_%y.%e';
         
         // Create tile output directory.
         if(!mkdir($outpath))
