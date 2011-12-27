@@ -150,7 +150,7 @@ class BindingUploadController extends Controller
             
         // Store a list of processed uploads for deletion later.
         $processedUploads = array();
-        $pageNumber = 0;
+        $pageNumber = 1;
         
         // Create scans.
         foreach($inputScans as $inputScan)
@@ -173,7 +173,6 @@ class BindingUploadController extends Controller
             $scan->setStatus(Scan::STATUS_PENDING);
             $scan->setPage($pageNumber++);
             $scan->setUploadId($upload->getUploadId());
-            $scan->setZoomLevel(0);
             
             // Identify the scan.
             $this->identifyScan($scan, $upload);
@@ -202,10 +201,6 @@ class BindingUploadController extends Controller
         // Get an identification of the image using imagick.
         $scanUploadImage = new Imagick($upload->getFileLocation());
         $scanUploadImageIdentification = $scanUploadImage->identifyimage();
-
-        // Set image dimensions.
-        $scan->setDimensions($scanUploadImageIdentification['geometry']['width'],
-                             $scanUploadImageIdentification['geometry']['height']);
                 
         // Determine if the upload is a JPEG file.
         if (strpos($scanUploadImageIdentification['format'], "JPEG") !== false) 
@@ -221,5 +216,29 @@ class BindingUploadController extends Controller
         {
             throw new ControllerException('unsupported-file-type');
         }
+        
+        //Prepare tile tree
+        $maxX = ($scanUploadImageIdentification['geometry']['width'] - 1) / 256 + 1;
+        $maxY = ($scanUploadImageIdentification['geometry']['height'] - 1) / 256 + 1;
+
+        // Determine the number of zoom levels for this image.
+        $numZoomLevels = 1;
+        $maxPowerTwo = 2;
+        while ($maxPowerTwo < max($maxX, $maxY)) 
+        {
+            $maxPowerTwo *= 2;
+        }
+        while ($maxPowerTwo > 1) 
+        {
+            $maxPowerTwo /= 2;
+            $numZoomLevels++;
+        }
+        $scan->setZoomLevel($numZoomLevels);
+        
+        // Determine image dimensinos.
+        $minification = pow(2, ($numZoomLevels - 1));
+        $scan->setDimensions(ceil($scanUploadImageIdentification['geometry']['width'] / $minification),
+                             ceil($scanUploadImageIdentification['geometry']['height'] / $minification));
+        
     }
 }
