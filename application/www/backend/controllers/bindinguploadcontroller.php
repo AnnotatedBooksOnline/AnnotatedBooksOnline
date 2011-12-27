@@ -117,7 +117,8 @@ class BindingUploadController extends Controller
             $book->setPlacePublished(self::getString($inputBook, 'placePublished'));
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getInteger($inputBook, 'printVersion'));
-                
+            $book->setFirstPage(1);
+            
             // Find the book author
             /*
             $bookAuthor = self::getString($inputBook, 'placePublished');
