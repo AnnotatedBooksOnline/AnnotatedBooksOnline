@@ -3,13 +3,12 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
+require_once 'util/mailer.php';
 require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
-require_once 'util/mailer.php';
 
-// Exceptions
+// Exceptions.
 class RegistrationFailedException extends ExceptionBase { }
-class UserNotFoundException extends ExceptionBase { }
 
 /**
  * User controller class.
@@ -83,7 +82,7 @@ class UserController extends Controller
                 {
                     $arguments[$column] = $value;
                 }
-            }            
+            }
         }
         
         // Retrieve the sortings from the request.
@@ -104,17 +103,16 @@ class UserController extends Controller
         
         // Query the Users table.
         $result = UserSearchList::findUsers($arguments, $offset, $limit, $order);
-
+        
         // Return the results.
         return array(
-            'records' => $result->asArrays(),
+            'records' => $result->asArrays(), // TODO: Do not return everything.
             'total'   => $total
         );
     }
     
     /**
-     *
-     *
+     * Saves a user.
      */
     public function actionSave($data)
     {
@@ -165,8 +163,7 @@ class UserController extends Controller
     }
     
     /**
-     *
-     *
+     * Creates a user.
      */
     public function actionCreate($data)
     {

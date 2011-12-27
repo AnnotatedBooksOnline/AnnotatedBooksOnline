@@ -63,7 +63,7 @@ class PyramidBuilder extends Singleton
         $outpath = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scan->getScanId();
         $quality = $conf->getInteger('tile-quality', 60);
         $builderpath = $conf->getString('install-base') . $conf->getString('builder-path'); 
-        $tileformat = '%z_%x_%y.%e';
+        $tileformat = 'tile_%z_%x_%y.%e';
         
         // Create tile output directory.
         if(!mkdir($outpath))
@@ -96,8 +96,8 @@ class PyramidBuilder extends Singleton
         $conf = Configuration::getInstance();
         
         // Determine paths.
-        $thumb = $conf->getString('install-base') . $conf->getString('thumbnail-path') . '/' . $scanid . 'jpg';
-        $tile = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scanid . '/0_0_0.jpg';
+        $thumb = $conf->getString('install-base') . $conf->getString('thumbnail-path') . '/' . $scanid . '.jpg';
+        $tile = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scanid . '/tile_0_0_0.jpg';
         
         // Determine thumbnail dimensions.
         $width = $conf->getInteger('thumbnail-width', 100);

@@ -16,23 +16,79 @@ class PdfController extends Controller
      */
     public function actionGenerate($data)
     {
-        // Get scan id.
-        $scanId = self::getInteger($data, 'scan');
+        $scanId = self::getInteger($data, 'scanId');
+        $transcriptions = false;
+        $annotations = false;
+        $range = null;
+        
+        if (isset($data['transcriptions']) && $data['transcriptions'] == 'on')
+        {
+            $transcriptions = true;
+            if (isset($data['polygons']) && $data['polygons'] == 'on')
+            {
+                $annotations = true;
+            }
+        }
+        if (isset($data['page']) && $data['page'] == 'range')
+        {
+            if (isset($data['pageFrom']) && isset($data['pageTo']))
+            {
+                $range = array($data['pageFrom'], $data['pageTo']);
+            }
+        }
+        else if (isset($data['page']) && $data['page'] == 'scan')
+        {
+            $scan = new Scan($scanId);
+            $range = $scan->getPage();
+        }
+        
+        $currentScan = new Scan($scanId);
+        $binding = new Binding($currentScan->getBindingId());
         
         // Get cache entry.
-        $entry = Cache::getFileEntry('pdf', $scanId);
+        if ($transcriptions || $annotations)
+        {
+            // Transcriptions and annotations are highly likely to change.
+            // Therefore, we should not cache them.
+            $id = md5(uniqid('pdfgen', true));
+            $entry = Cache::getFileEntry('pdf', $id);
+        }
+        else
+        {
+            $id = md5(serialize(array($binding->getBindingId(), $range)));
+            $entry = Cache::getFileEntry('pdf', $id);
+        }
         
         // Check for expiration.
         if ($entry->hasExpired())
         {
-            // Generate PDF.
-            $scan = new Scan($scanId);
-            $pdf = new Pdf($scan, $entry);
+            try
+            {
+                // Generate PDF.
+                $pdf = new Pdf($binding, $entry, $range, $transcriptions, $annotations);
+            }
+            catch (Exception $e)
+            {
+                // On failure, clear the cache entry.
+                $entry->clear();
+                throw $e;
+            }
         }
         else
         {
             $entry->update();
         }
+        
+        $textRange = '';
+        if (is_array($range))
+        {
+            $textRange = ' (' . $range[0] . '-' . $range[1] . ')';
+        }
+        else if ($range !== null)
+        {
+            $textRange = ' ' . $range;
+        }
+        return array('id' => $id, 'title' => $binding->getSignature() . $textRange);
     }
     
     /**
@@ -40,11 +96,11 @@ class PdfController extends Controller
      */
     public function actionDownload($data)
     {
-        // Get scan id.
-        $scanId = self::getInteger($data, 'scan');
+        $id = $data['id'];
+        $title = $data['title'];
         
         // Get cache entry.
-        $entry = Cache::getFileEntry('pdf', $scanId);
+        $entry = Cache::getFileEntry('pdf', $id);
         
         // Check for expiration.
         if ($entry->hasExpired())
@@ -55,16 +111,9 @@ class PdfController extends Controller
         // Update timestamp on entry.
         $entry->update();
         
-        // Get scan and book for filename.
-        // TODO
-        $scan = new Scan($scanId);
-        $binding = new Binding($scan->getBindingId());
-        $books = Book::fromBinding($binding);
-        $book = $books[0];
-        
         // Calculate filename.
-        $filename = preg_replace('/[^\w\-\., ()\[\]\']+/i', '',
-            $book->getTitle() . '-' . $scan->getPage() . '.pdf');
+        $filename = preg_replace('/[^\w\-\.,_ ()\[\]\']+/i', '',
+            $title . '.pdf');
         
         // Set headers.
         header('Pragma: public');

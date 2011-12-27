@@ -69,13 +69,13 @@ Ext.define('Ext.ux.ExportForm', {
                 vertical: true,
                 labelAlign: 'top',
                 items: [{
-                    boxLabel: 'Without annotations',
-                    name: 'annotations',
+                    boxLabel: 'Without transcriptions',
+                    name: 'transcriptions',
                     inputValue: 'off',
                     checked: true
                 },{ 
-                    boxLabel: 'With annotations',
-                    name: 'annotations',
+                    boxLabel: 'With transcriptions',
+                    name: 'transcriptions',
                     inputValue: 'on'
                 },{
                     xtype: 'checkbox',
@@ -88,7 +88,7 @@ Ext.define('Ext.ux.ExportForm', {
                 listeners: {
                     change: function(field, newValue)
                     {
-                        this.down('[name=polygons]').setDisabled(newValue.annotations != 'on');
+                        this.down('[name=polygons]').setDisabled(newValue.transcriptions != 'on');
                     }
                 }
             },{
@@ -104,7 +104,7 @@ Ext.define('Ext.ux.ExportForm', {
                     
                     if (form.isValid())
                     {
-                        Ext.Msg.alert('Submitted Values', form.getValues(true));
+                        _this.exportPdf(form.getValues(false));
                     }
                 }
             }],
@@ -114,6 +114,30 @@ Ext.define('Ext.ux.ExportForm', {
         
         Ext.apply(this, defConfig);
         this.callParent();
+    },
+    
+    exportPdf: function(values)
+    {
+        // Set scan id.
+        var viewer = this.up('viewerpanel');
+        values.scanId = viewer.getScanId();
+        
+        RequestManager.getInstance().request(
+            'Pdf',
+            'generate',
+            values,
+            this,
+            function(data)
+            {
+                // Download just generated file.
+                Ext.apply(data, {
+                    controller: 'Pdf',
+                    action: 'download'
+                });
+                console.log(data);
+                window.location = '?' + Ext.Object.toQueryString(data);
+            }
+        );
     }
 });
 
@@ -128,19 +152,19 @@ Ext.define('Ext.ux.WorkspacePanel', {
     initComponent: function()
     {
         var defConfig = {
-            title: 'Workspace',
-            collapsible: true,
-            collapsed: true,
-            width: 300,
-            minWidth: 300,
+            layout: 'fit',
+            border: false,
             items: [{
                 xtype: 'annotationspanel',
-                title: 'Annotations'
+                title: 'Annotations',
+                viewer: this.viewer
             },{
-                title: 'Notes'
+                title: 'Notes',
+                viewer: this.viewer
             },{
                 title: 'Export',
-                xtype: 'exportform'
+                xtype: 'exportform',
+                viewer: this.viewer
             }]
         };
         
@@ -149,4 +173,3 @@ Ext.define('Ext.ux.WorkspacePanel', {
         this.callParent();
     }
 });
-

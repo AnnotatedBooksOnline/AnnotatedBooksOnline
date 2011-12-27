@@ -20,6 +20,9 @@ Polygon.prototype.overlay;
 
 Polygon.prototype.mode;
 
+Polygon.prototype.highlightColor;
+Polygon.prototype.highlighted;
+
 Polygon.prototype.content;
 Polygon.prototype.lines;
 Polygon.prototype.corners;
@@ -44,7 +47,10 @@ Polygon.prototype.constructor = function(overlay, vertices)
     this.overlay  = overlay;
     this.vertices = vertices;
     this.mode     = 'view';
-    this.color    = '0000FF';
+    this.id       = Ext.id();
+    
+    this.highlightColor = '#0000FF';
+    this.highlighted    = 0;
     
     // Initialize.
     this.initialize();
@@ -178,9 +184,25 @@ Polygon.prototype.moveVertex = function(vertex, position)
     }
 }
 
+// Returns polygon its unique id.
+Polygon.prototype.getId = function()
+{
+    return this.id;
+}
+
+Polygon.prototype.getVertices = function()
+{
+    return this.vertices;
+}
+
 Polygon.prototype.getVertex = function(index)
 {
     return this.vertices[index];
+}
+
+Polygon.prototype.getVertexAmount = function()
+{
+    return this.vertices.length;
 }
 
 Polygon.prototype.setMode = function(mode)
@@ -208,6 +230,46 @@ Polygon.prototype.getBoundingBox = function()
 Polygon.prototype.getVertexAmount = function()
 {
     return this.vertices.length;
+}
+
+Polygon.prototype.getHighlightColor = function()
+{
+    return this.highlightColor;
+}
+
+Polygon.prototype.setHighlightColor = function(color)
+{
+    this.highlightColor = color;
+    
+    this.content.setAttributes({fill: color});
+}
+
+Polygon.prototype.highlight = function()
+{
+    // Stack highlightings.
+    ++this.highlighted;
+    
+    if (this.highlighted === 1)
+    {
+        // Highlight.
+        this.content.setAttributes({
+            opacity: .2
+        }, true);
+    }
+}
+
+Polygon.prototype.unhighlight = function()
+{
+    // Stack highlightings.
+    --this.highlighted;
+    
+    if (this.highlighted === 0)
+    {
+        // Unhighlight.
+        this.content.setAttributes({
+            opacity: 0
+        }, true);
+    }
 }
 
 Polygon.prototype.destroy = function()
@@ -240,8 +302,8 @@ Polygon.prototype.initialize = function()
         type: "path",
         path: path,
         stroke: "#000",
-        fill: "none",
-        opacity: 0.1,
+        fill: this.highlightColor,
+        opacity: 0,
         "stroke-width": 0,
         listeners: {
             'mouseover': function(s, event) { return _this.onMouseOver(event); },
@@ -251,7 +313,7 @@ Polygon.prototype.initialize = function()
         }
     });
     
-    // Add polygon class.
+    // Add polygon class. Polygon must be shown to add a class.
     this.content.show(true);
     this.content.addCls('polygon');
     
@@ -263,8 +325,6 @@ Polygon.prototype.initialize = function()
         fill: "none",
         opacity: 1
     });
-    
-    //this.lines.show(true);
     
     // Create corners.
     this.corners = [];
@@ -304,22 +364,6 @@ Polygon.prototype.addCorner = function(vertex)
     return corner;
 }
 
-Polygon.prototype.onMouseOver = function()
-{
-    this.content.setAttributes({
-        fill: this.color,
-        opacity: .2
-    }, true);
-}
-
-Polygon.prototype.onMouseOut = function()
-{
-    this.content.setAttributes({
-        fill: 'none',
-        opacity: 0.1
-    }, true);
-}
-
 /*
  * Event handlers.
  */
@@ -327,7 +371,23 @@ Polygon.prototype.onMouseOut = function()
 // Handles click on the polygon.
 Polygon.prototype.onClick = function(event)
 {
-    this.overlay.onPolygonClick(event, this);
+    this.overlay.onPolygonClick(this);
+}
+
+Polygon.prototype.onMouseOver = function()
+{
+    // Highlight this polygon.
+    this.highlight();
+    
+    this.overlay.onPolygonHover(this);
+}
+
+Polygon.prototype.onMouseOut = function()
+{
+    // Dehighlight this polygon.
+    this.unhighlight();
+    
+    this.overlay.onPolygonUnhover(this);
 }
 
 // Handles mouse down on a vertex.

@@ -4,6 +4,7 @@
  
 Ext.define('Ext.ux.ModelBase', {
     extend: 'Ext.data.Model',
+    
     inheritableStatics: {
         /*
          * Alternative to the static load() function on Ext.data.Model.
@@ -21,86 +22,95 @@ Ext.define('Ext.ux.ModelBase', {
             });
         }
     },
+    
     /*
      * A private helper function to load relations. There is no use using this directly.
      */
     loadAssocs: function(config)
     {
-        var model = this;
-        var assocs = model.associations.items;
-        var num = assocs.length; // The number of callbacks we are expecting.
-        var done = 0;            // The number of successful callbacks.
-        var failed = false;      // Whether something has failed, and we should stop loading.
-        // For all related Entities (i.e. hasMany)...
-        for (var i = 0; i < assocs.length; i++)
-        {
-            // Load the associated (sub)store
-            var store = assocs[i].createStore().call(model);
-            store.load({
-                callback: function(records, operation, success)
-                {
-                    if (success)
-                    {
-                        // The store was loaded successfully. Now, find relations of every store record.
-                        done++;
-                        store.each(function(record)
-                        {
-                            num++;
-                            // Only Ext.ux.Model Entities can be loaded recursively, as they have this function.
-                            if (record.loadAssocs != undefined)
-                            {
-                                // Recurse.
-                                record.loadAssocs({
-                                    success: function()
-                                    {
-                                        done++;
-                                        if (done == num && !failed && config.success != undefined)
-                                        {
-                                            config.success.call(config.scope, model);
-                                        }
-                                    }, 
-                                    failure: function()
-                                    {
-                                        if (!failed)
-                                        {
-                                            failed = true;
-                                            if (config.failure != undefined)
-                                            {
-                                                config.failure.call(config.scope, model);
-                                            }
-                                        }
-                                    },
-                                    scope: config.scope
-                                });
-                            }
-                        });
-                        // Seems like we are done here: the store might not have had records at all.
-                        if (done == num && !failed && config.success != undefined)
-                        {
-                            config.success.call(config.scope, model);
-                        }
-                    }
-                    else
-                    {
-                        // Something went wrong while loading the store.
-                        if (!failed)
-                        {
-                            failed = true;
-                            if (config.failure != undefined)
-                            {
-                                config.failure.call(config.scope, model);
-                            }
-                        }
-                    }
-                },
-                scope: config.scope
-            });
-        }
-        // Maybe we had no associations, then succeed.
-        if (assocs.length == 0 && config.success != undefined)
+        var model    = this;
+        var assocs   = model.associations.items;
+        var toBeDone = assocs.length; // The number of callbacks we are expecting.
+        var done     = 0;             // The number of successful callbacks.
+        var failed   = false;         // Whether something has failed, and we should stop loading.
+        
+        // Maybe we have no associations, then succeed.
+        if (!assocs.length && (config.success != undefined))
         {
             config.success.call(config.scope, model);
+            
+            return;
+        }
+        
+        // Failure handler.
+        var onFailure = function()
+        {
+            // Check if we have not yet failed already.
+            if (!failed)
+            {
+                return;
+            }
+            
+            // Call failure method.
+            failed = true;
+            if (config.failure !== undefined)
+            {
+                config.failure.call(config.scope, model);
+            }
+        };
+        
+        // Success handler.
+        var onSuccess = function()
+        {
+            // One more done.
+            ++done;
+            
+            // Check if we are done with everything.
+            if ((done == toBeDone) && !failed && (config.success !== undefined))
+            {
+                config.success.call(config.scope, model);
+            }
+        }
+        
+        // For all related entities (i.e. hasMany)...
+        for (var i = assocs.length - 1; i >= 0; --i)
+        {
+            // Load the associated (sub)store.
+            var store = assocs[i].createStore().call(model);
+            store.load({
+                callback: function(models, operation, success)
+                {
+                    // Check for failure.
+                    if (!success)
+                    {
+                        onFailure();
+                        return;
+                    }
+                    
+                    // The store was loaded successfully. Now, find relations of every store record.
+                    store.each(function(model)
+                    {
+                        // Only Ext.ux.Model entities can be loaded recursively,
+                        // as they have this function.
+                        if (model.loadAssocs === undefined)
+                        {
+                            return;
+                        }
+                        
+                        // We need an extra success.
+                        ++toBeDone;
+                        
+                        // Recurse.
+                        model.loadAssocs({
+                            success: onSuccess,
+                            failure: onFailure
+                        });
+                    });
+                    
+                    // We had success.
+                    onSuccess();
+                }
+            });
         }
     }
 });
-

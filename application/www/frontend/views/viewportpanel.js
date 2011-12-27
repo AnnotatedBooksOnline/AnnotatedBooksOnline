@@ -1,5 +1,5 @@
 /*
- * Viewport panel interface class.
+ * Viewport panel class.
  */
 
 Ext.define('Ext.ux.ViewportPanel', {
@@ -16,7 +16,7 @@ Ext.define('Ext.ux.ViewportPanel', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();        
+        this.callParent();
     },
     
     afterRender: function()

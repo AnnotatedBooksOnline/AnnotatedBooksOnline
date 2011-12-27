@@ -166,7 +166,7 @@ class Authentication extends Singleton
     }
     
     /**
-     * Generates a unique token that can be mailed to users and be part of an URL.
+     * Generates a unique token.
      * 
      * @return string A string representing a unique 32-digit hexadecimal number.
      */
