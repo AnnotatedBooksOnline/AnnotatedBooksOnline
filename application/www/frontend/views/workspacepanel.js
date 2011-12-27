@@ -160,6 +160,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 viewer: this.viewer
             },{
                 title: 'Notes',
+                xtype: 'notespanel',
                 viewer: this.viewer
             },{
                 title: 'Export',
