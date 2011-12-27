@@ -590,16 +590,8 @@ class Pdf
     {
         $z = $scan->getZoomLevel();
         $sid = $scan->getScanId();
-        if ($z == 1)
-        {
-            $size = getimagesize($this->tileName($sid, 0, 0, 0));
-            $this->scanAttr['tileSize'] = max($size[0], $size[1]);
-        }
-        else
-        {
-            $size = getimagesize($this->tileName($sid, 0, 0, 1));
-            $this->scanAttr['tileSize'] = $size[0];
-        }
+        $size = getimagesize($this->tileName($sid, 0, 0, $z - 1));
+        $this->scanAttr['tileSize'] = max($size[0], $size[1]);
         
         $this->scanAttr['pageWidth'] = $width;
         $this->scanAttr['pageHeight'] = $height;
