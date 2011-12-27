@@ -270,7 +270,7 @@ Annotations.prototype.initialize = function()
     
     // Create store.
     var _this = this;
-/*    this.store = Ext.create('Ext.ux.StoreBase', {
+    this.store = Ext.create('Ext.ux.StoreBase', {
         model: 'Ext.ux.AnnotationModel',
         
         listeners: {
@@ -284,16 +284,8 @@ Annotations.prototype.initialize = function()
             
             // TODO: update (vertices?), datachanged (?).
         }
-    });*/
-    this.store = this.viewer.getBinding().getScan(this.viewer.pageNumber).annotations();
-    this.store.on('add', function(store, models)           { _this.onStoreAdd(models);           });
-    this.store.on('remove', function(store, model)         { _this.onStoreRemove(model);         });
-    this.store.on('beforeload', function(store)            { _this.onStoreBeforeLoad();          });
-    this.store.on('load', function(store, models, success) { _this.onStoreLoad(models, success); });
-    this.store.on('beforesync', function()                 { return false;                       });
-    this.store.on('clear', function()                      { _this.clear();                      });
-    this.store.on('datachanged', function(store, models)   { _this.onStoreDataChanged(models);   });
-    // TODO: Unregister listeners at some time?
+    });
+    this.store.filter({property: 'scanId', value: this.viewer.getBinding().getScanId(this.viewer.pageNumber)});
     // TODO: What if the current page changes?
     
     // Create overlay and add it.
