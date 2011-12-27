@@ -63,7 +63,7 @@ class PyramidBuilder extends Singleton
         $outpath = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scan->getScanId();
         $quality = $conf->getInteger('tile-quality', 60);
         $builderpath = $conf->getString('install-base') . $conf->getString('builder-path'); 
-        $tileformat = '%z_%x_%y.%e';
+        $tileformat = 'tile_%z_%x_%y.%e';
         
         // Create tile output directory.
         if(!mkdir($outpath))
