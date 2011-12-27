@@ -60,7 +60,7 @@ class BookController extends Controller
      */
     public function actionSearch($data)
     {
-        $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.bindingId', 'bindings.summary', 'bindings.signature', 'libraries.libraryName'))
+        $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.summary', 'bindings.signature', 'libraries.libraryName'))
             ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pAuthorList"."name"), \', \'', 'authorNames')
             ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pProvenanceList"."name"), \', \'', 'provenanceNames')
             ->from('Books books')
@@ -74,7 +74,7 @@ class BookController extends Controller
             ->join('Persons pProvenanceList', array('provenancesList.personId = pProvenanceList.personId'), 'LEFT')
             ->join('Provenances provenancesFind', array('bindings.bindingId = provenancesFind.bindingId'), 'LEFT')
             ->join('Persons pProvenanceFind', array('provenancesFind.personId = pProvenanceFind.personId'), 'LEFT')
-            ->groupBy('books.bookId', 'bindings.bindingId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
+            ->groupBy('books.bookId', 'bindings.bindingId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
         $binds = array();
         $headline = "";
         $c = 0;
@@ -202,6 +202,13 @@ class BookController extends Controller
             {
                 $year = $book->getValue('minYear') . ' - ' . $book->getValue('maxYear');
             }
+            $binding = new Binding($book->getValue('bindingId'));
+            $firstScan = Scan::fromBindingPage($binding, $book->getValue('firstPage'));
+            if (count($firstScan) != 1)
+            {
+                // This book contains no scans. Hmm... that won't make sense in the search results.
+                continue;
+            }
             $records[] = array( // TODO: Name these.
                 $book->getValue('title'),
                 $book->getValue('authorNames'),
@@ -213,8 +220,10 @@ class BookController extends Controller
                 $book->getValue('provenanceNames'),
                 $book->getValue('summary'),
                 $book->getValue('headline'),
-                'tiles/tile_0_0_0.jpg',
-                $book->getValue('bookId')
+                'tiles/' . $firstScan[0]->getScanId() . '/tile_0_0_0.jpg',
+                $book->getValue('bookId'),
+                $book->getValue('bindingId'),
+                $book->getValue('firstPage')
             );
         }
         
