@@ -97,7 +97,7 @@ class PyramidBuilder extends Singleton
         
         // Determine paths.
         $thumb = $conf->getString('install-base') . $conf->getString('thumbnail-path') . '/' . $scanid . '.jpg';
-        $tile = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scanid . '/0_0_0.jpg';
+        $tile = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scanid . '/tile_0_0_0.jpg';
         
         // Determine thumbnail dimensions.
         $width = $conf->getInteger('thumbnail-width', 100);
