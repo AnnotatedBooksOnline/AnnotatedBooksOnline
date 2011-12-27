@@ -96,7 +96,7 @@ class PyramidBuilder extends Singleton
         $conf = Configuration::getInstance();
         
         // Determine paths.
-        $thumb = $conf->getString('install-base') . $conf->getString('thumbnail-path') . '/' . $scanid . 'jpg';
+        $thumb = $conf->getString('install-base') . $conf->getString('thumbnail-path') . '/' . $scanid . '.jpg';
         $tile = $conf->getString('install-base') . $conf->getString('tile-output-path') . '/' . $scanid . '/0_0_0.jpg';
         
         // Determine thumbnail dimensions.

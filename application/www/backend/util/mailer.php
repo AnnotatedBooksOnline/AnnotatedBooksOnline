@@ -27,8 +27,8 @@ class Mailer
      */
     public static function sendMail($recipient, $subject, $message)
     {
-        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name', 'Collaboratory for the History of Reading') 
-                    . ' <'     . Configuration::getInstance()->getString('from-address', 'no-reply@sp.urandom.nl') 
+        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name') 
+                    . ' <'     . Configuration::getInstance()->getString('from-address') 
                     . '>\r\n';
         
         $success = mail($recipient, $subject, $message, $fromheader);
@@ -44,7 +44,7 @@ class Mailer
      * Sends a standard activation mail to the specified PendingUser containing his or her 
      * activation code.
      * 
-     * @param PendingUser $puser The pending user entity.
+     * @param PendingUser $puser The pending user entity, its values should be set.
      * 
      * @throws MailerException When something goes wrong, like the e-mail not being accepted for
      *                         delivery. 
@@ -59,7 +59,7 @@ class Mailer
         $recipient = $user->getEmail();
         $basemessage = Setting::getSetting('activation-mail-message');
         $code = $puser->getConfirmationCode();
-        $link = Configuration::getInstance()->getString('activation-url', 'http://localhost/sp/#activation-') . $code;
+        $link = Configuration::getInstance()->getString('activation-url') . $code;
         
         // For the sake of security, confirm the validity of the confirmation code, which should be
         // a hexadecimal numer of 32 digits.
@@ -82,7 +82,35 @@ class Mailer
     
     public static function sendPasswordRestorationMail($user)
     {
-        // TODO
+        // Determine the restoration token.
+        $token = $user->getPasswordRestoreToken();
+        if(!isset($token))
+        {
+            throw new MailerException('no-password-restore-token');
+        }
+        
+        // Determine properties.
+        $subject = Setting::getSetting('forgotpass-mail-subject');
+        $recipient = $user->getEmail();
+        $basemessage = Setting::getSetting('forgotpass-mail-message');
+        $link = Configuration::getInstance()->getString('forgotpass-url') . $code;
+        
+        // For the sake of security, confirm the validity of the password token, which should be
+        // a hexadecimal numer of 32 digits.
+        if(strlen($code) != 32 || preg_match('/[^a-f^0-9]/', $code) == 1)
+        {
+            throw new MailerException('illegal-confirmation-code', $code);
+        }
+         
+        // Insert user info and the activation link into the e-mail.
+        $message = str_replace(
+        array('[LINK]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]'),
+        array($link, $user->getUsername(), $user->getFirstName(), $user->getLastName()),
+        $basemessage);
+        
+        // Now send the e-mail.
+        Log::info('Sending activation code to %s.\nContents: %s.', $user->getEmail(), $message);
+        self::sendMail($recipient, $subject, $message);
     }
     
 }

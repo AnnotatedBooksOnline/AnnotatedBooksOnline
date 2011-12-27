@@ -32,11 +32,6 @@ PolygonOverlay.prototype.polygons;
 PolygonOverlay.prototype.activePolygons;
 PolygonOverlay.prototype.newPolygon;
 
-//NOTE: should we have some state? like current position, rotation, etc?
-
-// Constants.
-//PolygonOverlay.abc = 10;
-
 // Constructor.
 PolygonOverlay.prototype.constructor = function(viewport)
 {
@@ -83,19 +78,46 @@ PolygonOverlay.prototype.addPolygon = function(vertices, mode, update)
     return polygon;
 }
 
-PolygonOverlay.prototype.removePolygon = function(polygon)
+// Removes a polygon.
+PolygonOverlay.prototype.removePolygon = function(polygon, triggerEvent)
 {
+    // Search for polygon.
     for (var i = this.polygons.length - 1; i >= 0; --i)
     {
         if (this.polygons[i] === polygon)
         {
+            // Remove polygon from list.
             this.polygons.splice(i, 1);
             
+            // Trigger polygon removal event.
+            if (triggerEvent !== false)
+            {
+                this.onPolygonRemove(polygon);
+            }
+            
+            // Destroy polygon.
             polygon.destroy();
             
             return;
         }
     }
+}
+
+PolygonOverlay.prototype.removePolygons = function(triggerEvent)
+{
+    for (var i = this.polygons.length - 1; i >= 0; --i)
+    {
+        var polygon = this.polygons[i];
+        
+        if (triggerEvent !== false)
+        {
+            this.onPolygonRemove(polygon);
+        }
+        
+        polygon.destroy();
+    }
+    
+    this.polygons = [];
 }
 
 PolygonOverlay.prototype.setActive = function(polygon)
@@ -143,9 +165,63 @@ PolygonOverlay.prototype.setMode = function(mode)
     
     if (this.newPolygon !== undefined)
     {
-        this.removePolygon(this.newPolygon);
+        // Do not trigger a remove, because it never really got created.
+        this.removePolygon(this.newPolygon, false);
         
         this.newPolygon = undefined;
+    }
+}
+
+PolygonOverlay.prototype.getMode = function()
+{
+    return this.mode;
+}
+
+/*
+ * Protected methods.
+ */
+
+PolygonOverlay.prototype.onBeforePolygonRemove = function(polygon, succeed, cancel)
+{
+    // May be implemented by subclass. Call succeed or cancel to go on.
+    
+    succeed();
+}
+
+PolygonOverlay.prototype.onPolygonRemove = function(polygon)
+{
+    // May be implemented by subclass.
+}
+
+PolygonOverlay.prototype.onBeforePolygonCreate = function(polygon, succeed, cancel)
+{
+    // May be implemented by subclass.
+    
+    succeed();
+}
+
+PolygonOverlay.prototype.onPolygonCreate = function(polygon)
+{
+    // May be implemented by subclass.
+}
+
+PolygonOverlay.prototype.onPolygonClick = function(polygon)
+{
+    // May be implemented by subclass.
+    
+    if (this.mode === 'erase')
+    {
+        // Check whether to succeed.
+        var _this = this;
+        this.onBeforePolygonRemove(polygon,
+            function()
+            {
+                _this.removePolygon(polygon);
+            },
+            function()
+            {
+                // Do nothing.
+            });
     }
 }
 
@@ -155,10 +231,7 @@ PolygonOverlay.prototype.setMode = function(mode)
 
 PolygonOverlay.prototype.initialize = function()
 {
-    
-    
-    
-    
+    // Create draw component and get its surface.
     this.drawComponent = Ext.create('Ext.draw.Component', {
         width: '100%',
         height: '100%',
@@ -168,45 +241,13 @@ PolygonOverlay.prototype.initialize = function()
     
     this.surface = this.drawComponent.surface;
     
-    //*
-    
-    var vertices = [{x: 10, y: 10}, {x: 60, y: 50}, {x: 110, y: 10}, {x: 110, y: 110}, {x: 60, y: 150}, {x: 10, y: 110}];
-    var polygon = this.addPolygon(vertices, undefined, false);
-    
-    polygon.setMode('edit');
-    
-    
-    
-    var vertices = [{x: 122, y: 152}, {x: 130, y: 152}, {x: 130, y: 160}, {x: 122, y: 160}];
-    this.addPolygon(vertices, undefined, false);
-    
-    //*/
-    
-    
-    
-    
-    
-    
-    //set event listeners
+    // Set event listeners.
     var _this = this;
-    this.dom.bind('click',        function(event) { return _this.onClick(event);       });
     this.dom.bind('dblclick',     function(event) { return _this.onDoubleClick(event); });
     this.dom.bind('mousedown',    function(event) { return _this.onMouseDown(event);   });
     this.dom.bind('contextmenu',  false);
     $(document).bind('mousemove', function(event) { return _this.onMouseMove(event);   });
     $(document).bind('mouseup',   function(event) { return _this.onMouseUp(event);     });
-    
-    
-    //this.dom.bind('mousedown',     function(event) { _this.startDragging(event); });
-    //$(document).bind('keydown',    function(event) { _this.handleKeyDown(event); });
-    //$(document).bind('keyup',      function(event) { _this.handleKeyUp(event);   });
-    
-    
-    
-    
-    
-    
-    
 }
 
 PolygonOverlay.prototype.addVertex = function(event)
@@ -230,32 +271,33 @@ PolygonOverlay.prototype.endPolygon = function()
 {
     if ((this.newPolygon !== undefined) && (this.newPolygon.getVertexAmount() >= 3))
     {
-        this.newPolygon.setMode('edit');
-        this.newPolygon.update(this.position, this.zoomFactor, this.rotation);
-        
+        // Set new polygon to undefined for new polygons.
+        var newPolygon  = this.newPolygon;
         this.newPolygon = undefined;
+        
+        // Check whether to succeed.
+        var _this = this;
+        this.onBeforePolygonCreate(newPolygon,
+            function()
+            {
+                // Keep polygon, set its mode and update it.
+                newPolygon.setMode('view');
+                newPolygon.update(_this.position, _this.zoomFactor, _this.rotation);
+                
+                // Call polygon create handler.
+                _this.onPolygonCreate(newPolygon);
+            },
+            function()
+            {
+                _this.removePolygon(newPolygon, false);
+            });
+        
     }
 }
 
 /*
  * Event handlers.
  */
-
-PolygonOverlay.prototype.onClick = function(event)
-{
-    if (this.mode !== 'view')
-    {
-        ;
-    }
-}
-
-PolygonOverlay.prototype.onPolygonClick = function(event, polygon)
-{
-    if (this.mode === 'erase')
-    {
-        this.removePolygon(polygon);
-    }
-}
 
 PolygonOverlay.prototype.onDoubleClick = function(event)
 {

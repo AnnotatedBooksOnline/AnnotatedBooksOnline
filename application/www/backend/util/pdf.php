@@ -95,7 +95,7 @@ class Pdf
         // Use a safe maximal buffer size, knowing that the Cache will double the memory usage.
         $this->maxBufferSize = $this->iniToBytes('memory_limit') / 4;
         
-        $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
+        $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles');
         
         $this->autoPrint = false;
         $this->setPageSize(595, 842);
@@ -407,7 +407,7 @@ class Pdf
             $minYear = $book->getMinYear();
             $maxYear = $book->getMaxYear();
             $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
-            $fields[] = $this->authors;
+            $fields[] = $this->getAuthorNames($book);
             $fields[] = $book->getTitle();
             $fields[] = $year;
             if ($book->getPlacePublished() != null)
@@ -588,14 +588,15 @@ class Pdf
     private function drawScan($scan, $width, $height)
     {
         $z = $scan->getZoomLevel();
+        $sid = $scan->getScanId();
         if ($z == 1)
         {
-            $size = getimagesize($this->tileName(0, 0, 0));
+            $size = getimagesize($this->tileName($sid, 0, 0, 0));
             $this->scanAttr['tileSize'] = max($size[0], $size[1]);
         }
         else
         {
-            $size = getimagesize($this->tileName(0, 0, 1));
+            $size = getimagesize($this->tileName($sid, 0, 0, 1));
             $this->scanAttr['tileSize'] = $size[0];
         }
         
@@ -624,7 +625,7 @@ class Pdf
 
         // Calculate the scale of the images.
         // Compensate for the possibility of the edge tiles being smaller.
-        $cornerSize = getimagesize($this->tileName($cols - 1, $rows - 1), $zoomLevel);
+        $cornerSize = getimagesize($this->tileName($sid, $cols - 1, $rows - 1), $zoomLevel);
         $compx = 1 - $cornerSize[0] / $ts;
         $compy = 1 - $cornerSize[1] / $ts;
         $scale = min($pw / ($cols - $compx), $ph / ($rows - $compy));
@@ -645,7 +646,7 @@ class Pdf
             $tileWidth = $x == $cols - 1 ? $cornerSize[0] : $ts;
             $tileHeight = $y == $rows - 1 ? $cornerSize[1] : $ts;
             
-            $this->newTile($x, $y, $tileWidth, $tileHeight);
+            $this->newTile($sid, $x, $y, $tileWidth, $tileHeight);
         }
         
         $this->draw('Q');
@@ -811,9 +812,9 @@ class Pdf
     /**
      * Adds a new tile to the output.
      */
-    private function newTile($x, $y, $width, $height)
+    private function newTile($scanId, $x, $y, $width, $height)
     {
-        $file = file_get_contents($this->tileName($x, $y));
+        $file = file_get_contents($this->tileName($scanId, $x, $y));
         $objectNum = $this->newStream("/Subtype /Image\n"
                                     . "/Width " . $width . "\n"
                                     . "/Height " . $height . "\n"
@@ -845,13 +846,13 @@ class Pdf
     /**
      * Returns the filename of the image at the position requested.
      */
-    private function tileName($x, $y, $z = null)
+    private function tileName($scanId, $x, $y, $z = null)
     {
         if ($z === null)
         {
             $z = $this->scanAttr['zoomLevel'];
         }
-        return $this->path . '_' . $z . '_' . $x . '_' . $y . '.jpg';
+        return $this->path . '/' . $scanId . '/tile_' . $z . '_' . $x . '_' . $y . '.jpg';
     }
     
     /**

@@ -1,4 +1,4 @@
--- 
+﻿-- 
 -- SQL for PostgreSQL. Database encoding must be UTF-8.
 -- 
 
@@ -213,6 +213,7 @@ CREATE TABLE "Scans"
     FOREIGN KEY ("bookId")
         REFERENCES "Books",
         
+    CONSTRAINT "Scans_check"
     CHECK ("status" <> 0 OR (
                  "bookId"    IS NOT NULL 
              AND "page"      IS NOT NULL 
@@ -220,6 +221,7 @@ CREATE TABLE "Scans"
              AND "height"    IS NOT NULL 
              AND "zoomLevel" IS NOT NULL
           )),
+    CONSTRAINT "Scans_check1"
     CHECK ("scanType" = 'jpeg' OR "scanType" = 'tiff')
 );
 

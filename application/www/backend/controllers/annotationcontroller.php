@@ -10,16 +10,16 @@ require_once 'models/scan/scan.php';
  */
 class AnnotationController extends Controller
 {
-    protected function __construct()
-    {
-        ;
-    }
-    
     /**
-     * Loads scan. 
+     * Loads annotation(s).
      */
     public function actionLoad($data)
     {
+        Log::debug('Fetching annotations: %s', print_r($data, true));
+        
+        // TODO: Really, can we create a generic method that handles any load command in
+        // TODO: EntitityList or something?
+        
         if (isset($data['filters'])
          && isset($data['filters'][0])
          && isset($data['filters'][0]['column'])
@@ -30,14 +30,13 @@ class AnnotationController extends Controller
             $scanId = self::getInteger($data['filters'][0], 'value', 0);
             $scan = new Scan($scanId);
             
-            $annots = Annotation::fromScan($scan);
-            $annots = array_map(function($annot)
+            $annotations = Annotation::fromScan($scan);
+            $annotations = array_map(function($annotation)
             {
-                return $annot->getValues(true, false);
-            }, $annots);
+                return $annotation->getValues(true, false);
+            }, $annotations);
             
-            return array('records' => $annots, 'total' => count($annots));
+            return array('records' => $annotations, 'total' => count($annotations));
         }
     }
 }
-

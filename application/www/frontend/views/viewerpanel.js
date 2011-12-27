@@ -5,7 +5,8 @@
  * - Viewport panel
  * - Information panel
  * - Workspace panel
- * - A book
+ * - A binding
+ * - A page number
  * 
  * Each of which knows of the viewer panel, and can rely on its existance.
  */
@@ -22,39 +23,14 @@ Ext.define('Ext.ux.ViewerPanel', {
     {
         var _this = this;
         
-        var westRegion = {
-            collapsible: true,
-            resizable: {
-                handles: 'e'
-            },
-            region: 'west',
-            title: 'Information',
-            layout: {
-                type: 'accordion',
-                multi: 'true'
-            },
-            width: 190,
-            minWidth: 190,
-            items: [{
-                xtype: 'informationpanel',
-                title: 'Book information',
-                collapsed: false,
-                maxHeight: 200
-            },{
-                xtype: 'navigationpanel',
-                cls: 'navigation-panel',
-                collapsed: false,
-                book: _this.book
-            }]
-        };
-        
         var centerRegion = {
             region: 'center',
             xtype: 'viewportpanel',
-            document: _this.book.getDocument(0),
+            document: _this.binding.getDocument(0),
             cls: 'viewport-panel',
             tbar: [{
                 xtype: 'slider',
+                name: 'zoom-slider',
                 hideLabel: true,
                 useTips: false,
                 x: 20,
@@ -227,24 +203,32 @@ Ext.define('Ext.ux.ViewerPanel', {
             }]
         };
         
+        var westRegion = {
+            region: 'west',
+            name: 'west-region',
+            split: true,
+            collapsible: true,
+            width: 190,
+            minWidth: 190,
+            layout: 'fit',
+            title: 'Information'
+        };
+        
         var eastRegion = {
             region: 'east',
-            xtype: 'workspacepanel',
-            resizable: {
-                handles: 'w'
-            },
+            name: 'east-region',
+            split: true,
             collapsible: true,
             collapsed: false,
             width: 300,
-            minWidth: 300
+            minWidth: 300,
+            layout: 'fit',
+            title: 'Workspace'
         };
         
         var defConfig = {
-            layout: {
-                type: 'border'
-            },
-            items: [westRegion, centerRegion, eastRegion],
-            page: _this.page
+            layout: 'border',
+            items: [westRegion, centerRegion, eastRegion]
         };
         
         Ext.apply(this, defConfig);
@@ -254,24 +238,69 @@ Ext.define('Ext.ux.ViewerPanel', {
     
     afterRender: function()
     {
+        // Set members.
+        this.eventDispatcher = new EventDispatcher();
+        this.tool            = 'drag';
+        
+        // Set page number.
+        if (this.pageNumber === undefined)
+        {
+            this.pageNumber = 0;
+        }
+        
+        // Constrain page number.
+        this.pageNumber = Math.max(0, Math.min(this.binding.getScanAmount(), this.pageNumber));
+        
+        // Render childs.
         this.callParent();
         
-        this.information   = this.down('navigationpanel');
-        this.workspace     = this.down('workspacepanel');
+        // Fetch shortcuts to components.
         this.viewportPanel = this.down('viewportpanel');
         this.viewport      = this.viewportPanel.getViewport();
-        this.slider        = this.viewportPanel.dockedItems.get(0).items.get(0);
+        this.slider        = this.viewportPanel.down('[name=zoom-slider]');
         
-        this.annotations = new AnnotationOverlay(this.viewport);
-        this.viewport.addOverlay(this.annotations);
+        // Create annotations.
+        this.annotations = new Annotations(this);
         
-        this.pageNumber = this.page;
-        this.gotoPage(this.page);
-        
-        this.tool = 'drag';
-        
+        // Watch for change events on viewport.
         var eventDispatcher = this.viewport.getEventDispatcher();
         eventDispatcher.bind('change', this, this.afterViewportChange);
+        
+        // Add information (west) and workspace (east) regions, as they rely on the data above.
+        this.down('[name=west-region]').add({
+            // TODO: Move this to informationpanel.
+            
+            border: false,
+            layout: {
+                type: 'accordion',
+                multi: 'true'
+            },
+            items: [{
+                xtype: 'informationpanel',
+                title: 'Binding information',
+                collapsed: false,
+                maxHeight: 200
+            },{
+                xtype: 'navigationpanel',
+                cls: 'navigation-panel',
+                collapsed: false,
+                book: this.binding // TODO: Binding.
+            }],
+            
+            viewer: this
+        });
+        
+        this.down('[name=east-region]').add({
+            xtype: 'workspacepanel',
+            viewer: this
+        });
+        
+        // Get them
+        this.information = this.down('navigationpanel');
+        this.workspace   = this.down('workspacepanel');
+        
+        // Finally, we can go to the indicated page.
+        this.gotoPage(this.pageNumber);
     },
     
     afterViewportChange: function(event)
@@ -289,45 +318,30 @@ Ext.define('Ext.ux.ViewerPanel', {
      * Public methods.
      */
     
-    resetViewport: function()
+    getBinding: function()
     {
-        this.viewport.reset();
+        return this.binding;
     },
     
-    /*
-    setBook: function(book)
+    getAnnotations: function()
     {
-        this.book = book;
-        
-        this.gotoPage(0);
-        
-        // TODO: Set total pages, destroy old book, some more stuff.
+        return this.annotations;
     },
-    */
     
-    gotoPage: function(number)
+    getEventDispatcher: function()
     {
-        // Constrain page number.
-        number = Math.max(0, Math.min(this.book.getScanAmount(), number));
-        
-        // Set new page number.
-        this.pageNumber = number;
-        
-        // Set viewport document.
-        this.viewport.setDocument(this.book.getDocument(number));
-        
-        // Update menu.
-        var isFirst = (number == 0);
-        var isLast  = (number == this.book.getScanAmount() - 1);
-        
-        this.viewportPanel.down('[name=first-page]').setDisabled(isFirst);
-        this.viewportPanel.down('[name=previous-page]').setDisabled(isFirst);
-        this.viewportPanel.down('[name=page-number]').setValue(number + 1);
-        this.viewportPanel.down('[name=next-page]').setDisabled(isLast);
-        this.viewportPanel.down('[name=last-page]').setDisabled(isLast);
-        
-        // TODO: Should be the other way around, information panel should listen for changes.
-        this.information.setPage(number);
+        return this.eventDispatcher;
+    },
+    
+    getViewportEventDispatcher: function()
+    {
+        return this.viewport.getEventDispatcher();
+    },
+    
+    // Gets viewer its viewport. A viewer only ever has one.
+    getViewport: function()
+    {
+        return this.viewport;
     },
     
     getPage: function()
@@ -335,9 +349,45 @@ Ext.define('Ext.ux.ViewerPanel', {
         return this.pageNumber;
     },
     
+    getScanId: function()
+    {
+        return this.binding.getScanId(this.pageNumber);
+    },
+    
     getPageAmount: function()
     {
-        return this.book.getScanAmount();
+        return this.binding.getScanAmount();
+    },
+    
+    // Resets viewport.
+    resetViewport: function()
+    {
+        this.viewport.reset();
+    },
+    
+    gotoPage: function(number)
+    {
+        // Constrain page number.
+        number = Math.max(0, Math.min(this.binding.getScanAmount(), number));
+        
+        // Set new page number.
+        this.pageNumber = number;
+        
+        // Set viewport document.
+        this.viewport.setDocument(this.binding.getDocument(number));
+        
+        // Update menu.
+        var isFirst = (number == 0);
+        var isLast  = (number == this.binding.getScanAmount() - 1);
+        
+        this.viewportPanel.down('[name=first-page]').setDisabled(isFirst);
+        this.viewportPanel.down('[name=previous-page]').setDisabled(isFirst);
+        this.viewportPanel.down('[name=page-number]').setValue(number + 1);
+        this.viewportPanel.down('[name=next-page]').setDisabled(isLast);
+        this.viewportPanel.down('[name=last-page]').setDisabled(isLast);
+        
+        // Trigger event.
+        this.eventDispatcher.trigger('pagechange', this, number);
     },
     
     setTool: function(tool)
@@ -381,4 +431,3 @@ Ext.define('Ext.ux.ViewerPanel', {
         }
     }
 });
-

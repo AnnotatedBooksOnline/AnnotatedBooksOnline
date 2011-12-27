@@ -3,11 +3,11 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
+require_once 'util/mailer.php';
 require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
-require_once 'util/mailer.php';
 
-// Exceptions
+// Exceptions.
 class RegistrationFailedException extends ExceptionBase { }
 
 /**
@@ -82,7 +82,7 @@ class UserController extends Controller
                 {
                     $arguments[$column] = $value;
                 }
-            }            
+            }
         }
         
         // Retrieve the sortings from the request.
@@ -103,17 +103,16 @@ class UserController extends Controller
         
         // Query the Users table.
         $result = UserSearchList::findUsers($arguments, $offset, $limit, $order);
-
+        
         // Return the results.
         return array(
-            'records' => $result->asArrays(),
+            'records' => $result->asArrays(), // TODO: Do not return everything.
             'total'   => $total
         );
     }
     
     /**
-     *
-     *
+     * Saves a user.
      */
     public function actionSave($data)
     {
@@ -164,8 +163,7 @@ class UserController extends Controller
     }
     
     /**
-     *
-     *
+     * Creates a user.
      */
     public function actionCreate($data)
     {
@@ -191,7 +189,7 @@ class UserController extends Controller
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
-            'active'      => true, //TODO: false,
+            'active'      => false,
             'banned'      => false,
             'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
         );
@@ -217,12 +215,12 @@ class UserController extends Controller
             $user->save();
             
             // Now create a pending user.
-//            $puser = PendingUser::fromUser($user);
-//            $puser->save();
-//            return $puser;
+           $puser = PendingUser::fromUser($user);
+           $puser->save();
+           return $puser;
         });
         
-//        Mailer::sendActivationMail($puser);
+        Mailer::sendActivationMail($puser);
         
         return array('records' => $values); 
     }
@@ -327,10 +325,9 @@ class UserController extends Controller
         // Retrieve the corresponding user.
         $email = self::getString($data, 'email');
         $user = User::fromEmailAddress($email);
-        if($user === null)
+        if($user == null)
         {
-            // TODO: exception
-            return;
+            throw new UserNotFoundException('email-not-found', $email);
         }
         
         // Specify a password restoration token for this user.

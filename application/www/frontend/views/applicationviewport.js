@@ -290,10 +290,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 }
                 
                 // If given, go to the right page immediately.
-                var page = 0;
+                var pageNumber = 0;
                 if (data.length > 1)
                 {
-                    page = data[1]-1;
+                    pageNumber = data[1] - 1;
                 }
                 
                 // Fetch binding.
@@ -303,9 +303,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         // Add a viewer tab.
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
-                            title: 'Binding ' + binding.getModel().get('signature'), // TODO: Move to viewerpanel?
-                            book: binding,
-                            page: page
+                            title: 'Binding ' + escape(binding.getModel().get('signature')), // TODO: Move to viewerpanel.
+                            binding: binding,
+                            pageNumber: pageNumber
                         });
                         
                         // Add tab.
@@ -355,16 +355,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a users tab.
                 Ext.apply(tabConfig, {
                     title: 'Users',
-                    xtype: 'userlistpanel',
-                    border: false
+                    xtype: 'userlistpanel'
                 });
                 
                 break;
                 
             case 'viewprofile':
+                // TODO: data[0] may not even exist!
+                // TODO: Fetch user here.
+                // TODO: Handle non-existing users here.
+                
                 // Add a view profile tab.
                 Ext.apply(tabConfig, {
-                    title: 'Profile of ' + data[0],
+                    title: 'Profile of ' + escape(data[0]),
                     xtype: 'viewprofilepanel'
                 });
                 
@@ -436,11 +439,21 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 });
                 
                 break;
+                
             case 'activation':
                 // Add an activation tab.
                 Ext.apply(tabConfig, {
                     title: 'Activation',
                     xtype: 'activationpanel'
+                });
+                
+                break;
+                
+            case 'restorepass':
+                // Add a password restore tab.
+                Ext.apply(tabConfig, {
+                    title: 'Restore password',
+                    xtype: 'restorepasswordpanel'
                 });
                 
                 break;
@@ -458,7 +471,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             this.tabs.setActiveTab(newTab);
         }
     },
-
+    
     gotoTab: function(type, data, openIfNotAvailable)
     {
         // Try to match the type and data
@@ -548,4 +561,3 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
     }
 });
-

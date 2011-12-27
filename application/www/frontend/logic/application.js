@@ -233,6 +233,7 @@ Application.prototype.registerActions = function()
                 case 'welcome':
                 case 'info':
                 case 'activation':
+                case 'restorepass':
                     // These are tab actions, so close the windows.
                     Ext.WindowManager.each(
                         function(window)
@@ -282,6 +283,7 @@ Application.prototype.tabNeedsAuthentication = function(type)
         case 'welcome':
         case 'info':
         case 'activation':
+        case 'restorepass':
         //case 'upload':
             return false;
     }

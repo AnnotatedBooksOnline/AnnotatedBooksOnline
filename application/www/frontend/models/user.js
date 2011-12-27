@@ -3,7 +3,7 @@
  */
 
 Ext.define('Ext.ux.UserModel', {
-    extend: 'Ext.data.Model',
+    extend: 'Ext.ux.ModelBase',
     idProperty: 'userId',
     fields: [
        {name: 'userId'},
@@ -21,6 +21,7 @@ Ext.define('Ext.ux.UserModel', {
        {name: 'password'},
        {name: 'newPassword'}
     ],
+    
     proxy: {
         type: 'requestmanager',
         controller: 'User',

@@ -1,10 +1,10 @@
 /*
- * Annotations display & edit panel.
+ * Annotations display and edit panel.
  */
 
 var langStore = Ext.create('Ext.data.Store', {
     fields: ['lang', 'name'],
-    data : [{
+    data: [{
         lang: "eng",
         name:"English"
     },{
@@ -19,6 +19,9 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     
     initComponent: function()
     {
+        // Fetch annotations.
+        this.annotations = this.viewer.getAnnotations();
+        
         var _this = this;
         var defConfig = {
             border: false,
@@ -26,7 +29,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             flex: 0,
             height: 600,
             items: [{
-                xtype: 'panel',
                 region: 'north',
                 html: 'Please select an annotation below.',
                 bodyPadding: 5,
@@ -37,16 +39,15 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             },{
                 xtype: 'annotationsgrid',
                 region: 'center',
-                height: 350
+                height: 350,
+                viewer: this.viewer
             },{
-                xtype: 'panel',
                 name: 'annotationcontrols',
                 region: 'south',
                 height: 70,
                 border: false,
                 bodyPadding: 10,
                 items: [{
-                    xtype: 'panel',
                     border: 'false',
                     layout: 'hbox',
                     items: [{
@@ -92,7 +93,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         }
                     }]
                 },{
-                    xtype: 'panel',
                     border: 'false',
                     layout: 'hbox',
                     style: 'margin-top: 5px',
@@ -181,49 +181,53 @@ Ext.define('Ext.ux.AnnotationsGrid', {
     
     initComponent: function()
     {
+        // Fetch annotations.
+        this.annotations = this.viewer.getAnnotations();
+        
+        // Watch for events.
+        var eventDispatcher = this.annotations.getEventDispatcher();
+        eventDispatcher.bind('select', this,
+            function(event, annotations, annotation)
+            {
+                // TODO: I think we may want to have just one grid.
+                
+                this.getComponent(0).getSelectionModel().select(annotation.getModel());
+                this.getComponent(1).getSelectionModel().select(annotation.getModel());
+            });
+        
+        eventDispatcher.bind('hover', this,
+            function(event, annotations, annotation)
+            {
+                // TODO: I think we may want to have just one grid.
+                
+                this.getComponent(0).getView().addRowCls(annotation.getModel(), 'x-grid-row-over');
+                this.getComponent(1).getView().addRowCls(annotation.getModel(), 'x-grid-row-over');
+            });
+        
+        eventDispatcher.bind('unhover', this,
+            function(event, annotations, annotation)
+            {
+                // TODO: I think we may want to have just one grid.
+                
+                this.getComponent(0).getView().removeRowCls(annotation.getModel(), 'x-grid-row-over');
+                this.getComponent(1).getView().removeRowCls(annotation.getModel(), 'x-grid-row-over');
+            });
+        
+        // Fetch store.
+        var store = this.annotations.getStore();
+        
         var _this = this;
-        
-        var testData = [{
-            annId: 1,
-            bookId: 1,
-            page: 1,
-            eng: 'Hello, world!',
-            orig: 'Hallo, wereld!',
-            color: 'FF00FF'
-        },{
-            annId: 2,
-            bookId: 1,
-            page: 1,
-            eng: 'This is a test annotation.',
-            orig: 'Ceci n\'est pas un annotation.',
-            color: 'FFFF00'
-        },{
-            annId: 3,
-            bookId: 1,
-            page: 1,
-            eng: 'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?',
-            orig: 'Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit amet, consectetur, adipiscing velit, sed quia non numquam do eius modi tempora incididunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, qui dolorem eum fugiat, quo voluptas nulla pariatur?',
-            color: '00FFFF'
-        },{
-            annId: 4,
-            bookId: 1,
-            page: 1,
-            eng: 'On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.',
-            orig: 'At vero eos et accusamus et iusto odio dignissimos ducimus, qui blanditiis praesentium voluptatum deleniti atque corrupti, quos dolores et quas molestias excepturi sint, obcaecati cupiditate non provident, similique sunt in culpa, qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio, cumque nihil impedit, quo minus id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet, ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat...',
-            color: '000000'
-        }];
-
-        var annotationStore = Ext.create('Ext.data.Store', {
-            model: 'DataObject',
-            data: testData
-        });
-        
         var colorColumn = {
             dataIndex: 'color',
-            renderer: function(color, meta)
+            renderer: function(color, metadata, model)
             {
-                meta.style = 'background-color: #' + color;
-                meta.tdCls = 'grid-valign-middle';
+                var color =_this.annotations.getAnnotationColor(
+                    _this.annotations.getAnnotationByModel(model)
+                );
+                
+                metadata.style = 'background-color: ' + color;
+                metadata.tdCls = 'grid-valign-middle';
+                
                 return '';
             },
             width: 10
@@ -259,25 +263,25 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                 {
                     meta.tdCls = 'grid-valign-bottom';
                     
-	                var id = Ext.id();
+                    var id = Ext.id();
                     setTimeout(function()
-	                {
-	                    try
-	                    {
-		                    new Ext.Button(
-		                    {
-			                    renderTo: id,
-			                    id: id,
-			                    text: 'Edit'
-		                    });
-		                }
-		                catch(e)
-		                {
-		                    // Too late
-		                }
-	                }, 1);
+                    {
+                        try
+                        {
+                            new Ext.Button(
+                            {
+                                renderTo: id,
+                                id: id,
+                                text: 'Edit'
+                            });
+                        }
+                        catch (e)
+                        {
+                            // Too late.
+                        }
+                    }, 1);
 
-	                return '<div id="' + id + '"></div>';
+                    return '<div id="' + id + '"></div>';
                 },
                 width: 20,
                 flex: 0
@@ -289,22 +293,26 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             viewConfig: {
                 stripeRows: false,
                 listeners: {
-                    itemclick: function(grid, record)
+                    itemclick: function(grid, model)
                     {
-                        this.up('annotationspanel').setLargeAnnotation(record);
+                        this.up('annotationspanel').setLargeAnnotation(model);
                     },
-                    itemmouseenter: function(grid, record)
+                    itemmouseenter: function(grid, model)
                     {
-                        // TODO: highlight polygon
+                        var annotation = _this.annotations.getAnnotationByModel(model);
+                        
+                        _this.annotations.highlightAnnotation(annotation);
                     },
-                    itemmouseleave: function(grid, record)
+                    itemmouseleave: function(grid, model)
                     {
-                        // TODO: un-highlight polygon
+                        var annotation = _this.annotations.getAnnotationByModel(model);
+                        
+                        _this.annotations.unhighlightAnnotation(annotation);
                     }
                 }
             },
             hideHeaders: true,
-            store: annotationStore,
+            store: store,
             columns: getDisplayColumns('orig'),
             forceFit: true,
             autoScroll: true,
@@ -324,7 +332,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                 }
             },
             hideHeaders: true,
-            store: annotationStore,
+            store: store,
             columns: getEditColumns('orig'),
             forceFit: true,
             autoScroll: true,
