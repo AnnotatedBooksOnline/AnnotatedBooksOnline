@@ -15,10 +15,11 @@ class AnnotationController extends Controller
      */
     public function actionLoad($data)
     {
-        Log::debug('Fetching annotations: %s', print_r($data, true));
-        
         // TODO: Really, can we create a generic method that handles any load command in
-        // TODO: EntitityList or something?
+        // TODO: EntitityList or something? (Gerben)
+        
+        // I don't think so, or the EntityList has to understand all relations between the Entities.
+        // Some aspects of it could be more generalized, though. (Bert)
         
         if (isset($data['filters'])
          && isset($data['filters'][0])
@@ -33,10 +34,13 @@ class AnnotationController extends Controller
             $annotations = Annotation::fromScan($scan);
             $annotations = array_map(function($annotation)
             {
-                return $annotation->getValues(true, false);
+                $a = $annotation->getValues(true, false);
+                $a['polygon'] = $annotation->getPolygon();
+                return $a;
             }, $annotations);
             
             return array('records' => $annotations, 'total' => count($annotations));
         }
     }
 }
+
