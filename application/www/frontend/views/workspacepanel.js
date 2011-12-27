@@ -159,10 +159,6 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 title: 'Annotations',
                 viewer: this.viewer
             },{
-                title: 'Notes',
-                xtype: 'notespanel',
-                viewer: this.viewer
-            },{
                 title: 'Export',
                 xtype: 'exportform',
                 viewer: this.viewer
@@ -170,7 +166,43 @@ Ext.define('Ext.ux.WorkspacePanel', {
         };
         
         Ext.apply(this, defConfig);
-        
         this.callParent();
+        
+        if (Authentication.getInstance().isLoggedOn())
+        {
+            this.onLoggedOn();
+        }
+        
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+        this.eventDispatcher = new EventDispatcher();
+    },
+    
+    onLoggedOn: function()
+    {
+        this.insert(1, {
+            title: 'Notes',
+            xtype: 'notespanel',
+            viewer: this.viewer,
+            hidden: !Authentication.getInstance().isLoggedOn()
+        });
+    },
+    
+    onLoggedOut: function()
+    {
+        this.remove(1);
+    },
+    
+    onAuthenticationChange: function(event, authentication)
+    {
+        if (authentication.isLoggedOn())
+        {
+            this.onLoggedOn();
+        }
+        else
+        {
+           this.onLoggedOut();
+        }
     }
 });
+

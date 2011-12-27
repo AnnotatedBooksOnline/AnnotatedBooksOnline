@@ -27,12 +27,12 @@ Ext.define('Ext.ux.Notespanel', {
                             'Note',
                             'Save',
                             {token: token},
-                            _this,
+                            this,
                             function()
                             {},
                             function(data)
                             {
-                                _this.down('[name=notes]').setValue('failed to save');
+                                this.setValue('failed to save');
                             }
                         );
                     }
@@ -40,46 +40,29 @@ Ext.define('Ext.ux.Notespanel', {
             }]
         };
 
-        Ext.apply(this, defConfig);		
-
-        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
-        eventDispatcher.bind('change', this, this.onAuthenticationChange);
-        this.eventDispatcher = new EventDispatcher();
-
+        Ext.apply(this, defConfig);
         this.callParent();
+        
+        this.notes = this.getComponent(0);
     },
 
     afterRender: function()
     {   
-        var _this = this;
         var token = null;
         RequestManager.getInstance().request(
-            'Note'
+            'Note',
             'Load',
             {token: token},
-            _this,
+            this,
             function(data)
             {
-                _this.down('[name=notes]').setValue(data);
+                this.notes.setValue(data);
             },
             function(data)
             {
-                _this.down('[name=notes]').setValue('failed to load');
+               this.notes.setValue('failed to load');
             }
         );
-    },
-
-    onAuthenticationChange: function(event, authentication)
-    {
-        var _this = this;
-        //TODO get this working and set visibility when initializing
-        if (authentication.isLoggedOn())
-        {
-            _this.show();
-        }
-        else
-        {
-            _this.hide();
-        }
     }
 });
+
