@@ -7,6 +7,7 @@ require_once 'models/upload/upload.php';
 require_once 'models/book/book.php';
 require_once 'models/book/booklist.php';
 require_once 'models/binding/binding.php';
+require_once 'models/binding/bindingsearchlist.php';
 require_once 'models/library/librarysearchlist.php';
 require_once 'models/person/person.php';
 require_once 'models/person/personsearchlist.php';
@@ -39,16 +40,22 @@ class BindingUploadController extends Controller
         // Find the name of the library the binding belongs to.
         $libraryName = $inputBinding['library'];
         $provenancePersonName = $inputBinding['provenance'];
-            
+        $signature = self::getString($inputBinding, 'signature');
+        
         ////////////////////////////////////////////////////////////////////////////////////
         // Create the binding
         ////////////////////////////////////////////////////////////////////////////////////
             
         // Create the binding and fill its attributes with the information from the request.
         $binding = new Binding();
-        $binding->setSignature(self::getString($inputBinding, 'signature'));
         $binding->setSummary(self::getString($inputBinding, 'summary'));
-            
+        $binding->setSignature($signature);
+        
+        // Determine if the specified signature exists in the database already, this is not allowed.
+        if (BindingSearchList::findBindings(array('signature' => $signature), null, null, null)->getFirstRow_()) {
+            throw new ControllerException('duplicate-binding');
+        }
+        
         // Find the specified library in the database.
         $existingLibrary = LibrarySearchList::findLibraries(array('libraryName' => $libraryName), null, null, null)->getFirstRow_();
             
