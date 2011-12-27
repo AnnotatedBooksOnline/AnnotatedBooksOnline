@@ -3,18 +3,18 @@
  */
 
 Ext.define('Ext.ux.VertexModel', {
-    extend: 'Ext.ux.ModelBase',
+    extend: 'Ext.data.Model',
     fields: ['x', 'y']
 });
 
 Ext.define('Ext.ux.AnnotationModel', {
-    extend: 'Ext.ux.ModelBase',
-    idProperty: 'annId',
-    fields: ['annId', 'scanId', /* -- */ 'eng', 'orig' /* -- */], // TODO: Rename to real names.
+    extend: 'Ext.data.Model',
+    idProperty: 'annotationId',
+    fields: ['annotationId', 'scanId', 'transcriptionEng', 'transcriptionOrig'],
     
     hasMany: {
         model: 'Ext.ux.VertexModel',
-        name: 'vertices'
+        name: 'polygon'
     },
     
     // NOTE: text, etc.
@@ -25,3 +25,4 @@ Ext.define('Ext.ux.AnnotationModel', {
         model: 'Ext.ux.AnnotationModel'
     }
 });
+

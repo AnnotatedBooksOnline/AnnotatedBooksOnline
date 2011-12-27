@@ -11,8 +11,7 @@ require_once 'models/scan/scan.php';
 class Annotation extends Entity
 {
     protected $annotationId;
-    protected $bookId;
-    protected $page;
+    protected $scanId;
     protected $polygon;
     protected $transcriptionEng;
     protected $transcriptionOrig;
@@ -74,7 +73,7 @@ class Annotation extends Entity
      */
     public function getColumns()
     {
-        return array('bookId', 'page', 'polygon', 'transcriptionEng', 'transcriptionOrig');
+        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig');
     }
     
     /**
@@ -86,8 +85,7 @@ class Annotation extends Entity
     {
         return array(
             'annotationId'      => 'int',
-            'bookId'            => 'int',
-            'page'              => 'int',
+            'scanId'            => 'int',
             'polygon'           => 'lob',
             'transcriptionEng'  => 'string',
             'transcriptionOrig' => 'string'
@@ -98,10 +96,8 @@ class Annotation extends Entity
      * Getters and setters.
      */
     public function getannotationId() { return $this->annotationId; }
-    public function getBookID() { return $this->bookId; }
-    public function setBookID($bookId) { $this->bookId = $bookId; }
-    public function getPage() { return $this->page; }
-    public function setPage($page) { $this->page = $page; }
+    public function getScanId() { return $this->scanId; }
+    public function setScanId($scanId) { $this->scanId = $scanId; }
     public function getTranscriptionEng() { return $this->transcriptionEng; }
     public function setTranscriptionEng($text) { $this->transcriptionEng = $text; }
     public function getTranscriptionOrig() { return $this->transcriptionOrig; }
