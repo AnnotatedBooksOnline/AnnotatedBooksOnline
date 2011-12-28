@@ -149,7 +149,7 @@ class UserController extends Controller
             'homeAddress' => '',
             'active'      => true, // TODO: Activation.
             'banned'      => false,
-            'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
+            'rank'        => User::RANK_DEFAULT
         );
         
         $user = new User($userId);

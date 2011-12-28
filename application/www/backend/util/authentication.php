@@ -4,6 +4,7 @@
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/session.php';
 require_once 'models/user/user.php';
+require_once 'models/permission/permission.php';
 
 // Exceptions.
 class NotLoggedOnException extends ExceptionBase
@@ -230,7 +231,7 @@ class Authentication extends Singleton
      */
     public static function assertPermissionTo($action)
     {
-        if(!Authentication::getInstance()->isLoggedOn())
+        if(!Authentication::getInstance()->hasPermissionTo($action))
         {
             throw new AccessDeniedException($action);
         }

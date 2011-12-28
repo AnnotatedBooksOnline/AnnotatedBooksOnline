@@ -18,7 +18,6 @@ class UserActivationController extends Controller
     public function actionActivateUser($data)
     {
         Log::info('User activation action.');
-        Log::debug('!!! ' . print_r($data, true));
         // Fetch activation token.
         $token = self::getString($data, 'token');
         
@@ -31,7 +30,6 @@ class UserActivationController extends Controller
                                                               ->where('confirmationCode = :token')
                                                               ->execute(array('token' => $token));
             
-            Log::debug('!!!' . $token);
             if($result->getAmount() != 1)
             {
                 // TODO: Exception or more informative return value?
