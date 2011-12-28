@@ -30,7 +30,7 @@ class Permission extends Entity
     }
     
     /**
-     * Indicates whether a user with a provided rank has permission to undertake the action with 
+     * Indicates whether some user with the provided rank has permission to undertake the action with 
      * a certain name. 
      *
      * @param string $action The name of the action.
@@ -40,7 +40,7 @@ class Permission extends Entity
      * 
      * @throws EntityException If no action with this name could be found in the database.
      */
-    public function hasPermission($action, $rank)
+    public static function rankHasPermission($action, $rank)
     {
         // Create and load permission entity.  
         $permission = new Permission($action);
