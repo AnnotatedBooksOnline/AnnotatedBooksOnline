@@ -285,6 +285,14 @@ Ext.define('Ext.ux.ViewerPanel', {
                 cls: 'navigation-panel',
                 collapsed: false,
                 book: this.binding // TODO: Binding.
+             },{
+                xtype: 'referencespanel',
+                title: 'References',
+                cls: 'references-panel',
+                collapsed: false,
+                binding: this.binding.getModel(),
+                page: this.pageNumber,
+                viewer: this
             }],
             
             viewer: this
