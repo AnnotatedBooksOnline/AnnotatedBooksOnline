@@ -357,6 +357,24 @@ Ext.define('Ext.ux.ViewerPanel', {
         return this.pageNumber;
     },
     
+    getBook: function()
+    {
+        var currentBook;
+        var page=this.pageNumber+1
+        this.binding.getModel().books().each(
+            function(book)
+            {
+                var fp=book.get('firstPage');
+                var lp=book.get('lastPage');
+                if (fp <= page && page <= lp)
+                {
+                    currentBook=book;
+                    return false;
+                }
+            });
+        return currentBook;
+    },
+    
     getScanId: function()
     {
         return this.binding.getScanId(this.pageNumber);
@@ -439,3 +457,4 @@ Ext.define('Ext.ux.ViewerPanel', {
         }
     }
 });
+
