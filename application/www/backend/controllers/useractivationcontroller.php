@@ -28,6 +28,7 @@ class UserActivationController extends Controller
             // Determine to which user the  token belongs.
             $result = Query::select('pendingUserId', 'userId')->from('PendingUsers')
                                                               ->where('confirmationCode = :token')
+                                                              ->where('accepted = \'1\'') // TODO: Give specific exception when not accepted
                                                               ->execute(array('token' => $token));
             
             if($result->getAmount() != 1)

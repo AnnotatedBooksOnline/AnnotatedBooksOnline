@@ -222,7 +222,7 @@ class Authentication extends Singleton
     
     /**
      * Asserts that the currently logged in user, if any, has permission to perform the specified 
-     * action. 
+     * action.
      * 
      * @param string $action The name of the action, there should be an entry with it in the 
      *                       Permissions table.

@@ -44,7 +44,8 @@ class NoteController extends Controller
     public function actionSave($data)
     {
         //Check whether logged on.
-        Authentication::assertPermissionTo('manage-notebook');
+        Authentication::assertLoggedOn();
+        //Authentication::assertPermissionTo('manage-notebook');
         
         //Retrieve userId and text
         $userId  = Authentication::getInstance()->getUserId();

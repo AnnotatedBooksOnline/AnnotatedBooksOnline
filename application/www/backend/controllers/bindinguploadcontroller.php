@@ -30,7 +30,8 @@ class BindingUploadController extends Controller
         // TODO: exceptions
         
         // Assert that the user is authenticated. 
-        Authentication::assertPermissionTo('upload-bindings');  
+        Authentication::assertLoggedOn();
+        //Authentication::assertPermissionTo('upload-bindings');  
         
         // Retrieve contents of record.
         $inputScans = self::getArray($data, 'scans');
