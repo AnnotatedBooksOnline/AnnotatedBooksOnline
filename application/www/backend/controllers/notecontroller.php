@@ -21,24 +21,11 @@ class NoteController extends Controller
     public function actionLoad($data)
     {
         // Retrieve the user id of the user.
-        $userId = Authentication::getInstance()->getUserId();
-        // Retrieve the notes from the database
-        $text = Query::select('notes.text')
-            ->from('Notes notes')
-            ->where('notes.userId = :userId')
-            ->execute(array(':userId' => $userId));  
+        Authentication::assertLoggedOn();
+        $userId = self::getInteger($data, 'id', 0);
             
-        //Check if the notes exist. If they don't do nothing,
-        //otherwise return them. (Temporary solution)
-        if ($text->getAmount() != 1)
-        {
-            return '';
-        }
-        else
-        {
-            $text = $text->getFirstRow()->getValue('text');
-            return $text; 
-        }
+            $notes=new Note($userId);
+            return array('records' => $notes->getValues(), 'total' => 1);
     }
     
     public function actionSave($data)
@@ -47,35 +34,18 @@ class NoteController extends Controller
         Authentication::assertLoggedOn();
         
         //Retrieve userId and text
-        $userId  = Authentication::getInstance()->getUserId();
-        $text   = self::getString($data, 'token', '', false, -1);
+        $record = self::getArray($data, 'record');
         
+        $userId      = self::getInteger($record, 'userId', 0);
+        $text        = self::getString($record, 'text', '', true);
         
         $values = array( 
         'userId'        => $userId,
         'text'         => $text,
         );
-        
-        //Retrieve current notes in order to see whether these 
-        //should be overwritten or not. (Temporary solution)
-        $notes = Query::select('notes.text')
-            ->from('Notes notes')
-            ->where('userId = :userId')
-            ->execute(array(':userId' => $userId));
-        
+
         $note = new Note();
         $note->setValues($values);
-        
-        //Check if there already exists a note with that userId. 
-        //If there is overwrite it, otherwise create a new one. (Temporary solution)
-        if ($notes->getAmount() != 1)
-        {
-             $q=Query::insert('Notes', array('userId'    => ':userId', 
-                                            'text'   => ':text'))->execute(array(':userId' => $userId, ':text' => $text));
-        }
-        else
-        {
-            $note->save();
-        }
+        $note->save();
     }
 }

@@ -4,6 +4,7 @@
 require_once 'framework/controller/controller.php';
 require_once 'models/scan/scan.php';
 require_once 'models/binding/binding.php';
+require_once 'util/authentication.php';
 
 /**
  * Scan controller class.
@@ -39,5 +40,14 @@ class ScanController extends Controller
             return array('records' => $scans, 'total' => count($scans));
         }
     }
+    
+    public function actionReorder($data)
+    {
+        foreach ($data as $key => $value) 
+        {
+            $scan = new Scan($value);
+            $scan->setPage($key+1);
+            $scan->save();
+        }
+    }
 }
-

@@ -12,19 +12,19 @@ Ext.define('Ext.ux.BookListFieldset', {
         var _this = this;
         
         // TODO: get from database.
-        var bindingId = 0;
+        var bindingId = 1;
         
         var store = Ext.create('Ext.data.Store', {
-            model: 'Ext.ux.BindingModel'
+            model: 'Ext.ux.BookModel'
         });
-        
-        //store.load();
+        store.filter({property: 'bindingId', value: bindingId});
+        store.load();
         
         var defConfig = {
             items: [{
                 xtype: 'grid',
                 border: false,
-                //store: store,
+                store: store,
                 viewConfig: {
                     stripeRows: true
                 },
@@ -88,11 +88,11 @@ Ext.define('Ext.ux.ScanListFieldset', {
         var _this = this;
         
         // TODO: get from database.
-        var bindingId = 0;
+        var bindingId = 1;
         
-        var store = Ext.create('Ext.data.Store', {
-            model: 'Ext.ux.BindingModel'
-        });
+        //var store = Ext.create('Ext.data.Store', {
+        //    model: 'Ext.ux.BindingModel'
+        //});
         
         //store.load();
         

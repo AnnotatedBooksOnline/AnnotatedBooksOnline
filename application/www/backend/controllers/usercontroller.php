@@ -6,6 +6,7 @@ require_once 'util/authentication.php';
 require_once 'util/mailer.php';
 require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
+require_once 'models/notes/note.php';
 
 // Exceptions.
 class RegistrationFailedException extends ExceptionBase { }
@@ -213,6 +214,10 @@ class UserController extends Controller
             $user = new User();
             $user->setValues($values);
             $user->save();
+            
+            // Create note entry.
+            $q=Query::insert('Notes', array('userId'    => ':userId',
+                                           'text'   => ':text'))->execute(array(':userId' => $user->getUserId(), ':text' => ''));
             
             // Now create a pending user.
            $puser = PendingUser::fromUser($user);
