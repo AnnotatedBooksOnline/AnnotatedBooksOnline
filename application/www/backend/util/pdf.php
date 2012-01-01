@@ -34,7 +34,7 @@ class Pdf
     private $lineSpread = 2;
     private $productName = 'Collaboratory';
     private $productLogo = 'util/logo.jpg';
-    private $productUrl = 'http://sp.urandom.nl/devtest/';
+    private $productUrl;
     
     private $pageWidth;
     private $pageHeight;
@@ -88,6 +88,7 @@ class Pdf
      */
     public function __construct($binding, $cacheEntry, $range = null, $transcriptions = false, $annotations = false)
     {
+        $this->productUrl = $this->pageUrl();
         $this->identifier = uniqid('pdf', true);
         $this->outputEntry = $cacheEntry;
         $this->outputEntry->clear();
@@ -130,6 +131,27 @@ class Pdf
         }
     }
     
+    private function pageUrl()
+    {
+        $url = 'http';
+        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off")
+        {
+            $url .= "s";
+        }
+        $url .= "://";
+        $url .= $_SERVER["SERVER_NAME"];
+        if ($_SERVER["SERVER_PORT"] != "80")
+        {
+            $url .= ":".$_SERVER["SERVER_PORT"];
+        }
+        $url .= $_SERVER["REQUEST_URI"];
+        $url = parse_url($url);
+        unset($url['query']);
+        unset($url['fragment']);
+        $url = $url['scheme'] . '://' . $url['host'] . $url['path'];
+        return $url;
+    }
+    
     private function setHeaderText($text = '')
     {
         $this->headerText = $text;
@@ -138,11 +160,17 @@ class Pdf
     
     private function getAuthorNames($book)
     {
-        return implode(', ', array_map(function($author)
+        $authors = implode(', ', array_map(function($author)
         {
             $person = new Person($author->getPersonId());
             return $person->getName();
         }, Author::fromBook($book)));
+        
+        if ($authors == '')
+        {
+            $authors = "Unknown author";
+        }
+        return $authors;
     }
     
     private function iniToBytes($config)
