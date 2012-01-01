@@ -9,6 +9,17 @@ Ext.define('Ext.ux.Notespanel', {
     initComponent: function()
     {
         var _this = this;
+
+        Ext.ux.NotesModel.load(Authentication.getInstance().getUserId(), {
+            success: function(user) {
+                _this.notes = user;
+                _this.notesarea.setValue(user.get('text'));
+
+                _this.setLoading(false);
+            },
+            failure: function() {alert('notes failed to load');}
+        });
+        
         var defConfig = {
             border: false,
             layout: 'fit',
@@ -22,19 +33,8 @@ Ext.define('Ext.ux.Notespanel', {
                 listeners: {
                     change: function(comp, newValue, oldValue, obj)
                     {
-                        var token = newValue;
-                        RequestManager.getInstance().request(
-                            'Note',
-                            'Save',
-                            {token: token},
-                            this,
-                            function()
-                            {},
-                            function(data)
-                            {
-                                this.setValue('failed to save');
-                            }
-                        );
+                        _this.notes.set('text',newValue);
+                        _this.notes.save();
                     }
                 }
             }]
@@ -43,26 +43,7 @@ Ext.define('Ext.ux.Notespanel', {
         Ext.apply(this, defConfig);
         this.callParent();
         
-        this.notes = this.getComponent(0);
-    },
-
-    afterRender: function()
-    {   
-        var token = null;
-        RequestManager.getInstance().request(
-            'Note',
-            'Load',
-            {token: token},
-            this,
-            function(data)
-            {
-                this.notes.setValue(data);
-            },
-            function(data)
-            {
-               this.notes.setValue('failed to load');
-            }
-        );
+        this.notesarea = this.getComponent(0);
+        this.setLoading(true);
     }
 });
-
