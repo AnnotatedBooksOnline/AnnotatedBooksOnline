@@ -1,3 +1,4 @@
+
 /*
  * Reorder scan fieldset class.
  */
@@ -10,15 +11,10 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
     initComponent: function()
     {
         var _this = this;
-        
-        // TODO: get from database.
-        var bindingId = 0;
-        
-        var store = [['1', 'one'],['2', 'two'],['3', 'three'],['4', 'four'],['5', 'five']]; /*Ext.create('Ext.data.Store', {
-            model: 'Ext.ux.BindingModel'
-        });*/
-        
-        //store.load();
+        this.bindingId = 1;
+        this.store = Ext.create('Ext.ux.StoreBase', {model: 'Ext.ux.ScanModel'});
+        this.store.filter({property: 'bindingId', value: this.bindingId});
+        this.store.load();
         
         var defConfig = {
             items: [{
@@ -28,11 +24,12 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 height: 400,
                 allowBlank: true,
                 ddReorder: true,
-                store: store,
+                store: this.store,
+                displayField: 'scanId',
                 tbar: [{
                     text: 'Go back to old ordening',
                     handler: function() {
-                        _this.down('[name=scans]').bindStore(store);
+                        this.down('[name=scans]').bindStore(fields);
                     }
                 }]
             }]
@@ -41,6 +38,11 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+    }
+    ,
+    getNewOrder: function()
+    {
+        return this.down('[name=scans]').store;
     }
 });
 
@@ -59,7 +61,9 @@ Ext.define('Ext.ux.ReorderScanForm', {
             items: [{
                 xtype: 'bindinginformationfieldset'
             },{
-                xtype: 'reorderscanfieldset'
+                xtype: 'reorderscanfieldset',
+                name: 'reorder',
+                binding: this.binding
             }],
             
             submitButtonText: 'Save'
@@ -72,6 +76,27 @@ Ext.define('Ext.ux.ReorderScanForm', {
     
     submit: function()
     {
-        // TODO
+        //Put the changes into an array
+        var records=this.down('[name=reorder]').store;
+        var fields = new Array();
+        records.each(function(record)
+        {
+            var scanId=record.get('scanId');
+            var i=records.indexOf(record);
+            fields[i]=scanId;
+        });
+        
+        // Send the changes to the database
+        var onSuccess = function(data)
+        {
+            //TODO: Go to next step of the wizard
+        };
+            
+        var onFailure = function()
+        {
+            alert('Failed to change the order. Please try again.'); //Different kind of error?
+        };
+        
+        RequestManager.getInstance().request('Scan', 'reorder', fields, this, onSuccess, onFailure);
     }
 });
