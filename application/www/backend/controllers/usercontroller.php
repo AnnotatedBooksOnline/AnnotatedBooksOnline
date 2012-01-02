@@ -208,9 +208,12 @@ class UserController extends Controller
         }
      
         // Create user and pendinguser entries in a transaction.
-        $puser = Database::getInstance()->doTransaction(
+        Database::getInstance()->doTransaction(
         function() use ($values)
         {  
+            // Check whether automatic user acceptance is turned on.
+            $autoaccept = Setting::getSetting('auto-user-acceptance', true); //TODO: remove default.
+            
             // Create user entry.
             $user = new User();
             $user->setValues($values);
@@ -222,11 +225,20 @@ class UserController extends Controller
             
             // Now create a pending user.
            $puser = PendingUser::fromUser($user);
+           if($autoaccept)
+           {
+               // Automatically accept user.
+               $puser->setAccepted(true);
+           }
            $puser->save();
-           return $puser;
+           
+           if($autoaccept)
+           {
+               // If automatically accepted, send an activation e-mail.
+               // This is intentionally part of the transaction.
+               Mailer::sendActivationMail($puser);
+           }
         });
-        
-        Mailer::sendActivationMail($puser);
         
         return array('records' => $values); 
     }

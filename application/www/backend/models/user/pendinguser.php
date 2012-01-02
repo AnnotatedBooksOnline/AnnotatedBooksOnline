@@ -42,7 +42,7 @@ class PendingUser extends Entity
     
     /**
      * Constructs a new PendingUser based on an existing User. This method will also generate a 
-     * confirmation code and set a expiration date. 
+     * confirmation code and set a expiration date. Accepted will be set to NULL.
      * 
      * This new pending user can subsequently be saved to create a new database entry or update an
      * existing one.
@@ -61,7 +61,7 @@ class PendingUser extends Entity
         $values = array(
             'userId'           => $user->getUserId(),
             'confirmationCode' => Authentication::generateUniqueToken(),
-            'accepted'         => true, // TODO: null if non-automatic acceptance
+            'accepted'         => null, // Automatic acceptance should be handled by user controller.  
             'expirationDate'   => $expirationDate
         );
         
