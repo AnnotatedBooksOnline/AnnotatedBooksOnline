@@ -51,6 +51,7 @@ class BindingUploadController extends Controller
         $binding = new Binding();
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
+        $binding->setStatus(Binding::STATUS_UPLOADED);
         
         // Determine if the specified signature exists in the database already, this is not allowed.
         if (BindingSearchList::findBindings(array('signature' => $signature), null, null, null)->getFirstRow_()) {
