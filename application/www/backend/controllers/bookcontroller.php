@@ -76,7 +76,7 @@ class BookController extends Controller
             ->join('Persons pProvenanceFind', array('provenancesFind.personId = pProvenanceFind.personId'), 'LEFT')
             //->where('bindings.status = :bindingStatus')
             ->groupBy('books.bookId', 'bindings.bindingId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
-        $binds = array('bindingStatus' => Binding::STATUS_SELECTED);
+        $binds = array();//array('bindingStatus' => Binding::STATUS_SELECTED);
         $headline = "";
         $c = 0;
         
