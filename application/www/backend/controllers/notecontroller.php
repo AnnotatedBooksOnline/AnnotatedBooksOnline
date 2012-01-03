@@ -24,8 +24,21 @@ class NoteController extends Controller
         Authentication::assertLoggedOn();
         $userId = self::getInteger($data, 'id', 0);
             
-            $notes=new Note($userId);
-            return array('records' => $notes->getValues(), 'total' => 1);
+        // TODO: This is a temporary hack that checks whether a node exists before loading one and creating 
+        // one if it doesn't. This should really be handled by the entity or the existance of notes
+        // for every user should be enforced on the database level.
+        
+        $rset = Query::select()->from('Notes')->where('userId = :userId')->execute(array('userId' => $userId));
+        if($rset->getAmount() == 0)
+        {
+            // Create a row in Notes for this user.
+            Query::insert('Notes', array('userId' => ':userId'))->execute(array('userId' => $userId));
+        }
+        
+        ///////// End of hack /////////
+        
+        $notes=new Note($userId);
+        return array('records' => $notes->getValues(), 'total' => 1);
     }
     
     public function actionSave($data)

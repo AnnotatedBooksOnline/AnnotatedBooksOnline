@@ -128,17 +128,7 @@ abstract class Entity
     public function setValues($values)
     {
         foreach ($values as $name => $value)
-        {
-            // Tom: I changed this because the previous solution was more error-prone.
-            // Now you do have to manually use the setPassword function when you want to set a 
-            // password rather than a password hash, but this prevents problems with setters that
-            // have are not present or have been inconsistantly named.
-            //$this->{$name} = $value;
-            
-            // Gerben: If a setter does not exist, an error should be thrown.
-            // Setters really should be used here, as we want checking of the values.
-            // Also, they should be consistently named.
-            
+        {            
             // Get function name.
             $functionName = 'set' . ucfirst($name);
             
