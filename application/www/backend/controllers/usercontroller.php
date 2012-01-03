@@ -319,6 +319,7 @@ class UserController extends Controller
     {
         // Check whether logged on.
         Authentication::assertLoggedOn();
+        //Authentication::assertPermissionTo('delete-users');
         
         // TODO: Do a security check!
         

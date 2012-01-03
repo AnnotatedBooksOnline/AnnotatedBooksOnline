@@ -55,4 +55,11 @@ class AuthenticationController extends Controller
         
         return array('action' => 'login', 'user' => $user->getValues()); // TODO: just get the important ones..
     }
+    
+    public function actionHasPermissionTo($action)
+    {
+        return false;
+        // TODO: make entity for permission work.
+        Authentication::getInstance()->hasPermissionTo($action);
+    }
 }

@@ -80,7 +80,7 @@ Ext.define('Ext.ux.UserListPanel', {
                     emptyMsg: 'No users to display'
                 },
                 listeners: {
-                    itemdblclick: function(view, model)
+                    itemclick: function(view, model)
                     {
                         // Open user in a new tab if not clicked on 'email' or 'website'.
                         if ((model.get('dataIndex') !== 'email') && (model.get('dataIndex') !== 'website'))
