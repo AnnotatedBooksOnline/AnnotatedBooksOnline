@@ -25,11 +25,11 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 allowBlank: true,
                 ddReorder: true,
                 store: this.store,
-                displayField: 'scanId',
+                displayField: 'filename',
                 tbar: [{
                     text: 'Go back to old ordening',
                     handler: function() {
-                        this.down('[name=scans]').bindStore(fields);
+                        this.up('[name=scans]').store.sort('page', 'ASC');
                     }
                 }]
             }]
@@ -89,12 +89,20 @@ Ext.define('Ext.ux.ReorderScanForm', {
         // Send the changes to the database
         var onSuccess = function(data)
         {
-            //TODO: Go to next step of the wizard
+                Ext.Msg.show({
+                title: 'Error',
+                msg: 'The pages were succesfully reordered.',
+                buttons: Ext.Msg.OK}); 
+                this.close();
         };
-            
+        
+        //Show an error
         var onFailure = function()
         {
-            alert('Failed to change the order. Please try again.'); //Different kind of error?
+           Ext.Msg.show({
+                title: 'Error',
+                msg: 'Failed to reorder the pages. Please try again.',
+                buttons: Ext.Msg.OK}); 
         };
         
         RequestManager.getInstance().request('Scan', 'reorder', fields, this, onSuccess, onFailure);
