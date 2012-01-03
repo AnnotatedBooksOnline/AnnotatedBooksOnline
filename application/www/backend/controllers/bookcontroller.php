@@ -55,6 +55,22 @@ class BookController extends Controller
         }
     }
     
+        public function actionFirstLastPages($data)
+    {
+        $book;
+        foreach ($data as $value) 
+        {
+            $book = new Book($value[0]);
+            $book->setFirstPage($value[1]);
+            $book->setLastPage($value[2]);
+            $book->save();
+        }
+        $binding=new Binding($book->getBindingId());
+        $binding->setStatus(Binding::STATUS_SELECTED);
+        $binding->save();
+    }
+    
+    
     /**
      * Searches for books.
      */

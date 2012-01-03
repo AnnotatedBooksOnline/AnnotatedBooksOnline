@@ -14,17 +14,11 @@ Ext.define('Ext.ux.BookListFieldset', {
         // TODO: get from database.
         var bindingId = 1;
         
-        var store = Ext.create('Ext.data.Store', {
-            model: 'Ext.ux.BookModel'
-        });
-        store.filter({property: 'bindingId', value: bindingId});
-        store.load();
-        
         var defConfig = {
             items: [{
                 xtype: 'grid',
                 border: false,
-                store: store,
+                store: bookstore,
                 viewConfig: {
                     stripeRows: true
                 },
@@ -89,19 +83,15 @@ Ext.define('Ext.ux.ScanListFieldset', {
         
         // TODO: get from database.
         var bindingId = 1;
-        
-        //var store = Ext.create('Ext.data.Store', {
-        //    model: 'Ext.ux.BindingModel'
-        //});
-        
-        //store.load();
+        this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+        this.store.filter({property: 'bindingId', value: bindingId});
+        this.store.load();
         
         var defConfig = {
             items: [{
                 xtype: 'grid',
                 border: false,
-                autoScroll: true,
-                //store: store,
+                store: this.store,
                 viewConfig: {
                     stripeRows: true
                 },
@@ -110,7 +100,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
                     width:     50,
                     flex:      1,
                     sortable:  false,
-                    dataIndex: 'pageNumber'
+                    dataIndex: 'page'
                 },{
                     text:      'Filename',
                     width:     250,
@@ -122,27 +112,34 @@ Ext.define('Ext.ux.ScanListFieldset', {
                     width:     250,
                     flex:      1,
                     sortable:  false,
-                    dataIndex: 'title'
-                }]
-            }],
-            listeners: {
-                itemclick: function(view, record)
-                {
-                    var filename = record.get('filename')
-                    // TODO: give signal to button with filename.
+                    dataIndex: 'bookTitle'
+                }],
+                listeners: {
+                    itemdblclick: function(view, record)
+                    {
+                        var filename = record.get('filename');
+                        var page = record.get('page');
+                        this.up('selectbookform').updateForm(filename,page);
+                    }
                 }
-            }
+            }]
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
     }
 });
-
+    
 /*
  * Select book form class.
  */
+ 
+var i = -1;
+var book
+var bookstore;
+ 
 Ext.define('Ext.ux.SelectBookForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.selectbookform',
@@ -150,50 +147,73 @@ Ext.define('Ext.ux.SelectBookForm', {
     initComponent: function() 
     {
         var _this = this;
-        
-        // TODO: get from database
-        var bookTitle = 'A book title';
+        var bindingId=1;
+        bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
+                    bookstore.filter({property: 'bindingId', value: bindingId});
+                    bookstore.load();
         
         var defConfig = {
+            monitorValid: true,
             items: [{
                 xtype: 'bindinginformationfieldset'
             },{
-                xtype: 'booklistfieldset'
+                xtype: 'booklistfieldset',
             },{
                 xtype: 'button',
-                text: 'Select book \'' + bookTitle + '\'',
+                text: 'Start selecting the first and last pages of the currently selected book',
                 width: 140,
                 margin: '0 0 10 0',
                 handler: function()
                 {
-                    Ext.Msg.show({
-                        title: 'Select starting page',
-                        msg: 'You should now select the <b>starting</b> page of \'' 
-                            + bookTitle + '\'',
-                        buttons: Ext.Msg.OKCANCEL,
-                        callback: function()
-                            {
-                                // TODO
-                                    
-                                Ext.Msg.show({
-                                    title: 'Select ending page',
-                                    msg: 'You should now select the <b>ending</b> page of \''
-                                        + bookTitle + '\'',
-                                    buttons: Ext.Msg.OKCANCEL,
-                                    callback: function()
-                                        {
-                                            // TODO
-                                            // Disable button after last book.
-                                        }
-                                });
-                            }
-                    });
-                }
+                    var grid = this.up('selectbookform').down('booklistfieldset').down('grid');
+                    var selection = grid.getSelectionModel();
+                    
+                    if (i===-1)
+                    {
+                        bookstore.each(function(record)
+                        {
+                            record.set('firstPage',-1);
+                            record.set('lastPage',-1);
+                        });
+                        i=0;
+                    }
+                    
+                    if (selection.hasSelection()&&i!=2)
+                    {
+                        book=selection.getSelection()[0];
+                        this.disable();
+                        selection.deselectAll();
+                        grid.disable();
+                        Ext.Msg.show({
+                            title: 'Select starting page',
+                            msg: 'You should now select the <b>starting</b> page of \''
+                                + book.get('title') + '\' by double clicking',
+                            buttons: Ext.Msg.OK
+                        });
+                        i=1;
+                    }
+                    else
+                    {
+                        Ext.Msg.show({
+                            title: 'No book selected',
+                            msg: 'You should first select a book and press the button',
+                            buttons: Ext.Msg.OK});
+                    }
+                } 
             },{
                 xtype: 'scanlistfieldset'
             }],
-            
-            submitButtonText: 'Save'
+            buttons: [{
+                xtype: 'button',
+                disabled: true,
+                name: 'save',
+                text: 'Save',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
+                }
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -201,8 +221,127 @@ Ext.define('Ext.ux.SelectBookForm', {
         this.callParent();
     },
     
+    //React accordingly when a scan is double clicked
+    updateForm: function(filename,page)
+    {
+        if (i<=0)
+        {
+            Ext.Msg.show({
+                title: 'No book selected',
+                msg: 'You should first select a book.',
+                buttons: Ext.Msg.OK});
+                return;
+        }
+        if (i===1)
+        {
+            this.changeBookTitle(page, book.get('title'));
+            Ext.Msg.show({
+                title: 'Select ending page',
+                msg: 'You should now select the <b>ending</b> page of \''
+                    + book.get('title') + '\'',
+                buttons: Ext.Msg.OK});
+            book.set('firstPage', page);
+            i=2;
+            return;
+        }
+        if (i===2)
+        {
+            if (book.get('firstPage')<=page)
+            {
+                var bool = true;
+                bookstore.each(function(record)
+                {
+                    if(record.get('bookId')!=book.get('bookId')&&record.get('firstPage')<=page&&record.get('lastPage')>=page)
+                    {
+                        bool = false;
+                    }
+                });
+                if(bool)
+                {
+                    book.set('lastPage', page);
+                    var j;
+                    for(j=book.get('firstPage');j <= book.get('lastPage');j++)
+                        {
+                            this.changeBookTitle(j,book.get('title'));
+                        }
+                    this.down('button').enable();
+                    this.down('booklistfieldset').down('grid').enable();
+                    i=0;
+                    if (this.allPagesFilled())
+                    {
+                        this.down('[name=save]').enable();
+                    }
+                    return;
+                }
+                else
+                {
+                    Ext.Msg.show({
+                    title: 'Error',
+                    msg: 'Books can not overlap. Please select a different last page.',
+                    buttons: Ext.Msg.OK});
+                }
+            }
+            else
+            {
+                Ext.Msg.show({
+                title: 'Error',
+                msg: 'The last page can not precede the first page. Please select a different last page.',
+                buttons: Ext.Msg.OK});
+            }
+        }
+    },
+    
+    //True when all books have first and last pages.
+    allPagesFilled: function()
+    {
+        var result=true;
+        bookstore.each(function(record)
+        {
+            if(record.get('firstPage')<0||record.get('lastPage')<0)
+            {
+                result=false;
+            }
+        });
+        return result;
+    },
+    
+    //Change the booktitle of a scan in the scanlistField
+    changeBookTitle: function(page, booktitle)
+    {
+        this.down('scanlistfieldset').store.findRecord('page',page).set('bookTitle',booktitle);
+    },
+    
     submit: function()
     {
-        // TODO
+        //Put the changes into an array
+        var fields = new Array();
+        bookstore.each(function(record)
+        {
+            var bookId=record.get('bookId');
+            var firstPage=record.get('firstPage');
+            var lastPage=record.get('lastPage');
+            fields.push([bookId,firstPage,lastPage]);
+        });
+        
+        // Send the changes to the database
+        var onSuccess = function(data)
+        {
+                Ext.Msg.show({
+                title: 'Error',
+                msg: 'The data was succesfully added to the system.',
+                buttons: Ext.Msg.OK}); 
+                this.close();
+        };
+        
+        //Show an error
+        var onFailure = function()
+        {
+           Ext.Msg.show({
+                title: 'Error',
+                msg: 'Failed to save the first page and last page data. Please try again.',
+                buttons: Ext.Msg.OK}); 
+        };
+        
+        RequestManager.getInstance().request('Book', 'firstLastPages', fields, this, onSuccess, onFailure);
     }
 });

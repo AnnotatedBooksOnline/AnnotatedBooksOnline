@@ -3,6 +3,7 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'models/scan/scan.php';
+require_once 'models/upload/upload.php';
 require_once 'models/binding/binding.php';
 require_once 'util/authentication.php';
 
@@ -34,7 +35,10 @@ class ScanController extends Controller
             $scans = Scan::fromBinding($binding);
             $scans = array_map(function($scan)
             {
-                return $scan->getValues(true, false);
+                $upload = new Upload($scan->getUploadId());
+                $scan = $scan->getValues(true, false);
+                $scan['filename']= $upload->getFilename();
+                return $scan;
             }, $scans);
             
             return array('records' => $scans, 'total' => count($scans));
@@ -43,11 +47,16 @@ class ScanController extends Controller
     
     public function actionReorder($data)
     {
+        $scan;
         foreach ($data as $key => $value) 
         {
             $scan = new Scan($value);
             $scan->setPage($key+1);
             $scan->save();
         }
+        $binding=new Binding($scan->getBindingId());
+        $binding->setStatus(Binding::STATUS_REORDERED);
+        $binding->save();
     }
+    
 }
