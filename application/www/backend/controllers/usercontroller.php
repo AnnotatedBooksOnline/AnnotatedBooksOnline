@@ -10,6 +10,7 @@ require_once 'models/notes/note.php';
 
 // Exceptions.
 class RegistrationFailedException extends ExceptionBase { }
+class PasswordIncorrectException extends ExceptionBase { }
 
 /**
  * User controller class.
@@ -132,26 +133,46 @@ class UserController extends Controller
         $email       = self::getString($record, 'email', '', true, 255);
         $firstName   = self::getString($record, 'firstName', '', true, 50);
         $lastName    = self::getString($record, 'lastName', '', true, 50);
-        $password    = self::getString($record, 'password', '', false, 32);
+        $oldPassword = self::getString($record, 'password', '', false, 32);
+        $newPassword = self::getString($record, 'newPassword', '', false, 32);
         $affiliation = self::getString($record, 'affiliation', '', true, 50);
         $occupation  = self::getString($record, 'occupation', '', true, 50);
         $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
         $website     = self::getString($record, 'website', '', true, 255);
         
+        //Check if a new password is entered, in which case we need to check if the old password
+        //is correct.
+        if (isset($newPassword) && $newPassword != '')
+        {
+            if (!Authentication::getInstance()->checkPassword($oldPassword))
+            {
+                throw new PasswordIncorrectException('password-incorrect');
+            }
+            else
+            {
+                $password = $newPassword;
+            }
+        }
+        else
+        {
+            $password = $oldPassword;
+        }
+        
+        //As not all values
         $values = array(
             'username'    => $username,
             'email'       => $email,
             'firstName'   => $firstName,
             'lastName'    => $lastName,
-            //'password'    => $password,
+            'password'    => $password,
             'affiliation' => $affiliation,
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
             'homeAddress' => '',
-            'active'      => true, // TODO: Activation.
-            'banned'      => false,
-            'rank'        => User::RANK_DEFAULT
+            //'active'      => true, // TODO: Activation.
+            //'banned'      => false,
+            //'rank'        => User::RANK_DEFAULT
         );
         
         $user = new User($userId);

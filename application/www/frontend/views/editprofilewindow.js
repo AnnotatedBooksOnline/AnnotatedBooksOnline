@@ -181,33 +181,20 @@ Ext.define('Ext.ux.EditProfileForm', {
         var form = this.getForm();
         if (form.isValid())
         {
-            /*Authentication.getInstance().checkPassword(form.down('[name=password]'), this,
+            this.saveModel(this,
                 function()
-                {*/
-                    this.saveModel(this,
-                        function()
-                        {
-                            // Fire model changed event.
-                            Authentication.getInstance().modelChanged();
-                            
-                            // Close window above us, if any.
-                            var window = this.up('window');
-                            if (window)
-                            {
-                                window.close();
-                            }
-                        });
-                /*},
-                function(code, message, trace)
                 {
-                    // Show an error.
-                    Ext.Msg.show({
-                        title: 'Wrong current password.',
-                        msg: message, //'Combination of username and password could not be found.',
-                        icon: Ext.Msg.ERROR,
-                        buttons: Ext.Msg.OK
-                    });
-                });*/
+                    // Fire model changed event.
+                    Authentication.getInstance().modelChanged();
+                    
+                    // Close window above us, if any.
+                    var window = this.up('window');
+                    if (window)
+                    {
+                        window.close();
+                    }
+                }
+            );
         }
     }
 });

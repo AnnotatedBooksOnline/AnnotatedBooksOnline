@@ -27,14 +27,6 @@ class AuthenticationController extends Controller
         Authentication::getInstance()->logout();
     }
     
-    public function actionCheckPassword($data)
-    {
-        // Get field.
-        $password = self::getString($data, 'password', '', false, 32);
-        
-        return Authentication::getInstance()->checkPassword($password);
-    }
-    
     public function actionKeepAlive($data)
     {
         // Get a authentication instance.
