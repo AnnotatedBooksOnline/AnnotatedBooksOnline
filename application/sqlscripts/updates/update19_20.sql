@@ -8,7 +8,7 @@ ALTER TABLE "Annotations" ALTER COLUMN "scanId" SET NOT NULL;
 
 -- Enforce strictness of the bindingId in scans, drop bookId.
 ALTER TABLE "Scans" DROP CONSTRAINT "Scans_check";
-ALTER TABLE "Scans" DROP CONSTRAINT "Scans_check1";
+-- ALTER TABLE "Scans" DROP CONSTRAINT "Scans_check1";
 ALTER TABLE "Scans" ADD FOREIGN KEY ("bindingId") REFERENCES "Bindings" ("bindingId") ON UPDATE NO ACTION ON DELETE NO ACTION;
 ALTER TABLE "Scans" ADD CONSTRAINT "Scans_check" CHECK (status <> 0 OR "bindingId" IS NOT NULL AND page IS NOT NULL AND width IS NOT NULL AND height IS NOT NULL AND "zoomLevel" IS NOT NULL);
 
