@@ -88,8 +88,8 @@ abstract class Entity
     }    
     
     /**
-    *
-    */
+     *
+     */
     public function saveWithDetails()
     {
         $this->save();

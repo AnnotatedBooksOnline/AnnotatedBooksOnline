@@ -30,10 +30,10 @@ abstract class AssociativeEntity extends Entity
         $values = $this->getValues();
         
         // First do a selection to check whether entry exists (unfortunately PostgreSQL does 
-        // not directly support INSERT OR UPDATE). 
+        // not directly support 'INSERT OR UPDATE' syntax). 
         $result = $this->getSelectQuery()->execute($this->getPrimaryKeyValues());
         
-        if($result->getAmount() == 0)
+        if ($result->getAmount() == 0)
         {
             // Entry does not exist, do an insertion.
             $this->getInsertQuery(false)->execute($values, $types);
@@ -45,4 +45,3 @@ abstract class AssociativeEntity extends Entity
         }
     }
 }
-

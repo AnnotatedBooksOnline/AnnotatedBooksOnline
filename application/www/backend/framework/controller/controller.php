@@ -6,7 +6,7 @@ require_once('framework/util/configuration.php');
 require_once('framework/util/translator.php');
 require_once('framework/util/log.php');
 
-// Exceptions
+// Exceptions.
 class ControllerException extends ExceptionBase { }
 
 /**

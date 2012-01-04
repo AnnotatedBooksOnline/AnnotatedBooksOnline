@@ -198,6 +198,8 @@ class BindingUploadController extends Controller
      */
     private function identifyScan($scan, $upload) 
     {
+        // TODO: Get rid of this, check the extension or first bytes (better).
+        
         
         // Get an identification of the image using imagick.
         $scanUploadImage = new Imagick($upload->getFileLocation());
@@ -208,12 +210,12 @@ class BindingUploadController extends Controller
                              $scanUploadImageIdentification['geometry']['height']);
                 
         // Determine if the upload is a JPEG file.
-        if (strpos($scanUploadImageIdentification['format'], "JPEG") !== false) 
+        if (strpos($scanUploadImageIdentification['format'], "JPEG") !== false)
         {
             $scan->setScanType(Scan::TYPE_JPEG);
         } 
         // Determine if the upload is a GIF file.
-        else if (strpos($scanUploadImageIdentification['format'], "TIFF") !== false) 
+        else if (strpos($scanUploadImageIdentification['format'], "TIFF") !== false)
         {
             $scan->setScanType(Scan::TYPE_TIFF);
         } 
