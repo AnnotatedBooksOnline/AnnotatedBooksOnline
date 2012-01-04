@@ -293,7 +293,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var pageNumber = 0;
                 if (data.length > 1)
                 {
-                    pageNumber = data[1] - 1;
+                    pageNumber = parseInt(data[1] - 1);
                 }
                 
                 // Fetch binding.

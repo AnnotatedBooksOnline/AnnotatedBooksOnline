@@ -252,7 +252,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.tool            = 'drag';
         
         // Set page number.
-        if (this.pageNumber === undefined)
+        if (!this.pageNumber)
         {
             this.pageNumber = 0;
         }

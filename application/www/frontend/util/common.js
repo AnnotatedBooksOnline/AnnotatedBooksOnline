@@ -88,7 +88,7 @@ function rotateBoundingBox(aabb, angle)
     return {topLeft: topLeft, bottomRight: bottomRight};
 }
 
-// Clones a point.
+// Clones a bounding box.
 function cloneBoundingBox(aabb)
 {
     var retval = {
@@ -97,6 +97,13 @@ function cloneBoundingBox(aabb)
     };
     
     return retval;
+}
+
+// Checks whether bounding box intersects another bounding box.
+function boundingBoxesIntersect(first, second)
+{
+    return (first.topLeft.x < second.bottomRight.x) && (first.bottomRight.x >= second.topLeft.x) &&
+           (first.topLeft.y < second.bottomRight.y) && (first.bottomRight.y >= second.topLeft.y);
 }
 
 // Escapes a string for displaying.

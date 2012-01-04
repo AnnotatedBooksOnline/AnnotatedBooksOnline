@@ -55,7 +55,27 @@ PolygonOverlay.prototype.update = function(position, zoomLevel, rotation, area)
     
     for (var i = this.polygons.length - 1; i >= 0; --i)
     {
-        this.polygons[i].update(position, this.zoomFactor, rotation);
+        var polygon = this.polygons[i];
+        
+        // Determine if visible.
+        var visible = boundingBoxesIntersect(polygon.getBoundingBox(), area); // TODO: Create submethod.
+        if (visible !== polygon.isVisible())
+        {
+            if (visible)
+            {
+                polygon.show();
+            }
+            else
+            {
+                polygon.hide();
+            }
+        }
+        
+        // Update polygon.
+        if (visible)
+        {
+            polygon.update(position, this.zoomFactor, rotation);
+        }
     }
 }
 

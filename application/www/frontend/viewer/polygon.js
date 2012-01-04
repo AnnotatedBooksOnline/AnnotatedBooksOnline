@@ -19,6 +19,11 @@ function Polygon()
 Polygon.prototype.overlay;
 
 Polygon.prototype.mode;
+Polygon.prototype.id;
+
+Polygon.prototype.visible;
+Polygon.prototype.contentVisible;
+Polygon.prototype.cornersVisible;
 
 Polygon.prototype.highlightColor;
 Polygon.prototype.highlighted;
@@ -49,6 +54,10 @@ Polygon.prototype.constructor = function(overlay, vertices)
     this.mode     = 'view';
     this.id       = Ext.id();
     
+    this.visible        = true;
+    this.contentVisible = true;
+    this.cornersVisible = false;
+    
     this.highlightColor = '#0000FF';
     this.highlighted    = 0;
     
@@ -58,9 +67,22 @@ Polygon.prototype.constructor = function(overlay, vertices)
 
 Polygon.prototype.update = function(position, scale, rotation)
 {
+    // Skip update if not visible.
+    if (!this.visible)
+    {
+        return;
+    }
+    
+    // Update content.
     if (this.mode !== 'create')
     {
-        this.content.show();
+        if (!this.contentVisible)
+        {
+            this.content.show();
+            
+            this.contentVisible = true;
+        }
+        
         this.content.setAttributes({
             translate: {
                 x: -position.x * scale,
@@ -79,11 +101,14 @@ Polygon.prototype.update = function(position, scale, rotation)
             }
         }, true);
     }
-    else
+    else if (this.contentVisible)
     {
         this.content.hide(true);
+        
+        this.contentVisible = false;
     }
     
+    // Update lines.
     this.lines.setAttributes({
         translate: {
             x: -position.x * scale,
@@ -103,11 +128,16 @@ Polygon.prototype.update = function(position, scale, rotation)
         "stroke-width": Polygon.lineThickness / scale // TODO: Not for IE6/7/8?
     }, true);
     
+    // Update corners.
     if (this.mode !== 'view')
     {
         for (var i = this.corners.length - 1; i >= 0; --i)
         {
-            this.corners[i].show();
+            if (!this.cornersVisible)
+            {
+                this.corners[i].show();
+            }
+            
             this.corners[i].setAttributes({
                 translate: {
                     x: -position.x * scale,
@@ -126,14 +156,18 @@ Polygon.prototype.update = function(position, scale, rotation)
                 },
                 radius: Polygon.vertexRadius / scale
             }, true);
+            
+            this.cornersVisible = true;
         }
     }
-    else
+    else if (this.cornersVisible)
     {
         for (var i = this.corners.length - 1; i >= 0; --i)
         {
             this.corners[i].hide(true);
         }
+        
+        this.cornersVisible = false;
     }
 }
 
@@ -169,7 +203,7 @@ Polygon.prototype.moveVertex = function(vertex, position)
     // Set new path.
     var path = Polygon.calculatePath(this.vertices, this.mode !== 'create');
     
-    this.content.setAttributes({path: path}, true);
+    this.content.setAttributes({path: path}, this.contentVisible);
     this.lines.setAttributes({path: path}, true);
     
     // Set new corner position.
@@ -177,7 +211,7 @@ Polygon.prototype.moveVertex = function(vertex, position)
     {
         if (this.vertices[i] === vertex)
         {
-            this.corners[i].setAttributes({x: position.x, y: position.y}, true);
+            this.corners[i].setAttributes({x: position.x, y: position.y}, this.cornersVisible);
             
             return;
         }
@@ -213,7 +247,7 @@ Polygon.prototype.setMode = function(mode)
     // Set new path.
     var path = Polygon.calculatePath(this.vertices, this.mode !== 'create');
     
-    this.content.setAttributes({path: path}, true);
+    this.content.setAttributes({path: path}, this.contentVisible);
     this.lines.setAttributes({path: path}, true);
 }
 
@@ -270,6 +304,67 @@ Polygon.prototype.unhighlight = function()
             opacity: 0
         }, true);
     }
+}
+
+Polygon.prototype.show = function()
+{
+    if (this.visible)
+    {
+        return;
+    }
+    
+    this.visible = true;
+    
+    // Show lines.
+    this.lines.show(true);
+    
+    // Show content if visible.
+    if (this.contentVisible)
+    {
+        this.content.show(true);
+    }
+    
+    // Show corners if visible.
+    if (this.cornersVisible)
+    {
+        for (var i = this.corners.length - 1; i >= 0; --i)
+        {
+            this.corners[i].show(true);
+        }
+    }
+}
+
+Polygon.prototype.hide = function()
+{
+    if (!this.visible)
+    {
+        return;
+    }
+    
+    this.visible = false;
+    
+    // Hide lines.
+    this.lines.hide(true);
+    
+    // Hide content if visible.
+    if (this.contentVisible)
+    {
+        this.content.hide(true);
+    }
+    
+    // Hide corners if visible.
+    if (this.cornersVisible)
+    {
+        for (var i = this.corners.length - 1; i >= 0; --i)
+        {
+            this.corners[i].hide(true);
+        }
+    }
+}
+
+Polygon.prototype.isVisible = function()
+{
+    return this.visible;
 }
 
 Polygon.prototype.destroy = function()
