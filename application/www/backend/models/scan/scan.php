@@ -29,6 +29,7 @@ class Scan extends Entity
     protected $width;
     protected $height;
     protected $zoomLevel;
+    protected $filename;
     protected $uploadId;
     protected $bindingId;
 

@@ -17,6 +17,9 @@ class PendingUser extends Entity
     /** Confirmation code. */
     protected $confirmationCode;
     
+    /** Whether the pending user has been accepted or declined by an administator. Null if still waiting.*/
+    protected $accepted;
+    
     /**
      * The date of when this pending user will expire. Will be a timestamp.
      */
@@ -39,7 +42,7 @@ class PendingUser extends Entity
     
     /**
      * Constructs a new PendingUser based on an existing User. This method will also generate a 
-     * confirmation code and set a expiration date. 
+     * confirmation code and set a expiration date. Accepted will be set to NULL.
      * 
      * This new pending user can subsequently be saved to create a new database entry or update an
      * existing one.
@@ -58,7 +61,8 @@ class PendingUser extends Entity
         $values = array(
             'userId'           => $user->getUserId(),
             'confirmationCode' => Authentication::generateUniqueToken(),
-            'expirationDate'   => $expirationDate,
+            'accepted'         => null, // Automatic acceptance should be handled by user controller.  
+            'expirationDate'   => $expirationDate
         );
         
         $result->setValues($values);
@@ -87,7 +91,7 @@ class PendingUser extends Entity
      */
     protected function getColumns()
     {
-        return array('userId', 'confirmationCode', 'expirationDate');
+        return array('userId', 'confirmationCode', 'accepted', 'expirationDate');
     }
     
     /**
@@ -101,7 +105,8 @@ class PendingUser extends Entity
             'pendingUserId'    => 'int',
             'userId'           => 'int',
             'confirmationCode' => 'string',
-            'expirationDate'   => 'date',
+            'accepted'         => 'bool', 
+            'expirationDate'   => 'date'
         );
     }
     
@@ -116,6 +121,9 @@ class PendingUser extends Entity
     
     public function getConfirmationCode()      { return $this->confirmationCode;  }
     public function setConfirmationCode($code) { $this->confirmationCode = $code; }
+    
+    public function getAccepted()          { return $this->accepted;      }
+    public function setAccepted($accepted) { $this->accepted = $accepted; }
     
     public function getExpirationDate()      { return $this->expirationDate;  }
     public function setExpirationDate($date) { $this->expirationDate = $date; }

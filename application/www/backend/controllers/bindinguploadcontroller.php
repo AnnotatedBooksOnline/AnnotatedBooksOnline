@@ -7,6 +7,7 @@ require_once 'models/upload/upload.php';
 require_once 'models/book/book.php';
 require_once 'models/book/booklist.php';
 require_once 'models/binding/binding.php';
+require_once 'models/binding/bindingsearchlist.php';
 require_once 'models/library/librarysearchlist.php';
 require_once 'models/person/person.php';
 require_once 'models/person/personsearchlist.php';
@@ -29,7 +30,8 @@ class BindingUploadController extends Controller
         // TODO: exceptions
         
         // Assert that the user is authenticated. 
-        Authentication::assertLoggedOn();     
+        Authentication::assertLoggedOn();
+        //Authentication::assertPermissionTo('upload-bindings');  
         
         // Retrieve contents of record.
         $inputScans = self::getArray($data, 'scans');
@@ -39,16 +41,23 @@ class BindingUploadController extends Controller
         // Find the name of the library the binding belongs to.
         $libraryName = $inputBinding['library'];
         $provenancePersonName = $inputBinding['provenance'];
-            
+        $signature = self::getString($inputBinding, 'signature');
+        
         ////////////////////////////////////////////////////////////////////////////////////
         // Create the binding
         ////////////////////////////////////////////////////////////////////////////////////
             
         // Create the binding and fill its attributes with the information from the request.
         $binding = new Binding();
-        $binding->setSignature(self::getString($inputBinding, 'signature'));
         $binding->setSummary(self::getString($inputBinding, 'summary'));
-            
+        $binding->setSignature($signature);
+        $binding->setStatus(Binding::STATUS_UPLOADED);
+        
+        // Determine if the specified signature exists in the database already, this is not allowed.
+        if (BindingSearchList::findBindings(array('signature' => $signature), null, null, null)->getFirstRow_()) {
+            throw new ControllerException('duplicate-binding');
+        }
+        
         // Find the specified library in the database.
         $existingLibrary = LibrarySearchList::findLibraries(array('libraryName' => $libraryName), null, null, null)->getFirstRow_();
             
@@ -117,7 +126,9 @@ class BindingUploadController extends Controller
             $book->setPlacePublished(self::getString($inputBook, 'placePublished'));
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getInteger($inputBook, 'printVersion'));
-                
+            $book->setFirstPage(self::getInteger($inputBook, 'firstPage'));
+            $book->setLastPage(self::getInteger($inputBook, 'lastPage'));
+                        
             // Find the book author
             /*
             $bookAuthor = self::getString($inputBook, 'placePublished');
@@ -150,7 +161,7 @@ class BindingUploadController extends Controller
             
         // Store a list of processed uploads for deletion later.
         $processedUploads = array();
-        $pageNumber = 0;
+        $pageNumber = 1;
         
         // Create scans.
         foreach($inputScans as $inputScan)
@@ -173,7 +184,6 @@ class BindingUploadController extends Controller
             $scan->setStatus(Scan::STATUS_PENDING);
             $scan->setPage($pageNumber++);
             $scan->setUploadId($upload->getUploadId());
-            $scan->setZoomLevel(0);
             
             // Identify the scan.
             $this->identifyScan($scan, $upload);
@@ -198,24 +208,19 @@ class BindingUploadController extends Controller
      */
     private function identifyScan($scan, $upload) 
     {
-        // TODO: Get rid of this, check the extension or first bytes (better).
+        // Identify the image.
+        $scanUploadImageIdentification = getimagesize($upload->getFileLocation());
+        if (!$scanUploadImageIdentification)
+        {
+            throw new ControllerException('unsupported-file-type');
+        }
         
-        
-        // Get an identification of the image using imagick.
-        $scanUploadImage = new Imagick($upload->getFileLocation());
-        $scanUploadImageIdentification = $scanUploadImage->identifyimage();
-
-        // Set image dimensions.
-        $scan->setDimensions($scanUploadImageIdentification['geometry']['width'],
-                             $scanUploadImageIdentification['geometry']['height']);
-                
-        // Determine if the upload is a JPEG file.
-        if (strpos($scanUploadImageIdentification['format'], "JPEG") !== false)
+        // Determine file type.
+        if ($scanUploadImageIdentification[2] == IMAGETYPE_JPEG) 
         {
             $scan->setScanType(Scan::TYPE_JPEG);
         } 
-        // Determine if the upload is a GIF file.
-        else if (strpos($scanUploadImageIdentification['format'], "TIFF") !== false)
+        else if ($scanUploadImageIdentification[2] == IMAGETYPE_TIFF_II) 
         {
             $scan->setScanType(Scan::TYPE_TIFF);
         } 
@@ -223,5 +228,28 @@ class BindingUploadController extends Controller
         {
             throw new ControllerException('unsupported-file-type');
         }
+        
+        // Determine the number of zoom levels for this image.
+        $maxX = ($scanUploadImageIdentification[0] - 1) / 256 + 1;
+        $maxY = ($scanUploadImageIdentification[1] - 1) / 256 + 1;
+        $numZoomLevels = 1;
+        $maxPowerTwo = 2;
+        
+        while ($maxPowerTwo < max($maxX, $maxY)) 
+        {
+            $maxPowerTwo *= 2;
+        }
+        while ($maxPowerTwo > 1) 
+        {
+            $maxPowerTwo /= 2;
+            $numZoomLevels++;
+        }
+        
+        $scan->setZoomLevel($numZoomLevels);
+        
+        // Determine image dimensions.
+        $minification = pow(2, ($numZoomLevels - 1));
+        $scan->setDimensions(ceil($scanUploadImageIdentification[0] / $minification),
+                             ceil($scanUploadImageIdentification[1] / $minification));
     }
 }

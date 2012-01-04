@@ -151,15 +151,6 @@ Ext.define('Ext.ux.ViewerPanel', {
                 listeners: {
                     click: function() { Ext.ux.ViewerPanel.showSettingsWindow(); }
                 }
-            }, '-', {
-                iconCls: 'save-icon',
-                tooltip: 'Save this page as PDF',
-                listeners: {
-                    click: function()
-                    {
-                        _this.exportPdf();
-                    }
-                }
             }, '->', {
                 iconCls: 'drag-icon',
                 tooltip: 'Drag',
@@ -294,6 +285,14 @@ Ext.define('Ext.ux.ViewerPanel', {
                 cls: 'navigation-panel',
                 collapsed: false,
                 book: this.binding // TODO: Binding.
+             },{
+                xtype: 'referencespanel',
+                title: 'References',
+                cls: 'references-panel',
+                collapsed: false,
+                binding: this.binding.getModel(),
+                page: this.pageNumber,
+                viewer: this
             }],
             
             viewer: this
@@ -358,6 +357,24 @@ Ext.define('Ext.ux.ViewerPanel', {
         return this.pageNumber;
     },
     
+    getBook: function()
+    {
+        var currentBook;
+        var page=this.pageNumber+1
+        this.binding.getModel().books().each(
+            function(book)
+            {
+                var fp=book.get('firstPage');
+                var lp=book.get('lastPage');
+                if (fp <= page && page <= lp)
+                {
+                    currentBook=book;
+                    return false;
+                }
+            });
+        return currentBook;
+    },
+    
     getScanId: function()
     {
         return this.binding.getScanId(this.pageNumber);
@@ -366,24 +383,6 @@ Ext.define('Ext.ux.ViewerPanel', {
     getPageAmount: function()
     {
         return this.binding.getScanAmount();
-    },
-    
-    exportPdf: function()
-    {
-        // Get scan id.
-        var scanId = this.getScanId();
-        
-        RequestManager.getInstance().request(
-            'Pdf',
-            'generate',
-            {scan: scanId},
-            this,
-            function(data)
-            {
-                // Download just generated file.
-                window.location = '?controller=Pdf&action=download&scan=' + scanId;
-            }
-        );
     },
     
     // Resets viewport.
@@ -458,3 +457,4 @@ Ext.define('Ext.ux.ViewerPanel', {
         }
     }
 });
+

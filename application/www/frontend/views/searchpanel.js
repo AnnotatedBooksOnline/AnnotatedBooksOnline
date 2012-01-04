@@ -366,16 +366,10 @@ Ext.define('Ext.ux.SearchResultsView', {
                 itemclick: function(view, record)
                 {
                     // Open book in a new tab.
-                    var id = record.get('id');
-                    Ext.ux.BookModel.load(id, {
-                        success: function(model)
-                        {
-                            var pageNumber = model.get('firstPage');
-                            var bindingId  = model.get('bindingId');
-                            Application.getInstance().gotoTab('binding',
-                                (pageNumber === null ? [bindingId] : [bindingId, pageNumber]), true);
-                        }
-                    });
+                    var pageNumber = record.get('firstPage');
+                    var bindingId  = record.get('bindingId');
+                    Application.getInstance().gotoTab('binding',
+                        (pageNumber == null ? [bindingId] : [bindingId, pageNumber]), true);
                 }
             }
         };
@@ -723,14 +717,24 @@ Ext.define('Ext.ux.SearchPanel', {
                         }
                     }
                     
+                    var me = this.up('panel');
+                    me.setLoading(true);
+                    
                     // Request book results.
                     var onSuccess = function(data)
                     {
                         // Set resulting data on search results panel.
                         this.down('searchresultspanel').setData(data);
+                        me.setLoading(false);
                     };
                     
-                    RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess);
+                    var onFailure = function()
+                    {
+                        me.setLoading(false);
+                        return true;
+                    }
+                    
+                    RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess, onFailure);
                 }
             },{
                 xtype: 'searchresultspanel'
@@ -836,6 +840,16 @@ Ext.define('Ext.ux.SearchPanel', {
                     cols[cols.length] = {
                         desc: 'Identifier',
                         name: 'id',
+                        show: false
+                    };
+                    cols[cols.length] = {
+                        desc: 'Binding',
+                        name: 'bindingId',
+                        show: false
+                    };
+                    cols[cols.length] = {
+                        desc: 'First page',
+                        name: 'firstPage',
                         show: false
                     };
                     return cols;

@@ -28,6 +28,7 @@ class Note extends Entity
         {
             //$this->noteId= &id;
             $this->userId = $id;
+            
             $this->load();
         }
     }

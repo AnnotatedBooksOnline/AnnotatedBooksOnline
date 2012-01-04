@@ -10,6 +10,11 @@ require_once 'models/library/library.php';
  */
 class Binding extends Entity
 {
+    /** Binding status constants. */
+    const STATUS_UPLOADED = 0,
+          STATUS_REORDERED = 1,
+          STATUS_SELECTED = 2;
+    
     
     /** Id of this binding. */
     protected $bindingId;
@@ -21,11 +26,13 @@ class Binding extends Entity
     protected $summary;
     
     /** Library */
-    protected $library;
+    protected $libraryId;
+    
+    /** Binding status */
+    protected $status;
+    
     
     /** Books for this binding. */
-    // TODO: Tom: waar is dit voor?
-    // TODO: Mathijs: Om de boeken bij de binding in te stoppen.
     protected $bookList;
     
     /** List of all scans for this book. */
@@ -77,7 +84,7 @@ class Binding extends Entity
      */
     protected function getColumns()
     {
-        return array('libraryId', 'signature', 'summary');
+        return array('libraryId', 'signature', 'summary', 'status');
     }
     
     /**
@@ -91,7 +98,8 @@ class Binding extends Entity
                     'bindingId'        => 'int',
                     'libraryId'        => 'int',
                     'signature'        => 'string',
-                    'summary'          => 'string'
+                    'summary'          => 'string',
+                    'status'           => 'int'
         );
     }
     
@@ -128,5 +136,7 @@ class Binding extends Entity
     public function getScanList() { return $this->scanList; }
     public function setScanList($scanList) { $this->scanList = $scanList; }
 
+    public function getStatus()        { return $this->status;    }
+    public function setStatus($status) { $this->status = $status; }
 }
 

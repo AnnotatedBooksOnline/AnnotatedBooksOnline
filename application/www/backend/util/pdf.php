@@ -26,12 +26,15 @@ class Pdf
     private $identifier;
     private $path;
     private $dpi = 250;
-    private $textMargins = 72;
+    private $textMarginL = 72;
+    private $textMarginT = 72;
+    private $textMarginR = 72;
+    private $textMarginB = 72;
     private $fontSize = 12;
     private $lineSpread = 2;
     private $productName = 'Collaboratory';
     private $productLogo = 'util/logo.jpg';
-    private $productUrl = 'http://sp.urandom.nl/devtest/';
+    private $productUrl;
     
     private $pageWidth;
     private $pageHeight;
@@ -65,9 +68,13 @@ class Pdf
     private $headerContinued = false;
     private $pageHasText = false;
     
-    private $book;
-    private $binding;
+    private $countPages = false;
+    private $pageCountNum = 0;
+    private $pageCountState;
+    
     private $outputEntry = null;
+    
+    private $permanentLink;
 
     /**
      * Creates a new PDF based on the given scan. When possible, the resolution
@@ -79,8 +86,9 @@ class Pdf
      *    - height: the height in points (1/72 inch)
      * print: whether to insert JavaScript to trigger printing on open
      */
-    public function __construct($scan, $cacheEntry, $dimensions = null, $print = false)
+    public function __construct($binding, $cacheEntry, $range = null, $transcriptions = false, $annotations = false)
     {
+        $this->productUrl = $this->pageUrl();
         $this->identifier = uniqid('pdf', true);
         $this->outputEntry = $cacheEntry;
         $this->outputEntry->clear();
@@ -88,45 +96,81 @@ class Pdf
         // Use a safe maximal buffer size, knowing that the Cache will double the memory usage.
         $this->maxBufferSize = $this->iniToBytes('memory_limit') / 4;
         
-        $this->path = Configuration::getInstance()->getString('tile-output-path', '../tiles/tile');
+        $this->path = Configuration::getInstance()->getString('install-base', '../');
+        $this->path .= Configuration::getInstance()->getString('tile-output-path', '/tiles');
         
-        $this->autoPrint = $print;
-        
-        
-        // TODO
-        $this->binding = new Binding($scan->getBindingId());
-        $books = Book::fromBinding($this->binding);
-        $this->book = $books[0];
-        $this->authors = implode(', ', array_map(function($author)
-        {
-            $person = new Person($author->getPersonId());
-            return $person->getName();
-        }, Author::fromBook($this->book)));
-        
-        if ($dimensions !== null &&
-            is_array($dimensions) &&
-            isset($dimensions['width']) &&
-            isset($dimensions['height']))
-        {
-            $this->setPageSize($dimensions['width'], $dimensions['height']);
-        }
-        else
-        {
-            $this->setPageSize(595, 842);
-        }
+        $this->autoPrint = false;
+        $this->setPageSize(595, 842);
         
         // Load the default font.
         $this->addFont('DejaVuSans', 'dejavusans.php');
         $this->font = 'DejaVuSans';
         
-        $this->createSingleScan($scan, true, true);
-        //$this->createBook($this->book, true, true);
+        if ($range !== null && !is_array($range))
+        {
+            $scan = Scan::fromBindingPage($binding, $range);
+            $book = Book::fromBindingPage($binding, $range);
+            $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scan[0]->getPage();
+            $this->createSingleScan($scan[0], isset($book[0]) ? $book[0] : null, $binding, $transcriptions, $annotations);
+        }
+        else
+        {
+            if ($range === null)
+            {
+                $scans = Scan::fromBinding($binding);
+                $books = Book::fromBinding($binding);
+                $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId();
+            }
+            else
+            {
+                $scans = Scan::fromBindingPage($binding, $range);
+                $books = Book::fromBindingPage($binding, $range);
+                $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scans[0]->getPage();
+            }
+            $this->createMultiple($scans, $books, $binding, $transcriptions, $annotations, $range !== null);
+        }
+    }
+    
+    private function pageUrl()
+    {
+        $url = 'http';
+        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off")
+        {
+            $url .= "s";
+        }
+        $url .= "://";
+        $url .= $_SERVER["SERVER_NAME"];
+        if ($_SERVER["SERVER_PORT"] != "80")
+        {
+            $url .= ":".$_SERVER["SERVER_PORT"];
+        }
+        $url .= $_SERVER["REQUEST_URI"];
+        $url = parse_url($url);
+        unset($url['query']);
+        unset($url['fragment']);
+        $url = $url['scheme'] . '://' . $url['host'] . $url['path'];
+        return $url;
     }
     
     private function setHeaderText($text = '')
     {
         $this->headerText = $text;
         $this->headerContinued = false;
+    }
+    
+    private function getAuthorNames($book)
+    {
+        $authors = implode(', ', array_map(function($author)
+        {
+            $person = new Person($author->getPersonId());
+            return $person->getName();
+        }, Author::fromBook($book)));
+        
+        if ($authors == '')
+        {
+            $authors = "Unknown author";
+        }
+        return $authors;
     }
     
     private function iniToBytes($config)
@@ -145,66 +189,146 @@ class Pdf
     }
 
     /**
-     * Creates the PDF file bases on the book.
+     * Creates the PDF file based on (a subset of) a binding.
      */
-    private function createBook($book, $transcriptions = false, $annotations = false)
+    private function createMultiple($scans, $books, $binding, $transcriptions = false, $annotations = false, $subset = false)
     {
+        /*
+        $this->startCountPages();
         $this->setFontSize(18);
-        $this->drawText($this->book->getTitle());
-        $this->y -= 20;
-        
-        $minYear = $this->book->getMinYear();
-        $maxYear = $this->book->getMaxYear();
-        $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
-        
-        $this->setFontSize(14);
-        $this->drawText($this->authors . ', ' . $year);
-        $this->y -= 40;
-        
-        $this->setFontSize(12);
-        if ($this->book->getPlacePublished() != null)
+        $this->drawText('Index' . "\n\n");
+        for ($i = 0; $i < 20; $i++)
         {
-            $this->drawText($this->book->getPlacePublished());
+            $this->setFontSize(14);
+            $this->drawText('Book');
+            $this->setFontSize(12);
+            $this->drawText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean varius dictum nulla et interdum. Sed ut odio non arcu elementum hendrerit et quis justo. Sed id sem velit. Phasellus semper auctor justo, sit amet tempor lectus ultricies at. Fusce et mauris lorem. Nunc erat lorem, cursus sodales dictum sed, gravida sed enim. Sed sed lorem condimentum ligula sollicitudin pharetra quis vel metus. Quisque a dolor at neque auctor varius quis non odio. ' . "\n");
         }
-        if ($this->book->getPublisher() != null)
+        $indexPages = $this->stopCountPages();
+        $this->drawText((string)$indexPages);*/
+        
+        if (count($books) == 1)
         {
-            $this->drawText($this->book->getPublisher());
+            $this->setFontSize(18);
+            $this->drawText($books[0]->getTitle());
+            $this->y -= 20;
+            
+            $minYear = $books[0]->getMinYear();
+            $maxYear = $books[0]->getMaxYear();
+            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
+            
+            $this->setFontSize(14);
+            $this->drawText($this->getAuthorNames($books[0]) . ', ' . $year);
+            $this->y -= 40;
+            
+            $this->setFontSize(12);
+            if ($books[0]->getPlacePublished() != null)
+            {
+                $this->drawText($books[0]->getPlacePublished());
+            }
+            if ($books[0]->getPublisher() != null)
+            {
+                $this->drawText($books[0]->getPublisher());
+            }
         }
-        $library = new Library($this->binding->getLibraryId());
-        $this->drawText($library->getLibraryName() . ', ' . $this->binding->getSignature());
+        else
+        {
+            $this->setFontSize(18);
+            foreach ($books as $book)
+            {
+                $this->drawText($book->getTitle());
+                $this->y -= 10;
+            }
+            $this->setFontSize(12);
+            $this->y -= 40;
+        }
+        $library = new Library($binding->getLibraryId());
+        $this->drawText($library->getLibraryName() . ', ' . $binding->getSignature());
         $this->y -= 20;
         
         $this->drawText('Generated on ' . date('l, d M Y H:i:s T'));
-        $this->addLink($this->drawText($this->productUrl . '#book-' . $book->getBookId()), $this->productUrl . '#book-' . $book->getBookId());
+        $this->addLink($this->drawText($this->permanentLink), $this->permanentLink);
         
+        $this->y -= 20;
         if ($transcriptions !== false)
         {
-            $this->y -= 20;
             $this->drawText('With transcriptions');
         }
+        if ($subset !== false)
+        {
+            $this->drawText('Pages ' . $scans[0]->getPage() . ' – ' . $scans[count($scans)-1]->getPage());
+        }
         
-        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMargins, $this->textMargins, 0.5, 0.5);
+        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.5, 0.5);
         $this->x = $x + 15;
         $this->y = $y;
         $this->drawText($this->productName);
         
         $this->writePage();
         
-        $scans = Scan::fromBook($book);
+        $indexStart = count($this->pages);
+        if (count($books) > 1)
+        {
+            $this->startCountPages();
+            $this->setFontSize(18);
+            $this->drawText("Index\n");
+            foreach ($books as $book)
+            {
+                $this->textMarginR -= 30;
+                $this->setFontSize(14);
+                list(, $bottom) = $this->drawText($book->getTitle());
+                $this->textMarginR += 30;
+                $this->y -= 2;
+                
+                $minYear = $book->getMinYear();
+                $maxYear = $book->getMaxYear();
+                $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
+                
+                $this->setFontSize(12);
+                $this->textMarginL += 18;
+                $this->x = $this->textMarginL;
+                $this->drawText($this->getAuthorNames($book));
+                $this->drawText($year);
+                if ($book->getPlacePublished() != null)
+                {
+                    $this->drawText($book->getPlacePublished());
+                }
+                if ($book->getPublisher() != null)
+                {
+                    $this->drawText($book->getPublisher());
+                }
+                $this->y -= 20;
+                $this->textMarginL -= 18;
+                $this->x = $this->textMarginL;
+            }
+            $indexPages = $this->stopCountPages();
+        }
+        
+        $first = true;
         foreach($scans as $scan)
         {
+            // Add bookmarks for the index.
+            foreach($books as $book)
+            {
+                if ($first || $book->getFirstPage() == $scan->getPage())
+                {
+                    $this->addBookmark($book);
+                }
+                $first = false;
+            }
+            
             if ($transcriptions !== false)
             {
                 $anns = Annotation::fromScan($scan);
             }
             
-            $this->textMargins = 36; // 1,25 cm
+            $this->setPageMargin(36); // 1,25 cm
             $this->resetPosition();
             
-            $scanWidth = $this->pageWidth - 2 * $this->textMargins;
-            $scanHeight = $this->pageHeight - 2 * $this->textMargins - 28 - $this->fontSize;
+            $scanWidth = $this->pageWidth - $this->textMarginL - $this->textMarginR;
+            $scanHeight = $this->pageHeight - $this->textMarginT - $this->textMarginB - 28 - $this->fontSize;
             
-            $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->textMargins + $this->fontSize + 28));
+            $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMarginL, $this->textMarginB + $this->fontSize + 28));
 
             $this->drawScan($scan, $scanWidth, $scanHeight);
 
@@ -218,12 +342,12 @@ class Pdf
             
             $this->draw('Q');
             
-            $this->y = $this->textMargins;
+            $this->y = $this->textMarginB;
             
             $this->drawText('Page ' . $scan->getPage());
             $this->writePage();
             
-            $this->textMargins = 72; // 2,5 cm
+            $this->setPageMargin(72); // 2,5 cm
             $this->resetPosition();
             
             if ($transcriptions !== false)
@@ -232,49 +356,108 @@ class Pdf
             }
         }
         
-        $this->make();
+        if (count($books) > 1)
+        {
+            $this->setFontSize(18);
+            $this->drawText("Index\n");
+            foreach ($this->bookmarks as $bookmark)
+            {
+                $book = $bookmark[0];
+                $page = $bookmark[1] + $indexPages;
+                
+                $this->textMarginR -= 30;
+                $this->setFontSize(14);
+                list(, $bottom, , $top) = $this->drawText($book->getTitle());
+                $this->textMarginR += 30;
+                $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 1 w S Q', $this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $bottom));
+                $this->y -= 2;
+                
+                // Draw page number.
+                $bottom -= $this->fontInfo[$this->font]['Descent'] * $this->fontSize / 1000;
+                $this->setFontSize(12);
+                $width = $this->numberWidth($page);
+                $this->draw('q 1 0 0 1 ' . ($this->pageWidth - $this->textMarginR - $width) . ' ' . $bottom . ' cm');
+                $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$page) . ' Tj ET Q');
+                
+                $minYear = $book->getMinYear();
+                $maxYear = $book->getMaxYear();
+                $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
+                
+                $this->setFontSize(12);
+                $this->textMarginL += 18;
+                $this->x = $this->textMarginL;
+                $this->drawText($this->getAuthorNames($book));
+                $this->drawText($year);
+                if ($book->getPlacePublished() != null)
+                {
+                    $this->drawText($book->getPlacePublished());
+                }
+                if ($book->getPublisher() != null)
+                {
+                    $this->drawText($book->getPublisher());
+                }
+                $bottom = $this->y;
+                $this->textMarginL -= 18;
+                $this->x = $this->textMarginL;
+                $this->y -= 20;
+                $this->addLink(array($this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $top), null, false, $this->pages[$bookmark[1]-1]);
+            }
+            $this->writePage();
+            
+            //$this->pages = array_slice(array_splice($this->pages, $indexStart, 0, array_slice($this->pages, -$indexPages)), 0, count($this->pages));
+            $this->pages = array_merge(
+                array_slice($this->pages, 0, $indexStart),
+                array_slice($this->pages, -$indexPages),
+                array_slice($this->pages, $indexStart, count($this->pages) - $indexStart - $indexPages)
+            );
+        }
+        
+        $this->make($books[0]);
     }
     
     /**
      * Creates the PDF file based on the scan.
      */
-    private function createSingleScan($scan, $transcriptions = false, $annotations = false)
+    private function createSingleScan($scan, $book, $binding, $transcriptions = false, $annotations = false)
     {
         if ($transcriptions !== false)
         {
             $anns = Annotation::fromScan($scan);
         }
         
-        $this->textMargins = 36; // 1,25 cm
+        $this->setPageMargin(36); // 1,25 cm
         
         // Draw the header.
-        $minYear = $this->book->getMinYear();
-        $maxYear = $this->book->getMaxYear();
-        $year = $minYear == $maxYear ? $minYear : ($minYear . ' - ' . $maxYear);
-        $library = new Library($this->binding->getLibraryId());
+        $library = new Library($binding->getLibraryId());
         $title = $this->productName;
         $fields = array();
-        $fields[] = $this->authors;
-        $fields[] = $this->book->getTitle();
-        $fields[] = $year;
-        if ($this->book->getPlacePublished() != null)
+        if ($book !== null)
         {
-            $fields[] = $this->book->getPlacePublished();
-        }
-        if ($this->book->getPublisher() != null)
-        {
-            $fields[] = $this->book->getPublisher();
+            $minYear = $book->getMinYear();
+            $maxYear = $book->getMaxYear();
+            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
+            $fields[] = $this->getAuthorNames($book);
+            $fields[] = $book->getTitle();
+            $fields[] = $year;
+            if ($book->getPlacePublished() != null)
+            {
+                $fields[] = $book->getPlacePublished();
+            }
+            if ($book->getPublisher() != null)
+            {
+                $fields[] = $book->getPublisher();
+            }
         }
         $fields[] = $library->getLibraryName();
-        $fields[] = $this->binding->getSignature();
+        $fields[] = $binding->getSignature();
         $title .= "\n" . implode(', ', $fields);
         $title .= "\nPage number: " . $scan->getPage();
         $this->drawText($title);
         
         // Draw the scan, with annotations if required.
-        $scanWidth = $this->pageWidth - 2 * $this->textMargins;
-        $scanHeight = $this->y - $this->textMargins - 2 * 28;
-        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMargins, $this->textMargins + $this->fontSize + 28));
+        $scanWidth = $this->pageWidth - $this->textMarginL - $this->textMarginR;
+        $scanHeight = $this->y - $this->textMarginB - 2 * 28;
+        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMarginL, $this->textMarginB + $this->fontSize + 28));
         $this->drawScan($scan, $scanWidth, $scanHeight);
         if ($transcriptions !== false && $annotations !== false)
         {
@@ -287,12 +470,12 @@ class Pdf
         
         // Draw the footer.
         $this->y -= $scanHeight + 2 * 28;
-        $this->addLink($this->drawText($this->productUrl . '#book-' . $this->book->getBookId(), false, true), $this->productUrl . '#book-' . $this->book->getBookId());
+        $this->addLink($this->drawText($this->permanentLink, false, true), $this->permanentLink);
         $this->drawText(' — ' . date('l, d M Y H:i:s T'));
         
         $this->writePage();
         
-        $this->textMargins = 72; // 2,5 cm
+        $this->setPageMargin(72); // 2,5 cm
         $this->resetPosition();
         if ($transcriptions !== false)
         {
@@ -300,7 +483,7 @@ class Pdf
         }
         
         // Produce the final PDF file.
-        $this->make();
+        $this->make($book);
     }
     
     /**
@@ -309,6 +492,28 @@ class Pdf
     private function out($value)
     {
         $this->output .= $value . "\n";
+    }
+    
+    private function startCountPages()
+    {
+        $this->pageCountState = array(
+            $this->x,
+            $this->y,
+            $this->pageHasText
+        );
+        $this->countPages = true;
+        $this->pageCountNum = 0;
+    }
+    
+    private function stopCountPages()
+    {
+        list(
+            $this->x,
+            $this->y,
+            $this->pageHasText
+        ) = $this->pageCountState;
+        $this->countPages = false;
+        return $this->pageCountNum + 1;
     }
     
     private function drawJPEGImage($file, $x, $y, $sx = 1, $sy = 1)
@@ -351,14 +556,22 @@ class Pdf
     /**
      * Adds a Link Annotation to the specified area.
      */
-    private function addLink($area, $uri, $bottomline = true)
+    private function addLink($area, $uri, $bottomline = true, $pageId = null)
     {
+        if ($uri === null && $pageId !== null)
+        {
+            $action = "/Dest [ " . $pageId . " 0 R /Fit]\n";
+        }
+        else
+        {
+            $action = "/A << /S /URI /URI " . $this->escapeString($uri) . " /Type /Action >>\n";
+        }
         $this->annots[] = $this->newObject("<<\n" .
         "/Type /Annot\n" .
         "/Subtype /Link\n" .
         "/Rect [ " . vsprintf('%F %F %F %F', $area) . " ]\n" .
         "/Border [0 0 0]\n" .
-        "/A << /S /URI /URI " . $this->escapeString($uri) . " /Type /Action >>\n" .
+        $action .
         ">>", true);
         if ($bottomline)
         {
@@ -393,9 +606,9 @@ class Pdf
     /**
      * Adds a bookmark to the current page for the index.
      */
-    private function addBookmark($name)
+    private function addBookmark($book)
     {
-        $this->bookmarks[] = array($name, count($this->pages));
+        $this->bookmarks[] = array($book, count($this->pages) + 1);
     }
     
     /**
@@ -404,16 +617,9 @@ class Pdf
     private function drawScan($scan, $width, $height)
     {
         $z = $scan->getZoomLevel();
-        if ($z == 1)
-        {
-            $size = getimagesize($this->tileName(0, 0, 0));
-            $this->scanAttr['tileSize'] = max($size[0], $size[1]);
-        }
-        else
-        {
-            $size = getimagesize($this->tileName(0, 0, 1));
-            $this->scanAttr['tileSize'] = $size[0];
-        }
+        $sid = $scan->getScanId();
+        $size = getimagesize($this->tileName($sid, 0, 0, $z - 1));
+        $this->scanAttr['tileSize'] = max($size[0], $size[1]);
         
         $this->scanAttr['pageWidth'] = $width;
         $this->scanAttr['pageHeight'] = $height;
@@ -440,7 +646,7 @@ class Pdf
 
         // Calculate the scale of the images.
         // Compensate for the possibility of the edge tiles being smaller.
-        $cornerSize = getimagesize($this->tileName($cols - 1, $rows - 1), $zoomLevel);
+        $cornerSize = getimagesize($this->tileName($sid, $cols - 1, $rows - 1), $zoomLevel);
         $compx = 1 - $cornerSize[0] / $ts;
         $compy = 1 - $cornerSize[1] / $ts;
         $scale = min($pw / ($cols - $compx), $ph / ($rows - $compy));
@@ -461,7 +667,7 @@ class Pdf
             $tileWidth = $x == $cols - 1 ? $cornerSize[0] : $ts;
             $tileHeight = $y == $rows - 1 ? $cornerSize[1] : $ts;
             
-            $this->newTile($x, $y, $tileWidth, $tileHeight);
+            $this->newTile($sid, $x, $y, $tileWidth, $tileHeight);
         }
         
         $this->draw('Q');
@@ -528,18 +734,24 @@ class Pdf
         $first = false;
         
         // Draw the number of the annotation in the first vertex.
-        $num = str_split((string)$i);
+        $width = $this->numberWidth($i);
+        list($x, $y) = $transformedPoints[0];
+        $this->draw('q 1 0 0 1 ' . ($x - $width / 2) . ' ' . ($y - $this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4) . ' cm');
+        $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET Q');
+        
+        $this->draw('Q');
+    }
+    
+    private function numberWidth($number)
+    {
+        $num = str_split((string)$number);
         $width = 0;
         foreach ($num as $char)
         {
             $width += isset($this->fontSizes[$this->font][ord($char)]) ? $this->fontSizes[$this->font][ord($char)] : 600;
         }
         $width *= $this->fontSize / 1000;
-        list($x, $y) = $transformedPoints[0];
-        $this->draw('q 1 0 0 1 ' . ($x - $width / 2) . ' ' . ($y - $this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4) . ' cm');
-        $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET Q');
-        
-        $this->draw('Q');
+        return $width;
     }
     
     /**
@@ -621,9 +833,9 @@ class Pdf
     /**
      * Adds a new tile to the output.
      */
-    private function newTile($x, $y, $width, $height)
+    private function newTile($scanId, $x, $y, $width, $height)
     {
-        $file = file_get_contents($this->tileName($x, $y));
+        $file = file_get_contents($this->tileName($scanId, $x, $y));
         $objectNum = $this->newStream("/Subtype /Image\n"
                                     . "/Width " . $width . "\n"
                                     . "/Height " . $height . "\n"
@@ -655,19 +867,19 @@ class Pdf
     /**
      * Returns the filename of the image at the position requested.
      */
-    private function tileName($x, $y, $z = null)
+    private function tileName($scanId, $x, $y, $z = null)
     {
         if ($z === null)
         {
             $z = $this->scanAttr['zoomLevel'];
         }
-        return $this->path . '_' . $z . '_' . $x . '_' . $y . '.jpg';
+        return $this->path . '/' . $scanId . '/tile_' . $z . '_' . $x . '_' . $y . '.jpg';
     }
     
     /**
      * Creates the final PDF based on the previously generated pages / objects.
      */
-    private function make()
+    private function make($book)
     {
         if (strlen($this->draws) > 0)
         {
@@ -688,8 +900,8 @@ class Pdf
         $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
         
         $infoId = $this->newObject("<<\n" .
-            "/Title " . $this->fromUTF8($this->book->getTitle()) . "\n" .
-            "/Author " . $this->fromUTF8($this->authors) . "\n" . 
+            ($book !== null ? ("/Title " . $this->fromUTF8($book->getTitle()) . "\n" .
+            "/Author " . $this->fromUTF8($this->getAuthorNames($book)) . "\n") : '') . 
             "/Creator " . $this->fromUTF8($this->productName) . "\n" .
             "/CreationDate " . date("(\D:YmdHis)") . "\n" .
             ">>");
@@ -908,12 +1120,22 @@ class Pdf
      */
     private function resetPosition()
     {
-        $this->x = $this->textMargins;
-        $this->y = $this->pageHeight - $this->textMargins - $this->fontSize;
+        $this->x = $this->textMarginL;
+        $this->y = $this->pageHeight - $this->textMarginT - $this->fontSize;
+    }
+    
+    private function setPageMargin($margin)
+    {
+        $this->textMarginL = $margin;
+        $this->textMarginT = $margin;
+        $this->textMarginR = $margin;
+        $this->textMarginB = $margin;
     }
     
     private function drawText($text = '', $center = false, $omitNewLine = false)
     {
+        $numPages = 0;
+        
         if ($this->x === null || $this->y === null)
         {
             $this->resetPosition();
@@ -929,11 +1151,20 @@ class Pdf
             $this->pageHasText = true;
             $oldFontSize = $this->fontSize;
             $this->setFontSize(12);
-            list(, $bottom) = $this->drawText($this->headerText .
-                ($this->headerContinued ? ' (continued)' : '') . 
-                "\n");
-            $bottom -= $this->fontInfo[$this->font]['Descent'] * $this->fontSize / 1000 * 0.5;
-            $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 0.5 w S Q', $this->textMargins, $bottom, $this->pageWidth - $this->textMargins, $bottom));
+            if ($this->countPages)
+            {
+                /*$numPages += */$this->drawText($this->headerText .
+                    ($this->headerContinued ? ' (continued)' : '') . 
+                    "\n");
+            }
+            else
+            {
+                list(, $bottom) = $this->drawText($this->headerText .
+                    ($this->headerContinued ? ' (continued)' : '') . 
+                    "\n");
+                $bottom -= $this->fontInfo[$this->font]['Descent'] * $this->fontSize / 1000 * 0.5;
+                $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 0.5 w S Q', $this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $bottom));
+            }
             $this->setFontSize($oldFontSize);
         }
         $this->headerContinued = true;
@@ -953,7 +1184,7 @@ class Pdf
             if (strlen($text) == 0)
             {
                 $this->y -= $this->fontSize + $this->lineSpread;
-                $this->x = $this->textMargins;
+                $this->x = $this->textMarginL;
                 $tempX = $this->x;
                 continue;
             }
@@ -969,9 +1200,17 @@ class Pdf
             $endOfLine = false;
             for ($i = 0; $i < $length; $i++)
             {
-                if ($this->y < $this->textMargins)
+                if ($this->y < $this->textMarginB)
                 {
-                    $this->writePage();
+                    if ($this->countPages)
+                    {
+                        $numPages++;
+                        $this->resetPosition();
+                    }
+                    else
+                    {
+                        $this->writePage();
+                    }
                     if ($this->headerText != '')
                     {
                         $this->drawText();
@@ -995,7 +1234,7 @@ class Pdf
                     $endOfString = true;
                     $lastSpace = $i + 1;
                 }
-                if ($x >= $this->pageWidth - $this->textMargins || $endOfString)
+                if ($x >= $this->pageWidth - $this->textMarginR || $endOfString)
                 {
                     $minY = min($this->y, $minY);
                     if ($endOfString)
@@ -1003,32 +1242,35 @@ class Pdf
                         $maxX = max($x, $maxX);
                         $tempX = max($x, $tempX);
                     }
-                    $this->draw('q');
-                    if ($center)
+                    if (!$this->countPages)
                     {
-                        $offset = ($this->pageWidth - 2 * $this->textMargins - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
-                        $this->draw('1 0 0 1 ' . ($this->x + $offset) . ' ' . $this->y . ' cm');
+                        $this->draw('q');
+                        if ($center)
+                        {
+                            $offset = ($this->pageWidth - $this->textMarginL - $this->textMarginR - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
+                            $this->draw('1 0 0 1 ' . ($this->x + $offset) . ' ' . $this->y . ' cm');
+                        }
+                        else
+                        {
+                            $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
+                        }
+                        $this->draw('BT');
+                        $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
+                        if ($endOfString && $text[$i][1] == "\n" && $text[$i][0] == "\0")
+                        {
+                            $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                        }
+                        else
+                        {
+                            $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                        }
+                        $this->draw('ET');
+                        $this->draw('Q');
                     }
-                    else
-                    {
-                        $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
-                    }
-                    $this->draw('BT');
-                    $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
-                    if ($endOfString && $text[$i][1] == "\n" && $text[$i][0] == "\0")
-                    {
-                        $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                    }
-                    else
-                    {
-                        $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                    }
-                    $this->draw('ET');
-                    $this->draw('Q');
                     if (!$endOfString || $l < $numlines - 1 || !$omitNewLine)
                     {
                         $this->y -= $this->fontSize + $this->lineSpread;
-                        $this->x = $this->textMargins;
+                        $this->x = $this->textMarginL;
                         $tempX = $this->x;
                     }
                     $x = $this->x + $widthSinceSpace;
@@ -1045,6 +1287,10 @@ class Pdf
         $this->x = $tempX;
         $minY += ($this->fontInfo[$this->font]['Descent']) * $this->fontSize / 1000;
         $maxY += ($this->fontInfo[$this->font]['Ascent'] - 1000) * $this->fontSize / 1000;
+        if ($this->countPages)
+        {
+            $this->pageCountNum += $numPages;
+        }
         return array($minX, $minY, $maxX, $maxY);
     }
     

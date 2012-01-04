@@ -10,14 +10,28 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
     {
         var _this = this;
         
-        // TODO: get from database.
-        var bindingId = 0;
+        var bindingId = 1;
+        Ext.ux.BindingModel.load(1, {
+            scope: this,
+            failure: function(record, operation) {
+            //handleError
+            return undefined;
+        },
+            success: function(record, operation) {
+            this.down('propertygrid').setSource({
+                    "library": record.get('library').libraryName,
+                    "signature": record.get('signature'),
+                    "provenance": 'provenances',
+                    "languagesOfAnnotations": 'languages'
+                });
+        },
+            callback: function(record, operation) {
+        }
+        });
         
         var store = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.BindingModel'
         });
-        
-        //store.load();
         
         var defConfig = {
             flex: 1,
@@ -29,7 +43,6 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                     provenance: 'Provenance',
                     languagesOfAnnotations: 'Languages of annotations'
                 },
-                //store: store,
                 source: {},
                 listeners: {
                     // Prevent editing
@@ -37,7 +50,8 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                         return false;
                     }
                 },
-                hideHeaders: true
+                hideHeaders: true,
+                nameColumnWidth: 200
             }]
         };
         

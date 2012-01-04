@@ -5,15 +5,14 @@
 Ext.define('Ext.ux.ScanModel', {
     extend: 'Ext.ux.ModelBase',
     idProperty: 'scanId',
-    fields: ['scanId', 'bindingId', 'pageNumber', 'status', 'width', 'height', 'zoomLevel', 'uploadId'],
+    fields: ['scanId', 'bindingId', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'filename'],
     
     /*
     hasMany: {
         model: 'Ext.ux.AnnotationModel',
         name: 'annotations',
         filterProperty: 'scanId'
-    },
-    */
+    },*/
     
     proxy: {
         type: 'requestmanager',
@@ -21,3 +20,4 @@ Ext.define('Ext.ux.ScanModel', {
         model: 'Ext.ux.ScanModel'
     }
 });
+

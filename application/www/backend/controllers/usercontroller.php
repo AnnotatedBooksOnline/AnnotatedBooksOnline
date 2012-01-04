@@ -6,9 +6,11 @@ require_once 'util/authentication.php';
 require_once 'util/mailer.php';
 require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
+require_once 'models/notes/note.php';
 
 // Exceptions.
 class RegistrationFailedException extends ExceptionBase { }
+class PasswordIncorrectException extends ExceptionBase { }
 
 /**
  * User controller class.
@@ -44,6 +46,7 @@ class UserController extends Controller
     {
         // Assert that the user is authenticated. 
         Authentication::assertLoggedOn();
+        //Authentication::assertPermissionTo('view-users');
         
         // Determine the total number of users.
         $total = UserSearchList::findUserCount();
@@ -130,26 +133,46 @@ class UserController extends Controller
         $email       = self::getString($record, 'email', '', true, 255);
         $firstName   = self::getString($record, 'firstName', '', true, 50);
         $lastName    = self::getString($record, 'lastName', '', true, 50);
-        $password    = self::getString($record, 'password', '', false, 32);
+        $oldPassword = self::getString($record, 'password', '', false, 32);
+        $newPassword = self::getString($record, 'newPassword', '', false, 32);
         $affiliation = self::getString($record, 'affiliation', '', true, 50);
         $occupation  = self::getString($record, 'occupation', '', true, 50);
         $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
         $website     = self::getString($record, 'website', '', true, 255);
         
+        //Check if a new password is entered, in which case we need to check if the old password
+        //is correct.
+        if (isset($newPassword) && $newPassword != '')
+        {
+            if (!Authentication::getInstance()->checkPassword($oldPassword))
+            {
+                throw new PasswordIncorrectException('password-incorrect');
+            }
+            else
+            {
+                $password = $newPassword;
+            }
+        }
+        else
+        {
+            $password = $oldPassword;
+        }
+        
+        //As not all values
         $values = array(
             'username'    => $username,
             'email'       => $email,
             'firstName'   => $firstName,
             'lastName'    => $lastName,
-            //'password'    => $password,
+            'password'    => $password,
             'affiliation' => $affiliation,
             'occupation'  => $occupation,
             'homeAddress' => $homeAddress,
             'website'     => $website,
             'homeAddress' => '',
-            'active'      => true, // TODO: Activation.
-            'banned'      => false,
-            'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
+            //'active'      => true, // TODO: Activation.
+            //'banned'      => false,
+            //'rank'        => User::RANK_DEFAULT
         );
         
         $user = new User($userId);
@@ -206,21 +229,37 @@ class UserController extends Controller
         }
      
         // Create user and pendinguser entries in a transaction.
-        $puser = Database::getInstance()->doTransaction(
+        Database::getInstance()->doTransaction(
         function() use ($values)
         {  
+            // Check whether automatic user acceptance is turned on.
+            $autoaccept = Setting::getSetting('auto-user-acceptance', true); //TODO: remove default.
+            
             // Create user entry.
             $user = new User();
             $user->setValues($values);
             $user->save();
             
+            // Create note entry.
+            $q=Query::insert('Notes', array('userId'    => ':userId',
+                                           'text'   => ':text'))->execute(array(':userId' => $user->getUserId(), ':text' => ''));
+            
             // Now create a pending user.
            $puser = PendingUser::fromUser($user);
+           if($autoaccept)
+           {
+               // Automatically accept user.
+               $puser->setAccepted(true);
+           }
            $puser->save();
-           return $puser;
+           
+           if($autoaccept)
+           {
+               // If automatically accepted, send an activation e-mail.
+               // This is intentionally part of the transaction.
+               Mailer::sendActivationMail($puser);
+           }
         });
-        
-        Mailer::sendActivationMail($puser);
         
         return array('records' => $values); 
     }
@@ -280,6 +319,7 @@ class UserController extends Controller
     {
         // Check whether logged on.
         Authentication::assertLoggedOn();
+        //Authentication::assertPermissionTo('delete-users');
         
         // TODO: Do a security check!
         
@@ -301,6 +341,7 @@ class UserController extends Controller
     {
         // Check whether logged on.
         Authentication::assertLoggedOn();
+        //Authentication::assertPermissionTo('ban-users');
         
         // TODO: Do a security check!
         

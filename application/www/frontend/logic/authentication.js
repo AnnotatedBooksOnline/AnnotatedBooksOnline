@@ -285,19 +285,6 @@ Authentication.prototype.login = function(username, password, obj, onSuccess, on
     );
 }
 
-Authentication.prototype.checkPassword = function(password, obj, onSuccess, onError)
-{
-    // Do a check password request.
-    RequestManager.getInstance().request(
-        'Authentication',
-        'checkPassword',
-        {password: password},
-        obj,
-        onSuccess,
-        onError
-    );
-}
-
 /*
  * Private methods.
  */

@@ -5,10 +5,10 @@
 var langStore = Ext.create('Ext.data.Store', {
     fields: ['lang', 'name'],
     data: [{
-        lang: "eng",
+        lang: "transcriptionEng",
         name:"English"
     },{
-        lang: "orig",
+        lang: "transcriptionOrig",
         name: "Original language"
     }]
 });
@@ -143,7 +143,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         this.ownerCt.on('expand', function()
         {
             var langChooser = _this.down('[name=langchoose]');
-            langChooser.select('eng');
+            langChooser.select('transcriptionEng');
             langChooser.fireEvent('select', langChooser, {});
         }, {single: true});
     },
@@ -167,12 +167,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     {
         this.getComponent(2).down('[name=savechanges]').setDisabled(false);
     }
-});
-
-// TODO: remove when coupled to database
-Ext.define('DataObject', {
-    extend: 'Ext.data.Model',
-    fields: ['annId', 'bookId', 'page', 'eng', 'orig', 'color']
 });
 
 Ext.define('Ext.ux.AnnotationsGrid', {
@@ -258,8 +252,8 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         {
             return [colorColumn, getLanguageColumn(lang),
             {
-                dataIndex: 'annId',
-                renderer: function(annId, meta, rec, r, c, s, view)
+                dataIndex: 'annotationId',
+                renderer: function(annotationId, meta, rec, r, c, s, view)
                 {
                     meta.tdCls = 'grid-valign-bottom';
                     
@@ -313,7 +307,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             },
             hideHeaders: true,
             store: store,
-            columns: getDisplayColumns('orig'),
+            columns: getDisplayColumns('transcriptionOrig'),
             forceFit: true,
             autoScroll: true,
             border: false
@@ -333,7 +327,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             },
             hideHeaders: true,
             store: store,
-            columns: getEditColumns('orig'),
+            columns: getEditColumns('transcriptionOrig'),
             forceFit: true,
             autoScroll: true,
             border: false
@@ -368,3 +362,4 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         this.getLayout().setActiveItem(0);
     }
 });
+

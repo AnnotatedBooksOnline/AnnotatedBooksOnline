@@ -89,7 +89,7 @@ class UploadController extends Controller
      * Upload a file.
      */
     public function actionUpload($data)
-    {
+    {        
         // Assert that the user is authenticated. 
         Authentication::assertLoggedOn();
         

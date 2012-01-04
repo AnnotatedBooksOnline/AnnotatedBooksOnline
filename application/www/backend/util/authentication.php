@@ -4,6 +4,7 @@
 require_once 'framework/util/singleton.php';
 require_once 'framework/util/session.php';
 require_once 'models/user/user.php';
+require_once 'models/permission/permission.php';
 
 // Exceptions.
 class NotLoggedOnException extends ExceptionBase
@@ -11,6 +12,14 @@ class NotLoggedOnException extends ExceptionBase
     public function __construct()
     {
         parent::__construct('logon-required');
+    }
+}
+
+class AccessDeniedException extends ExceptionBase
+{
+    public function __construct($actionname)
+    {
+        parent::__construct('access-denied', $actionname);
     }
 }
 
@@ -39,7 +48,7 @@ class Authentication extends Singleton
     /**
      * Gets the currently logged on user.
      *
-     * @return  The currently logged on user.
+     * @return  The currently logged on user. Null if no user is logged on.
      */
     public function getUser()
     {
@@ -166,6 +175,28 @@ class Authentication extends Singleton
     }
     
     /**
+     * Indicates whether the currently logged in user, if any has permission to permorm the action 
+     * with the specified name. If no users are logged in, it is checked whether guests are allowed
+     * to perform the specified action. 
+     *
+     * @param string $action The name of the action, there should be an entry with it in the 
+     *                       Permissions table.
+     * 
+     * @return bool          Whether the current user has a rank high enough dor this action.
+     */
+    public function hasPermissionTo($action)
+    {
+        // Fetch the currently logged in user.
+        $user = $this->getUser();
+        
+        // Get its rank, or RANK_NONE if no user is logged in.
+        $rank = $user === null ? User::RANK_NONE : $user->getRank();
+        
+        // Check permission.
+        return Permission::rankHasPermission($action, $rank);
+    }
+    
+    /**
      * Generates a unique token.
      * 
      * @return string A string representing a unique 32-digit hexadecimal number.
@@ -188,4 +219,22 @@ class Authentication extends Singleton
             throw new NotLoggedOnException();
         }
     }
+    
+    /**
+     * Asserts that the currently logged in user, if any, has permission to perform the specified 
+     * action.
+     * 
+     * @param string $action The name of the action, there should be an entry with it in the 
+     *                       Permissions table.
+     *                       
+     * @throws AccessDeniedException If the current user has no permission. 
+     */
+    public static function assertPermissionTo($action)
+    {
+        if(!Authentication::getInstance()->hasPermissionTo($action))
+        {
+            throw new AccessDeniedException($action);
+        }
+    }
+    
 }

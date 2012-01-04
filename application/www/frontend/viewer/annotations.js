@@ -285,6 +285,8 @@ Annotations.prototype.initialize = function()
             // TODO: update (vertices?), datachanged (?).
         }
     });
+    this.store.filter({property: 'scanId', value: this.viewer.getBinding().getScanId(this.viewer.pageNumber)});
+    // TODO: What if the current page changes?
     
     // Create overlay and add it.
     this.overlay = new AnnotationOverlay(this.viewport);
@@ -488,3 +490,4 @@ Annotations.prototype.onStoreRemove = function(model)
         this.overlay.removeAnnotation(annotation);
     }
 }
+

@@ -115,7 +115,7 @@ CREATE TABLE "Bindings"
     "bindingId" serial NOT NULL,
     "libraryId" integer NOT NULL,
     "title" varchar(100) NOT NULL,
-    "signature" character(255) NOT NULL,
+    "signature" varchar(255) NOT NULL,
     "summary" text,
     "pagesToFirst" integer NOT NULL,
     "pagesFromLast" integer NOT NULL,

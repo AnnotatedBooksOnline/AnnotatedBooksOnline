@@ -17,14 +17,14 @@ function Annotation()
 
 // Fields.
 Annotation.prototype.model;
-Annotation.prototype.annId;
+Annotation.prototype.annotationId;
 
 // Constructor.
 Annotation.prototype.constructor = function(model)
 {
     // Set members.
     this.model = model;
-    this.annId = model.get('annId');
+    this.annotationId = model.get('annotationId');
     
     // Initialize.
     this.initialize();
@@ -34,7 +34,7 @@ Annotation.prototype.constructor = function(model)
  * Public methods.
  */
 
-Annotation.createFromId = function(annId, obj, onSuccess, onError)
+Annotation.createFromId = function(annotationId, obj, onSuccess, onError)
 {
     // On success, create entity.
     var successCallback = function(model)
@@ -44,7 +44,7 @@ Annotation.createFromId = function(annId, obj, onSuccess, onError)
             onSuccess.call(this, annotation);
         };
     
-    Ext.ux.AnnotationModel.load(annId, {
+    Ext.ux.AnnotationModel.load(annotationId, {
         scope: obj,
         success: successCallback,
         failure: onError
@@ -54,7 +54,7 @@ Annotation.createFromId = function(annId, obj, onSuccess, onError)
 Annotation.createFromVertices = function(vertices)
 {
     var model = Ext.create('Ext.ux.AnnotationModel', {
-        vertices: vertices // TODO: Maybe clone them.
+        polygon: vertices // TODO: Maybe clone them.
     });
     
     return new Annotation(model);
@@ -62,12 +62,12 @@ Annotation.createFromVertices = function(vertices)
 
 Annotation.prototype.getId = function()
 {
-    return this.annId;
+    return this.annotationId;
 }
 
 Annotation.prototype.getVertices = function()
 {
-    var vertexRecords = this.model.vertices().data.items;
+    var vertexRecords = this.model.polygon().data.items;
     var vertices = [];
     for (var i = 0; i < vertexRecords.length; ++i)
     {
@@ -91,9 +91,9 @@ Annotation.prototype.getHash = function()
     if (this.hash === undefined)
     {
         // Check for new annotations.
-        if (this.annId)
+        if (this.annotationId)
         {
-            this.hash = 'ann-' + this.annId;
+            this.hash = 'ann-' + this.annotationId;
         }
         else
         {
@@ -112,3 +112,4 @@ Annotation.prototype.initialize = function()
 {
     ;
 }
+

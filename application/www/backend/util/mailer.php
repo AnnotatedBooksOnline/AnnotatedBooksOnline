@@ -40,6 +40,8 @@ class Mailer
         Log::info('Mail to "%s" accepted for delivery:\n\n%s', $recipient, $message);
     }
     
+    
+    
     /**
      * Sends a standard activation mail to the specified PendingUser containing his or her 
      * activation code.
@@ -79,6 +81,10 @@ class Mailer
         self::sendMail($recipient, $subject, $message);
     }
     
+    public static function sendUserDeclinedMail($puser)
+    {
+        //TODO
+    }
     
     public static function sendPasswordRestorationMail($user)
     {
@@ -111,6 +117,5 @@ class Mailer
         // Now send the e-mail.
         Log::info('Sending activation code to %s.\nContents: %s.', $user->getEmail(), $message);
         self::sendMail($recipient, $subject, $message);
-    }
-    
+    }    
 }
