@@ -189,6 +189,42 @@ Ext.define('Ext.ux.ViewerPanel', {
                     }
                 }
             },{
+                iconCls: 'vertex-icon',
+                tooltip: 'Move a vertex',
+                enableToggle: true,
+                allowDepress: false,
+                name: 'vertex-tool',
+                listeners: {
+                    toggle: function()
+                    {
+                        _this.setTool('vertex');
+                    }
+                }
+            },{
+                iconCls: 'add-vertex-icon',
+                tooltip: 'Add a vertex',
+                enableToggle: true,
+                allowDepress: false,
+                name: 'addvertex-tool',
+                listeners: {
+                    toggle: function()
+                    {
+                        _this.setTool('addvertex');
+                    }
+                }
+            },{
+                iconCls: 'erase-vertex-icon',
+                tooltip: 'Erase a vertex',
+                enableToggle: true,
+                allowDepress: false,
+                name: 'erasevertex-tool',
+                listeners: {
+                    toggle: function()
+                    {
+                        _this.setTool('erasevertex');
+                    }
+                }
+            },{
                 iconCls: 'erase-icon',
                 tooltip: 'Erase an annotation',
                 enableToggle: true,
@@ -357,21 +393,26 @@ Ext.define('Ext.ux.ViewerPanel', {
         return this.pageNumber;
     },
     
+    // Gets current book.
     getBook: function()
     {
+        var page = this.pageNumber + 1;
+        
         var currentBook;
-        var page=this.pageNumber+1
         this.binding.getModel().books().each(
             function(book)
             {
-                var fp=book.get('firstPage');
-                var lp=book.get('lastPage');
-                if (fp <= page && page <= lp)
+                var firstPage = book.get('firstPage');
+                var lastPage  = book.get('lastPage');
+                
+                if ((firstPage <= page) && (page <= lastPage))
                 {
-                    currentBook=book;
+                    currentBook = book;
+                    
                     return false;
                 }
             });
+        
         return currentBook;
     },
     
@@ -403,8 +444,8 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.viewport.setDocument(this.binding.getDocument(number));
         
         // Update menu.
-        var isFirst = (number == 0);
-        var isLast  = (number == this.binding.getScanAmount() - 1);
+        var isFirst = (number === 0);
+        var isLast  = (number === (this.binding.getScanAmount() - 1));
         
         this.viewportPanel.down('[name=first-page]').setDisabled(isFirst);
         this.viewportPanel.down('[name=previous-page]').setDisabled(isFirst);
@@ -422,7 +463,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.tool = tool;
         
         // Set icon states.
-        var tools = ['drag', 'polygon', 'rectangle', 'erase'];
+        var tools = ['drag', 'polygon', 'rectangle', 'vertex', 'addvertex', 'erasevertex', 'erase'];
         for (var i = tools.length - 1; i >= 0; --i)
         {
             this.down('[name=' + tools[i] + '-tool]').toggle(tools[i] === tool, true);

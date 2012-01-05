@@ -103,6 +103,16 @@
     background-image: url(../icons/vertex.png);
 }
 
+.add-vertex-icon
+{
+    background-image: url(../icons/addvertex.png);
+}
+
+.erase-vertex-icon
+{
+    background-image: url(../icons/erasevertex.png);
+}
+
 /* Other icons. */
 
 .refresh-icon
