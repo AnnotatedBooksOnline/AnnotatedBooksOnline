@@ -26,11 +26,10 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         var defConfig = {
             border: false,
             layout: 'border',
-            flex: 0,
-            height: 600,
             items: [{
                 region: 'north',
                 html: 'Please select an annotation below.',
+                name: 'active-annotation',
                 bodyPadding: 5,
                 border: false,
                 autoScroll: true,
@@ -38,11 +37,12 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 resizable: { handles: 's' }
             },{
                 xtype: 'annotationsgrid',
+                name: 'grid',
                 region: 'center',
                 height: 350,
                 viewer: this.viewer
             },{
-                name: 'annotationcontrols',
+                name: 'controls',
                 region: 'south',
                 height: 70,
                 border: false,
@@ -54,42 +54,32 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         xtype: 'button',
                         text: 'Edit mode',
                         width: 135,
-                        name: 'editmode',
+                        name: 'edit-mode',
                         style: 'margin-right: 5px',
                         handler: function()
                         {
-                            this.up('annotationspanel').down('annotationsgrid').setEditMode();
-                            this.up('annotationspanel').getComponent(0).hide();
-                            this.hide();
-                            this.up('[name=annotationcontrols]').down('[name=savechanges]').show();
-                            this.up('[name=annotationcontrols]').down('[name=newtranscription]').show();
-                            this.up('[name=annotationcontrols]').down('[name=viewmode]').show();
+                            _this.setMode('edit');
                         }
                     },{
                         xtype: 'button',
                         text: 'Back to view mode',
                         width: 135,
-                        name: 'viewmode',
+                        name: 'view-mode',
                         hidden: true,
                         style: 'margin-right: 5px',
                         handler: function()
                         {
-                            this.up('annotationspanel').down('annotationsgrid').setDisplayMode();
-                            this.up('annotationspanel').getComponent(0).show();
-                            this.hide();
-                            this.up('[name=annotationcontrols]').down('[name=savechanges]').hide();
-                            this.up('[name=annotationcontrols]').down('[name=newtranscription]').hide();
-                            this.up('[name=annotationcontrols]').down('[name=editmode]').show();
+                            _this.setMode('view');
                         }
                     },{
                         xtype: 'button',
                         text: 'New transcription',
                         width: 135,
-                        name: 'newtranscription',
+                        name: 'new-transcription',
                         hidden: true,
                         handler: function()
                         {
-                            // TODO: Show 'new transcription' tools.
+                            _this.createNewTranscription();
                         }
                     }]
                 },{
@@ -103,7 +93,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         displayField: 'name',
                         valueField: 'lang',
                         width: 135,
-                        name: 'langchoose',
+                        name: 'lang-chooser',
                         style: 'margin-right: 5px',
                         forceSelection: true,
                         editable: false,
@@ -117,13 +107,12 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         xtype: 'button',
                         text: 'Save changes',
                         width: 135,
-                        name: 'savechanges',
+                        name: 'save-changes',
                         hidden: true,
                         disabled: true,
                         handler: function()
                         {
-                            // TODO: Actually save changes.
-                            this.setDisabled(true);
+                            _this.saveChanges();
                         }
                     }]
                 }]
@@ -138,39 +127,113 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     {
         this.callParent();
         
-        var _this = this;
+        // Fetch some components.
+        this.langChooser      = this.down('[name=lang-chooser]');
+        this.activeAnnotation = this.down('[name=active-annotation]');
+        this.controls         = this.down('[name=controls]');
+        this.grid             = this.down('[name=grid]');
+        this.saveChangesBtn   = this.down('[name=save-changes]');
+        this.editMode         = this.down('[name=edit-mode]');
+        this.viewMode         = this.down('[name=view-mode]');
+        this.newTranscription = this.down('[name=new-transcription]');
         
-        this.ownerCt.on('expand', function()
-        {
-            var langChooser = _this.down('[name=langchoose]');
-            langChooser.select('transcriptionEng');
-            langChooser.fireEvent('select', langChooser, {});
-        }, {single: true});
+        // Set language.
+        this.setLanguage('transcriptionEng');
     },
     
-    setLanguage: function(lang)
+    setLanguage: function(language)
     {
-        if (this.getComponent(0).activeRecord != undefined)
+        // Store language.
+        this.language = language;
+        
+        // Set language on selector.
+        this.langChooser.select(language);
+        
+        // Set language on grid.
+        this.grid.setLanguage(language);
+        
+        // Reset active model.
+        this.setActiveAnnotation(this.activeModel);
+    },
+    
+    setActiveAnnotation: function(model)
+    {
+        // Unset edit mode of previously selected model.
+        if (this.activeModel !== undefined)
         {
-            this.getComponent(0).body.update(this.getComponent(0).activeRecord.get(lang));
+            this.annotations.uneditAnnotation(this.annotations.getAnnotationByModel(this.activeModel));
         }
-        this.down('annotationsgrid').setLanguage(lang);
-    },
-    
-    setLargeAnnotation: function(record)
-    {
-        this.getComponent(0).activeRecord = record;
-        this.getComponent(0).body.update(record.get(this.down('[name=langchoose]').getValue()));
+        
+        // Set edit mode of new model.
+        if (model !== undefined)
+        {
+            this.annotations.editAnnotation(this.annotations.getAnnotationByModel(model));
+        }
+        
+        // Set active model.
+        this.activeModel = model;
+        
+        // Fetch text in current language.
+        var text = '';
+        if (model !== undefined)
+        {
+            text = model.get(this.language);
+        }
+        
+        // Show contents of new model.
+        this.activeAnnotation.body.update(escape(text));
     },
     
     markDirty: function()
     {
-        this.getComponent(2).down('[name=savechanges]').setDisabled(false);
+        this.saveChangesBtn.setDisabled(false);
+    },
+    
+    // Sets mode. Mode can be 'edit' or 'view'.
+    setMode: function(mode)
+    {
+        this.mode = mode;
+        
+        if (mode === 'edit')
+        {
+            this.editMode.hide();
+            this.viewMode.show();
+            this.saveChangesBtn.setDisabled(true);
+            this.saveChangesBtn.show();
+            this.newTranscription.show();
+        }
+        else
+        {
+            this.editMode.show();
+            this.viewMode.hide();
+            this.saveChangesBtn.setDisabled(true);
+            this.saveChangesBtn.hide();
+            this.newTranscription.hide();
+        }
+        
+        // Reset active model.
+        this.setActiveAnnotation(this.activeModel);
+        
+        // TODO: Handle unsaved records.
+    },
+    
+    createNewTranscription: function()
+    {
+        // TODO: Implement.
+    },
+    
+    saveChanges: function()
+    {
+        // TODO: Actually save changes.
+        this.saveChangesBtn.setDisabled(true);
+        
+        // Save annotations.
+        this.annotations.save();
     }
 });
 
 Ext.define('Ext.ux.AnnotationsGrid', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.grid.Panel',
     alias: 'widget.annotationsgrid',
     
     initComponent: function()
@@ -183,122 +246,49 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         eventDispatcher.bind('select', this,
             function(event, annotations, annotation)
             {
-                // TODO: I think we may want to have just one grid.
+                // Select this annotation.
+                this.getSelectionModel().select(annotation.getModel());
                 
-                this.getComponent(0).getSelectionModel().select(annotation.getModel());
-                this.getComponent(1).getSelectionModel().select(annotation.getModel());
+                // Make this annotation active.
+                this.up('annotationspanel').setActiveAnnotation(annotation.getModel());
             });
         
         eventDispatcher.bind('hover', this,
             function(event, annotations, annotation)
             {
-                // TODO: I think we may want to have just one grid.
-                
-                this.getComponent(0).getView().addRowCls(annotation.getModel(), 'x-grid-row-over');
-                this.getComponent(1).getView().addRowCls(annotation.getModel(), 'x-grid-row-over');
+                this.getView().addRowCls(annotation.getModel(), 'x-grid-row-over');
             });
         
         eventDispatcher.bind('unhover', this,
             function(event, annotations, annotation)
             {
-                // TODO: I think we may want to have just one grid.
-                
-                this.getComponent(0).getView().removeRowCls(annotation.getModel(), 'x-grid-row-over');
-                this.getComponent(1).getView().removeRowCls(annotation.getModel(), 'x-grid-row-over');
+                this.getView().removeRowCls(annotation.getModel(), 'x-grid-row-over');
             });
         
         // Fetch store.
         var store = this.annotations.getStore();
         
+        // Set view config.
         var _this = this;
-        var colorColumn = {
-            dataIndex: 'color',
-            renderer: function(color, metadata, model)
-            {
-                var color =_this.annotations.getAnnotationColor(
-                    _this.annotations.getAnnotationByModel(model)
-                );
-                
-                metadata.style = 'background-color: ' + color;
-                metadata.tdCls = 'grid-valign-middle';
-                
-                return '';
-            },
-            width: 10
-        };
-        
-        var getLanguageColumn = function(lang)
-        {
-            return {
-                dataIndex: lang,
-                renderer: function(text, meta)
-                {
-                    meta.style = 'white-space: normal;';
-                    if (text.length >= 120)
-                    {
-                        text = text.substr(0, 117) + '...';
-                    }
-                    return text;
-                }
-            };
-        };
-
-        var getDisplayColumns = function(lang)
-        {
-            return [colorColumn, getLanguageColumn(lang)];
-        };
-        
-        var getEditColumns = function(lang)
-        {
-            return [colorColumn, getLanguageColumn(lang),
-            {
-                dataIndex: 'annotationId',
-                renderer: function(annotationId, meta, rec, r, c, s, view)
-                {
-                    meta.tdCls = 'grid-valign-bottom';
-                    
-                    var id = Ext.id();
-                    setTimeout(function()
-                    {
-                        try
-                        {
-                            new Ext.Button(
-                            {
-                                renderTo: id,
-                                id: id,
-                                text: 'Edit'
-                            });
-                        }
-                        catch (e)
-                        {
-                            // Too late.
-                        }
-                    }, 1);
-
-                    return '<div id="' + id + '"></div>';
-                },
-                width: 20,
-                flex: 0
-            }];
-        };
-        
-        var displayMode = {
-            xtype: 'gridpanel',
+        var defConfig = {
             viewConfig: {
                 stripeRows: false,
                 listeners: {
                     itemclick: function(grid, model)
                     {
-                        this.up('annotationspanel').setLargeAnnotation(model);
+                        // Make this annotation active.
+                        this.up('annotationspanel').setActiveAnnotation(model);
                     },
                     itemmouseenter: function(grid, model)
                     {
+                        // Hightlight this annotation.
                         var annotation = _this.annotations.getAnnotationByModel(model);
                         
                         _this.annotations.highlightAnnotation(annotation);
                     },
                     itemmouseleave: function(grid, model)
                     {
+                        // Unhighlight this annotation.
                         var annotation = _this.annotations.getAnnotationByModel(model);
                         
                         _this.annotations.unhighlightAnnotation(annotation);
@@ -307,59 +297,83 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             },
             hideHeaders: true,
             store: store,
-            columns: getDisplayColumns('transcriptionOrig'),
+            columns: this.getColumns('transcriptionEng'),
             forceFit: true,
             autoScroll: true,
             border: false
         };
-        
-        var editMode = {
-            xtype: 'gridpanel',
-            viewConfig: {
-                stripeRows: false,
-                listeners: {
-                    itemupdate: function()
-                    {
-                        console.log('update');
-                        this.up('annotationspanel').markDirty();
-                    }
-                }
-            },
-            hideHeaders: true,
-            store: store,
-            columns: getEditColumns('transcriptionOrig'),
-            forceFit: true,
-            autoScroll: true,
-            border: false
-        };
-        
-        var defConfig = {
-            border: false,
-            layout: 'card',
-            items: [displayMode, editMode],
-            setLanguage: function(lang)
-            {
-                var _this = this;
-                setTimeout(function()
-                {
-                    _this.getComponent(0).reconfigure(null, getDisplayColumns(lang));
-                    _this.getComponent(1).reconfigure(null, getEditColumns(lang));
-                }, 1);
-            }
-        };
-        
         Ext.apply(this, defConfig);
+        
         this.callParent();
     },
     
-    setEditMode: function()
+    afterRender: function()
     {
-        this.getLayout().setActiveItem(1);
+        this.callParent();
+        
+        // Fetch some components.
+        
     },
     
-    setDisplayMode: function()
+    getColumns: function(language)
     {
-        this.getLayout().setActiveItem(0);
+        // Set color column.
+        var _this = this;
+        var colorColumn = {
+            dataIndex: 'color',
+            renderer: function(color, metadata, model)
+            {
+                return _this.renderColor(color, metadata, model);
+            },
+            width: 10
+        };
+        
+        // Set language column.
+        var languageColumn = {
+            dataIndex: language,
+            renderer: function(language, metadata) { return _this.renderLanguage(language, metadata); }
+        };
+
+        return [colorColumn, languageColumn];
+    },
+    
+    renderColor: function(color, metadata, model)
+    {
+        var color = this.annotations.getAnnotationColor(
+            this.annotations.getAnnotationByModel(model)
+        );
+        
+        metadata.style = 'background-color: ' + color;
+        metadata.tdCls = 'grid-valign-middle';
+        
+        return '';
+    },
+    
+    renderLanguage: function(text, metadata)
+    {
+        // Retain whitespace.
+        metadata.style = 'white-space: normal;';
+        
+        // Replace newlines with spaces.
+        text = text.replace(/\s*(\r\n|\n|\r)\s*/g, ' ');
+        
+        // Cut off text if too long.
+        if (text.length >= 120)
+        {
+            text = text.substr(0, 117) + '...';
+        }
+        
+        return escape(text);
+    },
+    
+    setLanguage: function(language)
+    {
+        // NOTE: Why a timeout?
+        
+        var _this = this;
+        setTimeout(function()
+        {
+            _this.reconfigure(null, _this.getColumns(language));
+        }, 1);
     }
 });
-
