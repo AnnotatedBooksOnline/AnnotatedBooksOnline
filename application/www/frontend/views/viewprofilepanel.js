@@ -14,7 +14,10 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             model: 'Ext.ux.UserModel'
         });
         
-        store.filter('username', this.tabInfo.data[0]);
+        var username = this.tabInfo.data[0];
+        
+        store.filter('username', username);
+        
         
         store.on('datachanged',
             function(store)
@@ -75,14 +78,11 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 width: '140',
                 handler: function ()
                 {
-                    var username = store.collect('username')[0];
-                    
                     // Shows a window to doublecheck if this is what the user wanted.
                     // Bans the user afterwards.
                     Ext.Msg.show({
                         title: 'Are you sure?',
-                        msg: 'You are about to ban \'' + username +
-                             '\', this can\'t be undone. Are you sure?',
+                        msg: 'You are about to ban \'' + username + '\'. Are you sure?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
@@ -107,8 +107,6 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 width: '140',
                 handler: function ()
                 {
-                    var username = store.collect('username')[0];
-                    
                     // Shows a window to doublecheck if this is what the user wanted.
                     // Deletes the user afterwards.
                     Ext.Msg.show({
