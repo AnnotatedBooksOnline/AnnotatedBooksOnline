@@ -178,9 +178,24 @@ PolygonOverlay.prototype.setMode = function(mode)
             this.viewport.disable(true, false, false);
             break;
             
+        case 'vertex':
+            this.viewport.disable(true, false, false);
+            break;
+            
+        case 'addvertex':
+            this.viewport.disable(true, false, false);
+            break;
+            
+        case 'erasevertex':
+            this.viewport.disable(true, false, false);
+            break;
+            
         case 'erase':
             this.viewport.disable(true, false, false);
             break;
+            
+        default:
+            throw new Error("Invalid polygon overlay mode given.");
     }
     
     if (this.newPolygon !== undefined)
