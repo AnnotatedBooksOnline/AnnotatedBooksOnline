@@ -287,7 +287,7 @@ class BindingUploadController extends Controller
             ->join('Uploads upload', "scan.uploadId = upload.uploadId", "LEFT")
             ->join('Bindings binding', "scan.bindingId = binding.bindingId", "LEFT")
             ->where('binding.status <= :reorderedStatus')
-            ->groupBy('binding.bindingId')
+            ->groupBy('binding.bindingId','binding.status')
             ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
         
         
