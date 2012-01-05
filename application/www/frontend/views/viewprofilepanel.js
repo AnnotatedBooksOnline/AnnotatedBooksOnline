@@ -60,8 +60,10 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     affiliation: 'Affiliation',
                     occupation: 'Occupation',
                     website: 'Website',
-                    homeAddress: 'Address'//,
-                    // rank: 'Rank',
+                    //homeAddress: 'Address',
+                    active: 'Active',
+                    banned: 'Banned',
+                    rank: 'Rank'
                 },
                 source: {},
                 listeners: {
@@ -71,6 +73,39 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     }
                 },
                 hideHeaders: true
+            },{
+                xtype: 'button',
+                text: 'Unban user',
+                id: 'unban',
+                width: '140',
+                handler: function ()
+                {
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Unbans the user afterwards.
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: 'You are about to unban \'' + username + '\'. Are you sure?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    // Ban the user.
+                                    RequestManager.getInstance().request(
+                                        'User',
+                                        'unBanUser',
+                                        {username: username},
+                                        _this,
+                                        function()
+                                        {
+                                            store.load();
+                                        }
+                                    );  
+                                }
+                            }
+                    });
+                }
             },{
                 xtype: 'button',
                 text: 'Ban user',
@@ -94,7 +129,11 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                                         'User',
                                         'banUser',
                                         {username: username},
-                                        _this
+                                        _this,
+                                        function()
+                                        {
+                                            store.load();
+                                        }
                                     );  
                                 }
                             }
