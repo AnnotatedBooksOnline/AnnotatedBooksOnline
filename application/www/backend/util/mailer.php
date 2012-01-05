@@ -77,13 +77,28 @@ class Mailer
                         $basemessage);
         
         // Now send the e-mail.
-        Log::info('Sending activation code to %s.\nContents: %s.', $user->getEmail(), $message);
+        Log::info("Sending activation code to %s.\nContents: %s.", $user->getEmail(), $message);
         self::sendMail($recipient, $subject, $message);
     }
     
     public static function sendUserDeclinedMail($puser)
     {
-        //TODO
+        // Retrieve associated User entity.
+        $user = new User($puser->getUserId());
+        
+        // Determine properties.
+        $subject = Setting::getSetting('user-declined-mail-subject');
+        $recipient = $user->getEmail();
+        $basemessage = Setting::getSetting('user-declined-mail-message');
+        
+        // Insert user info in mail.
+        $message = str_replace(
+                        array('[USERNAME]', '[FIRSTNAME]', '[LASTNAME]'),
+                        array($user->getUsername(), $user->getFirstName(), $user->getLastName()),
+                        $basemessage);
+        
+        // Now send the e-mail.
+        self::sendMail($recipient, $subject, $message);
     }
     
     public static function sendPasswordRestorationMail($user)
@@ -115,7 +130,7 @@ class Mailer
         $basemessage);
         
         // Now send the e-mail.
-        Log::info('Sending activation code to %s.\nContents: %s.', $user->getEmail(), $message);
+        Log::info("Sending activation code to %s. (password forgotten)\nContents: %s.", $user->getEmail(), $message);
         self::sendMail($recipient, $subject, $message);
     }    
 }

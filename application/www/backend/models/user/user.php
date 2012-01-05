@@ -36,7 +36,7 @@ class User extends Entity
     /** Rank constants: gaps in numbers are intentional to add more ranks if needed. */
     const RANK_NONE      =  0; // Not logged on.
     const RANK_DEFAULT   = 10; // A normal registered user.
-    const RANK_MODERATOR = 30; // A moderator.
+    const RANK_MODERATOR = 40; // A moderator.
     const RANK_ADMIN     = 50; // An administrator.
     
     /** User id. */
