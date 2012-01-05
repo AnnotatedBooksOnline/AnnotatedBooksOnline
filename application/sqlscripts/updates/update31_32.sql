@@ -1,0 +1,46 @@
+BEGIN TRANSACTION;
+
+-- Adds all the languages wanted by the client.
+INSERT INTO "Languages" ("languageName") VALUES ('Albanian');
+INSERT INTO "Languages" ("languageName") VALUES ('Arabic');
+INSERT INTO "Languages" ("languageName") VALUES ('Aramaic');
+INSERT INTO "Languages" ("languageName") VALUES ('Belarusian');
+INSERT INTO "Languages" ("languageName") VALUES ('Bulgarian');
+INSERT INTO "Languages" ("languageName") VALUES ('Celtic');
+INSERT INTO "Languages" ("languageName") VALUES ('Chinese');
+INSERT INTO "Languages" ("languageName") VALUES ('Croatian');
+INSERT INTO "Languages" ("languageName") VALUES ('Czech');
+INSERT INTO "Languages" ("languageName") VALUES ('Danish');
+INSERT INTO "Languages" ("languageName") VALUES ('Dutch');
+INSERT INTO "Languages" ("languageName") VALUES ('English');
+INSERT INTO "Languages" ("languageName") VALUES ('Estonian');
+INSERT INTO "Languages" ("languageName") VALUES ('Finnish');
+INSERT INTO "Languages" ("languageName") VALUES ('French');
+INSERT INTO "Languages" ("languageName") VALUES ('German');
+INSERT INTO "Languages" ("languageName") VALUES ('Greek');
+INSERT INTO "Languages" ("languageName") VALUES ('Hebrew');
+INSERT INTO "Languages" ("languageName") VALUES ('Hungarian');
+INSERT INTO "Languages" ("languageName") VALUES ('Icelandic');
+INSERT INTO "Languages" ("languageName") VALUES ('Irish');
+INSERT INTO "Languages" ("languageName") VALUES ('Italian');
+INSERT INTO "Languages" ("languageName") VALUES ('Japanese');
+INSERT INTO "Languages" ("languageName") VALUES ('Latvian');
+INSERT INTO "Languages" ("languageName") VALUES ('Lithuanian');
+INSERT INTO "Languages" ("languageName") VALUES ('Macedonian');
+INSERT INTO "Languages" ("languageName") VALUES ('Maltese');
+INSERT INTO "Languages" ("languageName") VALUES ('Norwegian');
+INSERT INTO "Languages" ("languageName") VALUES ('Persian');
+INSERT INTO "Languages" ("languageName") VALUES ('Polish');
+INSERT INTO "Languages" ("languageName") VALUES ('Portuguese');
+INSERT INTO "Languages" ("languageName") VALUES ('Romanian');
+INSERT INTO "Languages" ("languageName") VALUES ('Russian');
+INSERT INTO "Languages" ("languageName") VALUES ('Sanskrit');
+INSERT INTO "Languages" ("languageName") VALUES ('Serbian');
+INSERT INTO "Languages" ("languageName") VALUES ('Slovak');
+INSERT INTO "Languages" ("languageName") VALUES ('Slovenian');
+INSERT INTO "Languages" ("languageName") VALUES ('Spanish');
+INSERT INTO "Languages" ("languageName") VALUES ('Syriac');
+INSERT INTO "Languages" ("languageName") VALUES ('Turkish');
+INSERT INTO "Languages" ("languageName") VALUES ('Urkainian');
+
+COMMIT;
