@@ -704,7 +704,7 @@ class Query
         } 
         else if ($value === false)
         {
-            return '0';
+            return "'0'";
         }
         
         // Explicitly cast to string.
