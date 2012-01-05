@@ -701,6 +701,10 @@ class Query
         if($value === null)
         {
             return 'NULL';
+        } 
+        else if ($value === false)
+        {
+            return '0';
         }
         
         // Explicitly cast to string.
