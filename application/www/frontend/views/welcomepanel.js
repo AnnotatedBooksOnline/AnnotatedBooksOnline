@@ -106,8 +106,7 @@ Ext.define('Ext.ux.Welcome', {
                 Application.getInstance().openTab('search', [], true);
             }
         };
-        
-        var uploadButton = {
+         var uploadButton = {
             xtype: 'button',
             name: 'upload',
             text: 'Upload',
@@ -117,7 +116,33 @@ Ext.define('Ext.ux.Welcome', {
             width: buttonWidth,
             handler: function()
             {
-                Application.getInstance().gotoTab('upload', [], true);
+                RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+                function(result)
+                {
+                    if (result['status'] === 0)
+                    {
+                        Application.getInstance().gotoTab('reorderscan', [], true);
+                    }
+                    else
+                    {
+                        if (result['status'] === 1)
+                        {
+                            Application.getInstance().gotoTab('selectbook', [], true);
+                        }
+                        else
+                        {
+                            Application.getInstance().gotoTab('uploadinfo', [], true);
+                        }
+                    }
+                }, 
+                function()
+                {
+                    Ext.Msg.show({
+                                title: 'Error',
+                                msg: 'There is a problem with the server. Please try again later',
+                                buttons: Ext.Msg.OK
+                            });
+            });
             }
         };
         

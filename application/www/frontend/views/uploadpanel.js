@@ -549,6 +549,9 @@ Ext.define('Ext.ux.UploadForm', {
         var values = this.getValues();
         
         //alert(this.getValues(false));
+        
+        Application.getInstance().gotoTab('reorderscan',[],true);
+        this.close();
     },
     
     reset: function()
