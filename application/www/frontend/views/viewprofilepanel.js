@@ -68,105 +68,80 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     }
                 },
                 hideHeaders: true
-            }
-            // TODO: add information like last added annotation, forum post, ...
-            ]
+            },{
+                xtype: 'button',
+                text: 'Ban user',
+                id: 'ban',
+                width: '140',
+                handler: function ()
+                {
+                    var username = store.collect('username')[0];
+                    
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Bans the user afterwards.
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: 'You are about to ban \'' + username +
+                             '\', this can\'t be undone. Are you sure?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    // Ban the user.
+                                    RequestManager.getInstance().request(
+                                        'User',
+                                        'banUser',
+                                        {username: username},
+                                        _this
+                                    );  
+                                }
+                            }
+                    });
+                }
+            },{
+                xtype: 'button',
+                text: 'Delete user',
+                id: 'delete',
+                width: '140',
+                handler: function ()
+                {
+                    var username = store.collect('username')[0];
+                    
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Deletes the user afterwards.
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: 'You are about to delete \'' + username + 
+                             '\', this can\'t be undone. Are you sure?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    // Delete the user.
+                                    RequestManager.getInstance().request(
+                                        'User',
+                                        'deleteUser',
+                                        {username: username},
+                                        _this,
+                                        function()
+                                        {
+                                            _this.close();
+                                        }
+                                    );
+                                }
+                            }
+                    });
+                }
+            }]
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
-        
-        // TODO
-        RequestManager.getInstance().request(
-            'Authentication',
-            'hasPermissionTo',
-            {action: 'delete-users'},
-            this,
-            function(data)
-            {
-                // Add delete button
-                _this.add([{
-                    xtype: 'button',
-                    text: 'Delete user',
-                    id: 'delete',
-                    width: '140',
-                    handler: function ()
-                    {
-                        var username = store.collect('username')[0];
-                        
-                        // Shows a window to doublecheck if this is what the user wanted.
-                        // Deletes the user afterwards.
-                        Ext.Msg.show({
-                            title: 'Are you sure?',
-                            msg: 'You are about to delete \'' + username + 
-                                 '\', this can\'t be undone. Are you sure?',
-                            buttons: Ext.Msg.YESNO,
-                            icon: Ext.Msg.QUESTION,
-                            callback: function(button)
-                                {
-                                    if (button == 'yes')
-                                    {
-                                        // Delete the user.
-                                        RequestManager.getInstance().request(
-                                            'User',
-                                            'deleteUser',
-                                            {username: username},
-                                            _this
-                                        );
-                                        
-                                        _this.close();
-                                    }
-                                }
-                        });
-                    }
-                }]);
-            }
-        );
-        
-        RequestManager.getInstance().request(
-            'Authentication',
-            'hasPermissionTo',
-            {action: 'ban-users'},
-            this,
-            function(data)
-            {
-                // Add ban button
-                _this.add([{
-                    xtype: 'button',
-                    text: 'Ban user',
-                    id: 'ban',
-                    width: '140',
-                    handler: function ()
-                    {
-                        var username = store.collect('username')[0];
-                        
-                        // Shows a window to doublecheck if this is what the user wanted.
-                        // Bans the user afterwards.
-                        Ext.Msg.show({
-                            title: 'Are you sure?',
-                            msg: 'You are about to ban \'' + username +
-                                 '\', this can\'t be undone. Are you sure?',
-                            buttons: Ext.Msg.YESNO,
-                            icon: Ext.Msg.QUESTION,
-                            callback: function(button)
-                                {
-                                    if (button == 'yes')
-                                    {
-                                        // Ban the user.
-                                        RequestManager.getInstance().request(
-                                            'User',
-                                            'banUser',
-                                            {username: username},
-                                            _this
-                                        );  
-                                    }
-                                }
-                        });
-                    }
-                }]);
-            }
-        );
     }
 });
 
