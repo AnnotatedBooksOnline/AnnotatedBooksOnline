@@ -24,6 +24,8 @@ class UserSearchList
             'occupation',
             'website',
             'homeAddress',
+            'active',
+            'banned',
             'rank'
         );
         $conditionColumns = array(
@@ -36,6 +38,8 @@ class UserSearchList
             'occupation',
             'website',
             'homeAddress',
+            'active',
+            'banned',
             'rank'
         );
         

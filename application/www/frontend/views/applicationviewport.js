@@ -133,16 +133,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         {
                             Application.getInstance().gotoTab('reorderscan', [], true);
                         }
+                        else if (result['status'] === 1)
+                        {
+                            Application.getInstance().gotoTab('selectbook', [], true);
+                        }
                         else
                         {
-                            if (result['status'] === 1)
-                            {
-                                Application.getInstance().gotoTab('selectbook', [], true);
-                            }
-                            else
-                            {
-                                Application.getInstance().gotoTab('uploadinfo', [], true);
-                            }
+                            Application.getInstance().gotoTab('uploadinfo', [], true);
                         }
                     }, 
                     function()

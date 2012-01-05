@@ -14,6 +14,8 @@ require_once 'models/person/personsearchlist.php';
 require_once 'models/provenance/provenance.php';
 require_once 'models/scan/scan.php';
 
+class BindingStatusException extends ExceptionBase {}
+
 /**
  * Binding upload controller class.
  */
@@ -273,6 +275,34 @@ class BindingUploadController extends Controller
         else
         {
             return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
+        }
+    }
+    
+    public function actionGetBindingStatus($data)
+    {
+        $userId = Authentication::getInstance()->getUser()->getUserId();
+        $binding = Query::select('binding.status')
+            ->from ('Scans scan')
+            ->where('upload.userId = :userId')
+            ->join('Uploads upload', "scan.uploadId = upload.uploadId", "LEFT")
+            ->join('Bindings binding', "scan.bindingId = binding.bindingId", "LEFT")
+            ->where('binding.status <= :reorderedStatus')
+            ->groupBy('binding.bindingId')
+            ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
+        
+        if ($binding->getAmount()===1)
+        {
+            $status = $binding->getFirstRow()->getValue('status');
+            $bindingId = $binding->getFirstRow()->getValue('bindingId');
+            return (array('status' => $status, 'bindingId' => $bindingId));
+        }
+        else if ($status->getAmount()===0)
+        {
+            return (array('status' => Binding::STATUS_SELECTED));
+        }
+        else
+        {
+            throw new BindingStatusException('binding-status');
         }
     }
 }
