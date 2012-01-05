@@ -1,21 +1,18 @@
 <?php
 //[[GPL]]
-//Note: NoteId is disabled temporarily. We will make use of this parameter, when multiple notes are implemented.
-require_once 'framework/database/entity.php';
+
+require_once 'framework/database/assocentity.php';
+
 /**
  * Class representing a note entity.
  */
-class Note extends Entity
+class Note extends AssociativeEntity
 {
-    /** Id of the notes. */
-    //protected $noteId;
-    
     /** Id of the user who made the notes. */
     protected $userId;
     
     /** Text inside the note. */
     protected $text;
-    
     
     /**
     * Constructs a note by noteId.
@@ -26,7 +23,6 @@ class Note extends Entity
     {
         if ($id !== null)
         {
-            //$this->noteId= &id;
             $this->userId = $id;
             
             $this->load();
@@ -51,9 +47,9 @@ class Note extends Entity
     
     protected function getPrimaryKeys()
     {
-        return array(/*noteId*/'userId');
+        return array('userId');
     }
-           
+    
    /**
      * Gets all the columns.
      *
@@ -61,7 +57,7 @@ class Note extends Entity
      */
     protected function getColumns()
     {
-        return array(/*'userId',*/ 'text');
+        return array('text');
     }
     
     /**
@@ -72,19 +68,14 @@ class Note extends Entity
     protected function getColumnTypes()
     {
         return array(
-                    //'noteId'           => 'int',
-                    'userId'           => 'int',
-                    'text'            => 'string'
+            'userId' => 'int',
+            'text'   => 'string'
         );
     }
     
-    //public function getNoteId()         { return $this->noteId; }
-    //public function setNoteId($noteId)  { $this->noteId = $noteId; }
-    
-    public function getUserId()         { return $this->userId; }
+    public function getUserId()         { return $this->userId;    }
     public function setUserId($userId)  { $this->userId = $userId; }
     
-    public function getText()           { return $this->text; }
+    public function getText()           { return $this->text;  }
     public function setText($text)      { $this->text = $text; }
-    
 }
