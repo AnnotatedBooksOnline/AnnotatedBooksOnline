@@ -298,7 +298,7 @@ class BindingUploadController extends Controller
         }
         else if ($status->getAmount()===0)
         {
-            return (array('status' => Binding::STATUS_SELECTED));
+            return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
         }
         else
         {
