@@ -45,6 +45,15 @@ class UserSearchList
         // Conditionally add includes for the provided search arguments.
         $whereConditions = array();
         $whereValues = array();
+        
+        // Ignore dummy user.
+        $dummyId = Setting::getSetting('deleted-user-id');
+        if($dummyId !== null)
+        {
+            $whereConditions[] = 'userId != :dummyId';
+            $whereValues['dummyId'] = $dummyId;
+        }
+        
         foreach ($conditions as $column => $value)
         {
             if($column === 'username' || $column == 'email')

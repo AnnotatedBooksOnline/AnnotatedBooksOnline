@@ -36,7 +36,7 @@ class User extends Entity
     /** Rank constants: gaps in numbers are intentional to add more ranks if needed. */
     const RANK_NONE      =  0; // Not logged on.
     const RANK_DEFAULT   = 10; // A normal registered user.
-    const RANK_MODERATOR = 30; // A moderator.
+    const RANK_MODERATOR = 40; // A moderator.
     const RANK_ADMIN     = 50; // An administrator.
     
     /** User id. */
@@ -203,6 +203,63 @@ class User extends Entity
         else
         {
             return false;
+        }
+    }
+    
+    /**
+     * Safely deletes this user. With safely meaning that references to this user will be referred
+     * to a dummy user.
+     * 
+     * The userId of the entity should be set before calling this.
+     */
+    public function safeDelete()
+    {
+        $user = $this;
+        Database::getInstance()->doTransaction(function() use ($user)
+        {
+            // Get the user ID of the deleted dummy user.
+            $newid = Setting::getSetting('deleted-user-id');
+            
+            // All tables that need a userId foreign key set to the special deleted user after 
+            // deleting this user.
+            $reftables = array('Uploads');
+            
+            // Update references.
+            foreach($reftables as $table)
+            {
+                Query::update($table, array('userId' => ':newid'))
+                    ->where('userId = :oldid')
+                    ->execute(array('oldid' => $user->getUserId(), 'newid' => $newid));
+            }
+            
+            // Now the user can safely be deleted, as the DBMS will automatically delete
+            // associated notes and shelves etc.
+            $user->delete();
+        });
+    }
+    
+    /**
+     * Loads the user with the specified username. 
+     * 
+     * @param string $username The name of the user to load.
+     * 
+     * @return User A fully loaded user entity of the user with this name.
+     * 
+     * @throws EntityException If the user does not exist.
+     */
+    public static function findUserWithName($username)
+    {
+        $row = Query::select('userId')->from('Users')
+                                         ->where('username = :username')
+                                         ->execute(array('username' => $username))
+                                         ->getFirstRow_();
+        if($row === null)
+        {
+            throw new EntityException('record-not-found');
+        }
+        else
+        {
+            return new User($row->getValue('userId'));
         }
     }
     

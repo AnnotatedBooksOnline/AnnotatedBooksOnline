@@ -420,16 +420,6 @@ Ext.define('Ext.ux.BooksFieldSet', {
     {
         var _this = this;
         
-        // TODO: get this from database. (this table is not yet in the model)
-        var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['nl', 'Dutch'], ['en', 'English'], ['de', 'German']],
-            fields: ['value', 'text'],
-            sortInfo: {
-                field: 'text',
-                direction: 'ASC'
-            }
-        });
-        
         var defConfig = {
             items: [{
                 xtype: 'bookfieldset'
@@ -559,6 +549,9 @@ Ext.define('Ext.ux.UploadForm', {
         var values = this.getValues();
         
         //alert(this.getValues(false));
+        
+        Application.getInstance().gotoTab('reorderscan',[],true);
+        this.close();
     },
     
     reset: function()

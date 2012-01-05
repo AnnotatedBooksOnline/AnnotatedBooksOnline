@@ -120,12 +120,39 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             name: 'search'
         },{
+           
             text: 'Upload',
             iconCls: 'upload-icon',
             listeners: {
                 click: function()
                 {
-                    Application.getInstance().gotoTab('upload', [], true);
+                    RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+                    function(result)
+                    {
+                        if (result['status'] === 0)
+                        {
+                            Application.getInstance().gotoTab('reorderscan', [], true);
+                        }
+                        else
+                        {
+                            if (result['status'] === 1)
+                            {
+                                Application.getInstance().gotoTab('selectbook', [], true);
+                            }
+                            else
+                            {
+                                Application.getInstance().gotoTab('uploadinfo', [], true);
+                            }
+                        }
+                    }, 
+                    function()
+                    {
+                        Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. Please try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                    });
                 }
             },
             name: 'upload',
@@ -293,7 +320,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var pageNumber = 0;
                 if (data.length > 1)
                 {
-                    pageNumber = data[1] - 1;
+                    pageNumber = parseInt(data[1] - 1);
                 }
                 
                 // Fetch binding.
@@ -454,6 +481,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Restore password',
                     xtype: 'restorepasswordpanel'
+                });
+                
+                break;
+            
+                
+            case 'uploadinfo':
+                // Add an upload instructions tab.
+                Ext.apply(tabConfig, {
+                    title: 'Upload instructions',
+                    xtype: 'uploadinstructionpanel'
                 });
                 
                 break;

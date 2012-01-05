@@ -13,7 +13,7 @@ abstract class EntityList
     protected $entities;
     
     // TODO Mathijs : Functionality for loading multiple entities.
-    // TOO Mathijs : Functionality for deleting multiple entities.
+    // TODO Mathijs : Functionality for deleting multiple entities.
     
     /**
      * 

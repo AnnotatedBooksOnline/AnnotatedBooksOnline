@@ -6,7 +6,7 @@ require_once 'util/authentication.php';
 require_once 'util/mailer.php';
 require_once 'models/user/usersearchlist.php';
 require_once 'models/user/pendinguser.php';
-require_once 'models/notes/note.php';
+require_once 'models/note/note.php';
 
 // Exceptions.
 class RegistrationFailedException extends ExceptionBase { }
@@ -214,7 +214,7 @@ class UserController extends Controller
             'website'     => $website,
             'active'      => false,
             'banned'      => false,
-            'rank'        => User::RANK_ADMIN, // TODO: Handle ranks.
+            'rank'        => User::RANK_DEFAULT
         );
         
         // Check incoming values: username existance, email existance, correct pattern for 
@@ -317,21 +317,15 @@ class UserController extends Controller
      */
     public function actionDeleteUser($data)
     {
-        // Check whether logged on.
-        Authentication::assertLoggedOn();
-        //Authentication::assertPermissionTo('delete-users');
+        // Check permissions.
+        Authentication::assertPermissionTo('delete-users');
         
-        // TODO: Do a security check!
-        
-        // Fetch username.
+        // Fetch user.
         $username = self::getString($data, 'username', '', true, 30);
+        $user = User::findUserWithName($username);
         
-        // TODO: Move code below to user model.
-        
-        // Deletes the user from the database with this username.
-        $query = Query::delete('Users')->where('username = :username');
-        
-        $query->execute(array('username' => $username));
+        // Safely delete the user.
+        $user->safeDelete();
     }
     
     /**
@@ -339,20 +333,32 @@ class UserController extends Controller
      */
     public function actionBanUser($data)
     {
-        // Check whether logged on.
-        Authentication::assertLoggedOn();
-        //Authentication::assertPermissionTo('ban-users');
-        
-        // TODO: Do a security check!
+        // Check permissions.
+        Authentication::assertPermissionTo('ban-users');
         
         // Fetch username.
         $username = self::getString($data, 'username', '', true, 30);
         
-        // TODO: Move code below to user model.
-        
         // Sets the ban flag for this user.
         $query = Query::update('Users', array('banned' => true))->where('username = :username');
         
+        $query->execute(array('username' => $username));
+    }
+    
+    /**
+    * Unbans a user.
+    */
+    public function actionUnBanUser($data)
+    {
+        // Check permissions.
+        Authentication::assertPermissionTo('ban-users');
+    
+        // Fetch username.
+        $username = self::getString($data, 'username', '', true, 30);
+    
+        // Sets the ban flag for this user.
+        $query = Query::update('Users', array('banned' => false))->where('username = :username');
+    
         $query->execute(array('username' => $username));
     }
     

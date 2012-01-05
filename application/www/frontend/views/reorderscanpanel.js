@@ -2,6 +2,9 @@
 /*
  * Reorder scan fieldset class.
  */
+ 
+var store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+    
 Ext.define('Ext.ux.ReorderScanFieldset', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.reorderscanfieldset',
@@ -11,10 +14,36 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
     initComponent: function()
     {
         var _this = this;
-        this.bindingId = 1;
-        this.store = Ext.create('Ext.ux.StoreBase', {model: 'Ext.ux.ScanModel'});
-        this.store.filter({property: 'bindingId', value: this.bindingId});
-        this.store.load();
+        var bindingId = 1;
+        
+        RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+            function(result)
+            {
+                if (result['status'] === 0)
+                {
+                    bindingId = result['bindingId'];
+                    store.filter({property: 'bindingId', value: bindingId});
+                    store.load();
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.up('reorderscanform').close();
+                }
+            }, 
+            function()
+            {
+                 Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. PLease try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                this.close();
+            });
         
         var defConfig = {
             items: [{
@@ -24,7 +53,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 height: 400,
                 allowBlank: true,
                 ddReorder: true,
-                store: this.store,
+                store: store,
                 displayField: 'filename',
                 tbar: [{
                     text: 'Go back to old ordening',
@@ -38,11 +67,6 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
         Ext.apply(this, defConfig);
         
         this.callParent();
-    }
-    ,
-    getNewOrder: function()
-    {
-        return this.down('[name=scans]').store;
     }
 });
 
@@ -77,7 +101,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
     submit: function()
     {
         //Put the changes into an array
-        var records=this.down('[name=reorder]').store;
+        var records=store;
         var fields = new Array();
         records.each(function(record)
         {
@@ -90,9 +114,10 @@ Ext.define('Ext.ux.ReorderScanForm', {
         var onSuccess = function(data)
         {
                 Ext.Msg.show({
-                title: 'Error',
+                title: 'Success',
                 msg: 'The pages were succesfully reordered.',
                 buttons: Ext.Msg.OK}); 
+                Application.getInstance().gotoTab('selectbook',[],true);
                 this.close();
         };
         

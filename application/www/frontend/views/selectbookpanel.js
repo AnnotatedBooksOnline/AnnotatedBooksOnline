@@ -5,14 +5,10 @@ Ext.define('Ext.ux.BookListFieldset', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.booklistfieldset',
     title: 'Books',
-    collapsible: true,
     
     initComponent: function()
     {
         var _this = this;
-        
-        // TODO: get from database.
-        var bindingId = 1;
         
         var defConfig = {
             items: [{
@@ -58,7 +54,13 @@ Ext.define('Ext.ux.BookListFieldset', {
                     flex:      1,
                     sortable:  false,
                     dataIndex: 'placePublished'
-                }]
+                },{
+                    text:      'Status',
+                    width:     150,
+                    flex:      1,
+                    sortable:  false,
+                    dataIndex: 'status'
+                }],
             }]
         };
         
@@ -80,18 +82,43 @@ Ext.define('Ext.ux.ScanListFieldset', {
     initComponent: function()
     {
         var _this = this;
+        var bindingId;
         
-        // TODO: get from database.
-        var bindingId = 1;
-        this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-        this.store.filter({property: 'bindingId', value: bindingId});
-        this.store.load();
+        RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+            function(result)
+            {
+                if (result['status'] === 1)
+                {
+                    bindingId = result['bindingId'];
+                    scanstore.filter({property: 'bindingId', value: bindingId});
+                    scanstore.load();
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.up('selectbookform').close();
+                }
+            }, 
+            function()
+            {
+                 Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. PLease try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                this.close();
+            });
         
         var defConfig = {
             items: [{
                 xtype: 'grid',
                 border: false,
-                store: this.store,
+                store: scanstore,
+                resizable: false,
                 viewConfig: {
                     stripeRows: true
                 },
@@ -139,6 +166,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
 var i = -1;
 var book
 var bookstore;
+var scanstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
 var tempPage;
  
 Ext.define('Ext.ux.SelectBookForm', {
@@ -189,6 +217,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                             {
                                 _this.changeBookTitle(j,'');
                             }
+                            book.set('status', '');
                         }
                         i=1;
                         this.disable();
@@ -245,7 +274,8 @@ Ext.define('Ext.ux.SelectBookForm', {
         {
             tempPage = page;
             //TODO improve this
-            if(this.down('scanlistfieldset').store.findRecord('page',page).get('bookTitle')==''||this.down('scanlistfieldset').store.findRecord('page',page).get('bookTitle')==undefined)
+            if(scanstore.findRecord('page',page).get('bookTitle')==''||
+                            scanstore.findRecord('page',page).get('bookTitle')==undefined)
                 this.changeBookTitle(page, book.get('title'));
             i=2;
             return;
@@ -268,7 +298,11 @@ Ext.define('Ext.ux.SelectBookForm', {
             var bool = true;
             bookstore.each(function(record)
             {
-                if(record.get('bookId')!=book.get('bookId')&&(record.get('firstPage')<=last&&record.get('lastPage')>=last||record.get('firstPage')<=first&&record.get('lastPage')>=first))
+                if(record.get('bookId')!=book.get('bookId')
+                        &&(record.get('firstPage')<=last
+                        &&record.get('lastPage')>=last
+                            ||record.get('firstPage')<=first
+                            &&record.get('lastPage')>=first))
                 {
                     bool = false;
                 }
@@ -285,7 +319,6 @@ Ext.define('Ext.ux.SelectBookForm', {
                 title: 'Error',
                 msg: 'Books can not overlap. Please reselect a book and try again',
                 buttons: Ext.Msg.OK});
-                this.changeBookTitle(tempPage,'');
             }
             
             if(book.get('firstPage')!=-1)
@@ -295,6 +328,12 @@ Ext.define('Ext.ux.SelectBookForm', {
                 {
                     this.changeBookTitle(j,book.get('title'));
                 }
+                book.set('status', 'done');
+            }
+            
+            if (this.allPagesFilled())
+            {
+                this.down('[name=save]').enable();
             }
             
             this.down('button').enable();
@@ -321,7 +360,7 @@ Ext.define('Ext.ux.SelectBookForm', {
     //Change the booktitle of a scan in the scanlistField
     changeBookTitle: function(page, booktitle)
     {
-        this.down('scanlistfieldset').store.findRecord('page',page).set('bookTitle',booktitle);
+        scanstore.findRecord('page',page).set('bookTitle',booktitle);
     },
     
     submit: function()

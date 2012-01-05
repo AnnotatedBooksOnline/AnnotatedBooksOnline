@@ -4,7 +4,8 @@
 require_once 'framework/util/singleton.php';
 
 // Exceptions.
-class SettingNotFoundException extends ExceptionBase { }
+class ConfigurationException extends ExceptionBase { }
+class SettingNotFoundException extends ConfigurationException { }
 
 /**
  * Configuration class.
@@ -132,6 +133,12 @@ class Configuration extends Singleton
     // Adds settings from a file.
     private function addSettings($filename)
     {
+        // Check for file.
+        if (!file_exists($filename))
+        {
+            throw new ConfigurationException('config-file-not-found', $filename);
+        }
+        
         // Load ini file and add settings.
         $settings = parse_ini_file($filename, false);
         $this->settings = array_merge($this->settings, $settings);

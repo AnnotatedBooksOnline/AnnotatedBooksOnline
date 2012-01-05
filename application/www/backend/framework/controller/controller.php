@@ -6,7 +6,7 @@ require_once('framework/util/configuration.php');
 require_once('framework/util/translator.php');
 require_once('framework/util/log.php');
 
-// Exceptions
+// Exceptions.
 class ControllerException extends ExceptionBase { }
 
 /**
@@ -307,15 +307,23 @@ abstract class Controller
         // Set result.
         $result = array('message' => $message, 'code' => $code);
         
-        // Set stacktrace if in debug mode.
-        if (Configuration::getInstance()->getBoolean('debug-mode', false))
+        // Configuration may be the cause, so catch exceptions.
+        try
         {
-            $result['trace'] = $stackTrace;
-        }
+            // Set stacktrace if in debug mode.
+            if (Configuration::getInstance()->getBoolean('debug-mode', false))
+            {
+                $result['trace'] = $stackTrace;
+            }
+        } catch (Exception $e) { }
         
-        // Log the exception.
-        Log::error("An exception occured: message: '%s', code: '%s', stack trace:\n%s",
-            $message, $code, $stackTrace);
+        // Logging may be the cause, so catch exceptions.
+        try
+        {
+            // Log the exception.
+            Log::error("An exception occured: message: '%s', code: '%s', stack trace:\n%s",
+                $message, $code, $stackTrace);
+        } catch (Exception $e) { }
         
         return $result;
     }

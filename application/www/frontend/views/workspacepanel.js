@@ -331,7 +331,6 @@ Ext.define('Ext.ux.WorkspacePanel', {
         
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
         eventDispatcher.bind('change', this, this.onAuthenticationChange);
-        this.eventDispatcher = new EventDispatcher();
     },
     
     onLoggedOn: function()
@@ -361,4 +360,3 @@ Ext.define('Ext.ux.WorkspacePanel', {
         }
     }
 });
-

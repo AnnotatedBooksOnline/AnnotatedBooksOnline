@@ -251,6 +251,28 @@ class BindingUploadController extends Controller
         $minification = pow(2, ($numZoomLevels - 1));
         $scan->setDimensions(ceil($scanUploadImageIdentification[0] / $minification),
                              ceil($scanUploadImageIdentification[1] / $minification));
+    }
+    
+    public function actionGetBinding($data)
+    {
+        $userId = Authentication::getInstance()->getUser()->getUserId();
+        $bindingId = Query::select('binding.bindingId','binding.status')
+            ->from ('Scans scan')
+            ->where('upload.userId = :userId')
+            ->join('Uploads upload', "scan.uploadId = upload.uploadId", "LEFT")
+            ->join('Bindings binding', "scan.bindingId = binding.bindingId", "LEFT")
+            ->where('binding.status <= :reorderedStatus')
+            ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
         
+        if ($bindingId->getAmount()!=0)
+        {
+            $status = $bindingId->getFirstRow()->getValue('status');
+            $bId = $bindingId->getFirstRow()->getValue('bindingId');
+            return (array('status' => $status, 'bindingId' => $bId));
+        }
+        else
+        {
+            return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
+        }
     }
 }

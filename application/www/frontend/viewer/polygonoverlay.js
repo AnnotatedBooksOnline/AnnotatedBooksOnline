@@ -55,7 +55,27 @@ PolygonOverlay.prototype.update = function(position, zoomLevel, rotation, area)
     
     for (var i = this.polygons.length - 1; i >= 0; --i)
     {
-        this.polygons[i].update(position, this.zoomFactor, rotation);
+        var polygon = this.polygons[i];
+        
+        // Determine if visible.
+        var visible = boundingBoxesIntersect(polygon.getBoundingBox(), area); // TODO: Create submethod.
+        if (visible !== polygon.isVisible())
+        {
+            if (visible)
+            {
+                polygon.show();
+            }
+            else
+            {
+                polygon.hide();
+            }
+        }
+        
+        // Update polygon.
+        if (visible)
+        {
+            polygon.update(position, this.zoomFactor, rotation);
+        }
     }
 }
 
@@ -158,9 +178,24 @@ PolygonOverlay.prototype.setMode = function(mode)
             this.viewport.disable(true, false, false);
             break;
             
+        case 'vertex':
+            this.viewport.disable(true, false, false);
+            break;
+            
+        case 'addvertex':
+            this.viewport.disable(true, false, false);
+            break;
+            
+        case 'erasevertex':
+            this.viewport.disable(true, false, false);
+            break;
+            
         case 'erase':
             this.viewport.disable(true, false, false);
             break;
+            
+        default:
+            throw new Error("Invalid polygon overlay mode given.");
     }
     
     if (this.newPolygon !== undefined)
