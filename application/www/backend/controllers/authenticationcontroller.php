@@ -63,7 +63,6 @@ class AuthenticationController extends Controller
     
     public function actionGetPermissionList()
     {
-        Log::debug(print_r(Authentication::getInstance()->getPermissionList(), true));
         return Authentication::getInstance()->getPermissionList();
     }
 }
