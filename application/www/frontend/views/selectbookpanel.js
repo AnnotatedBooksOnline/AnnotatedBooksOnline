@@ -70,6 +70,7 @@ Ext.define('Ext.ux.BookListFieldset', {
     }
 });
 
+
 /*
  * Scan list fieldset class.
  */
@@ -82,7 +83,6 @@ Ext.define('Ext.ux.ScanListFieldset', {
     initComponent: function()
     {
         var _this = this;
-        var bindingId;
         
         RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
             function(result)
@@ -92,6 +92,18 @@ Ext.define('Ext.ux.ScanListFieldset', {
                     bindingId = result['bindingId'];
                     scanstore.filter({property: 'bindingId', value: bindingId});
                     scanstore.load();
+                    bookstore.filter({property: 'bindingId', value: bindingId});
+                    bookstore.on('load', function()
+                    { 
+                        bookstore.each(function(record)
+                        {
+                            record.set('timePeriod',record.getTimePeriod());
+                            record.set('firstPage',-1);
+                            record.set('lastPage',-1);
+                        });
+                    });
+                    
+                    bookstore.load();
                 }
                 else
                 {
@@ -163,9 +175,10 @@ Ext.define('Ext.ux.ScanListFieldset', {
  * Select book form class.
  */
  
-var i = -1;
+var bindingId;
+var i = 0;
 var book
-var bookstore;
+var bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
 var scanstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
 var tempPage;
  
@@ -176,10 +189,6 @@ Ext.define('Ext.ux.SelectBookForm', {
     initComponent: function() 
     {
         var _this = this;
-        var bindingId=1;
-        bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
-                    bookstore.filter({property: 'bindingId', value: bindingId});
-                    bookstore.load();
         
         var defConfig = {
             monitorValid: true,
@@ -197,16 +206,6 @@ Ext.define('Ext.ux.SelectBookForm', {
                     var grid = this.up('selectbookform').down('booklistfieldset').down('grid');
                     var selection = grid.getSelectionModel();
                     
-                    if (i===-1)
-                    {
-                        bookstore.each(function(record)
-                        {
-                            record.set('firstPage',-1);
-                            record.set('lastPage',-1);
-                        });
-                        i=0;
-                    }
-                    
                     if (selection.hasSelection())
                     {
                         book=selection.getSelection()[0];
@@ -215,7 +214,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                             var j;
                             for(j=book.get('firstPage');j <= book.get('lastPage');j++)
                             {
-                                _this.changeBookTitle(j,'');
+                                _this.changeBookTitle(j,undefined);
                             }
                             book.set('status', '');
                         }
@@ -273,11 +272,18 @@ Ext.define('Ext.ux.SelectBookForm', {
         if (i===1)
         {
             tempPage = page;
-            //TODO improve this
-            if(scanstore.findRecord('page',page).get('bookTitle')==''||
-                            scanstore.findRecord('page',page).get('bookTitle')==undefined)
+            if(scanstore.findRecord('page',page).get('bookTitle')==undefined)
+            {
                 this.changeBookTitle(page, book.get('title'));
-            i=2;
+                i=2;
+                return;
+            }
+            
+            Ext.Msg.show({
+                title: 'No book selected',
+                msg: 'Books can not overlap. Please reselect a book and try again.',
+                buttons: Ext.Msg.OK});
+            this.endSelecting();
             return;
         }
         if (i===2)
@@ -296,12 +302,13 @@ Ext.define('Ext.ux.SelectBookForm', {
             }
             
             var bool = true;
+            var title = scanstore.findRecord('page',page).get('bookTitle');
             bookstore.each(function(record)
             {
                 if(record.get('bookId')!=book.get('bookId')
                         &&(record.get('firstPage')<=last
-                        &&record.get('lastPage')>=last
-                            ||record.get('firstPage')<=first
+                        &&record.get('firstPage')>=first
+                            ||record.get('lastPage')<=last  
                             &&record.get('lastPage')>=first))
                 {
                     bool = false;
@@ -312,6 +319,10 @@ Ext.define('Ext.ux.SelectBookForm', {
             {
                 book.set('lastPage', last);
                 book.set('firstPage', first);
+                if (this.allPagesFilled())
+                {
+                    this.down('[name=save]').enable();
+                }
             }
             else
             {
@@ -319,28 +330,28 @@ Ext.define('Ext.ux.SelectBookForm', {
                 title: 'Error',
                 msg: 'Books can not overlap. Please reselect a book and try again',
                 buttons: Ext.Msg.OK});
+                this.changeBookTitle(tempPage,undefined);
             }
-            
-            if(book.get('firstPage')!=-1)
-            {
-                var j;
-                for(j=book.get('firstPage');j <= book.get('lastPage');j++)
-                {
-                    this.changeBookTitle(j,book.get('title'));
-                }
-                book.set('status', 'done');
-            }
-            
-            if (this.allPagesFilled())
-            {
-                this.down('[name=save]').enable();
-            }
-            
-            this.down('button').enable();
-            this.down('booklistfieldset').down('grid').enable();
-            this.down('booklistfieldset').down('grid').getSelectionModel().deselectAll();
-            i=0;
+
+            this.endSelecting();
         }
+    },
+    
+    endSelecting: function()
+    {
+        if(book.get('firstPage')!=-1)
+        {
+            var j;
+            for(j=book.get('firstPage');j <= book.get('lastPage');j++)
+            {
+                this.changeBookTitle(j,book.get('title'));
+            }
+            book.set('status', 'done');
+        }
+        this.down('button').enable();
+        this.down('booklistfieldset').down('grid').enable();
+        this.down('booklistfieldset').down('grid').getSelectionModel().deselectAll();
+        i=0;
     },
     
     //True when all books have first and last pages.
