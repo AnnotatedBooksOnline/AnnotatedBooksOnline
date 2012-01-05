@@ -197,6 +197,22 @@ class Authentication extends Singleton
     }
     
     /**
+     * Returns an array of all actions the currently logged in user is allowed to perform. 
+     * 
+     * @return array An array of strings representing action names.
+     */
+    public function getPermissionList()
+    {
+        // Fetch the currently logged in user.
+        $user = $this->getUser();
+        
+        // Get its rank, or RANK_NONE if no user is logged in.
+        $rank = $user === null ? User::RANK_NONE : $user->getRank();
+        
+        return Permission::getPermissionListForRank($rank);
+    }
+    
+    /**
      * Generates a unique token.
      * 
      * @return string A string representing a unique 32-digit hexadecimal number.
@@ -235,6 +251,5 @@ class Authentication extends Singleton
         {
             throw new AccessDeniedException($action);
         }
-    }
-    
+    }    
 }

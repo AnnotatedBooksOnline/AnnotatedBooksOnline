@@ -50,6 +50,28 @@ class Permission extends Entity
     }
     
     /**
+     * Returns an array of all actions a user with the specified rank is allowed to perform. 
+     *
+     * @param int $rank The rank of the kind of user for which to receive the permission list.
+     * 
+     * @return array An array of strings representing action names.
+     */
+    public static function getPermissionListForRank($rank)
+    {
+        $resultset = Query::select('actionName')->from('Permissions')
+                                                ->where('minRank <= :rank')
+                                                ->execute(array('rank' => $rank));
+        $list = array();
+
+        foreach($resultset as $row)
+        {
+            $list[] = $row->getValue('actionName');
+        }
+        
+        return $list;
+    }
+    
+    /**
      * Get the name of the corresponding table.
      */
     protected function getTableName()
