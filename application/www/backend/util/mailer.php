@@ -40,8 +40,6 @@ class Mailer
         Log::info('Mail to "%s" accepted for delivery:\n\n%s', $recipient, $message);
     }
     
-    
-    
     /**
      * Sends a standard activation mail to the specified PendingUser containing his or her 
      * activation code.

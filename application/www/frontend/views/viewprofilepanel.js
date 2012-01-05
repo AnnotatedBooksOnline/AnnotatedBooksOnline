@@ -81,8 +81,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
         RequestManager.getInstance().request(
             'Authentication',
             'hasPermissionTo',
-            // TODO: change to 'delete-users'. This setting is not yet available.
-            {action: 'ban-users'},
+            {action: 'delete-users'},
             this,
             function(data)
             {
