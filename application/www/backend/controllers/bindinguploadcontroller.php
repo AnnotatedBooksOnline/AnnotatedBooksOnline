@@ -281,7 +281,7 @@ class BindingUploadController extends Controller
     public function actionGetBindingStatus($data)
     {
         $userId = Authentication::getInstance()->getUser()->getUserId();
-        $binding = Query::select('binding.status')
+        $binding = Query::select('binding.bindingId','binding.status')
             ->from ('Scans scan')
             ->where('upload.userId = :userId')
             ->join('Uploads upload', "scan.uploadId = upload.uploadId", "LEFT")
@@ -290,13 +290,15 @@ class BindingUploadController extends Controller
             ->groupBy('binding.bindingId')
             ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
         
+        
         if ($binding->getAmount()===1)
         {
-            $status = $binding->getFirstRow()->getValue('status');
-            $bindingId = $binding->getFirstRow()->getValue('bindingId');
+            $result = $binding->getFirstRow();
+            $status = $result->getValue('status');
+            $bindingId = $result->getValue('bindingId');
             return (array('status' => $status, 'bindingId' => $bindingId));
         }
-        else if ($status->getAmount()===0)
+        else if ($binding->getAmount()===0)
         {
             return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
         }

@@ -84,7 +84,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
     {
         var _this = this;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
             function(result)
             {
                 if (result['status'] === 1)

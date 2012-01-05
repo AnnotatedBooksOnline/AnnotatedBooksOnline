@@ -126,7 +126,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             listeners: {
                 click: function()
                 {
-                    RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+                    RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
                     function(result)
                     {
                         if (result['status'] === 0)
