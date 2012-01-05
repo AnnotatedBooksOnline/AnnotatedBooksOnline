@@ -58,7 +58,7 @@ PolygonOverlay.prototype.update = function(position, zoomLevel, rotation, area)
         var polygon = this.polygons[i];
         
         // Determine if visible.
-        var visible = boundingBoxesIntersect(polygon.getBoundingBox(), area); // TODO: Create submethod.
+        var visible = this.isPolygonVisible(polygon, area);
         if (visible !== polygon.isVisible())
         {
             if (visible)
@@ -140,6 +140,12 @@ PolygonOverlay.prototype.removePolygons = function(triggerEvent)
     this.polygons = [];
 }
 
+PolygonOverlay.prototype.setPolygonMode = function(polygon, mode)
+{
+    polygon.setMode(mode);
+    polygon.update(this.position, this.zoomFactor, this.rotation);
+}
+
 PolygonOverlay.prototype.setActive = function(polygon)
 {
     this.setInactive(polygon);
@@ -215,6 +221,11 @@ PolygonOverlay.prototype.getMode = function()
 /*
  * Protected methods.
  */
+
+PolygonOverlay.prototype.isPolygonVisible = function(polygon, area)
+{
+    return boundingBoxesIntersect(polygon.getBoundingBox(), area);
+}
 
 PolygonOverlay.prototype.onBeforePolygonRemove = function(polygon, succeed, cancel)
 {
@@ -316,8 +327,7 @@ PolygonOverlay.prototype.endPolygon = function()
             function()
             {
                 // Keep polygon, set its mode and update it.
-                newPolygon.setMode('view');
-                newPolygon.update(_this.position, _this.zoomFactor, _this.rotation);
+                _this.setPolygonMode(newPolygon, 'view');
                 
                 // Call polygon create handler.
                 _this.onPolygonCreate(newPolygon);

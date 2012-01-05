@@ -116,7 +116,7 @@ Ext.define('Ext.ux.Welcome', {
             width: buttonWidth,
             handler: function()
             {
-                RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+                RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
                 function(result)
                 {
                     if (result['status'] === 0)

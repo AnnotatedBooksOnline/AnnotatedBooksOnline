@@ -126,23 +126,20 @@ Ext.define('Ext.ux.ApplicationViewport', {
             listeners: {
                 click: function()
                 {
-                    RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+                    RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
                     function(result)
                     {
                         if (result['status'] === 0)
                         {
                             Application.getInstance().gotoTab('reorderscan', [], true);
                         }
+                        else if (result['status'] === 1)
+                        {
+                            Application.getInstance().gotoTab('selectbook', [], true);
+                        }
                         else
                         {
-                            if (result['status'] === 1)
-                            {
-                                Application.getInstance().gotoTab('selectbook', [], true);
-                            }
-                            else
-                            {
-                                Application.getInstance().gotoTab('uploadinfo', [], true);
-                            }
+                            Application.getInstance().gotoTab('uploadinfo', [], true);
                         }
                     }, 
                     function()

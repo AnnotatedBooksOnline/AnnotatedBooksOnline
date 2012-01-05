@@ -34,7 +34,7 @@ Polygon.prototype.corners;
 
 Polygon.prototype.vertices;
 Polygon.prototype.aabb;
-Polygon.prototype.surface;
+Polygon.prototype.area;
 
 // Constants.
 Polygon.lineColor     = "#000";
@@ -131,6 +131,9 @@ Polygon.prototype.update = function(position, scale, rotation)
     // Update corners.
     if (this.mode !== 'view')
     {
+        // Let it scale somewhat with scale, because of the illusion of the spheres getting bigger.
+        var radius = Polygon.vertexRadius / Math.pow(scale, 1.05);
+        
         for (var i = this.corners.length - 1; i >= 0; --i)
         {
             if (!this.cornersVisible)
@@ -154,11 +157,11 @@ Polygon.prototype.update = function(position, scale, rotation)
                     y: 0,
                     degrees: rotation * (180 / Math.PI)
                 },
-                radius: Polygon.vertexRadius / scale
+                radius: radius
             }, true);
-            
-            this.cornersVisible = true;
         }
+        
+        this.cornersVisible = true;
     }
     else if (this.cornersVisible)
     {
@@ -177,8 +180,8 @@ Polygon.prototype.addVertex = function(vertex)
     this.vertices.push(vertex);
     
     // Calculate new bounding box and surface.
-    this.aabb    = Polygon.calculateBoundingBox(this.vertices);
-    this.surface = Polygon.calculateSurface(this.vertices);
+    this.aabb = Polygon.calculateBoundingBox(this.vertices);
+    this.area = Polygon.calculateArea(this.vertices);
     
     // Set new path.
     var path = Polygon.calculatePath(this.vertices, this.mode !== 'create');
@@ -197,8 +200,8 @@ Polygon.prototype.moveVertex = function(vertex, position)
     vertex.y = position.y;
     
     // Calculate bounding box and surface.
-    this.aabb    = Polygon.calculateBoundingBox(this.vertices);
-    this.surface = Polygon.calculateSurface(this.vertices);
+    this.aabb = Polygon.calculateBoundingBox(this.vertices);
+    this.area = Polygon.calculateArea(this.vertices);
     
     // Set new path.
     var path = Polygon.calculatePath(this.vertices, this.mode !== 'create');
@@ -259,6 +262,11 @@ Polygon.prototype.getMode = function()
 Polygon.prototype.getBoundingBox = function()
 {
     return this.aabb;
+}
+
+Polygon.prototype.getArea = function()
+{
+    return this.area;
 }
 
 Polygon.prototype.getVertexAmount = function()
@@ -384,9 +392,9 @@ Polygon.prototype.destroy = function()
 
 Polygon.prototype.initialize = function()
 {
-    // Calculate bounding box and surface.
-    this.aabb    = Polygon.calculateBoundingBox(this.vertices);
-    this.surface = Polygon.calculateSurface(this.vertices);
+    // Calculate bounding box and area.
+    this.aabb = Polygon.calculateBoundingBox(this.vertices);
+    this.area = Polygon.calculateArea(this.vertices);
     
     // Create path.
     var path = Polygon.calculatePath(this.vertices, true);
@@ -532,7 +540,7 @@ Polygon.prototype.onMouseUp = function(event)
  * Statics.
  */
 
-Polygon.calculateSurface = function(vertices)
+Polygon.calculateArea = function(vertices)
 {
     // Handle every vertex except first.
     var previous, current, surface = 0;

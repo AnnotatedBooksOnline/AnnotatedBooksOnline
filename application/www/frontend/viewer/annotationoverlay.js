@@ -26,6 +26,9 @@ AnnotationOverlay.prototype.eventDispatcher;
 AnnotationOverlay.prototype.annotationsByPolyId;
 AnnotationOverlay.prototype.polygonsByAnnHash;
 
+// Constants.
+AnnotationOverlay.minimumPolygonArea = 100;
+
 // Constructor.
 AnnotationOverlay.prototype.constructor = function(viewport)
 {
@@ -102,12 +105,12 @@ AnnotationOverlay.prototype.unhighlightAnnotation = function(annotation)
 
 AnnotationOverlay.prototype.editAnnotation = function(annotation)
 {
-    this.getPolygonByAnnotation(annotation).setMode('edit');
+    this.setPolygonMode(this.getPolygonByAnnotation(annotation), 'edit');
 }
 
 AnnotationOverlay.prototype.uneditAnnotation = function(annotation)
 {
-    this.getPolygonByAnnotation(annotation).setMode('view');
+    this.setPolygonMode(this.getPolygonByAnnotation(annotation), 'view');
 }
 
 AnnotationOverlay.prototype.getAnnotationColor = function(annotation)
@@ -124,13 +127,19 @@ AnnotationOverlay.prototype.setAnnotationColor = function(annotation, color)
  * Private methods.
  */
 
-AnnotationOverlay.prototype.update = function(position, zoomLevel, rotation, area)
+AnnotationOverlay.prototype.isPolygonVisible = function(polygon, area)
 {
-    // Determine visibility of each polygon by area.
-    // TODO: Implement.
+    // Fetch polygon area, squaring here because its in R^2.
+    var polygonArea = polygon.getArea() * this.zoomFactor * this.zoomFactor;
     
-    // Update polygons.
-    AnnotationOverlay.base.update.call(this, position, zoomLevel, rotation, area);
+    // Check polygon area.
+    var enoughArea = (polygonArea >= AnnotationOverlay.minimumPolygonArea);
+    
+    // Check mode.
+    var editMode = (polygon.getMode() !== 'view')
+    
+    return editMode ||
+        enoughArea && AnnotationOverlay.base.isPolygonVisible.call(this, polygon, area);
 }
 
 AnnotationOverlay.prototype.onBeforePolygonRemove = function(polygon, succeed, cancel)
@@ -165,9 +174,26 @@ AnnotationOverlay.prototype.onPolygonRemove = function(polygon)
 
 AnnotationOverlay.prototype.onBeforePolygonCreate = function(polygon, succeed, cancel)
 {
-    // TODO: Check area.
+    // Fetch polygon area, squaring here because its in R^2.
+    var polygonArea = polygon.getArea() * this.zoomFactor * this.zoomFactor;
     
-    succeed();
+    // Succeed or cancel depending on the area.
+    if (polygonArea >= AnnotationOverlay.minimumPolygonArea)
+    {
+        succeed();
+    }
+    else
+    {   
+        cancel();
+        
+        // Show a nice message.
+        Ext.Msg.show({
+            msg: 'Creating the annotation failed: it did not have enough area.',
+            title: 'Annotation creation failed.',
+            icon: Ext.Msg.ERROR,
+            buttons: Ext.Msg.OK
+        });
+    }
 }
 
 AnnotationOverlay.prototype.onPolygonCreate = function(polygon)
@@ -204,7 +230,10 @@ AnnotationOverlay.prototype.onPolygonHover = function(polygon)
     var annotation = this.getAnnotationByPolygon(polygon);
     
     // Trigger hover event.
-    this.eventDispatcher.trigger('hover', this, annotation);
+    if (annotation !== undefined)
+    {
+        this.eventDispatcher.trigger('hover', this, annotation);
+    }
 }
 
 AnnotationOverlay.prototype.onPolygonUnhover = function(polygon)
@@ -213,5 +242,8 @@ AnnotationOverlay.prototype.onPolygonUnhover = function(polygon)
     var annotation = this.getAnnotationByPolygon(polygon);
     
     // Trigger unhover event.
-    this.eventDispatcher.trigger('unhover', this, annotation);
+    if (annotation !== undefined)
+    {
+        this.eventDispatcher.trigger('unhover', this, annotation);
+    }
 }

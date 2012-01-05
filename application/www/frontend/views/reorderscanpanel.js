@@ -16,7 +16,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
         var _this = this;
         var bindingId = 1;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBinding', [], this, 
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
             function(result)
             {
                 if (result['status'] === 0)
