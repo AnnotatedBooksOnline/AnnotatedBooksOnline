@@ -317,13 +317,15 @@ class UserController extends Controller
      */
     public function actionDeleteUser($data)
     {
-        // Check whether logged on.
+        // Check permissions.
         Authentication::assertPermissionTo('delete-users');
         
-        // Fetch username.
+        // Fetch user.
         $username = self::getString($data, 'username', '', true, 30);
+        $user = User::findUserWithName($username);
         
-        //TODO ...
+        // Safely delete the user.
+        $user->safeDelete();
     }
     
     /**
@@ -331,7 +333,7 @@ class UserController extends Controller
      */
     public function actionBanUser($data)
     {
-        // Check whether logged on.
+        // Check permissions.
         Authentication::assertPermissionTo('ban-users');
         
         // Fetch username.
@@ -348,7 +350,7 @@ class UserController extends Controller
     */
     public function actionUnBanUser($data)
     {
-        // Check whether logged on.
+        // Check permissions.
         Authentication::assertPermissionTo('ban-users');
     
         // Fetch username.
