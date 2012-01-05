@@ -1,7 +1,7 @@
 BEGIN TRANSACTION;
 
 -- Add a "delete user" action to Permissions.
-INSERT INTO "Permissions" ("actionName", "minRank") VALUES ('delete-user', 50);
+INSERT INTO "Permissions" ("actionName", "minRank") VALUES ('delete-users', 50);
 
 -- Insert some temporary values for all the settings currently specified on the wiki.
 TRUNCATE TABLE "Settings";
