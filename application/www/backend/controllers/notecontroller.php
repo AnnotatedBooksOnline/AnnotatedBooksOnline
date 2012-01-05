@@ -1,65 +1,63 @@
 <?php
- 
 //[[GPL]]
- 
-//The code with the headers temporary solution will be 
-//replaced when having multiple notes is supported. 
- 
+
 require_once 'framework/controller/controller.php';
-require_once 'models/notes/note.php';
+require_once 'models/note/note.php';
 require_once 'util/authentication.php';
+
 /**
- * Profile controller class.
+ * Note controller class.
  */
 class NoteController extends Controller
 {
-    protected function __construct()
-    {
-        ;
-    }
- 
     public function actionLoad($data)
     {
-        // Retrieve the user id of the user.
         Authentication::assertLoggedOn();
-        $userId = self::getInteger($data, 'id', 0);
-            
-        // TODO: This is a temporary hack that checks whether a node exists before loading one and creating 
-        // one if it doesn't. This should really be handled by the entity or the existance of notes
-        // for every user should be enforced on the database level.
         
-        $rset = Query::select()->from('Notes')->where('userId = :userId')->execute(array('userId' => $userId));
-        if($rset->getAmount() == 0)
+        // Retrieve the user id of the user.
+        $userId = self::getInteger($data, 'id', 0);
+        
+        // Create note.
+        $note = new Note();
+        $note->setUserId($userId);
+        
+        // Try to load entity.
+        try
         {
-            // Create a row in Notes for this user.
-            Query::insert('Notes', array('userId' => ':userId'))->execute(array('userId' => $userId));
+            $note->load();
+        }
+        catch (EntityException $e)
+        {
+            // Create note.
+            $note->save();
         }
         
-        ///////// End of hack /////////
-        
-        $notes=new Note($userId);
-        return array('records' => $notes->getValues(), 'total' => 1);
+        return array('records' => $note->getValues(), 'total' => 1);
     }
     
     public function actionSave($data)
     {
-        //Check whether logged on.
+        // Check whether logged on.
         Authentication::assertLoggedOn();
-        //Authentication::assertPermissionTo('manage-notebook');
+        // Authentication::assertPermissionTo('manage-notebook');
         
-        //Retrieve userId and text
+        // TODO: Enable permissions above.
+        
+        // Retrieve user id and text.
         $record = self::getArray($data, 'record');
         
-        $userId      = self::getInteger($record, 'userId', 0);
-        $text        = self::getString($record, 'text', '', true);
+        $userId = self::getInteger($record, 'userId', 0);
+        $text   = self::getString($record, 'text', '', true);
         
         $values = array( 
-        'userId'        => $userId,
-        'text'         => $text,
+            'userId' => $userId,
+            'text'   => $text,
         );
 
         $note = new Note();
         $note->setValues($values);
         $note->save();
+        
+        return array('records' => $note->getValues(), 'total' => 1);
     }
 }

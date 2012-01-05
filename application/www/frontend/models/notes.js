@@ -2,7 +2,7 @@
  * Notes model.
  */
 
-Ext.define('Ext.ux.NotesModel', {
+Ext.define('Ext.ux.NoteModel', {
     extend: 'Ext.ux.ModelBase',
     idProperty: 'userId',
     fields: ['userId', 'text'],
@@ -10,6 +10,6 @@ Ext.define('Ext.ux.NotesModel', {
     proxy: {
         type: 'requestmanager',
         controller: 'Note',
-        model: 'Ext.ux.NotesModel'
+        model: 'Ext.ux.NoteModel'
     }
 });
