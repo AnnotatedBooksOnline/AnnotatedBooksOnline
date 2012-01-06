@@ -366,6 +366,8 @@ class UserController extends Controller
      * Sends an e-mail to the user containing a link with which he/she can enter a new password.
      * 
      * The only information a user needs to specify for this is an e-mail address.
+     * 
+     * @param $data Should have an 'email' key.
      */
     public function actionPasswordForgotten($data)
     {
@@ -383,5 +385,26 @@ class UserController extends Controller
         
         // Send an e-mail informing the user of the token.
         Mailer::sendPasswordRestorationMail($user);
+    }
+    
+    /**
+     * Change the role (rank) of a user.
+     * 
+     * @param $data Should contain 'username' and 'role', the latter being a number indicating the 
+     *              new rank of this user.
+     */
+    public function actionChangeRole($data)
+    {
+        // Check permissions.
+        Authentication::assertPermissionTo('change-user-roles');
+        
+        // Fetch username and new role.
+        $username = self::getString($data, 'username', '', true, 30);
+        $newrank = self::getInteger($data, 'role');
+        
+        // Change the user rank.
+        $user = User::findUserWithName($username);
+        $user->setRank($newrank);
+        $user->save();
     }
 }

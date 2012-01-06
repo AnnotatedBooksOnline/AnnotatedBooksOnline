@@ -78,10 +78,13 @@ class UserActivationController extends Controller
     /**
      * Activates a user based on a activation token. If the code matches with an existing pending 
      * user, this sets the active bit of the user to true and deletes the pending user entry.
+     * 
+     * @param $data Should contain a 'token', which is the confirmation code of the activation.
      */
     public function actionActivateUser($data)
     {
-        Log::info('User activation action.');
+        // Is done by a currently logged off guest, therefore no authentication check.
+        
         // Fetch activation token.
         $token = self::getString($data, 'token');
         
@@ -121,5 +124,25 @@ class UserActivationController extends Controller
         });
         
         return $success;
+    }
+    
+    /**
+     * Turns automatic user acceptance on or off. When off, administrators will manually have to \
+     * accept or decline registrations. If on, registrations are accepted automatically. 
+     * 
+     * In both cases users will still require to click an activation link though.
+     * 
+     * @param $data Should contain a boolean 'auto-accept', which is true if the setting should be
+     *              turned on and false if it should be turned off.
+     */
+    public function actionSetAutoAcceptance($data)
+    {
+        // Check permissions.
+        Authentication::assertPermissionTo('change-global-settings');
+        
+        // Fetch wheter to turn automatic acceptance on or off.
+        $newval = self::getBoolean($data, 'auto-accept');
+        
+        Setting::setSetting('auto-user-acceptance', $newval ? '1' : '0');
     }
 }
