@@ -180,6 +180,7 @@ Ext.define('Ext.ux.BookFieldset', {
                             name: 'title',
                             anchor: '98%',
                             labelAlign: 'top',
+                            height: 42,
                             listeners: {
                                 'change': function(t, title)
                                 {
@@ -196,106 +197,10 @@ Ext.define('Ext.ux.BookFieldset', {
                         },{
                             xtype: 'fieldcontainer',
                             layout: 'hbox',
-                            fieldLabel: 'Pages *',
-                            anchor: '98%',
-                            labelAlign: 'top',
-                            items: [{
-                                xtype: 'numberfield',
-                                name: 'pageStart',
-                                width: 63,
-                                minValue: 1,
-                                allowDecimals: false,
-                                listeners: {
-                                    'change': function (f, start)
-                                    {
-                                        // On change, check if this value ('start') is larger than
-                                        // the 'end' value -> change 'end' to 'start' in that case.
-                                        // This will also happen if 'end' value is empty.
-                                        var end = this.nextSibling('[name=pageEnd]');
-                                        if (end.getValue() == null ||
-                                            parseInt(start) > parseInt(end.getValue())) 
-                                        {
-                                            end.setValue(start);
-                                        }
-                                        
-                                        // On change, check if this value ('start') is smaller than
-                                        // the 'end' value of the book before this one -> change 'end' 
-                                        // to 'start' in that case.
-                                        var endOfBookBefore = this.previousNode('[name=pageEnd]');
-                                        if (endOfBookBefore != undefined &&
-                                            (endOfBookBefore.getValue() == null ||
-                                             parseInt(start) <= parseInt(endOfBookBefore.getValue()))) 
-                                        {
-                                            endOfBookBefore.setValue(start);
-                                        }
-                                        
-                                        return;
-                                    }
-                                }
-                            },{
-                                xtype: 'label',
-                                text: '-',
-                                margins: '0 0 0 10'
-                            },{
-                                xtype: 'numberfield',
-                                hideLabel: true,
-                                name: 'pageEnd',
-                                width: 63,
-                                minValue: 1,
-                                allowDecimals: false,
-                                margins: '0 0 0 10',
-                                listeners: {
-                                    'change': function (t, end)
-                                    {
-                                        // On change, check if this value ('end') is lower than
-                                        // the 'start' value -> change 'start' to 'end' in that case.
-                                        // This will also happen if 'start' value is empty.
-                                        var start = this.previousSibling('[name=pageStart]');
-                                        if (start.getValue() == null
-                                            || parseInt(end) < parseInt(start.getValue())) 
-                                        {
-                                            start.setValue(end);
-                                        }
-                                        
-                                        // On change, check if this value ('end') is smaller than
-                                        // the 'start' value of the book after this one -> change 
-                                        // 'start' to 'end' in that case.
-                                        var startOfBookAfter = this.nextNode('[name=pageStart]');
-                                        if (startOfBookAfter != undefined &&
-                                            (startOfBookAfter.getValue() == null ||
-                                             parseInt(end) >= parseInt(startOfBookAfter.getValue()))) 
-                                        {
-                                            startOfBookAfter.setValue(end);
-                                        }
-                                        
-                                        return;
-                                    }
-                                }
-                            }]
-                        },{
-                            fieldLabel: 'Author',
-                            name: 'author',
-                            anchor: '98%',
-                            allowBlank: true,
-                            labelAlign: 'top'
-                        },{
-                            fieldLabel: 'Publisher/printer',
-                            name: 'publisher',
-                            anchor: '98%',
-                            allowBlank: true,
-                            labelAlign: 'top'
-                        }]
-                    },{
-                        xtype: 'container',
-                        columnWidth: .5,
-                        layout: 'anchor',
-                        defaultType: 'textfield',
-                        items: [{
-                            xtype: 'fieldcontainer',
-                            layout: 'hbox',
                             fieldLabel: 'Time period of publication *',
                             anchor: '100%',
                             labelAlign: 'top',
+                            height: 42,
                             items: [{
                                 xtype: 'numberfield',
                                 name: 'from',
@@ -402,21 +307,44 @@ Ext.define('Ext.ux.BookFieldset', {
                             mode: 'local',
                             multiSelect: true,
                             store: store,
-                            anchor: '100%',
+                            anchor: '98%',
                             labelAlign: 'top',
                             editable: false,
+                            height: 42,
                             forceSelection: true
+                        },{
+                            fieldLabel: 'Publisher/printer',
+                            name: 'publisher',
+                            anchor: '98%',
+                            allowBlank: true,
+                            height: 42,
+                            labelAlign: 'top'
+                        }]
+                    },{
+                        xtype: 'container',
+                        columnWidth: .5,
+                        layout: 'anchor',
+                        defaultType: 'textfield',
+                        items: [{
+                            fieldLabel: 'Author',
+                            name: 'author',
+                            anchor: '100%',
+                            allowBlank: true,
+                            height: 42,
+                            labelAlign: 'top'
                         },{
                             fieldLabel: 'Place published',
                             name: 'placePublished',
                             anchor: '100%',
                             allowBlank: true,
+                            height: 42,
                             labelAlign: 'top'
                         },{
                             fieldLabel: 'Version',
                             name: 'version',
                             anchor: '100%',
                             allowBlank: true,
+                            height: 42,
                             labelAlign: 'top'
                         }]
                     }]
