@@ -305,17 +305,40 @@ Ext.define('Ext.ux.BookFieldset', {
                                 minValue: 1000,
                                 allowDecimals: false,
                                 listeners: {
-                                    'change': function(f, from)
-                                    {
-                                        // On change, check if this value ('from') is larger than
-                                        // the 'to' value -> change 'to' to 'from' in that case.
-                                        // This will also happen if 'to' value is empty.
+                                    'blur': function(from, f) {
                                         var to = this.nextSibling('[name=to]');
-                                        if (to.getValue() == null ||
-                                            parseInt(from) > parseInt(to.getValue())) 
+                                        var fromValue = from.getValue();
+                                        var toValue = to.getValue()
+                                        if (toValue == null || parseInt(fromValue) > parseInt(toValue)) 
                                         {
-                                            to.setValue(from);
+                                            to.setValue(fromValue);
                                         }
+                                        return;
+                                    },
+                                    'spin': function(from, direction) {
+                                        var to = this.nextSibling('[name=to]');
+                                        var fromValue = parseInt(from.getValue());
+                                        var toValue = parseInt(to.getValue());
+                                        
+                                        if (direction=='up')
+                                        {
+                                            fromValue++;
+                                        }
+                                        else
+                                        {
+                                            fromValue--;
+                                        }
+                                        
+                                        if (to.getValue() == null || fromValue > toValue) 
+                                        {
+                                            to.markInvalid('The value should be equal to or' +
+                                                           ' greater than the first value.');
+                                        }
+                                        else
+                                        {
+                                            to.validate();
+                                        }
+                                        
                                         return;
                                     }
                                 }
@@ -334,17 +357,40 @@ Ext.define('Ext.ux.BookFieldset', {
                                 allowDecimals: false,
                                 margins: '0 0 0 10',
                                 listeners: {
-                                    'change': function(t, to)
-                                    {
-                                        // On change, check if this value ('to') is lower than
-                                        // the 'from' value -> change 'from' to 'to' in that case.
-                                        // This will also happen if 'from' value is empty.
+                                    'blur': function(to, t) {
                                         var from = this.previousSibling('[name=from]');
-                                        if (from.getValue() == null
-                                            || parseInt(to) < parseInt(from.getValue())) 
+                                        var fromValue = from.getValue();
+                                        var toValue = to.getValue();
+                                        if (fromValue == null || parseInt(fromValue) > parseInt(toValue)) 
                                         {
-                                            from.setValue(to);
+                                            from.setValue(toValue);
                                         }
+                                        return;
+                                    },
+                                    'spin': function(to, direction) {
+                                        var from = this.previousSibling('[name=from]');
+                                        var fromValue = parseInt(from.getValue());
+                                        var toValue = parseInt(to.getValue());
+                                        
+                                        if (direction=='up')
+                                        {
+                                            toValue++;
+                                        }
+                                        else
+                                        {
+                                            toValue--;
+                                        }
+                                        
+                                        if (from.getValue() == null || fromValue > toValue) 
+                                        {
+                                            from.markInvalid('This value should be equal to or' +
+                                                             ' lower than the second value.');
+                                        }
+                                        else
+                                        {
+                                            from.validate();
+                                        }
+                                        
                                         return;
                                     }
                                 }
