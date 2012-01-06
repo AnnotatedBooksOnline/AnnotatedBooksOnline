@@ -534,6 +534,8 @@ Ext.define('Ext.ux.UploadForm', {
             {
                 this.ownerCt.setLoading(false);
                 Ext.Msg.alert('Upload', 'Binding added successfully.');
+                Application.getInstance().gotoTab('reorderscan',[],true);
+                this.close();
             }, function()
             {
                 this.ownerCt.setLoading(false);
@@ -549,9 +551,6 @@ Ext.define('Ext.ux.UploadForm', {
         var values = this.getValues();
         
         //alert(this.getValues(false));
-        
-        Application.getInstance().gotoTab('reorderscan',[],true);
-        this.close();
     },
     
     reset: function()
