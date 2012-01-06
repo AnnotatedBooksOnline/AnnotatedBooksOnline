@@ -767,16 +767,31 @@ Ext.define('Ext.ux.SearchPanel', {
                     xtype: 'panel',
                     border: false,
                     html: 'Sort by:',
-                    style: 'margin-bottom: 10px'
+                    style: 'margin-bottom: 5px'
                 },{
                     xtype: 'sortcombobox',
                     sortFn: sort
                 },{
-                    xtype: 'sortcombobox',
-                    sortFn: sort
+                    xtype: 'panel',
+                    border: false,
+                    html: 'Then by:',
+                    style: 'margin: 5px 0px'
                 },{
                     xtype: 'sortcombobox',
                     sortFn: sort
+                },{
+                    xtype: 'panel',
+                    border: false,
+                    html: 'Then by:',
+                    style: 'margin: 5px 0px'
+                },{
+                    xtype: 'sortcombobox',
+                    sortFn: sort
+                },{
+                    xtype: 'panel',
+                    border: false,
+                    html: '<font size="1" >(Select checkbox to invert sorting)</font>',
+                    style: 'margin-top: 5px'
                 }]
             },{
                 xtype: 'panel',
