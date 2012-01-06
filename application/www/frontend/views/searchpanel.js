@@ -872,6 +872,55 @@ Ext.define('Ext.ux.SearchPanel', {
         var firstField = this.down('[name=type]');
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});
+        
+        if (Authentication.getInstance().isLoggedOn())
+        {
+            this.onLoggedOn();
+        }
+        
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+    },
+    
+    onLoggedOn: function()
+    {
+        this.insert(2, {
+            region: 'east',
+            xtype: 'panel',
+            split: true,
+            collapsible: true,
+            collapsed: false,
+            width: 300,
+            minWidth: 300,
+            layout: 'fit',
+            hidden: !Authentication.getInstance().isLoggedOn(),
+            items: [{
+                xtype: 'tabpanel',
+                layout: 'fit',
+                border: false,
+                items: [{
+                    title: 'Notes',
+                    xtype: 'notespanel',
+                }]
+            }]
+        });
+    },
+    
+    onLoggedOut: function()
+    {
+        this.remove(2);
+    },
+    
+    onAuthenticationChange: function(event, authentication)
+    {
+        if (authentication.isLoggedOn())
+        {
+            this.onLoggedOn();
+        }
+        else
+        {
+           this.onLoggedOut();
+        }
     }
 });
 
