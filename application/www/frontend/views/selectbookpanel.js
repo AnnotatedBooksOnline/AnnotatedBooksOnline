@@ -84,47 +84,6 @@ Ext.define('Ext.ux.ScanListFieldset', {
     {
         var _this = this;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-            function(result)
-            {
-                if (result['status'] === 1)
-                {
-                    bindingId = result['bindingId'];
-                    scanstore.filter({property: 'bindingId', value: bindingId});
-                    scanstore.load();
-                    bookstore.filter({property: 'bindingId', value: bindingId});
-                    bookstore.on('load', function()
-                    { 
-                        bookstore.each(function(record)
-                        {
-                            record.set('timePeriod',record.getTimePeriod());
-                            record.set('firstPage',-1);
-                            record.set('lastPage',-1);
-                        });
-                    });
-                    
-                    bookstore.load();
-                }
-                else
-                {
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'This step of the uploading process is currently unavailable',
-                        buttons: Ext.Msg.OK
-                    });
-                    this.up('selectbookform').close();
-                }
-            }, 
-            function()
-            {
-                 Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'There is a problem with the server. PLease try again later',
-                            buttons: Ext.Msg.OK
-                        });
-                this.close();
-            });
-        
         var defConfig = {
             items: [{
                 xtype: 'grid',
@@ -190,10 +149,51 @@ Ext.define('Ext.ux.SelectBookForm', {
     {
         var _this = this;
         
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+            function(result)
+            {
+                if (result['status'] === 1)
+                {
+                    bindingId = result['bindingId'];
+                    scanstore.filter({property: 'bindingId', value: bindingId});
+                    scanstore.load();
+                    bookstore.filter({property: 'bindingId', value: bindingId});
+                    bookstore.on('load', function()
+                    { 
+                        bookstore.each(function(record)
+                        {
+                            record.set('timePeriod',record.getTimePeriod());
+                            record.set('firstPage',-1);
+                            record.set('lastPage',-1);
+                        });
+                    });
+                    
+                    bookstore.load();
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.close();
+                }
+            }, 
+            function()
+            {
+                 Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. Please try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                this.close();
+            });
+        
         var defConfig = {
             monitorValid: true,
             items: [{
-                xtype: 'bindinginformationfieldset'
+                xtype: 'bindinginformationfieldset',
             },{
                 xtype: 'booklistfieldset',
             },{

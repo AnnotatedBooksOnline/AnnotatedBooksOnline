@@ -486,7 +486,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             case 'uploadinfo':
                 // Add an upload instructions tab.
                 Ext.apply(tabConfig, {
-                    title: 'Upload instructions',
+                    title: 'Upload (instructions)',
                     xtype: 'uploadinstructionpanel'
                 });
                 
