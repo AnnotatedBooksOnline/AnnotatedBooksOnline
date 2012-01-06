@@ -541,7 +541,7 @@ Ext.define('Ext.ux.UploadForm', {
                     callback: function(button)
                         {
                             Application.getInstance().gotoTab('reorderscan',[],true);
-                            _this.close();
+                            this.close();
                         }
                 });
             }, function()
