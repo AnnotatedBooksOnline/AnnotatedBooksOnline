@@ -11,7 +11,8 @@ Ext.define('Ext.ux.UserListPanel', {
         var _this = this;
         
         var store = Ext.create('Ext.ux.StoreBase', {
-            model: 'Ext.ux.UserModel'
+            model: 'Ext.ux.UserModel',
+            pageSize: 20
         });
         
         store.loadPage(1);
