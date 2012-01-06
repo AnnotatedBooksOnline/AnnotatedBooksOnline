@@ -116,8 +116,11 @@ abstract class Controller
             // Determine if the action method exists in the controller.
             if (method_exists($controller, $methodName))
             {
-                // Log a messsage.
-                Log::info("Handling action '%s' of controller '%s'.", $actionName, $controllerName);
+                if($actionName != 'keepalive')
+                {
+                    // Log a messsage.
+                    Log::info("Handling action '%s' of controller '%s'.", $actionName, $controllerName);
+                }
                 
                 // Calculate start time.
                 $start = microtime(true);
@@ -128,9 +131,12 @@ abstract class Controller
                 // Calculate end time.
                 $end = microtime(true);
                 
-                // Log a messsage.
-                Log::debug("Action '%s' of controller '%s' took %dms.",
-                    $actionName, $controllerName, round(1000 * ($end - $start)));
+                if($actionName != 'keepalive')
+                {
+                    // Log a messsage.
+                    Log::debug("Action '%s' of controller '%s' took %dms.",
+                        $actionName, $controllerName, round(1000 * ($end - $start)));
+                }
             }
             else
             {

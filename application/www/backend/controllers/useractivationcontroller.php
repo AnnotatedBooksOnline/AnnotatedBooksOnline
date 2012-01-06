@@ -3,6 +3,8 @@
 
 require_once 'framework/controller/controller.php';
 require_once 'util/authentication.php';
+require_once 'models/user/pendinguser.php';
+require_once 'util/mailer.php';
 
 class UserActivationException extends ExceptionBase {}
 
@@ -15,7 +17,7 @@ class UserActivationController extends Controller
      * Accept or decline a pending user. If either is succesfull, the user will be send an e-mail.
      * If the user was accepted the e-mail will also contain a confirmation code.
      * 
-     * @param $data Should have 'userId' and 'accepted' entries; the latter indicated whether to 
+     * @param $data Should have 'username' and 'accepted' entries; the latter indicated whether to 
      *              accept or decline.
      * 
      * @throws UserActivationException
@@ -25,23 +27,26 @@ class UserActivationController extends Controller
         // Assert permission.
         Authentication::assertPermissionTo('accept-registrations');
         
-        // Fetch id of user to accept or decline.
-        $userId = self::getString($data, 'userId');
+        // Fetch name of user to accept or decline.
+        $username = self::getString($data, 'username');
         
         // Check whether to accept or decline user.
         $accepted = self::getBoolean($data, 'accepted', true);
         
         // Start a transaction.
         Database::getInstance()->doTransaction(
-        function() use ($userId, $accepted)
+        function() use ($username, $accepted)
         {
+            //Find corresponding user.
+            $user = User::findUserWithName($username);
+            
             // Find associated PendingUser.
-            $result = Query::select('pendingUserId')
-                           ->from('PendingUsers')
-                           ->where('userId = :userId')
-                           ->execute(array('userId' => $userId))
-                           ->getFirstRow_();
-            if(!$result)
+            $row = Query::select('pendingUserId')
+                         ->from('PendingUsers')
+                         ->where('userId = :userId')
+                         ->execute(array('userId' => $user->getUserId()))
+                         ->getFirstRow_();
+            if(!$row)
             {
                 throw new UserActivationException('user-not-pending');
             }
