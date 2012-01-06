@@ -12,7 +12,8 @@ class NoteController extends Controller
 {
     public function actionLoad($data)
     {
-        Authentication::assertLoggedOn();
+        //Authentication::assertLoggedOn();
+        Authentication::assertPermissionTo('manage-notebook');
         
         // Retrieve the user id of the user.
         $userId = self::getInteger($data, 'id', 0);
@@ -36,10 +37,9 @@ class NoteController extends Controller
     }
     
     public function actionSave($data)
-    {
-        // Check whether logged on.
-        Authentication::assertLoggedOn();
-        // Authentication::assertPermissionTo('manage-notebook');
+    {       
+        // Check permissions.
+        Authentication::assertPermissionTo('manage-notebook');
         
         // TODO: Enable permissions above.
         

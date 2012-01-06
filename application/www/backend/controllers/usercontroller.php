@@ -45,8 +45,7 @@ class UserController extends Controller
     public function actionLoad($data)
     {
         // Assert that the user is authenticated. 
-        Authentication::assertLoggedOn();
-        //Authentication::assertPermissionTo('view-users');
+        Authentication::assertPermissionTo('view-users');
         
         // Determine the total number of users.
         $total = UserSearchList::findUserCount();
@@ -119,10 +118,8 @@ class UserController extends Controller
      */
     public function actionSave($data)
     {
-        // Check whether logged on.
+        // TODO: proper permission
         Authentication::assertLoggedOn();
-        
-        // TODO: Do a security check on id!
         
         // TODO: Handle changing of passwords.
         

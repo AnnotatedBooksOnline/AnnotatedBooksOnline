@@ -31,7 +31,7 @@ class UserActivationController extends Controller
         $username = self::getString($data, 'username');
         
         // Check whether to accept or decline user.
-        $accepted = self::getBoolean($data, 'accepted', true);
+        $accepted = self::getBoolean($data, 'accepted');
         
         // Start a transaction.
         Database::getInstance()->doTransaction(
