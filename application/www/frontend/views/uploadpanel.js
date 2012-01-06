@@ -533,7 +533,17 @@ Ext.define('Ext.ux.UploadForm', {
             RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
             {
                 this.ownerCt.setLoading(false);
-                Ext.Msg.alert('Upload', 'Binding added successfully.');
+                //Ext.Msg.alert('Upload', 'Binding added successfully.');
+                Ext.Msg.show({
+                    title: 'Upload',
+                    msg: 'Binding added successfully.',
+                    buttons: Ext.Msg.OK,
+                    callback: function(button)
+                        {
+                            Application.getInstance().gotoTab('reorderscan',[],true);
+                            _this.close();
+                        }
+                });
             }, function()
             {
                 this.ownerCt.setLoading(false);
@@ -549,9 +559,6 @@ Ext.define('Ext.ux.UploadForm', {
         var values = this.getValues();
         
         //alert(this.getValues(false));
-        
-        Application.getInstance().gotoTab('reorderscan',[],true);
-        this.close();
     },
     
     reset: function()
