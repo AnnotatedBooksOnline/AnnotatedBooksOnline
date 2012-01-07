@@ -314,8 +314,7 @@ Ext.define('Ext.ux.ViewerPanel', {
             items: [{
                 xtype: 'informationpanel',
                 title: 'Binding information',
-                collapsed: false,
-                maxHeight: 200
+                collapsed: false
             },{
                 xtype: 'navigationpanel',
                 cls: 'navigation-panel',

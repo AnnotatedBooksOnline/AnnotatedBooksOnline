@@ -9,10 +9,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
     initComponent: function()
     {
         var _this = this;
-       
+        
         var librarySignatureCheck = true;
         
-
         // TODO: let this function communicate with db, define better name
         // used @ library & signature
         function checkLibrarySignature(library, signature) {
@@ -190,6 +189,7 @@ Ext.define('Ext.ux.BookFieldset', {
                             name: 'title',
                             anchor: '98%',
                             labelAlign: 'top',
+                            height: 42,
                             listeners: {
                                 'change': function(t, title)
                                 {
@@ -206,106 +206,10 @@ Ext.define('Ext.ux.BookFieldset', {
                         },{
                             xtype: 'fieldcontainer',
                             layout: 'hbox',
-                            fieldLabel: 'Pages *',
-                            anchor: '98%',
-                            labelAlign: 'top',
-                            items: [{
-                                xtype: 'numberfield',
-                                name: 'pageStart',
-                                width: 63,
-                                minValue: 1,
-                                allowDecimals: false,
-                                listeners: {
-                                    'change': function (f, start)
-                                    {
-                                        // On change, check if this value ('start') is larger than
-                                        // the 'end' value -> change 'end' to 'start' in that case.
-                                        // This will also happen if 'end' value is empty.
-                                        var end = this.nextSibling('[name=pageEnd]');
-                                        if (end.getValue() == null ||
-                                            parseInt(start) > parseInt(end.getValue())) 
-                                        {
-                                            end.setValue(start);
-                                        }
-                                        
-                                        // On change, check if this value ('start') is smaller than
-                                        // the 'end' value of the book before this one -> change 'end' 
-                                        // to 'start' in that case.
-                                        var endOfBookBefore = this.previousNode('[name=pageEnd]');
-                                        if (endOfBookBefore != undefined &&
-                                            (endOfBookBefore.getValue() == null ||
-                                             parseInt(start) <= parseInt(endOfBookBefore.getValue()))) 
-                                        {
-                                            endOfBookBefore.setValue(start);
-                                        }
-                                        
-                                        return;
-                                    }
-                                }
-                            },{
-                                xtype: 'label',
-                                text: '-',
-                                margins: '0 0 0 10'
-                            },{
-                                xtype: 'numberfield',
-                                hideLabel: true,
-                                name: 'pageEnd',
-                                width: 63,
-                                minValue: 1,
-                                allowDecimals: false,
-                                margins: '0 0 0 10',
-                                listeners: {
-                                    'change': function (t, end)
-                                    {
-                                        // On change, check if this value ('end') is lower than
-                                        // the 'start' value -> change 'start' to 'end' in that case.
-                                        // This will also happen if 'start' value is empty.
-                                        var start = this.previousSibling('[name=pageStart]');
-                                        if (start.getValue() == null
-                                            || parseInt(end) < parseInt(start.getValue())) 
-                                        {
-                                            start.setValue(end);
-                                        }
-                                        
-                                        // On change, check if this value ('end') is smaller than
-                                        // the 'start' value of the book after this one -> change 
-                                        // 'start' to 'end' in that case.
-                                        var startOfBookAfter = this.nextNode('[name=pageStart]');
-                                        if (startOfBookAfter != undefined &&
-                                            (startOfBookAfter.getValue() == null ||
-                                             parseInt(end) >= parseInt(startOfBookAfter.getValue()))) 
-                                        {
-                                            startOfBookAfter.setValue(end);
-                                        }
-                                        
-                                        return;
-                                    }
-                                }
-                            }]
-                        },{
-                            fieldLabel: 'Author',
-                            name: 'author',
-                            anchor: '98%',
-                            allowBlank: true,
-                            labelAlign: 'top'
-                        },{
-                            fieldLabel: 'Publisher/printer',
-                            name: 'publisher',
-                            anchor: '98%',
-                            allowBlank: true,
-                            labelAlign: 'top'
-                        }]
-                    },{
-                        xtype: 'container',
-                        columnWidth: .5,
-                        layout: 'anchor',
-                        defaultType: 'textfield',
-                        items: [{
-                            xtype: 'fieldcontainer',
-                            layout: 'hbox',
                             fieldLabel: 'Time period of publication *',
                             anchor: '100%',
                             labelAlign: 'top',
+                            height: 42,
                             items: [{
                                 xtype: 'numberfield',
                                 name: 'from',
@@ -315,17 +219,40 @@ Ext.define('Ext.ux.BookFieldset', {
                                 minValue: 1000,
                                 allowDecimals: false,
                                 listeners: {
-                                    'change': function(f, from)
-                                    {
-                                        // On change, check if this value ('from') is larger than
-                                        // the 'to' value -> change 'to' to 'from' in that case.
-                                        // This will also happen if 'to' value is empty.
+                                    'blur': function(from, f) {
                                         var to = this.nextSibling('[name=to]');
-                                        if (to.getValue() == null ||
-                                            parseInt(from) > parseInt(to.getValue())) 
+                                        var fromValue = from.getValue();
+                                        var toValue = to.getValue()
+                                        if (toValue == null || parseInt(fromValue) > parseInt(toValue)) 
                                         {
-                                            to.setValue(from);
+                                            to.setValue(fromValue);
                                         }
+                                        return;
+                                    },
+                                    'spin': function(from, direction) {
+                                        var to = this.nextSibling('[name=to]');
+                                        var fromValue = parseInt(from.getValue());
+                                        var toValue = parseInt(to.getValue());
+                                        
+                                        if (direction=='up')
+                                        {
+                                            fromValue++;
+                                        }
+                                        else
+                                        {
+                                            fromValue--;
+                                        }
+                                        
+                                        if (to.getValue() == null || fromValue > toValue) 
+                                        {
+                                            to.markInvalid('The value should be equal to or' +
+                                                           ' greater than the first value.');
+                                        }
+                                        else
+                                        {
+                                            to.validate();
+                                        }
+                                        
                                         return;
                                     }
                                 }
@@ -344,17 +271,40 @@ Ext.define('Ext.ux.BookFieldset', {
                                 allowDecimals: false,
                                 margins: '0 0 0 10',
                                 listeners: {
-                                    'change': function(t, to)
-                                    {
-                                        // On change, check if this value ('to') is lower than
-                                        // the 'from' value -> change 'from' to 'to' in that case.
-                                        // This will also happen if 'from' value is empty.
+                                    'blur': function(to, t) {
                                         var from = this.previousSibling('[name=from]');
-                                        if (from.getValue() == null
-                                            || parseInt(to) < parseInt(from.getValue())) 
+                                        var fromValue = from.getValue();
+                                        var toValue = to.getValue();
+                                        if (fromValue == null || parseInt(fromValue) > parseInt(toValue)) 
                                         {
-                                            from.setValue(to);
+                                            from.setValue(toValue);
                                         }
+                                        return;
+                                    },
+                                    'spin': function(to, direction) {
+                                        var from = this.previousSibling('[name=from]');
+                                        var fromValue = parseInt(from.getValue());
+                                        var toValue = parseInt(to.getValue());
+                                        
+                                        if (direction=='up')
+                                        {
+                                            toValue++;
+                                        }
+                                        else
+                                        {
+                                            toValue--;
+                                        }
+                                        
+                                        if (from.getValue() == null || fromValue > toValue) 
+                                        {
+                                            from.markInvalid('This value should be equal to or' +
+                                                             ' lower than the second value.');
+                                        }
+                                        else
+                                        {
+                                            from.validate();
+                                        }
+                                        
                                         return;
                                     }
                                 }
@@ -366,9 +316,10 @@ Ext.define('Ext.ux.BookFieldset', {
                             mode: 'local',
                             multiSelect: true,
                             store: store,
-                            anchor: '100%',
+                            anchor: '98%',
                             labelAlign: 'top',
                             editable: false,
+                            height: 42,
                             forceSelection: true,
                             listeners: {
                                 specialkey: function(field, e)
@@ -380,26 +331,51 @@ Ext.define('Ext.ux.BookFieldset', {
                                 }   
                             }
                         },{
+                            fieldLabel: 'Publisher/printer',
+                            name: 'publisher',
+                            anchor: '98%',
+                            allowBlank: true,
+                            height: 42,
+                            labelAlign: 'top'
+                        }]
+                    },{
+                        xtype: 'container',
+                        columnWidth: .5,
+                        layout: 'anchor',
+                        defaultType: 'textfield',
+                        items: [{
+                            fieldLabel: 'Author',
+                            name: 'author',
+                            anchor: '100%',
+                            allowBlank: true,
+                            height: 42,
+                            labelAlign: 'top'
+                        },{
                             fieldLabel: 'Place published',
                             name: 'placePublished',
                             anchor: '100%',
                             allowBlank: true,
+                            height: 42,
                             labelAlign: 'top'
                         },{
                             fieldLabel: 'Version',
                             name: 'version',
                             anchor: '100%',
                             allowBlank: true,
+                            height: 42,
                             labelAlign: 'top'
                         }]
                     }]
                 },{
                     xtype: 'button',
                     text: 'Delete book',
+                    name: 'deletebook',
+                    disabled: true,
                     width: 140,
                     margin: '5 0 10 0',
                     handler: function()
                     {
+                        _this.up('booksfieldset').checkBooks(true);
                         _this.destroy();
                     }
                 }]
@@ -414,8 +390,6 @@ Ext.define('Ext.ux.BookFieldset', {
     {
         return {
             title: this.down('[name=title]').getValue(),
-            firstPage: this.down('[name=pageStart]').getValue(),
-            lastPage: this.down('[name=pageEnd]').getValue(),
             author: this.down('[name=author]').getValue(),
             publisher: this.down('[name=publisher]').getValue(),
             minYear: this.down('[name=from]').getValue(),
@@ -450,6 +424,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 handler: function()
                 {
                     this.ownerCt.insert(this.ownerCt.items.length - 1, [{xtype: 'bookfieldset'}]);
+                    _this.checkBooks(false);
                 }
             }]
         };
@@ -467,6 +442,41 @@ Ext.define('Ext.ux.BooksFieldSet', {
             books[books.length] = current.getBook();
         } while (current = current.nextSibling('bookfieldset'));
         return books;
+    },
+    
+    checkBooks: function(deleted)
+    {
+        var books = this.getBooks();
+        var disable = false;
+        
+        if (books.length == 1 || (deleted && books.length == 2))
+        {
+            disable = true;
+        }
+        
+        var current = this.down('bookfieldset');
+        do {
+            current.down('[name=deletebook]').setDisabled(disable);
+        } while (current = current.nextSibling('bookfieldset'));
+    },
+    
+    reset: function()
+    {
+        var books = this.getBooks();
+        if (books.length > 1)
+        {
+            var current = this.down('bookfieldset');
+            var next = current.nextSibling('bookfieldset');
+            
+            for (var i = 0; i < books.length - 1; i++)
+            {
+                current = next;
+                next = current.nextSibling('bookfieldset');
+                current.destroy();
+            }
+            
+            this.checkBooks();
+        }
     }
 });
 
@@ -545,7 +555,7 @@ Ext.define('Ext.ux.UploadForm', {
                 width: 140,
                 handler: function()
                 {
-                    _this.ownerCt.setLoading('Uploading...');
+                    _this.setLoading('Uploading...');
                     _this.checkIntervalId = setInterval(function(){_this.checkCompleted();},1000);
                 }
             }]
@@ -560,41 +570,76 @@ Ext.define('Ext.ux.UploadForm', {
     {
         var scans = this.down('scanpanel').getValues();
         var waiting = false;
+        var successScans = 0;
         for (var i = 0; i < scans.length; i++)
         {
-            if (scans[i].status != 'success' && scans[i].status != 'error')
+            if (scans[i].status == 'success')
+            {
+                successScans++;
+            }
+            else if (scans[i].status == 'error')
+            {
+                this.setLoading(false);
+                this.setLoading('Some scans failed to upload. Please reselect them.');
+                waiting = true;
+                break;
+            }
+            else
             {
                 waiting = true;
                 break;
             }
         }
+        
         if (!waiting)
         {
-            clearInterval(this.checkIntervalId);
             var binding = this.down('bindingfieldset').getBinding();
             var books = this.down('booksfieldset').getBooks();
-            var scans = this.down('scanpanel').getValues();
             var result = {binding: binding, books: books, scans: scans};
-            this.ownerCt.setLoading("Saving...");
-            RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+            var numberOfBooks = books.length;
+            
+            if (numberOfBooks >= successScans)
             {
-                this.ownerCt.setLoading(false);
-                var _this = this;
-                Ext.Msg.show({
-                    title: 'Upload',
-                    msg: 'Binding added successfully.',
-                    buttons: Ext.Msg.OK,
-                    callback: function(button)
-                        {
-                            Application.getInstance().gotoTab('reorderscan',[],true);
-                            _this.up('[name=upload]').close();
-                        }
+                this.setLoading(false);
+                if (numberOfBooks==1) {
+                    this.setLoading('There need to be at least ' + numberOfBooks
+                                   + ' successfully uploaded scan, because there is '
+                                   + numberOfBooks + ' book. Please add more scans.'
+                                          + ' Waiting for more scans...');
+                }
+                else
+                {
+                    this.setLoading('There need to be at least ' + numberOfBooks
+                                   + ' successfully uploaded scans, because there are '
+                                   + numberOfBooks + ' books. Please add more scans.'
+                                   + ' Waiting for more scans...');
+                }
+            }
+            else
+            {
+                clearInterval(this.checkIntervalId);
+                this.setLoading(false);
+                this.setLoading('Saving...');
+                RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+                {
+                    this.setLoading(false);
+                    var _this = this;
+                    Ext.Msg.show({
+                        title: 'Upload',
+                        msg: 'Binding added successfully.',
+                        buttons: Ext.Msg.OK,
+                        callback: function(button)
+                            {
+                                Application.getInstance().gotoTab('reorderscan',[],true);
+                                _this.up('[name=upload]').close();
+                            }
+                    });
+                }, function()
+                {
+                    this.setLoading(false);
+                    return true;
                 });
-            }, function()
-            {
-                this.ownerCt.setLoading(false);
-                return true;
-            });
+            }
         }
     },
     
@@ -612,5 +657,6 @@ Ext.define('Ext.ux.UploadForm', {
         this.callParent();
         
         this.down('scanpanel').reset();
+        this.down('booksfieldset').reset();
     }
 });
