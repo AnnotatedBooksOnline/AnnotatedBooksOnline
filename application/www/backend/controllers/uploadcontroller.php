@@ -45,7 +45,7 @@ class UploadController extends Controller
         $resultSet = Query::select('token', 'filename', 'size', 'Scans.status AS status')
             ->from('Uploads')
             ->join('Scans', "Scans.uploadId = Uploads.uploadId", "LEFT")
-            ->where('userId = :userId', "Scans.scanId = null")
+            ->where('userId = :userId', "Scans.scanId is null")
             ->orderBy('filename')
             ->execute(array('userId' => $userId), array('userId' => 'int'));
         
