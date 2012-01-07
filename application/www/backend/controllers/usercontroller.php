@@ -230,7 +230,7 @@ class UserController extends Controller
         function() use ($values)
         {  
             // Check whether automatic user acceptance is turned on.
-            $autoaccept = Setting::getSetting('auto-user-acceptance', true); //TODO: remove default.
+            $autoaccept = Setting::getSetting('auto-user-acceptance');
             
             // Create user entry.
             $user = new User();

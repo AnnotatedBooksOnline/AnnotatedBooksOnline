@@ -15,6 +15,8 @@ class Annotation extends Entity
     protected $polygon;
     protected $transcriptionEng;
     protected $transcriptionOrig;
+    protected $userId;
+    protected $timeCreated;
 
     
     /**
@@ -73,7 +75,7 @@ class Annotation extends Entity
      */
     public function getColumns()
     {
-        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig');
+        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'userId', 'timeCreated');
     }
     
     /**
@@ -88,20 +90,27 @@ class Annotation extends Entity
             'scanId'            => 'int',
             'polygon'           => 'lob',
             'transcriptionEng'  => 'string',
-            'transcriptionOrig' => 'string'
+            'transcriptionOrig' => 'string',
+            'userId'            => 'int',
+            'timeCreated'       => 'time'
         );
     }
     
     /*
      * Getters and setters.
      */
-    public function getannotationId() { return $this->annotationId; }
-    public function getScanId() { return $this->scanId; }
+    public function getAnnotationId()    { return $this->annotationId; }
+    public function setAnnotationId($id) { $this->annotationId = $id; } 
+    
+    public function getScanId()        { return $this->scanId;    }
     public function setScanId($scanId) { $this->scanId = $scanId; }
-    public function getTranscriptionEng() { return $this->transcriptionEng; }
+    
+    public function getTranscriptionEng()      { return $this->transcriptionEng;  }
     public function setTranscriptionEng($text) { $this->transcriptionEng = $text; }
-    public function getTranscriptionOrig() { return $this->transcriptionOrig; }
+    
+    public function getTranscriptionOrig()      { return $this->transcriptionOrig;  }
     public function setTranscriptionOrig($text) { $this->transcriptionOrig = $text; }
+    
     public function getPolygon()
     {
         return array_map(function($coord)
@@ -120,5 +129,11 @@ class Annotation extends Entity
             $this->polygon .= pack('f2', $coord['x'], $coord['y']);
         }
     }
+    
+    public function getUserId()    { return $this->userId; }
+    public function setUserId($id) { $this->userId = $id;  }
+    
+    public function getTimeCreated()      { return $this->timeCreated;  }
+    public function setTimeCreated($time) { $this->timeCreated = $time; }
 }
 
