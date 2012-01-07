@@ -98,25 +98,6 @@ class BookController extends Controller
         $headline = "";
         $c = 0;
         
-        $allScans = Query::select()
-            ->count('scanId', 'allScans')->
-            ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
-            ->join('Scans scans', array('bindings.bindingId = scans.bindingId'), 'LEFT')
-            ->where('bindings.status = :bindingStatus')
-            ->execute()
-            ->getFirstRow()
-            ->getValue('total');
-         
-        $allScans = Query::select()
-            ->count('scanId', 'allScans')->
-            ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
-            ->join('Scans scans', array('bindings.bindingId = scans.bindingId'), 'LEFT')
-            ->where('bindings.status = :bindingStatus')
-            ->where('scans.status = :scanStatus')
-            ->execute()
-            ->getFirstRow()
-            ->getValue('total');
-        
         /*
          * Adds a fulltext search to the query.
          */
