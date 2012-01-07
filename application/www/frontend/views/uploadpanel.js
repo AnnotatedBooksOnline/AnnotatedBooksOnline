@@ -598,7 +598,7 @@ Ext.define('Ext.ux.UploadForm', {
             var result = {binding: binding, books: books, scans: scans};
             var numberOfBooks = books.length;
             
-            if (numberOfBooks >= successScans)
+            if (numberOfBooks > successScans)
             {
                 this.setLoading(false);
                 if (numberOfBooks==1) {
