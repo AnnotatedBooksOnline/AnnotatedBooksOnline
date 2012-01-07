@@ -369,10 +369,13 @@ Ext.define('Ext.ux.BookFieldset', {
                 },{
                     xtype: 'button',
                     text: 'Delete book',
+                    name: 'deletebook',
+                    disabled: true,
                     width: 140,
                     margin: '5 0 10 0',
                     handler: function()
                     {
+                        _this.up('booksfieldset').checkBooks(true);
                         _this.destroy();
                     }
                 }]
@@ -387,8 +390,6 @@ Ext.define('Ext.ux.BookFieldset', {
     {
         return {
             title: this.down('[name=title]').getValue(),
-            firstPage: this.down('[name=pageStart]').getValue(),
-            lastPage: this.down('[name=pageEnd]').getValue(),
             author: this.down('[name=author]').getValue(),
             publisher: this.down('[name=publisher]').getValue(),
             minYear: this.down('[name=from]').getValue(),
@@ -423,6 +424,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 handler: function()
                 {
                     this.ownerCt.insert(this.ownerCt.items.length - 1, [{xtype: 'bookfieldset'}]);
+                    _this.checkBooks(false);
                 }
             }]
         };
@@ -440,6 +442,22 @@ Ext.define('Ext.ux.BooksFieldSet', {
             books[books.length] = current.getBook();
         } while (current = current.nextSibling('bookfieldset'));
         return books;
+    },
+    
+    checkBooks: function(deleted)
+    {
+        var books = this.getBooks();
+        var disable = false;
+        
+        if (books.length == 1 || (deleted && books.length == 2))
+        {
+            disable = true;
+        }
+        
+        var current = this.down('bookfieldset');
+        do {
+            current.down('[name=deletebook]').setDisabled(disable);
+        } while (current = current.nextSibling('bookfieldset'));
     }
 });
 
@@ -491,7 +509,7 @@ Ext.define('Ext.ux.UploadForm', {
                 width: 140,
                 handler: function()
                 {
-                    _this.ownerCt.setLoading('Uploading...');
+                    _this.setLoading('Uploading...');
                     _this.checkIntervalId = setInterval(function(){_this.checkCompleted();},1000);
                 }
             }]
@@ -506,41 +524,76 @@ Ext.define('Ext.ux.UploadForm', {
     {
         var scans = this.down('scanpanel').getValues();
         var waiting = false;
+        var successScans = 0;
         for (var i = 0; i < scans.length; i++)
         {
-            if (scans[i].status != 'success' && scans[i].status != 'error')
+            if (scans[i].status == 'success')
+            {
+                successScans++;
+            }
+            else if (scans[i].status == 'error')
+            {
+                this.setLoading(false);
+                this.setLoading('Some scans failed to upload. Please reselect them.');
+                waiting = true;
+                break;
+            }
+            else
             {
                 waiting = true;
                 break;
             }
         }
+        
         if (!waiting)
         {
-            clearInterval(this.checkIntervalId);
             var binding = this.down('bindingfieldset').getBinding();
             var books = this.down('booksfieldset').getBooks();
-            var scans = this.down('scanpanel').getValues();
             var result = {binding: binding, books: books, scans: scans};
-            this.ownerCt.setLoading("Saving...");
-            RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+            var numberOfBooks = books.length;
+            
+            if (numberOfBooks >= successScans)
             {
-                this.ownerCt.setLoading(false);
-                var _this = this;
-                Ext.Msg.show({
-                    title: 'Upload',
-                    msg: 'Binding added successfully.',
-                    buttons: Ext.Msg.OK,
-                    callback: function(button)
-                        {
-                            Application.getInstance().gotoTab('reorderscan',[],true);
-                            _this.close();
-                        }
+                this.setLoading(false);
+                if (numberOfBooks==1) {
+                    this.setLoading('There need to be at least ' + numberOfBooks
+                                   + ' successfully uploaded scan, because there is '
+                                   + numberOfBooks + ' book. Please add more scans.'
+                                          + ' Waiting for more scans...');
+                }
+                else
+                {
+                    this.setLoading('There need to be at least ' + numberOfBooks
+                                   + ' successfully uploaded scans, because there are '
+                                   + numberOfBooks + ' books. Please add more scans.'
+                                   + ' Waiting for more scans...');
+                }
+            }
+            else
+            {
+                clearInterval(this.checkIntervalId);
+                this.setLoading(false);
+                this.setLoading('Saving...');
+                RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+                {
+                    this.setLoading(false);
+                    var _this = this;
+                    Ext.Msg.show({
+                        title: 'Upload',
+                        msg: 'Binding added successfully.',
+                        buttons: Ext.Msg.OK,
+                        callback: function(button)
+                            {
+                                Application.getInstance().gotoTab('reorderscan',[],true);
+                                _this.close();
+                            }
+                    });
+                }, function()
+                {
+                    this.setLoading(false);
+                    return true;
                 });
-            }, function()
-            {
-                this.ownerCt.setLoading(false);
-                return true;
-            });
+            }
         }
     },
     
