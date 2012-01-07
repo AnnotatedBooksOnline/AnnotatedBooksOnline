@@ -2,16 +2,17 @@
  * Form base class.
  */
 
+ //@selectFirst: Determines whether the cursor should appear in the first field or not.
+ 
 Ext.define('Ext.ux.FormBase', {
     extend: 'Ext.form.Panel',
-    
+    selectFirst: true,
     initComponent: function() 
     {
         var _this = this;
         var defConfig = {
             bodyPadding: 10,
             bodyBorder: true,
-            
             trackResetOnLoad: true,
             
             defaultType: 'textfield',
@@ -83,12 +84,16 @@ Ext.define('Ext.ux.FormBase', {
         
         // Focus first field.
         var _this = this;
-        /*setTimeout(
-            function()
-            {
-                var field = _this.getComponent(0);
-                field.focus(true, true);
-            }, 10);*/
+        
+        if (this.selectFirst)
+        {
+            setTimeout(
+                function()
+                {
+                    var field = _this.getComponent(0);
+                    field.focus(true, true);
+                }, 10);
+        }
     },
     
     setModel: function(model, id)

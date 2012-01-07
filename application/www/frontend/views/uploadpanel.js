@@ -122,7 +122,16 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         multiSelect: true,
                         allowBlank: true,
                         forceSelection: true,
-                        editable: false
+                        editable: false,
+                        listeners: {
+                            specialkey: function(field, e)
+                            {
+                                if (e.getKey() == e.BACKSPACE)
+                                {
+                                    e.preventDefault();
+                                }
+                            }
+                        }
                     }]   
                 }]
             }]
@@ -311,7 +320,16 @@ Ext.define('Ext.ux.BookFieldset', {
                             labelAlign: 'top',
                             editable: false,
                             height: 42,
-                            forceSelection: true
+                            forceSelection: true,
+                            listeners: {
+                                specialkey: function(field, e)
+                                {
+                                    if (e.getKey() == e.BACKSPACE)
+                                    {
+                                        e.preventDefault();
+                                    }
+                                }   
+                            }
                         },{
                             fieldLabel: 'Publisher/printer',
                             name: 'publisher',
