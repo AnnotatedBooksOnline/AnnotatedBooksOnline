@@ -427,6 +427,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an upload panel.
                 Ext.apply(tabConfig, {
                     title: 'Upload (upload)',
+                    name: 'upload',
                     layout: 'hbox',
                     bodyPadding: 10,
                     items: [{

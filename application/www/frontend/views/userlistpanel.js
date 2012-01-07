@@ -40,6 +40,7 @@ Ext.define('Ext.ux.UserListPanel', {
             border: false,
             items: [{
                 xtype: 'grid',
+                name: 'grid',
                 border: false,
                 store: store,
                 columns: [{
@@ -62,16 +63,22 @@ Ext.define('Ext.ux.UserListPanel', {
                 },{
                     text:      'Affiliation',
                     flex:      1,
-                    dataIndex: 'affiliation'
+                    dataIndex: 'affiliation',
+                    hidden:    true,
+                    hideable:  false
                 },{
                     text:      'Occupation',
                     flex:      1,
-                    dataIndex: 'occupation'
+                    dataIndex: 'occupation',
+                    hidden:    true,
+                    hideable:  false
                 },{
                     text:      'Website',
                     flex:      2,
                     renderer:  renderWebsite,
-                    dataIndex: 'website'
+                    dataIndex: 'website',
+                    hidden:    true,
+                    hideable:  false
                 }],
                 tbar: {
                     xtype: 'pagingtoolbar',
@@ -87,7 +94,20 @@ Ext.define('Ext.ux.UserListPanel', {
                         if ((model.get('dataIndex') !== 'email') && (model.get('dataIndex') !== 'website'))
                         {
                             var name = model.get('username');
-                            Application.getInstance().gotoTab('viewprofile', [name], true);
+        
+                            RequestManager.getInstance().request(
+                                'Authentication',
+                                'hasPermissionTo',
+                                {action: 'view-users-complete'},
+                                this,
+                                function(hasPermission)
+                                {
+                                    if (hasPermission)
+                                    {
+                                        Application.getInstance().gotoTab('viewprofile', [name], true);
+                                    }
+                                }
+                            );
                         }
                     }
                 }
@@ -97,5 +117,31 @@ Ext.define('Ext.ux.UserListPanel', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        RequestManager.getInstance().request(
+            'Authentication',
+            'hasPermissionTo',
+            {action: 'view-users-complete'},
+            this,
+            function(hasPermission)
+            {
+                if (hasPermission)
+                {
+                    _this.showFields();
+                }
+            }
+        );
+    },
+    
+    showFields: function(hidden)
+    {
+        var columns = this.down('[name=grid]').columns;
+        
+        for (var i=0; i < columns.length; i++)
+        {
+            var column = columns[i];
+            column.hideable = true; // doesn't work?
+            column.show();
+        }
     }
 });

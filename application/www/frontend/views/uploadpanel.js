@@ -458,6 +458,25 @@ Ext.define('Ext.ux.BooksFieldSet', {
         do {
             current.down('[name=deletebook]').setDisabled(disable);
         } while (current = current.nextSibling('bookfieldset'));
+    },
+    
+    reset: function()
+    {
+        var books = this.getBooks();
+        if (books.length > 1)
+        {
+            var current = this.down('bookfieldset');
+            var next = current.nextSibling('bookfieldset');
+            
+            for (var i = 0; i < books.length - 1; i++)
+            {
+                current = next;
+                next = current.nextSibling('bookfieldset');
+                current.destroy();
+            }
+            
+            this.checkBooks();
+        }
     }
 });
 
@@ -471,6 +490,33 @@ Ext.define('Ext.ux.UploadForm', {
     initComponent: function() 
     {
         var _this = this;
+        
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+            function(result)
+            {
+                if (result['status'] === 2)
+                {
+                    ;
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.up('[name=upload]').close();
+                }
+            }, 
+            function()
+            {
+                 Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. Please try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                this.up('[name=upload]').close();
+            });
         
         var defConfig = {
             items: [{
@@ -552,7 +598,7 @@ Ext.define('Ext.ux.UploadForm', {
             var result = {binding: binding, books: books, scans: scans};
             var numberOfBooks = books.length;
             
-            if (numberOfBooks >= successScans)
+            if (numberOfBooks > successScans)
             {
                 this.setLoading(false);
                 if (numberOfBooks==1) {
@@ -585,7 +631,7 @@ Ext.define('Ext.ux.UploadForm', {
                         callback: function(button)
                             {
                                 Application.getInstance().gotoTab('reorderscan',[],true);
-                                _this.close();
+                                _this.up('[name=upload]').close();
                             }
                     });
                 }, function()
@@ -611,5 +657,6 @@ Ext.define('Ext.ux.UploadForm', {
         this.callParent();
         
         this.down('scanpanel').reset();
+        this.down('booksfieldset').reset();
     }
 });

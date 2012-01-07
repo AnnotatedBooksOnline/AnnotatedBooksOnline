@@ -45,7 +45,10 @@ class UserController extends Controller
     public function actionLoad($data)
     {
         // Assert that the user is authenticated. 
-        Authentication::assertPermissionTo('view-users');
+        Authentication::assertPermissionTo('view-users-part');
+        
+        // Get the array with permissions to see data.
+        $permissionTo = $this->arrayWithPermissions();
         
         // Determine the total number of users.
         $total = UserSearchList::findUserCount();
@@ -64,8 +67,9 @@ class UserController extends Controller
             $user = new User($id);
             
             // TODO: Do a security check on id!
+            $userValues = array_intersect_key($user->getValues(), array_flip($permissionTo));
             
-            return array('records' => $user->getValues(), 'total' => 1);
+            return array('records' => $userValues, 'total' => 1);
         }
         
         // TODO: Do a security check on user kind.
@@ -104,11 +108,24 @@ class UserController extends Controller
         }
         
         // Query the Users table.
-        $result = UserSearchList::findUsers($arguments, $offset, $limit, $order);
+        $result = UserSearchList::findUsers($arguments, $offset, $limit, $order)->asArrays();
+        
+        foreach ($result as $array)
+        {
+            foreach ($array as $key => $value)
+            {
+                if (!in_array($key, $permissionTo))
+                {
+                    $value = NULL;
+                }
+            }
+        
+            $array = array_filter($array);
+        }
         
         // Return the results.
         return array(
-            'records' => $result->asArrays(), // TODO: Do not return everything.
+            'records' => $result, // TODO: Do not return everything.
             'total'   => $total
         );
     }
@@ -403,5 +420,27 @@ class UserController extends Controller
         $user = User::findUserWithName($username);
         $user->setRank($newrank);
         $user->save();
+    }
+    
+    /**
+     * Gets the array with permissions to see data for the user logged in.
+     *
+     * @return The array with values for each key of an user which this user has permission to see.
+     */
+    private function arrayWithPermissions()
+    {
+        if (Authentication::getInstance()->hasPermissionTo('view-users-complete'))
+        {
+            return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
+                         'occupation', 'website', 'homeAddress', 'active', 'banned', 'rank');
+        }
+        elseif (Authentication::getInstance()->hasPermissionTo('view-users-part'))
+        {
+            return array('username', 'email', 'firstName', 'lastName');
+        }
+        else
+        {
+            return false;
+        }
     }
 }
