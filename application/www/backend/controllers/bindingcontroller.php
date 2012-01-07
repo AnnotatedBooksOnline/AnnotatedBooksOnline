@@ -29,7 +29,11 @@ class BindingController extends Controller
         $binding = $binding->getValues(true, false);
         $binding['library'] = $library->getValues(true, false);
         
-        return array('records' => $binding, 'total' => 1);
+        if($binding['status']==2)
+        {
+            return array('records' => $binding, 'total' => 1);
+        }
+        
     }
 }
 
