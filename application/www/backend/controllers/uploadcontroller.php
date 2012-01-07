@@ -16,7 +16,7 @@ class UploadController extends Controller
     public function actionFetchToken($data)
     {
         // Assert that the user is authenticated. 
-        Authentication::assertLoggedOn();
+        Authentication::assertPermissionTo('upload-bindings');
         
         // Get fields.
         $filename = self::getString($data, 'filename', '', true, 255);
@@ -38,7 +38,7 @@ class UploadController extends Controller
     public function actionFetchUploads($data)
     {
         // Assert that the user is authenticated. 
-        Authentication::assertLoggedOn();
+        Authentication::assertPermissionTo('upload-bindings');
         
         $userId = Authentication::getInstance()->getUserId();
         
@@ -69,7 +69,7 @@ class UploadController extends Controller
     public function actionDelete($data)
     {
         // Assert that the user is authenticated. 
-        Authentication::assertLoggedOn();
+        Authentication::assertPermissionTo('upload-bindings');
         
         // Get token.
         $token = self::getString($data, 'token');
@@ -91,7 +91,7 @@ class UploadController extends Controller
     public function actionUpload($data)
     {        
         // Assert that the user is authenticated. 
-        Authentication::assertLoggedOn();
+        Authentication::assertPermissionTo('upload-bindings');
         
         // Get token.
         $token = self::getString($_POST, 'token');

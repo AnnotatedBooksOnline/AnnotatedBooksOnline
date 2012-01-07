@@ -253,13 +253,13 @@ class User extends Entity
                                          ->where('username = :username')
                                          ->execute(array('username' => $username))
                                          ->getFirstRow_();
-        if($row === null)
+        if($row)
         {
-            throw new EntityException('record-not-found');
+            return new User($row->getValue('userId'));
         }
         else
         {
-            return new User($row->getValue('userId'));
+            throw new EntityException('record-not-found');
         }
     }
     

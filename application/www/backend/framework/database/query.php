@@ -702,9 +702,10 @@ class Query
         {
             return 'NULL';
         } 
-        else if ($value === false)
+        else if (is_bool($value))
         {
-            return "'0'";
+            // If a boolean, return '1' or '0'.
+            return $value ? "'1'" : "'0'";
         }
         
         // Explicitly cast to string.

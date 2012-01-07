@@ -767,16 +767,31 @@ Ext.define('Ext.ux.SearchPanel', {
                     xtype: 'panel',
                     border: false,
                     html: 'Sort by:',
-                    style: 'margin-bottom: 10px'
+                    style: 'margin-bottom: 5px'
                 },{
                     xtype: 'sortcombobox',
                     sortFn: sort
                 },{
-                    xtype: 'sortcombobox',
-                    sortFn: sort
+                    xtype: 'panel',
+                    border: false,
+                    html: 'Then by:',
+                    style: 'margin: 5px 0px'
                 },{
                     xtype: 'sortcombobox',
                     sortFn: sort
+                },{
+                    xtype: 'panel',
+                    border: false,
+                    html: 'Then by:',
+                    style: 'margin: 5px 0px'
+                },{
+                    xtype: 'sortcombobox',
+                    sortFn: sort
+                },{
+                    xtype: 'panel',
+                    border: false,
+                    html: '<font size="1" >(Select checkbox to invert sorting)</font>',
+                    style: 'margin-top: 5px'
                 }]
             },{
                 xtype: 'panel',
@@ -872,6 +887,55 @@ Ext.define('Ext.ux.SearchPanel', {
         var firstField = this.down('[name=type]');
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});
+        
+        if (Authentication.getInstance().isLoggedOn())
+        {
+            this.onLoggedOn();
+        }
+        
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+    },
+    
+    onLoggedOn: function()
+    {
+        this.insert(2, {
+            region: 'east',
+            xtype: 'panel',
+            split: true,
+            collapsible: true,
+            collapsed: false,
+            width: 300,
+            minWidth: 300,
+            layout: 'fit',
+            hidden: !Authentication.getInstance().isLoggedOn(),
+            items: [{
+                xtype: 'tabpanel',
+                layout: 'fit',
+                border: false,
+                items: [{
+                    title: 'Notes',
+                    xtype: 'notespanel',
+                }]
+            }]
+        });
+    },
+    
+    onLoggedOut: function()
+    {
+        this.remove(2);
+    },
+    
+    onAuthenticationChange: function(event, authentication)
+    {
+        if (authentication.isLoggedOn())
+        {
+            this.onLoggedOn();
+        }
+        else
+        {
+           this.onLoggedOut();
+        }
     }
 });
 

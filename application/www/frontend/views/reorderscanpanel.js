@@ -4,6 +4,7 @@
  */
  
 var store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+var bindingId;
     
 Ext.define('Ext.ux.ReorderScanFieldset', {
     extend: 'Ext.form.FieldSet',
@@ -13,37 +14,6 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
     
     initComponent: function()
     {
-        var _this = this;
-        var bindingId = 1;
-        
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-            function(result)
-            {
-                if (result['status'] === 0)
-                {
-                    bindingId = result['bindingId'];
-                    store.filter({property: 'bindingId', value: bindingId});
-                    store.load();
-                }
-                else
-                {
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'This step of the uploading process is currently unavailable',
-                        buttons: Ext.Msg.OK
-                    });
-                    this.up('reorderscanform').close();
-                }
-            }, 
-            function()
-            {
-                 Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'There is a problem with the server. PLease try again later',
-                            buttons: Ext.Msg.OK
-                        });
-                this.close();
-            });
         
         var defConfig = {
             items: [{
@@ -80,6 +50,35 @@ Ext.define('Ext.ux.ReorderScanForm', {
     initComponent: function() 
     {
         var _this = this;
+        
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+            function(result)
+            {
+                if (result['status'] === 0)
+                {
+                    bindingId = result['bindingId'];
+                    store.filter({property: 'bindingId', value: bindingId});
+                    store.load();
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.close();
+                }
+            }, 
+            function()
+            {
+                 Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. Please try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                this.close();
+            });
         
         var defConfig = {
             items: [{

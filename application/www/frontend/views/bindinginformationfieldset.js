@@ -10,24 +10,31 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
     {
         var _this = this;
         
-        var bindingId = 1;
-        Ext.ux.BindingModel.load(1, {
-            scope: this,
-            failure: function(record, operation) {
-            //handleError
-            return undefined;
-        },
-            success: function(record, operation) {
-            this.down('propertygrid').setSource({
-                    "library": record.get('library').libraryName,
-                    "signature": record.get('signature'),
-                    "provenance": 'provenances',
-                    "languagesOfAnnotations": 'languages'
-                });
-        },
-            callback: function(record, operation) {
-        }
-        });
+        
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+            function(result)
+            {
+                    Ext.ux.BindingModel.load(result['bindingId'], 
+                    {
+                        scope: this,
+                        failure: function(record, operation) {
+                            //handleError
+                            return undefined;
+                        },
+                        success: function(record, operation) {
+                            this.down('propertygrid').setSource({
+                                "library": record.get('library').libraryName,
+                                "signature": record.get('signature'),
+                                "provenance": 'provenances',
+                                "languagesOfAnnotations": 'languages'
+                            });
+                        },
+                        callback: function(record, operation) {}
+                    });
+               
+            }, 
+            function()
+            {});
         
         var store = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.BindingModel'

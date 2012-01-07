@@ -352,7 +352,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a view profile tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (reorder scans)',
-                    xtype: 'reorderscanform'
+                    xtype: 'reorderscanform',
+                    selectFirst: false
                 });
                 
                 break;
@@ -370,7 +371,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a view profile tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (select books)',
-                    xtype: 'selectbookform'
+                    xtype: 'selectbookform',
+                    selectFirst: false
                 });
                 
                 break;
@@ -433,6 +435,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         flex: 1
                     },{
                         xtype: 'uploadform',
+                        selectFirst: false,
                         border: false,
                         width: 800,
                         autoScroll: true
@@ -486,7 +489,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             case 'uploadinfo':
                 // Add an upload instructions tab.
                 Ext.apply(tabConfig, {
-                    title: 'Upload instructions',
+                    title: 'Upload (instructions)',
                     xtype: 'uploadinstructionpanel'
                 });
                 

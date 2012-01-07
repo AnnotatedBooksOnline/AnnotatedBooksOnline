@@ -27,10 +27,10 @@ Ext.define('Ext.ux.BindingFieldSet', {
             }
         };
         
-        // TODO: get this from database (this table is not yet in the model)
+        // TODO: get this from database
         var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['nl', 'Dutch'],['en', 'English'],['de', 'German']],
-            fields: ['value', 'text'],
+            data: [['Albanian'],['Arabic'],['Aramaic'],['Belarusian'],['Bulgarian'],['Celtic'],['Chinese'],['Croatian'],['Czech'],['Danish'],['Dutch'],['English'],['Estonian'],['Finnish'],['French'],['German'],['Greek'],['Hebrew'],['Hungarian'],['Icelandic'],['Irish'],['Italian'],['Japanese'],['Latvian'],['Lithuanian'],['Macedonian'],['Maltese'],['Norwegian'],['Persian'],['Polish'],['Portuguese'],['Romanian'],['Russian'],['Sanskrit'],['Serbian'],['Slovak'],['Slovenian'],['Spanish'],['Syriac'],['Turkish'],['Urkainian']],
+            fields: ['text'],
             sortInfo: {
                 field: 'text',
                 direction: 'ASC'
@@ -122,7 +122,16 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         multiSelect: true,
                         allowBlank: true,
                         forceSelection: true,
-                        editable: false
+                        editable: false,
+                        listeners: {
+                            specialkey: function(field, e)
+                            {
+                                if (e.getKey() == e.BACKSPACE)
+                                {
+                                    e.preventDefault();
+                                }
+                            }
+                        }
                     }]   
                 }]
             }]
@@ -155,10 +164,10 @@ Ext.define('Ext.ux.BookFieldset', {
     initComponent: function() {
         var _this = this;
     
-        // TODO: get this from database.
+        // TODO: get this from database
         var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['nl', 'Dutch'], ['en', 'English'], ['de', 'German']],
-            fields: ['value', 'text'],
+            data: [['Albanian'],['Arabic'],['Aramaic'],['Belarusian'],['Bulgarian'],['Celtic'],['Chinese'],['Croatian'],['Czech'],['Danish'],['Dutch'],['English'],['Estonian'],['Finnish'],['French'],['German'],['Greek'],['Hebrew'],['Hungarian'],['Icelandic'],['Irish'],['Italian'],['Japanese'],['Latvian'],['Lithuanian'],['Macedonian'],['Maltese'],['Norwegian'],['Persian'],['Polish'],['Portuguese'],['Romanian'],['Russian'],['Sanskrit'],['Serbian'],['Slovak'],['Slovenian'],['Spanish'],['Syriac'],['Turkish'],['Urkainian']],
+            fields: ['text'],
             sortInfo: {
                 field: 'text',
                 direction: 'ASC'
@@ -359,7 +368,16 @@ Ext.define('Ext.ux.BookFieldset', {
                             anchor: '100%',
                             labelAlign: 'top',
                             editable: false,
-                            forceSelection: true
+                            forceSelection: true,
+                            listeners: {
+                                specialkey: function(field, e)
+                                {
+                                    if (e.getKey() == e.BACKSPACE)
+                                    {
+                                        e.preventDefault();
+                                    }
+                                }   
+                            }
                         },{
                             fieldLabel: 'Place published',
                             name: 'placePublished',
@@ -533,7 +551,7 @@ Ext.define('Ext.ux.UploadForm', {
             RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
             {
                 this.ownerCt.setLoading(false);
-                //Ext.Msg.alert('Upload', 'Binding added successfully.');
+                var _this = this;
                 Ext.Msg.show({
                     title: 'Upload',
                     msg: 'Binding added successfully.',

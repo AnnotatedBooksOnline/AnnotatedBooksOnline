@@ -2,6 +2,17 @@
  * Annotations display and edit panel.
  */
 
+//Because of an extjs bug, the loading screen appears in the upperleft corner when
+//the annotations tab is closed. The following code prevents that.
+ Ext.override(Ext.view.AbstractView, {
+    onMaskBeforeShow: function() {
+        if(!this.el.isVisible(true)) {
+            return false;
+        }
+        this.callOverridden(arguments);
+    }
+});
+ 
 var langStore = Ext.create('Ext.data.Store', {
     fields: ['lang', 'name'],
     data: [{
