@@ -369,10 +369,13 @@ Ext.define('Ext.ux.BookFieldset', {
                 },{
                     xtype: 'button',
                     text: 'Delete book',
+                    name: 'deletebook',
+                    disabled: true,
                     width: 140,
                     margin: '5 0 10 0',
                     handler: function()
                     {
+                        _this.up('booksfieldset').checkBooks(true);
                         _this.destroy();
                     }
                 }]
@@ -421,6 +424,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 handler: function()
                 {
                     this.ownerCt.insert(this.ownerCt.items.length - 1, [{xtype: 'bookfieldset'}]);
+                    _this.checkBooks(false);
                 }
             }]
         };
@@ -438,6 +442,22 @@ Ext.define('Ext.ux.BooksFieldSet', {
             books[books.length] = current.getBook();
         } while (current = current.nextSibling('bookfieldset'));
         return books;
+    },
+    
+    checkBooks: function(deleted)
+    {
+        var books = this.getBooks();
+        var disable = false;
+        
+        if (books.length == 1 || (deleted && books.length == 2))
+        {
+            disable = true;
+        }
+        
+        var current = this.down('bookfieldset');
+        do {
+            current.down('[name=deletebook]').setDisabled(disable);
+        } while (current = current.nextSibling('bookfieldset'));
     }
 });
 
