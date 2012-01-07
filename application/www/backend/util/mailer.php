@@ -27,11 +27,13 @@ class Mailer
      */
     public static function sendMail($recipient, $subject, $message)
     {
-        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name') 
-                    . ' <'     . Configuration::getInstance()->getString('from-address') 
-                    . '>\r\n';
+        $fromaddress = Configuration::getInstance()->getString('from-address');
         
-        $success = mail($recipient, $subject, $message, $fromheader);
+        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name') 
+                    . ' <'     . $fromaddress
+                    . ">\r\n";
+        
+        $success = mail($recipient, $subject, $message, $fromheader, "-f$fromaddress");
         if(!$success)
         {
             throw new MailerException('mail-failed', $recipient);
