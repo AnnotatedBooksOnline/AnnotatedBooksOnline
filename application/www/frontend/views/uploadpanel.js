@@ -458,6 +458,25 @@ Ext.define('Ext.ux.BooksFieldSet', {
         do {
             current.down('[name=deletebook]').setDisabled(disable);
         } while (current = current.nextSibling('bookfieldset'));
+    },
+    
+    reset: function()
+    {
+        var books = this.getBooks();
+        if (books.length > 1)
+        {
+            var current = this.down('bookfieldset');
+            var next = current.nextSibling('bookfieldset');
+            
+            for (var i = 0; i < books.length - 1; i++)
+            {
+                current = next;
+                next = current.nextSibling('bookfieldset');
+                current.destroy();
+            }
+            
+            this.checkBooks();
+        }
     }
 });
 
@@ -611,5 +630,6 @@ Ext.define('Ext.ux.UploadForm', {
         this.callParent();
         
         this.down('scanpanel').reset();
+        this.down('booksfieldset').reset();
     }
 });
