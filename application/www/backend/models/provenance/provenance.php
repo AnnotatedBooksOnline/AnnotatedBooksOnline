@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/assocentity.php';
+require_once 'models/binding/binding.php';
 
 /**
  * Class representing a provenance entity. Associatieve between binding and person.
@@ -19,22 +20,30 @@ class Provenance extends AssociativeEntity
     /**
      * 
      */
-    public function __construct($bindingId = null, $personId = null, $createnew = false)
+    public function __construct($bindingId = null, $personId = null)
     {
         if ($bindingId !== null && $personId !== null)
         {
             $this->bindingId = $bindingId;
             $this->personId = $personId;
             $this->load();
-            if($createnew)
-            {
-                $this->save();
-            }
-            else
-            {
-                $this->load();
-            }
         }
+    }
+    
+    public static function fromBinding($binding)
+    {
+        $result = Query::select('personId', 'bindingId')
+            ->from('Provenances')
+            ->where('bindingId = :binding')
+            ->execute(array(':binding' => $binding->getBindingId()));
+            
+        $provenances = array();
+        
+        foreach($result as $provenance)
+        {
+            $provenances[] = new Provenance($provenance->getValue('bindingId'), $provenance->getValue('personId'), false);
+        }
+        return $provenances;
     }
     
     /**
@@ -44,7 +53,7 @@ class Provenance extends AssociativeEntity
      */
     protected function getTableName()
     {
-        return 'Authors';
+        return 'Provenances';
     }
     
     /**

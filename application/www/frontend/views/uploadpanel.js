@@ -9,9 +9,10 @@ Ext.define('Ext.ux.BindingFieldSet', {
     initComponent: function()
     {
         var _this = this;
-        
+       
         var librarySignatureCheck = true;
         
+
         // TODO: let this function communicate with db, define better name
         // used @ library & signature
         function checkLibrarySignature(library, signature) {
@@ -480,6 +481,33 @@ Ext.define('Ext.ux.UploadForm', {
     {
         var _this = this;
         
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+            function(result)
+            {
+                if (result['status'] === 2)
+                {
+                    ;
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.up('[name=upload]').close();
+                }
+            }, 
+            function()
+            {
+                 Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. Please try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                this.up('[name=upload]').close();
+            });
+        
         var defConfig = {
             items: [{
                 xtype: 'scanpanel'
@@ -559,7 +587,7 @@ Ext.define('Ext.ux.UploadForm', {
                     callback: function(button)
                         {
                             Application.getInstance().gotoTab('reorderscan',[],true);
-                            _this.close();
+                            _this.up('[name=upload]').close();
                         }
                 });
             }, function()
