@@ -55,7 +55,6 @@ class BindingUploadController extends Controller
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
         $binding->setStatus(Binding::STATUS_UPLOADED);
-        $bindingId = $binding->getBindingId();
         
         // Determine if the specified signature exists in the database already, this is not allowed.
         if (BindingSearchList::findBindings(array('signature' => $signature), null, null, null)->getFirstRow_()) {
@@ -119,20 +118,6 @@ class BindingUploadController extends Controller
         }
     
         ////////////////////////////////////////////////////////////////////////////////////
-        // Link the languages to the binding
-        ////////////////////////////////////////////////////////////////////////////////////
-            
-        // Create a link between the binding and every given language
-            $languagesOfAnnotations = $inputBinding['languagesofannotations'];
-            if(!empty($languagesOfAnnotations))
-            {
-                foreach($languagesOfAnnotations as $language)
-                {
-                    new BindingLanguage($bindingId,$language,true);
-                }
-            }
-        
-        ////////////////////////////////////////////////////////////////////////////////////
         // Create the books.
         ////////////////////////////////////////////////////////////////////////////////////
             
@@ -151,7 +136,6 @@ class BindingUploadController extends Controller
             //$book->setFirstPage(self::getInteger($inputBook, 'firstPage'));
             //$book->setLastPage(self::getInteger($inputBook, 'lastPage'));
                         
-            $bookId = $book->getBookId();
             // Find the book author
             /*
             $bookAuthor = self::getString($inputBook, 'placePublished');
@@ -178,7 +162,8 @@ class BindingUploadController extends Controller
             {
                 foreach($languages as $language)
                 {
-                    new BookLanguage($bookId,$language,true);
+                    $bookLanguage = new BookLanguage($bookId,$language,true);
+                    $book->getBookLanguageList()->addEntity($bookLanguage);
                 }
             }
             
@@ -188,6 +173,20 @@ class BindingUploadController extends Controller
             //TODO: author
         }
             
+        ////////////////////////////////////////////////////////////////////////////////////
+        // Link the languages to the binding
+        ////////////////////////////////////////////////////////////////////////////////////
+            
+        // Create a link between the binding and every given language
+            $languagesOfAnnotations = $inputBinding['languagesofannotations'];
+            if(!empty($languagesOfAnnotations))
+            {
+                foreach($languagesOfAnnotations as $language)
+                {
+                    $bindingLanguage = new BindingLanguage($bindingId,$language,true);
+                    $binding->getBindingLanguageList()->addEntity($bindingLanguage);
+                }
+            }
         ////////////////////////////////////////////////////////////////////////////////////
         // Create the scans.
         ////////////////////////////////////////////////////////////////////////////////////
@@ -229,6 +228,9 @@ class BindingUploadController extends Controller
             
         // Save the binding and all its attribute entities.
         $binding->saveWithDetails();
+        
+        
+        
         
         Database::getInstance()->commit();
     }
@@ -309,6 +311,7 @@ class BindingUploadController extends Controller
         }
     }
     
+
     public function actionGetBindingStatus($data)
     {
         $userId = Authentication::getInstance()->getUser()->getUserId();
