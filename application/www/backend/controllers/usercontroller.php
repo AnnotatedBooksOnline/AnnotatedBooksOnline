@@ -156,8 +156,7 @@ class UserController extends Controller
         
         //Check if a new password is entered, in which case we need to check if the old password
         //is correct.
-        throw new PasswordIncorrectException($newPassword . ' ' . $oldPassword);
-        if (isset($newPassword) && $newPassword != '')
+        if (isset($newPassword) && strlen($newPassword) >= 8)
         {
             if (!Authentication::getInstance()->checkPassword($oldPassword))
             {
