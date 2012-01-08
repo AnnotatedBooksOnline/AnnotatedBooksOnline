@@ -29,15 +29,8 @@ Ext.define('Ext.ux.BindingFieldSet', {
             );
         };
         
-        // TODO: get this from database
-        var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['Albanian'],['Arabic'],['Aramaic'],['Belarusian'],['Bulgarian'],['Celtic'],['Chinese'],['Croatian'],['Czech'],['Danish'],['Dutch'],['English'],['Estonian'],['Finnish'],['French'],['German'],['Greek'],['Hebrew'],['Hungarian'],['Icelandic'],['Irish'],['Italian'],['Japanese'],['Latvian'],['Lithuanian'],['Macedonian'],['Maltese'],['Norwegian'],['Persian'],['Polish'],['Portuguese'],['Romanian'],['Russian'],['Sanskrit'],['Serbian'],['Slovak'],['Slovenian'],['Spanish'],['Syriac'],['Turkish'],['Urkainian']],
-            fields: ['text'],
-            sortInfo: {
-                field: 'text',
-                direction: 'ASC'
-            }
-        });
+        var annotationStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.LanguageModel'});
+        annotationStore.load();
         
         var defConfig = {
             items: [{
@@ -102,7 +95,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         mode: 'local',
                         anchor: '100%',
                         labelAlign: 'top',
-                        store: store,
+                        store: annotationStore,
+                        displayField: 'languageName',
+                        valueField: 'languageId',
                         multiSelect: true,
                         allowBlank: true,
                         forceSelection: true,
@@ -148,15 +143,8 @@ Ext.define('Ext.ux.BookFieldset', {
     initComponent: function() {
         var _this = this;
     
-        // TODO: get this from database
-        var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['Albanian'],['Arabic'],['Aramaic'],['Belarusian'],['Bulgarian'],['Celtic'],['Chinese'],['Croatian'],['Czech'],['Danish'],['Dutch'],['English'],['Estonian'],['Finnish'],['French'],['German'],['Greek'],['Hebrew'],['Hungarian'],['Icelandic'],['Irish'],['Italian'],['Japanese'],['Latvian'],['Lithuanian'],['Macedonian'],['Maltese'],['Norwegian'],['Persian'],['Polish'],['Portuguese'],['Romanian'],['Russian'],['Sanskrit'],['Serbian'],['Slovak'],['Slovenian'],['Spanish'],['Syriac'],['Turkish'],['Urkainian']],
-            fields: ['text'],
-            sortInfo: {
-                field: 'text',
-                direction: 'ASC'
-            }
-        });
+        var booklanguageStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.LanguageModel'});
+        booklanguageStore.load();
         
         var defConfig = {
             items: [{
@@ -299,7 +287,9 @@ Ext.define('Ext.ux.BookFieldset', {
                             name: 'languages',
                             mode: 'local',
                             multiSelect: true,
-                            store: store,
+                            store: booklanguageStore,
+                            displayField: 'languageName',
+                            valueField: 'languageId',
                             anchor: '98%',
                             labelAlign: 'top',
                             editable: false,
