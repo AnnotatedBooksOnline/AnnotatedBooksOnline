@@ -9,7 +9,7 @@ Ext.define('Ext.ux.ThumbnailView', {
     initComponent: function()
     {
         var fields = [];
-        for (var i = 0; i < this.binding.getScanAmount(); i++)
+        for (var i = 0; i < this.binding.getScans().length; i++)
         {
             var document = this.binding.getScans()[i];
             
