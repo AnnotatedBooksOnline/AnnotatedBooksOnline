@@ -55,7 +55,8 @@ class BindingUploadController extends Controller
         $binding->setStatus(Binding::STATUS_UPLOADED);
         
         // Determine if the specified signature exists in the database already, this is not allowed.
-        if (BindingSearchList::findBindings(array('signature' => $signature), null, null, null)->getFirstRow_()) {
+        if (!$this->uniqueLibrarySignature($libraryName, $signature))
+        {
             throw new ControllerException('duplicate-binding');
         }
         
@@ -305,5 +306,33 @@ class BindingUploadController extends Controller
         {
             throw new BindingStatusException('binding-status');
         }
+    }
+    
+    public function actionUniqueLibrarySignature($data)
+    {
+        $libraryName = self::getString($data, 'library', '', true, 256);
+        $signature = self::getString($data, 'signature', '', true, 256);
+        
+        
+        return $this->uniqueLibrarySignature($libraryName, $signature);
+    }
+    
+    public function uniqueLibrarySignature($libraryName, $signature)
+    {
+        $existingLibrary = LibrarySearchList::findLibraries(array('libraryName' => $libraryName),
+                               null, null, null)->getFirstRow_();
+        // Determine if the specified signature exists in the database already, this is not allowed.
+        if ($existingLibrary)
+        {
+            if (BindingSearchList::findBindings(
+                    array('libraryId' => $existingLibrary->getValue('libraryId')
+                         ,'signature' => $signature)
+                    , null, null, null)->getFirstRow_())
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }

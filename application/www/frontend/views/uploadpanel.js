@@ -10,21 +10,23 @@ Ext.define('Ext.ux.BindingFieldSet', {
     {
         var _this = this;
         
-        var librarySignatureCheck = true;
-        
-        // TODO: let this function communicate with db, define better name
-        // used @ library & signature
-        function checkLibrarySignature(library, signature) {
-            var result = null; // TODO: getfromdb(library, signature);
-            if (result === null)
-            {
-                return true;
-            }
-            else 
-            {
-                return 'The combination of library and signature is not unique in our system. '
-                     + 'See opennewtabwithresult ' /*+ result*/ + 'for the version in our system.';
-            }
+        function uniqueLibrarySignature(library, signature) {
+            RequestManager.getInstance().request(
+                'BindingUpload',
+                'uniqueLibrarySignature',
+                {library: library.getValue(), signature: signature.getValue()},
+                this,
+                function(data)
+                {
+                    if (!data)
+                    {
+                        signature.markInvalid('The combination of library and signature is not ' +
+                                              'unique in our system.');
+                        library.markInvalid('The combination of library and signature is not '+ 
+                                            'unique in our system.');
+                    }
+                }
+            );
         };
         
         // TODO: get this from database
@@ -54,23 +56,14 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         labelAlign: 'top',
                         validator: function(library)
                         {
-                            // Set signature + library false if the combination is already ina
-                            // the database.
-                            var signature = this.nextSibling('[name=signature]');
-                            if (signature === null)
+                            var signature = _this.down('[name=signature]');
+                            if (signature == null)
                             {
                                 return true;
                             }
                             else 
                             {
-                                if (librarySignatureCheck) 
-                                {
-                                    librarySignatureCheck = false;
-                                    signature.validate();
-                                    librarySignatureCheck = true;
-                                }
-                                
-                                return checkLibrarySignature(library, signature.getValue());
+                                uniqueLibrarySignature(this, signature);
                             }
                         }
                     },{
@@ -92,23 +85,14 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         labelAlign: 'top',
                         validator: function(signature)
                         {
-                            // Set signature + library false if the combination is already ina
-                            // the database.
-                            var library = this.previousSibling('[name=library]');
-                            if (library === null)
+                            var library = _this.down('[name=library]');
+                            if (library == null)
                             {
                                 return true;
                             }
                             else 
                             {
-                                if (librarySignatureCheck) 
-                                {
-                                    librarySignatureCheck = false;
-                                    library.validate();
-                                    librarySignatureCheck = true;
-                                }
-                                
-                                return checkLibrarySignature(library.getValue(), signature);
+                                uniqueLibrarySignature(library, this);
                             }
                         }
                     },{
