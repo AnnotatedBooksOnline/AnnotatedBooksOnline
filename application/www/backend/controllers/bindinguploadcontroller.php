@@ -186,7 +186,7 @@ class BindingUploadController extends Controller
                 foreach($languagesOfAnnotations as $language)
                 {
                     $bindingLanguage = new BindingLanguage();
-                    $bindingLangugae->setLanguageId($language);
+                    $bindingLanguage->setLanguageId($language);
                     $binding->getBindingLanguageList()->addEntity($bindingLanguage);
                 }
             }
@@ -314,7 +314,7 @@ class BindingUploadController extends Controller
         }
     }
     
-
+    
     public function actionGetBindingStatus($data)
     {
         $userId = Authentication::getInstance()->getUser()->getUserId();
