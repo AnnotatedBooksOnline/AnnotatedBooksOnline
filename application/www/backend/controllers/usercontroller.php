@@ -60,7 +60,7 @@ class UserController extends Controller
         $limit  = self::getInteger($data, 'limit',  $total, true, 0, $total);
         $offset = self::getInteger($data, 'offset', 0,      true, 0, $total);
         
-        // Determine id a specific user was requested. If this is the case retrieve this
+        // Determine if a specific user was requested. If this is the case retrieve this
         // user from the database and return.
         if ($id)
         {
@@ -393,12 +393,18 @@ class UserController extends Controller
             throw new UserNotFoundException('email-not-found', $email);
         }
         
-        // Specify a password restoration token for this user.
-        $user->setPasswordRestoreToken(Authentication::generateUniqueToken());
-        $user->save();
-        
-        // Send an e-mail informing the user of the token.
-        Mailer::sendPasswordRestorationMail($user);
+        // Set restore token in transaction so it is rolled back when the mailer throws an 
+        // exception.
+        Database::getInstance()->doTransaction(
+        function() use ($user)
+        {
+            // Specify a password restoration token for this user.
+            $user->setPasswordRestoreToken(Authentication::generateUniqueToken());
+            $user->save();
+            
+            // Send an e-mail informing the user of the token.
+            Mailer::sendPasswordRestorationMail($user);
+        });
     }
     
     /**
@@ -423,6 +429,56 @@ class UserController extends Controller
     }
     
     /**
+     * Changes a user's forgotten password based on a token.
+     * 
+     * @param $data Should contain a 'token' and a newly entered 'password'.
+     */
+    public function actionChangeForgottenPassword($data)
+    {
+        // Fetch password restoration token.
+        $token = self::getString($data, 'token', null, true, 32);
+        
+        // Fetch new password.
+        $newpass = self::getString($data, 'password');
+        
+        Log::debug('!!!!' . strlen($token) . '!!' . strlen($newpass));
+        
+        if($token == null || strlen($token) != 32 || strlen($newpass) == 0)
+        {
+            Log::debug('Illegal change password token or no password.');
+            return false;
+        }
+        
+        // Transaction.
+        $success = Database::getInstance()->doTransaction(
+        function() use ($token, $newpass)
+        {
+            // Query for associated user.
+            $row = Query::select('userId')
+                         ->from('Users')
+                         ->where('passwordRestoreToken = :token')
+                         ->execute(array('token' => $token))
+                         ->getFirstRow_();
+            if(!$row)
+            {
+                // No user associated with token.
+                Log::debug('Token does not correspond to a user.');
+                return false;
+            }
+            
+            // Change user password and remove password restoration token.
+            $user = new User($row->getValue('userId'));
+            $user->setPassword($newpass);
+            $user->setPasswordRestoreToken(null);
+            $user->save();
+            
+            return true;
+        });
+        
+        return $success;
+    }
+    
+    /**
      * Gets the array with permissions to see data for the user logged in.
      *
      * @return The array with values for each key of an user which this user has permission to see.
@@ -434,7 +490,7 @@ class UserController extends Controller
             return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
                          'occupation', 'website', 'homeAddress', 'active', 'banned', 'rank');
         }
-        elseif (Authentication::getInstance()->hasPermissionTo('view-users-part'))
+        else if (Authentication::getInstance()->hasPermissionTo('view-users-part'))
         {
             return array('username', 'email', 'firstName', 'lastName');
         }

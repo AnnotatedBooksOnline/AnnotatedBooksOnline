@@ -161,19 +161,19 @@ class User extends Entity
      */
     public static function fromEmailAddress($email)
     {
-        $result = Query::select('userId')
-                       ->from('Users')
-                       ->where(array('email ILIKE :email'))
-                       ->execute(array('email' => $email));
+        $row = Query::select('userId')
+                     ->from('Users')
+                     ->where(array('email ILIKE :email'))
+                     ->execute(array('email' => $email))
+                     ->getFirstRow_();
         
-        if($result->rowCount() == 0)
+        if($row)
         {
-            return null;
+            return new User($row->getValue('userId'));
         }
         else
         {
-            $id = $result->getFirstRow()->getValue('userId');
-            return new User($id);
+            return null;
         }
     }
     
@@ -292,7 +292,7 @@ class User extends Entity
     {
         return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
                      'affiliation', 'occupation', 'website', 'homeAddress', 'active',
-                     'banned', 'rank');
+                     'banned', 'rank', 'passwordRestoreToken');
     }
     
     /**
@@ -303,19 +303,20 @@ class User extends Entity
     protected function getColumnTypes()
     {
         return array(
-            'userId'       => 'int',
-            'username'     => 'istring', // Usernames should be compared case-insensitive.
-            'passwordHash' => 'string',
-            'email'        => 'istring',
-            'firstName'    => 'string',
-            'lastName'     => 'string',
-            'affiliation'  => 'string',
-            'occupation'   => 'string',
-            'website'      => 'string',
-            'homeAddress'  => 'string',
-            'active'       => 'boolean',
-            'banned'       => 'boolean',
-            'rank'         => 'int',
+            'userId'               => 'int',
+            'username'             => 'istring', // Usernames should be compared case-insensitively.
+            'passwordHash'         => 'string',
+            'email'                => 'istring',
+            'firstName'            => 'string',
+            'lastName'             => 'string',
+            'affiliation' 		   => 'string',
+            'occupation'           => 'string',
+            'website'              => 'string',
+            'homeAddress'          => 'string',
+            'active'               => 'boolean',
+            'banned'               => 'boolean',
+            'rank'                 => 'int',
+            'passwordRestoreToken' => 'string'
         );
     }
     
