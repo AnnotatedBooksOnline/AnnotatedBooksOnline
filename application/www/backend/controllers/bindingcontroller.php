@@ -41,7 +41,7 @@ class BindingController extends Controller
             }
         }
         
-        Log::info($_SERVER['SCRIPT_FILENAME']);
+        Log::info($_SERVER['REQUEST_URI']);
         
         if($unsafe || ($binding['status']==2 && $scanStatus))
         {
