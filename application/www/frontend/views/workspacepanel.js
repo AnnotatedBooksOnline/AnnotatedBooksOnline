@@ -120,7 +120,8 @@ Ext.define('Ext.ux.ExportForm', {
                 },{ 
                     boxLabel: 'With transcriptions',
                     name: 'transcriptions',
-                    inputValue: 'on'
+                    inputValue: 'on',
+                    disabled: true
                 },{
                     xtype: 'checkbox',
                     name: 'polygons',
