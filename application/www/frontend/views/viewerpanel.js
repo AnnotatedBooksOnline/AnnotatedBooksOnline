@@ -322,12 +322,12 @@ Ext.define('Ext.ux.ViewerPanel', {
                 xtype: 'informationpanel',
                 title: 'Binding information',
                 collapsed: false
-            },*/{
+            },{
                 xtype: 'navigationpanel',
                 cls: 'navigation-panel',
                 collapsed: false,
                 book: this.binding // TODO: Binding.
-             },{
+             },*/{
                 xtype: 'referencespanel',
                 title: 'References',
                 cls: 'references-panel',
