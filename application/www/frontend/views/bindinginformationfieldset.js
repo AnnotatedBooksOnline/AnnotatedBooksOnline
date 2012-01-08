@@ -14,7 +14,7 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], _this, 
             function(result)
             {
-                alert(result['bindingId']);
+                //alert(result['bindingId']);
                 Ext.ux.BindingModel.load(result['bindingId'], 
                 {
                     scope: _this,
