@@ -41,7 +41,7 @@ class BindingController extends Controller
             }
         }
         
-        Log::debug($_SERVER['HTTP_REFERER']);
+        Log::info($_SERVER['HTTP_REFERER']);
         
         if($unsafe || ($binding['status']==2 && $scanStatus))
         {
