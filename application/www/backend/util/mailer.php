@@ -29,17 +29,19 @@ class Mailer
     {
         $fromaddress = Configuration::getInstance()->getString('from-address');
         
-        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name') 
-                    . ' <'     . $fromaddress
-                    . ">\r\n";
+        $headers = 'MIME-Version: 1.0' . "\r\n"
+                 . 'Content-type: text/plain; charset=utf-8' . "\r\n"
+                 . 'From: ' . Configuration::getInstance()->getString('from-name') 
+                 . ' <'     . $fromaddress . ">\r\n"
+                 . 'To: <' . $recipient . ">\r\n";
         
-        $success = mail($recipient, $subject, $message, $fromheader, "-f$fromaddress");
+        $success = mail($recipient, $subject, $message, $headers, "-f$fromaddress");
         if(!$success)
         {
             throw new MailerException('mail-failed', $recipient);
         }
         
-        Log::info('Mail to "%s" accepted for delivery:\n\n%s', $recipient, $message);
+        Log::info("Mail to \"%s\" accepted for delivery:\n\n %s", $recipient, $message);
     }
     
     /**

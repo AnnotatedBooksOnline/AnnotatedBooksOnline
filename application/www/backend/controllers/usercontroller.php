@@ -60,7 +60,7 @@ class UserController extends Controller
         $limit  = self::getInteger($data, 'limit',  $total, true, 0, $total);
         $offset = self::getInteger($data, 'offset', 0,      true, 0, $total);
         
-        // Determine id a specific user was requested. If this is the case retrieve this
+        // Determine if a specific user was requested. If this is the case retrieve this
         // user from the database and return.
         if ($id)
         {

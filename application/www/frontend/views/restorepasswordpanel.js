@@ -66,8 +66,8 @@ Ext.define('Ext.ux.RestorePasswordForm', {
                 	{
                 		Ext.MessageBox.alert('Changing password failed.',
                               'Something went wrong while trying to change your password.' +
-                              'Please make sure the address in your address bar matches the one in' + 
-                              'the e-mail you received.');
+                              ' Please make sure the address in your address bar matches the one in' + 
+                              ' the e-mail you received.');
                 	};
                 	
                 	// Do a request to change the password.
