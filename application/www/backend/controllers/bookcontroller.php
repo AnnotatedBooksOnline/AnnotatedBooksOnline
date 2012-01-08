@@ -90,9 +90,11 @@ class BookController extends Controller
             ->join('Persons pProvenanceList', array('provenancesList.personId = pProvenanceList.personId'), 'LEFT')
             ->join('Provenances provenancesFind', array('bindings.bindingId = provenancesFind.bindingId'), 'LEFT')
             ->join('Persons pProvenanceFind', array('provenancesFind.personId = pProvenanceFind.personId'), 'LEFT')
+            ->join('Scans scans', array('bindings.bindingId = scans.bindingId', 'scans.status < :scanStatus'), 'LEFT')
             ->where('bindings.status = :bindingStatus')
+            ->where('scans.status IS NULL')
             ->groupBy('books.bookId', 'bindings.bindingId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
-        $binds = array('bindingStatus' => Binding::STATUS_SELECTED);
+        $binds = array('bindingStatus' => Binding::STATUS_SELECTED, 'scanStatus' => Scan::STATUS_PROCESSED);
         $headline = "";
         $c = 0;
         

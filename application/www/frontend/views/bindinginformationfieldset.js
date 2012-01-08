@@ -11,26 +11,36 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         var _this = this;
         
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], _this, 
             function(result)
             {
-                    Ext.ux.BindingModel.load(result['bindingId'], 
-                    {
-                        scope: this,
-                        failure: function(record, operation) {
-                            //handleError
-                            return undefined;
-                        },
-                        success: function(record, operation) {
-                            this.down('propertygrid').setSource({
-                                "library": record.get('library').libraryName,
-                                "signature": record.get('signature'),
-                                "provenance": 'provenances',
-                                "languagesOfAnnotations": 'languages'
-                            });
-                        },
-                        callback: function(record, operation) {}
-                    });
+                Ext.ux.BindingModel.load(result['bindingId'], 
+                {
+                    scope: _this,
+                    failure: function(binding, operation) {
+                        //handleError
+                        return undefined;
+                    },
+                    success: function(binding, operation) {
+                        binding.provenances().load({
+                            scope   : _this,
+                            callback:function(records, operation, success) {
+                                var provenance='';
+                                Ext.Array.each(records, function(record) {
+                                provenance += (', '+record.get('name'));
+                                });
+                                
+                                this.down('propertygrid').setSource({
+                                    "a": binding.get('library').libraryName,
+                                    "b": binding.get('signature'),
+                                    "c": provenance.substring(1),
+                                    "d": 'languages'
+                                });
+                            }
+                        });
+                    },
+                    callback: function(record, operation) {}
+                });
                
             }, 
             function()
@@ -45,10 +55,10 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
             items: [{
                 xtype: 'propertygrid',
                 propertyNames: {
-                    library: 'Library',
-                    signature: 'Signature',
-                    provenance: 'Provenance',
-                    languagesOfAnnotations: 'Languages of annotations'
+                    a: 'Library',
+                    b: 'Signature',
+                    c: 'Provenance',
+                    d: 'Languages of annotations'
                 },
                 source: {},
                 listeners: {

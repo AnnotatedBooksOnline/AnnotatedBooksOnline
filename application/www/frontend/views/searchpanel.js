@@ -926,12 +926,34 @@ Ext.define('Ext.ux.SearchPanel', {
             }]
         };
         
+        var eastRegion = {
+            region: 'east',
+            xtype: 'panel',
+            name: 'eastregion',
+            split: true,
+            collapsible: true,
+            collapsed: false,
+            width: 300,
+            minWidth: 300,
+            layout: 'fit',
+            hidden: true,
+            items: [{
+                xtype: 'tabpanel',
+                layout: 'fit',
+                border: false,
+                items: [{
+                    title: 'Notes',
+                    xtype: 'notespanel',
+                }]
+            }]
+        };
+        
         var defConfig = {
             title: 'Search',
             layout: {
                 type: 'border'
             },
-            items: [westRegion, centerRegion]
+            items: [westRegion, centerRegion, eastRegion]
         };
         
         Ext.apply(this, defConfig);
@@ -953,31 +975,12 @@ Ext.define('Ext.ux.SearchPanel', {
     
     onLoggedOn: function()
     {
-        this.insert(2, {
-            region: 'east',
-            xtype: 'panel',
-            split: true,
-            collapsible: true,
-            collapsed: false,
-            width: 300,
-            minWidth: 300,
-            layout: 'fit',
-            hidden: !Authentication.getInstance().isLoggedOn(),
-            items: [{
-                xtype: 'tabpanel',
-                layout: 'fit',
-                border: false,
-                items: [{
-                    title: 'Notes',
-                    xtype: 'notespanel',
-                }]
-            }]
-        });
+        this.down('[name=eastregion]').show();
     },
     
     onLoggedOut: function()
     {
-        this.remove(2);
+        this.down('[name=eastregion]').hide();
     },
     
     onAuthenticationChange: function(event, authentication)
@@ -992,4 +995,3 @@ Ext.define('Ext.ux.SearchPanel', {
         }
     }
 });
-

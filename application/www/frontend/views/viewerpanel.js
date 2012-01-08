@@ -145,13 +145,13 @@ Ext.define('Ext.ux.ViewerPanel', {
                         _this.resetViewport();
                     }
                 }
-            },{
+            }/*,{
                 iconCls: 'settings-icon',
                 tooltip: 'Set viewer settings',
                 listeners: {
                     click: function() { Ext.ux.ViewerPanel.showSettingsWindow(); }
                 }
-            }, '->', {
+            }*/, '->', {
                 iconCls: 'drag-icon',
                 tooltip: 'Drag',
                 enableToggle: true,

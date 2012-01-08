@@ -25,11 +25,25 @@ class BindingController extends Controller
         
         $binding = new Binding($bindingId);
         $library = new Library($binding->getLibraryId());
-
+        /*
+        $scans = Scan::fromBinding($binding);
+        $scanStatus = true;
+        */
         $binding = $binding->getValues(true, false);
         $binding['library'] = $library->getValues(true, false);
+        /*
+        foreach ($scans as $scan)
+        {
+            if ($scan->getStatus() !== Scan::STATUS_PROCESSED)
+            {
+                $scanStatus = false;
+            }
+        }
         
-        return array('records' => $binding, 'total' => 1);
+        if(($binding['status']==2 && $scanStatus))
+        {*/
+            return array('records' => $binding, 'total' => 1);
+        /*}*/
     }
 }
 

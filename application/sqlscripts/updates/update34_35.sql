@@ -1,23 +1,11 @@
 BEGIN TRANSACTION;
 
--- Insert settings used for password restoration mails.
+-- Inserts new actions in Permissions
+--   http://sp.urandom.nl:8091/display/WCOLLAB/Permissions+table
 
-INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('forgotpass-mail-subject', 'Restoration of your password');
-INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('forgotpass-mail-message', 'Dear Mr./Ms. [LASTNAME],
+DELETE FROM "Permissions" WHERE "actionName" = 'view-users';
 
-This e-mail has been send to you because you indicated you had forgotten your Collaboratory password. If this is not the case, please ignore this message.
-
-
-Your username is: [USERNAME]
-
-Please click the following link (which will stop working after succesfully using it) to change your password:
-
-[LINK]
-
-If clicking this link does not work, try to copy and paste it into the address bar of your browser.
-
-
-Regards,
-The Collaboratory Team');
+INSERT INTO "Permissions" ("actionName", "minRank") VALUES ('view-users-part', 10);
+INSERT INTO "Permissions" ("actionName", "minRank") VALUES ('view-users-complete', 50);
 
 COMMIT;

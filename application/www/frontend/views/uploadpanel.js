@@ -10,32 +10,27 @@ Ext.define('Ext.ux.BindingFieldSet', {
     {
         var _this = this;
         
-        var librarySignatureCheck = true;
-        
-        // TODO: let this function communicate with db, define better name
-        // used @ library & signature
-        function checkLibrarySignature(library, signature) {
-            var result = null; // TODO: getfromdb(library, signature);
-            if (result === null)
-            {
-                return true;
-            }
-            else 
-            {
-                return 'The combination of library and signature is not unique in our system. '
-                     + 'See opennewtabwithresult ' /*+ result*/ + 'for the version in our system.';
-            }
+        function uniqueLibrarySignature(library, signature) {
+            RequestManager.getInstance().request(
+                'BindingUpload',
+                'uniqueLibrarySignature',
+                {library: library.getValue(), signature: signature.getValue()},
+                this,
+                function(data)
+                {
+                    if (!data)
+                    {
+                        signature.markInvalid('The combination of library and signature is not ' +
+                                              'unique in our system.');
+                        library.markInvalid('The combination of library and signature is not '+ 
+                                            'unique in our system.');
+                    }
+                }
+            );
         };
         
-        // TODO: get this from database
-        var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['Albanian'],['Arabic'],['Aramaic'],['Belarusian'],['Bulgarian'],['Celtic'],['Chinese'],['Croatian'],['Czech'],['Danish'],['Dutch'],['English'],['Estonian'],['Finnish'],['French'],['German'],['Greek'],['Hebrew'],['Hungarian'],['Icelandic'],['Irish'],['Italian'],['Japanese'],['Latvian'],['Lithuanian'],['Macedonian'],['Maltese'],['Norwegian'],['Persian'],['Polish'],['Portuguese'],['Romanian'],['Russian'],['Sanskrit'],['Serbian'],['Slovak'],['Slovenian'],['Spanish'],['Syriac'],['Turkish'],['Urkainian']],
-            fields: ['text'],
-            sortInfo: {
-                field: 'text',
-                direction: 'ASC'
-            }
-        });
+        var annotationStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.LanguageModel'});
+        annotationStore.load();
         
         var defConfig = {
             items: [{
@@ -54,23 +49,15 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         labelAlign: 'top',
                         validator: function(library)
                         {
-                            // Set signature + library false if the combination is already ina
-                            // the database.
-                            var signature = this.nextSibling('[name=signature]');
-                            if (signature === null)
+                            var signature = _this.down('[name=signature]');
+                            if (signature == null)
                             {
                                 return true;
                             }
                             else 
                             {
-                                if (librarySignatureCheck) 
-                                {
-                                    librarySignatureCheck = false;
-                                    signature.validate();
-                                    librarySignatureCheck = true;
-                                }
-                                
-                                return checkLibrarySignature(library, signature.getValue());
+                                uniqueLibrarySignature(this, signature);
+                                return true;
                             }
                         }
                     },{
@@ -92,23 +79,15 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         labelAlign: 'top',
                         validator: function(signature)
                         {
-                            // Set signature + library false if the combination is already ina
-                            // the database.
-                            var library = this.previousSibling('[name=library]');
-                            if (library === null)
+                            var library = _this.down('[name=library]');
+                            if (library == null)
                             {
                                 return true;
                             }
                             else 
                             {
-                                if (librarySignatureCheck) 
-                                {
-                                    librarySignatureCheck = false;
-                                    library.validate();
-                                    librarySignatureCheck = true;
-                                }
-                                
-                                return checkLibrarySignature(library.getValue(), signature);
+                                uniqueLibrarySignature(library, this);
+                                return true;
                             }
                         }
                     },{
@@ -118,7 +97,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         mode: 'local',
                         anchor: '100%',
                         labelAlign: 'top',
-                        store: store,
+                        store: annotationStore,
+                        displayField: 'languageName',
+                        valueField: 'languageId',
                         multiSelect: true,
                         allowBlank: true,
                         forceSelection: true,
@@ -164,15 +145,8 @@ Ext.define('Ext.ux.BookFieldset', {
     initComponent: function() {
         var _this = this;
     
-        // TODO: get this from database
-        var store = Ext.create('Ext.data.ArrayStore', {
-            data: [['Albanian'],['Arabic'],['Aramaic'],['Belarusian'],['Bulgarian'],['Celtic'],['Chinese'],['Croatian'],['Czech'],['Danish'],['Dutch'],['English'],['Estonian'],['Finnish'],['French'],['German'],['Greek'],['Hebrew'],['Hungarian'],['Icelandic'],['Irish'],['Italian'],['Japanese'],['Latvian'],['Lithuanian'],['Macedonian'],['Maltese'],['Norwegian'],['Persian'],['Polish'],['Portuguese'],['Romanian'],['Russian'],['Sanskrit'],['Serbian'],['Slovak'],['Slovenian'],['Spanish'],['Syriac'],['Turkish'],['Urkainian']],
-            fields: ['text'],
-            sortInfo: {
-                field: 'text',
-                direction: 'ASC'
-            }
-        });
+        var booklanguageStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.LanguageModel'});
+        booklanguageStore.load();
         
         var defConfig = {
             items: [{
@@ -315,7 +289,9 @@ Ext.define('Ext.ux.BookFieldset', {
                             name: 'languages',
                             mode: 'local',
                             multiSelect: true,
-                            store: store,
+                            store: booklanguageStore,
+                            displayField: 'languageName',
+                            valueField: 'languageId',
                             anchor: '98%',
                             labelAlign: 'top',
                             editable: false,
@@ -369,10 +345,13 @@ Ext.define('Ext.ux.BookFieldset', {
                 },{
                     xtype: 'button',
                     text: 'Delete book',
+                    name: 'deletebook',
+                    disabled: true,
                     width: 140,
                     margin: '5 0 10 0',
                     handler: function()
                     {
+                        _this.up('booksfieldset').checkBooks(true);
                         _this.destroy();
                     }
                 }]
@@ -387,8 +366,6 @@ Ext.define('Ext.ux.BookFieldset', {
     {
         return {
             title: this.down('[name=title]').getValue(),
-            firstPage: this.down('[name=pageStart]').getValue(),
-            lastPage: this.down('[name=pageEnd]').getValue(),
             author: this.down('[name=author]').getValue(),
             publisher: this.down('[name=publisher]').getValue(),
             minYear: this.down('[name=from]').getValue(),
@@ -423,6 +400,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 handler: function()
                 {
                     this.ownerCt.insert(this.ownerCt.items.length - 1, [{xtype: 'bookfieldset'}]);
+                    _this.checkBooks(false);
                 }
             }]
         };
@@ -440,6 +418,41 @@ Ext.define('Ext.ux.BooksFieldSet', {
             books[books.length] = current.getBook();
         } while (current = current.nextSibling('bookfieldset'));
         return books;
+    },
+    
+    checkBooks: function(deleted)
+    {
+        var books = this.getBooks();
+        var disable = false;
+        
+        if (books.length == 1 || (deleted && books.length == 2))
+        {
+            disable = true;
+        }
+        
+        var current = this.down('bookfieldset');
+        do {
+            current.down('[name=deletebook]').setDisabled(disable);
+        } while (current = current.nextSibling('bookfieldset'));
+    },
+    
+    reset: function()
+    {
+        var books = this.getBooks();
+        if (books.length > 1)
+        {
+            var current = this.down('bookfieldset');
+            var next = current.nextSibling('bookfieldset');
+            
+            for (var i = 0; i < books.length - 1; i++)
+            {
+                current = next;
+                next = current.nextSibling('bookfieldset');
+                current.destroy();
+            }
+            
+            this.checkBooks();
+        }
     }
 });
 
@@ -453,6 +466,33 @@ Ext.define('Ext.ux.UploadForm', {
     initComponent: function() 
     {
         var _this = this;
+        
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+            function(result)
+            {
+                if (result['status'] === 2)
+                {
+                    ;
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.up('[name=upload]').close();
+                }
+            }, 
+            function()
+            {
+                 Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. Please try again later',
+                            buttons: Ext.Msg.OK
+                        });
+                this.up('[name=upload]').close();
+            });
         
         var defConfig = {
             items: [{
@@ -491,7 +531,7 @@ Ext.define('Ext.ux.UploadForm', {
                 width: 140,
                 handler: function()
                 {
-                    _this.ownerCt.setLoading('Uploading...');
+                    _this.setLoading('Uploading...');
                     _this.checkIntervalId = setInterval(function(){_this.checkCompleted();},1000);
                 }
             }]
@@ -506,41 +546,76 @@ Ext.define('Ext.ux.UploadForm', {
     {
         var scans = this.down('scanpanel').getValues();
         var waiting = false;
+        var successScans = 0;
         for (var i = 0; i < scans.length; i++)
         {
-            if (scans[i].status != 'success' && scans[i].status != 'error')
+            if (scans[i].status == 'success')
+            {
+                successScans++;
+            }
+            else if (scans[i].status == 'error')
+            {
+                this.setLoading(false);
+                this.setLoading('Some scans failed to upload. Please reselect them.');
+                waiting = true;
+                break;
+            }
+            else
             {
                 waiting = true;
                 break;
             }
         }
+        
         if (!waiting)
         {
-            clearInterval(this.checkIntervalId);
             var binding = this.down('bindingfieldset').getBinding();
             var books = this.down('booksfieldset').getBooks();
-            var scans = this.down('scanpanel').getValues();
             var result = {binding: binding, books: books, scans: scans};
-            this.ownerCt.setLoading("Saving...");
-            RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+            var numberOfBooks = books.length;
+            
+            if (numberOfBooks > successScans)
             {
-                this.ownerCt.setLoading(false);
-                var _this = this;
-                Ext.Msg.show({
-                    title: 'Upload',
-                    msg: 'Binding added successfully.',
-                    buttons: Ext.Msg.OK,
-                    callback: function(button)
-                        {
-                            Application.getInstance().gotoTab('reorderscan',[],true);
-                            _this.close();
-                        }
+                this.setLoading(false);
+                if (numberOfBooks==1) {
+                    this.setLoading('There need to be at least ' + numberOfBooks
+                                   + ' successfully uploaded scan, because there is '
+                                   + numberOfBooks + ' book. Please add more scans.'
+                                          + ' Waiting for more scans...');
+                }
+                else
+                {
+                    this.setLoading('There need to be at least ' + numberOfBooks
+                                   + ' successfully uploaded scans, because there are '
+                                   + numberOfBooks + ' books. Please add more scans.'
+                                   + ' Waiting for more scans...');
+                }
+            }
+            else
+            {
+                clearInterval(this.checkIntervalId);
+                this.setLoading(false);
+                this.setLoading('Saving...');
+                RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+                {
+                    this.setLoading(false);
+                    var _this = this;
+                    Ext.Msg.show({
+                        title: 'Upload',
+                        msg: 'Binding added successfully.',
+                        buttons: Ext.Msg.OK,
+                        callback: function(button)
+                            {
+                                Application.getInstance().gotoTab('reorderscan',[],true);
+                                _this.up('[name=upload]').close();
+                            }
+                    });
+                }, function()
+                {
+                    this.setLoading(false);
+                    return true;
                 });
-            }, function()
-            {
-                this.ownerCt.setLoading(false);
-                return true;
-            });
+            }
         }
     },
     
@@ -558,5 +633,6 @@ Ext.define('Ext.ux.UploadForm', {
         this.callParent();
         
         this.down('scanpanel').reset();
+        this.down('booksfieldset').reset();
     }
 });

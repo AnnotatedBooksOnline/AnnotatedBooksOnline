@@ -149,7 +149,7 @@ Ext.define('Ext.ux.SelectBookForm', {
     {
         var _this = this;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], _this, 
             function(result)
             {
                 if (result['status'] === 1)
@@ -160,14 +160,26 @@ Ext.define('Ext.ux.SelectBookForm', {
                     bookstore.filter({property: 'bindingId', value: bindingId});
                     bookstore.on('load', function()
                     { 
-                        bookstore.each(function(record)
+                        bookstore.each(function(book)
                         {
-                            record.set('timePeriod',record.getTimePeriod());
-                            record.set('firstPage',-1);
-                            record.set('lastPage',-1);
+                            book.set('timePeriod',book.getTimePeriod());
+                            book.set('firstPage',-1);
+                            book.set('lastPage',-1);
+                            
+                            var authors='';
+                            book.authors().load({
+                                scope   : _this,
+                                callback:function(records, operation, success) {
+                                    Ext.Array.each(records, function(record) {
+                                        authors += (', '+record.get('name'));
+                                    });
+                                                                
+                                    book.set('author',authors.substring(1));
+                                }
+                            });
                         });
                     });
-                    
+                        
                     bookstore.load();
                 }
                 else
@@ -182,7 +194,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             }, 
             function()
             {
-                 Ext.Msg.show({
+                Ext.Msg.show({
                             title: 'Error',
                             msg: 'There is a problem with the server. Please try again later',
                             buttons: Ext.Msg.OK
@@ -223,7 +235,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                         selection.deselectAll();
                         grid.disable();
                         Ext.Msg.show({
-                            title: 'Select starting page',
+                            title: 'Select pages',
                             msg: 'You should now select the starting and ending page of \''
                                 + book.get('title') + '\' by double clicking',
                             buttons: Ext.Msg.OK
@@ -280,7 +292,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             }
             
             Ext.Msg.show({
-                title: 'No book selected',
+                title: 'Books overlap',
                 msg: 'Books can not overlap. Please reselect a book and try again.',
                 buttons: Ext.Msg.OK});
             this.endSelecting();
@@ -327,7 +339,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             else
             {
                 Ext.Msg.show({
-                title: 'Error',
+                title: 'Books overlap',
                 msg: 'Books can not overlap. Please reselect a book and try again',
                 buttons: Ext.Msg.OK});
                 this.changeBookTitle(tempPage,undefined);
@@ -390,7 +402,7 @@ Ext.define('Ext.ux.SelectBookForm', {
         var onSuccess = function(data)
         {
                 Ext.Msg.show({
-                title: 'Error',
+                title: 'Success',
                 msg: 'The data was succesfully added to the system.',
                 buttons: Ext.Msg.OK}); 
                 this.close();
