@@ -404,4 +404,54 @@ class UserController extends Controller
         $user->setRank($newrank);
         $user->save();
     }
+    
+    /**
+     * Changes a user's forgotten password based on a token.
+     * 
+     * @param $data Should contain a 'token' and a newly entered 'password'.
+     */
+    public function actionChangeForgottenPassword($data)
+    {        
+        // Fetch password restoration token.
+        $token = self::getString($data, 'token', null, true, 32);
+        
+        // Fetch new password.
+        $newpass = self::getString($data, 'password');
+        
+        Log::debug('!!!!' . strlen($token) . '!!' . strlen($newpass));
+        
+        if($token == null || strlen($token) != 32 || strlen($newpass) == 0)
+        {
+            Log::debug('Illegal change password token or no password.');
+            return false;
+        }
+        
+        // Transaction.
+        $success = Database::getInstance()->doTransaction(
+        function() use ($token, $newpass)
+        {
+            // Query for associated user.
+            $row = Query::select('userId')
+                         ->from('Users')
+                         ->where('passwordRestoreToken = :token')
+                         ->execute(array('token' => $token))
+                         ->getFirstRow_();
+            if(!$row)
+            {
+                // No user associated with token.
+                Log::debug('Token does not correspond to a user.');
+                return false;
+            }
+            
+            // Change user password and remove password restoration token.
+            $user = new User($row->getValue('userId'));
+            $user->setPassword($newpass);
+            $user->setPasswordRestoreToken(null);
+            $user->save();
+            
+            return true;
+        });
+        
+        return $success;
+    }
 }
