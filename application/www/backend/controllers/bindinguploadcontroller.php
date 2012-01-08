@@ -43,7 +43,7 @@ class BindingUploadController extends Controller
         
         // Find the name of the library the binding belongs to.
         $libraryName = $inputBinding['library'];
-        $provenancePersonNames = $inputBinding['provenance'];
+        $provenancePersonName = $inputBinding['provenance'];
         $signature = self::getString($inputBinding, 'signature');
         
         ////////////////////////////////////////////////////////////////////////////////////
