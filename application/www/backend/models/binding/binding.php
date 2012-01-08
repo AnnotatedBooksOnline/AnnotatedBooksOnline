@@ -39,7 +39,7 @@ class Binding extends Entity
     protected $scanList;
     
     /** List of all languages of the annotations in this book. */
-    protected $bindingLanguageList;
+    //protected $bindingLanguageList;
     
     /**
      * Constructs a binding by id.
@@ -121,8 +121,8 @@ class Binding extends Entity
         $this->scanList->save();
         
         // Save the language list.
-        $this->bindingLanguageList->setBindingId($this->bindingId);
-        $this->bindingLanguageList->save();
+        //$this->bindingLanguageList->setBindingId($this->bindingId);
+        //$this->bindingLanguageList->save();
     }
     
     public function getBindingId()         { return $this->bindingId; }
@@ -146,7 +146,7 @@ class Binding extends Entity
     public function getStatus()        { return $this->status;    }
     public function setStatus($status) { $this->status = $status; }
     
-    public function getBindingLanguageList() { return $this->bindingLanguageList; }
-    public function setBindingLanguageList($bindingLanguageList) { $this->bindingLanguageList = $bindingLanguageList; }
+    //public function getBindingLanguageList() { return $this->bindingLanguageList; }
+    //public function setBindingLanguageList($bindingLanguageList) { $this->bindingLanguageList = $bindingLanguageList; }
 }
 

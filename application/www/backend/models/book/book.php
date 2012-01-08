@@ -43,7 +43,7 @@ class Book extends Entity
     protected $firstPage;
     protected $lastPage;
     
-    protected $bookLanguageList;
+    //protected $bookLanguageList;
     
     /**
     * Constructs a book by id.
@@ -172,9 +172,9 @@ class Book extends Entity
      */
     public function saveDetails() 
     {
-        // Save the book list.
-        $this->bookLanguageList->setBookId($this->bookId);
-        $this->bookLanguageList->save();
+        // Save the booklanguage list.
+       // $this->bookLanguageList->setBookId($this->bookId);
+        //$this->bookLanguageList->save();
     }
  
     
@@ -211,7 +211,7 @@ class Book extends Entity
     public function getLastPage() { return $this->lastPage; }
     public function setLastPage($page) { $this->lastPage = $page; }
     
-    public function getBookLanguageList() { return $this->bookLanguageList; }
-    public function setBookLanguageList($bookLanguageList) { $this->bookLanguageList = $bookLanguageList; }
+    //public function getBookLanguageList() { return $this->bookLanguageList; }
+    //public function setBookLanguageList($bookLanguageList) { $this->bookLanguageList = $bookLanguageList; }
 }
 
