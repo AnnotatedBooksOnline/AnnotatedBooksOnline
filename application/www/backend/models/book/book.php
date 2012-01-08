@@ -170,13 +170,13 @@ class Book extends Entity
      *
      * Enter description here ...
      */
-    public function saveDetails() 
+    /*public function saveDetails() 
     {
         // Save the booklanguage list.
        // $this->bookLanguageList->setBookId($this->bookId);
         //$this->bookLanguageList->save();
     }
- 
+ */
     
     public function getBookId()         { return $this->bookId; }
     public function setBookId($bookId)  { $this->bookId = $bookId; }
