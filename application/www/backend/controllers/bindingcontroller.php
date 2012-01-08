@@ -41,7 +41,7 @@ class BindingController extends Controller
             }
         }
         
-        Log::info($_SERVER['HTTP_REFERER']);
+        Log::info($_SERVER['SCRIPT_FILENAME']);
         
         if($unsafe || ($binding['status']==2 && $scanStatus))
         {
