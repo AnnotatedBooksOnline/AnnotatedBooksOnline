@@ -114,13 +114,13 @@ class Mailer
         $subject = Setting::getSetting('forgotpass-mail-subject');
         $recipient = $user->getEmail();
         $basemessage = Setting::getSetting('forgotpass-mail-message');
-        $link = Configuration::getInstance()->getString('forgotpass-url') . $code;
+        $link = Configuration::getInstance()->getString('forgotpass-url') . $token;
         
         // For the sake of security, confirm the validity of the password token, which should be
         // a hexadecimal numer of 32 digits.
-        if(strlen($code) != 32 || preg_match('/[^a-f^0-9]/', $code) == 1)
+        if(strlen($token) != 32 || preg_match('/[^a-f^0-9]/', $token) == 1)
         {
-            throw new MailerException('illegal-confirmation-code', $code);
+            throw new MailerException('illegal-confirmation-code', $token);
         }
          
         // Insert user info and the activation link into the e-mail.

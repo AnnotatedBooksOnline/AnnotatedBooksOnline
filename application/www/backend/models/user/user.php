@@ -161,19 +161,19 @@ class User extends Entity
      */
     public static function fromEmailAddress($email)
     {
-        $result = Query::select('userId')
-                       ->from('Users')
-                       ->where(array('email ILIKE :email'))
-                       ->execute(array('email' => $email));
+        $row = Query::select('userId')
+                     ->from('Users')
+                     ->where(array('email ILIKE :email'))
+                     ->execute(array('email' => $email))
+                     ->getFirstRow_();
         
-        if($result->rowCount() == 0)
+        if($row)
         {
-            return null;
+            return new User($row->getValue('userId'));
         }
         else
         {
-            $id = $result->getFirstRow()->getValue('userId');
-            return new User($id);
+            return null;
         }
     }
     

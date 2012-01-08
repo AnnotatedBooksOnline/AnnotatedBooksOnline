@@ -45,13 +45,29 @@ Ext.define('Ext.ux.RestorePasswordForm', {
                 	// After changing was succesfull.
                 	var onSuccess = function()
                 	{
-                		alert('Yay!');
+                		Ext.MessageBox.alert('Changing password succesfull.',
+                                'Your password has been succesfully changed.' +
+                				' You can now log in with it.',
+                				function()
+                                {
+                                    var tabs = Application.getInstance().viewport.getTabsInfo();
+                                    for (var i = 0; i < tabs.length; i++)
+                                    {
+                                        if (tabs[i].type == 'restorepass')
+                                        {
+                                            Application.getInstance().viewport.closeTab(i);
+                                        }
+                                    }
+                                });
                 	};
                 	
                 	// If it failed (because e.g. the token was incorrect).
                 	var onFailure = function()
                 	{
-                		alert('Nay!');
+                		Ext.MessageBox.alert('Changing password failed.',
+                              'Something went wrong while trying to change your password.' +
+                              'Please make sure the address in your address bar matches the one in' + 
+                              'the e-mail you received.');
                 	};
                 	
                 	// Do a request to change the password.

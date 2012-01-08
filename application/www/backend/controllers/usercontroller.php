@@ -376,12 +376,18 @@ class UserController extends Controller
             throw new UserNotFoundException('email-not-found', $email);
         }
         
-        // Specify a password restoration token for this user.
-        $user->setPasswordRestoreToken(Authentication::generateUniqueToken());
-        $user->save();
-        
-        // Send an e-mail informing the user of the token.
-        Mailer::sendPasswordRestorationMail($user);
+        // Set restore token in transaction so it is rolled back when the mailer throws an 
+        // exception.
+        Database::getInstance()->doTransaction(
+        function() use ($user)
+        {
+            // Specify a password restoration token for this user.
+            $user->setPasswordRestoreToken(Authentication::generateUniqueToken());
+            $user->save();
+            
+            // Send an e-mail informing the user of the token.
+            Mailer::sendPasswordRestorationMail($user);
+        });
     }
     
     /**
