@@ -127,7 +127,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                         
                         if (to.getValue() == null || fromValue > toValue) 
                         {
-                            to.markInvalid('The value should be equal to or greater than the first value.');
+                            to.markInvalid('This value should be equal to or greater than the first value.');
                         }
                         else
                         {

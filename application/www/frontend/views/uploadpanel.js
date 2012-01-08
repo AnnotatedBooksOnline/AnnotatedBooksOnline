@@ -219,7 +219,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         
                                         if (to.getValue() == null || fromValue > toValue) 
                                         {
-                                            to.markInvalid('The value should be equal to or' +
+                                            to.markInvalid('This value should be equal to or' +
                                                            ' greater than the first value.');
                                         }
                                         else

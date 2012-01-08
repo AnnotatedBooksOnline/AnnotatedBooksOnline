@@ -9,9 +9,9 @@ Ext.define('Ext.ux.ThumbnailView', {
     initComponent: function()
     {
         var fields = [];
-        for (var i = 0; i < this.book.getScanAmount(); i++)
+        for (var i = 0; i < this.binding.getScanAmount(); i++)
         {
-            var document = this.book.getScans()[i];
+            var document = this.binding.getScans()[i];
             
             //fields[i] = ['tiles/' + document.scanId + '/tile_0_0_0.jpg',
             fields[i] = ['tiles/thumbnails/' + document.scanId + '.jpg',
