@@ -135,6 +135,8 @@ class BindingUploadController extends Controller
             //$book->setLastPage(self::getInteger($inputBook, 'lastPage'));
                         
             $bookId = $book->getBookId();
+            
+            $binding->getBookList()->addEntity($book);
             // Find the book author
             /*
             $bookAuthor = self::getString($inputBook, 'placePublished');
