@@ -63,7 +63,7 @@ cd application/application/sqlscripts/updates
 lastupdate=$(echo update*_*.sql | tr " " "\n" | sed 's/update\([0-9]\+\)_.*/\1/' | sort -n | tail -n 1)
 for i in $(seq 0 $lastupdate)
 do
-    cat update${i}_$(($i+1)).sql | psql $ENVIRONMENT postgres 2>/dev/null >/dev/null
+    cat update${i}_$(($i+1)).sql | psql $ENVIRONMENT application 2>/dev/null >/dev/null
 done
 cd ../../../..
 
