@@ -57,6 +57,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                             else 
                             {
                                 uniqueLibrarySignature(this, signature);
+                                return true;
                             }
                         }
                     },{
@@ -86,6 +87,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                             else 
                             {
                                 uniqueLibrarySignature(library, this);
+                                return true;
                             }
                         }
                     },{
