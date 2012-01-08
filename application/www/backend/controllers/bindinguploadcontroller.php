@@ -156,7 +156,7 @@ class BindingUploadController extends Controller
             {
                 
             }*/
-            
+            /*
             //Add the links to the languages
             $languages = $inputBook['languages'];
             if(!empty($languages))
@@ -168,7 +168,7 @@ class BindingUploadController extends Controller
                     $book->getBookLanguageList()->addEntity($bookLanguage);
                 }
             }
-            
+            */
             // Add the book to the binding.
             $binding->getBookList()->addEntity($book);
                 
@@ -178,7 +178,7 @@ class BindingUploadController extends Controller
         ////////////////////////////////////////////////////////////////////////////////////
         // Link the languages to the binding
         ////////////////////////////////////////////////////////////////////////////////////
-            
+            /*
         // Create a link between the binding and every given language
             $languagesOfAnnotations = $inputBinding['languagesofannotations'];
             if(!empty($languagesOfAnnotations))
@@ -189,7 +189,7 @@ class BindingUploadController extends Controller
                     $bindingLanguage->setLanguageId($language);
                     $binding->getBindingLanguageList()->addEntity($bindingLanguage);
                 }
-            }
+            }*/
         ////////////////////////////////////////////////////////////////////////////////////
         // Create the scans.
         ////////////////////////////////////////////////////////////////////////////////////
