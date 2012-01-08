@@ -163,7 +163,8 @@ class BindingUploadController extends Controller
             {
                 foreach($languages as $language)
                 {
-                    $bookLanguage = new BookLanguage($bookId,$language,true);
+                    $bookLanguage = new BookLanguage();
+                    $bookLanguage->setLanguageId($language);
                     $book->getBookLanguageList()->addEntity($bookLanguage);
                 }
             }
@@ -184,7 +185,8 @@ class BindingUploadController extends Controller
             {
                 foreach($languagesOfAnnotations as $language)
                 {
-                    $bindingLanguage = new BindingLanguage($bindingId,$language,true);
+                    $bindingLanguage = new BindingLanguage();
+                    $bindingLangugae->setLanguageId($language);
                     $binding->getBindingLanguageList()->addEntity($bindingLanguage);
                 }
             }
