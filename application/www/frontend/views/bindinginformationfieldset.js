@@ -11,12 +11,12 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         var _this = this;
         
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], _this, 
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
             function(result)
             {
                     Ext.ux.BindingModel.load(result['bindingId'], 
                     {
-                        scope: _this,
+                        scope: this,
                         failure: function(binding, operation) {
                             //handleError
                             return undefined;
