@@ -18,8 +18,31 @@ Ext.define('Ext.ux.LoginForm', {
                 fieldLabel: 'Password',
                 inputType: 'password'
             }],
-            
-            submitButtonText: 'Login'
+            buttons: [{
+                xtype: 'button',
+                text: 'Cancel',
+                width: 140,
+                handler: function()
+                {
+                    Ext.WindowManager.each(
+                        function(window)
+                        {
+                            if (window instanceof Ext.window.Window)
+                                window.close();
+                        }
+                    );
+                }
+            },{
+                xtype: 'button',
+                formBind: true,
+                disabled: true,
+                text: 'Login',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
+                }
+            }]
         };
         
         Ext.apply(this, defConfig);
