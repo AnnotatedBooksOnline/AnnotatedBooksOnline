@@ -46,9 +46,11 @@ Ext.define('Ext.ux.Welcome', {
                       'digital presentations and general publications. In order to expand this ' +
                       'structural network, the principal partners in the collaboratory will ' + 
                       'prepare an application for a Marie Curie Initial Training Network.</p>' + 
+                      '<img src="frontend/resources/images/uu.png" style="height: 65px"/>' +
+                      '<img src="frontend/resources/images/uva.png" style="height: 65px"/>' +
                       '<img src="frontend/resources/images/princeton.png" style="height: 65px"/>' +
-                      '<img src="frontend/resources/images/cell.png" style="height: 100px"/>' +
-                      '<img src="frontend/resources/images/uu.png" style="height: 65px"/>'
+                      '<img src="frontend/resources/images/ugent.png" style="height: 100px"/>' +
+                      '<img src="frontend/resources/images/cell.png" style="height: 100px"/>'
             }
         };
         
