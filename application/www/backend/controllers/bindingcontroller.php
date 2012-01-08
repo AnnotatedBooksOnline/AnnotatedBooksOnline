@@ -22,17 +22,16 @@ class BindingController extends Controller
     {
         // Retrieve the binding id from the request
         $bindingId = self::getInteger($data, 'id', 0);
-        $unsafe    = self::getBoolean($data, 'unsafe', 0);
         
         $binding = new Binding($bindingId);
         $library = new Library($binding->getLibraryId());
-        
+        /*
         $scans = Scan::fromBinding($binding);
         $scanStatus = true;
-
+        */
         $binding = $binding->getValues(true, false);
         $binding['library'] = $library->getValues(true, false);
-        
+        /*
         foreach ($scans as $scan)
         {
             if ($scan->getStatus() !== Scan::STATUS_PROCESSED)
@@ -41,12 +40,10 @@ class BindingController extends Controller
             }
         }
         
-        Log::info($_SERVER['REQUEST_URI']);
-        
-        if($unsafe || ($binding['status']==2 && $scanStatus))
-        {
+        if(($binding['status']==2 && $scanStatus))
+        {*/
             return array('records' => $binding, 'total' => 1);
-        }
+        /*}*/
     }
 }
 
