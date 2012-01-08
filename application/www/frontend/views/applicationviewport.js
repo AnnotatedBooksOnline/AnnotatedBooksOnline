@@ -50,7 +50,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             name: 'password',
             xtype: 'button',
-            cls: 'user-button'
+            cls: 'user-button',
+            disabled: true
         },{
             xtype: 'button',
             text: 'Register',

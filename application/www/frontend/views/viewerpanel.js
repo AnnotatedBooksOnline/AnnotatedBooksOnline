@@ -145,13 +145,13 @@ Ext.define('Ext.ux.ViewerPanel', {
                         _this.resetViewport();
                     }
                 }
-            }/*,{
+            },{
                 iconCls: 'settings-icon',
                 tooltip: 'Set viewer settings',
                 listeners: {
                     click: function() { Ext.ux.ViewerPanel.showSettingsWindow(); }
                 }
-            }*/, '->', {
+            }*//*, '->', {
                 iconCls: 'drag-icon',
                 tooltip: 'Drag',
                 enableToggle: true,
@@ -163,7 +163,8 @@ Ext.define('Ext.ux.ViewerPanel', {
                     {
                         _this.setTool('drag');
                     }
-                }
+                },
+                disabled: true
             },{
                 iconCls: 'polygon-icon',
                 tooltip: 'Add a polygon annotation',
@@ -175,7 +176,8 @@ Ext.define('Ext.ux.ViewerPanel', {
                     {
                         _this.setTool('polygon');
                     }
-                }
+                },
+                disabled: true
             },{
                 iconCls: 'rectangle-icon',
                 tooltip: 'Add a rectangle annotation',
@@ -187,7 +189,8 @@ Ext.define('Ext.ux.ViewerPanel', {
                     {
                         _this.setTool('rectangle');
                     }
-                }
+                },
+                disabled: true
             },{
                 iconCls: 'vertex-icon',
                 tooltip: 'Move a vertex',
@@ -199,7 +202,8 @@ Ext.define('Ext.ux.ViewerPanel', {
                     {
                         _this.setTool('vertex');
                     }
-                }
+                },
+                disabled: true
             },{
                 iconCls: 'add-vertex-icon',
                 tooltip: 'Add a vertex',
@@ -211,7 +215,8 @@ Ext.define('Ext.ux.ViewerPanel', {
                     {
                         _this.setTool('addvertex');
                     }
-                }
+                },
+                disabled: true
             },{
                 iconCls: 'erase-vertex-icon',
                 tooltip: 'Erase a vertex',
@@ -223,7 +228,8 @@ Ext.define('Ext.ux.ViewerPanel', {
                     {
                         _this.setTool('erasevertex');
                     }
-                }
+                },
+                disabled: true
             },{
                 iconCls: 'erase-icon',
                 tooltip: 'Erase an annotation',
@@ -235,7 +241,8 @@ Ext.define('Ext.ux.ViewerPanel', {
                     {
                         _this.setTool('erase');
                     }
-                }
+                },
+                disabled: true
             }]
         };
         
@@ -311,11 +318,11 @@ Ext.define('Ext.ux.ViewerPanel', {
                 type: 'accordion',
                 multi: 'true'
             },
-            items: [{
+            items: [/*{
                 xtype: 'informationpanel',
                 title: 'Binding information',
                 collapsed: false
-            },{
+            },*/{
                 xtype: 'navigationpanel',
                 cls: 'navigation-panel',
                 collapsed: false,

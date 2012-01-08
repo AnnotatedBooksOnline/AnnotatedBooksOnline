@@ -310,11 +310,11 @@ Ext.define('Ext.ux.WorkspacePanel', {
         var defConfig = {
             layout: 'fit',
             border: false,
-            items: [{
+            items: [/*{
                 xtype: 'annotationspanel',
                 title: 'Annotations',
                 viewer: this.viewer
-            },{
+            },*/{
                 title: 'Export',
                 xtype: 'exportform',
                 viewer: this.viewer
@@ -335,7 +335,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
     
     onLoggedOn: function()
     {
-        this.insert(1, {
+        this.insert(0, {
             title: 'Notes',
             xtype: 'notespanel',
             viewer: this.viewer,
@@ -345,7 +345,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
     
     onLoggedOut: function()
     {
-        this.remove(1);
+        this.remove(0);
     },
     
     onAuthenticationChange: function(event, authentication)
