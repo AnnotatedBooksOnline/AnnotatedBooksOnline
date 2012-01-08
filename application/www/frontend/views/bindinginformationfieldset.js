@@ -11,43 +11,37 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         var _this = this;
         
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], _this, 
             function(result)
             {
-                    Ext.ux.BindingModel.load(result['bindingId'], 
-                    {
-                        scope: this,
-                        failure: function(binding, operation) {
-                            //handleError
-                            return undefined;
-                        },
-                        success: function(binding, operation) {
-                            this.down('propertygrid').setSource({
-                                "a": binding.get('library').libraryName,
-                                "b": binding.get('signature'),
-                                "c": 'provenances',
-                                "d": 'languages'
-                            });
-                            
-                            /*binding.provenances().load({
-                                scope   : _this,
-                                callback:function(records, operation, success) {
-                                    var provenance='';
-                                    Ext.Array.each(records, function(record) {
-                                    provenance += (', '+record.get('name'));
-                                    });
-                                    
-                                    this.down('propertygrid').setSource({
-                                        "a": binding.get('library').libraryName,
-                                        "b": binding.get('signature'),
-                                        "c": provenance.substring(1),
-                                        "d": 'languages'
-                                    });
-                                }
-                            });'*/
-                        },
-                        callback: function(record, operation) {}
-                    });
+                alert(result);
+                Ext.ux.BindingModel.load(result['bindingId'], 
+                {
+                    scope: _this,
+                    failure: function(binding, operation) {
+                        //handleError
+                        return undefined;
+                    },
+                    success: function(binding, operation) {
+                        binding.provenances().load({
+                            scope   : _this,
+                            callback:function(records, operation, success) {
+                                var provenance='';
+                                Ext.Array.each(records, function(record) {
+                                provenance += (', '+record.get('name'));
+                                });
+                                
+                                this.down('propertygrid').setSource({
+                                    "a": binding.get('library').libraryName,
+                                    "b": binding.get('signature'),
+                                    "c": provenance.substring(1),
+                                    "d": 'languages'
+                                });
+                            }
+                        });
+                    },
+                    callback: function(record, operation) {}
+                });
                
             }, 
             function()

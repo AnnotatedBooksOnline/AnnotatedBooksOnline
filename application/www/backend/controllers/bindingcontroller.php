@@ -22,6 +22,7 @@ class BindingController extends Controller
     {
         // Retrieve the binding id from the request
         $bindingId = self::getInteger($data, 'id', 0);
+        $unsafe    = self::getBoolean($data, 'unsafe', 0);
         
         $binding = new Binding($bindingId);
         $library = new Library($binding->getLibraryId());
@@ -40,7 +41,7 @@ class BindingController extends Controller
             }
         }
         
-        if($binding['status']==2 && $scanStatus)
+        if($unsafe || ($binding['status']==2 && $scanStatus))
         {
             return array('records' => $binding, 'total' => 1);
         }

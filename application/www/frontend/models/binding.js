@@ -15,11 +15,11 @@ Ext.define('Ext.ux.BindingModel', {
         model: 'Ext.ux.ScanModel',
         name: 'scans',
         filterProperty: 'bindingId'
-    }/*,{
+    },{
         model: 'Ext.ux.ProvenanceModel',
         name: 'provenances',
         filterProperty: 'bindingId'
-    }*/],
+    }],
     
     proxy: {
         type: 'requestmanager',
