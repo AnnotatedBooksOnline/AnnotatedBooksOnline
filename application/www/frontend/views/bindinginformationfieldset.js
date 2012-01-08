@@ -22,7 +22,14 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                             return undefined;
                         },
                         success: function(binding, operation) {
-                            binding.provenances().load({
+                            this.down('propertygrid').setSource({
+                                "a": binding.get('library').libraryName,
+                                "b": binding.get('signature'),
+                                "c": 'provenances',
+                                "d": 'languages'
+                            });
+                            
+                            /*binding.provenances().load({
                                 scope   : _this,
                                 callback:function(records, operation, success) {
                                     var provenance='';
@@ -37,7 +44,7 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                                         "d": 'languages'
                                     });
                                 }
-                            });
+                            });'*/
                         },
                         callback: function(record, operation) {}
                     });
