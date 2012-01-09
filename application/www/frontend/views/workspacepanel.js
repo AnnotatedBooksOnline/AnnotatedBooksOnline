@@ -335,7 +335,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
     
     onLoggedOn: function()
     {
-        this.insert(0, {
+        this.insert(1, {
             title: 'Notes',
             xtype: 'notespanel',
             viewer: this.viewer,
@@ -345,7 +345,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
     
     onLoggedOut: function()
     {
-        this.remove(0);
+        this.remove(1);
     },
     
     onAuthenticationChange: function(event, authentication)
