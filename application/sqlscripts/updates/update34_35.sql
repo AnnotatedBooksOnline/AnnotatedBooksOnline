@@ -1,4 +1,4 @@
-START TRANSACTION;
+BEGIN TRANSACTION;
 
 -- Inserts new actions in Permissions
 --   http://sp.urandom.nl:8091/display/WCOLLAB/Permissions+table

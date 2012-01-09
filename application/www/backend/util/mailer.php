@@ -29,17 +29,19 @@ class Mailer
     {
         $fromaddress = Configuration::getInstance()->getString('from-address');
         
-        $fromheader = 'From: ' . Configuration::getInstance()->getString('from-name') 
-                    . ' <'     . $fromaddress
-                    . ">\r\n";
+        $headers = 'MIME-Version: 1.0' . "\r\n"
+                 . 'Content-type: text/plain; charset=utf-8' . "\r\n"
+                 . 'From: ' . Configuration::getInstance()->getString('from-name') 
+                 . ' <'     . $fromaddress . ">\r\n"
+                 . 'To: <' . $recipient . ">\r\n";
         
-        $success = mail($recipient, $subject, $message, $fromheader, "-f$fromaddress");
+        $success = mail($recipient, $subject, $message, $headers, "-f$fromaddress");
         if(!$success)
         {
             throw new MailerException('mail-failed', $recipient);
         }
         
-        Log::info('Mail to "%s" accepted for delivery:\n\n%s', $recipient, $message);
+        Log::info("Mail to \"%s\" accepted for delivery:\n\n %s", $recipient, $message);
     }
     
     /**
@@ -114,13 +116,13 @@ class Mailer
         $subject = Setting::getSetting('forgotpass-mail-subject');
         $recipient = $user->getEmail();
         $basemessage = Setting::getSetting('forgotpass-mail-message');
-        $link = Configuration::getInstance()->getString('forgotpass-url') . $code;
+        $link = Configuration::getInstance()->getString('forgotpass-url') . $token;
         
         // For the sake of security, confirm the validity of the password token, which should be
         // a hexadecimal numer of 32 digits.
-        if(strlen($code) != 32 || preg_match('/[^a-f^0-9]/', $code) == 1)
+        if(strlen($token) != 32 || preg_match('/[^a-f^0-9]/', $token) == 1)
         {
-            throw new MailerException('illegal-confirmation-code', $code);
+            throw new MailerException('illegal-confirmation-code', $token);
         }
          
         // Insert user info and the activation link into the e-mail.

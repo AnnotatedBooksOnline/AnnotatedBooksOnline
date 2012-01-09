@@ -7,7 +7,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
     
     initComponent: function() 
     {
-        var userItems = [{
+        var _this = this;
+    	
+    	var userItems = [{
             colspan: 2,
             border: false,
             html: 'Welcome, <b>Guest</b>',
@@ -45,7 +47,37 @@ Ext.define('Ext.ux.ApplicationViewport', {
             listeners: {
                 click: function()
                 {
-                    alert('Function not yet implemented.');
+                    function handlePasswordForgotten(button, email)
+                    {
+                    	if(button == 'ok')
+                    	{
+                    		RequestManager.getInstance().request(
+                    	            'User',
+                    	            'passwordForgotten',
+                    	            {
+                    	            	email: email
+                    	            },
+                    	            _this,
+                    	            function(data)
+                    	            {
+                    	            	Ext.MessageBox.alert('Success', 'An e-mail with' +
+                    	            			' instructions on how to reset your password will' +
+                    	            			' be send to you in a few minutes.');
+                    	            },
+                    	            function(data)
+                    	            {
+                    	            	Ext.MessageBox.alert('Error', 'An error occurred while' + 
+                                          'trying to send the restoration e-mail. Please try again' +
+                                          ' later. If the problem persists: please contact the' + 
+                                          ' webmaster.');
+                    	            }
+                    	    );
+                    	}
+                    }
+                	
+                	Ext.MessageBox.prompt('Password forgotten.', 'Please enter your e-mail address' + 
+                                            ' to which a password restoration mail can be send:', 
+                                            handlePasswordForgotten);
                 }
             },
             name: 'password',
