@@ -233,7 +233,7 @@ class BindingUploadController extends Controller
         {
             throw new ControllerException('unsupported-file-type');
         }
-        
+        /*
         // Determine the number of zoom levels for this image.
         $maxX = ($scanUploadImageIdentification[0] - 1) / 256 + 1;
         $maxY = ($scanUploadImageIdentification[1] - 1) / 256 + 1;
@@ -254,6 +254,19 @@ class BindingUploadController extends Controller
         
         // Determine image dimensions.
         $minification = pow(2, ($numZoomLevels - 1));
+        $scan->setDimensions(ceil($scanUploadImageIdentification[0] / $minification),
+                             ceil($scanUploadImageIdentification[1] / $minification));
+        */
+        
+        $columns = $scanUploadImageIdentification[0]/256;
+        $rows = $scanUploadImageIdentification[1]/256;
+        
+        $maxZoomLevel = ceil(log(max($columns, $rows))/log(2));
+        
+        $scan->setZoomLevel($maxZoomLevel+1);
+        
+        // Determine image dimensions.
+        $minification = pow(2, $maxZoomLevel);
         $scan->setDimensions(ceil($scanUploadImageIdentification[0] / $minification),
                              ceil($scanUploadImageIdentification[1] / $minification));
     }
