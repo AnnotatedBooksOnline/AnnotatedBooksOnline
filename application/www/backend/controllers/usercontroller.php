@@ -156,7 +156,7 @@ class UserController extends Controller
         
         //Check if a new password is entered, in which case we need to check if the old password
         //is correct.
-        if (isset($newPassword) && $newPassword != '')
+        if (isset($newPassword) && strlen($newPassword) >= 8)
         {
             if (!Authentication::getInstance()->checkPassword($oldPassword))
             {
@@ -164,30 +164,34 @@ class UserController extends Controller
             }
             else
             {
-                $password = $newPassword;
+                $values = array(
+                    'username'    => $username,
+                    'email'       => $email,
+                    'firstName'   => $firstName,
+                    'lastName'    => $lastName,
+                    'password'    => $newPassword,
+                    'affiliation' => $affiliation,
+                    'occupation'  => $occupation,
+                    'homeAddress' => $homeAddress,
+                    'website'     => $website,
+                    'homeAddress' => ''
+                );
             }
         }
         else
         {
-            $password = $oldPassword;
+            $values = array(
+                'username'    => $username,
+                'email'       => $email,
+                'firstName'   => $firstName,
+                'lastName'    => $lastName,
+                'affiliation' => $affiliation,
+                'occupation'  => $occupation,
+                'homeAddress' => $homeAddress,
+                'website'     => $website,
+                'homeAddress' => ''
+            );
         }
-        
-        //As not all values
-        $values = array(
-            'username'    => $username,
-            'email'       => $email,
-            'firstName'   => $firstName,
-            'lastName'    => $lastName,
-            'password'    => $password,
-            'affiliation' => $affiliation,
-            'occupation'  => $occupation,
-            'homeAddress' => $homeAddress,
-            'website'     => $website,
-            'homeAddress' => '',
-            //'active'      => true, // TODO: Activation.
-            //'banned'      => false,
-            //'rank'        => User::RANK_DEFAULT
-        );
         
         $user = new User($userId);
         $user->setValues($values);
