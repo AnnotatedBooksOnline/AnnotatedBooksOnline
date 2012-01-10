@@ -191,7 +191,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                 minLength: 4,
                                 maxLength: 4,
                                 minValue: 1000,
-                                allowDecimals: false
+                                allowDecimals: false,
                                 listeners: {
                                     'blur': function(from, f) {
                                         var to = this.nextSibling('[name=to]');
