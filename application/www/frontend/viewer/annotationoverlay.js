@@ -123,6 +123,15 @@ AnnotationOverlay.prototype.setAnnotationColor = function(annotation, color)
     this.getPolygonByAnnotation(annotation).setHighlightColor(color);
 }
 
+// Sets mode. Mode can be: 'view', 'polygon', 'rectangle', 'erase'.
+AnnotationOverlay.prototype.setMode = function(mode)
+{
+    AnnotationOverlay.base.setMode.call(this, mode);
+    
+    // Trigger create event.
+    this.eventDispatcher.trigger('modechange', this, mode);
+}
+
 /*
  * Private methods.
  */
@@ -207,12 +216,16 @@ AnnotationOverlay.prototype.onPolygonCreate = function(polygon)
     
     // Trigger create event.
     this.eventDispatcher.trigger('create', this, annotation);
+    
+    // Set view mode.
+    this.setMode('view');
 }
 
 AnnotationOverlay.prototype.onPolygonClick = function(polygon)
 {
-    // Check for view mode.
-    if (this.getMode() === 'view')
+    // Check mode.
+    var mode = this.getMode();
+    if ((mode === 'view') || (mode === 'vertex') || (mode === 'addvertex') || (mode === 'erasevertex'))
     {
         // Get corresponding annotation.
         var annotation = this.getAnnotationByPolygon(polygon);
@@ -234,6 +247,8 @@ AnnotationOverlay.prototype.onPolygonHover = function(polygon)
     {
         this.eventDispatcher.trigger('hover', this, annotation);
     }
+    
+    AnnotationOverlay.base.onPolygonHover.call(this, polygon);
 }
 
 AnnotationOverlay.prototype.onPolygonUnhover = function(polygon)
@@ -246,4 +261,6 @@ AnnotationOverlay.prototype.onPolygonUnhover = function(polygon)
     {
         this.eventDispatcher.trigger('unhover', this, annotation);
     }
+    
+    AnnotationOverlay.base.onPolygonUnhover.call(this, polygon);
 }

@@ -21,6 +21,7 @@ function Annotations()
 // Fields.
 Annotations.prototype.eventDispatcher;
 
+Annotations.prototype.mode;
 Annotations.prototype.enabled;
 Annotations.prototype.loading;
 
@@ -44,6 +45,7 @@ Annotations.prototype.constructor = function(viewer)
     this.viewport = viewer.getViewport();
     this.enabled  = true;
     this.loading  = false;
+    this.mode     = 'view';
     
     this.annotations = [];
     
@@ -210,6 +212,7 @@ Annotations.prototype.clear = function()
 // Loads annotations.
 Annotations.prototype.load = function()
 {
+    this.store.filter({property: 'scanId', value: this.scanId});
     this.store.load();
 }
 
@@ -227,11 +230,15 @@ Annotations.prototype.save = function()
 // Sets annotation mode.
 Annotations.prototype.setMode = function(mode)
 {
-    // Set mode on overlay.
-    this.overlay.setMode(mode);
+    // Check existing mode.
+    if (mode === this.mode)
+    {
+        return;
+    }
     
-    // Trigger mode change.
-    this.eventDispatcher.trigger('modechange', this, mode);
+    // Save mode and set mode on overlay.
+    this.mode = mode;
+    this.overlay.setMode(mode);
 }
 
 // Fetches annotation store.
@@ -282,11 +289,9 @@ Annotations.prototype.initialize = function()
             'clear': function()                      { _this.clear();                      },
             'datachanged': function(store, models)   { _this.onStoreDataChanged(models);   }
             
-            // TODO: update (vertices?), datachanged (?).
+            // TODO: update vertices? Not for now..
         }
     });
-    this.store.filter({property: 'scanId', value: this.viewer.getBinding().getScanId(this.viewer.pageNumber)});
-    // TODO: What if the current page changes?
     
     // Create overlay and add it.
     this.overlay = new AnnotationOverlay(this.viewport);
@@ -312,6 +317,20 @@ Annotations.prototype.initialize = function()
     // Watch for unhovering.
     overlaygetEventDispatcher.bind('unhover', this,
         function(event, overlay, annotation) { this.onOverlayUnhover(annotation); });
+        
+    // Watch for mode changes.
+    overlaygetEventDispatcher.bind('modechange', this,
+        function(event, overlay, mode)
+        {
+            if (this.mode !== mode)
+            {
+                // Save mode.
+                this.mode = mode;
+        
+                // Trigger mode change.
+                this.eventDispatcher.trigger('modechange', this, mode);
+            }
+        });
     
     // Watch for page changes.
     this.viewer.getEventDispatcher().bind('pagechange', this,
@@ -362,6 +381,9 @@ Annotations.prototype.onOverlayCreate = function(annotation)
     // Add to store, but skip event.
     this.skipStoreAddEvent = true;
     this.store.add(annotation.getModel());
+    
+    // Trigger add.
+    this.eventDispatcher.trigger('add', this, annotation);
 }
 
 Annotations.prototype.onOverlayErase = function(annotation)
@@ -370,6 +392,9 @@ Annotations.prototype.onOverlayErase = function(annotation)
     var index = this.getAnnotationIndex(annotation);
     if (index >= 0)
     {
+        // Trigger remove.
+        this.eventDispatcher.trigger('remove', this, annotation);
+        
         // Get annotation color.
         var color = this.overlay.getAnnotationColor(annotation);
         
@@ -490,4 +515,3 @@ Annotations.prototype.onStoreRemove = function(model)
         this.overlay.removeAnnotation(annotation);
     }
 }
-

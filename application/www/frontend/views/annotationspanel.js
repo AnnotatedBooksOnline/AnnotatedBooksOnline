@@ -82,16 +82,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         {
                             _this.setMode('view');
                         }
-                    },{
-                        xtype: 'button',
-                        text: 'New transcription',
-                        width: 135,
-                        name: 'new-transcription',
-                        hidden: true,
-                        handler: function()
-                        {
-                            _this.createNewTranscription();
-                        }
                     }]
                 },{
                     border: 'false',
@@ -146,10 +136,22 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         this.saveChangesBtn   = this.down('[name=save-changes]');
         this.editMode         = this.down('[name=edit-mode]');
         this.viewMode         = this.down('[name=view-mode]');
-        this.newTranscription = this.down('[name=new-transcription]');
         
         // Set language.
         this.setLanguage('transcriptionEng');
+        
+        // Watch for removal.
+        var store = this.annotations.getStore();
+        store.on('remove',
+            function(store, model)
+            {
+                if (model === this.activeModel)
+                {
+                    this.activeModel = undefined;
+                    
+                    this.setActiveAnnotation(undefined);
+                }
+            }, this);
     },
     
     setLanguage: function(language)
@@ -211,7 +213,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             this.viewMode.show();
             this.saveChangesBtn.setDisabled(true);
             this.saveChangesBtn.show();
-            this.newTranscription.show();
         }
         else
         {
@@ -219,7 +220,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             this.viewMode.hide();
             this.saveChangesBtn.setDisabled(true);
             this.saveChangesBtn.hide();
-            this.newTranscription.hide();
         }
         
         // Reset active model.
@@ -264,6 +264,16 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                 this.up('annotationspanel').setActiveAnnotation(annotation.getModel());
             });
         
+        eventDispatcher.bind('add', this,
+            function(event, annotations, annotation)
+            {
+                // Select this annotation.
+                this.getSelectionModel().select(annotation.getModel());
+                
+                // Make this annotation active.
+                this.up('annotationspanel').setActiveAnnotation(annotation.getModel());
+            });
+        
         eventDispatcher.bind('hover', this,
             function(event, annotations, annotation)
             {
@@ -283,6 +293,10 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         var _this = this;
         var defConfig = {
             viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop',
+                    dragText: 'Drag and drop to reorganize'
+                },
                 stripeRows: false,
                 listeners: {
                     itemclick: function(grid, model)
@@ -301,6 +315,13 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                     {
                         // Unhighlight this annotation.
                         var annotation = _this.annotations.getAnnotationByModel(model);
+                        
+                        _this.annotations.unhighlightAnnotation(annotation);
+                    },
+                    drop: function(node, data, overModel)
+                    {
+                        // Unhighlight over model.
+                        var annotation = _this.annotations.getAnnotationByModel(overModel);
                         
                         _this.annotations.unhighlightAnnotation(annotation);
                     }

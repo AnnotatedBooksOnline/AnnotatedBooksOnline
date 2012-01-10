@@ -32,14 +32,19 @@ PolygonOverlay.prototype.polygons;
 PolygonOverlay.prototype.activePolygons;
 PolygonOverlay.prototype.newPolygon;
 
+PolygonOverlay.prototype.activePolygon;
+PolygonOverlay.prototype.activeVertex;
+
+// Constants.
+PolygonOverlay.minimumVertexDistance = 5;
+
 // Constructor.
 PolygonOverlay.prototype.constructor = function(viewport)
 {
     // Set members.
-    this.polygons       = [];
-    this.activePolygons = [];
-    this.viewport       = viewport;
-    this.mode           = 'view';
+    this.polygons = [];
+    this.viewport = viewport;
+    this.mode     = 'view';
     
     // Create overlay.
     PolygonOverlay.base.constructor.call(this);
@@ -146,25 +151,6 @@ PolygonOverlay.prototype.setPolygonMode = function(polygon, mode)
     polygon.update(this.position, this.zoomFactor, this.rotation);
 }
 
-PolygonOverlay.prototype.setActive = function(polygon)
-{
-    this.setInactive(polygon);
-    this.activePolygons.push(polygon);
-}
-
-PolygonOverlay.prototype.setInactive = function(polygon)
-{
-    for (var i = this.activePolygons.length - 1; i >= 0; --i)
-    {
-        if (this.activePolygons[i] === polygon)
-        {
-            this.activePolygons.splice(i, 1);
-            
-            return;
-        }
-    }
-}
-
 // Sets mode. Mode can be: 'view', 'polygon', 'rectangle', 'erase'.
 PolygonOverlay.prototype.setMode = function(mode)
 {
@@ -211,6 +197,9 @@ PolygonOverlay.prototype.setMode = function(mode)
         
         this.newPolygon = undefined;
     }
+    
+    this.activePolygon = undefined;
+    this.activeVertex  = undefined;
 }
 
 PolygonOverlay.prototype.getMode = function()
@@ -253,8 +242,6 @@ PolygonOverlay.prototype.onPolygonCreate = function(polygon)
 
 PolygonOverlay.prototype.onPolygonClick = function(polygon)
 {
-    // May be implemented by subclass.
-    
     if (this.mode === 'erase')
     {
         // Check whether to succeed.
@@ -269,6 +256,24 @@ PolygonOverlay.prototype.onPolygonClick = function(polygon)
                 // Do nothing.
             });
     }
+    
+    return true;
+}
+
+PolygonOverlay.prototype.onPolygonHover = function(polygon)
+{
+    // Highlight this polygon.
+    polygon.highlight();
+    
+    return true;
+}
+
+PolygonOverlay.prototype.onPolygonUnhover = function(polygon)
+{
+    // Dehighlight this polygon.
+    polygon.unhighlight();
+    
+    return true;
 }
 
 /*
@@ -292,6 +297,7 @@ PolygonOverlay.prototype.initialize = function()
     this.dom.bind('dblclick',     function(event) { return _this.onDoubleClick(event); });
     this.dom.bind('mousedown',    function(event) { return _this.onMouseDown(event);   });
     this.dom.bind('contextmenu',  false);
+    this.dom.bind('selectstart',  false);
     $(document).bind('mousemove', function(event) { return _this.onMouseMove(event);   });
     $(document).bind('mouseup',   function(event) { return _this.onMouseUp(event);     });
 }
@@ -308,8 +314,19 @@ PolygonOverlay.prototype.addVertex = function(event)
     }
     else
     {
-        this.newPolygon.addVertex(point);
-        this.newPolygon.update(this.position, this.zoomFactor, this.rotation);
+        // Check if previous vertex is not very close to this one.
+        // This solved double and triple click problems.
+        var squaredDistance = distanceSquared(
+            this.newPolygon.getVertex(this.newPolygon.getVertexAmount() - 1),
+            point
+        ) * this.zoomFactor * this.zoomFactor;
+        
+        var mvd = PolygonOverlay.minimumVertexDistance;
+        if (squaredDistance >= (mvd * mvd))
+        {
+            this.newPolygon.addVertex(point);
+            this.newPolygon.update(this.position, this.zoomFactor, this.rotation);
+        }
     }
 }
 
@@ -370,17 +387,26 @@ PolygonOverlay.prototype.onMouseMove = function(event)
             var bottomRight = this.newPolygon.getVertex(2);
             var bottomLeft  = this.newPolygon.getVertex(3);
             
+            var newTopRight = {x: point.x, y: topLeft.y};
+            var newBottomLeft = {x: topLeft.x, y: point.y};
+            
             this.newPolygon.moveVertex(topRight, {x: point.x, y: topLeft.y});
-            this.newPolygon.moveVertex(bottomRight, point);
             this.newPolygon.moveVertex(bottomLeft, {x: topLeft.x, y: point.y});
+            this.newPolygon.moveVertex(bottomRight, point);
             
             retval = false;
         }
     }
     
-    for (var i = this.activePolygons.length - 1; i >= 0; --i)
+    if (this.activePolygon !== undefined)
     {
-        retval = retval && this.activePolygons[i].onMouseMove(event);
+        // Calculate point within overlay in viewport dimensions.
+        var point = this.transformPoint({x: event.pageX, y: event.pageY});
+        
+        // Move vertex.
+        this.activePolygon.moveVertex(this.activeVertex, point);
+        
+        retval = false;
     }
     
     return retval;
@@ -400,14 +426,6 @@ PolygonOverlay.prototype.onMouseDown = function(event)
         
         return false;
     }
-    
-    //var retval = true;
-    //for (var i = this.activePolygons.length - 1; i >= 0; --i)
-    //{
-    //    retval = retval && this.activePolygons[i].onMouseDown(event);
-    //}
-    
-    //return retval;
 }
 
 PolygonOverlay.prototype.onMouseUp = function(event)
@@ -434,10 +452,118 @@ PolygonOverlay.prototype.onMouseUp = function(event)
         retval = false;
     }
     
-    for (var i = this.activePolygons.length - 1; i >= 0; --i)
+    if (this.activePolygon !== undefined)
     {
-        retval = retval && this.activePolygons[i].onMouseUp(event);
+        this.activePolygon = undefined;
+        this.activeVertex  = undefined;
     }
     
     return retval;
+}
+
+PolygonOverlay.prototype.onVertexMouseDown = function(event, polygon, vertex)
+{
+    if (this.mode === 'vertex')
+    {
+        this.activePolygon = polygon;
+        this.activeVertex  = vertex;
+        
+        return false;
+    }
+    
+    return true;
+}
+
+PolygonOverlay.prototype.onVertexMouseUp = function(event, polygon, vertex)
+{
+    if (this.mode === 'erasevertex')
+    {
+        if (polygon.getVertexAmount() <= 3)
+        {
+            // Check whether to succeed.
+            var _this = this;
+            this.onBeforePolygonRemove(polygon,
+                function()
+                {
+                    _this.removePolygon(polygon);
+                },
+                function()
+                {
+                    // Do nothing.
+                });
+        }
+        else
+        {
+            polygon.removeVertex(vertex);
+        }
+        
+        return false;
+    }
+    
+    return true;
+}
+
+PolygonOverlay.prototype.onPolygonMouseDown = function(event, polygon)
+{
+    if ((this.mode === 'addvertex') && (polygon.getMode() === 'edit'))
+    {
+        // Calculate point within overlay in viewport dimensions.
+        var point = this.transformPoint({x: event.getPageX(), y: event.getPageY()});
+        
+        // Get index where to insert vertex into polygon.
+        // We use a simple approach to do this: we fetch the edge closest to the point,
+        // And insert the new vertex there.
+        var amount = polygon.getVertexAmount();
+        var minSquaredDistance = Number.MAX_VALUE;
+        var minEdgeIndex = -1;
+        for (var i = amount - 1; i >= 0; --i)
+        {
+            // Get edge vertices.
+            var previousIndex = ((i !== 0) ? i : amount) - 1;
+            
+            var first  = polygon.getVertex(previousIndex);
+            var second = polygon.getVertex(i);
+            
+            // Calculate edge and vertex vectors.
+            var edge   = {x: second.x - first.x, y: second.y - first.y};
+            var vertex = {x: point.x  - first.x, y: point.y  - first.y};
+            
+            // Normalize edge, inlined here for usage of edge length later on.
+            var edgeLength = length(edge);
+            var edge = {x: edge.x / edgeLength, y: edge.y / edgeLength};
+            
+            // Calculate distance on edge  with dot product.
+            var distanceOnEdge = dot(edge, vertex);
+            
+            // Check whether vertex occurs in range.
+            if ((distanceOnEdge < 0) || (distanceOnEdge > edgeLength))
+            {
+                continue;
+            }
+            
+            // Calculate point on edge that is closest to vertex.
+            var edgePoint = {
+                x: first.x + edge.x * distanceOnEdge,
+                y: first.y + edge.y * distanceOnEdge
+            };
+            
+            // Calculate squared distance to point.
+            var squaredDistanceToEdgePoint = distanceSquared(point, edgePoint);
+            if (squaredDistanceToEdgePoint < minSquaredDistance)
+            {
+                minSquaredDistance = squaredDistanceToEdgePoint;
+                minEdgeIndex       = previousIndex;
+            }
+        }
+        
+        // Insert vertex at edge.
+        var vertex = polygon.addVertex(point, minEdgeIndex);
+        polygon.update(this.position, this.zoomFactor, this.rotation);
+        
+        // Set active polygon and vertex.
+        this.activePolygon = polygon;
+        this.activeVertex  = vertex;
+    }
+    
+    return true;
 }
