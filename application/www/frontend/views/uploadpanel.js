@@ -193,7 +193,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                 minValue: 1000,
                                 allowDecimals: false,
                                 listeners: {
-                                    'blur': function(from, f) {
+                                    'blur': function(from, f)
+                                    {
                                         var to = this.nextSibling('[name=to]');
                                         var fromValue = from.getValue();
                                         var toValue = to.getValue()
@@ -203,7 +204,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                         }
                                         return;
                                     },
-                                    'spin': function(from, direction) {
+                                    'spin': function(from, direction)
+                                    {
                                         var to = this.nextSibling('[name=to]');
                                         var fromValue = parseInt(from.getValue());
                                         var toValue = parseInt(to.getValue());
@@ -245,7 +247,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                 allowDecimals: false,
                                 margins: '0 0 0 10',
                                 listeners: {
-                                    'blur': function(to, t) {
+                                    'blur': function(to, t)
+                                    {
                                         var from = this.previousSibling('[name=from]');
                                         var fromValue = from.getValue();
                                         var toValue = to.getValue();
@@ -255,7 +258,8 @@ Ext.define('Ext.ux.BookFieldset', {
                                         }
                                         return;
                                     },
-                                    'spin': function(to, direction) {
+                                    'spin': function(to, direction)
+                                    {
                                         var from = this.previousSibling('[name=from]');
                                         var fromValue = parseInt(from.getValue());
                                         var toValue = parseInt(to.getValue());
@@ -364,6 +368,8 @@ Ext.define('Ext.ux.BookFieldset', {
     
     getBook: function()
     {
+        // TODO: How is this a book value? Create a book entity.
+        
         return {
             title: this.down('[name=title]').getValue(),
             author: this.down('[name=author]').getValue(),
@@ -380,6 +386,7 @@ Ext.define('Ext.ux.BookFieldset', {
 /*
  * Books fieldset class (more books).
  */
+
 Ext.define('Ext.ux.BooksFieldSet', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.booksfieldset',
@@ -414,9 +421,12 @@ Ext.define('Ext.ux.BooksFieldSet', {
     {
         var books = [];
         var current = this.down('bookfieldset');
-        do {
-            books[books.length] = current.getBook();
+        
+        do
+        {
+            books.push(current.getBook());
         } while (current = current.nextSibling('bookfieldset'));
+        
         return books;
     },
     
@@ -431,7 +441,9 @@ Ext.define('Ext.ux.BooksFieldSet', {
         }
         
         var current = this.down('bookfieldset');
-        do {
+        
+        do
+        {
             current.down('[name=deletebook]').setDisabled(disable);
         } while (current = current.nextSibling('bookfieldset'));
     },
@@ -472,7 +484,7 @@ Ext.define('Ext.ux.UploadForm', {
             {
                 if (result['status'] === 2)
                 {
-                    ;
+                    // TODO: What to do here?
                 }
                 else
                 {
@@ -481,16 +493,18 @@ Ext.define('Ext.ux.UploadForm', {
                         msg: 'This step of the uploading process is currently unavailable',
                         buttons: Ext.Msg.OK
                     });
+                    
                     this.up('[name=upload]').close();
                 }
             }, 
             function()
             {
-                 Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'There is a problem with the server. Please try again later',
-                            buttons: Ext.Msg.OK
-                        });
+                Ext.Msg.show({
+                    title: 'Error',
+                    msg: 'There is a problem with the server. Please try again later',
+                    buttons: Ext.Msg.OK
+                });
+                
                 this.up('[name=upload]').close();
             });
         
@@ -507,7 +521,8 @@ Ext.define('Ext.ux.UploadForm', {
                 xtype: 'button',
                 text: 'Reset',
                 width: 140,
-                handler: function() {
+                handler: function()
+                {
                     Ext.Msg.show({
                         title: 'Are you sure?',
                         msg: 'You are about to reset the complete form. Data will be lost and ' +
@@ -532,7 +547,7 @@ Ext.define('Ext.ux.UploadForm', {
                 handler: function()
                 {
                     _this.setLoading('Uploading...');
-                    _this.checkIntervalId = setInterval(function(){_this.checkCompleted();},1000);
+                    _this.checkIntervalId = setInterval(function() { _this.checkCompleted(); }, 1000);
                 }
             }]
         };
@@ -557,6 +572,7 @@ Ext.define('Ext.ux.UploadForm', {
             {
                 this.setLoading(false);
                 this.setLoading('Some scans failed to upload. Please reselect them.');
+                
                 waiting = true;
                 break;
             }
@@ -577,7 +593,8 @@ Ext.define('Ext.ux.UploadForm', {
             if (numberOfBooks > successScans)
             {
                 this.setLoading(false);
-                if (numberOfBooks==1) {
+                
+                if (numberOfBooks === 1) {
                     this.setLoading('There need to be at least ' + numberOfBooks
                                    + ' successfully uploaded scan, because there is '
                                    + numberOfBooks + ' book. Please add more scans.'
@@ -594,9 +611,12 @@ Ext.define('Ext.ux.UploadForm', {
             else
             {
                 clearInterval(this.checkIntervalId);
+                
                 this.setLoading(false);
                 this.setLoading('Saving...');
-                RequestManager.getInstance().request('BindingUpload', 'upload', result, this, function()
+                
+                RequestManager.getInstance().request('BindingUpload', 'upload', result, this,
+                function()
                 {
                     this.setLoading(false);
                     var _this = this;
@@ -610,9 +630,11 @@ Ext.define('Ext.ux.UploadForm', {
                                 _this.up('[name=upload]').close();
                             }
                     });
-                }, function()
+                },
+                function()
                 {
                     this.setLoading(false);
+                    
                     return true;
                 });
             }
@@ -626,6 +648,8 @@ Ext.define('Ext.ux.UploadForm', {
         var values = this.getValues();
         
         //alert(this.getValues(false));
+        
+        // TODO: Do something here.
     },
     
     reset: function()

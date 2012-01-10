@@ -80,19 +80,11 @@ Ext.define('Ext.ux.FormBase', {
             this.setModel(this.model, this.modelId);
         }
         
-        // TODO: Make this work again.
-        
         // Focus first field.
-        var _this = this;
-        
-        if (this.selectFirst)
+        if (this.selectFirstField !== false)
         {
-            setTimeout(
-                function()
-                {
-                    var field = _this.getComponent(0);
-                    field.focus(true, true);
-                }, 10);
+            var field = this.getComponent(0);
+            field.focus(true, true);
         }
     },
     

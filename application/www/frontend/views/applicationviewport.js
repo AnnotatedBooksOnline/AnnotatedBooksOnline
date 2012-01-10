@@ -381,11 +381,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 return;
                 
             case 'reorderscan':
-                // Add a view profile tab.
+                // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (reorder scans)',
-                    xtype: 'reorderscanform',
-                    selectFirst: false
+                    xtype: 'reorderscanform'
                 });
                 
                 break;
@@ -400,11 +399,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'selectbook':
-                // Add a view profile tab.
+                // Add a select book tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (select books)',
-                    xtype: 'selectbookform',
-                    selectFirst: false
+                    xtype: 'selectbookform'
                 });
                 
                 break;
