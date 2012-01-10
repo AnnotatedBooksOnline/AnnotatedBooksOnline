@@ -76,7 +76,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                 }
             }, '-', 'Page', {
                 xtype: 'textfield',
-                width: 30,
+                width: 40,
                 value: '1',
                 maskReg: /\d+/,
                 stripCharsRe: /[^\d]+/,

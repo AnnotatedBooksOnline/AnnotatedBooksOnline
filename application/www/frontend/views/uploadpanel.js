@@ -223,6 +223,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         {
                                             to.markInvalid('This value should be equal to or' +
                                                            ' greater than the first value.');
+                                            _this.up('form').getForm().markInvalid();
                                         }
                                         else
                                         {
@@ -277,6 +278,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                         {
                                             from.markInvalid('This value should be equal to or' +
                                                              ' lower than the second value.');
+                                            _this.up('form').getForm().markInvalid();
                                         }
                                         else
                                         {
@@ -509,6 +511,7 @@ Ext.define('Ext.ux.UploadForm', {
             });
         
         var defConfig = {
+            name: 'uploadform',
             items: [{
                 xtype: 'scanpanel'
             },{
@@ -516,6 +519,19 @@ Ext.define('Ext.ux.UploadForm', {
             },{
                 xtype: 'booksfieldset'
             }],
+            
+            listeners: {
+                validitychange: function(form, valid)
+                    {
+                        var booksfieldset = this.down('booksfieldset');
+                        var books = booksfieldset.getBooks();
+                        
+                        var current = booksfieldset.down('bookfieldset');
+                        do {
+                            current.down('[name=deletebook]').setDisabled(valid);
+                        } while (current = current.nextSibling('bookfieldset'));
+                    }
+            },
             
             buttons: [{
                 xtype: 'button',
