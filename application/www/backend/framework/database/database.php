@@ -360,9 +360,6 @@ class Database extends Singleton
         }
     }
     
-    /**
-     * TODO
-     */
     public function escape($value)
     {
         return $this->pdo->quote($value);

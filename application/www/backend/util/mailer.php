@@ -32,10 +32,9 @@ class Mailer
         $headers = 'MIME-Version: 1.0' . "\r\n"
                  . 'Content-type: text/plain; charset=utf-8' . "\r\n"
                  . 'From: ' . Configuration::getInstance()->getString('from-name') 
-                 . ' <'     . $fromaddress . ">\r\n"
-                 . 'To: <' . $recipient . ">\r\n";
+                 . ' <'     . $fromaddress . ">\r\n";
         
-        $success = mail($recipient, $subject, $message, $headers, "-f$fromaddress");
+        $success = mail($recipient, $subject, $message, $headers);
         if(!$success)
         {
             throw new MailerException('mail-failed', $recipient);
@@ -136,3 +135,4 @@ class Mailer
         self::sendMail($recipient, $subject, $message);
     }    
 }
+

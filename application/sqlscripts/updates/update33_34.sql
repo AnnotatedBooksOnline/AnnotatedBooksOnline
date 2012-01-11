@@ -1,5 +1,12 @@
 BEGIN TRANSACTION;
 
+-- For the users that still had column bookID in BookLanguages
+ALTER TABLE "BookLanguages" RENAME "bookID" TO "bookId";
+
+COMMIT;
+
+BEGIN TRANSACTION;
+
 -- Splits up BookLanguages table in two tables: one for bindings and one for books.
 ALTER TABLE "BookLanguages" DROP CONSTRAINT "BookLanguages_pkey";
 ALTER TABLE "BookLanguages" DROP COLUMN "bookLanguageId";
@@ -27,3 +34,4 @@ CREATE TABLE "BindingLanguages"
 
 
 COMMIT;
+

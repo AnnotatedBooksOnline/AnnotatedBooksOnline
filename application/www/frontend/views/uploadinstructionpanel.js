@@ -43,13 +43,13 @@ Ext.define('Ext.ux.UploadInfo', {
         },{
             
         xtype: 'button',
-        text: 'Go to uploadscreen',
-                width: 140,
-                handler: function()
-                {
-                    Application.getInstance().gotoTab('upload',[],true);
-                    this.up('uploadinstructionpanel').close();
-                }
+        text: 'Continue',
+        width: 140,
+        handler: function()
+        {
+            Application.getInstance().gotoTab('upload',[],true);
+            this.up('uploadinstructionpanel').close();
+        }
     }]
 
 });

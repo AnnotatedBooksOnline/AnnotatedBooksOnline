@@ -172,7 +172,7 @@ class BindingUploadController extends Controller
         
             // Identify the scan.
             $this->identifyScan($scan, $upload);
-        
+            
             // Add the scan to the bindning.
             $binding->getScanList()->addEntity($scan);
         }
