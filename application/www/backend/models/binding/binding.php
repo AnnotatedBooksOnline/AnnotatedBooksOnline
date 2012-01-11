@@ -3,7 +3,9 @@
 
 require_once 'framework/database/entity.php';
 require_once 'models/book/booklist.php';
+require_once 'models/provenance/provenancelist.php';
 require_once 'models/library/library.php';
+require_once 'models/language/bindinglanguagelist.php';
 
 /**
  * Class representing a binding entity.
@@ -38,8 +40,11 @@ class Binding extends Entity
     /** List of all scans for this book. */
     protected $scanList;
     
+    /** List of all provenances for this book. */
+    protected $provenanceList;
+    
     /** List of all languages of the annotations in this book. */
-    //protected $bindingLanguageList;
+    protected $bindingLanguageList;
     
     /**
      * Constructs a binding by id.
@@ -57,7 +62,8 @@ class Binding extends Entity
         
         $this->bookList = new BookList();
         $this->scanList = new ScanList();
-        
+        $this->provenanceList = new ProvenanceList();
+        $this->bindingLanguageList = new BindingLanguageList();
     }
     
     /**
@@ -120,9 +126,13 @@ class Binding extends Entity
         $this->scanList->setBindingId($this->bindingId);
         $this->scanList->save();
         
+        // Save the provenance list.
+        $this->provenanceList->setBindingId($this->bindingId);
+        $this->provenanceList->save();
+        
         // Save the language list.
-        //$this->bindingLanguageList->setBindingId($this->bindingId);
-        //$this->bindingLanguageList->save();
+        $this->bindingLanguageList->setBindingId($this->bindingId);
+        $this->bindingLanguageList->save();
     }
     
     public function getBindingId()         { return $this->bindingId; }
@@ -142,11 +152,14 @@ class Binding extends Entity
     
     public function getScanList() { return $this->scanList; }
     public function setScanList($scanList) { $this->scanList = $scanList; }
-
+    
+    public function getProvenanceList() { return $this->provenanceList; }
+    public function setProvenanceList($provenanceList) { $this->provenanceList = $provenanceList; }
+    
     public function getStatus()        { return $this->status;    }
     public function setStatus($status) { $this->status = $status; }
     
-    //public function getBindingLanguageList() { return $this->bindingLanguageList; }
-    //public function setBindingLanguageList($bindingLanguageList) { $this->bindingLanguageList = $bindingLanguageList; }
+    public function getBindingLanguageList() { return $this->bindingLanguageList; }
+    public function setBindingLanguageList($bindingLanguageList) { $this->bindingLanguageList = $bindingLanguageList; }
 }
 

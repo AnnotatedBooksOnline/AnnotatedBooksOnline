@@ -3,6 +3,8 @@
 
 require_once 'framework/database/entity.php';
 require_once 'models/scan/scanlist.php';
+require_once 'models/author/authorlist.php';
+require_once 'models/language/booklanguagelist.php';
 require_once 'models/binding/binding.php';
 
 
@@ -43,7 +45,9 @@ class Book extends Entity
     protected $firstPage;
     protected $lastPage;
     
-    //protected $bookLanguageList;
+    protected $bookLanguageList;
+    
+    protected $authorList;
     
     /**
     * Constructs a book by id.
@@ -58,6 +62,9 @@ class Book extends Entity
     
             $this->load();
         }
+        
+        $this->authorList = new AuthorList();
+        $this->bookLanguageList = new BookLanguageList();
         
     }
     
@@ -170,13 +177,16 @@ class Book extends Entity
      *
      * Enter description here ...
      */
-    /*public function saveDetails() 
+    public function saveDetails() 
     {
+        // Save the author list.
+        $this->authorList->setBookId($this->bookId);
+        $this->authorList->save();
+
         // Save the booklanguage list.
-       // $this->bookLanguageList->setBookId($this->bookId);
-        //$this->bookLanguageList->save();
+        $this->bookLanguageList->setBookId($this->bookId);
+        $this->bookLanguageList->save();
     }
- */
     
     public function getBookId()         { return $this->bookId; }
     public function setBookId($bookId)  { $this->bookId = $bookId; }
@@ -211,7 +221,10 @@ class Book extends Entity
     public function getLastPage() { return $this->lastPage; }
     public function setLastPage($page) { $this->lastPage = $page; }
     
-    //public function getBookLanguageList() { return $this->bookLanguageList; }
-    //public function setBookLanguageList($bookLanguageList) { $this->bookLanguageList = $bookLanguageList; }
+    public function getAuthorList() { return $this->authorList; }
+    public function setAuthorList($authorList) { $this->authorList = $authorList; }
+    
+    public function getBookLanguageList() { return $this->bookLanguageList; }
+    public function setBookLanguageList($bookLanguageList) { $this->bookLanguageList = $bookLanguageList; }
 }
 
