@@ -174,10 +174,17 @@ Polygon.prototype.update = function(position, scale, rotation)
     }
 }
 
-Polygon.prototype.addVertex = function(vertex)
+Polygon.prototype.addVertex = function(vertex, edgePosition)
 {
     // Add vertex.
-    this.vertices.push(vertex);
+    if ((edgePosition !== undefined) && (edgePosition >= 0))
+    {
+        this.vertices.splice(edgePosition + 1, 0, vertex);
+    }
+    else
+    {
+        this.vertices.push(vertex);
+    }
     
     // Calculate new bounding box and surface.
     this.aabb = Polygon.calculateBoundingBox(this.vertices);
@@ -190,7 +197,36 @@ Polygon.prototype.addVertex = function(vertex)
     this.lines.setAttributes({path: path});
     
     // Add corner.
-    this.addCorner(vertex);
+    this.addCorner(vertex, edgePosition);
+    
+    return vertex;
+}
+
+Polygon.prototype.removeVertex = function(vertex)
+{
+    // Find vertex.
+    for (var i = this.vertices.length - 1; i >= 0; --i)
+    {
+        if (this.vertices[i] === vertex)
+        {
+            // Remove vertex and corner.
+            this.vertices.splice(i, 1);
+            this.corners[i].destroy();
+            this.corners.splice(i, 1);
+            
+            // Calculate bounding box and surface.
+            this.aabb = Polygon.calculateBoundingBox(this.vertices);
+            this.area = Polygon.calculateArea(this.vertices);
+            
+            // Set new path.
+            var path = Polygon.calculatePath(this.vertices, this.mode !== 'create');
+            
+            this.content.setAttributes({path: path}, this.contentVisible);
+            this.lines.setAttributes({path: path}, true);
+            
+            return;
+        }
+    }
 }
 
 Polygon.prototype.moveVertex = function(vertex, position)
@@ -305,12 +341,14 @@ Polygon.prototype.unhighlight = function()
     // Stack highlightings.
     --this.highlighted;
     
-    if (this.highlighted === 0)
+    if (this.highlighted <= 0)
     {
         // Unhighlight.
         this.content.setAttributes({
             opacity: 0
         }, true);
+        
+        this.highlighted = 0;
     }
 }
 
@@ -412,6 +450,7 @@ Polygon.prototype.initialize = function()
             'mouseover': function(s, event) { return _this.onMouseOver(event); },
             'mouseout':  function(s, event) { return _this.onMouseOut(event);  },
             'mousemove': function(s, event) { return _this.onMouseOver(event); },
+            'mousedown': function(s, event) { return _this.onMouseDown(event); },
             'click':     function(s, event) { return _this.onClick(event);     }
         }
     });
@@ -437,9 +476,9 @@ Polygon.prototype.initialize = function()
     }
 }
 
-Polygon.prototype.addCorner = function(vertex)
+Polygon.prototype.addCorner = function(vertex, edgePosition)
 {
-    // Add corner.
+    // Create corner.
     var _this = this;
     var corner = this.overlay.surface.add({
         type: "circle",
@@ -452,9 +491,11 @@ Polygon.prototype.addCorner = function(vertex)
         listeners: {
             'mousedown': function(v, event)
             {
-                _this.onMouseDown(vertex);
-                
-                event.stopEvent();
+                return _this.onVertexMouseDown(event, vertex);
+            },
+            'mouseup': function(v, event)
+            {
+                return _this.onVertexMouseUp(event, vertex);
             }
         }
     });
@@ -462,7 +503,15 @@ Polygon.prototype.addCorner = function(vertex)
     corner.show(true);
     corner.addCls('corner');
     
-    this.corners.push(corner);
+    // Add corner to array.
+    if ((edgePosition !== undefined) && (edgePosition >= 0))
+    {
+        this.corners.splice(edgePosition + 1, 0, corner);
+    }
+    else
+    {
+        this.corners.push(corner);
+    }
     
     return corner;
 }
@@ -474,66 +523,40 @@ Polygon.prototype.addCorner = function(vertex)
 // Handles click on the polygon.
 Polygon.prototype.onClick = function(event)
 {
-    this.overlay.onPolygonClick(this);
+    // Pass event on to overlay.
+    return this.overlay.onPolygonClick(this);
 }
 
 Polygon.prototype.onMouseOver = function()
 {
-    // Highlight this polygon.
-    this.highlight();
-    
-    this.overlay.onPolygonHover(this);
+    // Pass event on to overlay.
+    return this.overlay.onPolygonHover(this);
 }
 
 Polygon.prototype.onMouseOut = function()
 {
-    // Dehighlight this polygon.
-    this.unhighlight();
-    
-    this.overlay.onPolygonUnhover(this);
+    // Pass event on to overlay.
+    return this.overlay.onPolygonUnhover(this);
+}
+
+Polygon.prototype.onMouseDown = function(event)
+{
+    // Pass event on to overlay.
+    return this.overlay.onPolygonMouseDown(event, this);
 }
 
 // Handles mouse down on a vertex.
-Polygon.prototype.onMouseDown = function(vertex)
-{   
-    // DEBUG: skip moving vertices for now..
-    return;
-    
-    // Make us receive events.
-    this.overlay.setActive(this);
-    
-    // Set active vertex.
-    this.activeVertex = vertex;
-    
-    return false;
+Polygon.prototype.onVertexMouseDown = function(event, vertex)
+{
+    // Pass event on to overlay.
+    return this.overlay.onVertexMouseDown(event, this, vertex);
 }
 
-Polygon.prototype.onMouseMove = function(event)
+// Handles mouse down on a vertex.
+Polygon.prototype.onVertexMouseUp = function(event, vertex)
 {
-    // Skip moving if there is no active vertex.
-    if (this.activeVertex === undefined)
-    {
-        return;
-    }
-    
-    // Calculate point within overlay in viewport dimensions.
-    var point = this.overlay.transformPoint({x: event.pageX, y: event.pageY});
-    
-    // Move vertex.
-    this.moveVertex(this.activeVertex, point);
-    
-    return false;
-}
-
-Polygon.prototype.onMouseUp = function(event)
-{
-    // Make us stop receiving events.
-    this.overlay.setInactive(this);
-    
-    // Remove active vertex.
-    delete this.activeVertex;
-    
-    return false;
+    // Pass event on to overlay.
+    return this.overlay.onVertexMouseUp(event, this, vertex);
 }
 
 /*

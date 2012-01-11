@@ -153,7 +153,8 @@ Ext.define('Ext.ux.ExportForm', {
                 }
             }],
             
-            buttons: []
+            buttons: [],
+            selectFirstField: false
         };
         
         Ext.apply(this, defConfig);
@@ -310,11 +311,11 @@ Ext.define('Ext.ux.WorkspacePanel', {
         var defConfig = {
             layout: 'fit',
             border: false,
-            items: [/*{
+            items: [{
                 xtype: 'annotationspanel',
                 title: 'Annotations',
                 viewer: this.viewer
-            },*/{
+            },{
                 title: 'Export',
                 xtype: 'exportform',
                 viewer: this.viewer

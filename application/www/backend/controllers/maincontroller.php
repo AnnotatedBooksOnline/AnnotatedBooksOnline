@@ -130,6 +130,9 @@ class MainController extends Controller
         // Fetch main content.
         $content = $this->getContent('../frontend/main.html', false);
         
+        // Remove comments.
+        $content = preg_replace('/<!--(.*?)-->/', '', $content);
+        
         // Fetch javascript references.
         $regexp = '#<script.*?src="([^"]+)".*?></\s*script>#i';
         
@@ -180,6 +183,9 @@ class MainController extends Controller
     {
         // Fetch main content.
         $content = $this->getContent('../frontend/main.html', false);
+        
+        // Remove comments.
+        $content = preg_replace('/<!--(.*?)-->/', '', $content);
         
         // Fetch stylesheet references.
         $regexp = '#<link.*?href="([^"]+)".*?/>#i';

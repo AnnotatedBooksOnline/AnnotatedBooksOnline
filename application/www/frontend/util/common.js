@@ -52,6 +52,36 @@ function clonePoint(point)
     return {x: point.x, y: point.y};
 }
 
+function distanceSquared(first, second)
+{
+    var dx = second.x - first.x;
+    var dy = second.y - first.y;
+    
+    return dx * dx + dy * dy;
+}
+
+function distance(first, second)
+{
+    return Math.sqrt(distanceSquared(first, second));
+}
+
+function length(point)
+{
+    return Math.sqrt(point.x * point.x + point.y * point.y);
+}
+
+function dot(first, second)
+{
+    return first.x * second.x + first.y * second.y;
+}
+
+function normalize(point)
+{
+    var invLength = 1 / length(point);
+    
+    return {x: point.x * invLength, y: point.y * invLength};
+}
+
 // Creates a bounding box.
 function createBoundingBox(x, y, width, height)
 {

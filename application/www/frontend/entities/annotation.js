@@ -53,13 +53,18 @@ Annotation.createFromId = function(annotationId, obj, onSuccess, onError)
 
 Annotation.createFromVertices = function(vertices)
 {
+    // Create annotation model.
     var model = Ext.create('Ext.ux.AnnotationModel', {
         // NOTE: Debug.
         transcriptionOrig: "Lorem.\nIpsum.",
-        transcriptionEng: "Foo.\nBar.",
-        
-        polygon: vertices // TODO: Maybe clone them.
+        transcriptionEng: "Foo.\nBar."
     });
+    
+    // Add vertices.
+    for (var i = 0; i < vertices.length; ++i)
+    {
+        model.polygon().add({x: vertices[i].x, y: vertices[i].y});
+    }
     
     return new Annotation(model);
 }

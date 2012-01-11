@@ -44,7 +44,28 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             },
             store
         );
-        
+        store.on('load',
+        	function(store, records, successfull)
+        	{
+        		if (!successfull) {
+        			return;
+        		}
+        		
+                if (store.data.get(0).get('banned') == '0') 
+                {
+                	_this.down('[id=unban]').setDisabled(true);
+                	_this.down('[id=ban]').setDisabled(false);
+        		} 
+                else 
+        		{
+                	_this.down('[id=ban]').setDisabled(true);
+                	_this.down('[id=unban]').setDisabled(false);
+        		}
+                
+        	},
+        	store
+        );
+                
         store.load();
         
         var defConfig = {
@@ -78,6 +99,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Unban user',
                 id: 'unban',
                 width: '140',
+                //enabled: store.data[0].get('banned') == '1',
                 handler: function ()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.
@@ -111,6 +133,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Ban user',
                 id: 'ban',
                 width: '140',
+                //enabled: store.data[0].get('banned') == '0',
                 handler: function ()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.
@@ -173,6 +196,44 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                             }
                     });
                 }
+            },{
+                xtype: 'button',
+                text: 'Change Role',
+                id: 'changerole',
+                width: '140',
+                handler: function ()
+                {
+                }
+            },{
+                xtype: 'button',
+                text: 'Change Password',
+                id: 'changepassword',
+                width: '140',
+                handler: function ()
+                {
+                    // Show login window.
+                    var changePasswordWindow = new Ext.ux.ChangePasswordWindow({
+                            listeners: {
+                            }
+                        });
+                    changePasswordWindow.show();
+                }
+            },{
+                xtype: 'button',
+                text: 'Accept',
+                id: 'accept',
+                width: '140',
+                handler: function ()
+                {
+                }
+            },{
+                xtype: 'button',
+                text: 'Decline',
+                id: 'decline',
+                width: '140',
+                handler: function ()
+                {
+                }
             }]
         };
         
@@ -182,3 +243,29 @@ Ext.define('Ext.ux.ViewProfilePanel', {
     }
 });
 
+/*
+ * Password restoration window.
+ */
+Ext.define('Ext.ux.ChangePasswordWindow', {
+    extend: 'Ext.ux.WindowBase',
+
+    initComponent: function() 
+    {
+        var defConfig = {
+            title: 'Change password',
+            layout: 'fit',
+            width: 400,
+            height: 150,
+            items: [{
+                xtype: 'restorepasswordform',
+                border: false,
+                width: 400,
+                height: 150
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    }
+});

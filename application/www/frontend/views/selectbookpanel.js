@@ -70,7 +70,6 @@ Ext.define('Ext.ux.BookListFieldset', {
     }
 });
 
-
 /*
  * Scan list fieldset class.
  */
@@ -129,18 +128,23 @@ Ext.define('Ext.ux.ScanListFieldset', {
         
     }
 });
-    
+
 /*
  * Select book form class.
  */
- 
+
+
+// TODO: Get rid of these globals! Make them class statics, or class fields.
+// TODO: This logic shouldn't even be separated over multiple main views, but one wizard view.
+
 var bindingId;
 var i = 0;
-var book
+var book;
 var bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
 var scanstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
 var tempPage;
- 
+
+
 Ext.define('Ext.ux.SelectBookForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.selectbookform',
@@ -149,37 +153,43 @@ Ext.define('Ext.ux.SelectBookForm', {
     {
         var _this = this;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], _this, 
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
             function(result)
             {
                 if (result['status'] === 1)
                 {
                     bindingId = result['bindingId'];
+                    
+                    // TODO: Implement filtering serverside, to remove second filtering.
                     scanstore.filter({property: 'bindingId', value: bindingId});
                     scanstore.load();
                     bookstore.filter({property: 'bindingId', value: bindingId});
+                    
                     bookstore.on('load', function()
                     { 
                         bookstore.each(function(book)
                         {
-                            book.set('timePeriod',book.getTimePeriod());
-                            book.set('firstPage',-1);
-                            book.set('lastPage',-1);
+                            book.set('timePeriod', book.getTimePeriod());
+                            book.set('firstPage', -1);
+                            book.set('lastPage', -1);
                             
-                            var authors='';
+                            var authors = '';
+                            
                             book.authors().load({
-                                scope   : _this,
-                                callback:function(records, operation, success) {
-                                    Ext.Array.each(records, function(record) {
-                                        authors += (', '+record.get('name'));
+                                scope: _this,
+                                callback: function(records, operation, success)
+                                {
+                                    Ext.Array.each(records, function(record)
+                                    {
+                                        authors += (', ' + record.get('name'));
                                     });
-                                                                
-                                    book.set('author',authors.substring(1));
+                                    
+                                    book.set('author', authors.substring(1));
                                 }
                             });
                         });
                     });
-                        
+                    
                     bookstore.load();
                 }
                 else
@@ -189,16 +199,18 @@ Ext.define('Ext.ux.SelectBookForm', {
                         msg: 'This step of the uploading process is currently unavailable',
                         buttons: Ext.Msg.OK
                     });
+                    
                     this.close();
                 }
             }, 
             function()
             {
                 Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'There is a problem with the server. Please try again later',
-                            buttons: Ext.Msg.OK
-                        });
+                    title: 'Error',
+                    msg: 'There is a problem with the server. Please try again later',
+                    buttons: Ext.Msg.OK
+                });
+                
                 this.close();
             });
         
@@ -220,20 +232,23 @@ Ext.define('Ext.ux.SelectBookForm', {
                     
                     if (selection.hasSelection())
                     {
-                        book=selection.getSelection()[0];
-                        if(book.get('firstPage')!=-1)
+                        book = selection.getSelection()[0];
+                        if (book.get('firstPage') !== -1)
                         {
-                            var j;
-                            for(j=book.get('firstPage');j <= book.get('lastPage');j++)
+                            for (var j = book.get('firstPage'); j <= book.get('lastPage'); j++)
                             {
-                                _this.changeBookTitle(j,undefined);
+                                _this.changeBookTitle(j, undefined);
                             }
+                            
                             book.set('status', '');
                         }
-                        i=1;
+                        
+                        i = 1;
+                        
                         this.disable();
                         selection.deselectAll();
                         grid.disable();
+                        
                         Ext.Msg.show({
                             title: 'Select pages',
                             msg: 'You should now select the starting and ending page of \''
@@ -262,7 +277,8 @@ Ext.define('Ext.ux.SelectBookForm', {
                 {
                     _this.submit();
                 }
-            }]
+            }],
+            selectFirstField: false
         };
         
         Ext.apply(this, defConfig);
@@ -270,38 +286,42 @@ Ext.define('Ext.ux.SelectBookForm', {
         this.callParent();
     },
     
-    //React accordingly when a scan is double clicked
-    updateForm: function(filename,page)
+    // React accordingly when a scan is double clicked.
+    updateForm: function(filename, page)
     {
-        if (i===0)
+        if (i === 0)
         {
             Ext.Msg.show({
                 title: 'No book selected',
                 msg: 'You should first select a book.',
-                buttons: Ext.Msg.OK});
-                return;
+                buttons: Ext.Msg.OK
+            });
         }
-        if (i===1)
+        else if (i === 1)
         {
             tempPage = page;
-            if(scanstore.findRecord('page',page).get('bookTitle')==undefined)
+            if(scanstore.findRecord('page', page).get('bookTitle') === undefined)
             {
                 this.changeBookTitle(page, book.get('title'));
-                i=2;
+                
+                i = 2;
+                
                 return;
             }
             
             Ext.Msg.show({
                 title: 'Books overlap',
                 msg: 'Books can not overlap. Please reselect a book and try again.',
-                buttons: Ext.Msg.OK});
+                buttons: Ext.Msg.OK
+            });
+            
             this.endSelecting();
-            return;
         }
-        if (i===2)
+        else if (i === 2)
         {
             var first;
             var last;
+            
             if (tempPage<=page)
             {
                 first = tempPage;
@@ -313,21 +333,20 @@ Ext.define('Ext.ux.SelectBookForm', {
                 last = tempPage;
             }
             
-            var bool = true;
+            var bool  = true; // TODO: Rename to something meaningful.
             var title = scanstore.findRecord('page',page).get('bookTitle');
+            
             bookstore.each(function(record)
             {
-                if(record.get('bookId')!=book.get('bookId')
-                        &&(record.get('firstPage')<=last
-                        &&record.get('firstPage')>=first
-                            ||record.get('lastPage')<=last  
-                            &&record.get('lastPage')>=first))
+                if (record.get('bookId') !== book.get('bookId') &&
+                   ((record.get('firstPage') <= last && record.get('firstPage') >= first) ||
+                    (record.get('lastPage')  <= last && record.get('lastPage')  >= first)))
                 {
                     bool = false;
                 }
             });
             
-            if(bool)
+            if (bool)
             {
                 book.set('lastPage', last);
                 book.set('firstPage', first);
@@ -339,9 +358,11 @@ Ext.define('Ext.ux.SelectBookForm', {
             else
             {
                 Ext.Msg.show({
-                title: 'Books overlap',
-                msg: 'Books can not overlap. Please reselect a book and try again',
-                buttons: Ext.Msg.OK});
+                    title: 'Books overlap',
+                    msg: 'Books can not overlap. Please reselect a book and try again',
+                    buttons: Ext.Msg.OK
+                });
+                
                 this.changeBookTitle(tempPage,undefined);
             }
 
@@ -351,70 +372,77 @@ Ext.define('Ext.ux.SelectBookForm', {
     
     endSelecting: function()
     {
-        if(book.get('firstPage')!=-1)
+        if (book.get('firstPage') !== -1)
         {
-            var j;
-            for(j=book.get('firstPage');j <= book.get('lastPage');j++)
+            for (var j = book.get('firstPage'); j <= book.get('lastPage'); j++)
             {
-                this.changeBookTitle(j,book.get('title'));
+                this.changeBookTitle(j, book.get('title'));
             }
+            
             book.set('status', 'done');
         }
+        
         this.down('button').enable();
         this.down('booklistfieldset').down('grid').enable();
         this.down('booklistfieldset').down('grid').getSelectionModel().deselectAll();
-        i=0;
+        
+        i = 0;
     },
     
-    //True when all books have first and last pages.
+    // Returns true when all books have first and last pages.
     allPagesFilled: function()
     {
-        var result=true;
+        var result = true;
         bookstore.each(function(record)
         {
-            if(record.get('firstPage')<0||record.get('lastPage')<0)
+            if (record.get('firstPage') < 0 || record.get('lastPage') < 0)
             {
-                result=false;
+                result = false;
             }
         });
+        
         return result;
     },
     
-    //Change the booktitle of a scan in the scanlistField
+    // Change the booktitle of a scan in the scanlist field.
     changeBookTitle: function(page, booktitle)
     {
-        scanstore.findRecord('page',page).set('bookTitle',booktitle);
+        scanstore.findRecord('page', page).set('bookTitle', booktitle);
     },
     
     submit: function()
     {
-        //Put the changes into an array
-        var fields = new Array();
+        // Put the changes into an array.
+        var fields = [];
         bookstore.each(function(record)
         {
-            var bookId=record.get('bookId');
-            var firstPage=record.get('firstPage');
-            var lastPage=record.get('lastPage');
-            fields.push([bookId,firstPage,lastPage]);
+            var bookId    = record.get('bookId');
+            var firstPage = record.get('firstPage');
+            var lastPage  = record.get('lastPage');
+            
+            fields.push([bookId, firstPage, lastPage]);
         });
         
         // Send the changes to the database
         var onSuccess = function(data)
         {
-                Ext.Msg.show({
+            Ext.Msg.show({
                 title: 'Success',
                 msg: 'The data was succesfully added to the system.',
-                buttons: Ext.Msg.OK}); 
-                this.close();
+                buttons: Ext.Msg.OK
+            }); 
+            
+            this.close();
         };
         
         //Show an error
         var onFailure = function()
         {
-           Ext.Msg.show({
+            Ext.Msg.show({
                 title: 'Error',
                 msg: 'Failed to save the first page and last page data. Please try again.',
-                buttons: Ext.Msg.OK}); 
+                buttons: Ext.Msg.OK
+            }); 
         };
         
         RequestManager.getInstance().request('Book', 'firstLastPages', fields, this, onSuccess, onFailure);

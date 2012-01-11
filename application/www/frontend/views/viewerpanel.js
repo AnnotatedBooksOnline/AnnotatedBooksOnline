@@ -157,11 +157,11 @@ Ext.define('Ext.ux.ViewerPanel', {
                 enableToggle: true,
                 allowDepress: false,
                 pressed: true,
-                name: 'drag-tool',
+                name: 'view-tool',
                 listeners: {
                     toggle: function()
                     {
-                        _this.setTool('drag');
+                        _this.setTool('view');
                     }
                 }
             },{
@@ -297,6 +297,13 @@ Ext.define('Ext.ux.ViewerPanel', {
         
         // Create annotations.
         this.annotations = new Annotations(this);
+        
+        // Watch for mode changes.
+        this.annotations.getEventDispatcher().bind('modechange', this,
+            function(event, annotations, mode)
+            {
+                this.setTool(mode);
+            });
         
         // Watch for change events on viewport.
         var eventDispatcher = this.viewport.getEventDispatcher();
@@ -462,14 +469,14 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.tool = tool;
         
         // Set icon states.
-        var tools = ['drag', 'polygon', 'rectangle', 'vertex', 'addvertex', 'erasevertex', 'erase'];
+        var tools = ['view', 'polygon', 'rectangle', 'vertex', 'addvertex', 'erasevertex', 'erase'];
         for (var i = tools.length - 1; i >= 0; --i)
         {
             this.down('[name=' + tools[i] + '-tool]').toggle(tools[i] === tool, true);
         }
         
         // Do tool actions.
-        this.annotations.setMode((tool === 'drag') ? 'view' : tool);
+        this.annotations.setMode(tool);
     },
     
     statics: {
@@ -497,4 +504,3 @@ Ext.define('Ext.ux.ViewerPanel', {
         }
     }
 });
-
