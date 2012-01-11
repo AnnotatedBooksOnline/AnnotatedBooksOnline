@@ -375,7 +375,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     },
                     function()
                     {
-                        // TODO: Show an error.
+                        alert('This binding could not be loaded.');
                     });
                 
                 return;

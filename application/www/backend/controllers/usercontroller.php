@@ -138,8 +138,6 @@ class UserController extends Controller
         // TODO: proper permission
         Authentication::assertLoggedOn();
         
-        // TODO: Handle changing of passwords.
-        
         $record = self::getArray($data, 'record');
         
         $userId      = self::getInteger($record, 'userId', 0);

@@ -194,7 +194,6 @@ class BindingUploadController extends Controller
             $this->identifyScan($scan, $upload);
             
             // Add the scan to the book.
-            // TODO Mathijs : Add the scan to the correct book, right now all scans will be added to the first book.
             $binding->getScanList()->addEntity($scan);
                 
         }
