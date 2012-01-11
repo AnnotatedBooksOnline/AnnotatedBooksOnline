@@ -48,13 +48,10 @@ class PyramidBuilder extends Singleton
      * @throws PyramidBuilderException When the builder returns with a nonzero error code, meaning 
      *                                 an error has occured.
      */
-    private function run($scan)
+    private function run($scan, $upload)
     {
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
-        
-        //$imgfile = $conf->getString('install-base') . $conf->getString('image-input-path') . '/' . $scanid;
-        $upload = new Upload($scan->getUploadId());
 
         $scantype = $scan->getScanType();
         $imgfile = $conf->getString('install-base') . $conf->getString('upload-path') . $upload->getToken() . ".upload";
@@ -183,15 +180,22 @@ class PyramidBuilder extends Singleton
                 $scan->setStatus(Scan::STATUS_PROCESSING);
                 $scan->save();
                 
+		// Retrieve the upload associated with the scan.
+		$upload = new Upload($scan->getUploadId());
+
                 // Process the image.
-                $this->run($scan);
+                $this->run($scan, $upload);
                 
                 // Create a thumbnail.
                 $this->createThumbnail($scanid); 
                                 
                 // No exception, therefore success!
                 $scan->setStatus(Scan::STATUS_PROCESSED);
-                $scan->save();
+		$scan->setUploadId(null);
+		$scan->save();
+		
+		// Delete the upload associated with the scan.
+		$upload->delete();
                 
                 Log::info('Succesfully processed scan with ID ' . $scanid . '.');
             }
