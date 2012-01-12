@@ -65,38 +65,38 @@ Ext.define('Ext.ux.LoginForm', {
                     // Authentication will close this window.
                 },
                 function(code, message, trace)
-                {                	                	
-                	function resendActivationDialog(button)
-                	{
-                		if(button == 'yes')
-                		{
-                			RequestManager.getInstance().request(
-                		            'UserActivation',
-                		            'resendActivationMail',
-                		            {username: values.username},
-                		            _this,
-                		            function(data)
-                		            {
-                		            	Ext.MessageBox.alert('Mail send', 'A new activation' +
-                		            			             ' e-mail has been send', function(){});
-                		            },
-                		            function(data)
-                		            {
-                		            	return true;
-                		            }
-                		    );
-                		}
-                	}
-                	
-                	switch (code)
+                {                                        
+                    function resendActivationDialog(button)
+                    {
+                        if(button == 'yes')
+                        {
+                            RequestManager.getInstance().request(
+                                    'UserActivation',
+                                    'resendActivationMail',
+                                    {username: values.username},
+                                    _this,
+                                    function(data)
+                                    {
+                                        Ext.MessageBox.alert('Mail send', 'A new activation' +
+                                                             ' e-mail has been send', function(){});
+                                    },
+                                    function(data)
+                                    {
+                                        return true;
+                                    }
+                            );
+                        }
+                    }
+                    
+                    switch (code)
                     {
                         case 'user-not-found':
                         case 'user-banned':
                         case 'user-pending':
-                        	break;
-                        	
+                            break;
+                            
                         case 'user-should-activate':
-                        	Ext.MessageBox.confirm('Not yet activated', 
+                            Ext.MessageBox.confirm('Not yet activated', 
                                     'You still need to activate your account through an activation' +
                                     ' e-mail. Would you like a new activation mail to be send to you?',
                                     resendActivationDialog);
