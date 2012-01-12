@@ -187,7 +187,7 @@ class UserController extends ControllerBase
             if ($autoAccept)
             {
                 // Automatically accept user.
-                $puser->setAccepted(true);
+                $pendingUser->setAccepted(true);
             }
             
             $pendingUser->save();
@@ -211,9 +211,11 @@ class UserController extends ControllerBase
         // Fetch username.
         $username = self::getString($data, 'username', '', true, 30);
         
-        // Return true if there is atleast one user with the specified username or email.
-        return ((bool) UserList::find(array('username' => $username))->getAmount())
-            || ((bool) UserList::find(array('email' => $username))->getAmount());
+        $resultset = Query::select()->from('Users')
+                                    ->where('username ILIKE :username')
+                                    ->execute(array('username' => $username));
+                                     
+        return $resultset->getAmount() > 0;
     }
     
     /**
@@ -420,11 +422,15 @@ class UserController extends ControllerBase
      */
     private function getAccessableColumns($loggedOnUser = false)
     {
-        if ($loggedOnUser || 
-            Authentication::getInstance()->hasPermissionTo('view-users-complete'))
+        if (Authentication::getInstance()->hasPermissionTo('view-users-complete'))
         {
             return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
                          'occupation', 'website', 'homeAddress', 'active', 'banned', 'rank');
+        }
+        else if($loggedOnUser)
+        {
+            return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
+                         'occupation', 'website', 'homeAddress', 'rank');
         }
         else if (Authentication::getInstance()->hasPermissionTo('view-users-part'))
         {
