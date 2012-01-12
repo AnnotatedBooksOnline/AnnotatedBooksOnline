@@ -235,7 +235,7 @@ class UserController extends ControllerBase
         $query = Query::select('userId')
             ->from('Users')
             ->where('userId != :userId')
-            ->whereOr('username = :email', 'email ILIKE :email');
+            ->whereOr('username ILIKE :email', 'email ILIKE :email');
         
         // Check if there are rows returned.
         return (bool) $query->execute(
