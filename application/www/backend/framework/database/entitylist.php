@@ -70,7 +70,7 @@ abstract class EntityList implements IteratorAggregate
     }
     
     /**
-     * Tries to fetcg an entity by index.
+     * Tries to fetch an entity by index.
      * 
      * @param $index
      *
@@ -96,7 +96,15 @@ abstract class EntityList implements IteratorAggregate
      */
     
     /**
-     * Find entities.
+     * Finds entities.
+     *
+     * @param $conditions  Column-value pairs of equal conditions the list should satisfy.
+     *                     Case insensitive strings will be compared Case insensitively.
+     * @param $offset      Offset to start list at.
+     * @param $limit       Amount of entities to return. Pass null for no limit.
+     * @param $ordering    Column-direction pairs of ordering.
+     *
+     * @return  Entity list with entities that pass the given criteria.
      */
     public static function find($conditions = array(), $offset = 0, $limit = null, $ordering = array()) 
     {
@@ -109,7 +117,7 @@ abstract class EntityList implements IteratorAggregate
         $whereValues = $whereTypes = $whereConds = array();
         foreach ($conditions as $column => $value)
         {
-            if (isset($types[$value]) && ($types[$value] == 'istring'))
+            if (isset($types[$column]) && ($types[$column] == 'istring'))
             {
                 $whereConds[] = $column . ' ILIKE :' . $column;
             }
@@ -170,23 +178,16 @@ abstract class EntityList implements IteratorAggregate
      */
     public function save()
     {
-        Database::getInstance()->startTransaction();
-        
-        try
-        {
-            foreach ($this->entities as $entity) 
+        $list = $this;
+        Database::getInstance()->doTransaction(
+            function() use ($list)
             {
-                $entity->save();
+                foreach ($list->entities as $entity)
+                {
+                    $entity->save();
+                }
             }
-        }
-        catch (Exception $e)
-        {
-            Database::getInstance()->rollback();
-            
-            throw $e;
-        }
-        
-        Database::getInstance()->commit();
+        );
     }
     
     /**
@@ -194,23 +195,16 @@ abstract class EntityList implements IteratorAggregate
      */
     public function delete()
     {
-        Database::getInstance()->startTransaction();
-        
-        try
-        {
-            foreach ($this->entities as $entity) 
+        $list = $this;
+        Database::getInstance()->doTransaction(
+            function() use ($list)
             {
-                $entity->delete();
+                foreach ($list->entities as $entity)
+                {
+                    $entity->delete();
+                }
             }
-        }
-        catch (Exception $e)
-        {
-            Database::getInstance()->rollback();
-            
-            throw $e;
-        }
-        
-        Database::getInstance()->commit();
+        );
     }
     
     /**

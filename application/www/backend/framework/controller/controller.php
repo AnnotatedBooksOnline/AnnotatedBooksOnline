@@ -88,7 +88,7 @@ abstract class Controller
                 {
                     echo $output;
                 }
-                else
+                else if ($output !== null)
                 {
                     var_dump($output);
                 }

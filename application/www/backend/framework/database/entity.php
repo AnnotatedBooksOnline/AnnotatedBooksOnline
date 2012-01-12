@@ -87,31 +87,28 @@ abstract class Entity
         }
     }
     
-    
-    
-    
-    // TODO: Remove these two, override save if you want to do custom things.
-    
     /**
-     *
+     * Saves entity with its relations.
      */
     public function saveWithDetails()
     {
-        $this->save();
-        $this->saveDetails();
+        $entity = $this;
+        Database::getInstance()->doTransaction(
+            function() use ($entity)
+            {
+                $entity->save();
+                $entity->saveDetails();
+            }
+        );
     }
     
     /**
-     *
-     * Enter description here ...
+     * Saves entity its relations.
      */
     public function saveDetails()
     {
-        ;
+        throw new EntityException('entity-function-not-implemented');
     }
-    
-    
-    
     
     /**
      * Deletes the entity from the database.

@@ -211,11 +211,12 @@ class UserController extends ControllerBase
         // Fetch username.
         $username = self::getString($data, 'username', '', true, 30);
         
-        $resultset = Query::select()->from('Users')
-                                    ->where('username ILIKE :username')
-                                    ->execute(array('username' => $username));
+        $resultSet = Query::select()
+                   ->from('Users')
+                   ->whereOr('username ILIKE :username', 'email ILIKE :username')
+                   ->execute(array('username' => $username));
                                      
-        return $resultset->getAmount() > 0;
+        return (bool) $resultSet->getAmount();
     }
     
     /**
@@ -230,25 +231,17 @@ class UserController extends ControllerBase
         $user = Authentication::getInstance()->getUser();
         $userId = ($user !== null) ? $user->getUserId() : 0;
         
-        // Create email selection query.
-        $emailQuery = Query::select('userId')
+        // Create query.
+        $query = Query::select('userId')
             ->from('Users')
-            ->where('userId != :userId', 'email = :email');
-        
-        // Create username selection query.
-        $usernameQuery = Query::select('userId')
-            ->from('Users')
-            ->where('userId != :userId', 'username = :username');
+            ->where('userId != :userId')
+            ->whereOr('username = :email', 'email ILIKE :email');
         
         // Check if there are rows returned.
-        return ((bool) $emailQuery->execute(
+        return (bool) $query->execute(
             array('userId' => $userId, 'email' => $email),
             array('userId' => 'int', 'email' => 'string')
-        )->getAmount())
-            || ((bool) $usernameQuery->execute(
-            array('userId' => $userId, 'username' => $email),
-            array('userId' => 'int', 'username' => 'string')
-        )->getAmount());
+        )->getAmount();
     }
     
     /**
