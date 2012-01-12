@@ -31,8 +31,6 @@ class BindingUploadController extends Controller
     {
         Database::getInstance()->startTransaction();
         
-        // TODO: Exceptions. Why? That's why we have transaction, isn't it?
-        
         // Assert that the user is authenticated. 
         Authentication::assertPermissionTo('upload-bindings');  
         
@@ -42,19 +40,8 @@ class BindingUploadController extends Controller
         $inputBooks   = self::getArray($data,'books');
         
         // Find the name of the library the binding belongs to.
-        $libraryName          = $inputBinding['library'];
-        $provenancePersonName = $inputBinding['provenance'];
-        $signature            = self::getString($inputBinding, 'signature');
-        
-        /*
-         * Create the binding.
-         */
-          
-        // Create the binding and fill its attributes with the information from the request.
-        $binding = new Binding();
-        $binding->setSummary(self::getString($inputBinding, 'summary'));
-        $binding->setSignature($signature);
-        $binding->setStatus(Binding::STATUS_UPLOADED);
+        $libraryName = $inputBinding['library'];
+        $signature   = self::getString($inputBinding, 'signature');
         
         // Determine if the specified signature exists in the database already, this is not allowed.
         if (!$this->uniqueLibrarySignature($libraryName, $signature))
@@ -62,6 +49,41 @@ class BindingUploadController extends Controller
             throw new ControllerException('duplicate-binding');
         }
         
+        // Create the binding and fill its attributes with the information from the request.
+        $binding = new Binding();
+        $binding->setSummary(self::getString($inputBinding, 'summary'));
+        $binding->setSignature($signature);
+        $binding->setStatus(Binding::STATUS_UPLOADED);
+        
+        // Save the books.
+        $this->createLibrary($libraryName, $binding);
+
+        // Save the books.
+        $this->createBooks($inputBooks, $binding);
+
+        // Save the scans.
+        $this->createScans($inputScans, $binding);
+
+        // Save the provenances.
+        $this->createProvenances($inputBinding, $binding);
+        
+        // Create the binding languages.
+        $this->createBindingAnnotationLanguages($inputBinding, $binding);
+        
+        // Save the binding and all its attribute entities.
+        $binding->saveWithDetails();
+        
+        Database::getInstance()->commit();
+    }
+    
+    /**
+    *
+    * Enter description here ...
+    * @param unknown_type $provenancePersonNames
+    * @param unknown_type $binding
+    */
+    private function createLibrary($libraryName, $binding)
+    {
         // Find the specified library in the database.
         $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
         
@@ -75,50 +97,27 @@ class BindingUploadController extends Controller
         {
             // Make the new binding link to the existing library.
             $binding->setLibraryId($existingLibrary->getValue('libraryId'));
-        } 
+        }
         else
         {
             // Create a new library and save it.
             $library = new Library();
             $library->setLibraryName($libraryName);
             $library->save();
-                
+        
             // Link the binding to the newly created library.
             $binding->setLibraryId($library->getLibraryId());
         }
-        
-        /*
-         * Create the provenance.
-         */
-        
-        // Create the provenance for the binding
-        $provenance = new Provenance();
-        
-        // Find the specified provenance person in the database.
-        $existingProvenancePerson = PersonList::find(array('name' => $provenancePersonName))->tryGet(0);
-        
-        // Determine if the provenance person exists in the database. If this is the case the new binding should link to it. If not
-        // the library needs to be created.
-        if ($existingProvenancePerson) 
-        {
-            // Make the existing person link to the new provenance.
-            $provenance->setPersonId($existingProvenancePerson->getValue('personId'));
-        }
-        else 
-        {
-            // Create a new person and save it in the database
-            $provenancePerson = new Person();
-            $provenancePerson->setName($provenancePersonName);
-            $provenancePerson->save();
-         
-            // Make the new person link to the provenance.
-            $provenance->setPersonId($provenancePerson->getPersonId());
-        }
-        
-        /*
-         * Create the books.
-         */
-        
+    }
+    
+    /**
+    *
+    * Enter description here ...
+    * @param unknown_type $provenancePersonNames
+    * @param unknown_type $binding
+    */
+    private function createBooks($inputBooks, $binding)
+    {
         // Iterate over all books in the input.
         foreach ($inputBooks as $inputBook)
         {
@@ -131,55 +130,40 @@ class BindingUploadController extends Controller
             $book->setPlacePublished(self::getString($inputBook, 'placePublished'));
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getInteger($inputBook, 'printVersion'));
-            //$book->setFirstPage(self::getInteger($inputBook, 'firstPage'));
-            //$book->setLastPage(self::getInteger($inputBook, 'lastPage'));
-                        
-            $bookId = $book->getBookId();
+        
+            // Create the book authors.
+            $this->createAuthors($inputBook, $book);
             
+            // Create the book languages.
+            $this->createBookLanguages($inputBook, $book);
+            
+            // Add the book to the binding.
             $binding->getBookList()->add($book);
-            // Find the book author
-            /*
-            $bookAuthor = self::getString($inputBook, 'placePublished');
-            $existingBookAuthorPerson = PersonList::find(array('name' => $bookAuthor))->tryGet(0);
-            
-            if ($existingBookAuthorPerson)
-            {
-                // Create a new person and save it in the database
-                $provenancePerson = new Person();
-                $provenancePerson->setName($provenancePersonName);
-                $provenancePerson->save();
-                 
-                // Make the new person link to the provenance.
-                $provenance->setPersonId($provenancePerson->getPersonId());
-            }
-            else
-            {
-                
-            }*/
-             
-            //TODO: author
         }
-        
-        /*
-         * Create the scans.
-         */
-        
-        // Store a list of processed uploads for deletion later.
-        $processedUploads = array();
+    }
+    
+    /**
+     *
+     * Enter description here ...
+     * @param unknown_type $provenancePersonNames
+     * @param unknown_type $binding
+     */
+    private function createScans($inputScans, $binding)
+    {
         $pageNumber = 1;
         
         // Create scans.
         foreach ($inputScans as $inputScan)
         {
             // Determine if the scan was succesfully uploaded.
-            if (self::getString($inputScan, 'status') != 'success') 
+            if (self::getString($inputScan, 'status') != 'success')
             {
                 continue;
             }
             
             // Retrieve the upload from the database and assert it exists.
             $upload = Upload::fromToken(self::getString($inputScan, 'token'));
-            if ($upload == null) 
+            if ($upload == null)
             {
                 throw new ControllerException('upload-does-not-exist');
             }
@@ -193,15 +177,122 @@ class BindingUploadController extends Controller
             // Identify the scan.
             $this->identifyScan($scan, $upload);
             
-            // Add the scan to the book.
-            // TODO Mathijs: Add the scan to the correct book, right now all scans will be added to the first book.
+            // Add the scan to the bindning.
             $binding->getScanList()->add($scan);
         }
+    }
+    
+    /**
+    *
+    * Enter description here ...
+    * @param unknown_type $provenancePersonNames
+    * @param unknown_type $binding
+    */
+    private function createBookLanguages($inputBook, $book)
+    {
+        // Create all book language entities.
+        foreach(self::getArray($inputBook, 'languages') as $languageId)
+        {
+           $bookLanguage = new BookLanguage();
+           $bookLanguage->setLanguageId($languageId);
+              
+           $book->getBookLanguageList()->add($bookLanguage);
+        }
+    }
+    
+    /**
+    *
+    * Enter description here ...
+    * @param unknown_type $provenancePersonNames
+    * @param unknown_type $binding
+    */
+    private function createBindingAnnotationLanguages($inputBinding, $binding)
+    {
+        // Create all book language entities.
+        foreach(self::getArray($inputBinding, 'languagesofannotations') as $languageId)
+        {
+            $bindingLanguage = new BindingLanguage();
+            $bindingLanguage->setLanguageId($languageId);
+             
+            $binding->getBindingLanguageList()->add($bindingLanguage);
+        }
+    }
+    
+    /**
+    *
+    * Enter description here ...
+    * @param unknown_type $provenancePersonNames
+    * @param unknown_type $binding
+    */
+    private function createAuthors($inputBook, $book)
+    {
+        // Split all persons in the provenance.
+        $authorPersonNames = explode(',', self::getString($inputBook, 'author')); 
         
-        // Save the binding and all its attribute entities.
-        $binding->saveWithDetails();
+        // Create all provenances.
+        foreach($authorPersonNames as $authorPersonName)
+        {
+            // Create the person for the provenance.
+            $person = $this->createPerson($authorPersonName);
+    
+            // Create the provenance associating the binding with the person.
+            $author = new Author();
+            $author->setPersonId($person->getPersonId());
+    
+            // Add the provenance to the binding.
+            $book->getAuthorList()->add($author);
+        }
+    }
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $provenancePersonNames
+     * @param unknown_type $binding
+     */
+    private function createProvenances($inputBinding, $binding)
+    {
+        // Split all persons in the provenance.
+        $provenancePersonNames = explode(',', self::getString($inputBinding, 'provenance')); 
         
-        Database::getInstance()->commit();
+        // Create all provenances.
+        foreach($provenancePersonNames as $provenancePersonName)
+        {
+            // Create the person for the provenance.
+            $person = $this->createPerson($provenancePersonName);
+            
+            // Create the provenance associating the binding with the person.
+            $provenance = new Provenance();
+            $provenance->setPersonId($person->getPersonId());
+            
+            // Add the provenance to the binding.
+            $binding->getProvenanceList()->add($provenance);
+        }    
+    }
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $inputBinding
+     * @param unknown_type $binding
+     */
+    private function createPerson($personName)
+    {
+        $existingPerson = PersonList::find(array('name' => $personName))->tryGet(0);
+        
+        if ($existingPerson !== null)
+        {
+            return new Person($existingPerson->getValue('personId'));
+        }
+        else
+        {
+            // Create a new person and save it in the database
+            $person = new Person();
+            $person->setName($personName);
+            $person->save();
+             
+            return $person;
+        }
     }
     
     /**
@@ -233,33 +324,6 @@ class BindingUploadController extends Controller
             throw new ControllerException('unsupported-file-type');
         }
         
-        // TODO: Remove this if deemed unnecessary.
-        
-        /*
-        // Determine the number of zoom levels for this image.
-        $maxX = ($scanUploadImageIdentification[0] - 1) / 256 + 1;
-        $maxY = ($scanUploadImageIdentification[1] - 1) / 256 + 1;
-        $numZoomLevels = 1;
-        $maxPowerTwo = 2;
-        
-        while ($maxPowerTwo < max($maxX, $maxY)) 
-        {
-            $maxPowerTwo *= 2;
-        }
-        while ($maxPowerTwo > 1) 
-        {
-            $maxPowerTwo /= 2;
-            $numZoomLevels++;
-        }
-        
-        $scan->setZoomLevel($numZoomLevels);
-        
-        // Determine image dimensions.
-        $minification = pow(2, ($numZoomLevels - 1));
-        $scan->setDimensions(ceil($scanUploadImageIdentification[0] / $minification),
-                             ceil($scanUploadImageIdentification[1] / $minification));
-        */
-        
         $columns = $scanUploadImageIdentification[0] / 256; // TODO: Constant!
         $rows    = $scanUploadImageIdentification[1] / 256; // TODO: Constant!
         
@@ -273,6 +337,12 @@ class BindingUploadController extends Controller
                              ceil($scanUploadImageIdentification[1] / $minification));
     }
     
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $data
+     * @return multitype:unknown |multitype:number
+     */
     public function actionGetBinding($data)
     {
         $userId = Authentication::getInstance()->getUserId();
@@ -298,6 +368,13 @@ class BindingUploadController extends Controller
         }
     }
     
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $data
+     * @throws BindingStatusException
+     * @return multitype:unknown |multitype:number
+     */
     public function actionGetBindingStatus($data)
     {
         $userId = Authentication::getInstance()->getUserId();
@@ -327,6 +404,12 @@ class BindingUploadController extends Controller
         }
     }
     
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $data
+     * @return boolean
+     */
     public function actionUniqueLibrarySignature($data)
     {
         $libraryName = self::getString($data, 'library', '', true, 256);
@@ -335,6 +418,13 @@ class BindingUploadController extends Controller
         return $this->uniqueLibrarySignature($libraryName, $signature);
     }
     
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $libraryName
+     * @param unknown_type $signature
+     * @return boolean
+     */
     public function uniqueLibrarySignature($libraryName, $signature)
     {
         $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
@@ -343,8 +433,9 @@ class BindingUploadController extends Controller
         if ($existingLibrary !== null)
         {
             if (BindingList::find(array(
-                    'libraryId' => $existingLibrary->getValue('libraryId') ,'signature' => $signature
-                ))->tryGet(0))
+                    'libraryId' => $existingLibrary->getValue('libraryId'),
+                    'signature' => $signature
+                ))->tryGet(0) !== null)
             {
                 return false;
             }

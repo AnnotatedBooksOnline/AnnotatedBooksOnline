@@ -164,7 +164,7 @@ class FileCacheEntry extends CacheEntry
  */
 class APCCacheEntry extends CacheEntry
 {
-    // TODO: Implement.
+    // TODO: Determine to delete this.
 }
 
 /**

@@ -18,7 +18,7 @@ class PasswordIncorrectException  extends ExceptionBase { }
 class UserController extends ControllerBase
 {
     /**
-     * Loads user(s).
+     * Loads users.
      */
     public function actionLoad($data)
     {
