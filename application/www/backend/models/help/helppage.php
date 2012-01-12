@@ -43,22 +43,22 @@ class HelpPage extends Entity
     
     // Standard entity functions.
     
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'HelpPages';
     }
     
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('helpPageId');
     }
     
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('pageName', 'content', 'parentHelpPageId');
     }
     
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
             'helpPageId'       => 'int',

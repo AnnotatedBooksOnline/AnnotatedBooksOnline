@@ -35,22 +35,22 @@ class HelpControlItem extends Entity
     
     // Standard entity functions.
     
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'HelpControlItems';
     }
     
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('controlItemName');
     }
     
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('helpPageId', 'marker');
     }
     
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
             'controlItemName' => 'string',
