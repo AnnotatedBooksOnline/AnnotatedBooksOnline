@@ -157,4 +157,37 @@ class UserActivationController extends Controller
         
         Setting::setSetting('auto-user-acceptance', $newValue ? '1' : '0');
     }
+    
+    /**
+     * Sends another activation mail in case a user did not receive or lost the initial one.
+     * 
+     * @param $data Should contain the 'username' of the user to whom to send a new e-mail.
+     * 
+     */
+    public function actionResendActivationMail($data)
+    {
+        // Determine user.
+        $user = User::fromUsername(self::getString($data, 'username'));
+        
+        // Find associated PendingUser.
+        $row = Query::select('pendingUserId')
+                    ->from('PendingUsers')
+                    ->where('userId = :userId')
+                    ->execute(array('userId' => $user->getUserId()))
+                    ->tryGetFirstRow();
+        if ($row !== null)
+        {
+            throw new UserActivationException('user-not-pending');
+        }
+    
+        // Make sure user is accepted.
+        $puser = new PendingUser($row->getValue('pendingUserId'));
+        if($puser->getAccepted() !== true)
+        {
+            throw new UserActivationException('user-not-accepted');
+        }
+        
+        // Send the activation mail again.
+        Mailer::sendActivationMail($puser);
+    }
 }
