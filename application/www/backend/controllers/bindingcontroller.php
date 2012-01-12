@@ -1,49 +1,31 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/controller/controller.php';
-require_once 'models/binding/binding.php';
+require_once 'controllers/controllerbase.php';
+require_once 'models/binding/bindinglist.php';
 require_once 'models/library/library.php';
 
 /**
  * Binding controller class.
  */
-class BindingController extends Controller
+class BindingController extends ControllerBase
 {
-    protected function __construct()
-    {
-        ;
-    }
-    
     /**
-     * Loads binding. 
+     * Loads bindings.
      */
     public function actionLoad($data)
     {
-        // Retrieve the binding id from the request
-        $bindingId = self::getInteger($data, 'id', 0);
+        // Handle load.
+        $result = $this->handleLoad($data, 'Binding', 'bindingId');
         
-        $binding = new Binding($bindingId);
-        $library = new Library($binding->getLibraryId());
-        /*
-        $scans = Scan::fromBinding($binding);
-        $scanStatus = true;
-        */
-        $binding = $binding->getValues(true, false);
-        $binding['library'] = $library->getValues(true, false);
-        /*
-        foreach ($scans as $scan)
+        // Also load each library of the each binding.
+        foreach ($result['records'] as &$record)
         {
-            if ($scan->getStatus() !== Scan::STATUS_PROCESSED)
-            {
-                $scanStatus = false;
-            }
+            $library = new Library($record['libraryId']);
+            
+            $record['library'] = $library->getValues();
         }
         
-        if(($binding['status']==2 && $scanStatus))
-        {*/
-            return array('records' => $binding, 'total' => 1);
-        /*}*/
+        return $result;
     }
 }
-

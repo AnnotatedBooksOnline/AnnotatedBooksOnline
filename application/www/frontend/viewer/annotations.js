@@ -336,9 +336,14 @@ Annotations.prototype.initialize = function()
     this.viewer.getEventDispatcher().bind('pagechange', this,
         function(pageNumber)
         {
-            this.scanId = this.viewer.getScanId();
-            
-            this.load();
+            // Check if scan has really changed.
+            var scanId = this.viewer.getScanId();
+            if (this.scanId !== scanId)
+            {
+                this.scanId = scanId;
+                
+                this.load();
+            }
         });
     
     // Fetch first annotations.

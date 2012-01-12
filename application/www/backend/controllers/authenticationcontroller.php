@@ -59,6 +59,7 @@ class AuthenticationController extends Controller
     public function actionHasPermissionTo($data)
     {
         $action = self::getString($data, 'action');
+        
         return Authentication::getInstance()->hasPermissionTo($action);
     }
     

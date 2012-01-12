@@ -14,24 +14,24 @@ class BindingLanguage extends AssociativeEntity
     
     /** Language. */
     protected $languageId;
-   
     
     /**
      * Constructs a binding-language relation.
      *
-     * @param id   $bindingId
-     * @param id   $languageId
-     * @param bool $createnew If true, a new relation will be created if the specified one did not 
-     *                        exist yet. If one already exists, it doesn't really matter whether 
-     *                        this is true or false.
+     * @param $bindingId
+     * @param $languageId
+     * @param $createNew  If true, a new relation will be created if the specified one did not 
+     *                    exist yet. If one already exists, it doesn't really matter whether 
+     *                    this is true or false.
      */
-    public function __construct($bindingId = null, $languageId = null, $createnew = false)
+    public function __construct($bindingId = null, $languageId = null, $createNew = false)
     {
-        if ($languageId !== null && $bindingId !== null)
+        if (($languageId !== null) && ($bindingId !== null))
         {
-            $this->bindingId = $bindingId;
+            $this->bindingId  = $bindingId;
             $this->languageId = $languageId;
-            if($createnew)
+            
+            if ($createNew)
             {
                 $this->save();
             }
@@ -60,7 +60,7 @@ class BindingLanguage extends AssociativeEntity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'BindingLanguages';
     }
@@ -70,7 +70,7 @@ class BindingLanguage extends AssociativeEntity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('bindingId', 'languageId');
     }
@@ -80,7 +80,7 @@ class BindingLanguage extends AssociativeEntity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array();
     }
@@ -90,17 +90,19 @@ class BindingLanguage extends AssociativeEntity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-                    'bindingId'           => 'int',
-                    'languageId'       => 'int'
+            'bindingId'  => 'int',
+            'languageId' => 'int'
         );
     }
-       
-    // Getters and setters.
     
-    public function getBindingId()        { return $this->bindingId;    }
+    /*
+     * Getters and setters.
+     */
+    
+    public function getBindingId()           { return $this->bindingId;       }
     public function setBindingId($bindingId) { $this->bindingId = $bindingId; }
     
     public function getLanguageId()    { return $this->languageId; }

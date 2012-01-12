@@ -6,7 +6,8 @@ require_once 'util/authentication.php';
 require_once 'models/user/pendinguser.php';
 require_once 'util/mailer.php';
 
-class UserActivationException extends ExceptionBase {}
+// Exceptions.
+class UserActivationException extends ExceptionBase { }
 
 /**
  * User activation controller class.
@@ -38,44 +39,47 @@ class UserActivationController extends Controller
         function() use ($username, $accepted)
         {
             //Find corresponding user.
-            $user = User::findUserWithName($username);
+            $user = User::fromUsername($username);
+            if ($user === null)
+            {
+                throw new UserActivationException('user-does-not-exist', $username);
+            }
             
             // Find associated PendingUser.
             $row = Query::select('pendingUserId')
-                         ->from('PendingUsers')
-                         ->where('userId = :userId')
-                         ->execute(array('userId' => $user->getUserId()))
-                         ->getFirstRow_();
-            if(!$row)
+                        ->from('PendingUsers')
+                        ->where('userId = :userId')
+                        ->execute(array('userId' => $user->getUserId()))
+                        ->tryGetFirstRow();
+            if ($row !== null)
             {
                 throw new UserActivationException('user-not-pending');
             }
             
-            $puser = new PendingUser($row->getValue('pendingUserId'));
-            $puser->load();
+            $pendingUser = new PendingUser($row->getValue('pendingUserId'));
+            $pendingUser->load();
             
-            
-            // Check whether the user is waiting for activation. 
-            if($puser->getAccepted() !== null)
+            // Check whether the user is waiting for activation.
+            if ($pendingUser->getAccepted() !== null)
             {
                 throw new UserActivationException('activation-already-handled');
             }
             
             //Accept or decline user.
-            $puser->setAccepted($accepted);
-            $puser->save();
+            $pendingUser->setAccepted($accepted);
+            $pendingUser->save();
             
             // Mailing is part of the transaction. Meaning database changes will be rolled back if
             // it fails.
-            if($accepted)
+            if ($accepted)
             {
                 // User is accepted: send an activation mail.
-                Mailer::sendActivationMail($puser);
+                Mailer::sendActivationMail($pendingUser);
             }
             else
             {
                 // User is denied. Inform him/her.
-                Mailer::sendUserDeclinedMail($puser);                
+                Mailer::sendUserDeclinedMail($pendingUser); 
             }
         });
     }
@@ -98,28 +102,29 @@ class UserActivationController extends Controller
         function() use ($token)
         {
             // Determine to which accepted pending user the token belongs.
-            $result = Query::select('pendingUserId', 'userId')->from('PendingUsers')
-                                                              ->where('confirmationCode = :token')
-                                                              ->where('accepted = :accepted')
-                                                              ->execute(array('token' => $token,
-                                                                              'accepted' => true));
+            $result = Query::select('pendingUserId', 'userId')
+                           ->from('PendingUsers')
+                           ->where('confirmationCode = :token')
+                           ->where('accepted = :accepted')
+                           ->execute(array('token' => $token, 'accepted' => true));
             
-            if($result->getAmount() != 1)
+            // Try to fetch row.
+            $row = $result->tryGetFirstRow();
+            if ($row === null)
             {
-                // TODO: Exception or more informative return value?
+                // TODO: Exception or more informative return value? (Gerben: Indeed, throw an exception)
                 Log::debug('Activation failed.');
                 return false;
             }
             
             // Get id's.
-            $row = $result->getFirstRow();
             $puser = $row->getValue('pendingUserId');
             $user  = $row->getValue('userId');
             
             // Set the active flag for the user.
             $query = Query::update('Users', array('active' => true))->where('userId = :userId');
             $query->execute(array('userId' => $user));
-    
+            
             // Erase this user's column from the pending users table.
             $query = Query::delete('PendingUsers')->where('pendingUserId = :pendingUserId');
             $query->execute(array('pendingUserId' => $puser));
@@ -128,12 +133,14 @@ class UserActivationController extends Controller
             return true;
         });
         
+        // TODO: Just throw an exception on failure.
+        
         return $success;
     }
     
     /**
-     * Turns automatic user acceptance on or off. When off, administrators will manually have to \
-     * accept or decline registrations. If on, registrations are accepted automatically. 
+     * Turns automatic user acceptance on or off. When off, administrators will manually have to
+     * accept or decline registrations. If on, registrations are accepted automatically.
      * 
      * In both cases users will still require to click an activation link though.
      * 
@@ -146,8 +153,8 @@ class UserActivationController extends Controller
         Authentication::assertPermissionTo('change-global-settings');
         
         // Fetch wheter to turn automatic acceptance on or off.
-        $newval = self::getBoolean($data, 'auto-accept');
+        $newValue = self::getBoolean($data, 'auto-accept');
         
-        Setting::setSetting('auto-user-acceptance', $newval ? '1' : '0');
+        Setting::setSetting('auto-user-acceptance', $newValue ? '1' : '0');
     }
 }

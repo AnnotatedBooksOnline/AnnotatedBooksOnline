@@ -479,12 +479,12 @@ class Query
      * Ordering.
      */
     
-    public function limit($value, $offset = 0)
+    public function limit($limit = null, $offset = 0)
     {
-        $value  = max(intval($value),  0);
+        $limit  = ($limit === null) ? 'ALL' : max(intval($limit),  0);
         $offset = max(intval($offset), 0);
         
-        $this->limitClause = "\nLIMIT " . $value . ($offset ? "\nOFFSET " . $offset : '');
+        $this->limitClause = "\nLIMIT " . $limit . ($offset ? "\nOFFSET " . $offset : '');
 
         return $this;
     }
@@ -503,21 +503,23 @@ class Query
     
     public function orderBy($column, $direction = 'asc')
     {
-        // Check type.
-        $direction = (strtolower($direction) != 'desc') ? 'ASC' : 'DESC';
-        
-        // Add order by clause.
-        $this->orderByClause .= "\nORDER BY " . $this->escapeIdentifier($column) . ' ' . $direction;
+        if (is_array($column))
+        {
+            foreach ($column as $name => $direction)
+            {
+                $this->orderBy($name, $direction);
+            }
+        }
+        else
+        {
+            // Check type.
+            $direction = (strtolower($direction) != 'desc') ? 'ASC' : 'DESC';
+            
+            // Add order by clause.
+            $this->orderByClause .= "\nORDER BY " . $this->escapeIdentifier($column) . ' ' . $direction;
+        }
         
         return $this;
-    }
-    
-    public function orderByMultiple($order) 
-    {
-        foreach ($order as $column => $order)
-        {
-            $query->orderBy($column, $order);
-        }
     }
     
     /*

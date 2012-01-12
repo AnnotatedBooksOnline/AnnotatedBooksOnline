@@ -42,11 +42,18 @@ class Permission extends Entity
      */
     public static function rankHasPermission($action, $rank)
     {
-        // Create and load permission entity.  
-        $permission = new Permission($action);
+        // Create and load permission entity.
+        try
+        {
+            $permission = new Permission($action);
+        }
+        catch (EntityException $e)
+        {
+            return false;
+        }
         
         // Compare ranks.
-        return $rank >= $permission->getMinRank();
+        return ($rank >= $permission->getMinRank());
     }
     
     /**
@@ -58,12 +65,13 @@ class Permission extends Entity
      */
     public static function getPermissionListForRank($rank)
     {
-        $resultset = Query::select('actionName')->from('Permissions')
-                                                ->where('minRank <= :rank')
-                                                ->execute(array('rank' => $rank));
+        $resultSet = Query::select('actionName')
+                   ->from('Permissions')
+                   ->where('minRank <= :rank')
+                   ->execute(array('rank' => $rank));
+        
         $list = array();
-
-        foreach($resultset as $row)
+        foreach ($resultSet as $row)
         {
             $list[] = $row->getValue('actionName');
         }
@@ -74,7 +82,7 @@ class Permission extends Entity
     /**
      * Get the name of the corresponding table.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'Permissions';
     }
@@ -82,7 +90,7 @@ class Permission extends Entity
     /**
      * Get an array with the primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('actionName');
     }
@@ -90,7 +98,7 @@ class Permission extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('minRank');
     }
@@ -100,11 +108,11 @@ class Permission extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-            'actionName'  => 'string',
-            'minRank'     => 'int',
+            'actionName' => 'string',
+            'minRank'    => 'int',
         );
     }
     

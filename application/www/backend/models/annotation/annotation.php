@@ -10,6 +10,7 @@ require_once 'models/scan/scan.php';
  */
 class Annotation extends Entity
 {
+    /** Fields. */
     protected $annotationId;
     protected $scanId;
     protected $polygon;
@@ -17,7 +18,6 @@ class Annotation extends Entity
     protected $transcriptionOrig;
     protected $userId;
     protected $timeCreated;
-
     
     /**
      * Constructs an annotation entity.
@@ -36,28 +36,28 @@ class Annotation extends Entity
     
     public static function fromScan($scan)
     {
+        // TODO: Use AnnotationList.
+        
         $result = Query::select('annotationId')
             ->from('Annotations')
             ->where('scanId = :scan')
             ->execute(array(
-                ':scan' => $scan->getScanId()
+                'scan' => $scan->getScanId()
             ));
             
         $annotations = array();
-        
         foreach($result as $annotation)
         {
             $annotations[] = new Annotation($annotation->getValue('annotationId'));
         }
+        
         return $annotations;
     }
-    
-    // TODO: Add more helpers.
     
     /**
      * Get the name of the corresponding table.
      */
-    public function getTableName()
+    public static function getTableName()
     {
         return 'Annotations';
     }
@@ -65,7 +65,7 @@ class Annotation extends Entity
     /**
      * Get an array with the primary keys.
      */
-    public function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('annotationId');
     }
@@ -73,7 +73,7 @@ class Annotation extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    public function getColumns()
+    public static function getColumns()
     {
         return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'userId', 'timeCreated');
     }
@@ -83,7 +83,7 @@ class Annotation extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
             'annotationId'      => 'int',
@@ -99,6 +99,7 @@ class Annotation extends Entity
     /*
      * Getters and setters.
      */
+    
     public function getAnnotationId()    { return $this->annotationId; }
     public function setAnnotationId($id) { $this->annotationId = $id; } 
     
@@ -113,20 +114,21 @@ class Annotation extends Entity
     
     public function getPolygon()
     {
-        return array_map(function($coord)
+        return array_map(function($vertex)
         {
             return array(
-                'x' => $coord[0],
-                'y' => $coord[1]
+                'x' => $vertex[0],
+                'y' => $vertex[1]
             );
         }, array_chunk(unpack('f*', $this->polygon), 2));
     }
-    public function setPolygon($arr)
+    
+    public function setPolygon($vertices)
     {
         $this->polygon = '';
-        foreach ($arr as $coord)
+        foreach ($vertices as $vertex)
         {
-            $this->polygon .= pack('f2', $coord['x'], $coord['y']);
+            $this->polygon .= pack('f2', $vertex['x'], $vertex['y']);
         }
     }
     
@@ -136,4 +138,3 @@ class Annotation extends Entity
     public function getTimeCreated()      { return $this->timeCreated;  }
     public function setTimeCreated($time) { $this->timeCreated = $time; }
 }
-

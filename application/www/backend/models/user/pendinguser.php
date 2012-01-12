@@ -61,7 +61,7 @@ class PendingUser extends Entity
         $values = array(
             'userId'           => $user->getUserId(),
             'confirmationCode' => Authentication::generateUniqueToken(),
-            'accepted'         => null, // Automatic acceptance should be handled by user controller.  
+            'accepted'         => null, // Automatic acceptance should be handled by user controller.
             'expirationDate'   => $expirationDate
         );
         
@@ -73,7 +73,7 @@ class PendingUser extends Entity
     /**
      * Get the name of the corresponding table.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'PendingUsers';
     }
@@ -81,7 +81,7 @@ class PendingUser extends Entity
     /**
      * Get an array with the primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('pendingUserId');
     }
@@ -89,7 +89,7 @@ class PendingUser extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('userId', 'confirmationCode', 'accepted', 'expirationDate');
     }
@@ -99,13 +99,13 @@ class PendingUser extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
             'pendingUserId'    => 'int',
             'userId'           => 'int',
             'confirmationCode' => 'string',
-            'accepted'         => 'bool', 
+            'accepted'         => 'bool',
             'expirationDate'   => 'date'
         );
     }

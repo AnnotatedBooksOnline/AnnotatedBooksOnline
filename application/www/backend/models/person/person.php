@@ -8,16 +8,14 @@ require_once 'framework/database/entity.php';
  */
 class Person extends Entity
 {
-
     /** Person id. */
     protected $personId;
     
     /** Full name of the person. */
     protected $name;
-     
     
     /**
-     * Constructs an person by id.
+     * Constructs a person by id.
      *
      * @param  $id  Id of the person. Default (null) will create a new person.
      */
@@ -26,6 +24,7 @@ class Person extends Entity
         if ($personId !== null)
         {
             $this->personId = $personId;
+            
             $this->load();
         }
     }
@@ -35,7 +34,7 @@ class Person extends Entity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'Persons';
     }
@@ -45,7 +44,7 @@ class Person extends Entity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('personId');
     }
@@ -55,7 +54,7 @@ class Person extends Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('name');
     }
@@ -65,17 +64,21 @@ class Person extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-                        'personId'         => 'int',
-                        'name  '           => 'string'
+            'personId' => 'int',
+            'name'     => 'string'
         );
     }
     
-    public function getPersonId()              { return $this->personId; }
+    /*
+     * Getters and setters.
+     */
+    
+    public function getPersonId()              { return $this->personId;      }
     public function setPersonId($personId)     { $this->personId = $personId; }
     
-    public function getName()                  { return $this->name; }
+    public function getName()                  { return $this->name;  }
     public function setName($name)             { $this->name = $name; }
 }

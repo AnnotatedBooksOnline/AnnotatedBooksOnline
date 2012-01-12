@@ -78,7 +78,7 @@ class User extends Entity
     /** Rank number. */
     protected $rank;
     
-    /** Password restoration token */
+    /** Password restoration token. */
     protected $passwordRestoreToken;
     
     /**
@@ -118,7 +118,7 @@ class User extends Entity
         
         $resultSet = $query->execute(array(
             'username' => $username,
-            'hash'     => self::secureHash($password)
+            'hash'     => self::hashPassword($password)
         ));
         
         if ($resultSet->getAmount() != 1)
@@ -139,11 +139,12 @@ class User extends Entity
             throw new UserPendingException($username);
         }
         
-        if($user->getPasswordRestoreToken() !== null)
+        if ($user->getPasswordRestoreToken() !== null)
         {
             // Apperantly the user remembered his/her password again. In that case we can remove
             // the password token.
-            Log::info('Removing password restore token for ' . $username . '.');
+            Log::info('Removing password restore token for %s.', $username);
+            
             $user->setPasswordRestoreToken(null);
             $user->save();
         }
@@ -162,12 +163,39 @@ class User extends Entity
     public static function fromEmailAddress($email)
     {
         $row = Query::select('userId')
-                     ->from('Users')
-                     ->where(array('email ILIKE :email'))
-                     ->execute(array('email' => $email))
-                     ->getFirstRow_();
+             ->from('Users')
+             ->where(array('email ILIKE :email'))
+             ->execute(array('email' => $email))
+             ->tryGetFirstRow();
         
-        if($row)
+        if ($row !== null)
+        {
+            return new User($row->getValue('userId'));
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
+    /**
+     * Loads the user with the specified username.
+     * 
+     * @param string $username The name of the user to load.
+     * 
+     * @return User A fully loaded user entity of the user with this name.
+     * 
+     * @throws EntityException If the user does not exist.
+     */
+    public static function fromUsername($username)
+    {
+        $row = Query::select('userId')
+             ->from('Users')
+             ->where('username = :username')
+             ->execute(array('username' => $username))
+             ->tryGetFirstRow();
+        
+        if ($row !== null)
         {
             return new User($row->getValue('userId'));
         }
@@ -193,7 +221,7 @@ class User extends Entity
         
         $resultSet = $query->execute(array(
             'userId' => $userId,
-            'hash'   => self::secureHash($password)
+            'hash'   => self::hashPassword($password)
         ));
         
         if ($resultSet->getAmount() == 1)
@@ -207,127 +235,44 @@ class User extends Entity
     }
     
     /**
-     * Safely deletes this user. With safely meaning that references to this user will be referred
-     * to a dummy user.
+     * Deletes this user. Rreferences to this user will be referred to by a dummy user.
      * 
-     * The userId of the entity should be set before calling this.
+     * The user id of the entity should be set before calling this.
      */
-    public function safeDelete()
+    public function delete()
     {
         $user = $this;
         Database::getInstance()->doTransaction(function() use ($user)
         {
-            // Get the user ID of the deleted dummy user.
-            $newid = Setting::getSetting('deleted-user-id');
+            // Get the user id of the deleted dummy user.
+            $newId = Setting::getSetting('deleted-user-id');
             
-            // All tables that need a userId foreign key set to the special deleted user after 
+            // All tables that need a userId foreign key set to the special deleted user after
             // deleting this user.
-            $reftables = array('Uploads', 'Annotations');
+            $refTables = array('Uploads', 'Annotations');
             
             // Update references.
-            foreach($reftables as $table)
+            foreach ($refTables as $table)
             {
-                Query::update($table, array('userId' => ':newid'))
-                    ->where('userId = :oldid')
-                    ->execute(array('oldid' => $user->getUserId(), 'newid' => $newid));
+                Query::update($table, array('userId' => ':newId'))
+                    ->where('userId = :oldId')
+                    ->execute(array('oldId' => $user->getUserId(), 'newId' => $newId));
             }
             
             // Now the user can safely be deleted, as the DBMS will automatically delete
             // associated notes and shelves etc.
-            $user->delete();
+            parent::delete();
         });
     }
     
-    /**
-     * Loads the user with the specified username. 
-     * 
-     * @param string $username The name of the user to load.
-     * 
-     * @return User A fully loaded user entity of the user with this name.
-     * 
-     * @throws EntityException If the user does not exist.
-     */
-    public static function findUserWithName($username)
-    {
-        $row = Query::select('userId')->from('Users')
-                                         ->where('username = :username')
-                                         ->execute(array('username' => $username))
-                                         ->getFirstRow_();
-        if($row)
-        {
-            return new User($row->getValue('userId'));
-        }
-        else
-        {
-            throw new EntityException('record-not-found');
-        }
-    }
-    
-    /**
-     * Gets the table name.
-     *
-     * @return  The table name.
-     */
-    protected function getTableName()
-    {
-        return 'Users';
-    }
-    
-    /**
-     * Gets the primary keys.
-     *
-     * @return  Array of all primary keys.
-     */
-    protected function getPrimaryKeys()
-    {
-        return array('userId');
-    }
-    
-    /**
-     * Gets all the columns.
-     *
-     * @return  Array of all columns, except primary keys.
-     */
-    protected function getColumns()
-    {
-        return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
-                     'affiliation', 'occupation', 'website', 'homeAddress', 'active',
-                     'banned', 'rank', 'passwordRestoreToken');
-    }
-    
-    /**
-     * Gets all the column types, per column, including primary keys.
-     *
-     * @return  Array of all column types.
-     */
-    protected function getColumnTypes()
-    {
-        return array(
-            'userId'               => 'int',
-            'username'             => 'istring', // Usernames should be compared case-insensitively.
-            'passwordHash'         => 'string',
-            'email'                => 'istring',
-            'firstName'            => 'string',
-            'lastName'             => 'string',
-            'affiliation' 		   => 'string',
-            'occupation'           => 'string',
-            'website'              => 'string',
-            'homeAddress'          => 'string',
-            'active'               => 'boolean',
-            'banned'               => 'boolean',
-            'rank'                 => 'int',
-            'passwordRestoreToken' => 'string'
-        );
-    }
-    
-    
+    // TODO: Call this method: fromUsername(..)
     
     /**
      * Calculates a secure hash for the given password.
      *
      * @return  A secure hash for the given password.
      */
-    private static function secureHash($password)
+    private static function hashPassword($password)
     {
         // DEBUG: For now, so that development works.
         // TODO: Remove the following line.
@@ -345,6 +290,63 @@ class User extends Entity
         return crypt($password, $algorithm . $passes . '$' . $salt);
     }
     
+    /**
+     * Gets the table name.
+     *
+     * @return  The table name.
+     */
+    public static function getTableName()
+    {
+        return 'Users';
+    }
+    
+    /**
+     * Gets the primary keys.
+     *
+     * @return  Array of all primary keys.
+     */
+    public static function getPrimaryKeys()
+    {
+        return array('userId');
+    }
+    
+    /**
+     * Gets all the columns.
+     *
+     * @return  Array of all columns, except primary keys.
+     */
+    public static function getColumns()
+    {
+        return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
+                     'affiliation', 'occupation', 'website', 'homeAddress', 'active',
+                     'banned', 'rank', 'passwordRestoreToken');
+    }
+    
+    /**
+     * Gets all the column types, per column, including primary keys.
+     *
+     * @return  Array of all column types.
+     */
+    public static function getColumnTypes()
+    {
+        return array(
+            'userId'               => 'int',
+            'username'             => 'istring', // Usernames should be compared case-insensitively.
+            'passwordHash'         => 'string',
+            'email'                => 'istring',
+            'firstName'            => 'string',
+            'lastName'             => 'string',
+            'affiliation'          => 'string',
+            'occupation'           => 'string',
+            'website'              => 'string',
+            'homeAddress'          => 'string',
+            'active'               => 'boolean',
+            'banned'               => 'boolean',
+            'rank'                 => 'int',
+            'passwordRestoreToken' => 'string'
+        );
+    }
+    
     /*
      * Getters and setters.
      */
@@ -356,7 +358,7 @@ class User extends Entity
     
     public function setPassword($password)
     {
-        $this->passwordHash = self::secureHash($password);
+        $this->passwordHash = self::hashPassword($password);
     }
     
     public function getEmail()       { return $this->email;   }
@@ -381,9 +383,11 @@ class User extends Entity
     public function getHomeAddress()         { return $this->homeAddress;     }
     
     public function setActive($active) { $this->active = $active; }
+    public function getActive()        { return $this->active;    }
     public function isActive()         { return $this->active;    }
     
     public function setBanned($banned) { $this->banned = $banned; }
+    public function getBanned()        { return $this->banned;    }
     public function isBanned()         { return $this->banned;    }
     
     public function setRank($rank) { $this->rank = $rank; }

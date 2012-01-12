@@ -1,9 +1,9 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/controller/controller.php';
+require_once 'controllers/controllerbase.php';
 require_once 'util/authentication.php';
-require_once 'models/book/book.php';
+require_once 'models/book/booklist.php';
 require_once 'models/binding/binding.php';
 
 // Exceptions.
@@ -18,46 +18,21 @@ class BookNotFoundException extends ExceptionBase
 /**
  * Book controller class.
  */
-class BookController extends Controller
+class BookController extends ControllerBase
 {
     /**
-     * Loads book(s).
+     * Loads books.
      */
     public function actionLoad($data)
     {
-        if (isset($data['filters'])
-         && isset($data['filters'][0])
-         && isset($data['filters'][0]['column'])
-         && $data['filters'][0]['column'] == 'bindingId' 
-         && isset($data['filters'][0]['value']))
-        {
-            // Retrieve the binding id from the request
-            $bindingId = self::getInteger($data['filters'][0], 'value', 0);
-            $binding = new Binding($bindingId);
-            
-            $books = Book::fromBinding($binding);
-            $books = array_map(function($book)
-            {
-                return $book->getValues(true, false);
-            }, $books);
-            
-            return array('records' => $books, 'total' => count($books));
-        }
-        else
-        {
-            // Retrieve the book id of a specific book from the request.
-            $id = self::getInteger($data, 'id', 0);
-
-            $book = new Book($id);
-            $book = $book->getValues(true, false);
-            
-            return array('records' => $book, 'total' => 1);
-        }
+        // Handle load.
+        return $this->handleLoad($data, 'Book', 'bookId');
     }
     
-        public function actionFirstLastPages($data)
+    public function actionFirstLastPages($data)
     {
-        $book;
+        // TODO: Use self::getArray(), as value may not be an array.
+        
         foreach ($data as $value) 
         {
             $book = new Book($value[0]);
@@ -65,11 +40,11 @@ class BookController extends Controller
             $book->setLastPage($value[2]);
             $book->save();
         }
-        $binding=new Binding($book->getBindingId());
+        
+        $binding = new Binding($book->getBindingId());
         $binding->setStatus(Binding::STATUS_SELECTED);
         $binding->save();
     }
-    
     
     /**
      * Searches for books.
@@ -146,6 +121,7 @@ class BookController extends Controller
             {
                 $headline = ($headline != '' ? ' & ' : '') . $split['headline'];
             }
+            
             Log::debug("Parsed search query: %s\n", print_r($split, true));
         };
         
@@ -160,37 +136,37 @@ class BookController extends Controller
                 {
                     case 'year':
                         $query = $query->where('books.maxYear >= :from' . $c);
-                        $binds[':from' . $c] = self::getInteger($value, 'from', -16535);
+                        $binds['from' . $c] = self::getInteger($value, 'from', -16535);
                         $query = $query->where('books.minYear <= :to' . $c);
-                        $binds[':to' . $c] = self::getInteger($value, 'to', 16534);
+                        $binds['to' . $c] = self::getInteger($value, 'to', 16534);
                         break;
                     case 'title':
-                        $addFulltext(':title', 'books.title', $value);
+                        $addFulltext('title', 'books.title', $value);
                         break;
                     case 'author':
-                        $addFulltext(':author', 'pAuthorFind.name', $value);
+                        $addFulltext('author', 'pAuthorFind.name', $value);
                         break;
                     case 'provenance':
-                        $addFulltext(':provenance', 'pProvenanceFind.name', $value);
+                        $addFulltext('provenance', 'pProvenanceFind.name', $value);
                         break;
                     case 'any':
-                        $addFulltext(':any', array('books.title', 'pAuthorFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'pProvenanceFind.name', 'libraries.libraryName', 'bindings.signature'), $value, true); // TODO: change column to index
+                        $addFulltext('any', array('books.title', 'pAuthorFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'pProvenanceFind.name', 'libraries.libraryName', 'bindings.signature'), $value, true); // TODO: change column to index
                         break;
                     case 'place':
-                        $addFulltext(':place', 'books.placePublished', $value);
+                        $addFulltext('place', 'books.placePublished', $value);
                         break;
                     case 'publisher':
-                        $addFulltext(':publisher', 'books.publisher', $value);
+                        $addFulltext('publisher', 'books.publisher', $value);
                         break;
                     case 'summary':
-                        $addFulltext(':summary', 'bindings.summary', $value);
+                        $addFulltext('summary', 'bindings.summary', $value);
                         break;
                     case 'library':
-                        $addFulltext(':library', 'libraries.libraryName', $value);
+                        $addFulltext('library', 'libraries.libraryName', $value);
                         break;
                     case 'signature':
                         $query = $query->where('bindings.signature ILIKE :signature'. $c);
-                        $binds[':signature'. $c] = '%' . trim($value) . '%';
+                        $binds['signature'. $c] = '%' . trim($value) . '%';
                         break;
                     default:
                         break;
@@ -202,8 +178,20 @@ class BookController extends Controller
         // Request a headline if necessary.
         if ($headline != "")
         {
-            $query = $query->headline(array('books.title', 'array_to_string(array_accum(DISTINCT pAuthorList.name), \', \')', 'books.publisher', 'books.placePublished', 'bindings.summary', 'array_to_string(array_accum(DISTINCT pProvenanceList.name), \', \')', 'libraries.libraryName', 'bindings.signature'), ':headline', 'headline');
-            $binds[':headline'] = $headline;
+            $query = $query->headline(
+                array(
+                    'books.title',
+                    'array_to_string(array_accum(DISTINCT pAuthorList.name), \', \')',
+                    'books.publisher',
+                    'books.placePublished',
+                    'bindings.summary',
+                    'array_to_string(array_accum(DISTINCT pProvenanceList.name), \', \')',
+                    'libraries.libraryName',
+                    'bindings.signature'
+                ),
+                ':headline',
+                'headline');
+            $binds['headline'] = $headline;
         }
         
         $result = $query->execute($binds);
@@ -213,6 +201,7 @@ class BookController extends Controller
         foreach ($result as $book)
         {
             Log::debug('%s', print_r($book->getValues(), true));
+            
             if ($book->getValue('minYear') == $book->getValue('maxYear'))
             {
                 $year = $book->getValue('minYear');
@@ -221,6 +210,7 @@ class BookController extends Controller
             {
                 $year = $book->getValue('minYear') . ' - ' . $book->getValue('maxYear');
             }
+            
             $binding = new Binding($book->getValue('bindingId'));
             $firstScan = Scan::fromBindingPage($binding, $book->getValue('firstPage'));
             if (count($firstScan) != 1)
@@ -302,4 +292,3 @@ class BookController extends Controller
         return $result;
     }
 }
-

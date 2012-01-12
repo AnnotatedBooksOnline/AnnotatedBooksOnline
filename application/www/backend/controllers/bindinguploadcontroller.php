@@ -7,16 +7,17 @@ require_once 'models/upload/upload.php';
 require_once 'models/book/book.php';
 require_once 'models/book/booklist.php';
 require_once 'models/binding/binding.php';
-require_once 'models/binding/bindingsearchlist.php';
-require_once 'models/library/librarysearchlist.php';
+require_once 'models/binding/bindinglist.php';
+require_once 'models/library/librarylist.php';
 require_once 'models/person/person.php';
-require_once 'models/person/personsearchlist.php';
+require_once 'models/person/personlist.php';
 require_once 'models/provenance/provenance.php';
 require_once 'models/scan/scan.php';
 require_once 'models/language/bindinglanguage.php';
 require_once 'models/language/booklanguage.php';
 
-class BindingStatusException extends ExceptionBase {}
+// Exceptions.
+class BindingStatusException extends ExceptionBase { }
 
 /**
  * Binding upload controller class.
@@ -34,13 +35,13 @@ class BindingUploadController extends Controller
         Authentication::assertPermissionTo('upload-bindings');  
         
         // Retrieve contents of record.
-        $inputScans = self::getArray($data, 'scans');
+        $inputScans   = self::getArray($data, 'scans');
         $inputBinding = self::getArray($data, 'binding');
-        $inputBooks = self::getArray($data,'books');
+        $inputBooks   = self::getArray($data,'books');
         
         // Find the name of the library the binding belongs to.
         $libraryName = $inputBinding['library'];
-        $signature = self::getString($inputBinding, 'signature');
+        $signature   = self::getString($inputBinding, 'signature');
         
         // Determine if the specified signature exists in the database already, this is not allowed.
         if (!$this->uniqueLibrarySignature($libraryName, $signature))
@@ -84,11 +85,15 @@ class BindingUploadController extends Controller
     private function createLibrary($libraryName, $binding)
     {
         // Find the specified library in the database.
-        $existingLibrary = LibrarySearchList::findLibraries(array('libraryName' => $libraryName), null, null, null)->getFirstRow_();
+        $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
+        
+        /*
+         * Create the library.
+         */
         
         // Determine if the library exists in the database. If this is the case the new binding should link to it. If not
         // the library needs to be created.
-        if ($existingLibrary)
+        if ($existingLibrary !== null)
         {
             // Make the new binding link to the existing library.
             $binding->setLibraryId($existingLibrary->getValue('libraryId'));
@@ -114,7 +119,7 @@ class BindingUploadController extends Controller
     private function createBooks($inputBooks, $binding)
     {
         // Iterate over all books in the input.
-        foreach($inputBooks as $inputBook)
+        foreach ($inputBooks as $inputBook)
         {
             // Create the book and fill its attributes with the information from the request.
             $book = new Book();
@@ -133,8 +138,7 @@ class BindingUploadController extends Controller
             $this->createBookLanguages($inputBook, $book);
             
             // Add the book to the binding.
-            $binding->getBookList()->addEntity($book);
-
+            $binding->getBookList()->add($book);
         }
     }
     
@@ -149,32 +153,32 @@ class BindingUploadController extends Controller
         $pageNumber = 1;
         
         // Create scans.
-        foreach($inputScans as $inputScan)
+        foreach ($inputScans as $inputScan)
         {
             // Determine if the scan was succesfully uploaded.
             if (self::getString($inputScan, 'status') != 'success')
             {
                 continue;
             }
-        
+            
             // Retrieve the upload from the database and assert it exists.
             $upload = Upload::fromToken(self::getString($inputScan, 'token'));
             if ($upload == null)
             {
                 throw new ControllerException('upload-does-not-exist');
             }
-        
+            
             // Create the scan entity.
             $scan = new Scan();
             $scan->setStatus(Scan::STATUS_PENDING);
             $scan->setPage($pageNumber++);
             $scan->setUploadId($upload->getUploadId());
-        
+            
             // Identify the scan.
             $this->identifyScan($scan, $upload);
             
             // Add the scan to the bindning.
-            $binding->getScanList()->addEntity($scan);
+            $binding->getScanList()->add($scan);
         }
     }
     
@@ -192,7 +196,7 @@ class BindingUploadController extends Controller
            $bookLanguage = new BookLanguage();
            $bookLanguage->setLanguageId($languageId);
               
-           $book->getBookLanguageList()->addEntity($bookLanguage);
+           $book->getBookLanguageList()->add($bookLanguage);
         }
     }
     
@@ -210,10 +214,9 @@ class BindingUploadController extends Controller
             $bindingLanguage = new BindingLanguage();
             $bindingLanguage->setLanguageId($languageId);
              
-            $binding->getBindingLanguageList()->addEntity($bindingLanguage);
+            $binding->getBindingLanguageList()->add($bindingLanguage);
         }
     }
-    
     
     /**
     *
@@ -237,7 +240,7 @@ class BindingUploadController extends Controller
             $author->setPersonId($person->getPersonId());
     
             // Add the provenance to the binding.
-            $book->getAuthorList()->addEntity($author);
+            $book->getAuthorList()->add($author);
         }
     }
     
@@ -263,7 +266,7 @@ class BindingUploadController extends Controller
             $provenance->setPersonId($person->getPersonId());
             
             // Add the provenance to the binding.
-            $binding->getProvenanceList()->addEntity($provenance);
+            $binding->getProvenanceList()->add($provenance);
         }    
     }
     
@@ -275,9 +278,9 @@ class BindingUploadController extends Controller
      */
     private function createPerson($personName)
     {
-        $existingPerson = PersonSearchList::findPersons(array('name' => $personName), null, null, null)->getFirstRow_();
+        $existingPerson = PersonList::find(array('name' => $personName))->tryGet(0);
         
-        if ($existingPerson)
+        if ($existingPerson !== null)
         {
             return new Person($existingPerson->getValue('personId'));
         }
@@ -320,13 +323,13 @@ class BindingUploadController extends Controller
         {
             throw new ControllerException('unsupported-file-type');
         }
-
-        $columns = $scanUploadImageIdentification[0]/256;
-        $rows = $scanUploadImageIdentification[1]/256;
         
-        $maxZoomLevel = ceil(log(max($columns, $rows))/log(2));
+        $columns = $scanUploadImageIdentification[0] / 256; // TODO: Constant!
+        $rows    = $scanUploadImageIdentification[1] / 256; // TODO: Constant!
         
-        $scan->setZoomLevel($maxZoomLevel+1);
+        $maxZoomLevel = ceil(log(max($columns, $rows), 2));
+        
+        $scan->setZoomLevel($maxZoomLevel + 1);
         
         // Determine image dimensions.
         $minification = pow(2, $maxZoomLevel);
@@ -342,19 +345,21 @@ class BindingUploadController extends Controller
      */
     public function actionGetBinding($data)
     {
-        $userId = Authentication::getInstance()->getUser()->getUserId();
+        $userId = Authentication::getInstance()->getUserId();
+        
         $bindingId = Query::select('binding.bindingId','binding.status')
             ->from ('Scans scan')
             ->where('upload.userId = :userId')
             ->join('Uploads upload', "scan.uploadId = upload.uploadId", "LEFT")
             ->join('Bindings binding', "scan.bindingId = binding.bindingId", "LEFT")
             ->where('binding.status <= :reorderedStatus')
-            ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
+            ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED));
         
-        if ($bindingId->getAmount()!=0)
+        if ($bindingId->getAmount() !== 0)
         {
             $status = $bindingId->getFirstRow()->getValue('status');
-            $bId = $bindingId->getFirstRow()->getValue('bindingId');
+            $bId    = $bindingId->getFirstRow()->getValue('bindingId');
+            
             return (array('status' => $status, 'bindingId' => $bId));
         }
         else
@@ -372,7 +377,7 @@ class BindingUploadController extends Controller
      */
     public function actionGetBindingStatus($data)
     {
-        $userId = Authentication::getInstance()->getUser()->getUserId();
+        $userId = Authentication::getInstance()->getUserId();
         $binding = Query::select('binding.bindingId','binding.status')
             ->from ('Scans scan')
             ->where('upload.userId = :userId')
@@ -382,15 +387,14 @@ class BindingUploadController extends Controller
             ->groupBy('binding.bindingId','binding.status')
             ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
         
-        
-        if ($binding->getAmount()===1)
+        if ($binding->getAmount() === 1)
         {
             $result = $binding->getFirstRow();
             $status = $result->getValue('status');
             $bindingId = $result->getValue('bindingId');
             return (array('status' => $status, 'bindingId' => $bindingId));
         }
-        else if ($binding->getAmount()===0)
+        else if ($binding->getAmount() === 0)
         {
             return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
         }
@@ -409,8 +413,7 @@ class BindingUploadController extends Controller
     public function actionUniqueLibrarySignature($data)
     {
         $libraryName = self::getString($data, 'library', '', true, 256);
-        $signature = self::getString($data, 'signature', '', true, 256);
-        
+        $signature   = self::getString($data, 'signature', '', true, 256);
         
         return $this->uniqueLibrarySignature($libraryName, $signature);
     }
@@ -424,15 +427,15 @@ class BindingUploadController extends Controller
      */
     public function uniqueLibrarySignature($libraryName, $signature)
     {
-        $existingLibrary = LibrarySearchList::findLibraries(array('libraryName' => $libraryName),
-                               null, null, null)->getFirstRow_();
+        $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
+        
         // Determine if the specified signature exists in the database already, this is not allowed.
-        if ($existingLibrary)
+        if ($existingLibrary !== null)
         {
-            if (BindingSearchList::findBindings(
-                    array('libraryId' => $existingLibrary->getValue('libraryId')
-                         ,'signature' => $signature)
-                    , null, null, null)->getFirstRow_())
+            if (BindingList::find(array(
+                    'libraryId' => $existingLibrary->getValue('libraryId'),
+                    'signature' => $signature
+                ))->tryGet(0) !== null)
             {
                 return false;
             }

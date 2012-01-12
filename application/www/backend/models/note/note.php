@@ -15,7 +15,7 @@ class Note extends AssociativeEntity
     protected $text;
     
     /**
-    * Constructs a note by noteId.
+    * Constructs a note by user id.
     *
     * @param  $id  Id of the user. Default (null) will create a new note.
     */
@@ -30,11 +30,11 @@ class Note extends AssociativeEntity
     }
     
     /**
-    * Gets the table name.
-    *
-    * @return  The table name.
-    */
-    protected function getTableName()
+     * Gets the table name.
+     *
+     * @return  The table name.
+     */
+    public static function getTableName()
     {
         return 'Notes';
     }
@@ -44,8 +44,7 @@ class Note extends AssociativeEntity
      *
      * @return  Array of all primary keys.
      */
-    
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('userId');
     }
@@ -55,7 +54,7 @@ class Note extends AssociativeEntity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('text');
     }
@@ -65,13 +64,17 @@ class Note extends AssociativeEntity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
             'userId' => 'int',
             'text'   => 'string'
         );
     }
+    
+    /*
+     * Getters and setters.
+     */
     
     public function getUserId()         { return $this->userId;    }
     public function setUserId($userId)  { $this->userId = $userId; }

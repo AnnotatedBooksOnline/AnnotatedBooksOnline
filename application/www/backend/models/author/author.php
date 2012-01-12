@@ -9,30 +9,29 @@ require_once 'framework/database/database.php';
  */
 class Author extends AssociativeEntity
 {
-    
-    /** Person. */
+    /** Person id. */
     protected $personId;
     
-    /** Book. */
+    /** Book id. */
     protected $bookId;
    
-    
     /**
      * Constructs an author entity by a person and book id.
      *
-     * @param id   $personId
-     * @param id   $bookId
-     * @param bool $createnew If true, a new author will be created if the specified one did not 
-     *                        exist yet. If one already exists, it doesn't really matter whether 
-     *                        this is true or false.
+     * @param $personId
+     * @param $bookId
+     * @param $createNew  If true, a new author will be created if the specified one did not 
+     *                    exist yet. If one already exists, it doesn't really matter whether 
+     *                    this is true or false.
      */
-    public function __construct($personId = null, $bookId = null, $createnew = false)
+    public function __construct($personId = null, $bookId = null, $createNew = false)
     {
-        if ($personId !== null && $bookId !== null)
+        if (($personId !== null) && ($bookId !== null))
         {
-            $this->bookId = $bookId;
+            $this->bookId   = $bookId;
             $this->personId = $personId;
-            if($createnew)
+            
+            if ($createNew)
             {
                 $this->save();
             }
@@ -45,17 +44,19 @@ class Author extends AssociativeEntity
     
     public static function fromBook($book)
     {
+        // TODO: Use AuthorList.
+        
         $result = Query::select('personId', 'bookId')
             ->from('Authors')
             ->where('bookId = :book')
-            ->execute(array(':book' => $book->getBookId()));
+            ->execute(array('book' => $book->getBookId()));
             
         $authors = array();
-        
-        foreach($result as $author)
+        foreach ($result as $author)
         {
             $authors[] = new Author($author->getValue('personId'), $author->getValue('bookId'), true);
         }
+        
         return $authors;
     }
     
@@ -64,7 +65,7 @@ class Author extends AssociativeEntity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'Authors';
     }
@@ -74,7 +75,7 @@ class Author extends AssociativeEntity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('personId', 'bookId');
     }
@@ -84,7 +85,7 @@ class Author extends AssociativeEntity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array();
     }
@@ -94,18 +95,21 @@ class Author extends AssociativeEntity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-                    'personId'         => 'int',
-                    'bookId'           => 'int'
+            'personId' => 'int',
+            'bookId'   => 'int'
         );
     }
     
-    public function getBookId()         { return $this->bookId; }
-    public function setBookId($bookId)     { $this->bookId = $bookId; }
+    /*
+     * Getters and setters.
+     */
     
-    public function getPersonId() { return $this->personId; }
+    public function getBookId()        { return $this->bookId;    }
+    public function setBookId($bookId) { $this->bookId = $bookId; }
+    
+    public function getPersonId()          { return $this->personId;      }
     public function setPersonId($personId) { $this->personId = $personId; }
-
 }

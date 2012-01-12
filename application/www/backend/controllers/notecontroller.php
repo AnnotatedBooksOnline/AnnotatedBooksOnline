@@ -41,8 +41,6 @@ class NoteController extends Controller
         // Check permissions.
         Authentication::assertPermissionTo('manage-notebook');
         
-        // TODO: Enable permissions above.
-        
         // Retrieve user id and text.
         $record = self::getArray($data, 'record');
         
@@ -51,7 +49,7 @@ class NoteController extends Controller
         
         $values = array( 
             'userId' => $userId,
-            'text'   => $text,
+            'text'   => $text
         );
 
         $note = new Note();

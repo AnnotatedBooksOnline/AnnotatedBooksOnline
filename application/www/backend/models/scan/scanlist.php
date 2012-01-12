@@ -1,22 +1,10 @@
 <?php 
 //[[GPL]]
 
-require_once 'framework/database/entity.php';
+require_once 'models/scan/scan.php';
 require_once 'framework/database/entitylist.php';
 
-require_once 'models/scan/scan.php';
-
-
 /**
- * Class representing a book entity.
+ * Class representing a scan entity list.
  */
-class ScanList extends EntityList
-{
-    public function setBindingId($bindingId) 
-    {
-        foreach ($this->entities as $entity)
-        {
-            $entity->setBindingId($bindingId);
-        }
-    }
-}
+class ScanList extends EntityList { }
