@@ -28,6 +28,14 @@ class UserPendingException extends ExceptionBase
     }
 }
 
+class UserShouldActivateException extends ExceptionBase
+{
+    public function __construct($username)
+    {
+        parent::__construct('user-should-activate', $username);
+    }
+}
+
 /**
  * Class representing a user entity.
  */
@@ -136,7 +144,22 @@ class User extends Entity
         }
         else if (!$user->isActive())
         {
-            throw new UserPendingException($username);
+            // Check whether the user has already been accepted, to determine the kind of exception
+            // to throw.
+            $row = Query::select('accepted')
+                                ->from('PendingUsers')
+                                ->where('userId = :userId')
+                                ->execute(array('userId' => $user->getUserId()))
+                                ->getFirstRow();
+            
+            if($row->getValue('accepted'))
+            {
+                throw new UserShouldActivateException($username);
+            }
+            else
+            {
+                throw new UserPendingException($username);
+            }
         }
         
         if ($user->getPasswordRestoreToken() !== null)
