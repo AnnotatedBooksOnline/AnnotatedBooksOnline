@@ -212,6 +212,8 @@ Annotations.prototype.clear = function()
 // Loads annotations.
 Annotations.prototype.load = function()
 {
+    this.clear();
+    
     this.store.filter({property: 'scanId', value: this.scanId});
     this.store.load();
 }
