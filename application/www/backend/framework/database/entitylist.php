@@ -170,14 +170,23 @@ abstract class EntityList implements IteratorAggregate
      */
     public function save()
     {
-        Database::startTransaction();
+        Database::getInstance()->startTransaction();
         
-        foreach ($this->entities as $entity) 
+        try
         {
-            $entity->save();
+            foreach ($this->entities as $entity) 
+            {
+                $entity->save();
+            }
+        }
+        catch (Exception $e)
+        {
+            Database::getInstance()->rollback();
+            
+            throw $e;
         }
         
-        Database::commit();
+        Database::getInstance()->commit();
     }
     
     /**
@@ -185,14 +194,23 @@ abstract class EntityList implements IteratorAggregate
      */
     public function delete()
     {
-        Database::startTransaction();
+        Database::getInstance()->startTransaction();
         
-        foreach ($this->entities as $entity) 
+        try
         {
-            $entity->delete();
+            foreach ($this->entities as $entity) 
+            {
+                $entity->delete();
+            }
+        }
+        catch (Exception $e)
+        {
+            Database::getInstance()->rollback();
+            
+            throw $e;
         }
         
-        Database::commit();
+        Database::getInstance()->commit();
     }
     
     /**

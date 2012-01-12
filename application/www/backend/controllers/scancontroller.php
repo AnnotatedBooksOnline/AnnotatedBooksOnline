@@ -32,11 +32,13 @@ class ScanController extends ControllerBase
     public function actionReorder($data)
     {
         // TODO: Data may not actually be an array. Encapsulate and use self::getArray(..).
+        // TODO: Check for case that there are not scans: $scan->getBindingId() will fail.
         
+        $page = 0;
         foreach ($data as $key => $value) 
         {
             $scan = new Scan($value);
-            $scan->setPage($key + 1);
+            $scan->setPage(++$page);
             $scan->save();
         }
         
