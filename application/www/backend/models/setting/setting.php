@@ -68,7 +68,7 @@ class Setting extends Entity
     /**
      * Get the name of the corresponding table.
      */
-    public function getTableName()
+    public static function getTableName()
     {
         return 'Settings';
     }
@@ -76,7 +76,7 @@ class Setting extends Entity
     /**
      * Get an array with the primary keys.
      */
-    public function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('settingName');
     }
@@ -84,7 +84,7 @@ class Setting extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    public function getColumns()
+    public static function getColumns()
     {
         return array('settingValue');
     }
@@ -94,8 +94,10 @@ class Setting extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
+        // TODO: Rename to name, value.
+        
         return array(
             'settingName'  => 'string',
             'settingValue' => 'string',
@@ -109,6 +111,6 @@ class Setting extends Entity
     public function getSettingName()      { return $this->settingName;  }
     public function setSettingName($name) { $this->settingName = $name; }
     
-    public function getSettingValue()     { return $this->settingValue; }
-    public function setSettingValue($val) { $this->settingValue = $val; }
+    public function getSettingValue()       { return $this->settingValue;   }
+    public function setSettingValue($value) { $this->settingValue = $value; }
 }

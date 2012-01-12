@@ -8,7 +8,6 @@ require_once 'framework/database/entity.php';
  */
 class Library extends Entity
 {
-    
     /** Id of this library. */
     protected $libraryId;
     
@@ -34,6 +33,7 @@ class Library extends Entity
         if ($libraryId !== null)
         {
             $this->libraryId = $libraryId;
+            
             $this->load();
         }
     }
@@ -43,7 +43,7 @@ class Library extends Entity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'Libraries';
     }
@@ -53,7 +53,7 @@ class Library extends Entity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('libraryId');
     }
@@ -63,7 +63,7 @@ class Library extends Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('libraryName', 'libraryAddress', 'website', 'info');
     }
@@ -73,31 +73,33 @@ class Library extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-                        'libraryId'        => 'int',
-                        'libraryName'      => 'string',
-                        'libraryAddress'   => 'string',
-                        'website'          => 'string',
-                        'info'             => 'string',
+            'libraryId'      => 'int',
+            'libraryName'    => 'string',
+            'libraryAddress' => 'string',
+            'website'        => 'string',
+            'info'           => 'string',
         );
     }
     
-    public function getLibraryId()               { return $this->libraryId; }
+    /*
+     * Getters and setters.
+     */
+    
+    public function getLibraryId()               { return $this->libraryId;       }
     public function setLibraryId($libraryId)     { $this->libraryId = $libraryId; }
     
-    public function getLibraryName()             { return $this->libraryName; }
+    public function getLibraryName()             { return $this->libraryName;         }
     public function setLibraryName($libraryName) { $this->libraryName = $libraryName; }
     
-    public function getLibraryAddress()                 { return $this->libraryAddress; }
-    public function setLibraryAddress($libraryAddress)  {  $this->libraryAddress = libraryAddress; }
+    public function getLibraryAddress()                 { return $this->libraryAddress;           }
+    public function setLibraryAddress($libraryAddress)  { $this->libraryAddress = libraryAddress; }
     
-    public function getWebsite()         { return $this->website; }
+    public function getWebsite()         { return $this->website;     }
     public function setWebsite($website) { $this->website = $website; }
     
-    public function getInfo()          { return $this->info; }
+    public function getInfo()          { return $this->info;  }
     public function setInfo($info)     { $this->info = $info; }
-    
-    
 }

@@ -43,6 +43,7 @@ class Scan extends Entity
         if ($id !== null)
         {
             $this->scanId = $id;
+            
             $this->load();
         }
     }
@@ -69,32 +70,37 @@ class Scan extends Entity
     
     public static function fromBinding($binding)
     {
+        // TODO: Use scan list here.
+        
         $result = Query::select('scanId')
             ->from('Scans')
             ->where('bindingId = :binding')
             ->orderBy('page', 'ASC')
-            ->execute(array(':binding' => $binding->getBindingId()));
+            ->execute(array('binding' => $binding->getBindingId()));
             
         $scans = array();
         
-        foreach($result as $scan)
+        foreach ($result as $scan)
         {
             $scans[] = new Scan($scan->getValue('scanId'));
         }
+        
         return $scans;
     }
     
     public static function fromBindingPage($binding, $range)
     {
+        // TODO: Use scan list here.
+        
         if (is_array($range))
         {
             $from = $range[0];
-            $to = $range[1];
+            $to   = $range[1];
         }
         else
         {
             $from = $range;
-            $to = $range;
+            $to   = $range;
         }
         
         $result = Query::select('scanId')
@@ -102,26 +108,24 @@ class Scan extends Entity
             ->where('bindingId = :binding', 'page >= :from', 'page <= :to')
             ->orderBy('page', 'ASC')
             ->execute(array(
-                ':binding' => $binding->getBindingId(),
-                ':from' => $from,
-                ':to' => $to
+                'binding' => $binding->getBindingId(),
+                'from'    => $from,
+                'to'      => $to
             ));
             
         $scans = array();
-        
-        foreach($result as $scan)
+        foreach ($result as $scan)
         {
             $scans[] = new Scan($scan->getValue('scanId'));
         }
+        
         return $scans;
     }
-    
-    // TODO: Add more helpers.
     
     /**
      * Get the name of the corresponding table.
      */
-    public function getTableName()
+    public static function getTableName()
     {
         return 'Scans';
     }
@@ -129,7 +133,7 @@ class Scan extends Entity
     /**
      * Get an array with the primary keys.
      */
-    public function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('scanId');
     }
@@ -137,7 +141,7 @@ class Scan extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    public function getColumns()
+    public static function getColumns()
     {
         return array('scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'bindingId');
     }
@@ -147,9 +151,10 @@ class Scan extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
+            'scanId'    => 'int',
             'scanType'  => 'string',
             'page'      => 'int',
             'status'    => 'int',
@@ -192,6 +197,5 @@ class Scan extends Entity
     public function setUploadId($id) { $this->uploadId = $id;  }
     
     public function getBindingId()    { return $this->bindingId; }
-    public function setBindingId($id) { $this->bindingId = $id; }
+    public function setBindingId($id) { $this->bindingId = $id;  }
 }
-

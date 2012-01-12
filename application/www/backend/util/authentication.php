@@ -132,7 +132,7 @@ class Authentication extends Singleton
     }
     
     /**
-     * Checks a password of an user.
+     * Checks a password of a user.
      *
      * @param  $password  The password of the user to check.
      *
@@ -171,6 +171,7 @@ class Authentication extends Singleton
     public function getRank()
     {
         $user = $this->getUser();
+        
         return (isset($user) ? $user->getRank() : User::RANK_NONE);
     }
     
@@ -189,7 +190,7 @@ class Authentication extends Singleton
         // Fetch the currently logged in user.
         $user = $this->getUser();
         
-        // Get its rank, or RANK_NONE if no user is logged in.
+        // Get its rank, or no rank if no user is logged in.
         $rank = $user === null ? User::RANK_NONE : $user->getRank();
         
         // Check permission.
@@ -206,7 +207,7 @@ class Authentication extends Singleton
         // Fetch the currently logged in user.
         $user = $this->getUser();
         
-        // Get its rank, or RANK_NONE if no user is logged in.
+        // Get its rank, or no rank if no user is logged in.
         $rank = $user === null ? User::RANK_NONE : $user->getRank();
         
         return Permission::getPermissionListForRank($rank);
@@ -247,9 +248,9 @@ class Authentication extends Singleton
      */
     public static function assertPermissionTo($action)
     {
-        if(!Authentication::getInstance()->hasPermissionTo($action))
+        if (!Authentication::getInstance()->hasPermissionTo($action))
         {
             throw new AccessDeniedException($action);
         }
-    }    
+    }
 }

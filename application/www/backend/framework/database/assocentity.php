@@ -26,7 +26,7 @@ abstract class AssociativeEntity extends Entity
         
         // Get types and values.
         $types  = $this->getTypes();
-        $values = $this->getValues();
+        $values = $this->getAllValues();
         
         // First do a selection to check whether entry exists (unfortunately PostgreSQL does 
         // not directly support 'INSERT OR UPDATE' syntax).

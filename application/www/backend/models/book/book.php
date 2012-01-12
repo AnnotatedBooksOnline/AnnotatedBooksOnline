@@ -5,14 +5,11 @@ require_once 'framework/database/entity.php';
 require_once 'models/scan/scanlist.php';
 require_once 'models/binding/binding.php';
 
-
 /**
  * Class representing a book entity.
  */
 class Book extends Entity
 {
-
-    
     /** Id of this book. */
     protected $bookId;
     
@@ -40,7 +37,10 @@ class Book extends Entity
     /** Version of the book. */
     protected $printVersion;
     
+    /** First page. */
     protected $firstPage;
+    
+    /** Last page. */
     protected $lastPage;
     
     //protected $bookLanguageList;
@@ -58,30 +58,46 @@ class Book extends Entity
     
             $this->load();
         }
-        
     }
+    
+    /**
+     *
+     * Enter description here ...
+     */
+    /*
+    public function saveDetails() 
+    {
+        // Save the booklanguage list.
+        //$this->bookLanguageList->setValue('bookId', $this->bookId);
+        //$this->bookLanguageList->save();
+    }
+    */
     
     public static function fromBinding($binding)
     {
+        // TODO: Use BookList here.
+        
         $result = Query::select('bookId')
             ->from('Books')
             ->where('bindingId = :binding')
             ->orderBy('firstPage', 'ASC')
             ->execute(array(
-                ':binding' => $binding->getBindingId()
+                'binding' => $binding->getBindingId()
             ));
             
         $books = array();
-        
         foreach($result as $book)
         {
             $books[] = new Book($book->getValue('bookId'));
         }
+        
         return $books;
     }
     
     public static function fromBindingPage($binding, $range)
     {
+        // TODO: Use BookList here.
+        
         if (is_array($range))
         {
             $from = $range[0];
@@ -98,17 +114,17 @@ class Book extends Entity
             ->where('bindingId = :binding', 'lastPage >= :from', 'firstPage <= :to')
             ->orderBy('firstPage', 'ASC')
             ->execute(array(
-                ':binding' => $binding->getBindingId(),
-                ':from' => $from,
-                ':to' => $to
+                'binding' => $binding->getBindingId(),
+                'from'    => $from,
+                'to'      => $to
             ));
-            
-        $books = array();
         
-        foreach($result as $book)
+        $books = array();
+        foreach ($result as $book)
         {
             $books[] = new Book($book->getValue('bookId'));
         }
+        
         return $books;
     }
     
@@ -117,7 +133,7 @@ class Book extends Entity
     *
     * @return  The table name.
     */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'Books';
     }
@@ -127,7 +143,7 @@ class Book extends Entity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('bookId');
     }
@@ -137,7 +153,7 @@ class Book extends Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('title', 'bindingId', 'minYear', 'maxYear',
                      'preciseDate', 'placePublished', 'publisher', 'printVersion',
@@ -149,69 +165,60 @@ class Book extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-                'bookId'           => 'int',
-                'title'            => 'string',
-                'bindingId   '     => 'int',
-                'minYear'          => 'int',
-                'maxYear'          => 'int',
-                'preciseDate'      => 'date',
-                'placePublished'   => 'string',
-                'publisher'        => 'string',
-                'printVersion'     => 'integer',
-                'firstPage'        => 'int',
-                'lastPage'         => 'int'
+            'bookId'         => 'int',
+            'title'          => 'string',
+            'bindingId'      => 'int',
+            'minYear'        => 'int',
+            'maxYear'        => 'int',
+            'preciseDate'    => 'date',
+            'placePublished' => 'string',
+            'publisher'      => 'string',
+            'printVersion'   => 'integer',
+            'firstPage'      => 'int',
+            'lastPage'       => 'int'
         );
     }
     
-    /**
-     *
-     * Enter description here ...
+    /*
+     * Getters and setters.
      */
-    /*public function saveDetails() 
-    {
-        // Save the booklanguage list.
-       // $this->bookLanguageList->setBookId($this->bookId);
-        //$this->bookLanguageList->save();
-    }
- */
     
-    public function getBookId()         { return $this->bookId; }
+    public function getBookId()         { return $this->bookId;    }
     public function setBookId($bookId)  { $this->bookId = $bookId; }
     
-    public function getTitle() { return $this->title; }
+    public function getTitle()       { return $this->title;   }
     public function setTitle($title) { $this->title = $title; }
     
-    public function getBindingId() { return $this->bindingId; }
+    public function getBindingId()           { return $this->bindingId;       }
     public function setBindingId($bindingId) { $this->bindingId = $bindingId; }
     
-    public function getMinYear()       { return $this->minYear; }
+    public function getMinYear()         { return $this->minYear;     }
     public function setMinYear($minYear) { $this->minYear = $minYear; }
     
-    public function getMaxYear()       { return $this->maxYear; }
+    public function getMaxYear()         { return $this->maxYear;     }
     public function setMaxYear($maxYear) { $this->maxYear = $maxYear; }
     
-    public function getPreciseDate()       { return $this->preciseDate; }
+    public function getPreciseDate()             { return $this->preciseDate;         }
     public function setPreciseDate($preciseDate) { $this->preciseDate = $preciseDate; }
     
-    public function getPlacePublished()       { return $this->placePublished; }
+    public function getPlacePublished()                { return $this->placePublished;            }
     public function setPlacePublished($placePublished) { $this->placePublished = $placePublished; }
     
-    public function getPublisher()       { return $this->publisher; }
+    public function getPublisher()           { return $this->publisher;       }
     public function setPublisher($publisher) { $this->publisher = $publisher; }
     
-    public function getPrintVersion()       { return $this->printVersion; }
+    public function getPrintVersion()              { return $this->printVersion;          }
     public function setPrintVersion($printVersion) { $this->printVersion = $printVersion; }
     
-    public function getFirstPage() { return $this->firstPage; }
+    public function getFirstPage()      { return $this->firstPage;  }
     public function setFirstPage($page) { $this->firstPage = $page; }
     
-    public function getLastPage() { return $this->lastPage; }
+    public function getLastPage()      { return $this->lastPage;  }
     public function setLastPage($page) { $this->lastPage = $page; }
     
-    //public function getBookLanguageList() { return $this->bookLanguageList; }
+    //public function getBookLanguageList()                  { return $this->bookLanguageList;              }
     //public function setBookLanguageList($bookLanguageList) { $this->bookLanguageList = $bookLanguageList; }
 }
-

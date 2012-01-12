@@ -1,62 +1,47 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/controller/controller.php';
-require_once 'models/scan/scan.php';
-require_once 'models/upload/upload.php';
+require_once 'controllers/controllerbase.php';
+require_once 'models/scan/scanlist.php';
 require_once 'models/binding/binding.php';
-require_once 'util/authentication.php';
 
 /**
  * Scan controller class.
  */
-class ScanController extends Controller
+class ScanController extends ControllerBase
 {
-    protected function __construct()
-    {
-        ;
-    }
-    
     /**
-     * Loads scan. 
+     * Loads scans.
      */
     public function actionLoad($data)
     {
-        if (isset($data['filters'])
-         && isset($data['filters'][0])
-         && isset($data['filters'][0]['column'])
-         && $data['filters'][0]['column'] == 'bindingId' 
-         && isset($data['filters'][0]['value']))
-        {
-            // Retrieve the binding id from the request
-            $bindingId = self::getInteger($data['filters'][0], 'value', 0);
-            $binding = new Binding($bindingId);
-            
-            $scans = Scan::fromBinding($binding);
-            $scans = array_map(function($scan)
-            {
-                $upload = new Upload($scan->getUploadId());
-                $scan = $scan->getValues(true, false);
-                $scan['filename']= $upload->getFilename();
-                return $scan;
-            }, $scans);
-            
-            return array('records' => $scans, 'total' => count($scans));
-        }
+        // Handle load.
+        return $this->handleLoad($data, 'Scan', 'scanId', array(
+            'scanId',
+            'bindingId',
+            'page',
+            'width',
+            'height',
+            'zoomLevel',
+            //'filename'
+        ));
+        
+        // TODO: Give scan a filename. (Was previously loaded from upload.)
     }
     
     public function actionReorder($data)
     {
-        $scan;
+        // TODO: Data may not actually be an array. Encapsulate and use self::getArray(..).
+        
         foreach ($data as $key => $value) 
         {
             $scan = new Scan($value);
-            $scan->setPage($key+1);
+            $scan->setPage($key + 1);
             $scan->save();
         }
-        $binding=new Binding($scan->getBindingId());
+        
+        $binding = new Binding($scan->getBindingId());
         $binding->setStatus(Binding::STATUS_REORDERED);
         $binding->save();
     }
-    
 }

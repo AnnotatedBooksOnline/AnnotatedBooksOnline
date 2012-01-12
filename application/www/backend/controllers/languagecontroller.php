@@ -1,32 +1,20 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/controller/controller.php';
-require_once 'models/language/language.php';
+require_once 'controllers/controllerbase.php';
+require_once 'models/language/languagelist.php';
 
 /**
  * Language controller class.
  */
-class LanguageController extends Controller
+class LanguageController extends ControllerBase
 {
     /**
-     * Loads language(s).
+     * Loads languages.
      */
     public function actionLoad($data)
     {
-        $languages = Language::getAvailableLanguages();
-        
-        foreach($languages as $lang)
-        {
-            $result[] = $lang->getValues();
-        }
-        
-        return $result;
-        
-        return array(
-            'records' => $languages, 
-            'total'   => $total
-        );
+        // Handle load.
+        return $this->handleLoad($data, 'Language', 'languageId');
     }
 }
-

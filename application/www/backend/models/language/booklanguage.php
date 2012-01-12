@@ -15,23 +15,23 @@ class BookLanguage extends AssociativeEntity
     /** Language. */
     protected $languageId;
    
-    
     /**
      * Constructs a book-language relation.
      *
-     * @param id   $bookId
-     * @param id   $languageId
-     * @param bool $createnew If true, a new relation will be created if the specified one did not 
-     *                        exist yet. If one already exists, it doesn't really matter whether 
-     *                        this is true or false.
+     * @param $bookId
+     * @param $languageId
+     * @param $createNew  If true, a new relation will be created if the specified one did not 
+     *                    exist yet. If one already exists, it doesn't really matter whether 
+     *                    this is true or false.
      */
-    public function __construct($bookId = null, $languageId = null, $createnew = false)
+    public function __construct($bookId = null, $languageId = null, $createNew = false)
     {
-        if ($languageId !== null && $bookId !== null)
+        if (($languageId !== null) && ($bookId !== null))
         {
-            $this->bookId = $bookId;
+            $this->bookId     = $bookId;
             $this->languageId = $languageId;
-            if($createnew)
+            
+            if ($createNew)
             {
                 $this->save();
             }
@@ -60,7 +60,7 @@ class BookLanguage extends AssociativeEntity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'BookLanguages';
     }
@@ -70,7 +70,7 @@ class BookLanguage extends AssociativeEntity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('bookId', 'languageId');
     }
@@ -80,7 +80,7 @@ class BookLanguage extends AssociativeEntity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array();
     }
@@ -90,15 +90,17 @@ class BookLanguage extends AssociativeEntity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-                    'bookId'           => 'int',
-                    'languageId'       => 'int'
+            'bookId'     => 'int',
+            'languageId' => 'int'
         );
     }
-       
-    // Getters and setters.
+    
+    /*
+     * Getters and setters.
+     */
     
     public function getBookId()        { return $this->bookId;    }
     public function setBookId($bookId) { $this->bookId = $bookId; }

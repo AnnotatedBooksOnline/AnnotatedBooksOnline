@@ -47,16 +47,11 @@ class ResultSet implements IteratorAggregate
         return $this->statement->rowCount();
     }
     
-    // TODO MathijsB : Find a good place / name for this method.
-    public function getFirstRow_()
+    public function tryGetFirstRow()
     {
         $row = $this->statement->fetch(PDO::FETCH_ASSOC);
-        if (!$row)
-        {
-            return false;
-        }
         
-        return new ResultSetRow($row);
+        return ($row ? new ResultSetRow($row) : null);
     }
     
     public function getFirstRow()
@@ -73,7 +68,6 @@ class ResultSet implements IteratorAggregate
     
     public function asArrays() 
     {
-        
         $records = array();
         foreach ($this->getIterator() as $row)
         {
@@ -99,6 +93,8 @@ class ResultSetIterator implements Iterator
         $this->rset      = $rset;
         $this->statement = $stat;
         $this->i         = -1;
+        
+        // TODO: This is wrong behaviour: an empty list should also be iterable.
         $this->next();
     }
     

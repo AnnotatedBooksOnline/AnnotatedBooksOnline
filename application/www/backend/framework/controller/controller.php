@@ -84,7 +84,14 @@ abstract class Controller
             else if ($success)
             {
                 // Just show output.
-                echo $output;
+                if (is_string($output))
+                {
+                    echo $output;
+                }
+                else
+                {
+                    var_dump($output);
+                }
             }
             else
             {

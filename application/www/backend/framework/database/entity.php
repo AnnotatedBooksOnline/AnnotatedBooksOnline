@@ -44,7 +44,7 @@ abstract class Entity
         }
         
         // Store result in our members.
-        $values = $resultSet->getFirstRow()->getValues($this->getTypes());
+        $values = $resultSet->getFirstRow()->getValues(static::getTypes());
         foreach ($values as $name => $value)
         {
             $this->{$name} = $value;
@@ -63,8 +63,8 @@ abstract class Entity
             // TODO: Set default columns.
             
             // Get values and types.
-            $values = $this->getValues(false);
-            $types  = $this->getTypes();
+            $values = $this->getAllValues(false);
+            $types  = static::getTypes();
             
             // Get the SQL statement to insert this entity and execute the statement .
             $row = $this->getInsertQuery(true)->execute($values, $types)->getFirstRow();
@@ -79,13 +79,16 @@ abstract class Entity
         else
         {
             // Get values and types.
-            $values = $this->getValues();
-            $types  = $this->getTypes();
+            $values = $this->getAllValues();
+            $types  = static::getTypes();
             
             // Get the SQL statement to update this entity and execute the statement prepared.
             $this->getUpdateQuery()->execute($values, $types);
         }
     }
+    
+    
+    
     
     // TODO: Remove these two, override save if you want to do custom things.
     
@@ -107,6 +110,9 @@ abstract class Entity
         ;
     }
     
+    
+    
+    
     /**
      * Deletes the entity from the database.
      */
@@ -120,6 +126,19 @@ abstract class Entity
         
         // Delete entity.
         $this->getDeleteQuery()->execute($this->getPrimaryKeyValues());
+    }
+    
+    /**
+     * Sets raw values of this entity. Only for use by entity list!
+     *
+     * @param  $values  Array of name-value pairs to set.
+     */
+    public function setRawValues($values)
+    {
+        foreach ($values as $name => $value)
+        {
+            $this->{$name} = $value;
+        }
     }
     
     /**
@@ -147,16 +166,53 @@ abstract class Entity
     }
     
     /**
+     * Gets some values of this entity.
+     *
+     * @param  $values  Array of names to fetch, or null if you want to fetch everything.
+     */
+    public function getValues($columns = null)
+    {
+        // Handle case of all accessable values.
+        $throwException = true;
+        if ($columns === null)
+        {
+            $columns = array_merge(static::getPrimaryKeys(), static::getColumns());
+            
+            $throwException = false;
+        }
+        
+        // Fetch all values.
+        $result = array();
+        foreach ($columns as $column)
+        {            
+            // Get function column.
+            $functionName = 'get' . ucfirst($column);
+            
+            // Check if it exists, and call it.
+            if (method_exists($this, $functionName))
+            {
+                $result[$column] = $this->{$functionName}();
+            }
+            else if ($throwException)
+            {
+                throw new EntityException('entity-column-cannot-be-fetched', $column);
+            }
+        }
+        
+        return $result;
+    }
+    
+    /**
      * Gets all values of this entity.
      *
      * @return  All values of this entity.
      */
-    public function getValues($keys = true, $default = true)
+    protected function getAllValues($keys = true, $default = true)
     {
         $columns = array_merge(
-            $keys ? $this->getPrimaryKeys() : array(),
-            $this->getColumns(),
-            $default ? $this->getDefaultColumns() : array()
+            $keys ? static::getPrimaryKeys() : array(),
+            static::getColumns(),
+            $default ? static::getDefaultColumns() : array()
         );
         
         $values = array();
@@ -168,12 +224,17 @@ abstract class Entity
         return $values;
     }
     
-    protected function getTypes($default = true)
+    /**
+     * Gets all types of this entity.
+     *
+     * @return  All types of this entity, by column name.
+     */
+    public static function getTypes($default = true)
     {
-        $types = $this->getColumnTypes();
+        $types = static::getColumnTypes();
         if ($default)
         {
-            $defaultTypes = $this->getDefaultColumnTypes();
+            $defaultTypes = static::getDefaultColumnTypes();
             if ($defaultTypes !== null)
             {
                 return ($types === null) ? $defaultTypes : array_merge($types, $defaultTypes);
@@ -218,43 +279,6 @@ abstract class Entity
     }
     
     /**
-     * Gets columns that are available in all entities.
-     *
-     * @return  Query to select an entity from the database.
-     */
-    protected function getDefaultColumns()
-    {
-        return array('createdOn', 'changedOn', 'createdBy', 'changedBy');
-    }
-    
-    /**
-     * Gets all the default column types, per column.
-     *
-     * @return  Array of all default column types.
-     */
-    protected function getDefaultColumnTypes()
-    {
-        return array(
-            'createdOn' => 'timestamp',
-            'changedOn' => 'timestamp',
-            'createdBy' => 'string',
-            'changedBy' => 'string'
-        );
-    }
-    
-    /**
-     * Gets all the column types, per column, including primary keys.
-     * 
-     * Note: the type istring denotes a string that should be compared in a case insensitive manner.
-     *
-     * @return  Array of all column types.
-     */
-    protected function getColumnTypes()
-    {
-        return null;
-    }
-    
-    /**
      * Returns the query needed to select this entity from the database.
      *
      * @return  Query to select an entity from the database.
@@ -262,14 +286,14 @@ abstract class Entity
     protected function getSelectQuery()
     {
         // Get keys and table name.
-        $keys      = $this->getPrimaryKeys();
-        $tableName = $this->getTableName();
-        $types = $this->getTypes();
+        $keys      = static::getPrimaryKeys();
+        $tableName = static::getTableName();
+        $types     = static::getTypes();
         
         // Set the conditions of the query.
         $callback = function($value) use ($types)
         {
-            if(isset($types[$value]) && $types[$value] == 'istring')
+            if (isset($types[$value]) && ($types[$value] == 'istring'))
             {
                 // Do a case-insensitive comparision for istrings.
                 return $value . 'ILIKE :' . $value;
@@ -297,8 +321,8 @@ abstract class Entity
     protected function getInsertQuery($returning = false)
     {
         // Get columns and table name.
-        $columns   = array_merge($this->getColumns(), $this->getDefaultColumns());
-        $tableName = $this->getTableName();
+        $columns   = array_merge(static::getColumns(), static::getDefaultColumns());
+        $tableName = static::getTableName();
         
         // Create values.
         $callback = function($value)
@@ -336,14 +360,14 @@ abstract class Entity
     protected function getDeleteQuery()
     {
         // Get keys and table name.
-        $keys      = $this->getPrimaryKeys();
-        $tableName = $this->getTableName();
-        $types = $this->getTypes();
+        $keys      = static::getPrimaryKeys();
+        $tableName = static::getTableName();
+        $types     = static::getTypes();
         
         // Set the conditions of the query.
         $callback = function($value) use ($types)
         {
-            if(isset($types[$value]) && $types[$value] == 'istring')
+            if (isset($types[$value]) && ($types[$value] == 'istring'))
             {
                 // Do a case-insensitive comparision for istrings.
                 return $value . 'ILIKE :' . $value;
@@ -368,10 +392,10 @@ abstract class Entity
     protected function getUpdateQuery()
     {
         // Get columns and table name.
-        $keys      = $this->getPrimaryKeys();
-        $columns   = array_merge($this->getColumns(), $this->getDefaultColumns());
-        $tableName = $this->getTableName();
-        $types = $this->getTypes();
+        $keys      = static::getPrimaryKeys();
+        $columns   = array_merge(static::getColumns(), static::getDefaultColumns());
+        $tableName = static::getTableName();
+        $types     = static::getTypes();
         
         // Set the contents of the query.
         $callback = function($value)
@@ -394,21 +418,58 @@ abstract class Entity
     }
     
     /**
+     * Gets columns that are available in all entities.
+     *
+     * @return  Query to select an entity from the database.
+     */
+    public static function getDefaultColumns()
+    {
+        return array('createdOn', 'changedOn', 'createdBy', 'changedBy');
+    }
+    
+    /**
+     * Gets all the default column types, per column.
+     *
+     * @return  Array of all default column types.
+     */
+    public static function getDefaultColumnTypes()
+    {
+        return array(
+            'createdOn' => 'timestamp',
+            'changedOn' => 'timestamp',
+            'createdBy' => 'string',
+            'changedBy' => 'string'
+        );
+    }
+    
+    /**
+     * Gets all the column types, per column, including primary keys.
+     * 
+     * The istring type denotes a string that should be compared in a case insensitive manner.
+     *
+     * @return  Array of all column types.
+     */
+    public static function getColumnTypes()
+    {
+        return null;
+    }
+    
+    /**
      * Gets the table name.
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         throw new EntityException('entity-function-not-implemented');
     }
     
     /**
-     * Gets the primary key.
+     * Gets the primary keys.
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         throw new EntityException('entity-function-not-implemented');
     }
@@ -418,9 +479,8 @@ abstract class Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         throw new EntityException('entity-function-not-implemented');
     }
 }
-

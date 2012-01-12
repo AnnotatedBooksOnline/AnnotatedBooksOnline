@@ -11,10 +11,9 @@ require_once 'models/library/library.php';
 class Binding extends Entity
 {
     /** Binding status constants. */
-    const STATUS_UPLOADED = 0,
+    const STATUS_UPLOADED  = 0,
           STATUS_REORDERED = 1,
-          STATUS_SELECTED = 2;
-    
+          STATUS_SELECTED  = 2;
     
     /** Id of this binding. */
     protected $bindingId;
@@ -30,7 +29,6 @@ class Binding extends Entity
     
     /** Binding status */
     protected $status;
-    
     
     /** Books for this binding. */
     protected $bookList;
@@ -57,7 +55,27 @@ class Binding extends Entity
         
         $this->bookList = new BookList();
         $this->scanList = new ScanList();
+    }
+    
+    // TODO: Remove comments, enter description.
+    
+    /**
+     * 
+     * Enter description here ...
+     */
+    public function saveDetails()
+    {
+        // Save the book list.
+        $this->bookList->setValue('bindingId', $this->bindingId);
+        $this->bookList->save();
         
+        // Save the scan list.
+        $this->scanList->setValue('bindingId', $this->bindingId);
+        $this->scanList->save();
+        
+        // Save the language list.
+        //$this->bindingLanguageList->setValue('bindingId', $this->bindingId);
+        //$this->bindingLanguageList->save();
     }
     
     /**
@@ -65,7 +83,7 @@ class Binding extends Entity
      *
      * @return  The table name.
      */
-    protected function getTableName()
+    public static function getTableName()
     {
         return 'Bindings';
     }
@@ -75,7 +93,7 @@ class Binding extends Entity
      *
      * @return  Array of all primary keys.
      */
-    protected function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('bindingId');
     }
@@ -85,7 +103,7 @@ class Binding extends Entity
      *
      * @return  Array of all columns, except primary keys.
      */
-    protected function getColumns()
+    public static function getColumns()
     {
         return array('libraryId', 'signature', 'summary', 'status');
     }
@@ -95,58 +113,42 @@ class Binding extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
-                    'bindingId'        => 'int',
-                    'libraryId'        => 'int',
-                    'signature'        => 'string',
-                    'summary'          => 'string',
-                    'status'           => 'int'
+            'bindingId' => 'int',
+            'libraryId' => 'int',
+            'signature' => 'string',
+            'summary'   => 'string',
+            'status'    => 'int',
         );
     }
     
-    /**
-     * 
-     * Enter description here ...
+    /*
+     * Getters and setters.
      */
-    public function saveDetails() 
-    {
-        // Save the book list.
-        $this->bookList->setBindingId($this->bindingId);
-        $this->bookList->save();
-        
-        // Save the scan list.
-        $this->scanList->setBindingId($this->bindingId);
-        $this->scanList->save();
-        
-        // Save the language list.
-        //$this->bindingLanguageList->setBindingId($this->bindingId);
-        //$this->bindingLanguageList->save();
-    }
     
-    public function getBindingId()         { return $this->bindingId; }
-    public function setBindingId($bindingId)     { $this->bindingId = $bindingId; }
+    public function getBindingId()           { return $this->bindingId;       }
+    public function setBindingId($bindingId) { $this->bindingId = $bindingId; }
     
-    public function getLibraryId() { return $this->libraryId; }
+    public function getLibraryId()           { return $this->libraryId;       }
     public function setLibraryId($libraryId) { $this->libraryId = $libraryId; }
     
-    public function getSignature() { return $this->signature; }
+    public function getSignature()           { return $this->signature;       }
     public function setSignature($signature) { $this->signature = $signature; }
     
-    public function getSummary() { return $this->summary; }
+    public function getSummary()         { return $this->summary;     }
     public function setSummary($summary) { $this->summary = $summary; }
 
-    public function getBookList()       { return $this->bookList; }
+    public function getBookList()          { return $this->bookList;      }
     public function setBookList($bookList) { $this->bookList = $bookList; }
     
-    public function getScanList() { return $this->scanList; }
+    public function getScanList()          { return $this->scanList;      }
     public function setScanList($scanList) { $this->scanList = $scanList; }
 
     public function getStatus()        { return $this->status;    }
     public function setStatus($status) { $this->status = $status; }
     
-    //public function getBindingLanguageList() { return $this->bindingLanguageList; }
+    //public function getBindingLanguageList()                     { return $this->bindingLanguageList;                 }
     //public function setBindingLanguageList($bindingLanguageList) { $this->bindingLanguageList = $bindingLanguageList; }
 }
-

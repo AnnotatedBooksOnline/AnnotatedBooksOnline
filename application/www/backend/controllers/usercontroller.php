@@ -1,44 +1,22 @@
 <?php
 //[[GPL]]
 
-require_once 'framework/controller/controller.php';
+require_once 'controllers/controllerbase.php';
 require_once 'util/authentication.php';
 require_once 'util/mailer.php';
-require_once 'models/user/usersearchlist.php';
+require_once 'models/user/userlist.php';
 require_once 'models/user/pendinguser.php';
 require_once 'models/note/note.php';
 
 // Exceptions.
 class RegistrationFailedException extends ExceptionBase { }
-class PasswordIncorrectException extends ExceptionBase { }
+class PasswordIncorrectException  extends ExceptionBase { }
 
 /**
  * User controller class.
  */
-class UserController extends Controller
+class UserController extends ControllerBase
 {
-    /*
-    
-    Load:
-        - id
-        - page
-        - offset
-        - limit
-        - sorters: [ {column, direction}, {column, direction}, .. ]
-        - groupers: ?
-        - filters: ?
-    
-    Save:
-        - record: {id, ..}
-    
-    Create:
-        - record: {id, ..}
-    
-    Delete:
-        - record: {id, ..}
-    
-    */
-    
     /**
      * Loads user(s).
      */
@@ -47,87 +25,30 @@ class UserController extends Controller
         // Assert that the user is authenticated. 
         Authentication::assertPermissionTo('view-users-part');
         
-        // Get the array with permissions to see data.
-        $permissionTo = $this->arrayWithPermissions();
+        // Handle load.
+        $result = $this->handleLoad($data, 'User', 'userId');
         
-        // Determine the total number of users.
-        $total = UserSearchList::findUserCount();
+        // Get columns that users may see.
+        $columns     = array_flip($this->getAccessableColumns());
+        $userColumns = array_flip($this->getAccessableColumns(true));
         
-        // Retrieve the user id of a specific user from the request.
-        $id = self::getInteger($data, 'id', 0);
+        // Get own user id.
+        $userId = Authentication::getInstance()->getUserId();
         
-        // Retrieve the limit and offset for the search from the request.
-        $limit  = self::getInteger($data, 'limit',  $total, true, 0, $total);
-        $offset = self::getInteger($data, 'offset', 0,      true, 0, $total);
-        
-        // Determine if a specific user was requested. If this is the case retrieve this
-        // user from the database and return.
-        if ($id)
+        // Remove columns that user does not have access to.
+        foreach ($result['records'] as &$record)
         {
-            $user = new User($id);
-            
-            // TODO: Do a security check on id!
-            $userValues = array_intersect_key($user->getValues(), array_flip($permissionTo));
-            
-            return array('records' => $userValues, 'total' => 1);
-        }
-        
-        // TODO: Do a security check on user kind.
-        
-        // Retrieve the search filters from the request.
-        $arguments = array();
-        $filters = self::getArray($data, 'filters');
-        if (isset($data['filters']))
-        {
-            $filterProperties = array();
-            foreach ($filters as $filter)
+            if ($record['userId'] === $userId)
             {
-                $column = self::getString($filter, 'column');
-                $value  = self::getString($filter, 'value');
-                if ($column && $value)
-                {
-                    $arguments[$column] = $value;
-                }
+                $record = array_intersect_key($record, $userColumns);
+            }
+            else
+            {
+                $record = array_intersect_key($record, $columns);
             }
         }
         
-        // Retrieve the sortings from the request.
-        $order = array();
-        $sorters = self::getArray($data, 'sorters');
-        if ($sorters)
-        {
-            foreach ($sorters as $sorting)
-            {
-                $column    = self::getString($sorting, 'column');
-                $direction = self::getString($sorting, 'direction');
-                if ($column && $direction)
-                {
-                    $order[$column] = $direction;
-                }
-            }
-        }
-        
-        // Query the Users table.
-        $result = UserSearchList::findUsers($arguments, $offset, $limit, $order)->asArrays();
-        
-        foreach ($result as $array)
-        {
-            foreach ($array as $key => $value)
-            {
-                if (!in_array($key, $permissionTo))
-                {
-                    $value = NULL;
-                }
-            }
-        
-            $array = array_filter($array);
-        }
-        
-        // Return the results.
-        return array(
-            'records' => $result, // TODO: Do not return everything.
-            'total'   => $total
-        );
+        return $result;
     }
     
     /**
@@ -135,11 +56,10 @@ class UserController extends Controller
      */
     public function actionSave($data)
     {
-        // TODO: proper permission
+        // TODO: Proper permissions.
         Authentication::assertLoggedOn();
         
-        // TODO: Handle changing of passwords.
-        
+        // Fetch values.
         $record = self::getArray($data, 'record');
         
         $userId      = self::getInteger($record, 'userId', 0);
@@ -154,8 +74,10 @@ class UserController extends Controller
         $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
         $website     = self::getString($record, 'website', '', true, 255);
         
-        //Check if a new password is entered, in which case we need to check if the old password
-        //is correct.
+        // TODO: Check everything, as in save.
+        
+        // Check if a new password is entered, in which case we need to check if the old password
+        // is correct.
         if (isset($newPassword) && strlen($newPassword) >= 8)
         {
             if (!Authentication::getInstance()->checkPassword($oldPassword))
@@ -198,8 +120,8 @@ class UserController extends Controller
         $user->save();
         
         return array(
-            'records' => $user->getValues(), // TODO: Not all of them.
-            'total'   => 1,
+            'records' => $user->getValues($this->getAccessableColumns(true)),
+            'total'   => 1
         );
     }
     
@@ -245,41 +167,40 @@ class UserController extends Controller
         {
             throw new RegistrationFailedException('registration-failed');
         }
+        
+        // TODO: Check lengths and website.
      
         // Create user and pendinguser entries in a transaction.
         Database::getInstance()->doTransaction(
         function() use ($values)
         {  
             // Check whether automatic user acceptance is turned on.
-            $autoaccept = Setting::getSetting('auto-user-acceptance');
+            $autoAccept = Setting::getSetting('auto-user-acceptance');
             
             // Create user entry.
             $user = new User();
             $user->setValues($values);
             $user->save();
             
-            // Create note entry.
-            $q=Query::insert('Notes', array('userId'    => ':userId',
-                                           'text'   => ':text'))->execute(array(':userId' => $user->getUserId(), ':text' => ''));
-            
             // Now create a pending user.
-           $puser = PendingUser::fromUser($user);
-           if($autoaccept)
-           {
-               // Automatically accept user.
-               $puser->setAccepted(true);
-           }
-           $puser->save();
+            $pendingUser = PendingUser::fromUser($user);
+            if ($autoAccept)
+            {
+                // Automatically accept user.
+                $puser->setAccepted(true);
+            }
+            
+            $pendingUser->save();
            
-           if($autoaccept)
-           {
-               // If automatically accepted, send an activation e-mail.
-               // This is intentionally part of the transaction.
-               Mailer::sendActivationMail($puser);
-           }
+            if ($autoAccept)
+            {
+                // If automatically accepted, send an activation e-mail.
+                // This is intentionally part of the transaction.
+                Mailer::sendActivationMail($pendingUser);
+            }
         });
         
-        return array('records' => $values); 
+        return array('records' => $values, 'total' => 1); 
     }
     
     /**
@@ -288,13 +209,11 @@ class UserController extends Controller
     public function actionUsernameExists($data)
     {
         // Fetch username.
-        $username = strtolower(self::getString($data, 'username', '', true, 30));
+        $username = self::getString($data, 'username', '', true, 30);
         
         // Return true if there is atleast one user with the specified username or email.
-        return ((bool) UserSearchList::findUsers(array('username' => $username), null, null, null)->
-            getAmount())
-            || ((bool) UserSearchList::findUsers(array('email' => $username), null, null, null)->
-            getAmount());
+        return ((bool) UserList::find(array('username' => $username))->getAmount())
+            || ((bool) UserList::find(array('email' => $username))->getAmount());
     }
     
     /**
@@ -340,10 +259,14 @@ class UserController extends Controller
         
         // Fetch user.
         $username = self::getString($data, 'username', '', true, 30);
-        $user = User::findUserWithName($username);
+        $user = User::fromUsername($username);
+        if ($user === null)
+        {
+            throw new ControllerException('user-does-not-exist', $username);
+        }
         
-        // Safely delete the user.
-        $user->safeDelete();
+        // Delete the user.
+        $user->delete();
     }
     
     /**
@@ -358,9 +281,9 @@ class UserController extends Controller
         $username = self::getString($data, 'username', '', true, 30);
         
         // Sets the ban flag for this user.
-        $query = Query::update('Users', array('banned' => true))->where('username = :username');
-        
-        $query->execute(array('username' => $username));
+        Query::update('Users', array('banned' => true))
+            ->where('username = :username')
+            ->execute(array('username' => $username));
     }
     
     /**
@@ -375,9 +298,9 @@ class UserController extends Controller
         $username = self::getString($data, 'username', '', true, 30);
     
         // Sets the ban flag for this user.
-        $query = Query::update('Users', array('banned' => false))->where('username = :username');
-    
-        $query->execute(array('username' => $username));
+        Query::update('Users', array('banned' => false))
+            ->where('username = :username')
+            ->execute(array('username' => $username));
     }
     
     /**
@@ -392,7 +315,7 @@ class UserController extends Controller
         // Retrieve the corresponding user.
         $email = self::getString($data, 'email');
         $user = User::fromEmailAddress($email);
-        if($user == null)
+        if ($user == null)
         {
             throw new UserNotFoundException('email-not-found', $email);
         }
@@ -427,7 +350,12 @@ class UserController extends Controller
         $newrank = self::getInteger($data, 'role');
         
         // Change the user rank.
-        $user = User::findUserWithName($username);
+        $user = User::fromUsername($username);
+        if ($user === null)
+        {
+            throw new ControllerException('user-does-not-exist', $username);
+        }
+        
         $user->setRank($newrank);
         $user->save();
     }
@@ -447,7 +375,7 @@ class UserController extends Controller
         
         Log::debug('!!!!' . strlen($token) . '!!' . strlen($newpass));
         
-        if($token == null || strlen($token) != 32 || strlen($newpass) == 0)
+        if ($token === null || strlen($token) != 32 || strlen($newpass) == 0)
         {
             Log::debug('Illegal change password token or no password.');
             return false;
@@ -462,8 +390,8 @@ class UserController extends Controller
                          ->from('Users')
                          ->where('passwordRestoreToken = :token')
                          ->execute(array('token' => $token))
-                         ->getFirstRow_();
-            if(!$row)
+                         ->tryGetFirstRow();
+            if ($row !== null)
             {
                 // No user associated with token.
                 Log::debug('Token does not correspond to a user.');
@@ -483,24 +411,28 @@ class UserController extends Controller
     }
     
     /**
-     * Gets the array with permissions to see data for the user logged in.
+     * Gets the array with columns that a logged on user may see.
+     * 
+     * @param $loggedOnUser  Boolean whether to get columns that the currently
+     *                       logged on user may see.
      *
-     * @return The array with values for each key of an user which this user has permission to see.
+     * @return The array of columns that a user may see.
      */
-    private function arrayWithPermissions()
+    private function getAccessableColumns($loggedOnUser = false)
     {
-        if (Authentication::getInstance()->hasPermissionTo('view-users-complete'))
+        if ($loggedOnUser || 
+            Authentication::getInstance()->hasPermissionTo('view-users-complete'))
         {
             return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
                          'occupation', 'website', 'homeAddress', 'active', 'banned', 'rank');
         }
         else if (Authentication::getInstance()->hasPermissionTo('view-users-part'))
         {
-            return array('username', 'email', 'firstName', 'lastName');
+            return array('userId', 'username', 'email', 'firstName', 'lastName');
         }
         else
         {
-            return false;
+            return array();
         }
     }
 }

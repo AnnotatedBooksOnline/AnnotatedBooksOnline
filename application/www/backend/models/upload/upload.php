@@ -159,7 +159,7 @@ class Upload extends Entity
     /**
      * Get the name of the corresponding table.
      */
-    public function getTableName()
+    public static function getTableName()
     {
         return 'Uploads';
     }
@@ -167,7 +167,7 @@ class Upload extends Entity
     /**
      * Get an array with the primary keys.
      */
-    public function getPrimaryKeys()
+    public static function getPrimaryKeys()
     {
         return array('uploadId');
     }
@@ -175,7 +175,7 @@ class Upload extends Entity
     /**
      * Gets all the columns that are not primary keys as an array.
      */
-    public function getColumns()
+    public static function getColumns()
     {
         return array('userId', 'token', 'filename', 'size', 'timestamp', 'status');
     }
@@ -185,7 +185,7 @@ class Upload extends Entity
      *
      * @return  Array of all column types.
      */
-    protected function getColumnTypes()
+    public static function getColumnTypes()
     {
         return array(
             'uploadId'  => 'int',
