@@ -24,6 +24,7 @@ Annotations.prototype.eventDispatcher;
 Annotations.prototype.mode;
 Annotations.prototype.enabled;
 Annotations.prototype.loading;
+Annotations.prototype.dirty;
 
 Annotations.prototype.viewer;
 Annotations.prototype.viewport;
@@ -46,6 +47,7 @@ Annotations.prototype.constructor = function(viewer)
     this.enabled  = true;
     this.loading  = false;
     this.mode     = 'view';
+    this.dirty    = false;
     
     this.annotations = [];
     
@@ -60,6 +62,11 @@ Annotations.prototype.constructor = function(viewer)
 Annotations.prototype.getEventDispatcher = function()
 {
     return this.eventDispatcher;
+}
+
+Annotations.prototype.hasChanges = function()
+{
+    return this.dirty;
 }
 
 Annotations.prototype.getAnnotation = function(index)
@@ -205,6 +212,9 @@ Annotations.prototype.clear = function()
     // All colors are available again.
     this.availableColors = this.allColors.slice();
     
+    // Clear store.
+    this.store.removeAll();
+    
     // Trigger clear.
     this.eventDispatcher.trigger('clear', this);
 }
@@ -212,18 +222,36 @@ Annotations.prototype.clear = function()
 // Loads annotations.
 Annotations.prototype.load = function()
 {
-    this.clear();
-    
+    // Load store.
     this.store.filter({property: 'scanId', value: this.scanId});
     this.store.load();
+}
+
+// Resets annotations.
+Annotations.prototype.reset = function()
+{
+    // Reload annotations.
+    this.load();
+    
+    // Trigger reset.
+    this.eventDispatcher.trigger('reset', this);
 }
 
 // Saves annotations.
 Annotations.prototype.save = function()
 {
-    // TODO: Save store.
+    // Sync store.
+    this.store.sync();
     
+    // Get all annotations.
+    var annotations = [];
+    
+    
+    // TODO: Save store: does polygon get transmitted?
     // NOTE: this.store.sync() might work, but we want revisions, so we may want to do this ourselves.
+    
+    
+    // TODO: Move save below to sync event.
     
     // Trigger save.
     this.eventDispatcher.trigger('save', this);
@@ -234,6 +262,12 @@ Annotations.prototype.setMode = function(mode)
 {
     // Check existing mode.
     if (mode === this.mode)
+    {
+        return;
+    }
+    
+    // Check whether logged on. If not, mode must be view.
+    if ((mode !== 'view') && !Authentication.getInstance().isLoggedOn())
     {
         return;
     }
@@ -446,11 +480,23 @@ Annotations.prototype.onStoreDataChanged = function(models)
     // Yup, datachanged event goes off before load event.
     if (this.loading)
     {
-        // Clear existing annotations.
-        this.clear();
+        // Remove all polygons.
+        this.overlay.clear();
+        this.annotations = [];
+        
+        // All colors are available again.
+        this.availableColors = this.allColors.slice();
         
         // Add annotations.
         this.onStoreAdd(models);
+    }
+    else
+    {
+        // Set us dirty.
+        this.dirty = true;
+        
+        // Trigger change.
+        this.eventDispatcher.trigger('change', this);
     }
 }
 
@@ -458,6 +504,9 @@ Annotations.prototype.onStoreLoad = function(models, success)
 {
     // We have stopped loading.
     this.loading = false;
+    
+    // Reset dirty marker.
+    this.dirty = false;
     
     // TODO: What about success?
     

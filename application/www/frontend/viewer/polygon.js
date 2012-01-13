@@ -513,6 +513,11 @@ Polygon.prototype.addCorner = function(vertex, edgePosition)
         this.corners.push(corner);
     }
     
+    if (!this.visible || !this.cornersVisible)
+    {
+        corner.hide(true);
+    }
+    
     return corner;
 }
 

@@ -27,6 +27,7 @@ Ext.define('Ext.ux.ViewerPanel', {
             region: 'center',
             xtype: 'viewportpanel',
             document: _this.binding.getDocument(0),
+            title: escape(_this.binding.getModel().get('signature')),
             cls: 'viewport-panel',
             tbar: [{
                 xtype: 'slider',
@@ -244,8 +245,8 @@ Ext.define('Ext.ux.ViewerPanel', {
             name: 'west-region',
             split: true,
             collapsible: true,
-            width: 190,
-            minWidth: 190,
+            width: 200,
+            minWidth: 200,
             layout: 'fit',
             title: 'Information'
         };
@@ -276,7 +277,11 @@ Ext.define('Ext.ux.ViewerPanel', {
     {
         // Set members.
         this.eventDispatcher = new EventDispatcher();
-        this.tool            = 'drag';
+        this.tool            = 'view';
+        this.toolsVisible    = false;
+        
+        // Set tool visibility.
+        this.setToolsVisibility();
         
         // Set page number.
         if (!this.pageNumber)
@@ -309,34 +314,12 @@ Ext.define('Ext.ux.ViewerPanel', {
         var eventDispatcher = this.viewport.getEventDispatcher();
         eventDispatcher.bind('change', this, this.afterViewportChange);
         
+        // Handle authentication changes.
+        Authentication.getInstance().getEventDispatcher().bind('change', this, this.onAuthenticationChange);
+        
         // Add information (west) and workspace (east) regions, as they rely on the data above.
         this.down('[name=west-region]').add({
-            // TODO: Move this to informationpanel.
-            
-            border: false,
-            layout: {
-                type: 'accordion',
-                multi: 'true'
-            },
-            items: [{
-                xtype: 'informationpanel',
-                title: 'Binding information',
-                collapsed: false
-            },{
-                xtype: 'navigationpanel',
-                cls: 'navigation-panel',
-                collapsed: false,
-                book: this.binding // TODO: Binding.
-             },{
-                xtype: 'referencespanel',
-                title: 'References',
-                cls: 'references-panel',
-                collapsed: false,
-                binding: this.binding.getModel(),
-                page: this.pageNumber,
-                viewer: this
-            }],
-            
+            xtype: 'informationpanel',
             viewer: this
         });
         
@@ -362,6 +345,43 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.skipSliderOnChange = true;
         this.slider.setValue(sliderWidth, false);
         this.skipSliderOnChange = false;
+    },
+    
+    onAuthenticationChange: function(event, authentication)
+    {
+        var loggedOn = authentication.isLoggedOn();
+        
+        // Set tools visibility.
+        this.setToolsVisibility();
+    },
+    
+    setToolsVisibility: function()
+    {
+        // Check whether tools are visible.
+        var loggedOn = Authentication.getInstance().isLoggedOn();
+        var visible  = this.toolsVisible && loggedOn;
+        
+        // Set icon states.
+        var tools = ['view', 'polygon', 'rectangle', 'vertex', 'addvertex', 'erasevertex', 'erase'];
+        for (var i = tools.length - 1; i >= 0; --i)
+        {
+            var toolButton = this.down('[name=' + tools[i] + '-tool]');
+            
+            if (visible)
+            {
+                toolButton.show();
+            }
+            else
+            {
+                toolButton.hide();
+            }
+        }
+        
+        // Set view tool if tools are not visible.
+        if (!visible && (this.tool !== 'view'))
+        {
+            this.setTool('view');
+        }
     },
     
     /*
@@ -477,6 +497,20 @@ Ext.define('Ext.ux.ViewerPanel', {
         
         // Do tool actions.
         this.annotations.setMode(tool);
+    },
+    
+    showTools: function()
+    {
+        this.toolsVisible = true;
+        
+        this.setToolsVisibility();
+    },
+    
+    hideTools: function()
+    {
+        this.toolsVisible = false;
+        
+        this.setToolsVisibility();
     },
     
     statics: {

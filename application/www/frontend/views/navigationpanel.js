@@ -8,19 +8,21 @@ Ext.define('Ext.ux.ThumbnailView', {
     
     initComponent: function()
     {
+        this.binding = this.viewer.getBinding();
+        
         var fields = [];
-        /*for (var i = 0; i < this.binding.getScans().length; i++)
+        for (var i = 0; i < this.binding.getScans().length; i++)
         {
-            var document = this.binding.getScans()[i];
+            var scan = this.binding.getScans()[i];
             
-            //fields[i] = ['tiles/' + document.scanId + '/tile_0_0_0.jpg',
-            fields[i] = ['tiles/thumbnails/' + document.scanId + '.jpg',
+            var thumbnail = 'tiles/' + scan.get('scanId') + '/tile_0_0_0.jpg';
+            //var thumbnail = 'tiles/thumbnails/' + scan.get('scanId') + '.jpg';
+            
+            //fields[i] = [,
+            fields[i] = [thumbnail,
                          i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : '',
                          i];
-        }*/
-        fields[0] = ['tiles/thumbnails/WRONG.jpg',
-                         i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : '',
-                         i];
+        }
         
         // TODO: Use page store.
         var store = Ext.create('Ext.data.ArrayStore', {
@@ -49,9 +51,9 @@ Ext.define('Ext.ux.ThumbnailView', {
             listeners: {
                 itemclick: function(view, record)
                 {
-                    var page = record.get('page');
+                    var page = record.get('page'); // TODO: Not page, but index?
                     
-                    this.up('navigationpanel').gotoPage(page);
+                    this.viewer.gotoPage(page);
                 }
             }
         };
@@ -127,10 +129,11 @@ Ext.define('Ext.ux.NavigationPanel', {
     initComponent: function()
     {
         var defConfig = {
+            border: false,
             title: 'Navigation',
             items: [{
                 xtype: 'thumbnailview',
-                book: this.book
+                viewer: this.viewer
             }]
         };
         
@@ -142,30 +145,5 @@ Ext.define('Ext.ux.NavigationPanel', {
     afterRender: function()
     {
         this.callParent();
-        
-        if (this.book !== undefined)
-        {
-            this.setBook(this.book);
-        }
-    },
-    
-    setBook: function(book)
-    {
-        //TODO: set book & document
-    },
-    
-    gotoPage: function(number)
-    {
-        this.up('viewerpanel').gotoPage(number);
-    },
-    
-    setPage: function(number)
-    {
-        this.down('thumbnailview').changeIndex(this.currentPage(), number);
-    },
-    
-    currentPage: function()
-    {
-        return this.up('viewerpanel').getPage();
     }
 });

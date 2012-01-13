@@ -1,26 +1,32 @@
 /*
- * Information panel class.
+ * Binding information panel class.
  */
 
-Ext.define('Ext.ux.InformationPanel', {
+Ext.define('Ext.ux.BindingInformationPanel', {
     extend: 'Ext.grid.Panel',
-    alias : 'widget.informationpanel',
-
+    alias: 'widget.bindinginformationpanel',
+    
     initComponent: function()
     {
-        this.store = {
-            fields: ['name', 'value'],
-            data: [
-                {name: 'Author', value: 'Leonardo da Vinci'},
-                {name: 'Year',   value: '1497'}
+        var defConfig = {
+            border: false,
+            title: 'Binding information',
+            store: {
+                fields: ['name', 'value'],
+                data: [
+                    {name: 'Author', value: 'Leonardo da Vinci'},
+                    {name: 'Year',   value: '1497'}
+                ]
+            },
+            
+            columns: [
+                {header: 'Name',  dataIndex: 'name',  flex: 1},
+                {header: 'Value', dataIndex: 'value', flex: 1}
             ]
         };
-
-        this.columns = [
-            {header: 'Name',  dataIndex: 'name',  flex: 1},
-            {header: 'Value', dataIndex: 'value', flex: 1}
-        ];
-
+        
+        Ext.apply(this, defConfig);
+        
         this.callParent();
     },
     
@@ -29,10 +35,52 @@ Ext.define('Ext.ux.InformationPanel', {
         this.callParent();
         
         //TODO: set document
-    },
+    }
+});
+
+/*
+ * Information panel class.
+ */
+
+Ext.define('Ext.ux.InformationPanel', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.informationpanel',
     
-    setDocument: function(document)
+    initComponent: function()
     {
-        //TODO: set document
+        var defConfig = {
+            border: false,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            items: [{
+                xtype: 'bindinginformationpanel',
+                //collapsed: false,
+                collapsible: true,
+                viewer: this.viewer,
+                //height: 200,
+                flex: 1
+            },{
+                xtype: 'navigationpanel',
+                //collapsed: false,
+                collapsible: true,
+                viewer: this.viewer,
+                //height: '60%'
+                flex: 3
+             },{
+                xtype: 'referencespanel',
+                title: 'References',
+                collapsed: true,
+                collapsible: true,
+                viewer: this.viewer,
+                //height: '20%'
+                flex: 1
+            }],
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
     }
 });

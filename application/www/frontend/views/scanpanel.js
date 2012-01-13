@@ -202,10 +202,10 @@ Ext.define('Ext.ux.UploadGrid', {
         }
     },
     
-    renderProgressBar: function(value, metaData, record)
+    renderProgressBar: function(value, metaData, model)
     {
-        // Get component id.
-        var id = record.get('id');
+        // Get model id.
+        var id = model.get('id');
         
         // Render progressbar delayed.
         var _this = this;
@@ -231,7 +231,7 @@ Ext.define('Ext.ux.UploadGrid', {
                 }
                 catch (e)
                 {
-                    // Record might already have been removed/replaced.
+                    // Model might already have been removed/replaced.
                 }
             }, 1);
         

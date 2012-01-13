@@ -930,6 +930,7 @@ Ext.define('Ext.ux.SearchPanel', {
             region: 'east',
             xtype: 'panel',
             name: 'eastregion',
+            title: 'Workspace',
             split: true,
             collapsible: true,
             collapsed: false,

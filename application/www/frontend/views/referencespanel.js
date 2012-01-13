@@ -1,114 +1,146 @@
-
-//Override basic Extjs functionality in order to enable changing labels
-//during runtime.
-Ext.override(Ext.form.Field, {setFieldLabel : function(label) 
+// Override basic Extjs functionality in order to enable changing labels
+// during runtime.
+Ext.override(Ext.form.Field, {
+    setFieldLabel: function(label)
+    {
+        if (this.rendered)
         {
-            if (this.rendered) Ext.get(this.labelEl.id).update(label);
-            this.fieldLabel = label;
+            Ext.get(this.labelEl.id).update(label);
         }
-});  
+        
+        this.fieldLabel = label;
+    }
+});
 
 /*
  * References panel class.
  */
+
 Ext.define('Ext.ux.ReferencesPanel', {
     extend: 'Ext.panel.Panel',
-    alias : 'widget.referencespanel',
+    alias: 'widget.referencespanel',
     
     initComponent: function()
     {
+        this.bindingModel = this.viewer.getBinding().getModel();
+        
+        this.urlPrefix = location.protocol + '//'
+                       + location.hostname + location.pathname
+                       +'#binding-' + this.bindingModel.get('bindingId');
+        
         var _this = this;
-        var beginurl=location.protocol+'//'+location.hostname+location.pathname+'#binding-'+this.binding.get('bindingId');
         var defConfig = {
             border: false,
-            flex: 0,
-            height: 600,
             bodyPadding: 10,
             layout: 'anchor',
             items: [{
                 xtype: 'textfield',
-                name: 'bindingLink',
-                fieldLabel: 'Link to this binding<br>('+this.binding.get('signature')+
-                                                   ', '+this.binding.get('library').libraryName+')',
+                name: 'binding-link',
                 labelAlign: 'top',
-                readOnly : true,
-                labelStyle: 'white-space:nowrap',
-                value: beginurl,
-                size:50,
+                readOnly: true,
+                fieldLabel: '...',
+                labelStyle: 'white-space: nowrap',
+                size: 50,
                 anchor: '100%'
             },{
                 xtype: 'button',
-                name: 'selectBinding',
                 text: 'Select',
                 style: 'margin-bottom: 5px',
                 handler: function()
-                    {
-                        this.up('referencespanel').select('bindingLink');
-                    }
+                {
+                    _this.select('binding-link');
+                }
             },{
                 xtype: 'textfield',
-                name: 'bookLink',
-                id: 'bookLink',
-                fieldLabel: 'Link to this book<br>('+')',
+                name: 'book-link',
                 labelAlign: 'top',
-                readOnly : true,
-                labelStyle: 'white-space:nowrap',
-                size:50,
+                readOnly: true,
+                fieldLabel: '...',
+                labelStyle: 'white-space: nowrap',
+                size: 50,
                 anchor: '100%'
             },{
                 xtype: 'button',
-                name: 'selectBook',
                 text: 'Select',
                 style: 'margin-bottom: 5px',
                 handler: function()
-                    {
-                        this.up('referencespanel').select('bookLink');
-                    }
+                {
+                    _this.select('book-link');
+                }
             },{
                 xtype: 'textfield',
-                name: 'pageLink',
+                name: 'page-link',
                 fieldLabel: 'Link to this page',
                 labelAlign: 'top',
-                readOnly : true,
-                labelStyle: 'white-space:nowrap',
-                size:50,
+                readOnly: true,
+                labelStyle: 'white-space: nowrap',
+                size: 50,
                 anchor: '100%'
             },{
                 xtype: 'button',
-                name: 'selectPage',
                 text: 'Select',
                 style: 'margin-bottom: 5px',
                 handler: function()
-                    {
-                        this.up('referencespanel').select('pageLink');
-                    }
+                {
+                    _this.select('page-link');
+                }
             }]
         };
+        
         Ext.apply(this, defConfig);
         
-        // Watch for page changes and update fields accordingly.
-        //TO DO: change label based on current book.
-        this.viewer.getEventDispatcher().bind('pagechange', this,
-        function()
-        {
-            var book=this.viewer.getBook();
-            if (book===undefined)
-                {
-                    this.down('[name=bookLink]').setValue('Not a book.');
-                    this.down('[name=bookLink]').setFieldLabel('Link to this book<br>(None)');
-                }
-            else
-                {
-                    this.down('[name=bookLink]').setValue(beginurl+'-'+book.get('firstPage'));
-                    this.down('[name=bookLink]').setFieldLabel('Link to this book<br>('+book.get('title')+')');
-                }
-            this.down('[name=pageLink]').setValue(beginurl+'-'+(this.viewer.pageNumber+1));
-        });
         this.callParent();
     },
-    select: function(name)
+    
+    afterRender: function()
+    {
+        this.callParent();
+        
+        // Watch for page changes and update fields accordingly.
+        this.viewer.getEventDispatcher().bind('pagechange', this, this.setValues);
+        this.setValues();
+    },
+    
+    setValues: function()
+    {
+        // Get binding model from viewer.
+        var bindingModel = this.viewer.getBinding().getModel();
+        
+        // Calculate url prefix.
+        var urlPrefix = location.protocol + '//'
+                      + location.hostname + location.pathname
+                      +'#binding-' + bindingModel.get('bindingId');
+        
+        // Set binding field label and value.
+        var bindingLinkLabel = 'Link to this binding<br />(' +
+            escape(bindingModel.get('signature')) + ', ' +
+            escape(bindingModel.get('library').libraryName) + ')';
+        
+        this.down('[name=binding-link]').setFieldLabel(bindingLinkLabel);
+        this.down('[name=binding-link]').setValue(this.urlPrefix);
+        
+        // Set book field label and value.
+        var book = this.viewer.getBook();
+        
+        if (book === undefined)
         {
-            this.down('[name='+name+']').selectText();
+            this.down('[name=book-link]').setValue('Not a book.');
+            this.down('[name=book-link]').setFieldLabel('Link to this book<br />(None)');
         }
+        else
+        {
+            this.down('[name=book-link]').setValue(urlPrefix + '-' +
+                escape(book.get('firstPage')));
+            this.down('[name=book-link]').setFieldLabel('Link to this book<br />(' +
+                escape(book.get('title')) + ')');
+        }
+        
+        // Set page field link.
+        this.down('[name=page-link]').setValue(urlPrefix + '-' + (this.viewer.getPage() + 1));
+    },
+    
+    select: function(name)
+    {
+        this.down('[name=' + name + ']').selectText();
+    }
 });
-

@@ -37,9 +37,6 @@ Document.invTileSize = 1 / Document.tileSize;
 //constructor
 Document.prototype.constructor = function(width, height, zoomLevels, getImageUrl)
 {
-    // TODO: reverse zoom levels and make width/height be defined at level 0.
-    // TODO: remove scan id.
-    
     //set members
     this.dimensions   = {width: width, height: height};
     this.maxZoomLevel = zoomLevels - 1;

@@ -8,8 +8,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
     initComponent: function() 
     {
         var _this = this;
-    	
-    	var userItems = [{
+        
+        var userItems = [{
             colspan: 2,
             border: false,
             html: 'Welcome, <b>Guest</b>',
@@ -49,35 +49,35 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 {
                     function handlePasswordForgotten(button, email)
                     {
-                    	if(button == 'ok')
-                    	{
-                    		RequestManager.getInstance().request(
-                    	            'User',
-                    	            'passwordForgotten',
-                    	            {
-                    	            	email: email
-                    	            },
-                    	            _this,
-                    	            function(data)
-                    	            {
-                    	            	Ext.MessageBox.alert('Success', 'An e-mail with' +
-                    	            			' instructions on how to reset your password will' +
-                    	            			' be send to you in a few minutes.');
-                    	            },
-                    	            function(data)
-                    	            {
-                    	            	Ext.MessageBox.alert('Error', 'An error occurred while' + 
-                                          'trying to send the restoration e-mail. Please try again' +
-                                          ' later. If the problem persists: please contact the' + 
-                                          ' webmaster.');
-                    	            }
-                    	    );
-                    	}
+                        if (button == 'ok')
+                        {
+                            RequestManager.getInstance().request(
+                                'User',
+                                'passwordForgotten',
+                                {
+                                    email: email
+                                },
+                                _this,
+                                function(data)
+                                {
+                                    Ext.MessageBox.alert('Success', 'An e-mail with' +
+                                            ' instructions on how to reset your password will' +
+                                            ' be send to you in a few minutes.');
+                                },
+                                function(data)
+                                {
+                                    Ext.MessageBox.alert('Error', 'An error occurred while' + 
+                                        'trying to send the restoration e-mail. Please try again' +
+                                        ' later. If the problem persists: please contact the' + 
+                                        ' webmaster.');
+                                }
+                            );
+                        }
                     }
-                	
-                	Ext.MessageBox.prompt('Password forgotten.', 'Please enter your e-mail address' + 
-                                            ' to which a password restoration mail can be send:', 
-                                            handlePasswordForgotten);
+                    
+                    Ext.MessageBox.prompt('Password forgotten.', 'Please enter your e-mail address' + 
+                        ' to which a password restoration mail can be send:', 
+                        handlePasswordForgotten);
                 }
             },
             name: 'password',
@@ -158,30 +158,31 @@ Ext.define('Ext.ux.ApplicationViewport', {
             listeners: {
                 click: function()
                 {
-                    RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-                    function(result)
-                    {
-                        if (result['status'] === 0)
+                    RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
+                        function(result)
                         {
-                            Application.getInstance().gotoTab('reorderscan', [], true);
-                        }
-                        else if (result['status'] === 1)
+                            if (result['status'] === 0)
+                            {
+                                Application.getInstance().gotoTab('reorderscan', [], true);
+                            }
+                            else if (result['status'] === 1)
+                            {
+                                Application.getInstance().gotoTab('selectbook', [], true);
+                            }
+                            else
+                            {
+                                Application.getInstance().gotoTab('uploadinfo', [], true);
+                            }
+                        }, 
+                        function()
                         {
-                            Application.getInstance().gotoTab('selectbook', [], true);
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: 'There is a problem with the server. Please try again later',
+                                buttons: Ext.Msg.OK
+                            });
                         }
-                        else
-                        {
-                            Application.getInstance().gotoTab('uploadinfo', [], true);
-                        }
-                    }, 
-                    function()
-                    {
-                        Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'There is a problem with the server. Please try again later',
-                            buttons: Ext.Msg.OK
-                        });
-                    });
+                    );
                 }
             },
             name: 'upload',
@@ -359,7 +360,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         // Add a viewer tab.
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
-                            title: 'Binding ' + escape(binding.getModel().get('signature')), // TODO: Move to viewerpanel.
+                            title: escape(binding.getModel().get('signature')), // TODO: Move to viewerpanel.
                             binding: binding,
                             pageNumber: pageNumber
                         });
