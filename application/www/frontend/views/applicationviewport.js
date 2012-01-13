@@ -417,17 +417,35 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'viewprofile':
-                // TODO: data[0] may not even exist!
-                // TODO: Fetch user here.
-                // TODO: Handle non-existing users here.
+                var username = data[0];
+                if (!username)
+                {
+                    return;
+                }
                 
-                // Add a view profile tab.
-                Ext.apply(tabConfig, {
-                    title: 'Profile of ' + escape(data[0]),
-                    xtype: 'viewprofilepanel'
-                });
+                RequestManager.getInstance().request('User', 'usernameExists', {username: username}, this, 
+                    function(exists)
+                    {
+                        if (exists)
+                        {
+                            Ext.apply(tabConfig, {
+                                title: 'Profile of ' + escape(data[0]),
+                                xtype: 'viewprofilepanel'
+                            });
+                            
+                            // Add tab.
+                            var newTab = _this.tabs.add(tabConfig);
+                            
+                            // Activate tab.
+                            if (activateTab !== false)
+                            {
+                                _this.tabs.setActiveTab(newTab);
+                            }
+                        }
+                    }
+                );
                 
-                break;
+                return;
                 
             case 'register':
                 // Add a registration panel.
