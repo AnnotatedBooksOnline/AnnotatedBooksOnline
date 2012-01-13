@@ -360,7 +360,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         // Add a viewer tab.
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
-                            title: escape(binding.getModel().get('signature')), // TODO: Move to viewerpanel.
                             binding: binding,
                             pageNumber: pageNumber
                         });
