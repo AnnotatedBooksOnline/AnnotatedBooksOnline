@@ -10,7 +10,7 @@
 
 #include "tilepyramidbuilder.h"
 
-/*
+/**
  * An object representing a tile in the image. Can either contain its raw image
  * data, or, when the tile is not atomic (tiles are atomic when their size is 1),
  * four subtiles. 
@@ -23,7 +23,7 @@
 class Tile
 {
 public:
-    //Constructor. Recursively constructs subtiles until size == 1.
+    ///Constructor. Recursively constructs subtiles until size == 1.
     Tile(Tile *parent, uint x, uint y, uint z, uint size) :
         done(false), x_pos(x), y_pos(y), z_pos(z), size(size)
     {
@@ -48,7 +48,7 @@ public:
         }
     }
 
-    //Destructor. Dealocates subtiles or image data.
+    ///Destructor. Dealocates subtiles or image data.
     ~Tile()
     {
         if(done)
@@ -68,7 +68,7 @@ public:
         }
     }
 
-    //Processes a chunk
+    ///Processes a chunk
     void processImageChunk(uint y, image_t chunk);
     
 private:
