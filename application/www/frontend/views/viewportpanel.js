@@ -25,7 +25,6 @@ Ext.define('Ext.ux.ViewportPanel', {
         
         var size = this.getSize();
         this.viewport = new Viewport(size.width, size.height, this.document);
-        //this.up('tabpanel').setLoading(false);
     },
     
     afterComponentLayout: function(width, height)
