@@ -41,10 +41,10 @@ var bookProperties = [{
 }/*,{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'
-},{
+}*/,{
     abbreviation: 'summary',
     name: 'Summary'
-}*/];
+}];
 
 Ext.define('Ext.ux.SearchParameterModel', {
     extend: 'Ext.data.Model',
