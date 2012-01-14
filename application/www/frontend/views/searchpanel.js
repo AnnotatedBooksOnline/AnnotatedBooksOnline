@@ -422,11 +422,9 @@ Ext.define('Ext.ux.SearchResultsView', {
                     // Open book in a new tab.
                     var pageNumber = record.get('firstPage');
                     var bindingId  = record.get('bindingId');
-                    var searchpanel = _this.up('searchpanel');
-                    searchpanel.setLoading(true);
+                    //_this.up('tabpanel').setLoading(true);
                     Application.getInstance().gotoTab('binding',
                         (pageNumber == null ? [bindingId] : [bindingId, pageNumber]), true);
-                    searchpanel.setLoading(false);
                 }
             }
         };

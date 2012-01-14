@@ -316,7 +316,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
     
     openTab: function(type, data, activateTab)
     {
+        // Start loading.
+        this.down('tabpanel').setLoading(true);
+        
         var _this = this;
+        
         var tabConfig = {
             // Our tab info.
             tabInfo: {type: type, data: data},
@@ -343,6 +347,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var bindingId = data[0];
                 if (!bindingId)
                 {
+                    // Loading is finished.
+                    this.down('tabpanel').setLoading(false);
                     return;
                 }
                 
@@ -352,15 +358,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 {
                     pageNumber = parseInt(data[1] - 1);
                 }
-                
                 // Fetch binding.
                 Binding.createFromId(bindingId, this,
                     function(binding)
                     {
+                        var correctStatus = true;
+                        
                         // Check for correct binding status.
                         if (binding.getModel().get('status') !== 2)
                         {
-                            return;
+                            correctStatus = false;
                         }
                         
                         // Check for correct scan status.
@@ -368,28 +375,37 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         {
                             if (binding.getScans()[i].get('status') !== 5)
                             {
-                                return;
+                                correctStatus = false;
+                                break;
                             }
                         }
                         
-                        // Add a viewer tab.
-                        Ext.apply(tabConfig, {
-                            xtype: 'viewerpanel',
-                            binding: binding,
-                            pageNumber: pageNumber
-                        });
-                        
-                        // Add tab.
-                        var newTab = this.tabs.add(tabConfig);
-                        
-                        // Activate tab.
-                        if (activateTab !== false)
+                        if (correctStatus)
                         {
-                            this.tabs.setActiveTab(newTab);
+                            // Add a viewer tab.
+                            Ext.apply(tabConfig, {
+                                xtype: 'viewerpanel',
+                                binding: binding,
+                                pageNumber: pageNumber
+                            });
+                            
+                            // Add tab.
+                            var newTab = this.tabs.add(tabConfig);
+                            
+                            // Activate tab.
+                            if (activateTab !== false)
+                            {
+                                this.tabs.setActiveTab(newTab);
+                            }
                         }
+                        
+                        // Loading is finished.
+                        this.down('tabpanel').setLoading(false);
                     },
                     function()
                     {
+                        // Loading is finished.
+                        this.down('tabpanel').setLoading(false);
                         alert('This binding could not be loaded.');
                     });
                 
@@ -435,6 +451,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var username = data[0];
                 if (!username)
                 {
+                    // Loading is finished.
+                    this.down('tabpanel').setLoading(false);
                     return;
                 }
                 
@@ -457,7 +475,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             {
                                 _this.tabs.setActiveTab(newTab);
                             }
+                            
+                            // Loading is finished.
+                            this.down('tabpanel').setLoading(false);
                         }
+                    },
+                    function()
+                    {
+                        // Loading is finished.
+                        this.down('tabpanel').setLoading(false);
                     }
                 );
                 
@@ -572,6 +598,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
         {
             this.tabs.setActiveTab(newTab);
         }
+        
+        // Loading is finished.
+        this.down('tabpanel').setLoading(false);
     },
     
     gotoTab: function(type, data, openIfNotAvailable)
