@@ -31,7 +31,7 @@ class Mailer
         
         $headers = 'MIME-Version: 1.0' . "\r\n"
                  . 'Content-type: text/plain; charset=utf-8' . "\r\n"
-                 . 'From: ' . Configuration::getInstance()->getString('from-name') 
+                 . 'From: ' . Setting::getSetting('mail-from-name') //Configuration::getInstance()->getString('from-name') 
                  . ' <'     . $fromaddress . ">\r\n";
         
         $success = mail($recipient, $subject, $message, $headers);

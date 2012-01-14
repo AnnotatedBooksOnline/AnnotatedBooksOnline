@@ -3,6 +3,8 @@
 
 require_once 'framework/database/entity.php';
 
+class SettingException extends ExceptionBase { }
+
 /**
  * Setting entity. This represents settings that can be set in the database.
  */
@@ -31,12 +33,15 @@ class Setting extends Entity
     
     /**
      * Returns the value associated with the provided setting name. If such a setting does not
-     * exist, the default argument is returned.
+     * exist, the default argument is returned (if one is defined; otherwise an exception is 
+     * thrown).
      * 
      * @param string $name     The name of the setting.
      * @param string $default  The result if the setting does not exist.
      * 
      * @return string The value of the setting.
+     * 
+     * @throws SettingException If default is null and the setting is not present.
      */
     public static function getSetting($name, $default = null)
     {
@@ -48,6 +53,11 @@ class Setting extends Entity
         }
         catch (EntityException $e)
         {
+            if($default === null)
+            {
+                throw new SettingException('setting-not-found', $name);
+            }
+            
             return $default;
         }
     }

@@ -368,8 +368,6 @@ class UserController extends ControllerBase
         // Fetch new password.
         $newpass = self::getString($data, 'password');
         
-        Log::debug('!!!!' . strlen($token) . '!!' . strlen($newpass));
-        
         if ($token === null || strlen($token) != 32 || strlen($newpass) == 0)
         {
             Log::debug('Illegal change password token or no password.');
@@ -386,7 +384,7 @@ class UserController extends ControllerBase
                          ->where('passwordRestoreToken = :token')
                          ->execute(array('token' => $token))
                          ->tryGetFirstRow();
-            if ($row !== null)
+            if ($row === null)
             {
                 // No user associated with token.
                 Log::debug('Token does not correspond to a user.');
