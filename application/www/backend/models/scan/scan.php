@@ -10,7 +10,7 @@ require_once 'framework/database/database.php';
 class Scan extends Entity
 {
     /** Scan status constants. */
-    const STATUS_AVAILABLE  = 0; // Scan is available and viewable.
+    // const STATUS_AVAILABLE  = 0; // Scan is available and viewable.
     const STATUS_PENDING    = 1; // Scan is new and waiting to be processed.
     const STATUS_PROCESSING = 2; // Scan is currently being processed.
     const STATUS_ERROR      = 3; // Processing the scan has failed.
