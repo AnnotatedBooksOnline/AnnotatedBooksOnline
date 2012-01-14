@@ -143,4 +143,20 @@ class Configuration extends Singleton
         $settings = parse_ini_file($filename, false);
         $this->settings = array_merge($this->settings, $settings);
     }
+    
+    /**
+     * Returns the base URL.
+     */
+    public static function getBaseURL()
+    {
+        return $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+    }
+    
+    /**
+     * Returns the base installation path.
+     */
+    public static function getInstallBase()
+    {
+        // TODO
+    }
 }
