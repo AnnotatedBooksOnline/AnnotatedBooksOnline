@@ -51,7 +51,7 @@ class UserActivationController extends Controller
                         ->where('userId = :userId')
                         ->execute(array('userId' => $user->getUserId()))
                         ->tryGetFirstRow();
-            if ($row !== null)
+            if ($row === null)
             {
                 throw new UserActivationException('user-not-pending');
             }
