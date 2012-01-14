@@ -357,6 +357,21 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Binding.createFromId(bindingId, this,
                     function(binding)
                     {
+                        // Check for correct binding status.
+                        if (binding.getModel().get('status') !== 2)
+                        {
+                            return;
+                        }
+                        
+                        // Check for correct scan status.
+                        for (var i = 0; i < binding.getScans().length; i++)
+                        {
+                            if (binding.getScans()[i].get('status') !== 5)
+                            {
+                                return;
+                            }
+                        }
+                        
                         // Add a viewer tab.
                         Ext.apply(tabConfig, {
                             xtype: 'viewerpanel',
@@ -423,6 +438,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     return;
                 }
                 
+                // Check if this username exists.
                 RequestManager.getInstance().request('User', 'usernameExists', {username: username}, this, 
                     function(exists)
                     {
