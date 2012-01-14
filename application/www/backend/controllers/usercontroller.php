@@ -95,8 +95,7 @@ class UserController extends ControllerBase
                     'affiliation' => $affiliation,
                     'occupation'  => $occupation,
                     'homeAddress' => $homeAddress,
-                    'website'     => $website,
-                    'homeAddress' => ''
+                    'website'     => $website
                 );
             }
         }
@@ -110,8 +109,7 @@ class UserController extends ControllerBase
                 'affiliation' => $affiliation,
                 'occupation'  => $occupation,
                 'homeAddress' => $homeAddress,
-                'website'     => $website,
-                'homeAddress' => ''
+                'website'     => $website
             );
         }
         

@@ -81,7 +81,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     affiliation: 'Affiliation',
                     occupation: 'Occupation',
                     website: 'Website',
-                    //homeAddress: 'Address',
+                    homeAddress: 'Address',
                     active: 'Active',
                     banned: 'Banned',
                     rank: 'Rank'

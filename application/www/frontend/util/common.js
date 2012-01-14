@@ -139,6 +139,11 @@ function boundingBoxesIntersect(first, second)
 // Escapes a string for displaying.
 function escape(str)
 {
+    if (str==null)
+    {
+        return '';
+    }
+    
     return str.replace(/&/g, '&amp;').
                replace(/"/g, '&quot;').
                replace(/</g, '&lt;').
