@@ -20,6 +20,7 @@ class ScanController extends ControllerBase
             'scanId',
             'bindingId',
             'page',
+            'status',
             'width',
             'height',
             'zoomLevel',

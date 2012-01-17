@@ -49,6 +49,11 @@ Ext.define('Ext.ux.EditProfileForm', {
                 vtype: 'checkURL',
                 maxLength: 256
             },{
+                name: 'homeAddress',
+                fieldLabel: 'Address',
+                allowBlank: true,
+                maxLength: 256
+            },{
                 name: 'password',
                 fieldLabel: 'Current password',
                 allowBlank: true,

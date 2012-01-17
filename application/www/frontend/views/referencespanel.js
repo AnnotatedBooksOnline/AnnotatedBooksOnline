@@ -130,9 +130,9 @@ Ext.define('Ext.ux.ReferencesPanel', {
         else
         {
             this.down('[name=book-link]').setValue(urlPrefix + '-' +
-                escape(book.get('firstPage')));
+                book.get('firstPage'));
             this.down('[name=book-link]').setFieldLabel('Link to this book<br />(' +
-                escape(book.get('title')) + ')');
+                book.get('title') + ')');
         }
         
         // Set page field link.

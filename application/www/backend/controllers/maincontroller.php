@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/util/cache.php';
+require_once 'framework/database/entity.php';
 require_once 'util/jsmin.php';
 require_once 'util/cssmin.php';
 
@@ -123,6 +124,18 @@ class MainController extends Controller
         
         // Output entry.
         $entry->output();
+    }
+    
+    public function actionTextPage($data)
+    {
+        $textPage = self::getString($data, 'textPage');
+        
+        $result = Query::select()
+                ->from('Settings')
+                ->where('settingName = :textPage')
+                ->execute(array('textPage' => $textPage));
+        
+        return $result->tryGetFirstRow()->getValue('settingValue');
     }
     
     private function getJavascriptFilenames()

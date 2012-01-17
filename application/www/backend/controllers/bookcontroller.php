@@ -227,7 +227,7 @@ class BookController extends ControllerBase
                 $book->getValue('libraryName'),
                 $book->getValue('signature'),
                 $book->getValue('provenanceNames'),
-                $book->getValue('summary'),
+                //$book->getValue('summary'),
                 $book->getValue('headline'),
                 'tiles/' . $firstScan[0]->getScanId() . '/tile_0_0_0.jpg',
                 $book->getValue('bookId'),

@@ -89,7 +89,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                 hideLabel: true,
                 style: 'margin-top: 15px;',
                 
-                boxLabel: 'I have read and accept the <a href="#" title="Show the terms of use" class="terms">terms of use</a>.',
+                boxLabel: 'I have read and accept the <a href="#register" title="Show the terms of use" class="terms">terms of use</a>.',
 
                 // Listener to open the terms of use page link in a modal window.
                 listeners: {
@@ -123,36 +123,45 @@ Ext.define('Ext.ux.RegistrationForm', {
         
         if (target)
         {
-            var _this = this;
-            var window = Ext.widget('window', {
-                title: 'Terms of use',
-                modal: true,
-                width: 500,
-                height: 400,
-                
-                // TODO: Fetch real terms of use.
-                html: '<iframe src="http://www.sencha.com/legal/terms-of-use/" '
-                    + 'style="border: 0; width: 100%; height: 100%;"></iframe>',
-                
-                buttons: [{
-                    text: 'Decline',
-                    handler: function()
-                    {
-                        this.up('window').close();
-                        _this.down('[name=acceptTerms]').setValue(false);
-                    }
-                },{
-                    text: 'Accept',
-                    handler: function()
-                    {
-                        this.up('window').close();
-                        _this.down('[name=acceptTerms]').setValue(true);
-                    }
-                }]
-            });
-            
-            window.show();
-            e.stopEvent();
+            RequestManager.getInstance().request('Main', 'textPage', {textPage: 'terms-of-use'}, this,
+                function(termsOfUse)
+                {
+                    var _this = this;
+                    
+                    var window = Ext.widget('window', {
+                        title: 'Terms of use',
+                        modal: true,
+                        width: 600,
+                        height: 400,
+                        bodyPadding: 10,
+                        autoScroll: true,
+                        html: termsOfUse,
+                        
+                        buttons: [{
+                            text: 'Decline',
+                            handler: function()
+                            {
+                                this.up('window').close();
+                                _this.down('[name=acceptTerms]').setValue(false);
+                            }
+                        },{
+                            text: 'Accept',
+                            handler: function()
+                            {
+                                this.up('window').close();
+                                _this.down('[name=acceptTerms]').setValue(true);
+                            }
+                        }]
+                    });
+                    
+                    window.show();
+                    e.preventDefault();
+                },
+                function()
+                {
+                    alert('Something went wrong. Please try again');
+                }
+            );
         }
     },
     

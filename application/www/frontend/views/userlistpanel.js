@@ -26,7 +26,11 @@ Ext.define('Ext.ux.UserListPanel', {
         function renderWebsite(website)
         {
             var escapedWebsite = escape(website);
-            if (website.match(/^(http|ftp)s?:\/\//))
+            if (website == null)
+            {
+                return '';
+            }
+            else if (website.match(/^(http|ftp)s?:\/\//))
             {
                 return '<a href="' + escapedWebsite + '" target="_blank">' + escapedWebsite + '</a>';
             } 
@@ -77,6 +81,12 @@ Ext.define('Ext.ux.UserListPanel', {
                     flex:      2,
                     renderer:  renderWebsite,
                     dataIndex: 'website',
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Address',
+                    flex:      2,
+                    dataIndex: 'homeAddress',
                     hidden:    true,
                     hideable:  false
                 }],
