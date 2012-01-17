@@ -3,6 +3,7 @@
 
 require_once 'framework/util/cache.php';
 require_once 'framework/database/entity.php';
+require_once 'models/setting/setting.php';
 require_once 'util/jsmin.php';
 require_once 'util/cssmin.php';
 
@@ -130,12 +131,12 @@ class MainController extends Controller
     {
         $textPage = self::getString($data, 'textPage');
         
-        $result = Query::select()
-                ->from('Settings')
-                ->where('settingName = :textPage')
-                ->execute(array('textPage' => $textPage));
+        // TODO: Secure this, prefix the name or something, as we can now get *any* setting!
         
-        return $result->tryGetFirstRow()->getValue('settingValue');
+        // TODO: Is it just an HTML body, or a whole HTML page?
+        // TODO: In the first case, we should put an XHTML page with body around it.
+        
+        return Setting::getSetting($textPage);
     }
     
     private function getJavascriptFilenames()

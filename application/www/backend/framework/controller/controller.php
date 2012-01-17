@@ -19,6 +19,19 @@ abstract class Controller
      */
     public static function handleRequest()
     {
+        // Check for a non-SSL connection.
+        if (empty($_SERVER['HTTPS']))
+        {
+            $forceSsl = Configuration::getInstance()->getBoolean('force-ssl', false);
+            
+            // Ensure the content is accessed securely.
+            if ($forceSsl)
+            {
+                header('Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+                exit;
+            }
+        }
+        
         // Check whether we want to use the post method.
         $postMethod = ($_SERVER['REQUEST_METHOD'] == 'POST') && empty($_FILES);
         
