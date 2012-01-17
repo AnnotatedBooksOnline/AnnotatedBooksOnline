@@ -1,0 +1,197 @@
+\hypertarget{classBindingLanguage}{
+\section{BindingLanguage Class Reference}
+\label{classBindingLanguage}\index{BindingLanguage@{BindingLanguage}}
+}
+Inheritance diagram for BindingLanguage:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classBindingLanguage}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBindingLanguage_a82d72a86b098f9d6ee3d11412f566674}{\_\-\_\-construct} (\$bindingId=null, \$languageId=null, \$createNew=false)
+\item 
+\hypertarget{classBindingLanguage_a3ddbcd10fe8a242eeac058c4f37b2363}{
+{\bfseries getBindingId} ()}
+\label{classBindingLanguage_a3ddbcd10fe8a242eeac058c4f37b2363}
+
+\item 
+\hypertarget{classBindingLanguage_a1466d54d63341b0b1097e0a7d772de41}{
+{\bfseries setBindingId} (\$bindingId)}
+\label{classBindingLanguage_a1466d54d63341b0b1097e0a7d772de41}
+
+\item 
+\hypertarget{classBindingLanguage_a128bbc4c6acaec2dc54f77b7d7e77d38}{
+{\bfseries getLanguageId} ()}
+\label{classBindingLanguage_a128bbc4c6acaec2dc54f77b7d7e77d38}
+
+\item 
+\hypertarget{classBindingLanguage_a049a0c51d0b71ce2235f6a87052f2107}{
+{\bfseries setLanguageId} (\$id)}
+\label{classBindingLanguage_a049a0c51d0b71ce2235f6a87052f2107}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classBindingLanguage_a36d05494548bf935e2a19f7cf37237fc}{createOrGet} (\$binding, \$language)
+\item 
+static \hyperlink{classBindingLanguage_a0f5427a1846d14c04dee6c35c73a0781}{getTableName} ()
+\item 
+static \hyperlink{classBindingLanguage_aafc27da4c3edcd204cf51d2d2429e8eb}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}{getColumns} ()
+\item 
+static \hyperlink{classBindingLanguage_a2555fe5224b885813f810b249a0fbefb}{getColumnTypes} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBindingLanguage_a4f5a54f30fd269c6db9196dd20f3e9d1}{\$bindingId}
+\item 
+\hyperlink{classBindingLanguage_a06beffccd3823c174be9117bf3ea3d50}{\$languageId}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Associative enity representing the language of a binding. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBindingLanguage_a82d72a86b098f9d6ee3d11412f566674}{
+\index{BindingLanguage@{BindingLanguage}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}BindingLanguage::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+\item[{\$}]{bindingId = {\ttfamily null}, }
+\item[{\$}]{languageId = {\ttfamily null}, }
+\item[{\$}]{createNew = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}}
+\label{classBindingLanguage_a82d72a86b098f9d6ee3d11412f566674}
+Constructs a binding-\/language relation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$bindingId} & \\
+\hline
+{\em \$languageId} & \\
+\hline
+{\em \$createNew} & If true, a new relation will be created if the specified one did not exist yet. If one already exists, it doesn't really matter whether this is true or false. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBindingLanguage_a36d05494548bf935e2a19f7cf37237fc}{
+\index{BindingLanguage@{BindingLanguage}!createOrGet@{createOrGet}}
+\index{createOrGet@{createOrGet}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{createOrGet}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::createOrGet (
+\begin{DoxyParamCaption}
+\item[{\$}]{binding, }
+\item[{\$}]{language}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBindingLanguage_a36d05494548bf935e2a19f7cf37237fc}
+Creates a new relation between a binding and a language or retreives one if it already exists.
+
+The id's of the binding and the language should be set.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\hyperlink{classBinding}{Binding} & {\em \$binding} & \\
+\hline
+\hyperlink{classLanguage}{Language} & {\em \$language} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}{
+\index{BindingLanguage@{BindingLanguage}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}
+Gets all the columns.
+
+\begin{DoxyReturn}{Returns}
+Array of all columns, except primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Entity}.
+
+\hypertarget{classBindingLanguage_a2555fe5224b885813f810b249a0fbefb}{
+\index{BindingLanguage@{BindingLanguage}!getColumnTypes@{getColumnTypes}}
+\index{getColumnTypes@{getColumnTypes}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getColumnTypes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBindingLanguage_a2555fe5224b885813f810b249a0fbefb}
+Gets all the column types, per column, including primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all column types. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
+
+\hypertarget{classBindingLanguage_aafc27da4c3edcd204cf51d2d2429e8eb}{
+\index{BindingLanguage@{BindingLanguage}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBindingLanguage_aafc27da4c3edcd204cf51d2d2429e8eb}
+Gets the primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
+
+\hypertarget{classBindingLanguage_a0f5427a1846d14c04dee6c35c73a0781}{
+\index{BindingLanguage@{BindingLanguage}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBindingLanguage_a0f5427a1846d14c04dee6c35c73a0781}
+Gets the table name.
+
+\begin{DoxyReturn}{Returns}
+The table name. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBindingLanguage_a4f5a54f30fd269c6db9196dd20f3e9d1}{
+\index{BindingLanguage@{BindingLanguage}!\$bindingId@{\$bindingId}}
+\index{\$bindingId@{\$bindingId}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{\$bindingId}]{\setlength{\rightskip}{0pt plus 5cm}BindingLanguage::\$bindingId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classBindingLanguage_a4f5a54f30fd269c6db9196dd20f3e9d1}
+\hyperlink{classBinding}{Binding}. \hypertarget{classBindingLanguage_a06beffccd3823c174be9117bf3ea3d50}{
+\index{BindingLanguage@{BindingLanguage}!\$languageId@{\$languageId}}
+\index{\$languageId@{\$languageId}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{\$languageId}]{\setlength{\rightskip}{0pt plus 5cm}BindingLanguage::\$languageId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classBindingLanguage_a06beffccd3823c174be9117bf3ea3d50}
+\hyperlink{classLanguage}{Language}. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/models/language/bindinglanguage.php\end{DoxyCompactItemize}

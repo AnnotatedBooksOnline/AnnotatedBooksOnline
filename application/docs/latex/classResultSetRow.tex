@@ -1,0 +1,68 @@
+\hypertarget{classResultSetRow}{
+\section{ResultSetRow Class Reference}
+\label{classResultSetRow}\index{ResultSetRow@{ResultSetRow}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classResultSetRow_a3f897baaa5a30d81cf11516ae0be04b7}{
+{\bfseries \_\-\_\-construct} (\$row)}
+\label{classResultSetRow_a3f897baaa5a30d81cf11516ae0be04b7}
+
+\item 
+\hyperlink{classResultSetRow_a7e96dad5900e697caeac3456604ed28f}{getValue} (\$name, \$type=null)
+\item 
+\hyperlink{classResultSetRow_aee1015a9b3975eab92106353dd2bae58}{getValues} (\$types=null)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains the items in a result set from a single row. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classResultSetRow_a7e96dad5900e697caeac3456604ed28f}{
+\index{ResultSetRow@{ResultSetRow}!getValue@{getValue}}
+\index{getValue@{getValue}!ResultSetRow@{ResultSetRow}}
+\subsubsection[{getValue}]{\setlength{\rightskip}{0pt plus 5cm}ResultSetRow::getValue (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{type = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classResultSetRow_a7e96dad5900e697caeac3456604ed28f}
+Get the value from the column with the specified name as a string.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$name} & The name of the column, is case incensitive. \\
+\hline
+array & {\em \$type} & Type of the value returned\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A string representing the value stored at the specified column, or null if there is no column with this name. 
+\end{DoxyReturn}
+\hypertarget{classResultSetRow_aee1015a9b3975eab92106353dd2bae58}{
+\index{ResultSetRow@{ResultSetRow}!getValues@{getValues}}
+\index{getValues@{getValues}!ResultSetRow@{ResultSetRow}}
+\subsubsection[{getValues}]{\setlength{\rightskip}{0pt plus 5cm}ResultSetRow::getValues (
+\begin{DoxyParamCaption}
+\item[{\$}]{types = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classResultSetRow_aee1015a9b3975eab92106353dd2bae58}
+Returns an associative array with the column names and corresponding values.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$types} & Types of the values returned by column name.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The array of row values. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/framework/database/resultset.php\end{DoxyCompactItemize}

@@ -1,0 +1,385 @@
+\hypertarget{classEntityList}{
+\section{EntityList Class Reference}
+\label{classEntityList}\index{EntityList@{EntityList}}
+}
+Inheritance diagram for EntityList:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=12.000000cm]{classEntityList}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classEntityList_ad54f70a37071343afd7cc87c01fa636e}{\_\-\_\-construct} ()
+\item 
+\hyperlink{classEntityList_a65960f27e39a393fb9554f725c333e12}{add} (\$entity)
+\item 
+\hyperlink{classEntityList_a5ec81b26c533af92dcf6af06e6b4e54e}{remove} (\$entity)
+\item 
+\hyperlink{classEntityList_afa9c310fb513d687dc753fe0f7e31431}{removeAt} (\$index)
+\item 
+\hyperlink{classEntityList_a74b902eba1e67bc6133c923a02540b37}{get} (\$index)
+\item 
+\hyperlink{classEntityList_a110854b1b33f521cb3c3f2f8de786177}{tryGet} (\$index)
+\item 
+\hyperlink{classEntityList_a2320391f82acdb29e4b68efd47081b62}{getIterator} ()
+\item 
+\hyperlink{classEntityList_af2c7d6e2bfa78d6af8d7357dd49e5d4b}{save} ()
+\item 
+\hyperlink{classEntityList_a9c027ff7f947b077129e0f4bdaaa3c08}{delete} ()
+\item 
+\hyperlink{classEntityList_a66784d8f928108863442c7429932c247}{setValue} (\$name, \$value)
+\item 
+\hyperlink{classEntityList_a041e92de11dad274df94247c3c1537c4}{setValues} (\$values)
+\item 
+\hyperlink{classEntityList_a740ab9d2b87a8641b47e29b80b99badc}{getValue} (\$name)
+\item 
+\hyperlink{classEntityList_ada2cd7ee35783d406d1d58c0814afd3e}{getValues} (\$names)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classEntityList_af892d6898641b93495db35a365bb87cd}{find} (\$conditions=array(), \$offset=0, \$limit=null, \$ordering=array())
+\item 
+static \hyperlink{classEntityList_a949d4cec1f470a75357a79027266ff7b}{getTotal} ()
+\item 
+static \hyperlink{classEntityList_a6d880dc516f006975a349b1790d7020f}{getTypes} (\$default=true)
+\item 
+static \hyperlink{classEntityList_a26d1917550bff1083b311ff888914f87}{getTableName} ()
+\item 
+static \hyperlink{classEntityList_adfac42710bce4db5b10cbd3ae4ec7714}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classEntityList_a3a33fe428c0ff87a7555b5082aa8925a}{getColumns} ()
+\item 
+static \hyperlink{classEntityList_a2cdb7c626516c7aeac73f412d5cd09ce}{getType} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classEntityList_a129d9f87af50328dab85a05b3f67fc17}{
+{\bfseries \$entities}}
+\label{classEntityList_a129d9f87af50328dab85a05b3f67fc17}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Abstract class for a list of database entities. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classEntityList_ad54f70a37071343afd7cc87c01fa636e}{
+\index{EntityList@{EntityList}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!EntityList@{EntityList}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_ad54f70a37071343afd7cc87c01fa636e}
+Constructs an entity list. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classEntityList_a65960f27e39a393fb9554f725c333e12}{
+\index{EntityList@{EntityList}!add@{add}}
+\index{add@{add}!EntityList@{EntityList}}
+\subsubsection[{add}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::add (
+\begin{DoxyParamCaption}
+\item[{\$}]{entity}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a65960f27e39a393fb9554f725c333e12}
+Adds an entity.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$entity} & \hyperlink{classEntity}{Entity} to add. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classEntityList_a9c027ff7f947b077129e0f4bdaaa3c08}{
+\index{EntityList@{EntityList}!delete@{delete}}
+\index{delete@{delete}!EntityList@{EntityList}}
+\subsubsection[{delete}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::delete (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a9c027ff7f947b077129e0f4bdaaa3c08}
+Deletes all entities from the database. \hypertarget{classEntityList_af892d6898641b93495db35a365bb87cd}{
+\index{EntityList@{EntityList}!find@{find}}
+\index{find@{find}!EntityList@{EntityList}}
+\subsubsection[{find}]{\setlength{\rightskip}{0pt plus 5cm}static EntityList::find (
+\begin{DoxyParamCaption}
+\item[{\$}]{conditions = {\ttfamily array()}, }
+\item[{\$}]{offset = {\ttfamily 0}, }
+\item[{\$}]{limit = {\ttfamily null}, }
+\item[{\$}]{ordering = {\ttfamily array()}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classEntityList_af892d6898641b93495db35a365bb87cd}
+Finds entities.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$conditions} & Column-\/value pairs of equal conditions the list should satisfy. Case insensitive strings will be compared Case insensitively. \\
+\hline
+{\em \$offset} & Offset to start list at. \\
+\hline
+{\em \$limit} & Amount of entities to return. Pass null for no limit. \\
+\hline
+{\em \$ordering} & Column-\/direction pairs of ordering.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classEntity}{Entity} list with entities that pass the given criteria. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a74b902eba1e67bc6133c923a02540b37}{
+\index{EntityList@{EntityList}!get@{get}}
+\index{get@{get}!EntityList@{EntityList}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::get (
+\begin{DoxyParamCaption}
+\item[{\$}]{index}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a74b902eba1e67bc6133c923a02540b37}
+Fetches an entity by index.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$index} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classEntity}{Entity} at index. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a3a33fe428c0ff87a7555b5082aa8925a}{
+\index{EntityList@{EntityList}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!EntityList@{EntityList}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static EntityList::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classEntityList_a3a33fe428c0ff87a7555b5082aa8925a}
+Gets all the columns.
+
+\begin{DoxyReturn}{Returns}
+Array of all columns, except primary keys. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a2320391f82acdb29e4b68efd47081b62}{
+\index{EntityList@{EntityList}!getIterator@{getIterator}}
+\index{getIterator@{getIterator}!EntityList@{EntityList}}
+\subsubsection[{getIterator}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::getIterator (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a2320391f82acdb29e4b68efd47081b62}
+Gets an iterator of this list.
+
+\begin{DoxyReturn}{Returns}
+\hyperlink{classEntity}{Entity} list iterator. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_adfac42710bce4db5b10cbd3ae4ec7714}{
+\index{EntityList@{EntityList}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!EntityList@{EntityList}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static EntityList::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classEntityList_adfac42710bce4db5b10cbd3ae4ec7714}
+Gets the primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all primary keys. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a26d1917550bff1083b311ff888914f87}{
+\index{EntityList@{EntityList}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!EntityList@{EntityList}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static EntityList::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classEntityList_a26d1917550bff1083b311ff888914f87}
+Gets the table name.
+
+\begin{DoxyReturn}{Returns}
+The table name. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a949d4cec1f470a75357a79027266ff7b}{
+\index{EntityList@{EntityList}!getTotal@{getTotal}}
+\index{getTotal@{getTotal}!EntityList@{EntityList}}
+\subsubsection[{getTotal}]{\setlength{\rightskip}{0pt plus 5cm}static EntityList::getTotal (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classEntityList_a949d4cec1f470a75357a79027266ff7b}
+Gets the total amount of entities in database. \hypertarget{classEntityList_a2cdb7c626516c7aeac73f412d5cd09ce}{
+\index{EntityList@{EntityList}!getType@{getType}}
+\index{getType@{getType}!EntityList@{EntityList}}
+\subsubsection[{getType}]{\setlength{\rightskip}{0pt plus 5cm}static EntityList::getType (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classEntityList_a2cdb7c626516c7aeac73f412d5cd09ce}
+Gets the type of the entity of this entitiy list.
+
+\begin{DoxyReturn}{Returns}
+Type of the entity. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a6d880dc516f006975a349b1790d7020f}{
+\index{EntityList@{EntityList}!getTypes@{getTypes}}
+\index{getTypes@{getTypes}!EntityList@{EntityList}}
+\subsubsection[{getTypes}]{\setlength{\rightskip}{0pt plus 5cm}static EntityList::getTypes (
+\begin{DoxyParamCaption}
+\item[{\$}]{default = {\ttfamily true}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classEntityList_a6d880dc516f006975a349b1790d7020f}
+Gets all types of this entity list.
+
+\begin{DoxyReturn}{Returns}
+All types of this entity list, by column name. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a740ab9d2b87a8641b47e29b80b99badc}{
+\index{EntityList@{EntityList}!getValue@{getValue}}
+\index{getValue@{getValue}!EntityList@{EntityList}}
+\subsubsection[{getValue}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::getValue (
+\begin{DoxyParamCaption}
+\item[{\$}]{name}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a740ab9d2b87a8641b47e29b80b99badc}
+Gets a value of all these entities.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & Name of the value.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Array of values. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_ada2cd7ee35783d406d1d58c0814afd3e}{
+\index{EntityList@{EntityList}!getValues@{getValues}}
+\index{getValues@{getValues}!EntityList@{EntityList}}
+\subsubsection[{getValues}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::getValues (
+\begin{DoxyParamCaption}
+\item[{\$}]{names}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_ada2cd7ee35783d406d1d58c0814afd3e}
+Gets some values of all these entities.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$names} & Array of names to get.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Array of array with key value pairs. 
+\end{DoxyReturn}
+\hypertarget{classEntityList_a5ec81b26c533af92dcf6af06e6b4e54e}{
+\index{EntityList@{EntityList}!remove@{remove}}
+\index{remove@{remove}!EntityList@{EntityList}}
+\subsubsection[{remove}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::remove (
+\begin{DoxyParamCaption}
+\item[{\$}]{entity}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a5ec81b26c533af92dcf6af06e6b4e54e}
+Removes an entity.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$entity} & \hyperlink{classEntity}{Entity} to remove. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classEntityList_afa9c310fb513d687dc753fe0f7e31431}{
+\index{EntityList@{EntityList}!removeAt@{removeAt}}
+\index{removeAt@{removeAt}!EntityList@{EntityList}}
+\subsubsection[{removeAt}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::removeAt (
+\begin{DoxyParamCaption}
+\item[{\$}]{index}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_afa9c310fb513d687dc753fe0f7e31431}
+Removes an entity at an index.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$index} & Index of entity to remove. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classEntityList_af2c7d6e2bfa78d6af8d7357dd49e5d4b}{
+\index{EntityList@{EntityList}!save@{save}}
+\index{save@{save}!EntityList@{EntityList}}
+\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::save (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_af2c7d6e2bfa78d6af8d7357dd49e5d4b}
+Loads entities. / public static function load(\$keyValues) \{ NOTE: Not yet needed, I think. \} Saves all entities to the database. \hypertarget{classEntityList_a66784d8f928108863442c7429932c247}{
+\index{EntityList@{EntityList}!setValue@{setValue}}
+\index{setValue@{setValue}!EntityList@{EntityList}}
+\subsubsection[{setValue}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::setValue (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{value}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a66784d8f928108863442c7429932c247}
+Sets a value to all these entities.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & Name of the value. \\
+\hline
+{\em \$value} & Its value. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classEntityList_a041e92de11dad274df94247c3c1537c4}{
+\index{EntityList@{EntityList}!setValues@{setValues}}
+\index{setValues@{setValues}!EntityList@{EntityList}}
+\subsubsection[{setValues}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::setValues (
+\begin{DoxyParamCaption}
+\item[{\$}]{values}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a041e92de11dad274df94247c3c1537c4}
+Sets some values to all these entities.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$values} & Array of name-\/value pairs to set. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classEntityList_a110854b1b33f521cb3c3f2f8de786177}{
+\index{EntityList@{EntityList}!tryGet@{tryGet}}
+\index{tryGet@{tryGet}!EntityList@{EntityList}}
+\subsubsection[{tryGet}]{\setlength{\rightskip}{0pt plus 5cm}EntityList::tryGet (
+\begin{DoxyParamCaption}
+\item[{\$}]{index}
+\end{DoxyParamCaption}
+)}}
+\label{classEntityList_a110854b1b33f521cb3c3f2f8de786177}
+Tries to fetch an entity by index.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$index} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\hyperlink{classEntity}{Entity} at index or null if not found. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/framework/database/entitylist.php\end{DoxyCompactItemize}

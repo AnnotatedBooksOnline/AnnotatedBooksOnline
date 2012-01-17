@@ -1,0 +1,224 @@
+\hypertarget{classDatabase}{
+\section{Database Class Reference}
+\label{classDatabase}\index{Database@{Database}}
+}
+Inheritance diagram for Database:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classDatabase}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classDatabase_a4107b10d54447fc4be287c878ff6faa0}{startTransaction} ()
+\item 
+\hyperlink{classDatabase_a8eb4ff36e5aee14fea7e1956b53dea9d}{inTransaction} ()
+\item 
+\hyperlink{classDatabase_a2903b6c9ff18c27ce43fb79558bbcfee}{commit} ()
+\item 
+\hyperlink{classDatabase_af41c84a1d533c8c650322e128112df34}{rollBack} ()
+\item 
+\hyperlink{classDatabase_a3ac67d2c28767d5c6d66db12d3568d7c}{doTransaction} (\$callback)
+\item 
+\hyperlink{classDatabase_a1a7d690c71fa3e350cb69fa33e7a8995}{execute} (\$query, \$arguments=array(), \$types=null)
+\item 
+\hypertarget{classDatabase_a49c18a3525e0ecfe4eb6727be719e0b3}{
+{\bfseries escape} (\$value)}
+\label{classDatabase_a49c18a3525e0ecfe4eb6727be719e0b3}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classDatabase_a1cb4660e6675325f9ede20652ec4453d}{convertFromType} (\$value, \$type)
+\item 
+static \hyperlink{classDatabase_a2c45ff0539c569218940280fb4b6239d}{convertFromTypes} (\$values, \$types)
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classDatabase_a313173b898c14db2a84f7fd1b14e5fb5}{\$instance}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classDatabase_a2903b6c9ff18c27ce43fb79558bbcfee}{
+\index{Database@{Database}!commit@{commit}}
+\index{commit@{commit}!Database@{Database}}
+\subsubsection[{commit}]{\setlength{\rightskip}{0pt plus 5cm}Database::commit (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classDatabase_a2903b6c9ff18c27ce43fb79558bbcfee}
+Commits the current transaction.
+
+Commits the current transaction, finalizing all changes made to the database. The transaction will now have ended and startTransaction can be called start a new one (or the query methods can be called directly).
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classDatabaseException}{DatabaseException}} & If no transaction has started or the commit failed for some other reason. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classDatabase_a1cb4660e6675325f9ede20652ec4453d}{
+\index{Database@{Database}!convertFromType@{convertFromType}}
+\index{convertFromType@{convertFromType}!Database@{Database}}
+\subsubsection[{convertFromType}]{\setlength{\rightskip}{0pt plus 5cm}static Database::convertFromType (
+\begin{DoxyParamCaption}
+\item[{\$}]{value, }
+\item[{\$}]{type}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classDatabase_a1cb4660e6675325f9ede20652ec4453d}
+Converts database data to normal data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$value} & Value to convert. \\
+\hline
+{\em \$type} & Type of the value.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resulting value. 
+\end{DoxyReturn}
+\hypertarget{classDatabase_a2c45ff0539c569218940280fb4b6239d}{
+\index{Database@{Database}!convertFromTypes@{convertFromTypes}}
+\index{convertFromTypes@{convertFromTypes}!Database@{Database}}
+\subsubsection[{convertFromTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Database::convertFromTypes (
+\begin{DoxyParamCaption}
+\item[{\$}]{values, }
+\item[{\$}]{types}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classDatabase_a2c45ff0539c569218940280fb4b6239d}
+Converts database data to normal data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$values} & Values to convert. \\
+\hline
+{\em \$types} & Types of those values.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Resulting values. 
+\end{DoxyReturn}
+\hypertarget{classDatabase_a3ac67d2c28767d5c6d66db12d3568d7c}{
+\index{Database@{Database}!doTransaction@{doTransaction}}
+\index{doTransaction@{doTransaction}!Database@{Database}}
+\subsubsection[{doTransaction}]{\setlength{\rightskip}{0pt plus 5cm}Database::doTransaction (
+\begin{DoxyParamCaption}
+\item[{\$}]{callback}
+\end{DoxyParamCaption}
+)}}
+\label{classDatabase_a3ac67d2c28767d5c6d66db12d3568d7c}
+Exception-\/safe transaction handler.
+
+Starts a transaction and executes the provided callback. If that callback terminates normally the transaction is committed, if it throws an exception however the transaction will be rolled back and it is rethrown.
+
+
+\begin{DoxyParams}[1]{Parameters}
+callback & {\em \$callback} & The function to execute as a transaction. May contain calls to this method for recursive transactions.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+mixed Returns whatever value the callback returns, if any.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Exception} & Rethrows exceptions from the callback. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classDatabase_a1a7d690c71fa3e350cb69fa33e7a8995}{
+\index{Database@{Database}!execute@{execute}}
+\index{execute@{execute}!Database@{Database}}
+\subsubsection[{execute}]{\setlength{\rightskip}{0pt plus 5cm}Database::execute (
+\begin{DoxyParamCaption}
+\item[{\$}]{query, }
+\item[{\$}]{arguments = {\ttfamily array()}, }
+\item[{\$}]{types = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classDatabase_a1a7d690c71fa3e350cb69fa33e7a8995}
+Executes query.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$query} & \hyperlink{classQuery}{Query} to execute. \\
+\hline
+{\em \$arguments} & Arguments to bind to query. \\
+\hline
+{\em \$types} & Types of those arguments.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Result set. 
+\end{DoxyReturn}
+\hypertarget{classDatabase_a8eb4ff36e5aee14fea7e1956b53dea9d}{
+\index{Database@{Database}!inTransaction@{inTransaction}}
+\index{inTransaction@{inTransaction}!Database@{Database}}
+\subsubsection[{inTransaction}]{\setlength{\rightskip}{0pt plus 5cm}Database::inTransaction (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classDatabase_a8eb4ff36e5aee14fea7e1956b53dea9d}
+Checks whether currently in a transaction.
+
+\begin{DoxyReturn}{Returns}
+A boolean indicating whether currently in a transaction.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classDatabaseException}{DatabaseException}} & \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classDatabase_af41c84a1d533c8c650322e128112df34}{
+\index{Database@{Database}!rollBack@{rollBack}}
+\index{rollBack@{rollBack}!Database@{Database}}
+\subsubsection[{rollBack}]{\setlength{\rightskip}{0pt plus 5cm}Database::rollBack (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classDatabase_af41c84a1d533c8c650322e128112df34}
+Rolls back a transaction.
+
+Undoes all queries made in the current transaction. The transaction will have ended, so $\backslash$ \hyperlink{classDatabase_a4107b10d54447fc4be287c878ff6faa0}{startTransaction()} should be called again when trying again.
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classDatabaseException}{DatabaseException}} & If no transaction has started, rollback is not supported or it failed for some other reason. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classDatabase_a4107b10d54447fc4be287c878ff6faa0}{
+\index{Database@{Database}!startTransaction@{startTransaction}}
+\index{startTransaction@{startTransaction}!Database@{Database}}
+\subsubsection[{startTransaction}]{\setlength{\rightskip}{0pt plus 5cm}Database::startTransaction (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classDatabase_a4107b10d54447fc4be287c878ff6faa0}
+Starts a database transaction. Nested transaction are allowed.
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classDatabaseException}{DatabaseException}} & If the transaction could not be started. \\
+\hline
+\end{DoxyExceptions}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classDatabase_a313173b898c14db2a84f7fd1b14e5fb5}{
+\index{Database@{Database}!\$instance@{\$instance}}
+\index{\$instance@{\$instance}!Database@{Database}}
+\subsubsection[{\$instance}]{\setlength{\rightskip}{0pt plus 5cm}Database::\$instance\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\label{classDatabase_a313173b898c14db2a84f7fd1b14e5fb5}
+Unique instance. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/framework/database/database.php\end{DoxyCompactItemize}

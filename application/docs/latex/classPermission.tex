@@ -1,0 +1,182 @@
+\hypertarget{classPermission}{
+\section{Permission Class Reference}
+\label{classPermission}\index{Permission@{Permission}}
+}
+Inheritance diagram for Permission:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classPermission}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classPermission_a0c1a23daf6f499100c92dcbbcef05416}{
+{\bfseries getActionName} ()}
+\label{classPermission_a0c1a23daf6f499100c92dcbbcef05416}
+
+\item 
+\hypertarget{classPermission_a0c35c0690e810975dab77df52ca619e6}{
+{\bfseries setActionName} (\$name)}
+\label{classPermission_a0c35c0690e810975dab77df52ca619e6}
+
+\item 
+\hypertarget{classPermission_a02f2ba7b284c068c0afde0fb92a9cd28}{
+{\bfseries getMinRank} ()}
+\label{classPermission_a02f2ba7b284c068c0afde0fb92a9cd28}
+
+\item 
+\hypertarget{classPermission_a7e6d42d69b97d2081c079b965ee0aa08}{
+{\bfseries setMinRank} (\$rank)}
+\label{classPermission_a7e6d42d69b97d2081c079b965ee0aa08}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classPermission_aaa1ea30e31b0e60dd30231e43b0af3aa}{rankHasPermission} (\$action, \$rank)
+\item 
+static \hyperlink{classPermission_abcffffde78f2430545cdbe63369928b9}{getPermissionListForRank} (\$rank)
+\item 
+static \hyperlink{classPermission_a9a6694ebca8793f08c3f3388c27e0645}{getTableName} ()
+\item 
+static \hyperlink{classPermission_a378dfdccb2df0e6d2b7bb059cd918873}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classPermission_ac2a9a31fc731c58daa3b0b9385ec03fb}{getColumns} ()
+\item 
+static \hyperlink{classPermission_a0040cda21f71bbcdf478c9e8f1996d6d}{getColumnTypes} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classPermission_ae5d62bba6b0bf9df502550081ce35db4}{\$actionName}
+\item 
+\hyperlink{classPermission_a21d0591b1aeff82d569b033fad2f521c}{\$minRank}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classPermission}{Permission} entity. This represents actions restricted to specific users. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classPermission_ac2a9a31fc731c58daa3b0b9385ec03fb}{
+\index{Permission@{Permission}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!Permission@{Permission}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Permission::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classPermission_ac2a9a31fc731c58daa3b0b9385ec03fb}
+Gets all the columns that are not primary keys as an array. 
+
+Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Entity}.
+
+\hypertarget{classPermission_a0040cda21f71bbcdf478c9e8f1996d6d}{
+\index{Permission@{Permission}!getColumnTypes@{getColumnTypes}}
+\index{getColumnTypes@{getColumnTypes}!Permission@{Permission}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Permission::getColumnTypes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classPermission_a0040cda21f71bbcdf478c9e8f1996d6d}
+Gets all the column types, per column, including primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all column types. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
+
+\hypertarget{classPermission_abcffffde78f2430545cdbe63369928b9}{
+\index{Permission@{Permission}!getPermissionListForRank@{getPermissionListForRank}}
+\index{getPermissionListForRank@{getPermissionListForRank}!Permission@{Permission}}
+\subsubsection[{getPermissionListForRank}]{\setlength{\rightskip}{0pt plus 5cm}static Permission::getPermissionListForRank (
+\begin{DoxyParamCaption}
+\item[{\$}]{rank}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classPermission_abcffffde78f2430545cdbe63369928b9}
+Returns an array of all actions a user with the specified rank is allowed to perform.
+
+
+\begin{DoxyParams}[1]{Parameters}
+int & {\em \$rank} & The rank of the kind of user for which to receive the permission list.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+array An array of strings representing action names. 
+\end{DoxyReturn}
+\hypertarget{classPermission_a378dfdccb2df0e6d2b7bb059cd918873}{
+\index{Permission@{Permission}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!Permission@{Permission}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Permission::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classPermission_a378dfdccb2df0e6d2b7bb059cd918873}
+Get an array with the primary keys. 
+
+Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
+
+\hypertarget{classPermission_a9a6694ebca8793f08c3f3388c27e0645}{
+\index{Permission@{Permission}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!Permission@{Permission}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Permission::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classPermission_a9a6694ebca8793f08c3f3388c27e0645}
+Get the name of the corresponding table. 
+
+Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
+
+\hypertarget{classPermission_aaa1ea30e31b0e60dd30231e43b0af3aa}{
+\index{Permission@{Permission}!rankHasPermission@{rankHasPermission}}
+\index{rankHasPermission@{rankHasPermission}!Permission@{Permission}}
+\subsubsection[{rankHasPermission}]{\setlength{\rightskip}{0pt plus 5cm}static Permission::rankHasPermission (
+\begin{DoxyParamCaption}
+\item[{\$}]{action, }
+\item[{\$}]{rank}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classPermission_aaa1ea30e31b0e60dd30231e43b0af3aa}
+Indicates whether some user with the provided rank has permission to undertake the action with a certain name.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$action} & The name of the action. \\
+\hline
+int & {\em \$rank} & The user rank for which to test the permission.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool true if if the rank is high enough for this action, false otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classEntityException}{EntityException}} & If no action with this name could be found in the database. \\
+\hline
+\end{DoxyExceptions}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classPermission_ae5d62bba6b0bf9df502550081ce35db4}{
+\index{Permission@{Permission}!\$actionName@{\$actionName}}
+\index{\$actionName@{\$actionName}!Permission@{Permission}}
+\subsubsection[{\$actionName}]{\setlength{\rightskip}{0pt plus 5cm}Permission::\$actionName\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classPermission_ae5d62bba6b0bf9df502550081ce35db4}
+Name of the associated action. \hypertarget{classPermission_a21d0591b1aeff82d569b033fad2f521c}{
+\index{Permission@{Permission}!\$minRank@{\$minRank}}
+\index{\$minRank@{\$minRank}!Permission@{Permission}}
+\subsubsection[{\$minRank}]{\setlength{\rightskip}{0pt plus 5cm}Permission::\$minRank\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classPermission_a21d0591b1aeff82d569b033fad2f521c}
+Minimal rank required to undertake this action. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/models/permission/permission.php\end{DoxyCompactItemize}

@@ -1,0 +1,80 @@
+\hypertarget{classMailer}{
+\section{Mailer Class Reference}
+\label{classMailer}\index{Mailer@{Mailer}}
+}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classMailer_a5eca35182ea74f3233ad375a07716639}{sendMail} (\$recipient, \$subject, \$message)
+\item 
+static \hyperlink{classMailer_a43f62956ab5ae7d52d4d1dae31de7ac5}{sendActivationMail} (\$puser)
+\item 
+\hypertarget{classMailer_a44f0dba87089ce36ee3faba019958ffe}{
+static {\bfseries sendUserDeclinedMail} (\$puser)}
+\label{classMailer_a44f0dba87089ce36ee3faba019958ffe}
+
+\item 
+\hypertarget{classMailer_ae8402e99832c34bbe8b49fdb9b2f5cc8}{
+static {\bfseries sendPasswordRestorationMail} (\$user)}
+\label{classMailer_ae8402e99832c34bbe8b49fdb9b2f5cc8}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+General helper class for sending e-\/mails. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classMailer_a43f62956ab5ae7d52d4d1dae31de7ac5}{
+\index{Mailer@{Mailer}!sendActivationMail@{sendActivationMail}}
+\index{sendActivationMail@{sendActivationMail}!Mailer@{Mailer}}
+\subsubsection[{sendActivationMail}]{\setlength{\rightskip}{0pt plus 5cm}static Mailer::sendActivationMail (
+\begin{DoxyParamCaption}
+\item[{\$}]{puser}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classMailer_a43f62956ab5ae7d52d4d1dae31de7ac5}
+Sends a standard activation mail to the specified \hyperlink{classPendingUser}{PendingUser} containing his or her activation code.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\hyperlink{classPendingUser}{PendingUser} & {\em \$puser} & The pending user entity, its values should be set.\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classMailerException}{MailerException}} & When something goes wrong, like the e-\/mail not being accepted for delivery. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classMailer_a5eca35182ea74f3233ad375a07716639}{
+\index{Mailer@{Mailer}!sendMail@{sendMail}}
+\index{sendMail@{sendMail}!Mailer@{Mailer}}
+\subsubsection[{sendMail}]{\setlength{\rightskip}{0pt plus 5cm}static Mailer::sendMail (
+\begin{DoxyParamCaption}
+\item[{\$}]{recipient, }
+\item[{\$}]{subject, }
+\item[{\$}]{message}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classMailer_a5eca35182ea74f3233ad375a07716639}
+Sends an e-\/mail. Opens up and closes an SMTP connection and therefore is not very suitable for 'mass mailing' a large numbers of users at once.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$recipient} & The e-\/mail address of the recipient. \\
+\hline
+string & {\em \$subject} & The subject of the mail. \\
+\hline
+string & {\em \$message} & The message in the body of the mail.\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em MailException} & When an e-\/mail is not accepted for delivery. \\
+\hline
+\end{DoxyExceptions}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/util/mailer.php\end{DoxyCompactItemize}

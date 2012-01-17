@@ -1,0 +1,176 @@
+\hypertarget{classProvenance}{
+\section{Provenance Class Reference}
+\label{classProvenance}\index{Provenance@{Provenance}}
+}
+Inheritance diagram for Provenance:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classProvenance}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classProvenance_a12d0b0930da213236d769da23b5b9f9b}{\_\-\_\-construct} (\$bindingId=null, \$personId=null)
+\item 
+\hypertarget{classProvenance_a5424205b774731f2d7593d3eb54e6139}{
+{\bfseries getBindingId} ()}
+\label{classProvenance_a5424205b774731f2d7593d3eb54e6139}
+
+\item 
+\hypertarget{classProvenance_ac4807d68357d3f3025c949658ba3d4e6}{
+{\bfseries setBindingId} (\$bindingId)}
+\label{classProvenance_ac4807d68357d3f3025c949658ba3d4e6}
+
+\item 
+\hypertarget{classProvenance_a896bd7918291bde6e3a9d271a73f4460}{
+{\bfseries getPersonId} ()}
+\label{classProvenance_a896bd7918291bde6e3a9d271a73f4460}
+
+\item 
+\hypertarget{classProvenance_a51836d2d53b9964d17d83b2e9ddcaa55}{
+{\bfseries setPersonId} (\$personId)}
+\label{classProvenance_a51836d2d53b9964d17d83b2e9ddcaa55}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classProvenance_a7514cb28de3123336f9f0bcc36b0fca7}{
+static {\bfseries fromBinding} (\$binding)}
+\label{classProvenance_a7514cb28de3123336f9f0bcc36b0fca7}
+
+\item 
+static \hyperlink{classProvenance_ae8dd5db6f4bdc8c131f625b7e1287827}{getTableName} ()
+\item 
+static \hyperlink{classProvenance_ad45c3e72c9462e73123e310a49da9154}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classProvenance_a244657b40cc6b72dd868d25a2cafbe57}{getColumns} ()
+\item 
+static \hyperlink{classProvenance_a3d14641b8cfcb3dbf226e82d684ab275}{getColumnTypes} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classProvenance_a908380e16902473484d18fc79fa65290}{\$bindingId}
+\item 
+\hyperlink{classProvenance_a0f541d6de88ef1a2c57a0aa462fcdc8b}{\$personId}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a provenance entity. Associatieve between binding and person. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classProvenance_a12d0b0930da213236d769da23b5b9f9b}{
+\index{Provenance@{Provenance}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Provenance@{Provenance}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Provenance::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+\item[{\$}]{bindingId = {\ttfamily null}, }
+\item[{\$}]{personId = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classProvenance_a12d0b0930da213236d769da23b5b9f9b}
+Constructs a provenance by binding and person ids.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$bindingId} & Id of the binding. Default (null) will create a new provenance. \\
+\hline
+{\em \$personId} & Id of the person. Default (null) will create a new provenance. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classProvenance_a244657b40cc6b72dd868d25a2cafbe57}{
+\index{Provenance@{Provenance}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!Provenance@{Provenance}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Provenance::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classProvenance_a244657b40cc6b72dd868d25a2cafbe57}
+Gets all the columns.
+
+\begin{DoxyReturn}{Returns}
+Array of all columns, except primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Entity}.
+
+\hypertarget{classProvenance_a3d14641b8cfcb3dbf226e82d684ab275}{
+\index{Provenance@{Provenance}!getColumnTypes@{getColumnTypes}}
+\index{getColumnTypes@{getColumnTypes}!Provenance@{Provenance}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Provenance::getColumnTypes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classProvenance_a3d14641b8cfcb3dbf226e82d684ab275}
+Gets all the column types, per column, including primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all column types. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
+
+\hypertarget{classProvenance_ad45c3e72c9462e73123e310a49da9154}{
+\index{Provenance@{Provenance}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!Provenance@{Provenance}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Provenance::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classProvenance_ad45c3e72c9462e73123e310a49da9154}
+Gets the primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
+
+\hypertarget{classProvenance_ae8dd5db6f4bdc8c131f625b7e1287827}{
+\index{Provenance@{Provenance}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!Provenance@{Provenance}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Provenance::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classProvenance_ae8dd5db6f4bdc8c131f625b7e1287827}
+Gets the table name.
+
+\begin{DoxyReturn}{Returns}
+The table name. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classProvenance_a908380e16902473484d18fc79fa65290}{
+\index{Provenance@{Provenance}!\$bindingId@{\$bindingId}}
+\index{\$bindingId@{\$bindingId}!Provenance@{Provenance}}
+\subsubsection[{\$bindingId}]{\setlength{\rightskip}{0pt plus 5cm}Provenance::\$bindingId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classProvenance_a908380e16902473484d18fc79fa65290}
+\hyperlink{classBinding}{Binding} id. \hypertarget{classProvenance_a0f541d6de88ef1a2c57a0aa462fcdc8b}{
+\index{Provenance@{Provenance}!\$personId@{\$personId}}
+\index{\$personId@{\$personId}!Provenance@{Provenance}}
+\subsubsection[{\$personId}]{\setlength{\rightskip}{0pt plus 5cm}Provenance::\$personId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classProvenance_a0f541d6de88ef1a2c57a0aa462fcdc8b}
+\hyperlink{classPerson}{Person} id. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/models/provenance/provenance.php\end{DoxyCompactItemize}

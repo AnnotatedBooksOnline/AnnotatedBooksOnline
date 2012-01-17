@@ -1,0 +1,72 @@
+\hypertarget{classResultSet}{
+\section{ResultSet Class Reference}
+\label{classResultSet}\index{ResultSet@{ResultSet}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classResultSet_ac86b486df597ae5b9e54149da234914f}{\_\-\_\-construct} (\$statement)
+\item 
+\hypertarget{classResultSet_a8eb3574cf0f0176005f873c4f85d18d1}{
+{\bfseries getIterator} ()}
+\label{classResultSet_a8eb3574cf0f0176005f873c4f85d18d1}
+
+\item 
+\hypertarget{classResultSet_a5f84a517e8af2bdd202b663f7e63a943}{
+{\bfseries getAmount} ()}
+\label{classResultSet_a5f84a517e8af2bdd202b663f7e63a943}
+
+\item 
+\hypertarget{classResultSet_ab677b0700c7706b6be5d01c9aa733140}{
+{\bfseries tryGetFirstRow} ()}
+\label{classResultSet_ab677b0700c7706b6be5d01c9aa733140}
+
+\item 
+\hypertarget{classResultSet_af7f034541c0d410bd2def9925074a993}{
+{\bfseries getFirstRow} ()}
+\label{classResultSet_af7f034541c0d410bd2def9925074a993}
+
+\item 
+\hypertarget{classResultSet_aedc1f5a1d07f1a027eeceb1ff4c02225}{
+{\bfseries asArrays} ()}
+\label{classResultSet_aedc1f5a1d07f1a027eeceb1ff4c02225}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An IteratorAggregate for the results of a query.
+
+Can be used to iterate over the rows in the result set of a query.
+
+Example: \begin{DoxyVerb}
+ * $results = $dbc->query('SELECT user_name FROM users WHERE birth_date = %a', unixtojd());
+ * foreach($results as $result)
+ * {
+ *      print 'Happy birthday, ' . $result->getValue('user_name') . '!\n'
+ * }
+ * \end{DoxyVerb}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classResultSet_ac86b486df597ae5b9e54149da234914f}{
+\index{ResultSet@{ResultSet}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!ResultSet@{ResultSet}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+\item[{\$}]{statement}
+\end{DoxyParamCaption}
+)}}
+\label{classResultSet_ac86b486df597ae5b9e54149da234914f}
+Constructs a \hyperlink{classResultSet}{ResultSet} from a prepared PDO statement.
+
+
+\begin{DoxyParams}[1]{Parameters}
+PDOStamement & {\em \$statement} & The PDO statement. Should already have been executed. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/framework/database/resultset.php\end{DoxyCompactItemize}

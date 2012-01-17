@@ -1,0 +1,139 @@
+\hypertarget{classSession}{
+\section{Session Class Reference}
+\label{classSession}\index{Session@{Session}}
+}
+Inheritance diagram for Session:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classSession}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSession_aed85e756b6654874dfd6c94f0382d061}{setVar} (\$name, \$value)
+\item 
+\hyperlink{classSession_ac0b791332d81ad7f542edeee935d0db4}{unsetVar} (\$name)
+\item 
+\hyperlink{classSession_a8cbfa64ffa31a33a61d62d4396985e07}{getVar} (\$name)
+\item 
+\hyperlink{classSession_a1747aaae205a1e90e14cb9de48120cd8}{exists} (\$name)
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSession_a36373ba15d6c8f932aeea02d7320d7c8}{\_\-\_\-construct} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSession_a86a6e52b2a48eeafaaff766db1973cef}{\$instance}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Represents the current user session. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classSession_a36373ba15d6c8f932aeea02d7320d7c8}{
+\index{Session@{Session}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Session@{Session}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Session::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classSession_a36373ba15d6c8f932aeea02d7320d7c8}
+Constructs a session class instance. 
+
+Reimplemented from \hyperlink{classSingleton}{Singleton}.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSession_a1747aaae205a1e90e14cb9de48120cd8}{
+\index{Session@{Session}!exists@{exists}}
+\index{exists@{exists}!Session@{Session}}
+\subsubsection[{exists}]{\setlength{\rightskip}{0pt plus 5cm}Session::exists (
+\begin{DoxyParamCaption}
+\item[{\$}]{name}
+\end{DoxyParamCaption}
+)}}
+\label{classSession_a1747aaae205a1e90e14cb9de48120cd8}
+Checks whether a variable exists in the session.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & Name of the variable.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Whether the variable exists. 
+\end{DoxyReturn}
+\hypertarget{classSession_a8cbfa64ffa31a33a61d62d4396985e07}{
+\index{Session@{Session}!getVar@{getVar}}
+\index{getVar@{getVar}!Session@{Session}}
+\subsubsection[{getVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::getVar (
+\begin{DoxyParamCaption}
+\item[{\$}]{name}
+\end{DoxyParamCaption}
+)}}
+\label{classSession_a8cbfa64ffa31a33a61d62d4396985e07}
+Sets a session variable.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & Name of the variable.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value of the variable or the empty string if it does not exist. 
+\end{DoxyReturn}
+\hypertarget{classSession_aed85e756b6654874dfd6c94f0382d061}{
+\index{Session@{Session}!setVar@{setVar}}
+\index{setVar@{setVar}!Session@{Session}}
+\subsubsection[{setVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::setVar (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{value}
+\end{DoxyParamCaption}
+)}}
+\label{classSession_aed85e756b6654874dfd6c94f0382d061}
+Sets a session variable.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & Name of the variable. \\
+\hline
+{\em \$value} & Value of the variable. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classSession_ac0b791332d81ad7f542edeee935d0db4}{
+\index{Session@{Session}!unsetVar@{unsetVar}}
+\index{unsetVar@{unsetVar}!Session@{Session}}
+\subsubsection[{unsetVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::unsetVar (
+\begin{DoxyParamCaption}
+\item[{\$}]{name}
+\end{DoxyParamCaption}
+)}}
+\label{classSession_ac0b791332d81ad7f542edeee935d0db4}
+Unsets a session variable.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & Name of the variable. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSession_a86a6e52b2a48eeafaaff766db1973cef}{
+\index{Session@{Session}!\$instance@{\$instance}}
+\index{\$instance@{\$instance}!Session@{Session}}
+\subsubsection[{\$instance}]{\setlength{\rightskip}{0pt plus 5cm}Session::\$instance\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\label{classSession_a86a6e52b2a48eeafaaff766db1973cef}
+Unique instance. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/framework/util/session.php\end{DoxyCompactItemize}

@@ -1,0 +1,230 @@
+\hypertarget{classConfiguration}{
+\section{Configuration Class Reference}
+\label{classConfiguration}\index{Configuration@{Configuration}}
+}
+Inheritance diagram for Configuration:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classConfiguration}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classConfiguration_af83327cbd2812c84077aa8e92cc1f9b6}{getString} (\$name, \$default=null)
+\item 
+\hyperlink{classConfiguration_a71e55f600649d58321c039cbb829ea09}{getPath} (\$name, \$default=null)
+\item 
+\hyperlink{classConfiguration_a7aba0859f79226be3b942e11a1d33738}{getInteger} (\$name, \$default=null)
+\item 
+\hyperlink{classConfiguration_aadd8e90fd4915c74aabe8e88be9bfe58}{getDouble} (\$name, \$default=null)
+\item 
+\hyperlink{classConfiguration_a4afcc17b2a14fe90ca873fc7cbc38d16}{getBoolean} (\$name, \$default=null)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classConfiguration_a9a1a49e746b5409d674183da01362444}{getBaseURL} ()
+\item 
+static \hyperlink{classConfiguration_a6fb14b409e3d73183b90d4e7cb30e605}{getInstallBase} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classConfiguration_a3102d300a65b42bea6794dacd9d7afc9}{\_\-\_\-construct} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classConfiguration_a1f4b6d097ad7230a63eba874ddbc7bef}{\$instance}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classConfiguration}{Configuration} class. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classConfiguration_a3102d300a65b42bea6794dacd9d7afc9}{
+\index{Configuration@{Configuration}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Configuration@{Configuration}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Configuration::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classConfiguration_a3102d300a65b42bea6794dacd9d7afc9}
+Constructs a configuration class instance. 
+
+Reimplemented from \hyperlink{classSingleton}{Singleton}.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classConfiguration_a9a1a49e746b5409d674183da01362444}{
+\index{Configuration@{Configuration}!getBaseURL@{getBaseURL}}
+\index{getBaseURL@{getBaseURL}!Configuration@{Configuration}}
+\subsubsection[{getBaseURL}]{\setlength{\rightskip}{0pt plus 5cm}static Configuration::getBaseURL (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classConfiguration_a9a1a49e746b5409d674183da01362444}
+Returns the base URL. \hypertarget{classConfiguration_a4afcc17b2a14fe90ca873fc7cbc38d16}{
+\index{Configuration@{Configuration}!getBoolean@{getBoolean}}
+\index{getBoolean@{getBoolean}!Configuration@{Configuration}}
+\subsubsection[{getBoolean}]{\setlength{\rightskip}{0pt plus 5cm}Configuration::getBoolean (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{default = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classConfiguration_a4afcc17b2a14fe90ca873fc7cbc38d16}
+Gets a boolean value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & The name of the setting. \\
+\hline
+{\em \$default} & The default of this setting. Defaults to an exception if no setting with the given name is found.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The setting its value.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classSettingNotFoundException}{SettingNotFoundException}} & If the setting could not be found and there is no default. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classConfiguration_aadd8e90fd4915c74aabe8e88be9bfe58}{
+\index{Configuration@{Configuration}!getDouble@{getDouble}}
+\index{getDouble@{getDouble}!Configuration@{Configuration}}
+\subsubsection[{getDouble}]{\setlength{\rightskip}{0pt plus 5cm}Configuration::getDouble (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{default = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classConfiguration_aadd8e90fd4915c74aabe8e88be9bfe58}
+Gets a floating point value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & The name of the setting. \\
+\hline
+{\em \$default} & The default of this setting. Defaults to an exception if no setting with the given name is found.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The setting its value.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classSettingNotFoundException}{SettingNotFoundException}} & If the setting could not be found and there is no default. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classConfiguration_a6fb14b409e3d73183b90d4e7cb30e605}{
+\index{Configuration@{Configuration}!getInstallBase@{getInstallBase}}
+\index{getInstallBase@{getInstallBase}!Configuration@{Configuration}}
+\subsubsection[{getInstallBase}]{\setlength{\rightskip}{0pt plus 5cm}static Configuration::getInstallBase (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classConfiguration_a6fb14b409e3d73183b90d4e7cb30e605}
+Returns the base installation path. \hypertarget{classConfiguration_a7aba0859f79226be3b942e11a1d33738}{
+\index{Configuration@{Configuration}!getInteger@{getInteger}}
+\index{getInteger@{getInteger}!Configuration@{Configuration}}
+\subsubsection[{getInteger}]{\setlength{\rightskip}{0pt plus 5cm}Configuration::getInteger (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{default = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classConfiguration_a7aba0859f79226be3b942e11a1d33738}
+Gets an integer value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & The name of the setting. \\
+\hline
+{\em \$default} & The default of this setting. Defaults to an exception if no setting with the given name is found.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The setting its value.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classSettingNotFoundException}{SettingNotFoundException}} & If the setting could not be found and there is no default. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classConfiguration_a71e55f600649d58321c039cbb829ea09}{
+\index{Configuration@{Configuration}!getPath@{getPath}}
+\index{getPath@{getPath}!Configuration@{Configuration}}
+\subsubsection[{getPath}]{\setlength{\rightskip}{0pt plus 5cm}Configuration::getPath (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{default = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classConfiguration_a71e55f600649d58321c039cbb829ea09}
+Gets a string value denoting a path. If the path does not start with '/', the current directory is prepended.
+
+\hyperlink{classNote}{Note}: only works with Unix-\/style paths.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & The name of the setting. \\
+\hline
+{\em \$default} & The default of this setting. Defaults to an exception if no setting with the given name is found.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The setting its value.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classSettingNotFoundException}{SettingNotFoundException}} & If the setting could not be found and there is no default. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classConfiguration_af83327cbd2812c84077aa8e92cc1f9b6}{
+\index{Configuration@{Configuration}!getString@{getString}}
+\index{getString@{getString}!Configuration@{Configuration}}
+\subsubsection[{getString}]{\setlength{\rightskip}{0pt plus 5cm}Configuration::getString (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{default = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classConfiguration_af83327cbd2812c84077aa8e92cc1f9b6}
+Gets a string value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$name} & The name of the setting. \\
+\hline
+{\em \$default} & The default of this setting. Defaults to an exception if no setting with the given name is found.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The setting its value.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classSettingNotFoundException}{SettingNotFoundException}} & If the setting could not be found and there is no default. \\
+\hline
+\end{DoxyExceptions}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classConfiguration_a1f4b6d097ad7230a63eba874ddbc7bef}{
+\index{Configuration@{Configuration}!\$instance@{\$instance}}
+\index{\$instance@{\$instance}!Configuration@{Configuration}}
+\subsubsection[{\$instance}]{\setlength{\rightskip}{0pt plus 5cm}Configuration::\$instance\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\label{classConfiguration_a1f4b6d097ad7230a63eba874ddbc7bef}
+Unique instance. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/framework/util/configuration.php\end{DoxyCompactItemize}

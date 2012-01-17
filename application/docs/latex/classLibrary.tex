@@ -1,0 +1,219 @@
+\hypertarget{classLibrary}{
+\section{Library Class Reference}
+\label{classLibrary}\index{Library@{Library}}
+}
+Inheritance diagram for Library:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classLibrary}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLibrary_a448367379e1917a080692b9f7d09b2af}{\_\-\_\-construct} (\$libraryId=null)
+\item 
+\hypertarget{classLibrary_a34d5adadf5e40827701eb60578f7a0f3}{
+{\bfseries getLibraryId} ()}
+\label{classLibrary_a34d5adadf5e40827701eb60578f7a0f3}
+
+\item 
+\hypertarget{classLibrary_a3c6fc6ea2264853d5b429b8efccc28f3}{
+{\bfseries setLibraryId} (\$libraryId)}
+\label{classLibrary_a3c6fc6ea2264853d5b429b8efccc28f3}
+
+\item 
+\hypertarget{classLibrary_a659f8b8b2794c0dc94433d5031537cd7}{
+{\bfseries getLibraryName} ()}
+\label{classLibrary_a659f8b8b2794c0dc94433d5031537cd7}
+
+\item 
+\hypertarget{classLibrary_aaa6854a276ca6f3205f9f50765e58b3e}{
+{\bfseries setLibraryName} (\$libraryName)}
+\label{classLibrary_aaa6854a276ca6f3205f9f50765e58b3e}
+
+\item 
+\hypertarget{classLibrary_ad1cb79a230bdc75537af95c9dd2e8e68}{
+{\bfseries getLibraryAddress} ()}
+\label{classLibrary_ad1cb79a230bdc75537af95c9dd2e8e68}
+
+\item 
+\hypertarget{classLibrary_a55af3acbe5cc36d495ef5eae6709e73a}{
+{\bfseries setLibraryAddress} (\$libraryAddress)}
+\label{classLibrary_a55af3acbe5cc36d495ef5eae6709e73a}
+
+\item 
+\hypertarget{classLibrary_a14e025adb3ccebbbde3392a1b238c352}{
+{\bfseries getWebsite} ()}
+\label{classLibrary_a14e025adb3ccebbbde3392a1b238c352}
+
+\item 
+\hypertarget{classLibrary_a1111c98cd08c2aca57e9d312aa4c7005}{
+{\bfseries setWebsite} (\$website)}
+\label{classLibrary_a1111c98cd08c2aca57e9d312aa4c7005}
+
+\item 
+\hypertarget{classLibrary_a48bb994e851407e81e703e78a4f97b16}{
+{\bfseries getInfo} ()}
+\label{classLibrary_a48bb994e851407e81e703e78a4f97b16}
+
+\item 
+\hypertarget{classLibrary_ae9a047ee6e26b0eda6df0659400f8f5f}{
+{\bfseries setInfo} (\$info)}
+\label{classLibrary_ae9a047ee6e26b0eda6df0659400f8f5f}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classLibrary_a0b5dbae3b3d7138ad86c7df6e6a433eb}{getTableName} ()
+\item 
+static \hyperlink{classLibrary_a026a18e3d13f83be2ee85221156f7864}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classLibrary_ab67ca6733ca346dccb066c7333ef3426}{getColumns} ()
+\item 
+static \hyperlink{classLibrary_aa18ef5cf611b855ccbe55283b41e93b6}{getColumnTypes} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLibrary_a54b997a065042081ebc9b3b636a37191}{\$libraryId}
+\item 
+\hyperlink{classLibrary_a9b8bf43c7a46c1cee209579a530ea25b}{\$libraryName}
+\item 
+\hyperlink{classLibrary_ae0971e71837cc3270e95ad59910b8570}{\$libraryAddress}
+\item 
+\hyperlink{classLibrary_ac1629c45731a1f498dbf69908d80f390}{\$website}
+\item 
+\hyperlink{classLibrary_afd004ebf7293b3b1b3be5afccb5eb396}{\$info}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a library entity. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classLibrary_a448367379e1917a080692b9f7d09b2af}{
+\index{Library@{Library}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Library@{Library}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Library::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+\item[{\$}]{libraryId = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classLibrary_a448367379e1917a080692b9f7d09b2af}
+Constructs a library by id.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$id} & Id of the library. Default (null) will create a new library. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classLibrary_ab67ca6733ca346dccb066c7333ef3426}{
+\index{Library@{Library}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!Library@{Library}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLibrary_ab67ca6733ca346dccb066c7333ef3426}
+Gets all the columns.
+
+\begin{DoxyReturn}{Returns}
+Array of all columns, except primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Entity}.
+
+\hypertarget{classLibrary_aa18ef5cf611b855ccbe55283b41e93b6}{
+\index{Library@{Library}!getColumnTypes@{getColumnTypes}}
+\index{getColumnTypes@{getColumnTypes}!Library@{Library}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getColumnTypes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLibrary_aa18ef5cf611b855ccbe55283b41e93b6}
+Gets all the column types, per column, including primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all column types. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
+
+\hypertarget{classLibrary_a026a18e3d13f83be2ee85221156f7864}{
+\index{Library@{Library}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!Library@{Library}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLibrary_a026a18e3d13f83be2ee85221156f7864}
+Gets the primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
+
+\hypertarget{classLibrary_a0b5dbae3b3d7138ad86c7df6e6a433eb}{
+\index{Library@{Library}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!Library@{Library}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLibrary_a0b5dbae3b3d7138ad86c7df6e6a433eb}
+Gets the table name.
+
+\begin{DoxyReturn}{Returns}
+The table name. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classLibrary_afd004ebf7293b3b1b3be5afccb5eb396}{
+\index{Library@{Library}!\$info@{\$info}}
+\index{\$info@{\$info}!Library@{Library}}
+\subsubsection[{\$info}]{\setlength{\rightskip}{0pt plus 5cm}Library::\$info\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLibrary_afd004ebf7293b3b1b3be5afccb5eb396}
+Info text about this library. \hypertarget{classLibrary_ae0971e71837cc3270e95ad59910b8570}{
+\index{Library@{Library}!\$libraryAddress@{\$libraryAddress}}
+\index{\$libraryAddress@{\$libraryAddress}!Library@{Library}}
+\subsubsection[{\$libraryAddress}]{\setlength{\rightskip}{0pt plus 5cm}Library::\$libraryAddress\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLibrary_ae0971e71837cc3270e95ad59910b8570}
+\hyperlink{classLibrary}{Library} address \hypertarget{classLibrary_a54b997a065042081ebc9b3b636a37191}{
+\index{Library@{Library}!\$libraryId@{\$libraryId}}
+\index{\$libraryId@{\$libraryId}!Library@{Library}}
+\subsubsection[{\$libraryId}]{\setlength{\rightskip}{0pt plus 5cm}Library::\$libraryId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLibrary_a54b997a065042081ebc9b3b636a37191}
+Id of this library. \hypertarget{classLibrary_a9b8bf43c7a46c1cee209579a530ea25b}{
+\index{Library@{Library}!\$libraryName@{\$libraryName}}
+\index{\$libraryName@{\$libraryName}!Library@{Library}}
+\subsubsection[{\$libraryName}]{\setlength{\rightskip}{0pt plus 5cm}Library::\$libraryName\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLibrary_a9b8bf43c7a46c1cee209579a530ea25b}
+\hyperlink{classLibrary}{Library} name. \hypertarget{classLibrary_ac1629c45731a1f498dbf69908d80f390}{
+\index{Library@{Library}!\$website@{\$website}}
+\index{\$website@{\$website}!Library@{Library}}
+\subsubsection[{\$website}]{\setlength{\rightskip}{0pt plus 5cm}Library::\$website\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLibrary_ac1629c45731a1f498dbf69908d80f390}
+\hyperlink{classLibrary}{Library} website. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/models/library/library.php\end{DoxyCompactItemize}

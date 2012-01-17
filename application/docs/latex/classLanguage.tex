@@ -1,0 +1,153 @@
+\hypertarget{classLanguage}{
+\section{Language Class Reference}
+\label{classLanguage}\index{Language@{Language}}
+}
+Inheritance diagram for Language:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classLanguage}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLanguage_abc1d723ee7724d0b7a6b27914e8e6d55}{\_\-\_\-construct} (\$id=null)
+\item 
+\hypertarget{classLanguage_ae8b3c5092853212ca93c29c3af395326}{
+{\bfseries getLanguageId} ()}
+\label{classLanguage_ae8b3c5092853212ca93c29c3af395326}
+
+\item 
+\hypertarget{classLanguage_a367ceec7d9d2c011c15c5e296d8188a0}{
+{\bfseries setLanguageId} (\$id)}
+\label{classLanguage_a367ceec7d9d2c011c15c5e296d8188a0}
+
+\item 
+\hypertarget{classLanguage_a4db7f3dd4e44138175adc1d6447e7f6f}{
+{\bfseries getLanguageName} ()}
+\label{classLanguage_a4db7f3dd4e44138175adc1d6447e7f6f}
+
+\item 
+\hypertarget{classLanguage_afa72381cb58b086ff6bcc08c4fbe582f}{
+{\bfseries setLanguageName} (\$name)}
+\label{classLanguage_afa72381cb58b086ff6bcc08c4fbe582f}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classLanguage_a262653445a1324d6c02099e01cab0dff}{getTableName} ()
+\item 
+static \hyperlink{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classLanguage_aca9b17402d92635b3092d255ca90e551}{getColumns} ()
+\item 
+static \hyperlink{classLanguage_a6e5cf86376e603ee4945b514fb6de7bd}{getColumnTypes} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLanguage_a3074b0c6617cb91c7e31ccb3faf33908}{\$languageId}
+\item 
+\hyperlink{classLanguage_a668d1ca7b67b40b4f8d001e2e1480dc3}{\$languageName}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class representing a language. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classLanguage_abc1d723ee7724d0b7a6b27914e8e6d55}{
+\index{Language@{Language}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Language@{Language}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Language::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+\item[{\$}]{id = {\ttfamily null}}
+\end{DoxyParamCaption}
+)}}
+\label{classLanguage_abc1d723ee7724d0b7a6b27914e8e6d55}
+Constructs a language entity.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$id} & Id of the language. Default (null) will create a new one. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classLanguage_aca9b17402d92635b3092d255ca90e551}{
+\index{Language@{Language}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!Language@{Language}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLanguage_aca9b17402d92635b3092d255ca90e551}
+Gets all the columns that are not primary keys as an array. 
+
+Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Entity}.
+
+\hypertarget{classLanguage_a6e5cf86376e603ee4945b514fb6de7bd}{
+\index{Language@{Language}!getColumnTypes@{getColumnTypes}}
+\index{getColumnTypes@{getColumnTypes}!Language@{Language}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getColumnTypes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLanguage_a6e5cf86376e603ee4945b514fb6de7bd}
+Gets all the column types, per column, including primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all column types. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
+
+\hypertarget{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}{
+\index{Language@{Language}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!Language@{Language}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}
+Get an array with the primary keys. 
+
+Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
+
+\hypertarget{classLanguage_a262653445a1324d6c02099e01cab0dff}{
+\index{Language@{Language}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!Language@{Language}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLanguage_a262653445a1324d6c02099e01cab0dff}
+Get the name of the corresponding table. 
+
+Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classLanguage_a3074b0c6617cb91c7e31ccb3faf33908}{
+\index{Language@{Language}!\$languageId@{\$languageId}}
+\index{\$languageId@{\$languageId}!Language@{Language}}
+\subsubsection[{\$languageId}]{\setlength{\rightskip}{0pt plus 5cm}Language::\$languageId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLanguage_a3074b0c6617cb91c7e31ccb3faf33908}
+The identifier of a language. \hypertarget{classLanguage_a668d1ca7b67b40b4f8d001e2e1480dc3}{
+\index{Language@{Language}!\$languageName@{\$languageName}}
+\index{\$languageName@{\$languageName}!Language@{Language}}
+\subsubsection[{\$languageName}]{\setlength{\rightskip}{0pt plus 5cm}Language::\$languageName\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLanguage_a668d1ca7b67b40b4f8d001e2e1480dc3}
+The name of the language. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/models/language/language.php\end{DoxyCompactItemize}

@@ -1,0 +1,279 @@
+\hypertarget{classAuthentication}{
+\section{Authentication Class Reference}
+\label{classAuthentication}\index{Authentication@{Authentication}}
+}
+Inheritance diagram for Authentication:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classAuthentication}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classAuthentication_a3da927c6d0643db0d0048b5c21a92f93}{getUser} ()
+\item 
+\hyperlink{classAuthentication_aca16ed99ec2ce7b7a0213a4c718af004}{getUserId} ()
+\item 
+\hyperlink{classAuthentication_a505c6a692893f694cc2d63a102a03338}{login} (\$username, \$password)
+\item 
+\hyperlink{classAuthentication_a478caa2b82260f22462a243fdbabad2f}{logout} ()
+\item 
+\hyperlink{classAuthentication_a317b36d37a99df0476dd0ec55f52bf9d}{checkPassword} (\$password)
+\item 
+\hyperlink{classAuthentication_ad311beb355ff37fd815c0141cc7727f3}{isLoggedOn} ()
+\item 
+\hyperlink{classAuthentication_a06867283805ffd4e223167cc15bbd800}{getRank} ()
+\item 
+\hyperlink{classAuthentication_ad5d1fba33f4df315084335f57025eec6}{hasPermissionTo} (\$action)
+\item 
+\hyperlink{classAuthentication_a5e0187c1c057694e6dae84006a6944c7}{getPermissionList} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classAuthentication_a8df399ee7f9eca617e6249935dae2a88}{generateUniqueToken} ()
+\item 
+static \hyperlink{classAuthentication_a6e29c7efa70a367135d3e7bf464fad52}{assertLoggedOn} ()
+\item 
+static \hyperlink{classAuthentication_a11dc5e2b83d14bcbcc35c7dd5584a1e5}{assertPermissionTo} (\$action)
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classAuthentication_a123a88a49f2dea1247f39a60de1c722c}{\_\-\_\-construct} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classAuthentication_afc3982cbe2a9766da03e6291249eddb4}{\$instance}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classAuthentication}{Authentication} utility class. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classAuthentication_a123a88a49f2dea1247f39a60de1c722c}{
+\index{Authentication@{Authentication}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Authentication@{Authentication}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classAuthentication_a123a88a49f2dea1247f39a60de1c722c}
+Constructs an authentication class instance. 
+
+Reimplemented from \hyperlink{classSingleton}{Singleton}.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classAuthentication_a6e29c7efa70a367135d3e7bf464fad52}{
+\index{Authentication@{Authentication}!assertLoggedOn@{assertLoggedOn}}
+\index{assertLoggedOn@{assertLoggedOn}!Authentication@{Authentication}}
+\subsubsection[{assertLoggedOn}]{\setlength{\rightskip}{0pt plus 5cm}static Authentication::assertLoggedOn (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classAuthentication_a6e29c7efa70a367135d3e7bf464fad52}
+Asserts that the user is logged on.
+
+Throws an NotLoggedOnError in all other cases. \hypertarget{classAuthentication_a11dc5e2b83d14bcbcc35c7dd5584a1e5}{
+\index{Authentication@{Authentication}!assertPermissionTo@{assertPermissionTo}}
+\index{assertPermissionTo@{assertPermissionTo}!Authentication@{Authentication}}
+\subsubsection[{assertPermissionTo}]{\setlength{\rightskip}{0pt plus 5cm}static Authentication::assertPermissionTo (
+\begin{DoxyParamCaption}
+\item[{\$}]{action}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classAuthentication_a11dc5e2b83d14bcbcc35c7dd5584a1e5}
+Asserts that the currently logged in user, if any, has permission to perform the specified action.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$action} & The name of the action, there should be an entry with it in the Permissions table.\\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classAccessDeniedException}{AccessDeniedException}} & If the current user has no permission. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classAuthentication_a317b36d37a99df0476dd0ec55f52bf9d}{
+\index{Authentication@{Authentication}!checkPassword@{checkPassword}}
+\index{checkPassword@{checkPassword}!Authentication@{Authentication}}
+\subsubsection[{checkPassword}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::checkPassword (
+\begin{DoxyParamCaption}
+\item[{\$}]{password}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_a317b36d37a99df0476dd0ec55f52bf9d}
+Checks a password of a user.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$password} & The password of the user to check.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true or false. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_a8df399ee7f9eca617e6249935dae2a88}{
+\index{Authentication@{Authentication}!generateUniqueToken@{generateUniqueToken}}
+\index{generateUniqueToken@{generateUniqueToken}!Authentication@{Authentication}}
+\subsubsection[{generateUniqueToken}]{\setlength{\rightskip}{0pt plus 5cm}static Authentication::generateUniqueToken (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classAuthentication_a8df399ee7f9eca617e6249935dae2a88}
+Generates a unique token.
+
+\begin{DoxyReturn}{Returns}
+string A string representing a unique 32-\/digit hexadecimal number. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_a5e0187c1c057694e6dae84006a6944c7}{
+\index{Authentication@{Authentication}!getPermissionList@{getPermissionList}}
+\index{getPermissionList@{getPermissionList}!Authentication@{Authentication}}
+\subsubsection[{getPermissionList}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::getPermissionList (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_a5e0187c1c057694e6dae84006a6944c7}
+Returns an array of all actions the currently logged in user is allowed to perform.
+
+\begin{DoxyReturn}{Returns}
+array An array of strings representing action names. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_a06867283805ffd4e223167cc15bbd800}{
+\index{Authentication@{Authentication}!getRank@{getRank}}
+\index{getRank@{getRank}!Authentication@{Authentication}}
+\subsubsection[{getRank}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::getRank (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_a06867283805ffd4e223167cc15bbd800}
+Gets the rank of the current user.
+
+\begin{DoxyReturn}{Returns}
+The rank of the current user. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_a3da927c6d0643db0d0048b5c21a92f93}{
+\index{Authentication@{Authentication}!getUser@{getUser}}
+\index{getUser@{getUser}!Authentication@{Authentication}}
+\subsubsection[{getUser}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::getUser (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_a3da927c6d0643db0d0048b5c21a92f93}
+Gets the currently logged on user.
+
+\begin{DoxyReturn}{Returns}
+The currently logged on user. Null if no user is logged on. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_aca16ed99ec2ce7b7a0213a4c718af004}{
+\index{Authentication@{Authentication}!getUserId@{getUserId}}
+\index{getUserId@{getUserId}!Authentication@{Authentication}}
+\subsubsection[{getUserId}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::getUserId (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_aca16ed99ec2ce7b7a0213a4c718af004}
+Gets the user id of the currently logged on user.
+
+\begin{DoxyReturn}{Returns}
+The user id. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_ad5d1fba33f4df315084335f57025eec6}{
+\index{Authentication@{Authentication}!hasPermissionTo@{hasPermissionTo}}
+\index{hasPermissionTo@{hasPermissionTo}!Authentication@{Authentication}}
+\subsubsection[{hasPermissionTo}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::hasPermissionTo (
+\begin{DoxyParamCaption}
+\item[{\$}]{action}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_ad5d1fba33f4df315084335f57025eec6}
+Indicates whether the currently logged in user, if any has permission to permorm the action with the specified name. If no users are logged in, it is checked whether guests are allowed to perform the specified action.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$action} & The name of the action, there should be an entry with it in the Permissions table.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool Whether the current user has a rank high enough dor this action. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_ad311beb355ff37fd815c0141cc7727f3}{
+\index{Authentication@{Authentication}!isLoggedOn@{isLoggedOn}}
+\index{isLoggedOn@{isLoggedOn}!Authentication@{Authentication}}
+\subsubsection[{isLoggedOn}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::isLoggedOn (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_ad311beb355ff37fd815c0141cc7727f3}
+Checks whether a user is logged on.
+
+\begin{DoxyReturn}{Returns}
+Whether a user is logged on. 
+\end{DoxyReturn}
+\hypertarget{classAuthentication_a505c6a692893f694cc2d63a102a03338}{
+\index{Authentication@{Authentication}!login@{login}}
+\index{login@{login}!Authentication@{Authentication}}
+\subsubsection[{login}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::login (
+\begin{DoxyParamCaption}
+\item[{\$}]{username, }
+\item[{\$}]{password}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_a505c6a692893f694cc2d63a102a03338}
+Logs a user in.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$username} & The username of the user to log in. \\
+\hline
+{\em \$password} & The password of the user to log in.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The new user.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classUserBannedException}{UserBannedException}} & If the user is banned. \\
+\hline
+{\em \hyperlink{classUserPendingException}{UserPendingException}} & If the user is not yet activated. \\
+\hline
+{\em \hyperlink{classUserNotFoundException}{UserNotFoundException}} & If no user with the provided username/password combination exists. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classAuthentication_a478caa2b82260f22462a243fdbabad2f}{
+\index{Authentication@{Authentication}!logout@{logout}}
+\index{logout@{logout}!Authentication@{Authentication}}
+\subsubsection[{logout}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::logout (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classAuthentication_a478caa2b82260f22462a243fdbabad2f}
+Logs the current user out. 
+
+\subsection{Member Data Documentation}
+\hypertarget{classAuthentication_afc3982cbe2a9766da03e6291249eddb4}{
+\index{Authentication@{Authentication}!\$instance@{\$instance}}
+\index{\$instance@{\$instance}!Authentication@{Authentication}}
+\subsubsection[{\$instance}]{\setlength{\rightskip}{0pt plus 5cm}Authentication::\$instance\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\label{classAuthentication_afc3982cbe2a9766da03e6291249eddb4}
+Unique instance. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/util/authentication.php\end{DoxyCompactItemize}

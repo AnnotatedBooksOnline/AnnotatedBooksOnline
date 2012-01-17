@@ -1,0 +1,182 @@
+\hypertarget{classSetting}{
+\section{Setting Class Reference}
+\label{classSetting}\index{Setting@{Setting}}
+}
+Inheritance diagram for Setting:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classSetting}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSetting_afc1e17b405d06caab9faf3362d3522b4}{
+{\bfseries getSettingName} ()}
+\label{classSetting_afc1e17b405d06caab9faf3362d3522b4}
+
+\item 
+\hypertarget{classSetting_a1a69278c2aac36ffee09cc16324ddf39}{
+{\bfseries setSettingName} (\$name)}
+\label{classSetting_a1a69278c2aac36ffee09cc16324ddf39}
+
+\item 
+\hypertarget{classSetting_aa98eb86325da3d3e4c98f007eda9c7ae}{
+{\bfseries getSettingValue} ()}
+\label{classSetting_aa98eb86325da3d3e4c98f007eda9c7ae}
+
+\item 
+\hypertarget{classSetting_a8714591d5d8722109dffff3edf449fee}{
+{\bfseries setSettingValue} (\$value)}
+\label{classSetting_a8714591d5d8722109dffff3edf449fee}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classSetting_a2ad01978f63a0087e552f9fb2de7e109}{getSetting} (\$name, \$default=null)
+\item 
+static \hyperlink{classSetting_adbcf1f8af6c1832b0ad59d39b550a6d0}{setSetting} (\$name, \$value)
+\item 
+static \hyperlink{classSetting_ada9934fb4f6bddcf5250494b63d81c5e}{getTableName} ()
+\item 
+static \hyperlink{classSetting_a20ab54f018e4987326d20a5464c7e615}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classSetting_ac1dc23d6b6f1fbd01ac0fd51e05cab3a}{getColumns} ()
+\item 
+static \hyperlink{classSetting_afde410fc459b142b11a50511414dc57d}{getColumnTypes} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classSetting_a59ac482046073fcae2656721ff8f8f02}{\$settingName}
+\item 
+\hyperlink{classSetting_a68d581b6c71b46423725f4ea9361b1a4}{\$settingValue}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classSetting}{Setting} entity. This represents settings that can be set in the database. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classSetting_ac1dc23d6b6f1fbd01ac0fd51e05cab3a}{
+\index{Setting@{Setting}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!Setting@{Setting}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Setting::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classSetting_ac1dc23d6b6f1fbd01ac0fd51e05cab3a}
+Gets all the columns that are not primary keys as an array. 
+
+Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Entity}.
+
+\hypertarget{classSetting_afde410fc459b142b11a50511414dc57d}{
+\index{Setting@{Setting}!getColumnTypes@{getColumnTypes}}
+\index{getColumnTypes@{getColumnTypes}!Setting@{Setting}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Setting::getColumnTypes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classSetting_afde410fc459b142b11a50511414dc57d}
+Gets all the column types, per column, including primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all column types. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
+
+\hypertarget{classSetting_a20ab54f018e4987326d20a5464c7e615}{
+\index{Setting@{Setting}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!Setting@{Setting}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Setting::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classSetting_a20ab54f018e4987326d20a5464c7e615}
+Get an array with the primary keys. 
+
+Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
+
+\hypertarget{classSetting_a2ad01978f63a0087e552f9fb2de7e109}{
+\index{Setting@{Setting}!getSetting@{getSetting}}
+\index{getSetting@{getSetting}!Setting@{Setting}}
+\subsubsection[{getSetting}]{\setlength{\rightskip}{0pt plus 5cm}static Setting::getSetting (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{default = {\ttfamily null}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classSetting_a2ad01978f63a0087e552f9fb2de7e109}
+Returns the value associated with the provided setting name. If such a setting does not exist, the default argument is returned (if one is defined; otherwise an exception is thrown).
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$name} & The name of the setting. \\
+\hline
+string & {\em \$default} & The result if the setting does not exist.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string The value of the setting.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \hyperlink{classSettingException}{SettingException}} & If default is null and the setting is not present. \\
+\hline
+\end{DoxyExceptions}
+\hypertarget{classSetting_ada9934fb4f6bddcf5250494b63d81c5e}{
+\index{Setting@{Setting}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!Setting@{Setting}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Setting::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classSetting_ada9934fb4f6bddcf5250494b63d81c5e}
+Get the name of the corresponding table. 
+
+Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
+
+\hypertarget{classSetting_adbcf1f8af6c1832b0ad59d39b550a6d0}{
+\index{Setting@{Setting}!setSetting@{setSetting}}
+\index{setSetting@{setSetting}!Setting@{Setting}}
+\subsubsection[{setSetting}]{\setlength{\rightskip}{0pt plus 5cm}static Setting::setSetting (
+\begin{DoxyParamCaption}
+\item[{\$}]{name, }
+\item[{\$}]{value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classSetting_adbcf1f8af6c1832b0ad59d39b550a6d0}
+Sets the value of the specified setting, creating it if it does not yet exist.
+
+
+\begin{DoxyParams}[1]{Parameters}
+string & {\em \$name} & The name of the setting. \\
+\hline
+string & {\em \$value} & The new value of the setting. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classSetting_a59ac482046073fcae2656721ff8f8f02}{
+\index{Setting@{Setting}!\$settingName@{\$settingName}}
+\index{\$settingName@{\$settingName}!Setting@{Setting}}
+\subsubsection[{\$settingName}]{\setlength{\rightskip}{0pt plus 5cm}Setting::\$settingName\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classSetting_a59ac482046073fcae2656721ff8f8f02}
+Name of the setting. \hypertarget{classSetting_a68d581b6c71b46423725f4ea9361b1a4}{
+\index{Setting@{Setting}!\$settingValue@{\$settingValue}}
+\index{\$settingValue@{\$settingValue}!Setting@{Setting}}
+\subsubsection[{\$settingValue}]{\setlength{\rightskip}{0pt plus 5cm}Setting::\$settingValue\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classSetting_a68d581b6c71b46423725f4ea9361b1a4}
+Value of the setting. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/models/setting/setting.php\end{DoxyCompactItemize}

@@ -1,0 +1,197 @@
+\hypertarget{classBookLanguage}{
+\section{BookLanguage Class Reference}
+\label{classBookLanguage}\index{BookLanguage@{BookLanguage}}
+}
+Inheritance diagram for BookLanguage:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classBookLanguage}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBookLanguage_a244f8af6147e237845222422611bf08f}{\_\-\_\-construct} (\$bookId=null, \$languageId=null, \$createNew=false)
+\item 
+\hypertarget{classBookLanguage_ae0a6dbbcc16626c4eda99ebccc090781}{
+{\bfseries getBookId} ()}
+\label{classBookLanguage_ae0a6dbbcc16626c4eda99ebccc090781}
+
+\item 
+\hypertarget{classBookLanguage_a4d9295cfd5bcdc8a0e648194404d1bcc}{
+{\bfseries setBookId} (\$bookId)}
+\label{classBookLanguage_a4d9295cfd5bcdc8a0e648194404d1bcc}
+
+\item 
+\hypertarget{classBookLanguage_ab573677e431d72216d45a4cf3e248de4}{
+{\bfseries getLanguageId} ()}
+\label{classBookLanguage_ab573677e431d72216d45a4cf3e248de4}
+
+\item 
+\hypertarget{classBookLanguage_ab8544234c7f5b5691ec471022bed143f}{
+{\bfseries setLanguageId} (\$id)}
+\label{classBookLanguage_ab8544234c7f5b5691ec471022bed143f}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classBookLanguage_a25bff2a665361ac798ebed5ff991e701}{createOrGet} (\$book, \$language)
+\item 
+static \hyperlink{classBookLanguage_a755bc7ed42e5d959d88a387485279ebd}{getTableName} ()
+\item 
+static \hyperlink{classBookLanguage_a2efcb1546e54019661200ad14276c5b6}{getPrimaryKeys} ()
+\item 
+static \hyperlink{classBookLanguage_afc7dd0ea15ff9f1e04006c4ccc0c8bb6}{getColumns} ()
+\item 
+static \hyperlink{classBookLanguage_a3ec4af1722ff86f65464a563f7c21d12}{getColumnTypes} ()
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classBookLanguage_a644c3c8cdc52b582ea932b3ca327840f}{\$bookId}
+\item 
+\hyperlink{classBookLanguage_a7cb17b4d967db7f5c09f3b9c31f8a8b5}{\$languageId}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Associative enity representing the language of a book. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classBookLanguage_a244f8af6147e237845222422611bf08f}{
+\index{BookLanguage@{BookLanguage}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!BookLanguage@{BookLanguage}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}BookLanguage::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+\item[{\$}]{bookId = {\ttfamily null}, }
+\item[{\$}]{languageId = {\ttfamily null}, }
+\item[{\$}]{createNew = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}}
+\label{classBookLanguage_a244f8af6147e237845222422611bf08f}
+Constructs a book-\/language relation.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$bookId} & \\
+\hline
+{\em \$languageId} & \\
+\hline
+{\em \$createNew} & If true, a new relation will be created if the specified one did not exist yet. If one already exists, it doesn't really matter whether this is true or false. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classBookLanguage_a25bff2a665361ac798ebed5ff991e701}{
+\index{BookLanguage@{BookLanguage}!createOrGet@{createOrGet}}
+\index{createOrGet@{createOrGet}!BookLanguage@{BookLanguage}}
+\subsubsection[{createOrGet}]{\setlength{\rightskip}{0pt plus 5cm}static BookLanguage::createOrGet (
+\begin{DoxyParamCaption}
+\item[{\$}]{book, }
+\item[{\$}]{language}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBookLanguage_a25bff2a665361ac798ebed5ff991e701}
+Creates a new relation between a book and a language or retreives one if it already exists.
+
+The id's of the book and the language should be set.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\hyperlink{classBook}{Book} & {\em \$book} & \\
+\hline
+\hyperlink{classLanguage}{Language} & {\em \$language} & \\
+\hline
+\end{DoxyParams}
+\hypertarget{classBookLanguage_afc7dd0ea15ff9f1e04006c4ccc0c8bb6}{
+\index{BookLanguage@{BookLanguage}!getColumns@{getColumns}}
+\index{getColumns@{getColumns}!BookLanguage@{BookLanguage}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static BookLanguage::getColumns (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBookLanguage_afc7dd0ea15ff9f1e04006c4ccc0c8bb6}
+Gets all the columns.
+
+\begin{DoxyReturn}{Returns}
+Array of all columns, except primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Entity}.
+
+\hypertarget{classBookLanguage_a3ec4af1722ff86f65464a563f7c21d12}{
+\index{BookLanguage@{BookLanguage}!getColumnTypes@{getColumnTypes}}
+\index{getColumnTypes@{getColumnTypes}!BookLanguage@{BookLanguage}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static BookLanguage::getColumnTypes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBookLanguage_a3ec4af1722ff86f65464a563f7c21d12}
+Gets all the column types, per column, including primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all column types. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
+
+\hypertarget{classBookLanguage_a2efcb1546e54019661200ad14276c5b6}{
+\index{BookLanguage@{BookLanguage}!getPrimaryKeys@{getPrimaryKeys}}
+\index{getPrimaryKeys@{getPrimaryKeys}!BookLanguage@{BookLanguage}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static BookLanguage::getPrimaryKeys (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBookLanguage_a2efcb1546e54019661200ad14276c5b6}
+Gets the primary keys.
+
+\begin{DoxyReturn}{Returns}
+Array of all primary keys. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
+
+\hypertarget{classBookLanguage_a755bc7ed42e5d959d88a387485279ebd}{
+\index{BookLanguage@{BookLanguage}!getTableName@{getTableName}}
+\index{getTableName@{getTableName}!BookLanguage@{BookLanguage}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static BookLanguage::getTableName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBookLanguage_a755bc7ed42e5d959d88a387485279ebd}
+Gets the table name.
+
+\begin{DoxyReturn}{Returns}
+The table name. 
+\end{DoxyReturn}
+
+
+Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classBookLanguage_a644c3c8cdc52b582ea932b3ca327840f}{
+\index{BookLanguage@{BookLanguage}!\$bookId@{\$bookId}}
+\index{\$bookId@{\$bookId}!BookLanguage@{BookLanguage}}
+\subsubsection[{\$bookId}]{\setlength{\rightskip}{0pt plus 5cm}BookLanguage::\$bookId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classBookLanguage_a644c3c8cdc52b582ea932b3ca327840f}
+\hyperlink{classBook}{Book}. \hypertarget{classBookLanguage_a7cb17b4d967db7f5c09f3b9c31f8a8b5}{
+\index{BookLanguage@{BookLanguage}!\$languageId@{\$languageId}}
+\index{\$languageId@{\$languageId}!BookLanguage@{BookLanguage}}
+\subsubsection[{\$languageId}]{\setlength{\rightskip}{0pt plus 5cm}BookLanguage::\$languageId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classBookLanguage_a7cb17b4d967db7f5c09f3b9c31f8a8b5}
+\hyperlink{classLanguage}{Language}. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/models/language/booklanguage.php\end{DoxyCompactItemize}

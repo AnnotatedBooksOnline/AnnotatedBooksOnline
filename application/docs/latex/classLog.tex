@@ -1,0 +1,152 @@
+\hypertarget{classLog}{
+\section{Log Class Reference}
+\label{classLog}\index{Log@{Log}}
+}
+Inheritance diagram for Log:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classLog}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLog_a8a98440f17cf6a9ce14597897e845abf}{\_\-\_\-destruct} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classLog_a9cbcd40831b44a7fc43494d32544ca45}{debug} (\$format)
+\item 
+static \hyperlink{classLog_aad760acd04b0f64236f8d90519a3bef8}{info} (\$format)
+\item 
+static \hyperlink{classLog_a3dae74a7d221b316861c88726d07c65a}{warn} (\$format)
+\item 
+static \hyperlink{classLog_ae64520f1abc38b59df669bd62174317e}{error} (\$format)
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classLog_ab413a80ef95f69c127319bbfc7cbb9e7}{\_\-\_\-construct} ()
+\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classLog_af469fce19eb78a62dce34d2925348d53}{\$instance}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classLog}{Log} class. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classLog_ab413a80ef95f69c127319bbfc7cbb9e7}{
+\index{Log@{Log}!\_\-\_\-construct@{\_\-\_\-construct}}
+\index{\_\-\_\-construct@{\_\-\_\-construct}!Log@{Log}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Log::\_\-\_\-construct (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classLog_ab413a80ef95f69c127319bbfc7cbb9e7}
+Constructs a log class instance. 
+
+Reimplemented from \hyperlink{classSingleton}{Singleton}.
+
+\hypertarget{classLog_a8a98440f17cf6a9ce14597897e845abf}{
+\index{Log@{Log}!\_\-\_\-destruct@{\_\-\_\-destruct}}
+\index{\_\-\_\-destruct@{\_\-\_\-destruct}!Log@{Log}}
+\subsubsection[{\_\-\_\-destruct}]{\setlength{\rightskip}{0pt plus 5cm}Log::\_\-\_\-destruct (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classLog_a8a98440f17cf6a9ce14597897e845abf}
+Closes log file. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classLog_a9cbcd40831b44a7fc43494d32544ca45}{
+\index{Log@{Log}!debug@{debug}}
+\index{debug@{debug}!Log@{Log}}
+\subsubsection[{debug}]{\setlength{\rightskip}{0pt plus 5cm}static Log::debug (
+\begin{DoxyParamCaption}
+\item[{\$}]{format}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLog_a9cbcd40831b44a7fc43494d32544ca45}
+Adds a debug message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$format} & The format of the message. \\
+\hline
+{\em ...} & The arguments of the format. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classLog_ae64520f1abc38b59df669bd62174317e}{
+\index{Log@{Log}!error@{error}}
+\index{error@{error}!Log@{Log}}
+\subsubsection[{error}]{\setlength{\rightskip}{0pt plus 5cm}static Log::error (
+\begin{DoxyParamCaption}
+\item[{\$}]{format}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLog_ae64520f1abc38b59df669bd62174317e}
+Adds an error message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$format} & The format of the message. \\
+\hline
+{\em ...} & The arguments of the format. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classLog_aad760acd04b0f64236f8d90519a3bef8}{
+\index{Log@{Log}!info@{info}}
+\index{info@{info}!Log@{Log}}
+\subsubsection[{info}]{\setlength{\rightskip}{0pt plus 5cm}static Log::info (
+\begin{DoxyParamCaption}
+\item[{\$}]{format}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLog_aad760acd04b0f64236f8d90519a3bef8}
+Adds an info message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$format} & The format of the message. \\
+\hline
+{\em ...} & The arguments of the format. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classLog_a3dae74a7d221b316861c88726d07c65a}{
+\index{Log@{Log}!warn@{warn}}
+\index{warn@{warn}!Log@{Log}}
+\subsubsection[{warn}]{\setlength{\rightskip}{0pt plus 5cm}static Log::warn (
+\begin{DoxyParamCaption}
+\item[{\$}]{format}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLog_a3dae74a7d221b316861c88726d07c65a}
+Adds a warning message.
+
+
+\begin{DoxyParams}{Parameters}
+{\em \$format} & The format of the message. \\
+\hline
+{\em ...} & The arguments of the format. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classLog_af469fce19eb78a62dce34d2925348d53}{
+\index{Log@{Log}!\$instance@{\$instance}}
+\index{\$instance@{\$instance}!Log@{Log}}
+\subsubsection[{\$instance}]{\setlength{\rightskip}{0pt plus 5cm}Log::\$instance\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\label{classLog_af469fce19eb78a62dce34d2925348d53}
+Unique instance. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+www/backend/framework/util/log.php\end{DoxyCompactItemize}
