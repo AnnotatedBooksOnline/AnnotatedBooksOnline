@@ -22,13 +22,13 @@ var bookProperties = [{
 },{
     abbreviation: 'publisher',
     name: 'Publisher'
-}/*,{
+},{
     abbreviation: 'version',
-    name: 'Version'
+    name: 'Edition'
 },{
     abbreviation: 'language',
     name: 'Language'
-}*/,{
+},{
     abbreviation: 'library',
     name: 'Library'
 },{
@@ -38,13 +38,10 @@ var bookProperties = [{
 },{
     abbreviation: 'provenance',
     name: 'Provenance'
-}/*,{
+},{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'
-},{
-    abbreviation: 'summary',
-    name: 'Summary'
-}*/];
+}];
 
 Ext.define('Ext.ux.SearchParameterModel', {
     extend: 'Ext.data.Model',
@@ -396,7 +393,7 @@ Ext.define('Ext.ux.SearchResultsView', {
     initComponent: function()
     {
         this.cols  = this.getColumnStore(this.cols);
-        this.store = this.getResultStore(this.data, this.cols);
+        this.store = this.getResultStore(this.cols);
         
         var _this = this;
         var defConfig = {
@@ -404,14 +401,13 @@ Ext.define('Ext.ux.SearchResultsView', {
                 '<tpl for=".">',
                     '<table class="bookitem" style="margin: 10px; cursor: pointer;">',
                         '<tr>',
-                            '<td><img src="{thumbnail}" style="width: 50px; height: 67px;"/></td>',
+                            '{maybethumbnail}',
                             '<td><table style="margin: 5px; margin-left: 10px">{properties}</table></td>',
                         '</tr>',
                     '</table>',
                     '<hr style="margin: 0px;">',
                 '</tpl>',
             ],
-            fullData: this.data,
 //            trackOver: true,
 //            overItemCls: 'x-item-over',
             itemSelector: 'table.bookitem',
@@ -434,18 +430,31 @@ Ext.define('Ext.ux.SearchResultsView', {
     
     prepareData: function(data)
     {
+        var thumbnail = '';
         var properties = '';
         for (var field in data)
         {
             var col = this.cols.findRecord('name', field);
             if (col && col.get('desc') && col.get('show') && data[field] != null && data[field].length != "")
             {
-                properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
-                            + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
+                if (field == 'headline')
+                {
+                    properties += '<tr><td colspan="2" style="font-style: italic; padding-top: 5px">' + data[field] + '</td></tr>';
+                }
+                else if (field == 'thumbnail')
+                {
+                    thumbnail = '<td><img src="' + data[field] + '" style="max-width: 50px; max-height: 67px;"/></td>'
+                }
+                else
+                {
+                    properties += '<tr><td style="padding-right: 5px; font-weight: bold;">'
+                                + col.get('desc') + ': </td><td>' + data[field] + '</td></tr>';
+                }
             }
         }
         
         data['properties'] = properties;
+        data['maybethumbnail'] = thumbnail;
         
         return data;
     },
@@ -460,9 +469,11 @@ Ext.define('Ext.ux.SearchResultsView', {
         return store;
     },
 
-    getResultStore: function(data, columns)
+    getResultStore: function(columns)
     {
-        var store = Ext.create('Ext.data.ArrayStore', {
+        var _this = this;
+        
+        var store = Ext.create('Ext.data.Store', {
             fields: function()
             {
                 var cols = columns.getRange();
@@ -474,24 +485,61 @@ Ext.define('Ext.ux.SearchResultsView', {
                 
                 return fields;
             }(),
-            pageSize: 5,
-            data: data,
-            pagedSort: function(sorters, direction)
+            pageSize: _this.searchPageSize,
+            data: [],
+            setPageSize: function(pageSize)
             {
-                this.loadData(data);
-                var sorted = this.sort(sorters, direction);
-                this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize,
-                    this.currentPage * this.pageSize));
-                return sorted;
+                var page = Math.floor((this.currentPage - 1) * this.pageSize / pageSize) + 1;
+                this.pageSize = pageSize;
+                this.loadPage(page);
+            },
+            setSorters: function(sorters)
+            {
+                _this.searchSorters = sorters;
+                this.loadPage(1);
+            },
+            setSelectors: function(selectors)
+            {
+                _this.searchFields = selectors;
+                this.loadPage(1);
             }
         });
         
-        store.on('load',
-            function(store, records, successful, operation)
+        store.on('beforeload',
+            function()
             {
-                this.loadData(data);
-                this.loadData(this.data.getRange().slice((this.currentPage - 1) * this.pageSize,
-                    this.currentPage * this.pageSize));
+                _this.searchPanel.setLoading(true);
+                var fields = {
+                    selectors: _this.searchFields,
+                    sorters: _this.searchSorters,
+                    limit: this.pageSize,
+                    page: this.currentPage
+                };
+                RequestManager.getInstance().request('Book', 'search', fields, this,
+                    function(data)
+                    {
+                        if (data.total == 0)
+                        {
+                            _this.up('[name=results]').down('pagingtoolbar').hide();
+                            _this.up('[name=results]').down('[name=noresults]').show();
+                        }
+                        else
+                        {
+                            _this.up('[name=results]').down('pagingtoolbar').show();
+                            _this.up('[name=results]').down('[name=noresults]').hide();
+                        }
+                        this.totalCount = data.total;
+                        this.loadData(data.records);
+                        store.fireEvent('load');
+                        _this.searchPanel.setLoading(false);
+                    },
+                    function()
+                    {
+                        _this.searchPanel.setLoading(false);
+                        return true;
+                    }
+                );
+                return false;
             },
             store
         );
@@ -648,7 +696,39 @@ Ext.define('Ext.ux.SearchResultsPanel', {
                 name: 'results',
                 border: false,
                 region: 'center'
-            }]
+            }],
+            searchPageSize: 5,
+            searchSorters: [],
+            listeners: {
+                afterrender: function()
+                {
+                    var results = this.down('[name=results]');
+                    results.add({
+                        xtype: 'searchresultsview',
+                        searchFields: [],
+                        searchPanel: this.up('searchpanel'),
+                        searchSorters: this.searchSorters,
+                        searchPageSize: this.searchPageSize,
+                        cols: this.up('searchpanel').down('[name=parameters]').getColumns()
+                    });
+                    results.add({
+                        xtype: 'panel',
+                        border: false,
+                        bodyPadding: 10,
+                        html: 'No results matching your search were found.',
+                        hidden: true,
+                        name: 'noresults'
+                    });
+                    results.addDocked({
+                        xtype: 'pagingtoolbar',
+                        docked: 'top',
+                        store: results.getComponent(0).getStore(),
+                        displayInfo: true,
+                        displayMsg: 'Displaying books {0} - {1} of {2}'
+                    });
+                    results.down('pagingtoolbar').down('[itemId=refresh]').hide();
+                }
+            }
         };
         
         Ext.apply(this, defConfig);
@@ -669,62 +749,34 @@ Ext.define('Ext.ux.SearchResultsPanel', {
             }
         } while (current = current.nextSibling('sortcombobox'));
         
+        this.searchSorters = sorters;
         var results = this.down('searchresultsview');
-        if (results)
-        {
-            results.store.pagedSort(sorters);
-        }
+        results.store.setSorters(sorters);
     },
     
-    setData: function(data)
+    setPageSize: function(num)
     {
-        var results = this.down('[name=results]');
-        
-        var currentToolbar = this.down('pagingtoolbar');
-        if (currentToolbar != null)
-        {
-            results.removeDocked(currentToolbar);
-        }
-        
-        results.removeAll();
-        
-        if (data.length > 0)
-        {
-            results.add({
-                xtype: 'searchresultsview',
-                data: data,
-                cols: this.up('searchpanel').down('[name=parameters]').getColumns()
-            });
-            
-            results.addDocked({
-                xtype: 'pagingtoolbar',
-                docked: 'top',
-                store: results.getComponent(0).getStore(),
-                displayInfo: true,
-                displayMsg: 'Displaying books {0} - {1} of {2}'
-            });
-            
-            results.down('pagingtoolbar').down('[itemId=refresh]').hide();
-            
-            this.sort();
-        }
-        else
-        {
-            results.add({
-                xtype: 'panel',
-                border: false,
-                bodyPadding: 10,
-                html: 'No results matching your search were found.'
-            });
-        }
+        this.searchPageSize = num;
+        var results = this.down('searchresultsview');
+        results.store.setPageSize(num);
     },
+    
+    search: function(fields)
+    {
+        var results = this.down('searchresultsview');
+        results.store.setSelectors(fields);
+    },
+    
     updateColumns: function()
     {
         var view = this.down('[name=results]').down('searchresultsview');
         
-        if (view != null)
+        if (view)
         {
-            this.setData(view.fullData);
+            var columns = this.up('searchpanel').down('[name=parameters]').getColumns();
+            columns = view.getColumnStore(columns);
+            view.cols = columns;
+            view.store.fireEvent('datachanged');
         }
     }
 });
@@ -772,23 +824,8 @@ Ext.define('Ext.ux.SearchPanel', {
                     }
                     
                     var me = this.up('panel');
-                    me.setLoading(true);
                     
-                    // Request book results.
-                    var onSuccess = function(data)
-                    {
-                        // Set resulting data on search results panel.
-                        this.down('searchresultspanel').setData(data);
-                        me.setLoading(false);
-                    };
-                    
-                    var onFailure = function()
-                    {
-                        me.setLoading(false);
-                        return true;
-                    }
-                    
-                    RequestManager.getInstance().request('Book', 'search', fields, _this, onSuccess, onFailure);
+                    me.down('searchresultspanel').search(fields);
                 }
             },{
                 xtype: 'searchresultspanel'
@@ -857,6 +894,40 @@ Ext.define('Ext.ux.SearchPanel', {
                 items: function()
                 {
                     var items = [{
+                        xtype: 'combobox',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['number'],
+                            data: [{
+                                number: 1
+                            },{
+                                number: 2
+                            },{
+                                number: 5
+                            },{
+                                number: 10
+                            },{
+                                number: 25
+                            }]
+                        }),
+                        queryMode: 'local',
+                        displayField: 'number',
+                        valueField: 'number',
+                        forceSelection: true,
+                        editable: false,
+                        fieldLabel: 'Books per page',
+                        style: 'margin-bottom: 10px',
+                        width: 160,
+                        listeners: {
+                            select: function()
+                            {
+                                _this.down('searchresultspanel').setPageSize(this.getValue());
+                            },
+                            afterrender: function()
+                            {
+                                this.select('5');
+                            }
+                        }
+                    },{
                         xtype: 'panel',
                         border: false,
                         html: 'Show:',
@@ -865,17 +936,22 @@ Ext.define('Ext.ux.SearchPanel', {
                     
                     var props = bookProperties.concat([{
                         abbreviation: 'headline',
-                        name: 'Headline',
+                        name: 'Highlights',
+                        defaultOn: true
+                    },{
+                        abbreviation: 'thumbnail',
+                        name: 'Thumbnail',
                         defaultOn: true
                     }]);
                     
                     for (var i = 0; i < props.length; i++)
                     {
-                        items[i+1] = {
+                        items[i+2] = {
                             xtype: 'checkbox',
                             boxLabel: props[i].name,
                             checked: props[i].defaultOn == true,
                             resultField: props[i].abbreviation,
+                            style: (props[i].abbreviation == 'headline') ? 'padding-top: 10px' : '',
                             getColumn: function()
                             {
                                 return {
@@ -897,15 +973,10 @@ Ext.define('Ext.ux.SearchPanel', {
                 getColumns: function()
                 {
                     var cols = [];
-                    for (var i = 0; i < this.items.length-1; i++)
+                    for (var i = 0; i < this.items.length-2; i++)
                     {
-                        cols[i] = this.items.get(i+1).getColumn();
+                        cols[i] = this.items.get(i+2).getColumn();
                     }
-                    cols[cols.length] = {
-                        desc: 'Thumbnail',
-                        name: 'thumbnail',
-                        show: false
-                    };
                     cols[cols.length] = {
                         desc: 'Identifier',
                         name: 'id',
@@ -944,7 +1015,7 @@ Ext.define('Ext.ux.SearchPanel', {
                 border: false,
                 items: [{
                     title: 'Notes',
-                    xtype: 'notespanel',
+                    xtype: 'notespanel'
                 }]
             }]
         };
@@ -996,3 +1067,4 @@ Ext.define('Ext.ux.SearchPanel', {
         }
     }
 });
+
