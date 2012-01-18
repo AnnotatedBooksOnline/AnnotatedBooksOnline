@@ -728,7 +728,7 @@ Ext.define('Ext.ux.SearchResultsPanel', {
                     results.add({
                         xtype: 'searchresultsview',
                         searchFields: [],
-                        searchPanel: this.up('searchpanel'),
+                        searchPanel: this.ownerCt,
                         searchSorters: this.searchSorters,
                         searchPageSize: this.searchPageSize,
                         cols: this.up('searchpanel').down('[name=parameters]').getColumns()

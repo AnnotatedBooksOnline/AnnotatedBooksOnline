@@ -157,7 +157,8 @@ class BookController extends ControllerBase
             'publisher'     => 'books.publisher',
             'language'      => 'bookLanguageNames(books.bookId)',
             'annotlanguage' => 'bindingLanguageNames(bindings.bindingId)',
-            'version'       => 'books.printVersion'
+            'version'       => 'books.printVersion',
+            'id'            => 'books.bookId'
         );
         $sorters = self::getArray($data, 'sorters');
         foreach ($sorters as $sorter)
