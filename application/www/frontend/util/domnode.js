@@ -46,3 +46,13 @@ DomNode.prototype.remove = function()
     
     element.parentNode.removeChild(element);
 }
+
+DomNode.prototype.getDom = function()
+{
+    return this.dom;
+}
+
+DomNode.prototype.destroy = function()
+{
+    this.dom.remove();
+}

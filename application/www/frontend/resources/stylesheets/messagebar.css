@@ -1,0 +1,33 @@
+/*
+ * Message bar stylesheet.
+ */
+
+.message-bars
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.message-bar
+{
+    position: relative;
+    cursor: pointer;
+    background: #DD0;
+    border-bottom: 1px solid #FC0;
+    padding: 5px;
+    
+    
+    background-color: #F4A83D;
+    border-bottom: 1px solid #D6800C;
+    padding: 7px 0;
+    color: #735005;
+    font-weight: bold;
+    font-size: 120%;
+    text-align: center;
+    
+    -moz-box-shadow:    0px 5px 10px 3px #ccc;
+    -webkit-box-shadow: 0px 5px 10px 3px #ccc;
+    box-shadow:         0px 5px 10px 3px #ccc;
+}

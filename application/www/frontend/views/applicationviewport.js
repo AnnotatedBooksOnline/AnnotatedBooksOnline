@@ -61,15 +61,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 function(data)
                                 {
                                     Ext.MessageBox.alert('Success', 'An e-mail with' +
-                                            ' instructions on how to reset your password will' +
-                                            ' be send to you in a few minutes.');
-                                },
-                                function(data)
-                                {
-                                    Ext.MessageBox.alert('Error', 'An error occurred while' + 
-                                        'trying to send the restoration e-mail. Please try again' +
-                                        ' later. If the problem persists: please contact the' + 
-                                        ' webmaster.');
+                                        ' instructions on how to reset your password will' +
+                                        ' be send to you in a few minutes.');
                                 }
                             );
                         }
@@ -358,6 +351,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 {
                     pageNumber = parseInt(data[1] - 1);
                 }
+                
                 // Fetch binding.
                 Binding.createFromId(bindingId, this,
                     function(binding)
@@ -406,7 +400,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     {
                         // Loading is finished.
                         this.down('tabpanel').setLoading(false);
-                        alert('This binding could not be loaded.');
+                        
+                        // TODO: Show a nice error maybe?
                     });
                 
                 return;

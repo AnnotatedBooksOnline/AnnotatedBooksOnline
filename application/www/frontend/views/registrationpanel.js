@@ -156,10 +156,6 @@ Ext.define('Ext.ux.RegistrationForm', {
                     
                     window.show();
                     e.preventDefault();
-                },
-                function()
-                {
-                    alert('Something went wrong. Please try again');
                 }
             );
         }

@@ -141,8 +141,6 @@ Ext.define('Ext.ux.Welcome', {
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
         eventDispatcher.bind('change', this, this.onAuthenticationChange);
         
-        //eventDispatcher.bind('modelchange', this, this.onAuthenticationModelChange);
-        
         this.callParent();
         
         RequestManager.getInstance().request('Main', 'textPage', {textPage: 'welcome-page'}, this,
@@ -161,10 +159,6 @@ Ext.define('Ext.ux.Welcome', {
                 };
                 
                 this.insert(this.items.length, [text]);
-            },
-            function()
-            {
-                alert('Something went wrong. Please try again.');
             }
         );
     },

@@ -147,10 +147,6 @@ Application.prototype.initialize = function()
     
     this.viewport.getEventDispatcher().bind('beforeclose', this, function(event, viewport, index)
         {
-            //alert('close');
-            
-            //Ext.History.back();
-            
             // TODO: go to previous tab, instead of first one.
         });
     
@@ -285,7 +281,6 @@ Application.prototype.tabNeedsAuthentication = function(type)
         case 'info':
         case 'activation':
         case 'restorepass':
-        //case 'upload':
             return false;
     }
     
@@ -298,6 +293,8 @@ Application.prototype.tabNeedsNoAuthentication = function(type)
     switch (type)
     {
         case 'register':
+        case 'activation':
+        case 'restorepass':
             return true;
     }
     
@@ -311,4 +308,3 @@ Ext.onReady(function()
         // Fetch an application instance to show it.
         Application.getInstance();
     });
-

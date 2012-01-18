@@ -34,10 +34,6 @@ Ext.define('Ext.ux.Info', {
                 };
                 
                 this.insert(this.items.length, [text]);
-            },
-            function()
-            {
-                alert('Something went wrong. Please try again.');
             }
         );
     }

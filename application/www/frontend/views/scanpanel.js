@@ -445,6 +445,12 @@ Ext.define('Ext.ux.ScanPanel', {
                     _this.onFileUploadSuccess(file.id, data, receivedResponse);
                 }
         });
+        
+        // Check if we have at least Flash 9 support.
+        if (!FlashDetect.versionAtLeast(9))
+        {
+            MessageBar.show('You need to have Adobe Flash installed to be able to upload scans.', 10000);
+        }
     },
     
     onFileQueued: function(id, filename, size)
