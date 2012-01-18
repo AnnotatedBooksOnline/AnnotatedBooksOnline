@@ -446,8 +446,8 @@ Ext.define('Ext.ux.ScanPanel', {
                 }
         });
         
-        // Check for no flash.
-        if (FlashDetect.versionAtLeast(9))
+        // Check if we have at least Flash 9 support.
+        if (!FlashDetect.versionAtLeast(9))
         {
             MessageBar.show('You need to have Adobe Flash installed to be able to upload scans.', 10000);
         }
