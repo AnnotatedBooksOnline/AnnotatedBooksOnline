@@ -31,8 +31,16 @@ class BookController extends ControllerBase
     
     public function actionFirstLastPages($data)
     {
-        // TODO: Use self::getArray(), as value may not be an array.
+        // TODO: To Jeroen, who wrote this:
         
+        // TODO: Use self::getArray(), as value may not be an array. (Gerben)
+
+        // TODO: This function is extremely UNSAFE! Unauthenticated users can alter all
+        // books this way, no data validation is performed at all, $book might not even
+        // be defined outside the foreach() loop.
+        // I would suggest to at least check that the user is authenticated, and use
+        // self::getArray() for the data array and self::getInteger() for the values.
+        // (Bert)
         foreach ($data as $value) 
         {
             $book = new Book($value[0]);
@@ -51,82 +59,32 @@ class BookController extends ControllerBase
      */
     public function actionSearch($data)
     {
-        $query = Query::select(array('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.summary', 'bindings.signature', 'libraries.libraryName'))
-            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pAuthorList"."name"), \', \'', 'authorNames')
-            ->unsafeAggregate('array_to_string(array_accum', 'DISTINCT "pProvenanceList"."name"), \', \'', 'provenanceNames')
+        Database::getInstance()->startTransaction();
+        
+        $query = Query::select('COUNT(books.bookId)')
             ->from('Books books')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
             ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
-            ->join('Authors authorsList', array('books.bookId = authorsList.bookId'), 'LEFT')
-            ->join('Persons pAuthorList', array('authorsList.personId = pAuthorList.personId'), 'LEFT')
-            ->join('Authors authorsFind', array('books.bookId = authorsFind.bookId'), 'LEFT')
-            ->join('Persons pAuthorFind', array('authorsFind.personId = pAuthorFind.personId'), 'LEFT')
-            ->join('Provenances provenancesList', array('bindings.bindingId = provenancesList.bindingId'), 'LEFT')
-            ->join('Persons pProvenanceList', array('provenancesList.personId = pProvenanceList.personId'), 'LEFT')
-            ->join('Provenances provenancesFind', array('bindings.bindingId = provenancesFind.bindingId'), 'LEFT')
-            ->join('Persons pProvenanceFind', array('provenancesFind.personId = pProvenanceFind.personId'), 'LEFT')
-            ->join('Scans scans', array('bindings.bindingId = scans.bindingId', 'scans.status < :scanStatus'), 'LEFT')
-            ->where('bindings.status = :bindingStatus')
-            ->where('scans.status IS NULL')
-            ->groupBy('books.bookId', 'bindings.bindingId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.summary', 'bindings.signature', 'libraries.libraryName');
+            ->join('Scans invalidScans', array('bindings.bindingId = invalidScans.bindingId', 'invalidScans.status < :scanStatus'), 'LEFT')
+            ->join('Scans firstScan', array('bindings.bindingId = firstScan.bindingId', 'books.firstPage = firstScan.page'), 'LEFT INNER')
+            ->where('bindings.status = :bindingStatus', 'invalidScans.status IS NULL');
+        
+        // The bindings accumulator.
         $binds = array('bindingStatus' => Binding::STATUS_SELECTED, 'scanStatus' => Scan::STATUS_PROCESSED);
+        // The headline query string.
         $headline = "";
+        // The bindings counter.
         $c = 0;
         
-        /*
-         * Adds a fulltext search to the query.
-         */
+        // Adds a fulltext search to the query.
         $addFulltext = function($name, $columns, $value, $addheadline = false) use (&$query, &$binds, &$c, &$headline)
         {
-            // Decompose the textual query
-            $split = BookController::splitFulltextQuery($value);
-            
-            // Process the non-exact selectors.
-            if ($split['rest'] != '')
-            {
-                $onlyNegative = true;
-                foreach (explode(' & ', $split['rest']) as $k => $v)
-                {
-                    if (trim($v) != '' && $v[0] != '!')
-                    {
-                        $onlyNegative = false;
-                        break;
-                    }
-                }
-                $query = $query->whereFulltext($columns, $name . $c, $onlyNegative);
-                $binds[$name . $c] = $split['rest'];
-            }
-            
-            // Process the exact selectors.
-            if (!is_array($columns))
-            {
-                $e = $split['exact'];
-                for ($i = 0; $i < count($e); $i++)
-                {
-                    if ($e[$i]['positive'])
-                    {
-                        $query = $query->where($columns . $e[$i]['like'] . $name . $c . '_' . $i);
-                    }
-                    else
-                    {
-                        $query = $query->whereOr($columns . $e[$i]['like'] . $name . $c . '_' . $i,
-                            $columns . ' IS NULL');
-                    }
-                    $binds[$name . $c . '_' . $i] = $e[$i]['value'];
-                }
-            }
-            
-            // Process headlines.
-            if ($addheadline)
-            {
-                $headline = ($headline != '' ? ' & ' : '') . $split['headline'];
-            }
-            
-            Log::debug("Parsed search query: %s\n", print_r($split, true));
+            BookController::addFulltext($name, $columns, $value, $addheadline, &$query, &$binds, &$c, &$headline);
         };
         
         // Process all search selectors and add them to the query.
-        foreach ($data as $selector)
+        $selectors = self::getArray($data, 'selectors');
+        foreach ($selectors as $selector)
         {
             // If any data is missing or invalid, do not process the selector.
             if (isset($selector['type']) && isset($selector['value']) && (is_array($selector['value']) || trim($selector['value']) != ""))
@@ -144,22 +102,19 @@ class BookController extends ControllerBase
                         $addFulltext('title', 'books.title', $value);
                         break;
                     case 'author':
-                        $addFulltext('author', 'pAuthorFind.name', $value);
+                        $addFulltext('author', 'authorNames(books.bookId)', $value);
                         break;
                     case 'provenance':
-                        $addFulltext('provenance', 'pProvenanceFind.name', $value);
+                        $addFulltext('provenance', 'provenanceNames(bindings.bindingId)', $value);
                         break;
                     case 'any':
-                        $addFulltext('any', array('books.title', 'pAuthorFind.name', 'books.publisher', 'books.placePublished', 'bindings.summary', 'pProvenanceFind.name', 'libraries.libraryName', 'bindings.signature'), $value, true); // TODO: change column to index
+                        $addFulltext('any', array('books.fulltext', 'bindings.fulltext'), $value, true); // TODO: change column to index
                         break;
                     case 'place':
                         $addFulltext('place', 'books.placePublished', $value);
                         break;
                     case 'publisher':
                         $addFulltext('publisher', 'books.publisher', $value);
-                        break;
-                    case 'summary':
-                        $addFulltext('summary', 'bindings.summary', $value);
                         break;
                     case 'library':
                         $addFulltext('library', 'libraries.libraryName', $value);
@@ -168,40 +123,87 @@ class BookController extends ControllerBase
                         $query = $query->where('bindings.signature ILIKE :signature'. $c);
                         $binds['signature'. $c] = '%' . trim($value) . '%';
                         break;
+                    case 'language':
+                        $addFulltext('booklanguage', 'bookLanguageNames(books.bookId)', $value);
+                        break;
+                    case 'annotlanguage':
+                        $addFulltext('bindinglanguage', 'bindingLanguageNames(bindings.bindingId)', $value);
+                        break;
+                    case 'version':
+                        $query = $query->where('books.printVersion = :version' . $c);
+                        $binds['version' . $c] = (int)$value;
+                        break;
                     default:
                         break;
                 }
                 $c++;
             }
         }
+
+        $results = $query->execute($binds);
+        $total = $results->getFirstRow()->getValue('count');
+
+        $query->clear('columns');
+        $query->columns('books.bookId');
+        $sortFields = array(
+            'year'          => 'books.minYear',
+            'title'         => 'books.title',
+            'author'        => 'authorNames(books.bookId)',
+            'binding'       => 'bindings.provenance',
+            'library'       => 'libraries.libraryName',
+            'signature'     => 'bindings.signature',
+            'provenance'    => 'provenanceNames(bindings.bindingId)',
+            'place'         => 'books.placePublished',
+            'publisher'     => 'books.publisher',
+            'language'      => 'bookLanguageNames(books.bookId)',
+            'annotlanguage' => 'bindingLanguageNames(bindings.bindingId)',
+            'version'       => 'books.printVersion'
+        );
+        $sorters = self::getArray($data, 'sorters');
+        foreach ($sorters as $sorter)
+        {
+            if (is_array($sorter) && isset($sorter['property']) && isset($sortFields[$sorter['property']]))
+            {
+                $sortField = $sortFields[$sorter['property']];
+                $sortDirection = isset($sorter['direction']) ? $sorter['direction'] : 'ASC';
+                $query->orderBy($sortField, $sortDirection);
+            }
+        }
+        $query->orderBy('books.bookId', 'ASC');
+        $limit = self::getInteger($data, 'limit', 5, true);
+        $offset = $limit * (self::getInteger($data, 'page', 0, true) - 1);
+        $query->limit($limit, $offset);
+        $query->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'books.printVersion', 'books.fulltext', 'bindings.fulltext');
+
+        $results = $query->execute($binds);
+
+        $query = Query::select('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'authorNames(books.bookId)', 'provenanceNames(bindings.bindingId)', 'scans.scanId', 'bookLanguageNames(books.bookId)', 'bindingLanguageNames(bindings.bindingId)', 'books.printVersion')
+            ->from('Books books')
+            ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
+            ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
+            ->join('Scans scans', array('bindings.bindingId = scans.bindingId', 'books.firstPage = scans.page'), 'LEFT INNER')
+            ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'authornames', 'provenancenames', 'scans.scanId', 'bindinglanguagenames', 'booklanguagenames', 'books.printVersion', 'books.fulltext', 'bindings.fulltext')
+            ->where('books.bookId = :bookId');
+        $binds = array();
         
         // Request a headline if necessary.
         if ($headline != "")
         {
             $query = $query->headline(
                 array(
-                    'books.title',
-                    'array_to_string(array_accum(DISTINCT pAuthorList.name), \', \')',
-                    'books.publisher',
-                    'books.placePublished',
-                    'bindings.summary',
-                    'array_to_string(array_accum(DISTINCT pProvenanceList.name), \', \')',
-                    'libraries.libraryName',
-                    'bindings.signature'
+                    'books.fulltext',
+                    'bindings.fulltext'
                 ),
                 ':headline',
                 'headline');
             $binds['headline'] = $headline;
         }
         
-        $result = $query->execute($binds);
-        
-        // Output the results.
         $records = array();
-        foreach ($result as $book)
+        foreach ($results as $result)
         {
-            Log::debug('%s', print_r($book->getValues(), true));
-            
+            $binds['bookId'] = $result->getValue('bookId');
+            $book = $query->execute($binds)->getFirstRow();
             if ($book->getValue('minYear') == $book->getValue('maxYear'))
             {
                 $year = $book->getValue('minYear');
@@ -211,39 +213,49 @@ class BookController extends ControllerBase
                 $year = $book->getValue('minYear') . ' - ' . $book->getValue('maxYear');
             }
             
-            $binding = new Binding($book->getValue('bindingId'));
-            $firstScan = Scan::fromBindingPage($binding, $book->getValue('firstPage'));
-            if (count($firstScan) != 1)
-            {
-                // This book contains no scans. Hmm... that won't make sense in the search results.
-                continue;
-            }
-            $records[] = array( // TODO: Name these.
-                $book->getValue('title'),
-                $book->getValue('authorNames'),
-                (string) $year,
-                $book->getValue('placePublished'),
-                $book->getValue('publisher'),
-                $book->getValue('libraryName'),
-                $book->getValue('signature'),
-                $book->getValue('provenanceNames'),
-                //$book->getValue('summary'),
-                $book->getValue('headline'),
-                'tiles/' . $firstScan[0]->getScanId() . '/tile_0_0_0.jpg',
-                $book->getValue('bookId'),
-                $book->getValue('bindingId'),
-                $book->getValue('firstPage')
+            $records[] = array(
+                'title'         => $book->getValue('title'),
+                'author'        => $book->getValue('authornames'),
+                'year'          => (string) $year,
+                'place'         => $book->getValue('placePublished'),
+                'publisher'     => $book->getValue('publisher'),
+                'library'       => $book->getValue('libraryName'),
+                'signature'     => $book->getValue('signature'),
+                'provenance'    => $book->getValue('provenancenames'),
+                'headline'      => $book->getValue('headline'),
+                'thumbnail'     => 'tiles/' . $book->getValue('scanId') . '/tile_0_0_0.jpg',
+                'id'            => $book->getValue('bookId'),
+                'bindingId'     => $book->getValue('bindingId'),
+                'firstPage'     => $book->getValue('firstPage'),
+                'language'      => $book->getValue('booklanguagenames'),
+                'annotlanguage' => $book->getValue('bindinglanguagenames'),
+                'version'       => $book->getValue('printVersion')
             );
         }
         
-        return $records;
+        Database::getInstance()->commit();
+        
+        return array(
+            'records' => $records,
+            'total'   => $total
+        );
     }
     
     /**
      * Splits a fulltext user-input query into distinct queries.
+     *
+     * This method provides with:
+     * - a list of exact (quoted) query parts in Postgres format,
+     * - a fulltext Postgres query string for all other parts,
+     * - a headline fulltext Postgres query string for this query.
+     *
+     * @param string query The user specified query, using - for NOT and double quotes for quoting.
+     *
+     * @return array The split fulltext query.
      */
     public static function splitFulltextQuery($query)
     {
+        // Find the exact (quoted) values.
         $exacts = array();
         $num = preg_match_all('/([+-]?)"([^"]+)"/', $query, $exacts, PREG_PATTERN_ORDER);
         $result = array();
@@ -256,7 +268,9 @@ class BookController extends ControllerBase
                 'positive' => $exacts[1][$i] != '-'
             );
         }
-        $headline = 
+        
+        // Determine the other values.
+        $rest = 
             explode(' ',
             trim(
             preg_replace('/\s+/', ' ',
@@ -267,13 +281,14 @@ class BookController extends ControllerBase
             preg_replace('/([+-]?)"([^"]+)"/', '',
             $query
         ))))))));
-        $result['rest'] = implode(' & ', $headline);
+        $result['rest'] = implode(' & ', $rest);
         
+        // Create a headline query.
+        $headline = $rest;
         if ($headline[0] == "")
         {
             $headline = array();
         }
-        
         for ($i = 0; $i < $num; $i++)
         {
             if ($exacts[1][$i] != '-')
@@ -289,6 +304,67 @@ class BookController extends ControllerBase
             }
         }
         $result['headline'] = implode(' & ', $headline);
+        
         return $result;
     }
+    
+    /**
+     * Adds a fulltext query to the given query.
+     *
+     * @param string  name        The name of this fulltext query (for binding name).
+     * @param mixed   columns     The columns to search on.
+     * @param string  value       The user-supplied search string.
+     * @param boolean addheadline Whether to add this fulltext query to the headlines.
+     * @param Query   query       The query to operate on.
+     * @param array   binds       The current array of bindings.
+     * @param int     c           The current binding counter.
+     * @param string  headline    The current headline query string.
+     */
+    public static function addFulltext($name, $columns, $value, $addheadline, Query &$query, array &$binds, &$c, &$headline)
+    {
+        // Decompose the textual query
+        $split = BookController::splitFulltextQuery($value);
+        
+        // Process the non-exact selectors.
+        if ($split['rest'] != '')
+        {
+            $onlyNegative = true;
+            foreach (explode(' & ', $split['rest']) as $k => $v)
+            {
+                if (trim($v) != '' && $v[0] != '!')
+                {
+                    $onlyNegative = false;
+                    break;
+                }
+            }
+            $query = $query->whereFulltext($columns, ':' . $name . $c, $onlyNegative);
+            $binds[$name . $c] = $split['rest'];
+        }
+        
+        // Process the exact selectors.
+        if (!is_array($columns))
+        {
+            $e = $split['exact'];
+            for ($i = 0; $i < count($e); $i++)
+            {
+                if ($e[$i]['positive'])
+                {
+                    $query = $query->where($columns . $e[$i]['like'] . $name . $c . '_' . $i);
+                }
+                else
+                {
+                    $query = $query->whereOr($columns . $e[$i]['like'] . $name . $c . '_' . $i,
+                        $columns . ' IS NULL');
+                }
+                $binds[$name . $c . '_' . $i] = $e[$i]['value'];
+            }
+        }
+        
+        // Process headlines.
+        if ($addheadline)
+        {
+            $headline = ($headline != '' ? ' & ' : '') . $split['headline'];
+        }
+    }
 }
+

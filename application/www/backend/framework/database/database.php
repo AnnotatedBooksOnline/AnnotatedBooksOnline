@@ -23,6 +23,9 @@ class Database extends Singleton
     /** Transaction level. */
     private $transactionLevel;
     
+    /** Prepared statements. */
+    private $preparedStatements;
+    
     protected function __construct()
     {
         $config = Configuration::getInstance();
@@ -34,6 +37,8 @@ class Database extends Singleton
                              array(PDO::ATTR_PERSISTENT => true));
         
         $this->transactionLevel = 0;
+        
+        $this->preparedStatements = array();
     }
     
     public function __destruct()
@@ -193,8 +198,19 @@ class Database extends Singleton
         Log::debug("Executing query:\n%s", $query);
         Log::debug('Arguments:\n%s', print_r($arguments, true));
         
-        // Prepare statement.
-        $statement = $this->pdo->prepare($query);
+        // Avoid preparing the same statement twice.
+        if (isset($this->preparedStatements[$query]))
+        {
+            // Re-use statement.
+            $statement = $this->preparedStatements[$query];
+            $statement->closeCursor();
+        }
+        else
+        {
+            // Prepare statement.
+            $statement = $this->pdo->prepare($query);
+            $this->preparedStatements[$query] = $statement;
+        }
         
         // Bind parameters.
         foreach ($arguments as $name => $value)
@@ -366,3 +382,4 @@ class Database extends Singleton
         return $this->pdo->quote($value);
     }
 }
+

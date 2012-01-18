@@ -157,18 +157,62 @@ class Query
     
     /**
      * Clears all query elements that have been set.
+     *
+     * @param array $fields The elements to clear. When null (default), will clear all elements.
      */
-    public function clear()
+    public function clear($fields = null)
     {
-        $this->columns         = array();
-        $this->tables          = array();
-        $this->joinClause      = '';
-        $this->whereClause     = '';
-        $this->havingClause    = '';
-        $this->groupByClause   = '';
-        $this->orderByClause   = '';
-        $this->limitClause     = '';
-        $this->returningClause = '';
+        if ($fields === null)
+        {
+            $this->columns         = array();
+            $this->tables          = array();
+            $this->joinClause      = '';
+            $this->whereClause     = '';
+            $this->havingClause    = '';
+            $this->groupByClause   = '';
+            $this->orderByClause   = '';
+            $this->limitClause     = '';
+            $this->returningClause = '';
+        }
+        else
+        {
+            $fields = self::argsToArray(func_get_args());
+            foreach ($fields as $field)
+            {
+                switch ($field)
+                {
+                    case 'columns':
+                        $this->columns = array();
+                        break;
+                    case 'tables':
+                        $this->tables = array();
+                        break;
+                    case 'join':
+                        $this->joinClause = '';
+                        break;
+                    case 'where':
+                        $this->whereClause = '';
+                        break;
+                    case 'having':
+                        $this->havingClause = '';
+                        break;
+                    case 'groupBy':
+                        $this->groupByClause = '';
+                        break;
+                    case 'orderBy':
+                        $this->orderByClause = '';
+                        break;
+                    case 'limit':
+                        $this->limitClause = '';
+                        break;
+                    case 'returning':
+                        $this->returningClause = '';
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
         
         return $this;
     }
@@ -267,9 +311,9 @@ class Query
             $columns = array('*');
         }
         
-        $query->kind    = 'SELECT';
-        $query->columns = array_merge($query->columns,
-            array_map(array($query, 'escapeIdentifier'), $columns));
+        $this->kind    = 'SELECT';
+        $this->columns = array_merge($this->columns,
+            array_map(array($this, 'escapeIdentifier'), $columns));
         
         return $this;
     }
@@ -298,7 +342,7 @@ class Query
         $query = $this->escapeIdentifier($query); // TODO: Can't we make an abstraction of the query?
         
         $this->columns[] = 'ts_headline(\'english\', ' . $columns .
-            ', plainto_tsquery(\'english\', ' . $query . ')) AS ' . $this->escapeIdentifier($as);
+            ', to_tsquery(\'english\', ' . $query . ')) AS ' . $this->escapeIdentifier($as);
             
         return $this;
     }
@@ -330,16 +374,6 @@ class Query
         $this->returningClause .= implode(', ', array_map(array($this, 'escapeIdentifier'), $columns));
     }
     
-    /**
-     * Unsafe aggregate function. Handle with care!
-     */
-    public function unsafeAggregate($function, $expression, $as) // TODO: Remove this workaround.
-    {
-        $this->columns[] =  $function . '(' . $expression . ') AS ' .
-            $this->escapeIdentifier($as);
-        
-        return $this;
-    }
     
     
     /*
@@ -516,7 +550,14 @@ class Query
             $direction = (strtolower($direction) != 'desc') ? 'ASC' : 'DESC';
             
             // Add order by clause.
-            $this->orderByClause .= "\nORDER BY " . $this->escapeIdentifier($column) . ' ' . $direction;
+            if ($this->orderByClause != '')
+            {
+                $this->orderByClause .= ", " . $this->escapeIdentifier($column) . ' ' . $direction;
+            }
+            else
+            {
+                $this->orderByClause .= "\nORDER BY " . $this->escapeIdentifier($column) . ' ' . $direction;
+            }
         }
         
         return $this;
@@ -773,3 +814,4 @@ class Query
         }
     }
 }
+
