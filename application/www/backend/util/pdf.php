@@ -10,6 +10,9 @@ require_once 'models/binding/binding.php';
 require_once 'models/library/library.php';
 require_once 'models/author/author.php';
 require_once 'models/person/person.php';
+require_once 'models/language/language.php';
+require_once 'models/language/booklanguage.php';
+require_once 'models/language/booklanguagelist.php';
 require_once 'framework/util/log.php';
 
 // Exceptions.
@@ -21,6 +24,13 @@ class PdfException extends ExceptionBase
     }
 }
 
+/**
+ * A PDF exporting class. Exports bindings or a subset thereof to the PDF format.
+ *
+ * This class has no public methods other than its constructor: it immediately exports to the given CacheEntry.
+ *
+ * All dimensions are in points, equalling 1/72 inch, unless indicated otherwise.
+ */
 class Pdf
 {
     private $identifier;
@@ -32,7 +42,7 @@ class Pdf
     private $textMarginB = 72;
     private $fontSize = 12;
     private $lineSpread = 2;
-    private $productName = 'Collaboratory';
+    private $productName = 'Annotated Books Online'; // TODO: setting?
     private $productLogo = 'util/logo.jpg';
     private $productUrl;
     
@@ -77,14 +87,13 @@ class Pdf
     private $permanentLink;
 
     /**
-     * Creates a new PDF based on the given scan. When possible, the resolution
-     * will be at least the configured dpi.
+     * Creates a new PDF based on the given scan.
      *
-     * scan: the scan to turn into a PDF
-     * dimensions: the page dimensions
-     *    - width: the width in points (1/72 inch)
-     *    - height: the height in points (1/72 inch)
-     * print: whether to insert JavaScript to trigger printing on open
+     * @param binding        The Binding to export.
+     * @param cacheEntry     The CacheEntry to export to.
+     * @param range          The range of pages to export. This may be null for all, a number for a single page and an array of two numbers for a range.
+     * @param transcriptions Whether to include transcriptions.
+     * @param annotations    Whether to include annotations on the scans. Only valid on combination with transcriptions parameter set.
      */
     public function __construct($binding, $cacheEntry, $range = null, $transcriptions = false, $annotations = false)
     {
@@ -131,6 +140,9 @@ class Pdf
         }
     }
     
+    /**
+     * Determines the requested URL without query and fragment information.
+     */
     private function pageUrl()
     {
         $url = 'http';
@@ -152,12 +164,22 @@ class Pdf
         return $url;
     }
     
+    /**
+     * Sets the header text, which will be displayed on top of every (next, when the current page has text) page.
+     *
+     * @param text The header text. Omit this argument or use the empty string to disable header text.
+     */
     private function setHeaderText($text = '')
     {
         $this->headerText = $text;
         $this->headerContinued = false;
     }
     
+    /**
+     * Gets pretty formatted author names of a book.
+     *
+     * @param book The book.
+     */
     private function getAuthorNames($book)
     {
         $authors = implode(', ', array_map(function($author)
@@ -173,6 +195,29 @@ class Pdf
         return $authors;
     }
     
+    /**
+     * Gets pretty formatted languages of a book.
+     *
+     * @param book The book.
+     */
+    private function getLanguageNames($book)
+    {
+        $list = BookLanguageList::find(array('bookId' => $book->getBookId()));
+        $langs = array();
+        foreach ($list as $booklang)
+        {
+            $lang = new Language($booklang->getLanguageId());
+            $langs[] = $lang->getLanguageName();
+        }
+        $langs = implode(', ', $langs);
+        return $langs;
+    }
+    
+    /**
+     * Helper function to convert a php.ini numeric value to an integer.
+     *
+     * @param config The configuration option to read and convert.
+     */
     private function iniToBytes($config)
     {
         $val = trim(ini_get($config));
@@ -190,23 +235,17 @@ class Pdf
 
     /**
      * Creates the PDF file based on (a subset of) a binding.
+     *
+     * @param scans          An array of scans to export.
+     * @param books          An array of books that match the given scans.
+     * @param binding        The encapsulating binding.
+     * @param transcriptions Whether to include transcriptions.
+     * @param annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
+     * @param subset         Whether this selection of pages is a subset of the binding.
      */
     private function createMultiple($scans, $books, $binding, $transcriptions = false, $annotations = false, $subset = false)
     {
-        /*
-        $this->startCountPages();
-        $this->setFontSize(18);
-        $this->drawText('Index' . "\n\n");
-        for ($i = 0; $i < 20; $i++)
-        {
-            $this->setFontSize(14);
-            $this->drawText('Book');
-            $this->setFontSize(12);
-            $this->drawText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean varius dictum nulla et interdum. Sed ut odio non arcu elementum hendrerit et quis justo. Sed id sem velit. Phasellus semper auctor justo, sit amet tempor lectus ultricies at. Fusce et mauris lorem. Nunc erat lorem, cursus sodales dictum sed, gravida sed enim. Sed sed lorem condimentum ligula sollicitudin pharetra quis vel metus. Quisque a dolor at neque auctor varius quis non odio. ' . "\n");
-        }
-        $indexPages = $this->stopCountPages();
-        $this->drawText((string)$indexPages);*/
-        
+        // Make title page.
         if (count($books) == 1)
         {
             $this->setFontSize(18);
@@ -229,6 +268,15 @@ class Pdf
             if ($books[0]->getPublisher() != null)
             {
                 $this->drawText($books[0]->getPublisher());
+            }
+            if ($books[0]->getPrintVersion() != null)
+            {
+                $this->drawText('Edition ' . $books[0]->getPrintVersion());
+            }
+            $langs = $this->getLanguageNames($books[0]);
+            if ($langs != '')
+            {
+                $this->drawText($langs);
             }
         }
         else
@@ -266,6 +314,7 @@ class Pdf
         
         $this->writePage();
         
+        // Initialize index if necessary: count the number of pages it will use.
         $indexStart = count($this->pages);
         if (count($books) > 1)
         {
@@ -297,6 +346,15 @@ class Pdf
                 {
                     $this->drawText($book->getPublisher());
                 }
+                if ($book->getPrintVersion() != null)
+                {
+                    $this->drawText('Edition ' . $book->getPrintVersion());
+                }
+                $langs = $this->getLanguageNames($book);
+                if ($langs != '')
+                {
+                    $this->drawText($langs);
+                }
                 $this->y -= 20;
                 $this->textMarginL -= 18;
                 $this->x = $this->textMarginL;
@@ -304,6 +362,7 @@ class Pdf
             $indexPages = $this->stopCountPages();
         }
         
+        // Output scans and transcriptions.
         $first = true;
         foreach($scans as $scan)
         {
@@ -356,6 +415,7 @@ class Pdf
             }
         }
         
+        // Write the index.
         if (count($books) > 1)
         {
             $this->setFontSize(18);
@@ -365,6 +425,7 @@ class Pdf
                 $book = $bookmark[0];
                 $page = $bookmark[1] + $indexPages;
                 
+                // Draw book title.
                 $this->textMarginR -= 30;
                 $this->setFontSize(14);
                 list(, $bottom, , $top) = $this->drawText($book->getTitle());
@@ -383,6 +444,7 @@ class Pdf
                 $maxYear = $book->getMaxYear();
                 $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
                 
+                // Draw book information.
                 $this->setFontSize(12);
                 $this->textMarginL += 18;
                 $this->x = $this->textMarginL;
@@ -396,6 +458,15 @@ class Pdf
                 {
                     $this->drawText($book->getPublisher());
                 }
+                if ($book->getPrintVersion() != null)
+                {
+                    $this->drawText('Edition ' . $book->getPrintVersion());
+                }
+                $langs = $this->getLanguageNames($book);
+                if ($langs != '')
+                {
+                    $this->drawText($langs);
+                }
                 $bottom = $this->y;
                 $this->textMarginL -= 18;
                 $this->x = $this->textMarginL;
@@ -404,7 +475,7 @@ class Pdf
             }
             $this->writePage();
             
-            //$this->pages = array_slice(array_splice($this->pages, $indexStart, 0, array_slice($this->pages, -$indexPages)), 0, count($this->pages));
+            // Put the index in front of the scans.
             $this->pages = array_merge(
                 array_slice($this->pages, 0, $indexStart),
                 array_slice($this->pages, -$indexPages),
@@ -412,11 +483,17 @@ class Pdf
             );
         }
         
-        $this->make($books[0]);
+        $this->make(count($books) > 0 ? $books[0] : null);
     }
     
     /**
      * Creates the PDF file based on the scan.
+     *
+     * @param scan           The scan to export.
+     * @param book           The encapsulating book, or null if none.
+     * @param binding        The encapsulating binding.
+     * @param transcriptions Whether to include transcriptions.
+     * @param annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
      */
     private function createSingleScan($scan, $book, $binding, $transcriptions = false, $annotations = false)
     {
@@ -488,12 +565,18 @@ class Pdf
     
     /**
      * Outputs raw data to the PDF output followed by a newline.
+     *
+     * @param value The raw data to output.
      */
     private function out($value)
     {
         $this->output .= $value . "\n";
     }
     
+    /**
+     * Starts page counting mode, disabling any kind of textual output.
+     * This is a dry run mode to determine how many pages a specific text output will take.
+     */
     private function startCountPages()
     {
         $this->pageCountState = array(
@@ -505,6 +588,11 @@ class Pdf
         $this->pageCountNum = 0;
     }
     
+    /**
+     * Stops page counting mode.
+     *
+     * @return The number of pages the text occupied.
+     */
     private function stopCountPages()
     {
         list(
@@ -516,6 +604,19 @@ class Pdf
         return $this->pageCountNum + 1;
     }
     
+    /**
+     * Draws a JPEG image at the given location.
+     *
+     * A scale of one corresponds with scaling each image pixel to a point (1/72 inch) in the output.
+     *
+     * @param file The filename.
+     * @param x    The X position in the document.
+     * @param y    The Y position in the document.
+     * @param sx   The X scale of the image, defaults to 1.
+     * @param sy   The Y scale of the image, defaults to 1.
+     *
+     * @return The bounding box of the image.
+     */
     private function drawJPEGImage($file, $x, $y, $sx = 1, $sy = 1)
     {
         list($width, $height) = getimagesize($file);
@@ -540,6 +641,10 @@ class Pdf
     
     /**
      * Creates a circle subpath with radius r centered at point (x,y).
+     *
+     * @param x The X coordinate of the circle.
+     * @param y The Y coordinate of the circle.
+     * @param r The radius of the circle, in points.
      */
     private function putCircle($x, $y, $r)
     {
@@ -554,7 +659,12 @@ class Pdf
     }
     
     /**
-     * Adds a Link Annotation to the specified area.
+     * Adds a Link Annotation to the specified area. This can be an external link or a page link.
+     *
+     * @param area       The bounding box of the link.
+     * @param uri        The URI to link to, or null for page link.
+     * @param bottomline Whether to draw a line underneath the link.
+     * @param pageId     The page object ID to link to, in case of a page link.
      */
     private function addLink($area, $uri, $bottomline = true, $pageId = null)
     {
@@ -579,6 +689,11 @@ class Pdf
         }
     }
     
+    /**
+     * Exports the transcriptions.
+     * @param annotations The annotations that contain the transcriptions.
+     * @param scan        The encapsulating scan.
+     */
     private function drawTranscriptions($annotations, $scan)
     {
         if (count($annotations) == 0)
@@ -605,6 +720,8 @@ class Pdf
     
     /**
      * Adds a bookmark to the current page for the index.
+     *
+     * @param book The book to add a bookmark to.
      */
     private function addBookmark($book)
     {
@@ -612,7 +729,11 @@ class Pdf
     }
     
     /**
-     * Draws the given scan with the given size.
+     * Draws a scan, scaling it to fit in the given width and height.
+     *
+     * @param scan The scan to draw.
+     * @param width The maximum width of the scan in points.
+     * @param height The maximum height of the scan in points.
      */
     private function drawScan($scan, $width, $height)
     {
@@ -675,6 +796,10 @@ class Pdf
     
     /**
      * Draws given points as an annotation polygon with number i.
+     *
+     * @param i      The index of the polygon for reference to the transcription.
+     * @param points The points of the polygon.
+     * @param scan   The encapsulating scan.
      */
     private function drawAnnotationPolygon($i, $points, $scan)
     {
@@ -742,6 +867,11 @@ class Pdf
         $this->draw('Q');
     }
     
+    /**
+     * Calculates the width of a numerical string. It is assumed that the input is numeric and the number will fit on the line.
+     *
+     * @param number The number to calculate the textual width of.
+     */
     private function numberWidth($number)
     {
         $num = str_split((string)$number);
@@ -756,6 +886,11 @@ class Pdf
     
     /**
      * Creates a new PDF object with the given contents.
+     *
+     * @param contents The raw content data.
+     * @param final    Whether this object can immediately be written to the output (when true, updateObject() cannot be used).
+     *
+     * @return The object ID.
      */
     private function newObject($contents, $final = false)
     {
@@ -763,6 +898,15 @@ class Pdf
         return $this->updateObject($this->numObjects, $contents, $final);
     }
     
+    /**
+     * Updates an existing PDF object.
+     *
+     * @param id       The object ID to manipulate.
+     * @param contents The raw content data.
+     * @param final    Whether this object can immediately be written to the output (when true, updateObject() can no longer be used).
+     *
+     * @return The object ID.
+     */
     private function updateObject($id, $contents, $final = false)
     {
         if ($id <= $this->numObjects)
@@ -799,7 +943,12 @@ class Pdf
     }
     
     /**
-     * Creates a new PDF stream with the given contents.
+     * Creates a new PDF stream object with the given contents.
+     *
+     * @param headers  Additional stream dictionary contents (/Length is generated automatically).
+     * @param contents The raw content data.
+     *
+     * @return The object ID.
      */
     private function newStream($headers, $contents)
     {
@@ -814,16 +963,22 @@ class Pdf
     
     /**
      * Adds a new PDF resource reference.
+     *
+     * @param objectId The object ID to add as a reference.
+     *
+     * @return The generated reference name.
      */
-    private function addResource($objectNum)
+    private function addResource($objectId)
     {
-        $name = 'r' . $objectNum;
-        $this->resources .= "/" . $name . " " . $objectNum . " 0 R\n";
+        $name = 'r' . $objectId;
+        $this->resources .= "/" . $name . " " . $objectId . " 0 R\n";
         return "/" . $name;
     }
     
     /**
      * Adds a drawing command to the draw queue.
+     *
+     * @param command The drawing command. The command is assumed to be valid.
      */
     private function draw($command)
     {
@@ -832,6 +987,14 @@ class Pdf
     
     /**
      * Adds a new tile to the output.
+     *
+     * @param scanId The ID of the encapsulating scan.
+     * @param x      The column of the tile.
+     * @param y      The row of the tile.
+     * @param width  The width of the image.
+     * @param height The height of the image.
+     *
+     * @return The object ID of the generated tile.
      */
     private function newTile($scanId, $x, $y, $width, $height)
     {
@@ -865,7 +1028,12 @@ class Pdf
     }
     
     /**
-     * Returns the filename of the image at the position requested.
+     * Returns the filename of the tile at the position requested.
+     *
+     * @param scanId The ID of the scan to which the tile belongs.
+     * @param x      The column of the tile.
+     * @param y      The row of the tile.
+     * @param z      The zoom level of the tile.
      */
     private function tileName($scanId, $x, $y, $z = null)
     {
@@ -878,6 +1046,8 @@ class Pdf
     
     /**
      * Creates the final PDF based on the previously generated pages / objects.
+     *
+     * @param book The book to get information dictionary information from, or null if none.
      */
     private function make($book)
     {
@@ -886,6 +1056,7 @@ class Pdf
             $this->writePage();
         }
         
+        // Insert automatic printing script of required.
         $javascript = '';
         if ($this->autoPrint)
         {
@@ -894,11 +1065,15 @@ class Pdf
             $this->updateObject($jsEmbedId, "<< /S /JavaScript /JS (print\(true\);) >>");
             $javascript = '/Names << /JavaScript ' . $jsId . ' 0 R >>';
         }
-        $this->catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $this->pagesId . ' 0 R /OpenAction [ ' . $this->pages[0] . ' 0 R /Fit ] ' . $javascript . ' >>');
         
+        // TODO: index/outline? See PDF1.7 specs at page 367+
+        
+        // Fill the page catalog.
+        $this->catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $this->pagesId . ' 0 R /OpenAction [ ' . $this->pages[0] . ' 0 R /Fit ] ' . $javascript . ' >>');
         $pages = implode(' 0 R ', array_values($this->pages)) . ' 0 R';
         $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
         
+        // Fill the document information catalog.
         $infoId = $this->newObject("<<\n" .
             ($book !== null ? ("/Title " . $this->fromUTF8($book->getTitle()) . "\n" .
             "/Author " . $this->fromUTF8($this->getAuthorNames($book)) . "\n") : '') . 
@@ -906,13 +1081,13 @@ class Pdf
             "/CreationDate " . date("(\D:YmdHis)") . "\n" .
             ">>");
         
+        // Initialize the XREF table.
         $xref = "0000000000 65535 f \n";
-
         $offset = 9;
         
+        // Output the file, while keeping track of the object positions.
         $this->outputEntry->append($this->output);
         $this->output = '';
-        
         foreach ($this->bufferedObjectSizes as $key => $size)
         {
             $this->bufferedObjectSizes[$key] = $offset;
@@ -920,6 +1095,7 @@ class Pdf
         }
         $this->outputEntry->append($this->buffer);
         
+        // Calculate the XREF table.
         foreach ($this->objectHandles as $key => $handle)
         {
             if ($handle === null)
@@ -936,6 +1112,7 @@ class Pdf
             }
         }
         
+        // Output the XREF table and finalize the file.
         $this->out('xref');
         $this->out('0 ' . ($this->numObjects + 1));
         $this->out($xref);
@@ -943,7 +1120,6 @@ class Pdf
         $this->out('startxref');
         $this->out($offset);
         $this->out('%%EOF');
-        
         $this->outputEntry->append($this->output);
         
         // Unset all unneeded variables for memory savings.
@@ -958,6 +1134,8 @@ class Pdf
     
     /**
      * Creates a PDF-formatted UTF-16BE string from the given UTF-8 string.
+     *
+     * @param s The string to convert.
      */
     private function fromUTF8($s)
     {
@@ -976,6 +1154,8 @@ class Pdf
     
     /**
      * Creates a PDF-formatted UTF-16BE string from the given UTF-16BE array.
+     *
+     * @param s The multibyte character array to convert.
      */
     private function fromUTF16BEArray($s)
     {
@@ -993,12 +1173,21 @@ class Pdf
     
     /**
      * Creates a safe text string from the given string.
+     *
+     * @param text The plain input string.
+     *
+     * @return A text string with escaped (, ), \ and \r.
      */
     private function escapeString($text)
     {
         return '(' . strtr($text, array(')' => '\\)', '(' => '\\(', '\\' => '\\\\', chr(13) => '\r')) . ')';
     }
     
+    /**
+     * Converts an UTF-8 string to an UTF-16BE multibyte character array.
+     *
+     * @param text The string to convert.
+     */
     private function toUTF16BEArray($text)
     {
         $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
@@ -1008,6 +1197,9 @@ class Pdf
     
     /**
      * Adds a font for drawing text.
+     *
+     * @param fontName The name of the font for future reference.
+     * @param fontFile The php file in which the font information is contained.
      */
     private function addFont($fontName, $fontFile)
     {
@@ -1124,6 +1316,11 @@ class Pdf
         $this->y = $this->pageHeight - $this->textMarginT - $this->fontSize;
     }
     
+    /**
+     * Sets all page margins to the given margin.
+     *
+     * @param margin The margin to set all page margins to.
+     */
     private function setPageMargin($margin)
     {
         $this->textMarginL = $margin;
@@ -1132,6 +1329,13 @@ class Pdf
         $this->textMarginB = $margin;
     }
     
+    /**
+     * Draws a (potentially long) string.
+     *
+     * @param text        The string to draw.
+     * @param center      Whether to center the text.
+     * @param omitNewLine Whether to omit the extra newline at the end of the string.
+     */
     private function drawText($text = '', $center = false, $omitNewLine = false)
     {
         $numPages = 0;
@@ -1153,7 +1357,7 @@ class Pdf
             $this->setFontSize(12);
             if ($this->countPages)
             {
-                /*$numPages += */$this->drawText($this->headerText .
+                $this->drawText($this->headerText .
                     ($this->headerContinued ? ' (continued)' : '') . 
                     "\n");
             }
@@ -1294,6 +1498,11 @@ class Pdf
         return array($minX, $minY, $maxX, $maxY);
     }
     
+    /**
+     * Writes a page to the output, resetting the position for the next page.
+     *
+     * @param enforce Whether to enforce drawing a page, even if it is empty.
+     */
     private function writePage($enforce = true)
     {
         if (!$enforce && $this->draws == '')
@@ -1319,12 +1528,23 @@ class Pdf
         $this->pageHasText = false;
     }
     
+    /**
+     * Sets the page size.
+     *
+     * @param width The width in points.
+     * @param height The height in points.
+     */
     private function setPageSize($width, $height)
     {
         $this->pageWidth = $width;
         $this->pageHeight = $height;
     }    
     
+    /**
+     * Sets the font size.
+     *
+     * @param points The font size.
+     */
     private function setFontSize($points)
     {
         $this->lastFontSize = $this->fontSize;
