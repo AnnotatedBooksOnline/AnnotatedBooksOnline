@@ -65,6 +65,9 @@ Ext.define('Ext.ux.SearchColumnModel', {
     },{
         name: 'show',
         type: 'boolean'
+    },{
+        name: 'index',
+        type: 'int'
     }]
 });
 
@@ -432,10 +435,29 @@ Ext.define('Ext.ux.SearchResultsView', {
     {
         var thumbnail = '';
         var properties = '';
+        var _this = this;
+        var fields = [];
         for (var field in data)
         {
+            fields.push(field);
+        }
+        fields.sort(function(a, b)
+        {
+            var aa = _this.cols.findRecord('name', a);
+            var bb = _this.cols.findRecord('name', b);
+            if (!aa || !bb)
+            {
+                return 0;
+            }
+            aa = aa.get('index');
+            bb = bb.get('index');
+            return (aa > bb) - (aa < bb);
+        });
+        for (var i = 0; i < fields.length; i++)
+        {
+            var field = fields[i];
             var col = this.cols.findRecord('name', field);
-            if (col && col.get('desc') && col.get('show') && data[field] != null && data[field].length != "")
+            if (col && col.get('desc') && col.get('show') && data[field] != null && data[field].length != 0)
             {
                 if (field == 'headline')
                 {
@@ -951,13 +973,15 @@ Ext.define('Ext.ux.SearchPanel', {
                             boxLabel: props[i].name,
                             checked: props[i].defaultOn == true,
                             resultField: props[i].abbreviation,
+                            index: i,
                             style: (props[i].abbreviation == 'headline') ? 'padding-top: 10px' : '',
                             getColumn: function()
                             {
                                 return {
                                     desc: this.boxLabel,
                                     name: this.resultField,
-                                    show: this.getValue()
+                                    show: this.getValue(),
+                                    index: this.index
                                 };
                             },
                             listeners: {
@@ -980,17 +1004,20 @@ Ext.define('Ext.ux.SearchPanel', {
                     cols[cols.length] = {
                         desc: 'Identifier',
                         name: 'id',
-                        show: false
+                        show: false,
+                        index: 0
                     };
                     cols[cols.length] = {
                         desc: 'Binding',
                         name: 'bindingId',
-                        show: false
+                        show: false,
+                        index: 0
                     };
                     cols[cols.length] = {
                         desc: 'First page',
                         name: 'firstPage',
-                        show: false
+                        show: false,
+                        index: 0
                     };
                     return cols;
                 }
