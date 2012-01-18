@@ -342,7 +342,7 @@ class Query
         $query = $this->escapeIdentifier($query); // TODO: Can't we make an abstraction of the query?
         
         $this->columns[] = 'ts_headline(\'english\', ' . $columns .
-            ', to_tsquery(\'english\', ' . $query . ')) AS ' . $this->escapeIdentifier($as);
+            ', to_tsquery(\'english\', ' . $query . '), \'StartSel=<b>, StopSel=</b>, MaxWords=100, MinWords=25, ShortWord=3, HighlightAll=FALSE\') AS ' . $this->escapeIdentifier($as);
             
         return $this;
     }
@@ -479,21 +479,36 @@ class Query
     /**
      * A specific where implementation for fulltext searches.
      */
-    public function whereFulltext($columns, $query, $orNull = false)
+    public function whereFulltext($columns, $query, $orNull = false, $isVector = false)
     {
         $columns = self::argsToArray($columns);
-        $columns = implode(' || \' \' || ',
-            array_map(array($this, 'coalesceEmpty'),
-                array_map(array($this, 'escapeIdentifier'), $columns)));
+        if (count($columns) != 1 || !$isVector)
+        {
+            $isVector = false;
+            $columns = implode(' || \' \' || ',
+                array_map(array($this, 'coalesceEmpty'),
+                    array_map(array($this, 'escapeIdentifier'), $columns)));
+        }
+        else
+        {
+            $columns = $this->escapeIdentifier($columns[0]);
+        }
         
         $query = $this->escapeIdentifier($query);
         
-        $conditions = 'to_tsvector(\'english\', ' . $columns .
+        $conditions = '(' . $columns .
             ') @@ to_tsquery(\'english\', ' . $query . ')';
             
         if ($orNull)
         {
-            $conditions = '(' . $conditions . ' OR ' . $columns . ' ~* \'^\s*$\')';
+            if ($isVector)
+            {
+                $conditions = '(' . $conditions . ' OR length(' . $columns . ') = 0)';
+            }
+            else
+            {
+                $conditions = '(' . $conditions . ' OR ' . $columns . ' ~* \'^\s*$\')';
+            }
         }
         
         // Add clauses to where clause.

@@ -461,7 +461,7 @@ Ext.define('Ext.ux.SearchResultsView', {
             {
                 if (field == 'headline')
                 {
-                    properties += '<tr><td colspan="2" style="font-style: italic; padding-top: 5px">' + data[field] + '</td></tr>';
+                    properties += '<tr><td></td><td style="font-style: italic; padding-top: 5px">' + data[field] + '</td></tr>';
                 }
                 else if (field == 'thumbnail')
                 {

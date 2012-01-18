@@ -77,9 +77,9 @@ class BookController extends ControllerBase
         $c = 0;
         
         // Adds a fulltext search to the query.
-        $addFulltext = function($name, $columns, $value, $addheadline = false) use (&$query, &$binds, &$c, &$headline)
+        $addFulltext = function($name, $columns, $value, $addheadline = false, $altvector = null) use (&$query, &$binds, &$c, &$headline)
         {
-            BookController::addFulltext($name, $columns, $value, $addheadline, &$query, &$binds, &$c, &$headline);
+            BookController::addFulltext($name, $columns, $value, $addheadline, $altvector, &$query, &$binds, &$c, &$headline);
         };
         
         // Process all search selectors and add them to the query.
@@ -108,7 +108,7 @@ class BookController extends ControllerBase
                         $addFulltext('provenance', 'provenanceNames(bindings.bindingId)', $value);
                         break;
                     case 'any':
-                        $addFulltext('any', array('books.fulltext', 'bindings.fulltext'), $value, true); // TODO: change column to index
+                        $addFulltext('any', 'books.fulltext', $value, true, 'books.fulltext_vector');
                         break;
                     case 'place':
                         $addFulltext('place', 'books.placePublished', $value);
@@ -173,7 +173,7 @@ class BookController extends ControllerBase
         $limit = self::getInteger($data, 'limit', 5, true);
         $offset = $limit * (self::getInteger($data, 'page', 0, true) - 1);
         $query->limit($limit, $offset);
-        $query->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'books.printVersion', 'books.fulltext', 'bindings.fulltext');
+        $query->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'books.printVersion', 'books.fulltext');
 
         $results = $query->execute($binds);
 
@@ -182,7 +182,7 @@ class BookController extends ControllerBase
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
             ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
             ->join('Scans scans', array('bindings.bindingId = scans.bindingId', 'books.firstPage = scans.page'), 'LEFT INNER')
-            ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'authornames', 'provenancenames', 'scans.scanId', 'bindinglanguagenames', 'booklanguagenames', 'books.printVersion', 'books.fulltext', 'bindings.fulltext')
+            ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'authornames', 'provenancenames', 'scans.scanId', 'bindinglanguagenames', 'booklanguagenames', 'books.printVersion', 'books.fulltext')
             ->where('books.bookId = :bookId');
         $binds = array();
         
@@ -190,10 +190,7 @@ class BookController extends ControllerBase
         if ($headline != "")
         {
             $query = $query->headline(
-                array(
-                    'books.fulltext',
-                    'bindings.fulltext'
-                ),
+                'books.fulltext',
                 ':headline',
                 'headline');
             $binds['headline'] = $headline;
@@ -315,12 +312,13 @@ class BookController extends ControllerBase
      * @param mixed   columns     The columns to search on.
      * @param string  value       The user-supplied search string.
      * @param boolean addheadline Whether to add this fulltext query to the headlines.
+     * @param string  altvector   A (indexed) vector for the given column, if available. Only valid for a single column.
      * @param Query   query       The query to operate on.
      * @param array   binds       The current array of bindings.
      * @param int     c           The current binding counter.
      * @param string  headline    The current headline query string.
      */
-    public static function addFulltext($name, $columns, $value, $addheadline, Query &$query, array &$binds, &$c, &$headline)
+    public static function addFulltext($name, $columns, $value, $addheadline, $altvector, Query &$query, array &$binds, &$c, &$headline)
     {
         // Decompose the textual query
         $split = BookController::splitFulltextQuery($value);
@@ -337,7 +335,14 @@ class BookController extends ControllerBase
                     break;
                 }
             }
-            $query = $query->whereFulltext($columns, ':' . $name . $c, $onlyNegative);
+            if ($altvector === null)
+            {
+                $query = $query->whereFulltext($columns, ':' . $name . $c, $onlyNegative);
+            }
+            else
+            {
+                $query = $query->whereFulltext($altvector, ':' . $name . $c, $onlyNegative, true);
+            }
             $binds[$name . $c] = $split['rest'];
         }
         
@@ -349,14 +354,14 @@ class BookController extends ControllerBase
             {
                 if ($e[$i]['positive'])
                 {
-                    $query = $query->where($columns . $e[$i]['like'] . $name . $c . '_' . $i);
+                    $query = $query->where($columns . $e[$i]['like'] . ':' .$name . $c . 'z' . $i);
                 }
                 else
                 {
-                    $query = $query->whereOr($columns . $e[$i]['like'] . $name . $c . '_' . $i,
+                    $query = $query->whereOr($columns . $e[$i]['like'] . ':' . $name . $c . 'z' . $i,
                         $columns . ' IS NULL');
                 }
-                $binds[$name . $c . '_' . $i] = $e[$i]['value'];
+                $binds[$name . $c . 'z' . $i] = $e[$i]['value'];
             }
         }
         
