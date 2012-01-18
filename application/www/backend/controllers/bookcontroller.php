@@ -79,7 +79,7 @@ class BookController extends ControllerBase
         // Adds a fulltext search to the query.
         $addFulltext = function($name, $columns, $value, $addheadline = false, $altvector = null) use (&$query, &$binds, &$c, &$headline)
         {
-            BookController::addFulltext($name, $columns, $value, $addheadline, $altvector, &$query, &$binds, &$c, &$headline);
+            BookController::addFulltext($name, $columns, $value, $addheadline, $altvector, $query, $binds, $c, $headline);
         };
         
         // Process all search selectors and add them to the query.
