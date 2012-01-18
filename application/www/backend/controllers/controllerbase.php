@@ -16,12 +16,15 @@ abstract class ControllerBase extends Controller
         // Set entity list type.
         $entityListType = $type . 'List';
         
-        // Determine the total number of entities.
-        $total = $entityListType::getTotal();
-        
         // Retrieve the limit and offset for the search from the data.
-        $limit  = self::getInteger($data, 'limit',  $total, true, 0, $total);
-        $offset = self::getInteger($data, 'offset', 0,      true, 0, $total);
+        $limit  = self::getInteger($data, 'limit',  -1);
+        $offset = self::getInteger($data, 'offset', 0,  true, 0);
+        
+        // Check limit.
+        if ($limit < 0)
+        {
+            $limit = null;
+        }
         
         // Retrieve the search filters from the data.
         $filters    = self::getArray($data, 'filters');
@@ -71,7 +74,8 @@ abstract class ControllerBase extends Controller
         }
         
         // Find those entities.
-        $entityList = $entityListType::find($conditions, $offset, $limit, $ordering);
+        $total = 0;
+        $entityList = $entityListType::find($conditions, $offset, $limit, $ordering, $total);
         
         // Get values.
         $records = $entityList->getValues($columns);

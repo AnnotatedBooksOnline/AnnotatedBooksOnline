@@ -28,7 +28,7 @@ abstract class EntityList implements IteratorAggregate
      *
      * @param $entity  Entity to add.
      */
-    public function add($entity) 
+    public function add($entity)
     {
         $this->entities[] = $entity;
     }
@@ -38,7 +38,7 @@ abstract class EntityList implements IteratorAggregate
      *
      * @param $entity  Entity to remove.
      */
-    public function remove($entity) 
+    public function remove($entity)
     {
         $key = array_search($this->entities, $entity);
         if ($key !== false)
@@ -52,7 +52,7 @@ abstract class EntityList implements IteratorAggregate
      *
      * @param $index  Index of entity to remove.
      */
-    public function removeAt($index) 
+    public function removeAt($index)
     {
         unset($this->entities[$index]);
     }
@@ -99,14 +99,17 @@ abstract class EntityList implements IteratorAggregate
      * Finds entities.
      *
      * @param $conditions  Column-value pairs of equal conditions the list should satisfy.
-     *                     Case insensitive strings will be compared Case insensitively.
+     *                     case insensitive strings will be compared Case insensitively.
      * @param $offset      Offset to start list at.
      * @param $limit       Amount of entities to return. Pass null for no limit.
      * @param $ordering    Column-direction pairs of ordering.
+     * @param $total       Will contain the total number of records, without the limit or offset
+     *                     contraint.
      *
      * @return  Entity list with entities that pass the given criteria.
      */
-    public static function find($conditions = array(), $offset = 0, $limit = null, $ordering = array()) 
+    public static function find($conditions = array(), $offset = 0, $limit = null, $ordering = array(),
+        &$total = null)
     {
         // Get some values.
         $keys      = self::getPrimaryKeys();
@@ -130,12 +133,24 @@ abstract class EntityList implements IteratorAggregate
             $whereTypes[$column]  = isset($types[$column]) ? $types[$column] : 'string';
         }
         
+        // Fetch total.
+        if ($total !== null)
+        {
+            $total = Query::select()->
+                count('*', 'total')->
+                from(self::getTableName())->
+                where($whereConds)->
+                execute($whereValues, $whereTypes)->
+                getFirstRow()->
+                getValue('total', 'int');
+        }
+        
         // Build select clause.
         $query = Query::select()->
             from(self::getTableName())->
             where($whereConds)->
-            limit($limit, $offset)->
-            orderBy($ordering);
+            orderBy($ordering)->
+            limit($limit, $offset);
         
         // Execute query.
         $resultSet = $query->execute($whereValues, $whereTypes);
