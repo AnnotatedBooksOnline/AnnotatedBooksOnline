@@ -82,6 +82,8 @@ class Pdf
     private $pageCountNum = 0;
     private $pageCountState;
     
+    private $stackDepth = 0;
+    
     private $outputEntry = null;
     
     private $permanentLink;
@@ -89,13 +91,13 @@ class Pdf
     /**
      * Creates a new PDF based on the given scan.
      *
-     * @param binding        The Binding to export.
-     * @param cacheEntry     The CacheEntry to export to.
-     * @param range          The range of pages to export. This may be null for all, a number for a single page and an array of two numbers for a range.
-     * @param transcriptions Whether to include transcriptions.
-     * @param annotations    Whether to include annotations on the scans. Only valid on combination with transcriptions parameter set.
+     * @param Binding    $binding        The Binding to export.
+     * @param CacheEntry $cacheEntry     The CacheEntry to export to.
+     * @param mixed      $range          The range of pages to export. This may be null for all, a number for a single page and an array of two numbers for a range.
+     * @param boolean    $transcriptions Whether to include transcriptions.
+     * @param boolean    $annotations    Whether to include annotations on the scans. Only valid on combination with transcriptions parameter set.
      */
-    public function __construct($binding, $cacheEntry, $range = null, $transcriptions = false, $annotations = false)
+    public function __construct(Binding $binding, CacheEntry $cacheEntry, $range = null, $transcriptions = false, $annotations = false)
     {
         $this->productUrl = $this->pageUrl();
         $this->identifier = uniqid('pdf', true);
@@ -167,7 +169,7 @@ class Pdf
     /**
      * Sets the header text, which will be displayed on top of every (next, when the current page has text) page.
      *
-     * @param text The header text. Omit this argument or use the empty string to disable header text.
+     * @param string $text The header text. Omit this argument or use the empty string to disable header text.
      */
     private function setHeaderText($text = '')
     {
@@ -178,9 +180,9 @@ class Pdf
     /**
      * Gets pretty formatted author names of a book.
      *
-     * @param book The book.
+     * @param Book $book The book.
      */
-    private function getAuthorNames($book)
+    private function getAuthorNames(Book $book)
     {
         $authors = implode(', ', array_map(function($author)
         {
@@ -198,9 +200,9 @@ class Pdf
     /**
      * Gets pretty formatted languages of a book.
      *
-     * @param book The book.
+     * @param Book $book The book.
      */
-    private function getLanguageNames($book)
+    private function getLanguageNames(Book $book)
     {
         $list = BookLanguageList::find(array('bookId' => $book->getBookId()));
         $langs = array();
@@ -216,7 +218,7 @@ class Pdf
     /**
      * Helper function to convert a php.ini numeric value to an integer.
      *
-     * @param config The configuration option to read and convert.
+     * @param string $config The configuration option to read and convert.
      */
     private function iniToBytes($config)
     {
@@ -236,14 +238,14 @@ class Pdf
     /**
      * Creates the PDF file based on (a subset of) a binding.
      *
-     * @param scans          An array of scans to export.
-     * @param books          An array of books that match the given scans.
-     * @param binding        The encapsulating binding.
-     * @param transcriptions Whether to include transcriptions.
-     * @param annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
-     * @param subset         Whether this selection of pages is a subset of the binding.
+     * @param array   $scans          An array of scans to export.
+     * @param array   $books          An array of books that match the given scans.
+     * @param Binding $binding        The encapsulating binding.
+     * @param boolean $transcriptions Whether to include transcriptions.
+     * @param boolean $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
+     * @param boolean $subset         Whether this selection of pages is a subset of the binding.
      */
-    private function createMultiple($scans, $books, $binding, $transcriptions = false, $annotations = false, $subset = false)
+    private function createMultiple(array $scans, array $books, Binding $binding, $transcriptions = false, $annotations = false, $subset = false)
     {
         // Make title page.
         if (count($books) == 1)
@@ -387,19 +389,17 @@ class Pdf
             $scanWidth = $this->pageWidth - $this->textMarginL - $this->textMarginR;
             $scanHeight = $this->pageHeight - $this->textMarginT - $this->textMarginB - 28 - $this->fontSize;
             
-            $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMarginL, $this->textMarginB + $this->fontSize + 28));
-
-            $this->drawScan($scan, $scanWidth, $scanHeight);
-
-            if ($transcriptions !== false && $annotations !== false)
-            {
-                for ($i = 1; $i <= count($anns); $i++)
+            $this->pushState();
+                $this->translate($this->textMarginL, $this->textMarginB + $this->fontSize + 28);
+                $this->drawScan($scan, $scanWidth, $scanHeight);
+                if ($transcriptions !== false && $annotations !== false)
                 {
-                    $this->drawAnnotationPolygon($i, $anns[$i-1]->getPolygon(), $scan);
+                    for ($i = 1; $i <= count($anns); $i++)
+                    {
+                        $this->drawAnnotationPolygon($i, $anns[$i-1]->getPolygon(), $scan);
+                    }
                 }
-            }
-            
-            $this->draw('Q');
+            $this->popState();
             
             $this->y = $this->textMarginB;
             
@@ -413,6 +413,9 @@ class Pdf
             {
                 $this->drawTranscriptions($anns, $scan);
             }
+            
+            // Use at max 5 seconds per scan.
+            set_time_limit(5);
         }
         
         // Write the index.
@@ -437,8 +440,10 @@ class Pdf
                 $bottom -= $this->fontInfo[$this->font]['Descent'] * $this->fontSize / 1000;
                 $this->setFontSize(12);
                 $width = $this->numberWidth($page);
-                $this->draw('q 1 0 0 1 ' . ($this->pageWidth - $this->textMarginR - $width) . ' ' . $bottom . ' cm');
-                $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$page) . ' Tj ET Q');
+                $this->pushState();
+                    $this->translate($this->pageWidth - $this->textMarginR - $width, $bottom);
+                    $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$page) . ' Tj ET');
+                $this->popState();
                 
                 $minYear = $book->getMinYear();
                 $maxYear = $book->getMaxYear();
@@ -489,13 +494,13 @@ class Pdf
     /**
      * Creates the PDF file based on the scan.
      *
-     * @param scan           The scan to export.
-     * @param book           The encapsulating book, or null if none.
-     * @param binding        The encapsulating binding.
-     * @param transcriptions Whether to include transcriptions.
-     * @param annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
+     * @param Scan    $scan           The scan to export.
+     * @param Book    $book           The encapsulating book, or null if none.
+     * @param Binding $binding        The encapsulating binding.
+     * @param boolean $transcriptions Whether to include transcriptions.
+     * @param boolean $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
      */
-    private function createSingleScan($scan, $book, $binding, $transcriptions = false, $annotations = false)
+    private function createSingleScan(Scan $scan, Book $book = null, Binding $binding, $transcriptions = false, $annotations = false)
     {
         if ($transcriptions !== false)
         {
@@ -534,16 +539,18 @@ class Pdf
         // Draw the scan, with annotations if required.
         $scanWidth = $this->pageWidth - $this->textMarginL - $this->textMarginR;
         $scanHeight = $this->y - $this->textMarginB - 2 * 28;
-        $this->draw(sprintf('q 1 0 0 1 %F %F cm', $this->textMarginL, $this->textMarginB + $this->fontSize + 28));
-        $this->drawScan($scan, $scanWidth, $scanHeight);
-        if ($transcriptions !== false && $annotations !== false)
-        {
-            for ($i = 1; $i <= count($anns); $i++)
+
+        $this->pushState();
+            $this->translate($this->textMarginL, $this->textMarginB + $this->fontSize + 28);        
+            $this->drawScan($scan, $scanWidth, $scanHeight);
+            if ($transcriptions !== false && $annotations !== false)
             {
-                $this->drawAnnotationPolygon($i, $anns[$i-1]->getPolygon(), $scan);
+                for ($i = 1; $i <= count($anns); $i++)
+                {
+                    $this->drawAnnotationPolygon($i, $anns[$i-1]->getPolygon(), $scan);
+                }
             }
-        }
-        $this->draw('Q');
+        $this->popState();
         
         // Draw the footer.
         $this->y -= $scanHeight + 2 * 28;
@@ -566,7 +573,7 @@ class Pdf
     /**
      * Outputs raw data to the PDF output followed by a newline.
      *
-     * @param value The raw data to output.
+     * @param string $value The raw data to output.
      */
     private function out($value)
     {
@@ -591,7 +598,7 @@ class Pdf
     /**
      * Stops page counting mode.
      *
-     * @return The number of pages the text occupied.
+     * @return integer The number of pages the text occupied.
      */
     private function stopCountPages()
     {
@@ -609,13 +616,13 @@ class Pdf
      *
      * A scale of one corresponds with scaling each image pixel to a point (1/72 inch) in the output.
      *
-     * @param file The filename.
-     * @param x    The X position in the document.
-     * @param y    The Y position in the document.
-     * @param sx   The X scale of the image, defaults to 1.
-     * @param sy   The Y scale of the image, defaults to 1.
+     * @param string  $file The filename.
+     * @param integer $x    The X position in the document.
+     * @param integer $y    The Y position in the document.
+     * @param number  $sx   The X scale of the image, defaults to 1.
+     * @param number  $sy   The Y scale of the image, defaults to 1.
      *
-     * @return The bounding box of the image.
+     * @return array The bounding box of the image.
      */
     private function drawJPEGImage($file, $x, $y, $sx = 1, $sy = 1)
     {
@@ -630,11 +637,12 @@ class Pdf
                                     , file_get_contents($file));
         $resourceName = $this->addResource($objectNum);
         
-        $this->draw('q');
-        $this->draw('1 0 0 1 ' . $x . ' ' . $y . ' cm');
-        $this->draw($sx . ' 0 0 ' . $sy . ' 0 0 cm');
-        $this->draw($width . ' 0 0 ' . $height . ' 0 0 cm');
-        $this->draw($resourceName . ' Do Q');
+        $this->pushState();
+            $this->translate($x, $y);
+            $this->scale($sx, $sy);
+            $this->scale($width, $height);
+            $this->draw($resourceName . ' Do');
+        $this->popState();
         
         return array($x, $y, $x + $width * $sx, $y + $height * $sy);
     }
@@ -642,9 +650,9 @@ class Pdf
     /**
      * Creates a circle subpath with radius r centered at point (x,y).
      *
-     * @param x The X coordinate of the circle.
-     * @param y The Y coordinate of the circle.
-     * @param r The radius of the circle, in points.
+     * @param number $x The X coordinate of the circle.
+     * @param number $y The Y coordinate of the circle.
+     * @param number $r The radius of the circle, in points.
      */
     private function putCircle($x, $y, $r)
     {
@@ -661,12 +669,12 @@ class Pdf
     /**
      * Adds a Link Annotation to the specified area. This can be an external link or a page link.
      *
-     * @param area       The bounding box of the link.
-     * @param uri        The URI to link to, or null for page link.
-     * @param bottomline Whether to draw a line underneath the link.
-     * @param pageId     The page object ID to link to, in case of a page link.
+     * @param array   $area       The bounding box of the link.
+     * @param string  $uri        The URI to link to, or null for page link.
+     * @param boolean $bottomline Whether to draw a line underneath the link.
+     * @param integer $pageId     The page object ID to link to, in case of a page link.
      */
-    private function addLink($area, $uri, $bottomline = true, $pageId = null)
+    private function addLink(array $area, $uri, $bottomline = true, $pageId = null)
     {
         if ($uri === null && $pageId !== null)
         {
@@ -691,10 +699,11 @@ class Pdf
     
     /**
      * Exports the transcriptions.
-     * @param annotations The annotations that contain the transcriptions.
-     * @param scan        The encapsulating scan.
+     *
+     * @param array $annotations The annotations that contain the transcriptions.
+     * @param Scan  $scan        The encapsulating scan.
      */
-    private function drawTranscriptions($annotations, $scan)
+    private function drawTranscriptions(array $annotations, Scan $scan)
     {
         if (count($annotations) == 0)
         {
@@ -721,9 +730,9 @@ class Pdf
     /**
      * Adds a bookmark to the current page for the index.
      *
-     * @param book The book to add a bookmark to.
+     * @param Book $book The book to add a bookmark to.
      */
-    private function addBookmark($book)
+    private function addBookmark(Book $book)
     {
         $this->bookmarks[] = array($book, count($this->pages) + 1);
     }
@@ -731,77 +740,86 @@ class Pdf
     /**
      * Draws a scan, scaling it to fit in the given width and height.
      *
-     * @param scan The scan to draw.
-     * @param width The maximum width of the scan in points.
-     * @param height The maximum height of the scan in points.
+     * @param Scan   $scan   The scan to draw.
+     * @param number $width  The maximum width of the scan in points.
+     * @param number $height The maximum height of the scan in points.
      */
     private function drawScan($scan, $width, $height)
     {
-        $z = $scan->getZoomLevel();
-        $sid = $scan->getScanId();
-        $size = getimagesize($this->tileName($sid, 0, 0, $z - 1));
-        $this->scanAttr['tileSize'] = max($size[0], $size[1]);
+        $this->pushState();
         
-        $this->scanAttr['pageWidth'] = $width;
-        $this->scanAttr['pageHeight'] = $height;
-        
-        $ts = $this->scanAttr['tileSize'];
-        $pw = $width;
-        $ph = $height;
-        $w = $scan->getWidth();
-        $h = $scan->getHeight();
-        
-        // Calculate the desired zoomlevel for the configured dpi.
-        for ($zoomLevel = 0; $zoomLevel < $z - 1; $zoomLevel++)
-        {
-            if (min($w, $h) * pow(2, $zoomLevel) * 72 / $this->dpi >= min($pw, $ph))
-            {
-                break;
-            }
-        }
-        $cols = ceil($w * pow(2, $zoomLevel) / $ts);
-        $rows = ceil($h * pow(2, $zoomLevel) / $ts);
-        $this->scanAttr['zoomLevel'] = $zoomLevel;
-        $this->scanAttr['cols'] = $cols;
-        $this->scanAttr['rows'] = $rows;
-
-        // Calculate the scale of the images.
-        // Compensate for the possibility of the edge tiles being smaller.
-        $cornerSize = getimagesize($this->tileName($sid, $cols - 1, $rows - 1), $zoomLevel);
-        $compx = 1 - $cornerSize[0] / $ts;
-        $compy = 1 - $cornerSize[1] / $ts;
-        $scale = min($pw / ($cols - $compx), $ph / ($rows - $compy));
-        $this->scanAttr['compX'] = $compx;
-        $this->scanAttr['compY'] = $compy;
-        $this->scanAttr['scale'] = $scale;
-
-        // Center the scan on the page.
-        $this->draw(sprintf('q 1 0 0 1 %F %F cm',
-            ($width - $scale * ($cols - $compx))/2,
-            ($height - $scale * ($rows - $compy))/2
-        ));
-
-        // Add the tiles.
-        for ($y = 0; $y < $rows; $y++)
-        for ($x = 0; $x < $cols; $x++)
-        {
-            $tileWidth = $x == $cols - 1 ? $cornerSize[0] : $ts;
-            $tileHeight = $y == $rows - 1 ? $cornerSize[1] : $ts;
+            $z = $scan->getZoomLevel();
+            $sid = $scan->getScanId();
+            $w = $scan->getWidth();
+            $h = $scan->getHeight();
             
-            $this->newTile($sid, $x, $y, $tileWidth, $tileHeight);
-        }
+            $this->scanAttr['rotate'] = $w > 1.1 * $h;
+            
+            if ($this->scanAttr['rotate'])
+            {
+                $this->rotate(-90);
+                $this->translate(-$height, 0);
+                list($width, $height) = array($height, $width);
+            }
+            
+            $size = getimagesize($this->tileName($sid, 0, 0, $z - 1));
+            $this->scanAttr['tileSize'] = max($size[0], $size[1]);
+            
+            $this->scanAttr['pageWidth'] = $width;
+            $this->scanAttr['pageHeight'] = $height;
+            
+            $ts = $this->scanAttr['tileSize'];
+            $pw = $width;
+            $ph = $height;
+            
+            // Calculate the desired zoomlevel for the configured dpi.
+            for ($zoomLevel = 0; $zoomLevel < $z - 1; $zoomLevel++)
+            {
+                if (min($w, $h) * pow(2, $zoomLevel) * 72 / $this->dpi >= min($pw, $ph))
+                {
+                    break;
+                }
+            }
+            $cols = ceil($w * pow(2, $zoomLevel) / $ts);
+            $rows = ceil($h * pow(2, $zoomLevel) / $ts);
+            $this->scanAttr['zoomLevel'] = $zoomLevel;
+            $this->scanAttr['cols'] = $cols;
+            $this->scanAttr['rows'] = $rows;
+
+            // Calculate the scale of the images.
+            // Compensate for the possibility of the edge tiles being smaller.
+            $cornerSize = getimagesize($this->tileName($sid, $cols - 1, $rows - 1), $zoomLevel);
+            $compx = 1 - $cornerSize[0] / $ts;
+            $compy = 1 - $cornerSize[1] / $ts;
+            $scale = min($pw / ($cols - $compx), $ph / ($rows - $compy));
+            $this->scanAttr['compX'] = $compx;
+            $this->scanAttr['compY'] = $compy;
+            $this->scanAttr['scale'] = $scale;
+
+            // Center the scan on the page.
+            $this->translate(($width - $scale * ($cols - $compx))/2, ($height - $scale * ($rows - $compy))/2);
+
+            // Add the tiles.
+            for ($y = 0; $y < $rows; $y++)
+            for ($x = 0; $x < $cols; $x++)
+            {
+                $tileWidth = $x == $cols - 1 ? $cornerSize[0] : $ts;
+                $tileHeight = $y == $rows - 1 ? $cornerSize[1] : $ts;
+                
+                $this->newTile($sid, $x, $y, $tileWidth, $tileHeight);
+            }
         
-        $this->draw('Q');
+        $this->popState();
     }
     
     /**
      * Draws given points as an annotation polygon with number i.
      *
-     * @param i      The index of the polygon for reference to the transcription.
-     * @param points The points of the polygon.
-     * @param scan   The encapsulating scan.
+     * @param integer $i      The index of the polygon for reference to the transcription.
+     * @param array   $points The points of the polygon.
+     * @param Scan    $scan   The encapsulating scan.
      */
-    private function drawAnnotationPolygon($i, $points, $scan)
+    private function drawAnnotationPolygon($i, array $points, Scan $scan)
     {
         // Colors for the polygons in 'r g b' format.
         $edgeColor = '0 0 0';
@@ -821,56 +839,69 @@ class Pdf
         $width = $this->scanAttr['pageWidth'];
         $height = $this->scanAttr['pageHeight'];
         
-        $this->draw(sprintf('q 1 0 0 1 %F %F cm',
-            ($width - $scale * ($cols - $compx))/2,
-            ($height - $scale * ($rows - $compy))/2
-        ));
-        
-        // Calculate X and Y scales.
-        $sx = $scale * ($cols - $compx) / $scan->getWidth();
-        $sy = $scale * ($rows - $compy) / $scan->getHeight();
-        
-        // Calculate the resulting scan height.
-        $ph = $scale * ($rows - $compy);
-        
-        $transformedPoints = array();
-        foreach($points as $p)
-        {
-            $transformedPoints[] = array($sx*$p['x'], $ph-$sy*$p['y']);
-        }
-        
-        // Draw the edges of the polygon as lines.
-        $this->draw('q 2 w');
-        $first = true;
-        foreach($transformedPoints as $p)
-        {
-            list($x, $y) = $p;
-            $this->draw($x . ' ' . $y . ($first ? ' m' : ' l'));
+        $this->pushState();
+            
+            if ($this->scanAttr['rotate'])
+            {
+                $this->rotate(-90);
+                $this->translate(-$width, 0);
+            }
+            
+            $this->translate(($width - $scale * ($cols - $compx))/2, ($height - $scale * ($rows - $compy))/2);
+            
+            // Calculate X and Y scales.
+            $sx = $scale * ($cols - $compx) / $scan->getWidth();
+            $sy = $scale * ($rows - $compy) / $scan->getHeight();
+            
+            // Calculate the resulting scan height.
+            $ph = $scale * ($rows - $compy);
+            
+            $transformedPoints = array();
+            foreach($points as $p)
+            {
+                $transformedPoints[] = array($sx*$p['x'], $ph-$sy*$p['y']);
+            }
+            
+            // Draw the edges of the polygon as lines.
+            $this->pushState();
+                $this->draw('2 w');
+                $first = true;
+                foreach($transformedPoints as $p)
+                {
+                    list($x, $y) = $p;
+                    $this->draw($x . ' ' . $y . ($first ? ' m' : ' l'));
+                    $first = false;
+                }
+                $this->draw('h');
+                $this->draw($edgeColor . ' RG S');
+            $this->popState();
+            
+            // Draw the first vertex of the polygon as point.
+            list($x, $y) = $transformedPoints[0];
+            $this->pushState();
+                $this->putCircle($x, $y, 10);
+                $this->draw('1 w ' . $circleFillColor . ' rg ' . $circleColor . ' RG B');
+            $this->popState();
             $first = false;
-        }
-        $this->draw('h');
-        $this->draw($edgeColor . ' RG S Q');
+            
+            // Draw the number of the annotation in the first vertex.
+            $width = $this->numberWidth($i);
+            list($x, $y) = $transformedPoints[0];
+            $this->translate($x, $y);
+            if ($this->scanAttr['rotate'])
+            {    
+                $this->rotate(90);
+            }        
+            $this->translate(-$width / 2, -$this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4);
+            $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET');
         
-        // Draw the first vertex of the polygon as point.
-        list($x, $y) = $transformedPoints[0];
-        $this->draw('q');
-        $this->putCircle($x, $y, 10);
-        $this->draw('1 w ' . $circleFillColor . ' rg ' . $circleColor . ' RG B Q');
-        $first = false;
-        
-        // Draw the number of the annotation in the first vertex.
-        $width = $this->numberWidth($i);
-        list($x, $y) = $transformedPoints[0];
-        $this->draw('q 1 0 0 1 ' . ($x - $width / 2) . ' ' . ($y - $this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4) . ' cm');
-        $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET Q');
-        
-        $this->draw('Q');
+        $this->popState();
     }
     
     /**
      * Calculates the width of a numerical string. It is assumed that the input is numeric and the number will fit on the line.
      *
-     * @param number The number to calculate the textual width of.
+     * @param integer $number The number to calculate the textual width of.
      */
     private function numberWidth($number)
     {
@@ -887,10 +918,10 @@ class Pdf
     /**
      * Creates a new PDF object with the given contents.
      *
-     * @param contents The raw content data.
-     * @param final    Whether this object can immediately be written to the output (when true, updateObject() cannot be used).
+     * @param string  $contents The raw content data.
+     * @param boolean $final    Whether this object can immediately be written to the output (when true, updateObject() cannot be used).
      *
-     * @return The object ID.
+     * @return integer The object ID.
      */
     private function newObject($contents, $final = false)
     {
@@ -901,11 +932,11 @@ class Pdf
     /**
      * Updates an existing PDF object.
      *
-     * @param id       The object ID to manipulate.
-     * @param contents The raw content data.
-     * @param final    Whether this object can immediately be written to the output (when true, updateObject() can no longer be used).
+     * @param integer $id       The object ID to manipulate.
+     * @param string  $contents The raw content data.
+     * @param boolean $final    Whether this object can immediately be written to the output (when true, updateObject() can no longer be used).
      *
-     * @return The object ID.
+     * @return integer The object ID.
      */
     private function updateObject($id, $contents, $final = false)
     {
@@ -945,10 +976,10 @@ class Pdf
     /**
      * Creates a new PDF stream object with the given contents.
      *
-     * @param headers  Additional stream dictionary contents (/Length is generated automatically).
-     * @param contents The raw content data.
+     * @param string $headers  Additional stream dictionary contents (/Length is generated automatically).
+     * @param string $contents The raw content data.
      *
-     * @return The object ID.
+     * @return integer The object ID.
      */
     private function newStream($headers, $contents)
     {
@@ -964,9 +995,9 @@ class Pdf
     /**
      * Adds a new PDF resource reference.
      *
-     * @param objectId The object ID to add as a reference.
+     * @param integer $objectId The object ID to add as a reference.
      *
-     * @return The generated reference name.
+     * @return string The generated reference name.
      */
     private function addResource($objectId)
     {
@@ -976,9 +1007,85 @@ class Pdf
     }
     
     /**
+     * Affine transforms the current transformed origin with matrix
+     * \verbatim
+       a b e
+       c d f
+       0 0 1
+       \endverbatim
+     *
+     * @param number $a
+     * @param number $b
+     * @param number $c
+     * @param number $d
+     * @param number $e
+     * @param number $f
+     */
+    private function affine($a, $b, $c, $d, $e, $f)
+    {
+        $this->draw(sprintf('%F %F %F %F %F %F cm', $a, $b, $c, $d, $e, $f));
+    }
+    
+    /**
+     * Pushes the current graphics tranformation state on the stack.
+     */
+    private function pushState()
+    {
+        $this->stackDepth++;
+        $this->draw('q');
+    }
+    
+    /**
+     * Pops a previous graphics tranformation state from the stack.
+     */
+    private function popState()
+    {
+        if ($this->stackDepth-- == 0)
+        {
+            throw new PdfException('pdf-creation-failed');
+        }
+        $this->draw('Q');
+    }
+    
+    /**
+     * Translates the current transformed origin by the given amount.
+     *
+     * @param number $x
+     * @param number $y
+     */
+    private function translate($x, $y)
+    {
+        $this->affine(1, 0, 0, 1, $x, $y);
+    }
+    
+    /**
+     * Rotates the current transformed origin by the given amount.
+     *
+     * @param number $theta The (counterclockwise) angle in degrees.
+     */
+    private function rotate($theta)
+    {
+        $theta = $theta * M_PI / 180;
+        $c = cos($theta);
+        $s = sin($theta);
+        $this->affine($c, $s, -$s, $c, 0, 0);
+    }
+    
+    /**
+     * Scales the current transformed origin by the given amount.
+     *
+     * @param number $sx
+     * @param number $sy
+     */
+    private function scale($sx, $sy)
+    {
+        $this->affine($sx, 0, 0, $sy, 0, 0);
+    }
+    
+    /**
      * Adds a drawing command to the draw queue.
      *
-     * @param command The drawing command. The command is assumed to be valid.
+     * @param string $command The drawing command. The command is assumed to be valid.
      */
     private function draw($command)
     {
@@ -988,13 +1095,13 @@ class Pdf
     /**
      * Adds a new tile to the output.
      *
-     * @param scanId The ID of the encapsulating scan.
-     * @param x      The column of the tile.
-     * @param y      The row of the tile.
-     * @param width  The width of the image.
-     * @param height The height of the image.
+     * @param integer $scanId The ID of the encapsulating scan.
+     * @param integer $x      The column of the tile.
+     * @param integer $y      The row of the tile.
+     * @param integer $width  The width of the image.
+     * @param integer $height The height of the image.
      *
-     * @return The object ID of the generated tile.
+     * @return integer The object ID of the generated tile.
      */
     private function newTile($scanId, $x, $y, $width, $height)
     {
@@ -1019,10 +1126,11 @@ class Pdf
         $ox = $x * $tileSize / $width;
         $oy = ($rows - $y - $compy) * $tileSize / $height - 1;
         
-        $this->draw('q');
-        $this->draw($sx . ' 0 0 ' . $sy . ' 0 0 cm');
-        $this->draw('1 0 0 1 ' . $ox . ' ' . $oy . ' cm');
-        $this->draw($resourceName . ' Do Q');
+        $this->pushState();
+            $this->scale($sx, $sy);
+            $this->translate($ox, $oy);
+            $this->draw($resourceName . ' Do');
+        $this->popState();
         
         return $objectNum;
     }
@@ -1030,10 +1138,12 @@ class Pdf
     /**
      * Returns the filename of the tile at the position requested.
      *
-     * @param scanId The ID of the scan to which the tile belongs.
-     * @param x      The column of the tile.
-     * @param y      The row of the tile.
-     * @param z      The zoom level of the tile.
+     * @param integer $scanId The ID of the scan to which the tile belongs.
+     * @param integer $x      The column of the tile.
+     * @param integer $y      The row of the tile.
+     * @param integer $z      The zoom level of the tile.
+     *
+     * @return string The filename.
      */
     private function tileName($scanId, $x, $y, $z = null)
     {
@@ -1047,9 +1157,9 @@ class Pdf
     /**
      * Creates the final PDF based on the previously generated pages / objects.
      *
-     * @param book The book to get information dictionary information from, or null if none.
+     * @param Book $book The book to get information dictionary information from, or null if none.
      */
-    private function make($book)
+    private function make(Book $book = null)
     {
         if (strlen($this->draws) > 0)
         {
@@ -1135,7 +1245,7 @@ class Pdf
     /**
      * Creates a PDF-formatted UTF-16BE string from the given UTF-8 string.
      *
-     * @param s The string to convert.
+     * @param string $s The string to convert.
      */
     private function fromUTF8($s)
     {
@@ -1155,9 +1265,9 @@ class Pdf
     /**
      * Creates a PDF-formatted UTF-16BE string from the given UTF-16BE array.
      *
-     * @param s The multibyte character array to convert.
+     * @param array $s The multibyte character array to convert.
      */
-    private function fromUTF16BEArray($s)
+    private function fromUTF16BEArray(array $s)
     {
         if (count($s) == 0)
         {
@@ -1174,9 +1284,9 @@ class Pdf
     /**
      * Creates a safe text string from the given string.
      *
-     * @param text The plain input string.
+     * @param string $text The plain input string.
      *
-     * @return A text string with escaped (, ), \ and \r.
+     * @return string A text string with escaped (, ), \ and \r.
      */
     private function escapeString($text)
     {
@@ -1186,7 +1296,9 @@ class Pdf
     /**
      * Converts an UTF-8 string to an UTF-16BE multibyte character array.
      *
-     * @param text The string to convert.
+     * @param string $text The string to convert.
+     *
+     * @return array A multibyte character array.
      */
     private function toUTF16BEArray($text)
     {
@@ -1198,8 +1310,8 @@ class Pdf
     /**
      * Adds a font for drawing text.
      *
-     * @param fontName The name of the font for future reference.
-     * @param fontFile The php file in which the font information is contained.
+     * @param string $fontName The name of the font for future reference.
+     * @param string $fontFile The php file in which the font information is contained.
      */
     private function addFont($fontName, $fontFile)
     {
@@ -1319,7 +1431,7 @@ class Pdf
     /**
      * Sets all page margins to the given margin.
      *
-     * @param margin The margin to set all page margins to.
+     * @param number $margin The margin to set all page margins to.
      */
     private function setPageMargin($margin)
     {
@@ -1332,9 +1444,11 @@ class Pdf
     /**
      * Draws a (potentially long) string.
      *
-     * @param text        The string to draw.
-     * @param center      Whether to center the text.
-     * @param omitNewLine Whether to omit the extra newline at the end of the string.
+     * @param string  $text        The string to draw.
+     * @param boolean $center      Whether to center the text.
+     * @param boolean $omitNewLine Whether to omit the extra newline at the end of the string.
+     *
+     * @return array The estimated bounding box of the resulting string.
      */
     private function drawText($text = '', $center = false, $omitNewLine = false)
     {
@@ -1448,28 +1562,28 @@ class Pdf
                     }
                     if (!$this->countPages)
                     {
-                        $this->draw('q');
-                        if ($center)
-                        {
-                            $offset = ($this->pageWidth - $this->textMarginL - $this->textMarginR - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
-                            $this->draw('1 0 0 1 ' . ($this->x + $offset) . ' ' . $this->y . ' cm');
-                        }
-                        else
-                        {
-                            $this->draw('1 0 0 1 ' . $this->x . ' ' . $this->y . ' cm');
-                        }
-                        $this->draw('BT');
-                        $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
-                        if ($endOfString && $text[$i][1] == "\n" && $text[$i][0] == "\0")
-                        {
-                            $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                        }
-                        else
-                        {
-                            $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                        }
-                        $this->draw('ET');
-                        $this->draw('Q');
+                        $this->pushState();
+                            if ($center)
+                            {
+                                $offset = ($this->pageWidth - $this->textMarginL - $this->textMarginR - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
+                                $this->translate($this->x + $offset, $this->y);
+                            }
+                            else
+                            {
+                                $this->translate($this->x, $this->y);
+                            }
+                            $this->draw('BT');
+                            $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
+                            if ($endOfString && $text[$i][1] == "\n" && $text[$i][0] == "\0")
+                            {
+                                $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                            }
+                            else
+                            {
+                                $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
+                            }
+                            $this->draw('ET');
+                        $this->popState();
                     }
                     if (!$endOfString || $l < $numlines - 1 || !$omitNewLine)
                     {
@@ -1501,7 +1615,7 @@ class Pdf
     /**
      * Writes a page to the output, resetting the position for the next page.
      *
-     * @param enforce Whether to enforce drawing a page, even if it is empty.
+     * @param boolean $enforce Whether to enforce drawing a page, even if it is empty.
      */
     private function writePage($enforce = true)
     {
@@ -1531,8 +1645,8 @@ class Pdf
     /**
      * Sets the page size.
      *
-     * @param width The width in points.
-     * @param height The height in points.
+     * @param number $width  The width in points.
+     * @param number $height The height in points.
      */
     private function setPageSize($width, $height)
     {
@@ -1543,7 +1657,7 @@ class Pdf
     /**
      * Sets the font size.
      *
-     * @param points The font size.
+     * @param number $points The font size.
      */
     private function setFontSize($points)
     {

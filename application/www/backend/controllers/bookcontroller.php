@@ -247,7 +247,7 @@ class BookController extends ControllerBase
      * - a fulltext Postgres query string for all other parts,
      * - a headline fulltext Postgres query string for this query.
      *
-     * @param string query The user specified query, using - for NOT and double quotes for quoting.
+     * @param string $query The user specified query, using - for NOT and double quotes for quoting.
      *
      * @return array The split fulltext query.
      */
@@ -309,15 +309,15 @@ class BookController extends ControllerBase
     /**
      * Adds a fulltext query to the given query.
      *
-     * @param string  name        The name of this fulltext query (for binding name).
-     * @param mixed   columns     The columns to search on.
-     * @param string  value       The user-supplied search string.
-     * @param boolean addheadline Whether to add this fulltext query to the headlines.
-     * @param string  altvector   A (indexed) vector for the given column, if available. Only valid for a single column.
-     * @param Query   query       The query to operate on.
-     * @param array   binds       The current array of bindings.
-     * @param int     c           The current binding counter.
-     * @param string  headline    The current headline query string.
+     * @param string  $name        The name of this fulltext query (for binding name).
+     * @param mixed   $columns     The columns to search on.
+     * @param string  $value       The user-supplied search string.
+     * @param boolean $addheadline Whether to add this fulltext query to the headlines.
+     * @param string  $altvector   A (indexed) vector for the given column, if available. Only valid for a single column.
+     * @param Query   $query       The query to operate on.
+     * @param array   $binds       The current array of bindings.
+     * @param int     $c           The current binding counter.
+     * @param string  $headline    The current headline query string.
      */
     public static function addFulltext($name, $columns, $value, $addheadline, $altvector, Query &$query, array &$binds, &$c, &$headline)
     {
