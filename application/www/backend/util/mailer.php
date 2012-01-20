@@ -27,11 +27,11 @@ class Mailer
      */
     public static function sendMail($recipient, $subject, $message)
     {
-        $fromaddress = Configuration::getInstance()->getString('from-address');
+        $fromaddress = Setting::getSetting('mail-from-address');
         
         $headers = 'MIME-Version: 1.0' . "\r\n"
                  . 'Content-type: text/plain; charset=utf-8' . "\r\n"
-                 . 'From: ' . Setting::getSetting('mail-from-name') //Configuration::getInstance()->getString('from-name') 
+                 . 'From: ' . Setting::getSetting('mail-from-name') 
                  . ' <'     . $fromaddress . ">\r\n";
         
         $success = mail($recipient, $subject, $message, $headers);
