@@ -51,6 +51,9 @@ Ext.define('Ext.ux.ViewProfilePanel', {
         			return;
         		}
         		
+        		// Enable the 'unban' button for banned users and disable the 'unban' 
+        		// button. Disable the 'unban' button for unbanned users and enable
+        		// the 'ban' button.
                 if (store.data.get(0).get('banned') == '0') 
                 {
                 	_this.down('[id=unban]').setDisabled(true);
@@ -61,6 +64,19 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 	_this.down('[id=ban]').setDisabled(true);
                 	_this.down('[id=unban]').setDisabled(false);
         		}
+                
+                // Enable the 'accept' and 'decline' buttons when the user is pending
+                // activation. Disable them otherwise.
+                if (store.data.get(0).get('activationStage') == '0') 
+                {
+                	_this.down('[id=accept]').setDisabled(false);
+                	_this.down('[id=decline]').setDisabled(false);
+                }
+                else
+                {
+                	_this.down('[id=accept]').setDisabled(true);
+                	_this.down('[id=decline]').setDisabled(true);                	
+                }
                 
         	},
         	store
@@ -206,25 +222,37 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 }
             },{
                 xtype: 'button',
-                text: 'Change Password',
-                id: 'changepassword',
-                width: '140',
-                handler: function ()
-                {
-                    // Show login window.
-                    var changePasswordWindow = new Ext.ux.ChangePasswordWindow({
-                            listeners: {
-                            }
-                        });
-                    changePasswordWindow.show();
-                }
-            },{
-                xtype: 'button',
                 text: 'Accept',
                 id: 'accept',
                 width: '140',
                 handler: function ()
                 {
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Accepts the user afterwards.
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: 'You are about to accept \'' + username + '\'. Are you sure?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    // Accept the user.
+                                    RequestManager.getInstance().request(
+                                        'UserActivation',
+                                        'setUserAccepted',
+                                        {username: username,
+                                         accepted: true},
+                                        null,
+                                        function()
+                                        {
+                                            store.load();
+                                        }
+                                    );  
+                                }
+                            }
+                    });
                 }
             },{
                 xtype: 'button',
@@ -233,6 +261,32 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 width: '140',
                 handler: function ()
                 {
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Declines the user afterwards.
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: 'You are about to decline \'' + username + '\'. Are you sure?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    // Decline the user.
+                                    RequestManager.getInstance().request(
+                                        'UserActivation',
+                                        'setUserAccepted',
+                                        {username: username,
+                                         accepted: false},
+                                        null,
+                                        function()
+                                        {
+                                            store.load();
+                                        }
+                                    );  
+                                }
+                            }
+                    });
                 }
             }]
         };
