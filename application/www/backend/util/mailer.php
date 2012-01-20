@@ -31,7 +31,7 @@ class Mailer
         
         $headers = 'MIME-Version: 1.0' . "\r\n"
                  . 'Content-type: text/plain; charset=utf-8' . "\r\n"
-                 . 'From: ' . Setting::getSetting('project-name') 
+                 . 'From: ' . Setting::getSetting('project-title') 
                  . ' <'     . $fromaddress . ">\r\n";
         
         $success = mail($recipient, $subject, $message, $headers);
@@ -54,7 +54,7 @@ class Mailer
      */
     private static function insertInfo($message, $user, $link = null)
     {
-        $projectname = Setting::getSetting('project-name');
+        $projectname = Setting::getSetting('project-title');
         return str_replace(
                     array('[PROJECTNAME]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]', '[LINK]'),
                     array($projectname, $user->getUsername(), $user->getFirstName(), $user->getLastName(), $link),

@@ -7,7 +7,7 @@ INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('project-title', 
 INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('mail-from-address', 'no-reply@sp.urandom.nl');
 
 -- Change the project title used in e-mails.
-INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('activation-mail-message','Dear Mr./Ms. [LASTNAME],
+UPDATE "Settings" SET "settingValue" = 'Dear Mr./Ms. [LASTNAME],
 
 Your registration for [PROJECTNAME] has been accepted. Your username is [USERNAME].
 
@@ -19,9 +19,9 @@ If clicking this link does not work, try to copy and paste it into the address b
 
 
 Regards,
-The [PROJECTNAME] Team');
+The [PROJECTNAME] Team' WHERE "settingName" = 'activation-mail-message';
 
-INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('forgotpass-mail-message','Dear Mr./Ms. [LASTNAME],
+UPDATE "Settings" SET "settingValue" = 'Dear Mr./Ms. [LASTNAME],
 
 This e-mail has been send to you because you indicated you had forgotten your password for [PROJECTNAME]. If this is not the case, please ignore this message.
 
@@ -36,14 +36,14 @@ If clicking this link does not work, try to copy and paste it into the address b
 
 
 Regards,
-The [PROJECTNAME] Team');
+The [PROJECTNAME] Team' WHERE "settingName" = 'forgotpass-mail-message';
 
-INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('user-declined-mail-message', 'Dear Mr./Ms. [LASTNAME],
+UPDATE "Settings" SET "settingValue" = 'Dear Mr./Ms. [LASTNAME],
 
 Unfortunately your registration for [PROJECTNAME] has been declined. For more information, please contact the webmaster.
 
 Regards,
-The [PROJECTNAME] Team');
+The [PROJECTNAME] Team' WHERE "settingName" = 'user-declined-mail-message';
 
 -- The mail-from-name setting is now redundant because the project name can be used here.
 DELETE FROM "Settings" WHERE "settingName" = 'mail-from-name';

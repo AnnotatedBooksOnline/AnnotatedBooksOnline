@@ -13,6 +13,7 @@ require_once 'models/person/person.php';
 require_once 'models/language/language.php';
 require_once 'models/language/booklanguage.php';
 require_once 'models/language/booklanguagelist.php';
+require_once 'models/setting/setting.php';
 require_once 'framework/util/log.php';
 
 // Exceptions.
@@ -42,8 +43,8 @@ class Pdf
     private $textMarginB = 72;
     private $fontSize = 12;
     private $lineSpread = 2;
-    private $productName = 'Annotated Books Online'; // TODO: setting?
     private $productLogo = 'util/logo.jpg';
+    private $productName;
     private $productUrl;
     
     private $pageWidth;
@@ -100,6 +101,7 @@ class Pdf
     public function __construct(Binding $binding, CacheEntry $cacheEntry, $range = null, $transcriptions = false, $annotations = false)
     {
         $this->productUrl = $this->pageUrl();
+        $this->productName = Setting::getSetting('project-title');
         $this->identifier = uniqid('pdf', true);
         $this->outputEntry = $cacheEntry;
         $this->outputEntry->clear();
