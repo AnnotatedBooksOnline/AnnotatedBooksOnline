@@ -31,7 +31,7 @@ class Mailer
         
         $headers = 'MIME-Version: 1.0' . "\r\n"
                  . 'Content-type: text/plain; charset=utf-8' . "\r\n"
-                 . 'From: ' . Setting::getSetting('mail-from-name') 
+                 . 'From: ' . Setting::getSetting('project-name') 
                  . ' <'     . $fromaddress . ">\r\n";
         
         $success = mail($recipient, $subject, $message, $headers);
@@ -42,6 +42,25 @@ class Mailer
         
         Log::info("Mail to \"%s\" accepted for delivery:\n\n %s", $recipient, $message);
     }
+    
+    /**
+     * Helper that replaces some tags in a message by certain properties.
+     *
+     * @param string $message The message with tags in it.
+     * @param User   $user    A loaded user entity. 
+     * @param string $link    A link that can optionally be provided.
+     * 
+     * @return string The new message.
+     */
+    private static function insertInfo($message, $user, $link = null)
+    {
+        $projectname = Setting::getSetting('project-name');
+        return str_replace(
+                    array('[PROJECTNAME]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]', '[LINK]'),
+                    array($projectname, $user->getUsername(), $user->getFirstName(), $user->getLastName(), $link),
+                    $message);
+    }
+    
     
     /**
      * Sends a standard activation mail to the specified PendingUser containing his or her 
@@ -72,10 +91,7 @@ class Mailer
         }
          
         // Insert user info and the activation link into the e-mail.
-        $message = str_replace(
-                        array('[LINK]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]'),
-                        array($link, $user->getUsername(), $user->getFirstName(), $user->getLastName()),
-                        $basemessage);
+        $message = self::insertInfo($basemessage, $user, $link);
         
         // Now send the e-mail.
         Log::info("Sending activation code to %s.\nContents: %s.", $user->getEmail(), $message);
@@ -93,10 +109,7 @@ class Mailer
         $basemessage = Setting::getSetting('user-declined-mail-message');
         
         // Insert user info in mail.
-        $message = str_replace(
-                        array('[USERNAME]', '[FIRSTNAME]', '[LASTNAME]'),
-                        array($user->getUsername(), $user->getFirstName(), $user->getLastName()),
-                        $basemessage);
+        $message = self::insertInfo($basemessage, $user);
         
         // Now send the e-mail.
         self::sendMail($recipient, $subject, $message);
@@ -125,10 +138,7 @@ class Mailer
         }
          
         // Insert user info and the activation link into the e-mail.
-        $message = str_replace(
-        array('[LINK]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]'),
-        array($link, $user->getUsername(), $user->getFirstName(), $user->getLastName()),
-        $basemessage);
+        $message = self::insertInfo($basemessage, $user, $link);
         
         // Now send the e-mail.
         Log::info("Sending activation code to %s. (password forgotten)\nContents: %s.", $user->getEmail(), $message);
