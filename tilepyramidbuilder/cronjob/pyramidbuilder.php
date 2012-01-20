@@ -43,7 +43,7 @@ class PyramidBuilder extends Singleton
     /**
      * Runs the pyramid builder on an image. Blocks until the image has been completely processed.
      * 
-     * @param $scan A scan entity.
+     * @param $scan A scan entity with its fields filled in.
      * 
      * @throws PyramidBuilderException When the builder returns with a nonzero error code, meaning 
      *                                 an error has occured.
