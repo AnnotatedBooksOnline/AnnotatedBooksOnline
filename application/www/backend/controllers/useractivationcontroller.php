@@ -155,7 +155,19 @@ class UserActivationController extends Controller
         // Fetch wheter to turn automatic acceptance on or off.
         $newValue = self::getBoolean($data, 'auto-accept');
         
-        Setting::setSetting('auto-user-acceptance', $newValue ? '1' : '0');
+        // Start a transaction.
+        Database::getInstance()->doTransaction(
+        function() use ($newValue)
+        {
+            // Set the setting.
+            Setting::setSetting('auto-user-acceptance', $newValue ? '1' : '0');
+            
+            // If auto acceptance is turned on, accept all users waiting for acception.
+            if($newValue)
+            {
+                //TODO
+            }
+        });
     }
     
     /**
