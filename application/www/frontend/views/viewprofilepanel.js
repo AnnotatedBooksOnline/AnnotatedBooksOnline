@@ -145,6 +145,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Unban user',
                 id: 'unban',
                 width: '140',
+                hidden: !Authentication.getInstance().hasPermissionTo('ban-users'),
                 //enabled: store.data[0].get('banned') == '1',
                 handler: function ()
                 {
@@ -179,6 +180,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Ban user',
                 id: 'ban',
                 width: '140',
+                hidden: !Authentication.getInstance().hasPermissionTo('ban-users'),
                 //enabled: store.data[0].get('banned') == '0',
                 handler: function ()
                 {
@@ -213,6 +215,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Delete user',
                 id: 'delete',
                 width: '140',
+                hidden: !Authentication.getInstance().hasPermissionTo('delete-users'),
                 handler: function ()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.
@@ -247,6 +250,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Change Role',
                 id: 'changerole',
                 width: '140',
+                hidden: !Authentication.getInstance().hasPermissionTo('change-user-roles'),
                 handler: function ()
                 {
                     var changeRoleWindow = new Ext.ux.ChangeRoleWindow({
@@ -265,6 +269,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Accept',
                 id: 'accept',
                 width: '140',
+                hidden: !Authentication.getInstance().hasPermissionTo('accept-registrations'),
                 handler: function ()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.
@@ -299,6 +304,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Decline',
                 id: 'decline',
                 width: '140',
+                hidden: !Authentication.getInstance().hasPermissionTo('accept-registrations'),
                 handler: function ()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.

@@ -1063,7 +1063,7 @@ Ext.define('Ext.ux.SearchPanel', {
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});
         
-        if (Authentication.getInstance().isLoggedOn())
+        if(Authentication.getInstance().isLoggedOn())
         {
             this.onLoggedOn();
         }
@@ -1074,7 +1074,10 @@ Ext.define('Ext.ux.SearchPanel', {
     
     onLoggedOn: function()
     {
-        this.down('[name=eastregion]').show();
+    	if (Authentication.getInstance().hasPermissionTo('manage-notebook'))
+    	{
+    		this.down('[name=eastregion]').show();
+    	}
     },
     
     onLoggedOut: function()

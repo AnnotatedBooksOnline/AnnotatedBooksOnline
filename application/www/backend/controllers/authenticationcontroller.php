@@ -18,7 +18,12 @@ class AuthenticationController extends Controller
         // Login.
         $user = Authentication::getInstance()->login($username, $password);
         
-        return $user->getValues(); // TODO: just get the important ones..
+        $userValues = $user->getValues(); // TODO: just get the important ones..
+        
+        // Add the permissions of this user to the return values.
+        $userValues['permissions'] = Authentication::getInstance()->getPermissionList();
+        
+        return $userValues;
     }
     
     public function actionLogout($data)
@@ -53,7 +58,12 @@ class AuthenticationController extends Controller
             return;
         }
         
-        return array('action' => 'login', 'user' => $user->getValues()); // TODO: just get the important ones..
+        $userValues = $user->getValues(); // TODO: just get the important ones..
+        
+        // Add the permissions of this user to the return values.
+        $userValues['permissions'] = Authentication::getInstance()->getPermissionList();
+        
+        return array('action' => 'login', 'user' => $userValues);
     }
     
     public function actionHasPermissionTo($data)

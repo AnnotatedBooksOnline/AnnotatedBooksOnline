@@ -652,11 +652,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
     },
     
     onAuthenticationChange: function(event, authentication)
-    {
+    {         
         if (authentication.isLoggedOn())
         {
-            this.down('[name=users]').show();
-            this.down('[name=upload]').show();
+            //this.down('[name=users]').show();
+            //this.down('[name=upload]').show();
             this.down('[name=logout]').show();
             this.down('[name=profile]').show();
             this.down('[name=login]').hide();
@@ -665,14 +665,33 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
         else
         {
-            this.down('[name=users]').hide();
-            this.down('[name=upload]').hide();
+            //this.down('[name=users]').hide();
+            //this.down('[name=upload]').hide();
             this.down('[name=logout]').hide();
             this.down('[name=profile]').hide();
             this.down('[name=login]').show();
             this.down('[name=register]').show();
             this.down('[name=password]').show();
         }
+        
+        // Display upload and users buttons when having permission.
+        if(Authentication.getInstance().hasPermissionTo('view-users-part'))
+        {
+        	this.down('[name=users]').show();
+        }
+        else
+        {
+        	this.down('[name=users]').hide();
+        }
+        if(Authentication.getInstance().hasPermissionTo('upload-bindings'))
+        {
+        	this.down('[name=upload]').show();
+        }
+        else
+        {
+        	this.down('[name=upload]').hide();
+        }
+        
     },
     
     onAuthenticationModelChange: function(event, authentication)

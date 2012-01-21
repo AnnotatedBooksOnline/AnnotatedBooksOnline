@@ -19,6 +19,7 @@ Ext.define('Ext.ux.UserModel', {
        {name: 'banned'},
        {name: 'rank'},
        {name: 'activationStage'},
+       {name: 'permissions'},
        
        // Passwords are needed for registration and profile. Not filled when fetching a user.
        {name: 'password'},

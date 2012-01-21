@@ -358,8 +358,8 @@ Ext.define('Ext.ux.ViewerPanel', {
     setToolsVisibility: function()
     {
         // Check whether tools are visible.
-        var loggedOn = Authentication.getInstance().isLoggedOn();
-        var visible  = this.toolsVisible && loggedOn;
+        var permission = Authentication.getInstance().hasPermissionTo('add-annotations');
+        var visible  = this.toolsVisible && permission;
         
         // Set icon states.
         var tools = ['view', 'polygon', 'rectangle', 'vertex', 'addvertex', 'erasevertex', 'erase'];
