@@ -277,8 +277,8 @@ Annotations.prototype.setMode = function(mode)
         return;
     }
     
-    // Check whether logged on. If not, mode must be view.
-    if ((mode !== 'view') && !Authentication.getInstance().isLoggedOn())
+    // Check whether permission to add annotations. If not, mode must be view.
+    if ((mode !== 'view') && !Authentication.getInstance().hasPermissionTo('add-annotations'))
     {
         return;
     }

@@ -29,7 +29,14 @@ Ext.define('Ext.ux.BindingFieldSet', {
             );
         };
         
-        var annotationStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.LanguageModel'});
+        var annotationStore = Ext.create('Ext.data.Store', {
+            model: 'Ext.ux.LanguageModel',  
+            pageSize : 250,
+            sorters : {
+                property : 'languageName',
+                direction: 'ASC'
+            }
+        });
         annotationStore.load();
         
         var defConfig = {
@@ -145,7 +152,14 @@ Ext.define('Ext.ux.BookFieldset', {
     initComponent: function() {
         var _this = this;
     
-        var booklanguageStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.LanguageModel'});
+        var booklanguageStore = Ext.create('Ext.data.Store', {
+            model: 'Ext.ux.LanguageModel',  
+            pageSize : 250,
+            sorters : {
+                property : 'languageName',
+                direction: 'ASC'
+            }
+        });
         booklanguageStore.load();
         
         var defConfig = {

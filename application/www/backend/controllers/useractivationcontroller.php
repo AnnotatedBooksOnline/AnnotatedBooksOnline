@@ -59,15 +59,16 @@ class UserActivationController extends Controller
             $pendingUser = new PendingUser($row->getValue('pendingUserId'));
             $pendingUser->load();
             
-            // Check whether the user is waiting for activation.
-            if ($pendingUser->getAccepted() !== null)
+            // Confirm the user is waiting for activation.
+            if ($user->getActivationStage() != User::ACTIVE_STAGE_PENDING)
             {
                 throw new UserActivationException('activation-already-handled');
             }
             
             //Accept or decline user.
-            $pendingUser->setAccepted($accepted);
-            $pendingUser->save();
+            $user->setActivationStage($accepted ? User::ACTIVE_STAGE_ACCEPTED
+                                                : User::ACTIVE_STAGE_DENIED);
+            $user->save();
             
             // Mailing is part of the transaction. Meaning database changes will be rolled back if
             // it fails.
@@ -101,39 +102,47 @@ class UserActivationController extends Controller
         $success = Database::getInstance()->doTransaction(
         function() use ($token)
         {
-            // Determine to which accepted pending user the token belongs.
+            // Determine to which pending user the token belongs.
             $result = Query::select('pendingUserId', 'userId')
                            ->from('PendingUsers')
                            ->where('confirmationCode = :token')
-                           ->where('accepted = :accepted')
-                           ->execute(array('token' => $token, 'accepted' => true));
+                           ->execute(array('token' => $token));
             
             // Try to fetch row.
             $row = $result->tryGetFirstRow();
             if ($row === null)
             {
-                // TODO: Exception or more informative return value? (Gerben: Indeed, throw an exception)
                 Log::debug('Activation failed.');
                 return false;
             }
             
-            // Get id's.
-            $puser = $row->getValue('pendingUserId');
-            $user  = $row->getValue('userId');
+            // Get pending user id.
+            $puserId = $row->getValue('pendingUserId');
             
-            // Set the active flag for the user.
-            $query = Query::update('Users', array('active' => true))->where('userId = :userId');
-            $query->execute(array('userId' => $user));
+            // Load associated user.
+            $user = new User($row->getValue('userId'));
+            $user->load();
+            
+            // Confirm the user is accepted.
+            if($user->getActivationStage() != User::ACTIVE_STAGE_ACCEPTED)
+            {
+                Log::debug('Activation failed.');
+                return false;
+            }
+            
+            // Activate the user.
+            $user->setActivationStage(User::ACTIVE_STAGE_ACTIVE);
+            $user->save();
             
             // Erase this user's column from the pending users table.
             $query = Query::delete('PendingUsers')->where('pendingUserId = :pendingUserId');
-            $query->execute(array('pendingUserId' => $puser));
+            $query->execute(array('pendingUserId' => $puserId));
             
             Log::debug('Activation success.');
             return true;
         });
         
-        // TODO: Just throw an exception on failure.
+        // TODO: Throw an exception on failure, instead of returning false.
         
         return $success;
     }
@@ -155,7 +164,21 @@ class UserActivationController extends Controller
         // Fetch wheter to turn automatic acceptance on or off.
         $newValue = self::getBoolean($data, 'auto-accept');
         
-        Setting::setSetting('auto-user-acceptance', $newValue ? '1' : '0');
+        // Start a transaction.
+        Database::getInstance()->doTransaction(
+        function() use ($newValue)
+        {
+            // Set the setting.
+            Setting::setSetting('auto-user-acceptance', $newValue ? '1' : '0');
+            
+            // If auto acceptance is turned on, accept all users waiting for acception.
+            if($newValue)
+            {
+                Query::update('Users', array('activationStage' => User::ACTIVE_STAGE_ACCEPTED))
+                        ->where('activationStage = :stage')
+                        ->execute(User::ACTIVE_STAGE_PENDING);
+            }
+        });
     }
     
     /**
@@ -169,6 +192,12 @@ class UserActivationController extends Controller
         // Determine user.
         $user = User::fromUsername(self::getString($data, 'username'));
         
+        // Make sure user is accepted.
+        if($user->getActivationStage() != User::ACTIVE_STAGE_ACCEPTED)
+        {
+            throw new UserActivationException('user-not-accepted');
+        }
+        
         // Find associated PendingUser.
         $row = Query::select('pendingUserId')
                     ->from('PendingUsers')
@@ -179,15 +208,9 @@ class UserActivationController extends Controller
         {
             throw new UserActivationException('user-not-pending');
         }
-    
-        // Make sure user is accepted.
-        $puser = new PendingUser($row->getValue('pendingUserId'));
-        if($puser->getAccepted() !== true)
-        {
-            throw new UserActivationException('user-not-accepted');
-        }
         
         // Send the activation mail again.
+        $puser = new PendingUser($row->getValue('pendingUserId'));
         Mailer::sendActivationMail($puser);
     }
 }

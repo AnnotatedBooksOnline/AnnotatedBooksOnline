@@ -47,6 +47,12 @@ class User extends Entity
     const RANK_MODERATOR = 40; // A moderator.
     const RANK_ADMIN     = 50; // An administrator.
     
+    /** Activation stage constants. */
+    const ACTIVE_STAGE_PENDING  = 0; // Just registered, awaiting activation.
+    const ACTIVE_STAGE_ACCEPTED = 1; // Accepted, an activation mail should've been send.
+    const ACTIVE_STAGE_DENIED   = 2; // Activation denied by administrator.
+    const ACTIVE_STAGE_ACTIVE   = 3; // Activated. User can log in.
+    
     /** User id. */
     protected $userId;
     
@@ -77,8 +83,8 @@ class User extends Entity
     /** Website. */
     protected $website;
     
-    /** Whether this user is active. */
-    protected $active;
+    /** The activation stage of the user. */
+    protected $activationStage;
     
     /** Whether this user is banned. */
     protected $banned;
@@ -105,7 +111,8 @@ class User extends Entity
     }
     
     /**
-     * Constructs a user by username and password.
+     * Constructs a user by username and password. Also check whether the user is allowed to log 
+     * in. If that is not the case, an exception is thrown. 
      *
      * @param  $username  Username of the user.
      * @param  $password  Password of the user.
@@ -137,29 +144,25 @@ class User extends Entity
         // Fetch user.
         $user = new User($resultSet->getFirstRow()->getValue('userId', 'int'));
         
-        // Check for if user is banned or inactive.
-        if ($user->isBanned())
+        // Check for if user is banned.
+        if($user->isBanned())
         {
             throw new UserBannedException($username);
         }
-        else if (!$user->isActive())
+        
+        // Check whether user is inactive and, if not, why.
+        $stage = $user->getActivationStage();
+        switch($stage)
         {
-            // Check whether the user has already been accepted, to determine the kind of exception
-            // to throw.
-            $row = Query::select('accepted')
-                                ->from('PendingUsers')
-                                ->where('userId = :userId')
-                                ->execute(array('userId' => $user->getUserId()))
-                                ->getFirstRow();
-            
-            if($row->getValue('accepted'))
-            {
-                throw new UserShouldActivateException($username);
-            }
-            else
-            {
+            case self::ACTIVE_STAGE_PENDING:
                 throw new UserPendingException($username);
-            }
+            case self::ACTIVE_STAGE_ACCEPTED:
+                throw new UserShouldActivateException($username);
+            case self::ACTIVE_STAGE_DENIED:   
+                throw new UserBannedException($username);
+            case self::ACTIVE_STAGE_ACTIVE:
+                // User is active.
+                break;
         }
         
         if ($user->getPasswordRestoreToken() !== null)
@@ -341,7 +344,7 @@ class User extends Entity
     public static function getColumns()
     {
         return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
-                     'affiliation', 'occupation', 'website', 'homeAddress', 'active',
+                     'affiliation', 'occupation', 'website', 'homeAddress', 'activationStage',
                      'banned', 'rank', 'passwordRestoreToken');
     }
     
@@ -363,7 +366,7 @@ class User extends Entity
             'occupation'           => 'string',
             'website'              => 'string',
             'homeAddress'          => 'string',
-            'active'               => 'boolean',
+            'activationStage'      => 'int',
             'banned'               => 'boolean',
             'rank'                 => 'int',
             'passwordRestoreToken' => 'string'
@@ -405,10 +408,6 @@ class User extends Entity
     public function setHomeAddress($address) { $this->homeAddress = $address; }
     public function getHomeAddress()         { return $this->homeAddress;     }
     
-    public function setActive($active) { $this->active = $active; }
-    public function getActive()        { return $this->active;    }
-    public function isActive()         { return $this->active;    }
-    
     public function setBanned($banned) { $this->banned = $banned; }
     public function getBanned()        { return $this->banned;    }
     public function isBanned()         { return $this->banned;    }
@@ -418,4 +417,23 @@ class User extends Entity
     
     public function getPasswordRestoreToken()       { return $this->passwordRestoreToken;   }
     public function setPasswordRestoreToken($token) { $this->passwordRestoreToken = $token; }
+    
+    public function getActivationStage()       { return $this->activationStage;   }
+    public function setActivationStage($stage) { $this->activationStage = $stage; }
+    
+    
+    // Active getters are redirected to activation stage. 
+    public function getActive()        
+    {
+        if($this->activationStage === null)
+        {
+            return null;
+        }
+        else
+        {
+            return $this->activationStage == self::ACTIVE_STAGE_ACTIVE;
+        }
+    }
+    
+    public function isActive() { return $this->getActive(); }
 }

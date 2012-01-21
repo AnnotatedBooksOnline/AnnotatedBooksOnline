@@ -31,7 +31,7 @@ void showUsage(char *command)
          << "  <color>      A color, eg: '#FF0', '#FFFF00', 'white', or '255,255,0'\n\n"
          << "Examples:\n"
          << "  " << command << " -u -c #FFF -f tile_%z_%x_%y.%e -p /output/path/ input.jpg\n"
-         << "  " << command << " -i tiff -w 512 -h 512 -q 85 -o input.tif\n";
+         << "  " << command << " -i tiff -w 512 -h 512 -q 85 input.tif\n";
 }
 
 rgb_t parseColor(const char *str)
@@ -91,9 +91,7 @@ rgb_t parseColor(const char *str)
 }
 
 int main(int argc, char **argv)
-{
-    TilePyramidBuilder *builder = NULL;
-    
+{    
     try
     {
         //Settings

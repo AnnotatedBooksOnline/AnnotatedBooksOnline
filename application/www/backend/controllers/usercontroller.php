@@ -141,18 +141,18 @@ class UserController extends ControllerBase
         $website     = self::getString($record, 'website', '', true, 255);
         
         $values = array(
-            'username'    => $username,
-            'email'       => $email,
-            'firstName'   => $firstName,
-            'lastName'    => $lastName,
-            'password'    => $password,
-            'affiliation' => $affiliation,
-            'occupation'  => $occupation,
-            'homeAddress' => $homeAddress,
-            'website'     => $website,
-            'active'      => false,
-            'banned'      => false,
-            'rank'        => User::RANK_DEFAULT
+            'username'         => $username,
+            'email'            => $email,
+            'firstName'        => $firstName,
+            'lastName'         => $lastName,
+            'password'         => $password,
+            'affiliation'      => $affiliation,
+            'occupation' 	   => $occupation,
+            'homeAddress'	   => $homeAddress,
+            'website'          => $website,
+            'activationStage'  => User::ACTIVE_STAGE_PENDING,
+            'banned'           => false,
+            'rank'             => User::RANK_DEFAULT
         );
         
         // Check incoming values: username existance, email existance, correct pattern for 
@@ -172,21 +172,24 @@ class UserController extends ControllerBase
         Database::getInstance()->doTransaction(
         function() use ($values)
         {  
-            // Check whether automatic user acceptance is turned on.
-            $autoAccept = Setting::getSetting('auto-user-acceptance');
-            
             // Create user entry.
             $user = new User();
             $user->setValues($values);
+            
+            // Check whether automatic user acceptance is turned on.
+            $autoAccept = Setting::getSetting('auto-user-acceptance');
+            if ($autoAccept)
+            {
+                // Automatically accept user.
+                $user->setActivationStage(User::ACTIVE_STAGE_ACCEPTED);
+            }
+            
+            // Save user.
             $user->save();
             
             // Now create a pending user.
             $pendingUser = PendingUser::fromUser($user);
-            if ($autoAccept)
-            {
-                // Automatically accept user.
-                $pendingUser->setAccepted(true);
-            }
+            
             
             $pendingUser->save();
            
@@ -414,7 +417,7 @@ class UserController extends ControllerBase
         if (Authentication::getInstance()->hasPermissionTo('view-users-complete'))
         {
             return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
-                         'occupation', 'website', 'homeAddress', 'active', 'banned', 'rank');
+                         'occupation', 'website', 'homeAddress', 'activationStage', 'banned', 'rank');
         }
         else if($loggedOnUser)
         {

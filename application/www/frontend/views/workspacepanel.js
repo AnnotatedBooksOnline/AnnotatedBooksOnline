@@ -340,7 +340,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
             title: 'Notes',
             xtype: 'notespanel',
             viewer: this.viewer,
-            hidden: !Authentication.getInstance().isLoggedOn()
+            hidden: !Authentication.getInstance().hasPermissionTo('manage-notebook')
         });
     },
     

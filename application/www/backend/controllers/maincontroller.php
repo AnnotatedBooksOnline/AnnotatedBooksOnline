@@ -49,6 +49,9 @@ class MainController extends Controller
             );
         }
         
+        // Insert project title.
+        $content = str_replace('<!--[PROJECTNAME]-->', Setting::getSetting('project-title'), $content);
+        
         // Send headers.
         $this->sendCachingHeaders(strlen($content), 'text/html', $modified);
         
@@ -135,7 +138,6 @@ class MainController extends Controller
         
         // TODO: Is it just an HTML body, or a whole HTML page?
         // TODO: In the first case, we should put an XHTML page with body around it.
-        
         return Setting::getSetting($textPage);
     }
     

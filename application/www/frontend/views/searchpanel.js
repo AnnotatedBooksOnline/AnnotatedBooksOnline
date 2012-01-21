@@ -480,7 +480,7 @@ Ext.define('Ext.ux.SearchResultsView', {
             {
                 if (field == 'headline')
                 {
-                    properties += '<tr><td colspan="2" style="font-style: italic; padding-top: 5px">' + data[field] + '</td></tr>';
+                    properties += '<tr><td></td><td style="font-style: italic; padding-top: 5px">' + data[field] + '</td></tr>';
                 }
                 else if (field == 'thumbnail')
                 {
@@ -747,7 +747,7 @@ Ext.define('Ext.ux.SearchResultsPanel', {
                     results.add({
                         xtype: 'searchresultsview',
                         searchFields: [],
-                        searchPanel: this.up('searchpanel'),
+                        searchPanel: this.ownerCt,
                         searchSorters: this.searchSorters,
                         searchPageSize: this.searchPageSize,
                         cols: this.up('searchpanel').down('[name=parameters]').getColumns()
@@ -1082,7 +1082,7 @@ Ext.define('Ext.ux.SearchPanel', {
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});
         
-        if (Authentication.getInstance().isLoggedOn())
+        if(Authentication.getInstance().isLoggedOn())
         {
             this.onLoggedOn();
         }
@@ -1093,7 +1093,10 @@ Ext.define('Ext.ux.SearchPanel', {
     
     onLoggedOn: function()
     {
-        this.down('[name=eastregion]').show();
+        if (Authentication.getInstance().hasPermissionTo('manage-notebook'))
+        {
+            this.down('[name=eastregion]').show();
+        }
     },
     
     onLoggedOut: function()

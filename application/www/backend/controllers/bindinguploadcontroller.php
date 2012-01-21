@@ -428,12 +428,12 @@ class BindingUploadController extends Controller
     public function uniqueLibrarySignature($libraryName, $signature)
     {
         $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
-        
         // Determine if the specified signature exists in the database already, this is not allowed.
         if ($existingLibrary !== null)
         {
+            Log::debug('!!!!!!!!!' . print_r($existingLibrary, true));
             if (BindingList::find(array(
-                    'libraryId' => $existingLibrary->getValue('libraryId'),
+                    'libraryId' => $existingLibrary->getLibraryId(),
                     'signature' => $signature
                 ))->tryGet(0) !== null)
             {
