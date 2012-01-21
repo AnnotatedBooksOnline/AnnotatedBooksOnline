@@ -49,8 +49,8 @@ class MainController extends Controller
             );
         }
         
-        // Insert project title.
-        $content = str_replace('<!--[PROJECTNAME]-->', Setting::getSetting('project-title'), $content);
+        // Insert title.
+        $content = str_replace('[TITLE]', Setting::getSetting('project-title'), $content);
         
         // Send headers.
         $this->sendCachingHeaders(strlen($content), 'text/html', $modified);

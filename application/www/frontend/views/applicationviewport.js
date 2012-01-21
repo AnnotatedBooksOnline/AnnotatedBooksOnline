@@ -123,18 +123,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             hidden: true
         }];
         
-        var menuButtons = [/*{
-            text: 'Book',
-            menu: [{
-                text: 'Save current page...'
-            },{
-                text: 'Go to page...'
-            },{
-                text: 'Print...'
-            },{
-                text: 'Close'
-            }]
-        },*/{
+        var menuButtons = [{
             text: 'Search',
             iconCls: 'search-icon',
             listeners: {
@@ -145,12 +134,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             name: 'search'
         },{
-           
             text: 'Upload',
             iconCls: 'upload-icon',
             listeners: {
                 click: function()
                 {
+                    // TODO: Move this, we can't know of any logic like this.
+                    
                     RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
                         function(result)
                         {
@@ -166,14 +156,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             {
                                 Application.getInstance().gotoTab('uploadinfo', [], true);
                             }
-                        }, 
-                        function()
-                        {
-                            Ext.Msg.show({
-                                title: 'Error',
-                                msg: 'There is a problem with the server. Please try again later',
-                                buttons: Ext.Msg.OK
-                            });
                         }
                     );
                 }

@@ -55,9 +55,8 @@ Annotation.createFromVertices = function(vertices)
 {
     // Create annotation model.
     var model = Ext.create('Ext.ux.AnnotationModel', {
-        // NOTE: Debug.
-        transcriptionOrig: "Lorem.\nIpsum.",
-        transcriptionEng: "Foo.\nBar."
+        transcriptionOrig: '',
+        transcriptionEng: ''
     });
     
     // Add vertices.

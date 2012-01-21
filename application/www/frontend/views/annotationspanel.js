@@ -186,11 +186,15 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         // Watch for load.
         var eventDispatcher = this.annotations.getEventDispatcher();
         eventDispatcher.bind('load', this,
-            function(event, annotations, annotation)
+            function(event, annotations)
             {
                 // Disable save and reset buttons.
                 this.saveChangesBtn.setDisabled(true);
                 this.resetChangesBtn.setDisabled(true);
+                
+                // Unset active model.
+                this.activeModel = undefined;
+                this.setActiveAnnotation(undefined);
             });
         
         // Watch for save.
