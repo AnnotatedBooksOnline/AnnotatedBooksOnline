@@ -196,20 +196,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
         },{
             xtype: 'tbseparator',
             cls: 'menu-separator'
-        },/*{
-            text: 'Options',
-            iconCls: 'settings-icon',
-            menu: [{
-                text: 'Viewer settings...',
-                iconCls: 'settings-icon',
-                listeners: {
-                    click: function()
-                    {
-                        Ext.ux.Viewer.showSettingsWindow();
-                    }
-                }
-            }]
-        },*/{
+        },{
             text: 'Users',
             iconCls: 'users-icon',
             listeners: {
@@ -365,9 +352,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         }
                         
                         // Check for correct scan status.
-                        for (var i = 0; i < binding.getScans().length; i++)
+                        for (var i = binding.getScanAmount() - 1; i >= 0; --i)
                         {
-                            if (binding.getScans()[i].get('status') !== 5)
+                            if (binding.getScan(i).get('status') !== 5)
                             {
                                 correctStatus = false;
                                 break;
@@ -400,8 +387,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     {
                         // Loading is finished.
                         this.down('tabpanel').setLoading(false);
-                        
-                        // TODO: Show a nice error maybe?
                     });
                 
                 return;

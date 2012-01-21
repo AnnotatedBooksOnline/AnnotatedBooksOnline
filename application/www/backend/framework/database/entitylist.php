@@ -193,11 +193,11 @@ abstract class EntityList implements IteratorAggregate
      */
     public function save()
     {
-        $list = $this;
+        $entities = $this->entities;
         Database::getInstance()->doTransaction(
-            function() use ($list)
+            function() use ($entities)
             {
-                foreach ($list->entities as $entity)
+                foreach ($entities as $entity)
                 {
                     $entity->save();
                 }
@@ -210,11 +210,11 @@ abstract class EntityList implements IteratorAggregate
      */
     public function delete()
     {
-        $list = $this;
+        $entities = $this->entities;
         Database::getInstance()->doTransaction(
-            function() use ($list)
+            function() use ($entities)
             {
-                foreach ($list->entities as $entity)
+                foreach ($entities as $entity)
                 {
                     $entity->delete();
                 }

@@ -70,7 +70,7 @@ Ext.define('Ext.ux.FormBase', {
         this.callParent();
     },
     
-    afterRender: function(form)
+    afterRender: function()
     {
         this.callParent();
         
@@ -83,8 +83,11 @@ Ext.define('Ext.ux.FormBase', {
         // Focus first field.
         if (this.selectFirstField !== false)
         {
-            var field = this.getComponent(0);
-            field.focus(true, true);
+            var field = this.getForm().getFields().getAt(0);
+            if (field !== undefined)
+            {
+                setTimeout(function() { field.focus(true, false); }, 10);
+            }
         }
     },
     

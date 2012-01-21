@@ -3,8 +3,9 @@
 #
 
 # Enable the rewriting engine.
+Options +FollowSymlinks
 RewriteEngine On
 
-# Rewrite everyting to index.php.
-# TODO: Remove tiles from the list.
-RewriteRule !(tiles|frontend)/.* index.php [L]
+# Rewrite everyting to index.php, except tiles, thumbnails and the frontend.
+RewriteCond %{REQUEST_URI} !(tiles|thumbnails|frontend)
+RewriteRule .* index.php [NC,L]

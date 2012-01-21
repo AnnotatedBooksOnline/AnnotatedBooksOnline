@@ -8,52 +8,55 @@ Ext.define('Ext.ux.ThumbnailView', {
     
     initComponent: function()
     {
+        // Fetch binding.
         this.binding = this.viewer.getBinding();
         
+        // Set fields.
         var fields = [];
-        for (var i = 0; i < this.binding.getScans().length; i++)
+        for (var i = 0; i < this.binding.getScanAmount(); i++)
         {
             var scan = this.binding.getScans()[i];
             
-            var thumbnail = 'tiles/' + scan.get('scanId') + '/tile_0_0_0.jpg';
-            //var thumbnail = 'tiles/thumbnails/' + scan.get('scanId') + '.jpg';
+            var thumbnail = 'data/thumbnails/' + scan.get('scanId') + '.jpg';
             
-            //fields[i] = [,
-            fields[i] = [thumbnail,
-                         i == 0 ? '<div id="test" style="position: absolute; border: 2px solid red;"></div>' : '',
-                         i];
+            fields[i] = [
+                scan.get('scanId'),
+                thumbnail,
+                i
+            ];
         }
         
-        // TODO: Use page store.
+        // Create store.
         var store = Ext.create('Ext.data.ArrayStore', {
             id: 'testStore',
-            fields: ['thumbnail', 'rect', 'page'],
+            fields: ['id', 'thumbnail', 'index'],
             pageSize: 10,
             data: fields
         });
         
+        var _this = this;
         var defConfig = {
             store: store,
             tpl: [
                 '<tpl for=".">',
-                    '<div class="thumbnail" style="cursor: pointer; float: left; margin: 10px;">',
-                        '<div style="position: relative;">',
-                            '<img src="{thumbnail}" />',
-                            '{rect}',
+                    '<div class="thumbnail">',
+                        '<div class="thumbnail-inner">',
+                            '<img src="{thumbnail}" alt="" />',
+                            '<div class="thumbnail-rect" style="display: none;"></div>',
                         '</div>',
                     '</div>',
                 '</tpl>',
             ],
             style: 'height: 100%', // For scrollbars to appear correctly.
-            store: store, //this.getStore(),
+            store: store,
             itemSelector: 'div.thumbnail',
             autoScroll: true,
             listeners: {
-                itemclick: function(view, record)
+                itemclick: function(view, model)
                 {
-                    var page = record.get('page'); // TODO: Not page, but index?
+                    var index = model.get('index');
                     
-                    this.viewer.gotoPage(page);
+                    _this.viewer.gotoPage(index);
                 }
             }
         };
@@ -63,63 +66,108 @@ Ext.define('Ext.ux.ThumbnailView', {
         this.callParent();
     },
     
-    changeIndex: function(oldPage, newPage)
+    afterRender: function()
     {
-        // TODO: Re-implement and improve.
+        this.callParent();
         
-        /*
-        if (this.timer === undefined)
-        {
-            var _this = this;
-            this.timer = setTimeout(
-                function()
-                {
-                    _this.timer = undefined;
-                    
-                    var area = _this.viewport.getVisibleArea();
-                    
-                    var topLeft = {
-                        x: Math.max(0, Math.min(151, Math.round(area.topLeft.x))),
-                        y: Math.max(0, Math.min(225, Math.round(area.topLeft.y)))
-                    };
-                    var bottomRight = {
-                        x: Math.min(151, Math.round(area.bottomRight.x)),
-                        y: Math.min(225, Math.round(area.bottomRight.y))
-                    };
-                    
-                    var test = document.getElementById("test");
-                    
-                    test.style.left   = topLeft.x + "px";
-                    test.style.top    = topLeft.y + "px";
-                    test.style.width  = (bottomRight.x - topLeft.x) + "px";
-                    test.style.height = (bottomRight.y - topLeft.y) + "px";
-                },
-                10
-            );
-        }
-        */
+        // Fetch viewport.
+        this.viewport = this.viewer.getViewport();
         
-        /*
-        this.getStore().getAt(oldPage).set('rect', '');
-        this.getStore().getAt(newPage).set('rect', '<div id="test" style="position: absolute; border: 2px solid red;"></div>');
-        var top = this.getEl().dom.childNodes[newPage].offsetTop;
-        top -= this.getEl().dom.childNodes[0].offsetTop;
-        this.getEl().scrollTo('top', top, true);
-        */
-    }//,
+        // Watch for page changes.
+        this.viewer.getEventDispatcher().bind('pagechange', this, this.onPageChange);
+        
+        // Watch for viewport changes.
+        this.viewer.getViewportEventDispatcher().bind('change', this, this.onViewportChange);
+        
+        // Hide or show first rectangles at load of thumbnail.
+        var _this = this;
+        this.on('viewready',
+            function()
+            {
+                setTimeout(function() { _this.onPageChange(); }, 100);
+            });
+    },
     
-    /*
-    // NOTE: Name seems to be internally used!
-    getStore: function(data)
+    onPageChange: function()
     {
-        var store = Ext.create('Ext.ux.StoreBase', {
-            model: 'Ext.ux.PageModel',
-            //data: data.columns
-        });
+        // Fetch some shortcuts.
+        var pageNumber = this.viewer.getPage();
+        var node       = this.getNode(pageNumber);
+        var image      = $(node).find('img');
         
-        return store;
+        // Set current rectangle.
+        this.rectangle = $(node).find('.thumbnail-rect').get(0);
+        
+        // Get document dimensions.
+        var documentDimensions = this.viewport.getDocument().getDimensions();
+        
+        // Get image dimensions.
+        this.imageDimensions = {width: image.width() || 0, height: image.height() || 0};
+        
+        // Calculate factors.
+        this.widthFactor  = this.imageDimensions.width  / documentDimensions.width;
+        this.heightFactor = this.imageDimensions.height / documentDimensions.height;
+        
+        // Show just the current rectangle.
+        for (var i = this.binding.getScanAmount() - 1; i >= 0; --i)
+        {
+            // Fetch rectangle.
+            var node       = this.getNode(i);
+            var rectangle  = $(node).find('.thumbnail-rect');
+            
+            // Show or hide it.
+            if (i === pageNumber)
+            {
+                rectangle.show();
+            }
+            else
+            {
+                rectangle.hide();
+            }
+        }
+        
+        // Trigger viewport change.
+        this.onViewportChange();
+    },
+    
+    onViewportChange: function()
+    {
+        // Check for current timer and rectangle.
+        if ((this.timer !== undefined) || (this.rectangle === undefined))
+        {
+            return;
+        }
+        
+        // Set timer to avoid updating to many times.
+        var _this = this;
+        this.timer = setTimeout(
+            function()
+            {
+                // Clear timer.
+                _this.timer = undefined;
+                
+                // Fetch some shortcuts.
+                var area = _this.viewport.getVisibleArea();
+                
+                // Calculate AABB of page inside thumbnail.
+                var topLeft = {
+                    x: Math.max(0, Math.min(_this.imageDimensions.width,  Math.round(area.topLeft.x * _this.widthFactor))),
+                    y: Math.max(0, Math.min(_this.imageDimensions.height, Math.round(area.topLeft.y * _this.heightFactor)))
+                };
+                var bottomRight = {
+                    x: Math.min(_this.imageDimensions.width,  Math.round(area.bottomRight.x * _this.widthFactor)),
+                    y: Math.min(_this.imageDimensions.height, Math.round(area.bottomRight.y * _this.heightFactor))
+                };
+                
+                // Set new rectanlge position and size.
+                _this.rectangle.style.left   = topLeft.x + "px";
+                _this.rectangle.style.top    = topLeft.y + "px";
+                _this.rectangle.style.width  = (bottomRight.x - topLeft.x) + "px";
+                _this.rectangle.style.height = (bottomRight.y - topLeft.y) + "px";
+            },
+            10
+        );
     }
-    */
 });
 
 Ext.define('Ext.ux.NavigationPanel', {
@@ -139,11 +187,6 @@ Ext.define('Ext.ux.NavigationPanel', {
         
         Ext.apply(this, defConfig);
         
-        this.callParent();
-    },
-    
-    afterRender: function()
-    {
         this.callParent();
     }
 });

@@ -173,11 +173,14 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         // Watch for change.
         var eventDispatcher = this.annotations.getEventDispatcher();
         eventDispatcher.bind('change', this,
-            function(event, annotations, annotation)
+            function(event, annotations)
             {
                 // Enable save and reset buttons.
                 this.saveChangesBtn.setDisabled(false);
                 this.resetChangesBtn.setDisabled(false);
+                
+                // Reset active model.
+                this.setActiveAnnotation(this.activeModel);
             });
         
         // Watch for load.
@@ -452,7 +455,15 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                             new Ext.Button({
                                 renderTo: id,
                                 text: 'Edit',
-                                style: 'margin-right: 5px;'
+                                style: 'margin-right: 5px;',
+                                handler: function()
+                                {
+                                    var window = new Ext.ux.TranscriptionEditorWindow({
+                                        annotation: model
+                                    });
+                                    
+                                    window.show();
+                                }
                             });
                         }
                         catch (e)

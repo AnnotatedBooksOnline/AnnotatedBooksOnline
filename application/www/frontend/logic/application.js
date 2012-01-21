@@ -214,10 +214,6 @@ Application.prototype.registerActions = function()
                     Authentication.showEditProfileWindow();
                     break;
                     
-                case 'viewersettings':
-                    Ext.ux.ViewerPanel.showSettingsWindow();
-                    break;
-                    
                 case 'binding':
                 case 'search':
                 case 'users':
@@ -239,6 +235,7 @@ Application.prototype.registerActions = function()
                                 window.close();
                         }
                     );
+                    
                     // Go to the given panel.
                     this.gotoTab(action, data, true);
                     break;

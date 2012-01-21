@@ -79,7 +79,7 @@ class BookController extends ControllerBase
         // Adds a fulltext search to the query.
         $addFulltext = function($name, $columns, $value, $addheadline = false) use (&$query, &$binds, &$c, &$headline)
         {
-            BookController::addFulltext($name, $columns, $value, $addheadline, &$query, &$binds, &$c, &$headline);
+            BookController::addFulltext($name, $columns, $value, $addheadline, $query, $binds, $c, $headline);
         };
         
         // Process all search selectors and add them to the query.
@@ -223,7 +223,7 @@ class BookController extends ControllerBase
                 'signature'     => $book->getValue('signature'),
                 'provenance'    => $book->getValue('provenancenames'),
                 'headline'      => $book->getValue('headline'),
-                'thumbnail'     => 'tiles/' . $book->getValue('scanId') . '/tile_0_0_0.jpg',
+                'thumbnail'     => 'data/thumbnails/' . $book->getValue('scanId') . '.jpg',
                 'id'            => $book->getValue('bookId'),
                 'bindingId'     => $book->getValue('bindingId'),
                 'firstPage'     => $book->getValue('firstPage'),

@@ -222,9 +222,8 @@ Annotations.prototype.clear = function()
 // Loads annotations.
 Annotations.prototype.load = function()
 {
-    // Load store.
+    // Load store. Filter will trigger a load.
     this.store.filter({property: 'scanId', value: this.scanId});
-    this.store.load();
 }
 
 // Resets annotations.
@@ -240,14 +239,26 @@ Annotations.prototype.reset = function()
 // Saves annotations.
 Annotations.prototype.save = function()
 {
-    // Sync store.
-    this.store.sync();
-    
     // Get all annotations.
     var annotations = [];
     
     
-    // TODO: Save store: does polygon get transmitted?
+    /*
+    
+    for (var i = this.model.fields.items.length - 1; i >= 0; --i)
+    {
+        var fieldName = this.model.fields.items[i].name;
+        
+        if (values[fieldName] !== undefined)
+        {
+            this.model.set(fieldName, values[fieldName]);
+        }
+    }
+    
+    */
+    
+    
+    // TODO: Save store: does polygon get transmitted? Nope.
     // NOTE: this.store.sync() might work, but we want revisions, so we may want to do this ourselves.
     
     
@@ -323,6 +334,7 @@ Annotations.prototype.initialize = function()
             'load': function(store, models, success) { _this.onStoreLoad(models, success); },
             'beforesync': function()                 { return false;                       },
             'clear': function()                      { _this.clear();                      },
+            'update': function(store, model)         { _this.onStoreDataChanged([model]);  },
             'datachanged': function(store, models)   { _this.onStoreDataChanged(models);   }
             
             // TODO: update vertices? Not for now..

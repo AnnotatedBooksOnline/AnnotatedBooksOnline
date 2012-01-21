@@ -213,8 +213,8 @@ Viewport.prototype.getVisibleArea = function()
     //calculate topleft and bottomright
     var topLeft     = this.position;
     var bottomRight = {
-        x: topLeft.x + this.dimensions.width  * this.zoomFactor,
-        y: topLeft.y + this.dimensions.height * this.zoomFactor
+        x: topLeft.x + this.dimensions.width  * this.invZoomFactor,
+        y: topLeft.y + this.dimensions.height * this.invZoomFactor
     };
     
     return rotateBoundingBox({topLeft: topLeft, bottomRight: bottomRight}, -this.rotation);
@@ -387,6 +387,12 @@ Viewport.prototype.reset = function()
     ) / Math.LN2;
     
     this.zoom(newZoomLevel);
+}
+
+// Gets a new document.
+Viewport.prototype.getDocument = function()
+{
+    return this.document;
 }
 
 // Sets a new document.
