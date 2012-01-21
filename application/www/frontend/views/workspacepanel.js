@@ -203,6 +203,7 @@ Ext.define('Ext.ux.ExportForm', {
         var sendRequest = function()
         {
             _this.setLoading('Exporting...');
+            
             RequestManager.getInstance().request(
                 'Pdf',
                 'generate',
@@ -215,12 +216,15 @@ Ext.define('Ext.ux.ExportForm', {
                         controller: 'Pdf',
                         action: 'download'
                     });
+                    
                     window.location = '?' + Ext.Object.toQueryString(data);
+                    
                     _this.setLoading(false);
                 },
                 function()
                 {
                     _this.setLoading(false);
+                    
                     return true;
                 }
             );
@@ -318,6 +322,7 @@ Ext.define('Ext.ux.ExportForm', {
                 onContinue: function()
                 {
                     sendRequest();
+                    
                     this.close();
                 },
                 onCancel: function()
@@ -325,6 +330,7 @@ Ext.define('Ext.ux.ExportForm', {
                     this.close();
                 }
             });
+            
             confirm.show();
         }
         else
@@ -424,7 +430,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
         }
         
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
-        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+        eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
     onLoggedOn: function()
@@ -454,4 +460,3 @@ Ext.define('Ext.ux.WorkspacePanel', {
         }
     }
 });
-

@@ -10,7 +10,7 @@ Ext.define('Ext.ux.VertexModel', {
 Ext.define('Ext.ux.AnnotationModel', {
     extend: 'Ext.data.Model',
     idProperty: 'annotationId',
-    fields: ['annotationId', 'scanId', 'transcriptionEng', 'transcriptionOrig'],
+    fields: ['annotationId', 'scanId', 'transcriptionEng', 'transcriptionOrig', 'order'],
     
     hasMany: {
         model: 'Ext.ux.VertexModel',

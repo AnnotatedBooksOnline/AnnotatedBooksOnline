@@ -179,6 +179,9 @@ AnnotationOverlay.prototype.onPolygonRemove = function(polygon)
     
     // Delete polygon reference.
     delete this.polygonsByAnnHash[annotation.getHash()];
+    
+    // Set view mode.
+    this.setMode('view');
 }
 
 AnnotationOverlay.prototype.onBeforePolygonCreate = function(polygon, succeed, cancel)
@@ -263,4 +266,46 @@ AnnotationOverlay.prototype.onPolygonUnhover = function(polygon)
     }
     
     AnnotationOverlay.base.onPolygonUnhover.call(this, polygon);
+}
+
+AnnotationOverlay.prototype.onVertexMove = function(polygon, vertex)
+{
+    // Get corresponding annotation.
+    var annotation = this.getAnnotationByPolygon(polygon);
+    
+    // Set new vertices.
+    annotation.setVertices(polygon.getVertices());
+    
+    // Trigger change event.
+    this.eventDispatcher.trigger('change', this, annotation);
+    
+    AnnotationOverlay.base.onVertexMove.call(this, polygon, vertex);
+}
+
+AnnotationOverlay.prototype.onVertexAdd = function(polygon, vertex)
+{
+    // Get corresponding annotation.
+    var annotation = this.getAnnotationByPolygon(polygon);
+    
+    // Set new vertices.
+    annotation.setVertices(polygon.getVertices());
+    
+    // Trigger change event.
+    this.eventDispatcher.trigger('change', this, annotation);
+    
+    AnnotationOverlay.base.onVertexAdd.call(this, polygon, vertex);
+}
+
+AnnotationOverlay.prototype.onVertexRemove = function(polygon, vertex)
+{
+    // Get corresponding annotation.
+    var annotation = this.getAnnotationByPolygon(polygon);
+    
+    // Set new vertices.
+    annotation.setVertices(polygon.getVertices());
+    
+    // Trigger change event.
+    this.eventDispatcher.trigger('change', this, annotation);
+    
+    AnnotationOverlay.base.onVertexRemove.call(this, polygon, vertex);
 }

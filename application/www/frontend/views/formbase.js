@@ -86,7 +86,7 @@ Ext.define('Ext.ux.FormBase', {
             var field = this.getForm().getFields().getAt(0);
             if (field !== undefined)
             {
-                setTimeout(function() { field.focus(true, false); }, 10);
+                setTimeout(function() { field.focus(true, true); }, 10);
             }
         }
     },

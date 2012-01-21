@@ -240,6 +240,21 @@ PolygonOverlay.prototype.onPolygonCreate = function(polygon)
     // May be implemented by subclass.
 }
 
+PolygonOverlay.prototype.onVertexMove = function(polygon, vertex)
+{
+    // May be implemented by subclass.
+}
+
+PolygonOverlay.prototype.onVertexAdd = function(polygon, vertex)
+{
+    // May be implemented by subclass.
+}
+
+PolygonOverlay.prototype.onVertexRemove = function(polygon, vertex)
+{
+    // May be implemented by subclass.
+}
+
 PolygonOverlay.prototype.onPolygonClick = function(polygon)
 {
     if (this.mode === 'erase')
@@ -353,7 +368,6 @@ PolygonOverlay.prototype.endPolygon = function()
             {
                 _this.removePolygon(newPolygon, false);
             });
-        
     }
 }
 
@@ -405,6 +419,9 @@ PolygonOverlay.prototype.onMouseMove = function(event)
         
         // Move vertex.
         this.activePolygon.moveVertex(this.activeVertex, point);
+        
+        // Trigger vertex move event.
+        this.onVertexMove(this.activePolygon, this.activeVertex);
         
         retval = false;
     }
@@ -494,6 +511,10 @@ PolygonOverlay.prototype.onVertexMouseUp = function(event, polygon, vertex)
         }
         else
         {
+            // Trigger remove vertex event.
+            this.onVertexRemove(polygon, vertex);
+            
+            // Remove vertex.
             polygon.removeVertex(vertex);
         }
         
@@ -563,6 +584,9 @@ PolygonOverlay.prototype.onPolygonMouseDown = function(event, polygon)
         // Set active polygon and vertex.
         this.activePolygon = polygon;
         this.activeVertex  = vertex;
+        
+        // Trigger add vertex event.
+        this.onVertexAdd(polygon, vertex);
     }
     
     return true;

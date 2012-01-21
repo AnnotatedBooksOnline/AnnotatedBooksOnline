@@ -438,7 +438,6 @@ Polygon.prototype.initialize = function()
     var path = Polygon.calculatePath(this.vertices, true);
     
     // Create content.
-    var _this = this;
     this.content = this.overlay.surface.add({
         type: "path",
         path: path,
@@ -455,18 +454,26 @@ Polygon.prototype.initialize = function()
         }
     });
     
-    // Add polygon class. Polygon must be shown to add a class.
-    this.content.show(true);
-    this.content.addCls('polygon');
-    
     // Create lines.
+    var _this = this;
     this.lines = this.overlay.surface.add({
         type: "path",
         path: path,
         stroke: Polygon.lineColor,
         fill: "none",
-        opacity: 1
+        opacity: 1,
+        listeners: {
+            'mouseover': function(s, event) { return _this.onMouseOver(event); },
+            'mouseout':  function(s, event) { return _this.onMouseOut(event);  },
+            'mousemove': function(s, event) { return _this.onMouseOver(event); },
+            'mousedown': function(s, event) { return _this.onMouseDown(event); },
+            'click':     function(s, event) { return _this.onClick(event);     }
+        }
     });
+    
+    // Add polygon class. Polygon must be shown to add a class.
+    this.content.show(true);
+    this.content.addCls('polygon');
     
     // Create corners.
     this.corners = [];
