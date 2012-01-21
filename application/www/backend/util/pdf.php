@@ -35,7 +35,7 @@ class PdfException extends ExceptionBase
 class Pdf
 {
     private $identifier;
-    private $path;
+    private $path = '../data/tiles/';
     private $dpi = 250;
     private $textMarginL = 72;
     private $textMarginT = 72;
@@ -108,9 +108,6 @@ class Pdf
         
         // Use a safe maximal buffer size, knowing that the Cache will double the memory usage.
         $this->maxBufferSize = $this->iniToBytes('memory_limit') / 4;
-        
-        $this->path = Configuration::getInstance()->getString('install-base', '../');
-        $this->path .= Configuration::getInstance()->getString('tile-output-path', '/tiles');
         
         $this->autoPrint = false;
         $this->setPageSize(595, 842);
