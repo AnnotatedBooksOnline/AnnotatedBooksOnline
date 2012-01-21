@@ -891,10 +891,6 @@ class Pdf
             $width = $this->numberWidth($i);
             list($x, $y) = $transformedPoints[0];
             $this->translate($x, $y);
-            if ($this->scanAttr['rotate'])
-            {    
-                $this->rotate(-90);
-            }        
             $this->translate(-$width / 2, -$this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4);
             $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET');
         
