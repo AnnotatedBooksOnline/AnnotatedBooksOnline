@@ -126,7 +126,30 @@ Ext.define('Ext.ux.RequestManagerProxy', {
                 data.records = [];
             }
             
-            _this.processResponse(true, operation, request, data, callback, scope);
+            // Determine success.
+            var success = true;
+            if (data.records.length === 0)
+            {
+                switch (operation.action)
+                {
+                    // On destroy, we can and should not return anything.
+                    case 'destroy':
+                        break;
+                        
+                    // On read, if id was set, we fail.
+                    case 'read':
+                        success = (operation.id === undefined);
+                        break;
+                        
+                    // On update and create, the new record must be sent along.
+                    case 'update':
+                    case 'create':
+                        success = false;
+                        break;
+                }
+            }
+            
+            _this.processResponse(success, operation, request, data, callback, scope);
         }
         
         function onError(code, message, trace)

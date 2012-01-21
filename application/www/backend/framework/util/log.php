@@ -23,7 +23,7 @@ class Log extends Singleton
     protected function __construct()
     {
         // Open log file.
-        $this->file = fopen('log/log.txt', 'a');
+        $this->file = fopen('../data/logs/log.txt', 'a');
         
         // Get log level.
         $this->level = Configuration::getInstance()->getBoolean('logging-level', 2);

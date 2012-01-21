@@ -3,15 +3,15 @@
  * Password restoration form.
  */
 Ext.define('Ext.ux.RestorePasswordForm', {
-	extend: 'Ext.ux.FormBase',
+    extend: 'Ext.ux.FormBase',
     alias: 'widget.restorepasswordform',
     
     initComponent: function() 
     {  
-    	var _this = this;
-    	
-    	var defConfig = { 
-    			title : 'Enter a new password',
+        var _this = this;
+        
+        var defConfig = { 
+                title : 'Enter a new password',
                 items: [{
                     name: 'password',
                     fieldLabel: 'New password *',
@@ -36,19 +36,19 @@ Ext.define('Ext.ux.RestorePasswordForm', {
                 
                 submit: function()
                 {
-                	var form = this.getForm();
-                	
-                	// Determine token and newly entered password.
-                	var token = _this.up('restorepasswordpanel').tabInfo.data[0];
-                	var newpass = form.getValues()['password'];
-                	
-                	// After changing was succesfull.
-                	var onSuccess = function()
-                	{
-                		Ext.MessageBox.alert('Changing password succesfull.',
+                    var form = this.getForm();
+                    
+                    // Determine token and newly entered password.
+                    var token = _this.up('restorepasswordpanel').tabInfo.data[0];
+                    var newpass = form.getValues()['password'];
+                    
+                    // After changing was succesfull.
+                    var onSuccess = function()
+                    {
+                        Ext.MessageBox.alert('Changing password succesfull.',
                                 'Your password has been succesfully changed.' +
-                				' You can now log in with it.',
-                				function()
+                                ' You can now log in with it.',
+                                function()
                                 {
                                     var tabs = Application.getInstance().viewport.getTabsInfo();
                                     for (var i = 0; i < tabs.length; i++)
@@ -59,52 +59,52 @@ Ext.define('Ext.ux.RestorePasswordForm', {
                                         }
                                     }
                                 });
-                	};
-                	
-                	// If it failed (because e.g. the token was incorrect).
-                	var onFailure = function()
-                	{
-                		Ext.MessageBox.alert('Changing password failed.',
+                    };
+                    
+                    // If it failed (because e.g. the token was incorrect).
+                    var onFailure = function()
+                    {
+                        Ext.MessageBox.alert('Changing password failed.',
                               'Something went wrong while trying to change your password.' +
                               ' Please make sure the address in your address bar matches the one in' + 
                               ' the e-mail you received.');
-                	};
-                	
-                	// Do a request to change the password.
-                	if(form.isValid())
-                	{
-                		RequestManager.getInstance().request(
-                	            'User',
-                	            'changeForgottenPassword',
-                	            {
-                	            	password: newpass,
-                	            	token: token
-                	            },
-                	            _this,
-                	            function(success)
-                	            {
-                	            	if(success)
-                	            	{
-                	            		onSuccess();
-                	            	}
-                	            	else
-                	            	{
-                	            		onFailure();
-                	            	}
-                	            },
-                	            function(data)
-                	            {
-                	            	onFailure();
-                	            }
-                	    );
-                	}
+                    };
+                    
+                    // Do a request to change the password.
+                    if(form.isValid())
+                    {
+                        RequestManager.getInstance().request(
+                                'User',
+                                'changeForgottenPassword',
+                                {
+                                    password: newpass,
+                                    token: token
+                                },
+                                _this,
+                                function(success)
+                                {
+                                    if(success)
+                                    {
+                                        onSuccess();
+                                    }
+                                    else
+                                    {
+                                        onFailure();
+                                    }
+                                },
+                                function(data)
+                                {
+                                    onFailure();
+                                }
+                        );
+                    }
                 },
                 
                 model: new Ext.ux.UserModel()
             };
         
-    	Ext.apply(this, defConfig);
-    	this.callParent();
+        Ext.apply(this, defConfig);
+        this.callParent();
     }
 });
 
@@ -117,12 +117,12 @@ Ext.define('Ext.ux.RestorePasswordPanel', {
     
     initComponent: function() 
     {  
-    	// Send request with token from URL.
-    	var _this = this;
-    	    	
-    	var defConfig =
-    	{
-            	title: 'Restore password',
+        // Send request with token from URL.
+        var _this = this;
+                
+        var defConfig =
+        {
+                title: 'Restore password',
                 layout: 'hbox',
                 bodyPadding: 10,
                 items: [{
@@ -130,7 +130,7 @@ Ext.define('Ext.ux.RestorePasswordPanel', {
                         plain: true,
                         flex: 1
                     },{
-                    	xtype: 'restorepasswordform',
+                        xtype: 'restorepasswordform',
                         border: false,
                         width: 400,
                         height: 150
@@ -141,8 +141,8 @@ Ext.define('Ext.ux.RestorePasswordPanel', {
                     }]
             }
         
-    	Ext.apply(_this, defConfig);
-    	this.callParent();
+        Ext.apply(_this, defConfig);
+        this.callParent();
     }
 
 

@@ -196,7 +196,7 @@ class Database extends Singleton
     public function execute($query, $arguments = array(), $types = null)
     {
         Log::debug("Executing query:\n%s", $query);
-        Log::debug('Arguments:\n%s', print_r($arguments, true));
+        Log::debug("Arguments:\n%s", print_r($arguments, true));
         
         // Avoid preparing the same statement twice.
         if (isset($this->preparedStatements[$query]))

@@ -241,8 +241,8 @@ Ext.define('Ext.ux.RegistrationPanel', {
     {
         var item = this.items.get(1);
         
-        item.update('Welcome to the collaboratory, ' + escape(model.getFullName()) + '.<br/>' +
-        		    'You should soon receive an e-mail with instructions on how to activate your account.');
+        item.update('Welcome to ' + document.title + ', ' + escape(model.getFullName()) + '.<br/>' +
+                    'You should soon receive an e-mail with instructions on how to activate your account.');
         
         this.getLayout().setActiveItem(1);
     }

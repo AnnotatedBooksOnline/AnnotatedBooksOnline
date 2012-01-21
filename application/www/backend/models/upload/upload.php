@@ -153,7 +153,7 @@ class Upload extends Entity
      */
     public function getFileLocation()
     {
-        return 'uploads/' . $this->token . '.upload';
+        return '../data/uploads/' . $this->token . '.upload';
     }
     
     /**

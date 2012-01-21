@@ -7,7 +7,7 @@ Ext.define('Ext.ux.Info', {
     alias: 'widget.infopanel',
     
     initComponent: function() 
-    {
+    {        
         var _this = this;
         
         var defConfig = {

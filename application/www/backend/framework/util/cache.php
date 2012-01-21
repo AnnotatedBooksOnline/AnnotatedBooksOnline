@@ -15,7 +15,7 @@ class CacheEntry
      */
     public function __construct($key)
     {
-        $this->filename            = 'cache/' . $key . '.cache';
+        $this->filename            = '../data/cache/' . $key . '.cache';
         $this->dependencyTimestamp = 0;
         $this->content             = null;
     }

@@ -27,7 +27,6 @@ Ext.define('Ext.ux.ViewerPanel', {
             region: 'center',
             xtype: 'viewportpanel',
             document: _this.binding.getDocument(0),
-            title: escape(_this.binding.getModel().get('signature')),
             cls: 'viewport-panel',
             tbar: [{
                 xtype: 'slider',
@@ -146,13 +145,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                         _this.resetViewport();
                     }
                 }
-            }/*,{
-                iconCls: 'settings-icon',
-                tooltip: 'Set viewer settings',
-                listeners: {
-                    click: function() { Ext.ux.ViewerPanel.showSettingsWindow(); }
-                }
-            }*/, '->', {
+            }, '->', {
                 iconCls: 'drag-icon',
                 tooltip: 'Drag',
                 enableToggle: true,
@@ -265,6 +258,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         
         var defConfig = {
             layout: 'border',
+            title: escape(_this.binding.getModel().get('signature')),
             items: [westRegion, centerRegion, eastRegion]
         };
         
@@ -358,8 +352,8 @@ Ext.define('Ext.ux.ViewerPanel', {
     setToolsVisibility: function()
     {
         // Check whether tools are visible.
-        var loggedOn = Authentication.getInstance().isLoggedOn();
-        var visible  = this.toolsVisible && loggedOn;
+        var permission = Authentication.getInstance().hasPermissionTo('add-annotations');
+        var visible  = this.toolsVisible && permission;
         
         // Set icon states.
         var tools = ['view', 'polygon', 'rectangle', 'vertex', 'addvertex', 'erasevertex', 'erase'];

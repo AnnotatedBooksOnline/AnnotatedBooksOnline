@@ -123,18 +123,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             hidden: true
         }];
         
-        var menuButtons = [/*{
-            text: 'Book',
-            menu: [{
-                text: 'Save current page...'
-            },{
-                text: 'Go to page...'
-            },{
-                text: 'Print...'
-            },{
-                text: 'Close'
-            }]
-        },*/{
+        var menuButtons = [{
             text: 'Search',
             iconCls: 'search-icon',
             listeners: {
@@ -145,12 +134,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             name: 'search'
         },{
-           
             text: 'Upload',
             iconCls: 'upload-icon',
             listeners: {
                 click: function()
                 {
+                    // TODO: Move this, we can't know of any logic like this.
+                    
                     RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
                         function(result)
                         {
@@ -166,14 +156,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             {
                                 Application.getInstance().gotoTab('uploadinfo', [], true);
                             }
-                        }, 
-                        function()
-                        {
-                            Ext.Msg.show({
-                                title: 'Error',
-                                msg: 'There is a problem with the server. Please try again later',
-                                buttons: Ext.Msg.OK
-                            });
                         }
                     );
                 }
@@ -196,20 +178,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
         },{
             xtype: 'tbseparator',
             cls: 'menu-separator'
-        },/*{
-            text: 'Options',
-            iconCls: 'settings-icon',
-            menu: [{
-                text: 'Viewer settings...',
-                iconCls: 'settings-icon',
-                listeners: {
-                    click: function()
-                    {
-                        Ext.ux.Viewer.showSettingsWindow();
-                    }
-                }
-            }]
-        },*/{
+        },{
             text: 'Users',
             iconCls: 'users-icon',
             listeners: {
@@ -245,7 +214,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 items: [{
                     xtype: 'container',
                     height: 87,
-                    html: '<h1>Collaboratory</h1><div class="version">#COLLABVERSION#</div>'
+                    html: '<h1>' + document.title + '</h1><div class="version">#COLLABVERSION#</div>'
                 },{
                     xtype: 'container',
                     defaults: {
@@ -365,9 +334,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         }
                         
                         // Check for correct scan status.
-                        for (var i = 0; i < binding.getScans().length; i++)
+                        for (var i = binding.getScanAmount() - 1; i >= 0; --i)
                         {
-                            if (binding.getScans()[i].get('status') !== 5)
+                            if (binding.getScan(i).get('status') !== 5)
                             {
                                 correctStatus = false;
                                 break;
@@ -400,8 +369,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     {
                         // Loading is finished.
                         this.down('tabpanel').setLoading(false);
-                        
-                        // TODO: Show a nice error maybe?
                     });
                 
                 return;
@@ -652,11 +619,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
     },
     
     onAuthenticationChange: function(event, authentication)
-    {
+    {         
         if (authentication.isLoggedOn())
         {
-            this.down('[name=users]').show();
-            this.down('[name=upload]').show();
+            //this.down('[name=users]').show();
+            //this.down('[name=upload]').show();
             this.down('[name=logout]').show();
             this.down('[name=profile]').show();
             this.down('[name=login]').hide();
@@ -665,14 +632,33 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
         else
         {
-            this.down('[name=users]').hide();
-            this.down('[name=upload]').hide();
+            //this.down('[name=users]').hide();
+            //this.down('[name=upload]').hide();
             this.down('[name=logout]').hide();
             this.down('[name=profile]').hide();
             this.down('[name=login]').show();
             this.down('[name=register]').show();
             this.down('[name=password]').show();
         }
+        
+        // Display upload and users buttons when having permission.
+        if(Authentication.getInstance().hasPermissionTo('view-users-part'))
+        {
+            this.down('[name=users]').show();
+        }
+        else
+        {
+            this.down('[name=users]').hide();
+        }
+        if(Authentication.getInstance().hasPermissionTo('upload-bindings'))
+        {
+            this.down('[name=upload]').show();
+        }
+        else
+        {
+            this.down('[name=upload]').hide();
+        }
+        
     },
     
     onAuthenticationModelChange: function(event, authentication)

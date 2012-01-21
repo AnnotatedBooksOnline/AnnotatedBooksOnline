@@ -2,7 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
-require_once 'models/help/helpcontrolitem.php';
+require_once 'models/help/helpparagraph.php';
 
 /**
  * Entity representing a help page.
@@ -15,14 +15,7 @@ class HelpPage extends Entity
     /** The name of the page. */
     protected $pageName;
     
-    /** The content of the page, in HTML. */
-    protected $content;
-    
-    /** The parent page, if any. */
-    protected $parentHelpPageId;
-
-    
-    /** A cached array of subpages and contained control items. */
+    /** A cached array of paragraphs. */
     private $subItems;
     
     
@@ -55,33 +48,24 @@ class HelpPage extends Entity
     
     public static function getColumns()
     {
-        return array('pageName', 'content', 'parentHelpPageId');
+        return array('pageName');
     }
     
     public static function getColumnTypes()
     {
         return array(
             'helpPageId'       => 'int',
-            'pageName'         => 'string',
-            'content'          => 'string',
-            'parentHelpPageId' => 'int'
+            'pageName'         => 'string'
         );
     }
     
     
     // Helpers.
     
-    /**
-     * Get and load all subpages and control items contained by this page.  
-     *
-     * @return array An array of loaded HelpPage and HelpContolItem entities. 
-     * 
-     * @throws EntityException If the parentHelpPageId of this entity is not set.
-     */
     public function getChildren()
     {
         // Confirm that id is set.
-        if($this->parentHelpPageId === null)
+        if($this->helpPageId === null)
         {
             throw new EntityException('entity-primary-keys-not-set');
         }
@@ -91,25 +75,15 @@ class HelpPage extends Entity
         {
             $this->subItems = array();
             
-            // Query all subpages.
-            $pages = $this->getSelectQuery()->where('parentHelpPageId = :id')
-                                            ->execute(array('id' => $this->helpPageId));
-            
-            // Query contained HelpControlItems.
-            $citems = Query::select('controlItemName')
-                           ->from('HelpContolItems')
-                           ->where('helpPageId = :id')
+            // Query contained paragraphs (but not their children).
+            $citems = Query::select('helpParagraphId')
+                           ->from('HelpParagraphs')
+                           ->where('helpPageId = :id AND paragraphParentId IS NULL')
                            ->execute(array('id' => $this->helpPageId));
             
-            
-            // Add loaded entities to result.
-            foreach($pages as $page)
-            {
-                $this->subItems[] = new HelpPage($page->getValue('helpPageId'));
-            }
             foreach($citems as $citem)
             {
-                $this->subItems[] = new HelpContolItem($citem->getValue('controlItemId'));
+                $this->subItems[] = new HelpParagraph($citem->getValue('controlItemId'));
             }
         }
         

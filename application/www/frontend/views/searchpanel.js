@@ -1,5 +1,3 @@
-"use strict";
-
 /*
  * Search models and properties.
  */
@@ -101,17 +99,21 @@ Ext.define('Ext.ux.YearBetweenField', {
                 name: 'from',
                 fieldLabel: 'Between',
                 listeners: {
-                    'blur': function(from, f) {
+                    'blur': function(from, f)
+                    {
                         var to = this.nextSibling('[name=to]');
                         var fromValue = from.getValue();
-                        var toValue = to.getValue()
-                        if (toValue == null || parseInt(fromValue) > parseInt(toValue)) 
+                        var toValue = to.getValue();
+                        
+                        if (toValue == null || parseInt(fromValue) > parseInt(toValue))
                         {
                             to.setValue(fromValue);
                         }
+                        
                         return;
                     },
-                    'spin': function(from, direction) {
+                    'spin': function(from, direction)
+                    {
                         var to = this.nextSibling('[name=to]');
                         var fromValue = parseInt(from.getValue());
                         var toValue = parseInt(to.getValue());
@@ -149,7 +151,8 @@ Ext.define('Ext.ux.YearBetweenField', {
                 name: 'to',
                 fieldLabel: 'and',
                 listeners: {
-                    'blur': function(to, t) {
+                    'blur': function(to, t)
+                    {
                         var from = this.previousSibling('[name=from]');
                         var fromValue = from.getValue();
                         var toValue = to.getValue();
@@ -159,7 +162,8 @@ Ext.define('Ext.ux.YearBetweenField', {
                         }
                         return;
                     },
-                    'spin': function(to, direction) {
+                    'spin': function(to, direction)
+                    {
                         var from = this.previousSibling('[name=from]');
                         var fromValue = parseInt(from.getValue());
                         var toValue = parseInt(to.getValue());
@@ -274,6 +278,8 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                     {
                         searchFieldsPanel.add([{xtype: 'searchfield'}]);
                     }
+                    
+                    this.ownerCt.focus();
                 }
             }
         };
@@ -343,7 +349,20 @@ Ext.define('Ext.ux.SearchField', {
         
         this.superclass.initComponent.apply(this, []);
     },
-            
+    
+    afterRender: function()
+    {
+        this.callParent();
+        
+        this.focus();
+    },
+    
+    focus: function()
+    {
+        var field = this.down('[name=value]');
+        setTimeout(function() { field.focus(false, false); }, 10);
+    },
+    
     getValue: function()
     {
         var value = {
@@ -1063,7 +1082,7 @@ Ext.define('Ext.ux.SearchPanel', {
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});
         
-        if (Authentication.getInstance().isLoggedOn())
+        if(Authentication.getInstance().isLoggedOn())
         {
             this.onLoggedOn();
         }
@@ -1074,7 +1093,10 @@ Ext.define('Ext.ux.SearchPanel', {
     
     onLoggedOn: function()
     {
-        this.down('[name=eastregion]').show();
+        if (Authentication.getInstance().hasPermissionTo('manage-notebook'))
+        {
+            this.down('[name=eastregion]').show();
+        }
     },
     
     onLoggedOut: function()
