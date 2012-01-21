@@ -88,6 +88,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             flex: 1,
             items: [{
                 xtype: 'propertygrid',
+                
                 propertyNames: {
                     // userId: 'Identifier',
                     username: 'Username',
@@ -98,9 +99,38 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     occupation: 'Occupation',
                     website: 'Website',
                     homeAddress: 'Address',
-                    active: 'Active',
+                    activationStage: 'Status',
                     banned: 'Banned',
                     rank: 'Rank'
+                },
+                customRenderers: {
+                	banned: function(banned){
+                		if (banned === true) {
+                			return 'Yes';
+                		} else {
+                			return 'No';
+                		}
+                	},
+                	activationStage: function(activationStage){
+                		if (activationStage == '0') {
+                			return 'Pending';
+                		} else if (activationStage == '1') {
+                			return 'Accepted';
+                		} else if (activationStage == '2') {
+                			return 'Declined';
+                		} else if (activationStage == '3') {
+                			return 'Active';
+                		}
+                	},
+                	rank: function(rank){
+                		if (rank == '10') {
+                			return 'Normal user';
+                		} else if (rank == '40') {
+                			return 'Moderator';
+                		} else if (rank == '50') {
+                			return 'Administrator';
+                		}
+                	}
                 },
                 source: {},
                 listeners: {
