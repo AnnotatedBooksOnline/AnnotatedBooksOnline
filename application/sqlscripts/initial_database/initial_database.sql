@@ -2,6 +2,8 @@
 -- SQL for PostgreSQL. Database encoding must be UTF-8.
 -- 
 
+BEGIN TRANSACTION;
+
 CREATE TABLE "Users"
 (
     "userId" serial NOT NULL,
@@ -246,3 +248,5 @@ CREATE TABLE "Provenances"
     FOREIGN KEY ("bindingId")
         REFERENCES "Bindings"
 );
+
+COMMIT;

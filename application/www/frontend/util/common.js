@@ -184,3 +184,11 @@ var isFF = navigator.userAgent.indexOf("Firefox") != -1;
  */
 
 var hasTransforms = Modernizr.csstransforms;
+/*
+ * Default page size
+ */
+ 
+Ext.override(Ext.data.Store, {
+    pageSize: 1000000000 // 'Infinite' page size
+});
+

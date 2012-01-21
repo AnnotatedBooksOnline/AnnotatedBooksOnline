@@ -23,7 +23,42 @@ class PdfController extends Controller
         
         if (isset($data['transcriptions']) && $data['transcriptions'] == 'on')
         {
-            $transcriptions = true;
+            $languages = array('English' => 'Eng');
+            if (isset($data['language']))
+            {
+                switch ($data['language'])
+                {
+                    case 'eng':
+                        $languages = array('English' => 'eng');
+                        break;
+                    case 'orig':
+                        $languages = array('Original' => 'orig');
+                        break;
+                    case 'both':
+                        $languages = array('Original' => 'orig', 'English' => 'eng');
+                        break;
+                    default:
+                        break;
+                }
+            }
+            $transcriptions = function(Annotation $annotation) use ($languages)
+            {
+                $trans = array();
+                foreach ($languages as $name => $getter)
+                {
+                    $getter = 'getTranscription' . ucfirst($getter);
+                    $text = $annotation->{$getter}();
+                    if (trim($text) != '')
+                    {
+                        $trans[$name] = $text;
+                    }
+                    else
+                    {
+                        $trans[$name] = 'This transcription is not available in ' . $name . '.';
+                    }
+                }
+                return $trans;
+            };
             if (isset($data['polygons']) && $data['polygons'] == 'on')
             {
                 $annotations = true;
