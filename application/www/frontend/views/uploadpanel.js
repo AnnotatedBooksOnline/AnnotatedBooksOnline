@@ -30,9 +30,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
         };
         
         var annotationStore = Ext.create('Ext.data.Store', {
-        	model: 'Ext.ux.LanguageModel',  
-        	pageSize : 250,
-        	sorters : {
+            model: 'Ext.ux.LanguageModel',  
+            pageSize : 250,
+            sorters : {
                 property : 'languageName',
                 direction: 'ASC'
             }
@@ -153,9 +153,9 @@ Ext.define('Ext.ux.BookFieldset', {
         var _this = this;
     
         var booklanguageStore = Ext.create('Ext.data.Store', {
-        	model: 'Ext.ux.LanguageModel',  
-        	pageSize : 250,
-        	sorters : {
+            model: 'Ext.ux.LanguageModel',  
+            pageSize : 250,
+            sorters : {
                 property : 'languageName',
                 direction: 'ASC'
             }

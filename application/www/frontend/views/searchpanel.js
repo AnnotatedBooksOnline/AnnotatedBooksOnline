@@ -1074,10 +1074,10 @@ Ext.define('Ext.ux.SearchPanel', {
     
     onLoggedOn: function()
     {
-    	if (Authentication.getInstance().hasPermissionTo('manage-notebook'))
-    	{
-    		this.down('[name=eastregion]').show();
-    	}
+        if (Authentication.getInstance().hasPermissionTo('manage-notebook'))
+        {
+            this.down('[name=eastregion]').show();
+        }
     },
     
     onLoggedOut: function()

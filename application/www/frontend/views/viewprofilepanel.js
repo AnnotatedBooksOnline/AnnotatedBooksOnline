@@ -45,41 +45,41 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             store
         );
         store.on('load',
-        	function(store, records, successfull)
-        	{
-        		if (!successfull) {
-        			return;
-        		}
-        		
-        		// Enable the 'unban' button for banned users and disable the 'unban' 
-        		// button. Disable the 'unban' button for unbanned users and enable
-        		// the 'ban' button.
+            function(store, records, successfull)
+            {
+                if (!successfull) {
+                    return;
+                }
+                
+                // Enable the 'unban' button for banned users and disable the 'unban' 
+                // button. Disable the 'unban' button for unbanned users and enable
+                // the 'ban' button.
                 if (store.data.get(0).get('banned') == '0') 
                 {
-                	_this.down('[id=unban]').setDisabled(true);
-                	_this.down('[id=ban]').setDisabled(false);
-        		} 
+                    _this.down('[id=unban]').setDisabled(true);
+                    _this.down('[id=ban]').setDisabled(false);
+                } 
                 else 
-        		{
-                	_this.down('[id=ban]').setDisabled(true);
-                	_this.down('[id=unban]').setDisabled(false);
-        		}
+                {
+                    _this.down('[id=ban]').setDisabled(true);
+                    _this.down('[id=unban]').setDisabled(false);
+                }
                 
                 // Enable the 'accept' and 'decline' buttons when the user is pending
                 // activation. Disable them otherwise.
                 if (store.data.get(0).get('activationStage') == '0') 
                 {
-                	_this.down('[id=accept]').setDisabled(false);
-                	_this.down('[id=decline]').setDisabled(false);
+                    _this.down('[id=accept]').setDisabled(false);
+                    _this.down('[id=decline]').setDisabled(false);
                 }
                 else
                 {
-                	_this.down('[id=accept]').setDisabled(true);
-                	_this.down('[id=decline]').setDisabled(true);                	
+                    _this.down('[id=accept]').setDisabled(true);
+                    _this.down('[id=decline]').setDisabled(true);                    
                 }
                 
-        	},
-        	store
+            },
+            store
         );
                 
         store.load();
@@ -104,33 +104,33 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     rank: 'Rank'
                 },
                 customRenderers: {
-                	banned: function(banned){
-                		if (banned === true) {
-                			return 'Yes';
-                		} else {
-                			return 'No';
-                		}
-                	},
-                	activationStage: function(activationStage){
-                		if (activationStage == '0') {
-                			return 'Pending';
-                		} else if (activationStage == '1') {
-                			return 'Accepted';
-                		} else if (activationStage == '2') {
-                			return 'Declined';
-                		} else if (activationStage == '3') {
-                			return 'Active';
-                		}
-                	},
-                	rank: function(rank){
-                		if (rank == '10') {
-                			return 'Normal user';
-                		} else if (rank == '40') {
-                			return 'Moderator';
-                		} else if (rank == '50') {
-                			return 'Administrator';
-                		}
-                	}
+                    banned: function(banned){
+                        if (banned === true) {
+                            return 'Yes';
+                        } else {
+                            return 'No';
+                        }
+                    },
+                    activationStage: function(activationStage){
+                        if (activationStage == '0') {
+                            return 'Pending';
+                        } else if (activationStage == '1') {
+                            return 'Accepted';
+                        } else if (activationStage == '2') {
+                            return 'Declined';
+                        } else if (activationStage == '3') {
+                            return 'Active';
+                        }
+                    },
+                    rank: function(rank){
+                        if (rank == '10') {
+                            return 'Normal user';
+                        } else if (rank == '40') {
+                            return 'Moderator';
+                        } else if (rank == '50') {
+                            return 'Administrator';
+                        }
+                    }
                 },
                 source: {},
                 listeners: {
@@ -254,12 +254,12 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 handler: function ()
                 {
                     var changeRoleWindow = new Ext.ux.ChangeRoleWindow({
-                    	store: store,
+                        store: store,
                         listeners: {
                             close: function() { 
-                            	// Reload the user profile after the user is done modifying the users rank.
-                            	store.load(); 
-                            	}
+                                // Reload the user profile after the user is done modifying the users rank.
+                                store.load(); 
+                                }
                         }
                     });
                     changeRoleWindow.show();
@@ -349,80 +349,80 @@ Ext.define('Ext.ux.ChangeRoleForm', {
 
     initComponent: function() 
     {
-    	var userRecord = this.store.data.get(0);
-    	
-    	var userRoles = Ext.create('Ext.data.Store', {
-    	    fields: ['id', 'name'],
-    	    data : [
-    	        {"id":"10", "name":"Normal user"},
-    	        {"id":"40", "name":"Moderator"},
-    	        {"id":"50", "name":"Administrator"}
-    	    ]
-    	});
+        var userRecord = this.store.data.get(0);
+        
+        var userRoles = Ext.create('Ext.data.Store', {
+            fields: ['id', 'name'],
+            data : [
+                {"id":"10", "name":"Normal user"},
+                {"id":"40", "name":"Moderator"},
+                {"id":"50", "name":"Administrator"}
+            ]
+        });
 
-    	
+        
         var _this = this;
         var defConfig = {
-        	items: [{                            
-        		xtype: 'fieldcontainer',
+            items: [{                            
+                xtype: 'fieldcontainer',
                 layout: 'hbox',
                 fieldLabel: 'Username',
                 anchor: '100%',
                 labelAlign: 'left',
                 items: [{
-                	xtype: 'label',
+                    xtype: 'label',
                     text: userRecord.get('username')
                 }]
-        	},{                            
-        		xtype: 'fieldcontainer',
+            },{                            
+                xtype: 'fieldcontainer',
                 layout: 'hbox',
                 fieldLabel: 'First name',
                 anchor: '100%',
                 labelAlign: 'left',
                 items: [{
-                	xtype: 'label',
+                    xtype: 'label',
                     text: userRecord.get('firstName')
                 }]
-        	},{                            
-        		xtype: 'fieldcontainer',
+            },{                            
+                xtype: 'fieldcontainer',
                 layout: 'hbox',
                 fieldLabel: 'Last name',
                 anchor: '100%',
                 labelAlign: 'left',
                 items: [{
-                	xtype: 'label',
+                    xtype: 'label',
                     text: userRecord.get('lastName')
                 }]
-        	},{                            
-        		xtype: 'fieldcontainer',
+            },{                            
+                xtype: 'fieldcontainer',
                 layout: 'hbox',
                 fieldLabel: 'E-mail',
                 anchor: '100%',
                 labelAlign: 'left',
                 items: [{
-                	xtype: 'label',
+                    xtype: 'label',
                     text: userRecord.get('email')
                 }]
-        	},{                            
-        		xtype: 'fieldcontainer',
+            },{                            
+                xtype: 'fieldcontainer',
                 layout: 'hbox',
                 fieldLabel: 'Current role',
                 anchor: '100%',
                 labelAlign: 'left',
                 items: [{
-                	xtype: 'label',
+                    xtype: 'label',
                     text: userRecord.get('rank')
                 }]
-        	},{
-        		xtype: 'combobox', 
-        		name: 'role',
-        		fieldLabel: 'New user role',
-        		store: userRoles,
-        		queryMode: 'local',
-        		displayField: 'name',
-        		valueField: 'id',
-        		renderTo: Ext.getBody()
-        	}],
+            },{
+                xtype: 'combobox', 
+                name: 'role',
+                fieldLabel: 'New user role',
+                store: userRoles,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'id',
+                renderTo: Ext.getBody()
+            }],
             buttons: [{
                 xtype: 'button',
                 text: 'Cancel',

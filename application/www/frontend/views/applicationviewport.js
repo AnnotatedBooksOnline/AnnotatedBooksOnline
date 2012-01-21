@@ -677,19 +677,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
         // Display upload and users buttons when having permission.
         if(Authentication.getInstance().hasPermissionTo('view-users-part'))
         {
-        	this.down('[name=users]').show();
+            this.down('[name=users]').show();
         }
         else
         {
-        	this.down('[name=users]').hide();
+            this.down('[name=users]').hide();
         }
         if(Authentication.getInstance().hasPermissionTo('upload-bindings'))
         {
-        	this.down('[name=upload]').show();
+            this.down('[name=upload]').show();
         }
         else
         {
-        	this.down('[name=upload]').hide();
+            this.down('[name=upload]').hide();
         }
         
     },

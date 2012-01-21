@@ -7,9 +7,9 @@ Ext.define('Ext.ux.Activation', {
     alias: 'widget.activationpanel',
     
     initComponent: function() 
-    {    	    	
-    	var config = 
-    	{
+    {                
+        var config = 
+        {
                 bodyPadding: 10,
                 items: [{
                     xtype: 'container',
@@ -23,14 +23,14 @@ Ext.define('Ext.ux.Activation', {
                         style: 'margin-right: 5px;'
                     },
                     items: []
-                	},
+                    },
                 ]
         };
-    	
-    	// Send request with activation token from URL.
-    	var token = this.tabInfo.data[0];
-    	var _this = this;
-    	RequestManager.getInstance().request(
+        
+        // Send request with activation token from URL.
+        var token = this.tabInfo.data[0];
+        var _this = this;
+        RequestManager.getInstance().request(
             'UserActivation',
             'activateUser',
             {token: token},
@@ -39,34 +39,34 @@ Ext.define('Ext.ux.Activation', {
             {
                 if (success)
                 {
-                	_this.add({
-	                    xtype: 'container',
-	                    items: {
-	                        style: 'text-align: justify;',
-	                        xtype: 'panel',
-	                        border: false,
-	                        width: 500,
-	                        flex: 0,
-	                        html: 'Your account has been succesfully activated. ' +
-	                        	  '<a href="#" title="" onclick="Authentication.showLoginWindow(); return false;">' +
-	                              'Please click here to login.</a>'
-	                    }
-	                })
+                    _this.add({
+                        xtype: 'container',
+                        items: {
+                            style: 'text-align: justify;',
+                            xtype: 'panel',
+                            border: false,
+                            width: 500,
+                            flex: 0,
+                            html: 'Your account has been succesfully activated. ' +
+                                  '<a href="#" title="" onclick="Authentication.showLoginWindow(); return false;">' +
+                                  'Please click here to login.</a>'
+                        }
+                    })
                 }
                 else
                 {
-                	_this.add({
-	                    xtype: 'container',
-	                    items: {
-	                        style: 'text-align: justify;',
-	                        xtype: 'panel',
-	                        border: false,
-	                        width: 500,
-	                        flex: 0,
-	                        html: 'Your account could not be activated. Please try again or request a new confirmation ' +
-	                              'link by logging in.'
-	                    }
-	                })
+                    _this.add({
+                        xtype: 'container',
+                        items: {
+                            style: 'text-align: justify;',
+                            xtype: 'panel',
+                            border: false,
+                            width: 500,
+                            flex: 0,
+                            html: 'Your account could not be activated. Please try again or request a new confirmation ' +
+                                  'link by logging in.'
+                        }
+                    })
                 }
                 
                 
@@ -74,8 +74,8 @@ Ext.define('Ext.ux.Activation', {
             },
             function(data)
             {
-            	// TODO ...
-            	_this.add({
+                // TODO ...
+                _this.add({
                     xtype: 'container',
                     items: {
                         style: 'text-align: justify;',
@@ -90,7 +90,7 @@ Ext.define('Ext.ux.Activation', {
             }
         );
         
-    	Ext.apply(_this, config);
-    	this.callParent();
+        Ext.apply(_this, config);
+        this.callParent();
     }
 });
