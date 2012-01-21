@@ -219,6 +219,16 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 width: '140',
                 handler: function ()
                 {
+                    var changeRoleWindow = new Ext.ux.ChangeRoleWindow({
+                    	store: store,
+                        listeners: {
+                            close: function() { 
+                            	// Reload the user profile after the user is done modifying the users rank.
+                            	store.load(); 
+                            	}
+                        }
+                    });
+                    changeRoleWindow.show();
                 }
             },{
                 xtype: 'button',
@@ -279,10 +289,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                                         {username: username,
                                          accepted: false},
                                         null,
-                                        function()
-                                        {
-                                            store.load();
-                                        }
+                                        null
                                     );  
                                 }
                             }
@@ -298,23 +305,165 @@ Ext.define('Ext.ux.ViewProfilePanel', {
 });
 
 /*
- * Password restoration window.
+ * Set role form.
  */
-Ext.define('Ext.ux.ChangePasswordWindow', {
+Ext.define('Ext.ux.ChangeRoleForm', {
+    extend: 'Ext.ux.FormBase',
+    alias: 'widget.changeroleform',
+
+    initComponent: function() 
+    {
+    	var userRecord = this.store.data.get(0);
+    	
+    	var userRoles = Ext.create('Ext.data.Store', {
+    	    fields: ['id', 'name'],
+    	    data : [
+    	        {"id":"10", "name":"Normal user"},
+    	        {"id":"40", "name":"Moderator"},
+    	        {"id":"50", "name":"Administrator"}
+    	    ]
+    	});
+
+    	
+        var _this = this;
+        var defConfig = {
+        	items: [{                            
+        		xtype: 'fieldcontainer',
+                layout: 'hbox',
+                fieldLabel: 'Username',
+                anchor: '100%',
+                labelAlign: 'left',
+                items: [{
+                	xtype: 'label',
+                    text: userRecord.get('username')
+                }]
+        	},{                            
+        		xtype: 'fieldcontainer',
+                layout: 'hbox',
+                fieldLabel: 'First name',
+                anchor: '100%',
+                labelAlign: 'left',
+                items: [{
+                	xtype: 'label',
+                    text: userRecord.get('firstName')
+                }]
+        	},{                            
+        		xtype: 'fieldcontainer',
+                layout: 'hbox',
+                fieldLabel: 'Last name',
+                anchor: '100%',
+                labelAlign: 'left',
+                items: [{
+                	xtype: 'label',
+                    text: userRecord.get('lastName')
+                }]
+        	},{                            
+        		xtype: 'fieldcontainer',
+                layout: 'hbox',
+                fieldLabel: 'E-mail',
+                anchor: '100%',
+                labelAlign: 'left',
+                items: [{
+                	xtype: 'label',
+                    text: userRecord.get('email')
+                }]
+        	},{                            
+        		xtype: 'fieldcontainer',
+                layout: 'hbox',
+                fieldLabel: 'Current role',
+                anchor: '100%',
+                labelAlign: 'left',
+                items: [{
+                	xtype: 'label',
+                    text: userRecord.get('rank')
+                }]
+        	},{
+        		xtype: 'combobox', 
+        		name: 'role',
+        		fieldLabel: 'New user role',
+        		store: userRoles,
+        		queryMode: 'local',
+        		displayField: 'name',
+        		valueField: 'id',
+        		renderTo: Ext.getBody()
+        	}],
+            buttons: [{
+                xtype: 'button',
+                text: 'Cancel',
+                width: 140,
+                handler: function()
+                {
+                    Ext.WindowManager.each(
+                        function(window)
+                        {
+                            if (window instanceof Ext.window.Window)
+                                window.close();
+                        }
+                    );
+                }
+            },{
+                xtype: 'button',
+                formBind: true,
+                disabled: true,
+                text: 'Apply',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
+                }
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    },
+    
+    submit: function()
+    {
+        var form = this.getForm();        
+        var values = form.getValues();
+        
+        // Decline the user.
+        RequestManager.getInstance().request(
+            'User',
+            'changeRole',
+            {username: this.store.data.get(0).get('username'),
+             role: values.role},
+            null,
+            function()
+            {
+                store.load();
+                Ext.WindowManager.each(
+                        function(window)
+                        {
+                            if (window instanceof Ext.window.Window)
+                                window.close();
+                        }
+                    );
+            }
+        );
+        
+    }
+});
+
+/*
+ * Set role window.
+ */
+Ext.define('Ext.ux.ChangeRoleWindow', {
     extend: 'Ext.ux.WindowBase',
 
     initComponent: function() 
     {
         var defConfig = {
-            title: 'Change password',
+            title: 'Change user role',
             layout: 'fit',
             width: 400,
-            height: 150,
             items: [{
-                xtype: 'restorepasswordform',
+                xtype: 'changeroleform',
+                store: this.store,
                 border: false,
                 width: 400,
-                height: 150
             }]
         };
         
