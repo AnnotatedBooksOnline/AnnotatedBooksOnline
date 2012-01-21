@@ -54,7 +54,7 @@ class PdfController extends Controller
                     }
                     else
                     {
-                        $trans[$name] = 'This transcriptions is not available in ' . $name . '.';
+                        $trans[$name] = 'This transcription is not available in ' . $name . '.';
                     }
                 }
                 return $trans;
