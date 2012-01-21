@@ -309,7 +309,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         eventDispatcher.bind('change', this, this.afterViewportChange);
         
         // Handle authentication changes.
-        Authentication.getInstance().getEventDispatcher().bind('change', this, this.onAuthenticationChange);
+        Authentication.getInstance().getEventDispatcher().bind('modelchange', this, this.onAuthenticationChange);
         
         // Add information (west) and workspace (east) regions, as they rely on the data above.
         this.down('[name=west-region]').add({
@@ -341,10 +341,8 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.skipSliderOnChange = false;
     },
     
-    onAuthenticationChange: function(event, authentication)
+    onAuthenticationChange: function()
     {
-        var loggedOn = authentication.isLoggedOn();
-        
         // Set tools visibility.
         this.setToolsVisibility();
     },
@@ -353,7 +351,7 @@ Ext.define('Ext.ux.ViewerPanel', {
     {
         // Check whether tools are visible.
         var permission = Authentication.getInstance().hasPermissionTo('add-annotations');
-        var visible  = this.toolsVisible && permission;
+        var visible    = this.toolsVisible && permission;
         
         // Set icon states.
         var tools = ['view', 'polygon', 'rectangle', 'vertex', 'addvertex', 'erasevertex', 'erase'];

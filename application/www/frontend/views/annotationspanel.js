@@ -92,6 +92,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         text: 'Edit mode',
                         width: 135,
                         name: 'edit-mode',
+                        disabled: true,
                         style: 'margin-right: 5px',
                         handler: function()
                         {
@@ -102,6 +103,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         text: 'View mode',
                         width: 135,
                         name: 'view-mode',
+                        disabled: true,
                         hidden: true,
                         style: 'margin-right: 5px',
                         handler: function()
@@ -157,6 +159,9 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         // Set language.
         this.setLanguage('transcriptionEng');
         
+        // Handle current authentication state.
+        this.onAuthenticationChange();
+        
         // Watch for removal.
         var store = this.annotations.getStore();
         store.on('remove',
@@ -206,6 +211,9 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 this.saveChangesBtn.setDisabled(true);
                 this.resetChangesBtn.setDisabled(true);
             });
+        
+        // Handle authentication model changes.
+        Authentication.getInstance().getEventDispatcher().bind('modelchange', this, this.onAuthenticationChange);
     },
     
     setLanguage: function(language)
@@ -257,7 +265,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     },
     
     // Sets mode. Mode can be 'edit' or 'view'.
-    setMode: function(mode)
+    setMode: function(mode, force)
     {
         this.mode = mode;
         
@@ -278,6 +286,35 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             this.resetChangesBtn.setDisabled(true);
             
             this.viewer.hideTools();
+            
+            // Handle unsaved changes.
+            if (this.annotations.hasChanges())
+            {
+                if (force)
+                {
+                    // Reset changes.
+                    this.resetChanges();
+                }
+                else
+                {
+                    // Ask user whether to save changes.
+                    var _this = this;
+                    Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
+                        function(button)
+                        {
+                            if (button === 'yes')
+                            {
+                                // Save changes.
+                                _this.saveChanges();
+                            }
+                            else
+                            {
+                                // Reset changes.
+                                _this.resetChanges();
+                            }
+                        });
+                }
+            }
         }
         
         // Reset active model.
@@ -285,8 +322,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         
         // Set mode of grid.
         this.grid.setMode(mode);
-        
-        // TODO: Handle unsaved records.
     },
     
     saveChanges: function()
@@ -302,6 +337,30 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         
         // Reset annotations.
         this.annotations.reset();
+    },
+    
+    onAuthenticationChange: function()
+    {
+        var permission = Authentication.getInstance().hasPermissionTo('add-annotations');
+        
+        if (permission)
+        {
+            // Set view change mode buttons enabled.
+            this.editMode.setDisabled(false);
+            this.viewMode.setDisabled(false);
+        }
+        else
+        {
+            // Check if in edit mode.
+            if (this.mode === 'edit')
+            {
+                this.setMode('view', true);
+            }
+            
+            // Set view change mode buttons disabled.
+            this.editMode.setDisabled(true);
+            this.viewMode.setDisabled(true);
+        }
     }
 });
 

@@ -168,6 +168,7 @@ Ext.define('Ext.ux.ExportForm', {
         var sendRequest = function()
         {
             _this.setLoading('Exporting...');
+            
             RequestManager.getInstance().request(
                 'Pdf',
                 'generate',
@@ -180,12 +181,15 @@ Ext.define('Ext.ux.ExportForm', {
                         controller: 'Pdf',
                         action: 'download'
                     });
+                    
                     window.location = '?' + Ext.Object.toQueryString(data);
+                    
                     _this.setLoading(false);
                 },
                 function()
                 {
                     _this.setLoading(false);
+                    
                     return true;
                 }
             );
@@ -203,6 +207,7 @@ Ext.define('Ext.ux.ExportForm', {
         {
             pages = values.pageTo - values.pageFrom + 1;
         }
+        
         var time = Math.ceil(pages / 20);
         var size = Math.floor(0.4 + 1.2 * pages); // TODO: Make a bit better estimation.
         
@@ -219,11 +224,13 @@ Ext.define('Ext.ux.ExportForm', {
                      + 'This may take some time and the resulting file may be large.</p>'
                      + '<p>Estimated processing time: ' + timestr + '<br/>'
                      + 'Estimated file size: ' + size + ' MB</p>';
+            
             var confirm = new Ext.ux.ExportConfirmWindow({
                 info: info,
                 onContinue: function()
                 {
                     sendRequest();
+                    
                     this.close();
                 },
                 onCancel: function()
@@ -231,6 +238,7 @@ Ext.define('Ext.ux.ExportForm', {
                     this.close();
                 }
             });
+            
             confirm.show();
         }
         else
@@ -331,7 +339,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
         }
         
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
-        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+        eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
     onLoggedOn: function()

@@ -1082,13 +1082,10 @@ Ext.define('Ext.ux.SearchPanel', {
         firstField.select('any');
         firstField.fireEvent('select',firstField,{});
         
-        if(Authentication.getInstance().isLoggedOn())
-        {
-            this.onLoggedOn();
-        }
+        this.onAuthenticationChange('modelchange', Authentication.getInstance());
         
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
-        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+        eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
     onLoggedOn: function()
@@ -1116,4 +1113,3 @@ Ext.define('Ext.ux.SearchPanel', {
         }
     }
 });
-

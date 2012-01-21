@@ -18,6 +18,7 @@ class Annotation extends Entity
     protected $transcriptionOrig;
     protected $userId;
     protected $timeCreated;
+    protected $order;
     
     /**
      * Constructs an annotation entity.
@@ -75,7 +76,7 @@ class Annotation extends Entity
      */
     public static function getColumns()
     {
-        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'userId', 'timeCreated');
+        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'userId', 'timeCreated', 'order');
     }
     
     /**
@@ -92,7 +93,8 @@ class Annotation extends Entity
             'transcriptionEng'  => 'string',
             'transcriptionOrig' => 'string',
             'userId'            => 'int',
-            'timeCreated'       => 'time'
+            'timeCreated'       => 'timestamp',
+            'order'             => 'int'
         );
     }
     
@@ -137,4 +139,7 @@ class Annotation extends Entity
     
     public function getTimeCreated()      { return $this->timeCreated;  }
     public function setTimeCreated($time) { $this->timeCreated = $time; }
+    
+    public function getOrder()       { return $this->order;   }
+    public function setOrder($order) { $this->order = $order; }
 }
