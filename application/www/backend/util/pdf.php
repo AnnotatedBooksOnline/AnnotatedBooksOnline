@@ -757,7 +757,7 @@ class Pdf
             
             if ($this->scanAttr['rotate'])
             {
-                $this->rotate(-90);
+                $this->rotate(90);
                 $this->translate(-$height, 0);
                 list($width, $height) = array($height, $width);
             }
@@ -824,7 +824,7 @@ class Pdf
         // Colors for the polygons in 'r g b' format.
         $edgeColor = '0 0 0';
         $circleColor = '0 0 0';
-        $circleFillColor = '1.0 1.0 1.0';
+        $circleFillColor = '0.961 0.894 0.612';
         
         if (count($points) == 0)
         {
@@ -843,7 +843,7 @@ class Pdf
             
             if ($this->scanAttr['rotate'])
             {
-                $this->rotate(-90);
+                $this->rotate(90);
                 $this->translate(-$width, 0);
             }
             
@@ -890,7 +890,7 @@ class Pdf
             $this->translate($x, $y);
             if ($this->scanAttr['rotate'])
             {    
-                $this->rotate(90);
+                $this->rotate(-90);
             }        
             $this->translate(-$width / 2, -$this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4);
             $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET');
