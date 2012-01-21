@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 -- Change help tables.
 DROP TABLE "HelpControlItems";
