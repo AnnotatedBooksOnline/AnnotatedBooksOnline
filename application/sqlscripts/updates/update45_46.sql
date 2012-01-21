@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 -- Add activation column to Users.
 ALTER TABLE "Users" ADD COLUMN "activationStage" smallint NOT NULL DEFAULT 0;
