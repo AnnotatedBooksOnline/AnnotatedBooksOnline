@@ -25,7 +25,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 text: 'Modify binding',
                 handler: function()
                 {
-                    Application.getInstance().gotoTab('upload', viewer.binding, true);
+                    Application.getInstance().gotoTab('upload', [viewer.binding], true);
                 }
             },
             columns: [

@@ -476,6 +476,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
             
             case 'upload':
+            	
+            	// Identify a possible existing binding passed to the upload panel.
+            	var existingBinding = undefined;
+            	if (data.length > 0) 
+            	{
+            		existingBinding = data[0];
+            	}
+            	
                 // Add an upload panel.
                 Ext.apply(tabConfig, {
                     title: 'Upload (upload)',
@@ -489,6 +497,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     },{
                         xtype: 'uploadform',
                         selectFirst: false,
+                        existingBinding: existingBinding,
                         border: false,
                         width: 800,
                         autoScroll: true
