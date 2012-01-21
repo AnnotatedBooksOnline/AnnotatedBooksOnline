@@ -8,6 +8,8 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     
     initComponent: function()
     {
+    	var viewer = this.viewer;
+    	
         var defConfig = {
             border: false,
             title: 'Binding information',
@@ -18,7 +20,14 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                     {name: 'Year',   value: '1497'}
                 ]
             },
-            
+            bbar: {
+                xtype: 'button',
+                text: 'Modify binding',
+                handler: function()
+                {
+                    Application.getInstance().gotoTab('upload', viewer.binding, true);
+                }
+            },
             columns: [
                 {header: 'Name',  dataIndex: 'name',  flex: 1},
                 {header: 'Value', dataIndex: 'value', flex: 1}
