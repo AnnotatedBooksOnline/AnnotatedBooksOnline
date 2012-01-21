@@ -122,17 +122,52 @@ Ext.define('Ext.ux.ExportForm', {
                     name: 'transcriptions',
                     inputValue: 'on'
                 },{
-                    xtype: 'checkbox',
-                    name: 'polygons',
+                    xtype: 'panel',
+                    border: false,
+                    name: 'transcriptionoptions',
                     style: 'margin-left: 20px;',
-                    checked: false,
-                    boxLabel: 'Display polygons on scan',
-                    disabled: true
+                    items: [{
+                        xtype: 'combobox',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['lang', 'text'],
+                            data: [{
+                                lang: 'orig',
+                                text: 'Original'
+                            },{
+                                lang: 'eng',
+                                text: 'English'
+                            },{
+                                lang: 'both',
+                                text: 'Both'
+                            }]
+                        }),
+                        queryMode: 'local',
+                        displayField: 'text',
+                        valueField: 'lang',
+                        forceSelection: true,
+                        editable: false,
+                        fieldLabel: 'Language',
+                        disabled: true,
+                        name: 'language',
+                        listeners: {
+                            afterrender: function()
+                            {
+                                this.select('orig');
+                            }
+                        }
+                    },{
+                        xtype: 'checkbox',
+                        name: 'polygons',
+                        checked: false,
+                        boxLabel: 'Display polygons on scan',
+                        disabled: true
+                    }]
                 }],
                 listeners: {
                     change: function(field, newValue)
                     {
                         this.down('[name=polygons]').setDisabled(newValue.transcriptions != 'on');
+                        this.down('[name=language]').setDisabled(newValue.transcriptions != 'on');
                     }
                 }
             },{

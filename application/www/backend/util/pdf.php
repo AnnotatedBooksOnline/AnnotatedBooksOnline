@@ -95,10 +95,10 @@ class Pdf
      * @param Binding    $binding        The Binding to export.
      * @param CacheEntry $cacheEntry     The CacheEntry to export to.
      * @param mixed      $range          The range of pages to export. This may be null for all, a number for a single page and an array of two numbers for a range.
-     * @param boolean    $transcriptions Whether to include transcriptions.
+     * @param callback   $transcriptions Function that extracts required transcription languages from Annotations.
      * @param boolean    $annotations    Whether to include annotations on the scans. Only valid on combination with transcriptions parameter set.
      */
-    public function __construct(Binding $binding, CacheEntry $cacheEntry, $range = null, $transcriptions = false, $annotations = false)
+    public function __construct(Binding $binding, CacheEntry $cacheEntry, $range = null, $transcriptions = null, $annotations = false)
     {
         $this->productUrl = $this->pageUrl();
         $this->productName = Setting::getSetting('project-title');
@@ -237,14 +237,14 @@ class Pdf
     /**
      * Creates the PDF file based on (a subset of) a binding.
      *
-     * @param array   $scans          An array of scans to export.
-     * @param array   $books          An array of books that match the given scans.
-     * @param Binding $binding        The encapsulating binding.
-     * @param boolean $transcriptions Whether to include transcriptions.
-     * @param boolean $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
-     * @param boolean $subset         Whether this selection of pages is a subset of the binding.
+     * @param array    $scans          An array of scans to export.
+     * @param array    $books          An array of books that match the given scans.
+     * @param Binding  $binding        The encapsulating binding.
+     * @param callback $transcriptions Function that extracts required transcription languages from Annotations.
+     * @param boolean  $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
+     * @param boolean  $subset         Whether this selection of pages is a subset of the binding.
      */
-    private function createMultiple(array $scans, array $books, Binding $binding, $transcriptions = false, $annotations = false, $subset = false)
+    private function createMultiple(array $scans, array $books, Binding $binding, $transcriptions = null, $annotations = false, $subset = false)
     {
         // Make title page.
         if (count($books) == 1)
@@ -299,7 +299,7 @@ class Pdf
         $this->addLink($this->drawText($this->permanentLink), $this->permanentLink);
         
         $this->y -= 20;
-        if ($transcriptions !== false)
+        if ($transcriptions !== null)
         {
             $this->drawText('With transcriptions');
         }
@@ -377,7 +377,7 @@ class Pdf
                 $first = false;
             }
             
-            if ($transcriptions !== false)
+            if ($transcriptions !== null)
             {
                 $anns = Annotation::fromScan($scan);
             }
@@ -391,7 +391,7 @@ class Pdf
             $this->pushState();
                 $this->translate($this->textMarginL, $this->textMarginB + $this->fontSize + 28);
                 $this->drawScan($scan, $scanWidth, $scanHeight);
-                if ($transcriptions !== false && $annotations !== false)
+                if ($transcriptions !== null && $annotations !== false)
                 {
                     for ($i = 1; $i <= count($anns); $i++)
                     {
@@ -408,9 +408,9 @@ class Pdf
             $this->setPageMargin(72); // 2,5 cm
             $this->resetPosition();
             
-            if ($transcriptions !== false)
+            if ($transcriptions !== null)
             {
-                $this->drawTranscriptions($anns, $scan);
+                $this->drawTranscriptions($anns, $scan, $transcriptions);
             }
             
             // Use at max 5 seconds per scan.
@@ -493,15 +493,15 @@ class Pdf
     /**
      * Creates the PDF file based on the scan.
      *
-     * @param Scan    $scan           The scan to export.
-     * @param Book    $book           The encapsulating book, or null if none.
-     * @param Binding $binding        The encapsulating binding.
-     * @param boolean $transcriptions Whether to include transcriptions.
-     * @param boolean $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
+     * @param Scan     $scan           The scan to export.
+     * @param Book     $book           The encapsulating book, or null if none.
+     * @param Binding  $binding        The encapsulating binding.
+     * @param callback $transcriptions Function that extracts required transcription languages from Annotations.
+     * @param boolean  $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
      */
-    private function createSingleScan(Scan $scan, Book $book = null, Binding $binding, $transcriptions = false, $annotations = false)
+    private function createSingleScan(Scan $scan, Book $book = null, Binding $binding, $transcriptions = null, $annotations = false)
     {
-        if ($transcriptions !== false)
+        if ($transcriptions !== null)
         {
             $anns = Annotation::fromScan($scan);
         }
@@ -542,7 +542,7 @@ class Pdf
         $this->pushState();
             $this->translate($this->textMarginL, $this->textMarginB + $this->fontSize + 28);        
             $this->drawScan($scan, $scanWidth, $scanHeight);
-            if ($transcriptions !== false && $annotations !== false)
+            if ($transcriptions !== null && $annotations !== false)
             {
                 for ($i = 1; $i <= count($anns); $i++)
                 {
@@ -560,9 +560,9 @@ class Pdf
         
         $this->setPageMargin(72); // 2,5 cm
         $this->resetPosition();
-        if ($transcriptions !== false)
+        if ($transcriptions !== null)
         {
-            $this->drawTranscriptions($anns, $scan);
+            $this->drawTranscriptions($anns, $scan, $transcriptions);
         }
         
         // Produce the final PDF file.
@@ -699,10 +699,11 @@ class Pdf
     /**
      * Exports the transcriptions.
      *
-     * @param array $annotations The annotations that contain the transcriptions.
-     * @param Scan  $scan        The encapsulating scan.
+     * @param array    $annotations    The annotations that contain the transcriptions.
+     * @param Scan     $scan           The encapsulating scan.
+     * @param callback $transcriptions Function that extracts required transcription languages from Annotations.
      */
-    private function drawTranscriptions(array $annotations, Scan $scan)
+    private function drawTranscriptions(array $annotations, Scan $scan, $transcriptions)
     {
         if (count($annotations) == 0)
         {
@@ -712,15 +713,18 @@ class Pdf
         $this->setHeaderText('Transcriptions for page ' . $scan->getPage());
         for ($i = 1; $i <= count($annotations); $i++)
         {
-            $this->setFontSize(14);
-            $numPages = count($this->pages);
-            $this->drawText('Transcription ' . $i);
-            if ($numPages == count($this->pages))
+            foreach ($transcriptions($annotations[$i-1]) as $name => $text)
             {
-                $this->y -= 7;
+                $this->setFontSize(14);
+                $numPages = count($this->pages);
+                $this->drawText('Transcription ' . $i . ' (' . $name . ')');
+                if ($numPages == count($this->pages))
+                {
+                    $this->y -= 7;
+                }
+                $this->setFontSize(12);
+                $this->drawText($text . "\n");
             }
-            $this->setFontSize(12);
-            $this->drawText($annotations[$i-1]->getTranscriptionOrig() . "\n");
         }
         $this->setHeaderText();
         $this->writePage();
