@@ -2,6 +2,9 @@
 # Apache access file.
 #
 
+# Disallow directory listing.
+Options -Indexes
+
 # Enable the rewriting engine.
 Options +FollowSymlinks
 RewriteEngine On
