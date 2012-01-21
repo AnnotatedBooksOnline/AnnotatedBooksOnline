@@ -166,7 +166,7 @@ END; $$;
 
 CREATE OR REPLACE FUNCTION Bindings_Libraries_Update() RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
-    IF TG_OP != 'DELETE' AND (TG_OP = 'INSERT' OR OLD."languageId" != NEW."languageId") THEN
+    IF TG_OP != 'DELETE' AND (TG_OP = 'INSERT' OR OLD."libraryId" != NEW."libraryId") THEN
         UPDATE "Bindings"
             SET "libraryId" = "libraryId"
             WHERE "libraryId" = NEW."libraryId";
