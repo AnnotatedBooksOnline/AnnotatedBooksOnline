@@ -191,40 +191,40 @@ Ext.define('Ext.ux.SelectBookForm', {
         
         if (this.existingBinding === undefined)
         {
-        	RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-        		function(result)
-        		{
-                	if (result['status'] === 1)
-                	{
-                		_this.bindingId = result['bindingId'];
-                		loadStores(result['bindingId']);                 
-                	}
-                	else
-                	{
-                		Ext.Msg.show({
-                			title: 'Error',
-                			msg: 'This step of the uploading process is currently unavailable',
-                			buttons: Ext.Msg.OK
-                		});
+            RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+                function(result)
+                {
+                    if (result['status'] === 1)
+                    {
+                        _this.bindingId = result['bindingId'];
+                        loadStores(result['bindingId']);                 
+                    }
+                    else
+                    {
+                        Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'This step of the uploading process is currently unavailable',
+                            buttons: Ext.Msg.OK
+                        });
                     
-                		this.close();
-                	}
-        		}, 
-        		function()
-        		{
-        			Ext.Msg.show({
-        				title: 'Error',
-        				msg: 'There is a problem with the server. Please try again later',
-        				buttons: Ext.Msg.OK
-        			});
+                        this.close();
+                    }
+                }, 
+                function()
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'There is a problem with the server. Please try again later',
+                        buttons: Ext.Msg.OK
+                    });
                 
-        			this.close();
-        		});
+                    this.close();
+                });
         }
         else
         {
-        	this.bindingId = this.existingBinding.bindingId;
-        	loadStores(this.existingBinding.bindingId);
+            this.bindingId = this.existingBinding.bindingId;
+            loadStores(this.existingBinding.bindingId);
         }
         
         var defConfig = {
@@ -459,14 +459,14 @@ Ext.define('Ext.ux.SelectBookForm', {
         };
         
         RequestManager.getInstance().request(
-        		'Book', 
-        		'firstLastPages', 
-        		{
-        			bindingId:this.bindingId, 
-        			selectedBooks:fields
-        		}
-        		this, 
-        		onSuccess, 
-        		onFailure);
+                'Book', 
+                'firstLastPages', 
+                {
+                    bindingId:this.bindingId, 
+                    selectedBooks:fields
+                }
+                this, 
+                onSuccess, 
+                onFailure);
     }
 });

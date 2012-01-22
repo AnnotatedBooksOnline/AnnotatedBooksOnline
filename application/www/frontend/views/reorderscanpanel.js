@@ -56,45 +56,45 @@ Ext.define('Ext.ux.ReorderScanForm', {
         
         if (this.existingBinding === undefined)
         {
-        	alert('NONON');
-        	RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-        		function(result)
-        		{
-        			if (result['status'] === 0)
-        			{
-        				_this.bindingId = result['bindingId'];
+            alert('NONON');
+            RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+                function(result)
+                {
+                    if (result['status'] === 0)
+                    {
+                        _this.bindingId = result['bindingId'];
                     
-        				_this.store.filter({property: 'bindingId', value: _this.bindingId});
-        				_this.store.load();
-        			}
-        			else
-        			{
-        				Ext.Msg.show({
-        					title: 'Error',
-        					msg: 'This step of the uploading process is currently unavailable',
-        					buttons: Ext.Msg.OK
-        				});
+                        _this.store.filter({property: 'bindingId', value: _this.bindingId});
+                        _this.store.load();
+                    }
+                    else
+                    {
+                        Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'This step of the uploading process is currently unavailable',
+                            buttons: Ext.Msg.OK
+                        });
                     
-        				this.close();
-        			}
-        		}, 
-        		function()
-        		{
-        			Ext.Msg.show({
-        				title: 'Error',
-                    	msg: 'There is a problem with the server. Please try again later',
-                    	buttons: Ext.Msg.OK
-        			});
+                        this.close();
+                    }
+                }, 
+                function()
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'There is a problem with the server. Please try again later',
+                        buttons: Ext.Msg.OK
+                    });
                 
-        			this.close();
-        		});
+                    this.close();
+                });
         }
         else
         {
-        	this.bindingId = this.existingBinding.bindingId;
-        	
-			_this.store.filter({property: 'bindingId', value: this.existingBinding.bindingId});
-			_this.store.load();
+            this.bindingId = this.existingBinding.bindingId;
+            
+            _this.store.filter({property: 'bindingId', value: this.existingBinding.bindingId});
+            _this.store.load();
         }
         
         var defConfig = {
@@ -154,14 +154,14 @@ Ext.define('Ext.ux.ReorderScanForm', {
         };
         
         RequestManager.getInstance().request(
-        		'Scan', 
-        		'reorder', 
-        		{
-        			bindingId: this.bindingId,
-        			orderedScans: fields
-        		},
-        		this, 
-        		onSuccess, 
-        		onFailure);
+                'Scan', 
+                'reorder', 
+                {
+                    bindingId: this.bindingId,
+                    orderedScans: fields
+                },
+                this, 
+                onSuccess, 
+                onFailure);
     }
 });

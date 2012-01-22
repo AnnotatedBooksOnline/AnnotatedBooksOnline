@@ -94,7 +94,7 @@ Authentication.prototype.setUserModel = function(model)
 
 Authentication.prototype.modelChanged = function()
 {
-	// Refetch user id.
+    // Refetch user id.
     this.userId = this.user.get('userId');
     
     // Refetch permissions.
@@ -300,27 +300,27 @@ Authentication.prototype.login = function(username, password, obj, onSuccess, on
 
 Authentication.prototype.initialize = function()
 {
-	// Create keep-alive interval.
+    // Create keep-alive interval.
     this.keepAlive();
     
     var _this = this;
     
     // Fetch guest permissions.
     RequestManager.getInstance().request(
-    		'Authentication', 
-    		'getGuestPermissionList',
-    		{}, 
-    		this,
-    		function(permissions)
-    		{
-    			_this.guestPermissions = permissions;
-    			this.eventDispatcher.trigger('modelchange', _this);
-    		},
-    		function(data)
-    		{
-    			// TODO: Maybe try again?
-    			return true;
-    		});
+            'Authentication', 
+            'getGuestPermissionList',
+            {}, 
+            this,
+            function(permissions)
+            {
+                _this.guestPermissions = permissions;
+                this.eventDispatcher.trigger('modelchange', _this);
+            },
+            function(data)
+            {
+                // TODO: Maybe try again?
+                return true;
+            });
 }
 
 Authentication.prototype.keepAlive = function()
@@ -406,11 +406,11 @@ Authentication.prototype.hasPermissionTo = function(action)
     {
         if(this.guestPermissions === undefined)
         {
-        	return false;
+            return false;
         }
         else
         {
-        	this.permissions = this.guestPermissions;
+            this.permissions = this.guestPermissions;
         }
     }
     

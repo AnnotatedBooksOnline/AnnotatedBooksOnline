@@ -16,9 +16,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
                 'BindingUpload',
                 'uniqueLibrarySignature',
                 {
-                	library: library.getValue(), 
-                 	signature: signature.getValue(),
-                 	bindingId: _this.existingBinding !== undefined ? _this.existingBinding.bindingId : '-1'
+                    library: library.getValue(), 
+                     signature: signature.getValue(),
+                     bindingId: _this.existingBinding !== undefined ? _this.existingBinding.bindingId : '-1'
                 },
                 this,
                 function(data)
@@ -42,7 +42,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                 direction: 'ASC'
             }
         });
-    	
+        
         annotationStore.load();
                 
         var defConfig = {
@@ -139,22 +139,22 @@ Ext.define('Ext.ux.BindingFieldSet', {
         // Determine if an existing binding is modified. If this is the case display the existing
         // binding fields in the form.
         if (this.existingBinding !== undefined) {
-        	var existingBindingModel = this.existingBinding.model;
+            var existingBindingModel = this.existingBinding.model;
         
-        	var provenances = "";
-        	existingBindingModel.provenancesStore.each(function(provenance)
+            var provenances = "";
+            existingBindingModel.provenancesStore.each(function(provenance)
             {
-        		if (provenances !== "") 
-        		{
-        			provenances = provenances + ", ";
-        		}
-        		provenances = provenances + provenance.get('name');
+                if (provenances !== "") 
+                {
+                    provenances = provenances + ", ";
+                }
+                provenances = provenances + provenance.get('name');
             });
-        	
-        	var languageIds = [];
-        	existingBindingModel.bindingLanguagesStore.each(function(language)
+            
+            var languageIds = [];
+            existingBindingModel.bindingLanguagesStore.each(function(language)
             {
-        		languageIds.push(language.get('languageId'));
+                languageIds.push(language.get('languageId'));
             });
             
             this.down('[name=library]').setValue(existingBindingModel.get('library')['libraryName']);
@@ -169,7 +169,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
     getBinding: function()
     {
         return {
-        	bindingId: this.existingBinding !== undefined ? this.existingBinding.bindingId : '-1',
+            bindingId: this.existingBinding !== undefined ? this.existingBinding.bindingId : '-1',
             library: this.down('[name=library]').getValue(),
             provenance: this.down('[name=provenance]').getValue(),
             signature: this.down('[name=signature]').getValue(),
@@ -422,21 +422,21 @@ Ext.define('Ext.ux.BookFieldset', {
         // book fields in the form.
         if (this.existingBook !== undefined) {
 
-        	var languageIds = [];
-        	this.existingBook.bookLanguagesStore.each(function(language)
+            var languageIds = [];
+            this.existingBook.bookLanguagesStore.each(function(language)
             {
-        		languageIds.push(language.get('languageId'));
+                languageIds.push(language.get('languageId'));
             });
-        	
-        	
+            
+            
             var authors = "";
             this.existingBook.authorsStore.each(function(author)
             {
-        		if (authors !== "") 
-        		{
-        			authors = authors + ", ";
-        		}
-        		authors = authors + author.get('name');
+                if (authors !== "") 
+                {
+                    authors = authors + ", ";
+                }
+                authors = authors + author.get('name');
             });
 
             this.down('[name=title]').setValue(this.existingBook.get('title'));
@@ -456,7 +456,7 @@ Ext.define('Ext.ux.BookFieldset', {
         // TODO: How is this a book value? Create a book entity.
         
         return {
-        	bookId: this.existingBook !== undefined ? this.existingBook.get('bookId') : '-1',
+            bookId: this.existingBook !== undefined ? this.existingBook.get('bookId') : '-1',
             title: this.down('[name=title]').getValue(),
             author: this.down('[name=author]').getValue(),
             publisher: this.down('[name=publisher]').getValue(),
@@ -504,20 +504,20 @@ Ext.define('Ext.ux.BooksFieldSet', {
         // binding fields in the form.
         if (this.existingBinding !== undefined) 
         {
-        	// Insert a fieldset for every book in the existing book that is being modified.
-        	this.existingBinding.model.booksStore.each(function(book)
+            // Insert a fieldset for every book in the existing book that is being modified.
+            this.existingBinding.model.booksStore.each(function(book)
             {
-        		_this.insert(_this.items.length - 1, 
-        			[{
-        				xtype: 'bookfieldset',
-        				existingBook: book
-        			}]);
+                _this.insert(_this.items.length - 1, 
+                    [{
+                        xtype: 'bookfieldset',
+                        existingBook: book
+                    }]);
             });
         }
         else
         {
-        	// Insert a blank set of books fields when a new book is being uploaded.
-        	this.insert(this.items.length - 1, [{xtype: 'bookfieldset'}]);
+            // Insert a blank set of books fields when a new book is being uploaded.
+            this.insert(this.items.length - 1, [{xtype: 'bookfieldset'}]);
         }
         
     },
@@ -589,34 +589,34 @@ Ext.define('Ext.ux.UploadForm', {
         if (this.existingBinding === undefined)
         {
         
-        	RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-        			function(result)
-        			{
-                		if (result['status'] === 2)
-                		{
-                			// TODO: What to do here?
-                		}
-                		else
-                		{
-                			Ext.Msg.show({
-                				title: 'Error',
-                				msg: 'This step of the uploading process is currently unavailable',
-                				buttons: Ext.Msg.OK
-                			});
+            RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+                    function(result)
+                    {
+                        if (result['status'] === 2)
+                        {
+                            // TODO: What to do here?
+                        }
+                        else
+                        {
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: 'This step of the uploading process is currently unavailable',
+                                buttons: Ext.Msg.OK
+                            });
                     
-                			this.up('[name=upload]').close();
-                		}
-        			}, 
-        			function()
-        			{
-        				Ext.Msg.show({
-        					title: 'Error',
-        					msg: 'There is a problem with the server. Please try again later',
-        					buttons: Ext.Msg.OK
-        				});
+                            this.up('[name=upload]').close();
+                        }
+                    }, 
+                    function()
+                    {
+                        Ext.Msg.show({
+                            title: 'Error',
+                            msg: 'There is a problem with the server. Please try again later',
+                            buttons: Ext.Msg.OK
+                        });
                 
-        				this.up('[name=upload]').close();
-        			});
+                        this.up('[name=upload]').close();
+                    });
         }
         
         var defConfig = {
