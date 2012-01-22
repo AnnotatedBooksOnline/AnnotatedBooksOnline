@@ -184,13 +184,18 @@ var isFF = navigator.userAgent.indexOf("Firefox") != -1;
  */
 
 var hasTransforms = Modernizr.csstransforms;
+
 /*
- * Default page size
+ * Default page size.
  */
  
 Ext.override(Ext.data.Store, {
     pageSize: 1000000000 // 'Infinite' page size
 });
+
+/*
+ * Fix for problematic z-index of setLoading() floating LoadMask.
+ */
 
 Ext.override(Ext.AbstractComponent, {
     setLoading: function(load, targetEl)
@@ -230,4 +235,8 @@ Ext.override(Ext.AbstractComponent, {
     }
 });
 
+/*
+ * Fix undefined reference in Ext JS.
+ */
+Ext.getDoc().dom.namespaces = Ext.getDoc().dom.namespaces || {}
 

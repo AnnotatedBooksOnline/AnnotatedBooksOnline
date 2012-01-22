@@ -35,7 +35,7 @@ var bookProperties = [{
     defaultOn: true
 },{
     abbreviation: 'provenance',
-    name: 'Provenance'
+    name: 'Readers'
 },{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'
@@ -1060,7 +1060,7 @@ Ext.define('Ext.ux.SearchPanel', {
                 layout: 'fit',
                 border: false,
                 items: [{
-                    title: 'Notes',
+                    title: 'My notes',
                     xtype: 'notespanel'
                 }]
             }]
@@ -1091,7 +1091,7 @@ Ext.define('Ext.ux.SearchPanel', {
     onLoggedOn: function()
     {
         if (Authentication.getInstance().hasPermissionTo('manage-notebook'))
-        {
+        { 
             this.down('[name=eastregion]').show();
         }
     },

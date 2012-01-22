@@ -22,6 +22,9 @@ Authentication.prototype.loggedOn;
 Authentication.prototype.userId;
 Authentication.prototype.user;
 
+Authentication.prototype.guestPermissions;
+Authentication.prototype.permissions;
+
 Authentication.prototype.keepAliveInterval;
 
 // Singleton instance.
@@ -83,6 +86,9 @@ Authentication.prototype.setUserModel = function(model)
     // Set user id.
     this.userId = model ? model.get('userId') : 0;
     
+    // Set permissions. Use guestPermissions if no user is logged in.
+    this.permissions = model ? model.get('permissions') : this.guestPermissions;
+    
     this.eventDispatcher.trigger('modelchange', this);
 }
 
@@ -90,6 +96,9 @@ Authentication.prototype.modelChanged = function()
 {
     // Refetch user id.
     this.userId = this.user.get('userId');
+    
+    // Refetch permissions.
+    this.permissions = this.user.get('permissions');
     
     this.eventDispatcher.trigger('modelchange', this);
 }
@@ -293,6 +302,25 @@ Authentication.prototype.initialize = function()
 {
     // Create keep-alive interval.
     this.keepAlive();
+    
+    var _this = this;
+    
+    // Fetch guest permissions.
+    RequestManager.getInstance().request(
+            'Authentication', 
+            'getGuestPermissionList',
+            {}, 
+            this,
+            function(permissions)
+            {
+                _this.guestPermissions = permissions;
+                this.eventDispatcher.trigger('modelchange', _this);
+            },
+            function(data)
+            {
+                // TODO: Maybe try again?
+                return true;
+            });
 }
 
 Authentication.prototype.keepAlive = function()
@@ -372,17 +400,23 @@ Authentication.prototype.loginInternally = function(user)
 }
 
 Authentication.prototype.hasPermissionTo = function(action)
-{
-    // TODO: check permissions for not logged in users.
-    
-    // If no user has logged on, there is no permission.
-    if (this.user === undefined)
+{    
+    // If no permissions are defined, use guestPermissions.
+    if (this.permissions === undefined)
     {
-        return false;
+        if(this.guestPermissions === undefined)
+        {
+            return false;
+        }
+        else
+        {
+            this.permissions = this.guestPermissions;
+        }
     }
     
-    // Get user his permissions.
-    var permissions = this.user.get('permissions');
+    var permissions = this.permissions;
+    
+    // Check whether action is in permission list.
     for (var i = permissions.length - 1; i >= 0; --i)
     {
         if (permissions[i] == action)

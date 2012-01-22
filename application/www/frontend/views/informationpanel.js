@@ -8,8 +8,8 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     
     initComponent: function()
     {
-    	var viewer = this.viewer;
-    	
+        var viewer = this.viewer;
+        
         var defConfig = {
             border: false,
             title: 'Binding information',

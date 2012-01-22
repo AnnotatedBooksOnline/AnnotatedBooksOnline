@@ -77,4 +77,9 @@ class AuthenticationController extends Controller
     {
         return Authentication::getInstance()->getPermissionList();
     }
+    
+    public function actionGetGuestPermissionList()
+    {
+        return Permission::getPermissionListForRank(User::RANK_NONE);
+    }
 }

@@ -374,13 +374,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 return;
                 
             case 'reorderscan':
-            	// Identify a possible existing binding passed to the upload panel.
-            	var existingBinding = undefined;
-            	if (data.length > 0) 
-            	{
-            		existingBinding = data[0];
-            	}
-            	
+                // Identify a possible existing binding passed to the upload panel.
+                var existingBinding = undefined;
+                if (data.length > 0) 
+                {
+                    existingBinding = data[0];
+                }
+                
                 // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (reorder scans)',
@@ -400,13 +400,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'selectbook':
-            	// Identify a possible existing binding passed to the upload panel.
-            	var existingBinding = undefined;
-            	if (data.length > 0) 
-            	{
-            		existingBinding = data[0];
-            	}
-            	
+                // Identify a possible existing binding passed to the upload panel.
+                var existingBinding = undefined;
+                if (data.length > 0) 
+                {
+                    existingBinding = data[0];
+                }
+                
                 // Add a select book tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (select books)',
@@ -492,14 +492,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
             
             case 'upload':
-            	
-            	// Identify a possible existing binding passed to the upload panel.
-            	var existingBinding = undefined;
-            	if (data.length > 0) 
-            	{
-            		existingBinding = data[0];
-            	}
-            	
+                
+                // Identify a possible existing binding passed to the upload panel.
+                var existingBinding = undefined;
+                if (data.length > 0) 
+                {
+                    existingBinding = data[0];
+                }
+                
                 // Add an upload panel.
                 Ext.apply(tabConfig, {
                     title: 'Upload (upload)',
@@ -541,6 +541,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Info',
                     xtype: 'infopanel'
+                });
+                
+                break;
+            
+            case 'termsofuse':
+                // Add a terms of use tab.
+                Ext.apply(tabConfig, {
+                    title: 'Terms of Use',
+                    xtype: 'termsofusepanel'
                 });
                 
                 break;

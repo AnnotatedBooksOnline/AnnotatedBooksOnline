@@ -57,7 +57,7 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                 propertyNames: {
                     a: 'Library',
                     b: 'Signature',
-                    c: 'Provenance',
+                    c: 'Readers',
                     d: 'Languages of annotations'
                 },
                 source: {},
