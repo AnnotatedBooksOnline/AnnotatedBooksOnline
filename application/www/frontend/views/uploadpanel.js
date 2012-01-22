@@ -689,6 +689,8 @@ Ext.define('Ext.ux.UploadForm', {
         var scans = this.down('scanpanel').getValues();
         var waiting = false;
         var successScans = 0;
+        var _this = this;
+        
         for (var i = 0; i < scans.length; i++)
         {
             if (scans[i].status == 'success')
@@ -717,7 +719,7 @@ Ext.define('Ext.ux.UploadForm', {
             var result = {binding: binding, books: books, scans: scans};
             var numberOfBooks = books.length;
             
-            if (numberOfBooks > successScans && this.existingBinding === undefined)
+            if (numberOfBooks > successScans && this.existingBindingId === undefined)
             {
                 this.setLoading(false);
                 
@@ -743,20 +745,14 @@ Ext.define('Ext.ux.UploadForm', {
                 this.setLoading('Saving...');
                 
                 RequestManager.getInstance().request('BindingUpload', 'upload', result, this,
-                function()
+                function(result)
                 {
-                    this.setLoading(false);
-                    var _this = this;
-                    Ext.Msg.show({
-                        title: 'Upload',
-                        msg: 'Binding added successfully.',
-                        buttons: Ext.Msg.OK,
-                        callback: function(button)
-                            {
-                                Application.getInstance().gotoTab('reorderscan',[_this.existingBindingId],true);
-                                _this.up('[name=upload]').close();
-                            }
-                    });
+                	this.setLoading(false);
+                	
+                    Application.getInstance().gotoTab('reorderscan', [result['bindingId'], _this.existingBindingId !== undefined], true);
+                    
+                    _this.up('[name=upload]').close();
+                    
                 },
                 function()
                 {

@@ -86,6 +86,8 @@ class BindingUploadController extends Controller
         $binding->saveWithDetails();
         
         Database::getInstance()->commit();
+        
+        return (array('bindingId' => $binding->getBindingId()));
     }
     
     /**

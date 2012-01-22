@@ -154,79 +154,40 @@ Ext.define('Ext.ux.SelectBookForm', {
     {
         var _this = this;
         
-        function loadStores(bindingId) 
-        {
-            // TODO: Implement filtering serverside, to remove second filtering.
-            scanstore.filter({property: 'bindingId', value: bindingId});
-            scanstore.load();
-            bookstore.filter({property: 'bindingId', value: bindingId});
+
+        // TODO: Implement filtering serverside, to remove second filtering.
+        scanstore.filter({property: 'bindingId', value: this.bindingId});
+        scanstore.load();
+        bookstore.filter({property: 'bindingId', value: this.bindingId});
             
-            bookstore.on('load', function()
-            { 
-                bookstore.each(function(book)
-                {
-                    book.set('timePeriod', book.getTimePeriod());
-                    book.set('firstPage', -1);
-                    book.set('lastPage', -1);
+        bookstore.on('load', function()
+        { 
+            bookstore.each(function(book)
+            {
+                book.set('timePeriod', book.getTimePeriod());
+                book.set('firstPage', -1);
+                book.set('lastPage', -1);
                     
-                    var authors = '';
+                var authors = '';
                     
-                    book.authors().load({
-                        scope: _this,
-                        callback: function(records, operation, success)
+                book.authors().load({
+                    scope: _this,
+                    callback: function(records, operation, success)
+                    {
+                        Ext.Array.each(records, function(record)
                         {
-                            Ext.Array.each(records, function(record)
-                            {
-                                authors += (', ' + record.get('name'));
-                            });
-                            
-                            book.set('author', authors.substring(1));
-                        }
-                    });
+                            authors += (', ' + record.get('name'));
+                        });
+                          
+                        book.set('author', authors.substring(1));
+                    }
                 });
             });
+        });
             
-            bookstore.load();
-        };
+        bookstore.load();
         
-        if (this.existingBinding === undefined)
-        {
-            RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-                function(result)
-                {
-                    if (result['status'] === 1)
-                    {
-                        _this.bindingId = result['bindingId'];
-                        loadStores(result['bindingId']);                 
-                    }
-                    else
-                    {
-                        Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'This step of the uploading process is currently unavailable',
-                            buttons: Ext.Msg.OK
-                        });
-                    
-                        this.close();
-                    }
-                }, 
-                function()
-                {
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'There is a problem with the server. Please try again later',
-                        buttons: Ext.Msg.OK
-                    });
-                
-                    this.close();
-                });
-        }
-        else
-        {
-            this.bindingId = this.existingBinding.bindingId;
-            loadStores(this.existingBinding.bindingId);
-        }
-        
+
         var defConfig = {
             monitorValid: true,
             items: [{

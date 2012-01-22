@@ -374,17 +374,18 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 return;
                 
             case 'reorderscan':
-                var existingBindingId = undefined;
-                if (data.length > 0 && data[0] !== undefined) 
+                var isExistingBinding = false;
+                if (data.length >= 2 && data[1] !== undefined) 
                 {
-                    existingBindingId = data[0];
+                	isExistingBinding = true
                 }
                 
                 // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
-                    title: existingBindingId == undefined ? 'Upload (reorder scans)' : 'Modify binding (reorder scans)',
+                    title: existingBindingId == isExistingBinding ? 'Upload (reorder scans)' : 'Modify binding (reorder scans)',
                     xtype: 'reorderscanform',
-                    existingBindingId: existingBindingId
+                    bindingId: data[0],
+                    isExistingBinding: isExistingBinding
                 });
                 
                 break;
@@ -399,17 +400,18 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'selectbook':
-                var existingBindingId = undefined;
-                if (data.length > 0 && data[0] !== undefined) 
+                var isExistingBinding = false;
+                if (data.length >= 2 && data[1] !== undefined) 
                 {
-                    existingBindingId = data[0];
+                	isExistingBinding = true
                 }
                 
                 // Add a select book tab.
                 Ext.apply(tabConfig, {
-                    title: existingBindingId == undefined ? 'Upload (select books)' : 'Modify binding (select books)',
+                    title: existingBindingId == isExistingBinding ? 'Upload (select books)' : 'Modify binding (select books)',
                     xtype: 'selectbookform',
-                    existingBindingId: existingBindingId
+                    bindingId: data[0],
+                    isExistingBinding: isExistingBinding
                 });
                 
                 break;
