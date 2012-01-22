@@ -9,7 +9,7 @@ then
 fi
 
 echo "Removing old version"
-ls -1 | grep -v "tiles" | grep -v "update.sh" | grep -v "update.php" | xargs rm -rf
+ls -1 | grep -v "tiles" | grep -v "data" | grep -v "update.sh" | grep -v "update.php" | xargs rm -rf
 
 echo "Cloning repository.."
 git clone /home/git/application.git/ 2>/dev/null >/dev/null
