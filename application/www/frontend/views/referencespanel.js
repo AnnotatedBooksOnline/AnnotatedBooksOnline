@@ -113,8 +113,8 @@ Ext.define('Ext.ux.ReferencesPanel', {
         
         // Set binding field label and value.
         var bindingLinkLabel = 'Link to this binding<br />(' +
-            escape(bindingModel.get('signature')) + ', ' +
-            escape(bindingModel.get('library').libraryName) + ')';
+            escape(bindingModel.get('library').libraryName) + ', ' +
+            escape(bindingModel.get('signature')) + ')';
         
         this.down('[name=binding-link]').setFieldLabel(bindingLinkLabel);
         this.down('[name=binding-link]').setValue(this.urlPrefix);
