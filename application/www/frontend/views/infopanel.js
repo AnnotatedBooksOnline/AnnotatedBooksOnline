@@ -23,7 +23,7 @@ Ext.define('Ext.ux.Info', {
             {
                 var projectInfo = '<h2>Project info</h2><p>This website is free software released'
                     + 'under GNU General Public License version 3, downloadable from '
-                    + '<a href="http://www.github.com/AnnotatedBooksOnline" ' 
+                    + '<a href="http://www.github.com/AnnotatedBooksOnline/AnnotatedBooksOnline" ' 
                     + 'title="Go to the GitHub of this project">GitHub</a>. The content of this '
                     + 'website is not covered by this license, please read the '
                     + '<a href="#termsofuse" title="Go to the Terms of Use">Terms of Use</a> for '
