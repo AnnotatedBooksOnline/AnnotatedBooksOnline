@@ -35,7 +35,7 @@ cd ../..
 
 rm -rf bin
 mkdir bin
-cp -f application/tilepyramidbuilder/pyramid_builder bin/pyramid_builder
+cp -f application/tilepyramidbuilder/pyramid_builder bin/tilepyramidbuilder
 
 echo "Deploying cronjob..."
 old_php_instance=$(ps aux | grep "php cronjob/pyramidbuilder" | grep $ENVIRONMENT | grep -v "grep" | awk '{print $2}')
