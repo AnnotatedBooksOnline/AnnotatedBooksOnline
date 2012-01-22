@@ -229,11 +229,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 margin: '5 0 0 0',
                 width: 380,
                 html: '<p>' 
-                    + '<a href="http://www.uu.nl/" title="Go to the website of Utrecht University"><img src="frontend/resources/images/uu-small.png"/></a> '
-                    + '<a href="http://www.uva.nl/" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva-small.png"/></a> '
-                    + '<a href="http://www.princeton.edu/" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton-small.png"/></a> '
-                    + '<a href="http://www.ugent.be/" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent-small.png"/></a> '
-                    + '<a href="http://www.livesandletters.ac.uk/" title="Go to the website of CELL"><img src="frontend/resources/images/cell-small.png"/></a>'
+                    + '<a href="http://www.uu.nl/" target="_blank" title="Go to the website of Utrecht University"><img src="frontend/resources/images/uu-small.png"/></a> '
+                    + '<a href="http://www.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva-small.png"/></a> '
+                    + '<a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton-small.png"/></a> '
+                    + '<a href="http://www.ugent.be/" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent-small.png"/></a> '
+                    + '<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell-small.png"/></a>'
                     + '</p>'
             },{ // User items.
                 border: false,

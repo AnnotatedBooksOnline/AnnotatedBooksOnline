@@ -9,10 +9,10 @@ UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
 
 <p>The project will create a transnational platform that enables scholars to (1) view, connect and study annotated books and readers&#39; notes, (2) offer training to students and young researchers in handling readers&#39; traces, and (3) make results freely accessible for teaching purposes, as well as for broader general interest by means of exhibitions, digital presentations and general publications. In order to expand this structural network, the principal partners in the collaboratory will prepare an application for a Marie Curie Initial Training Network.</p>
 
-<a href="http://www.uu.nl/" title="Go to the website of Utrecht University"><img src="frontend/resources/images/uu.png" style="height: 65px"/></a>
-<a href="http://www.uva.nl/" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva.png" style="height: 60px"/></a>
-<a href="http://www.princeton.edu/" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton.png" style="height: 65px"/></a>
-<a href="http://www.ugent.be/" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent.png" style="height: 100px"/></a>
-<a href="http://www.livesandletters.ac.uk/" title="Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>' WHERE "settingName" = 'welcome-page';
+<a href="http://www.uu.nl/" target="_blank" title="Go to the website of Utrecht University"><img src="frontend/resources/images/uu.png" style="height: 65px"/></a>
+<a href="http://www.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva.png" style="height: 60px"/></a>
+<a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton.png" style="height: 65px"/></a>
+<a href="http://www.ugent.be/" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent.png" style="height: 100px"/></a>
+<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>' WHERE "settingName" = 'welcome-page';
 
 COMMIT;
