@@ -591,21 +591,21 @@ Ext.define('Ext.ux.UploadForm', {
         // there is no existing pending binding for the user.
         if (this.existingBindingId !== undefined)
         {
-        	_this.setLoading('Loading binding information...');
-        	
+            _this.setLoading('Loading binding information...');
+            
             // Fetch binding.
             Binding.createFromId(this.existingBindingId, this,
                 function(binding)
                 {
-                	_this.setLoading(false);
-                	
-            		_this.down('[name=bindingfields]').fillFromExistingBinding(binding);
-            		_this.down('[name=bookfields]').fillFromExistingBinding(binding);
+                    _this.setLoading(false);
+                    
+                    _this.down('[name=bindingfields]').fillFromExistingBinding(binding);
+                    _this.down('[name=bookfields]').fillFromExistingBinding(binding);
                 },
                 function()
                 {
-                	_this.setLoading(false);
-                	
+                    _this.setLoading(false);
+                    
                     Ext.Msg.show({
                         title: 'Error',
                         msg: 'There is a problem with the server. Please try again later',
@@ -727,7 +727,7 @@ Ext.define('Ext.ux.UploadForm', {
                     this.setLoading('There need to be at least ' + numberOfBooks
                                    + ' successfully uploaded scan, because there is '
                                    + numberOfBooks + ' book. Please add more scans.'
-                                          + ' Waiting for more scans...');
+                                   + ' Waiting for more scans...');
                 }
                 else
                 {
@@ -747,8 +747,8 @@ Ext.define('Ext.ux.UploadForm', {
                 RequestManager.getInstance().request('BindingUpload', 'upload', result, this,
                 function(result)
                 {
-                	this.setLoading(false);
-                	
+                    this.setLoading(false);
+                    
                     Application.getInstance().gotoTab('reorderscan', [result['bindingId'], _this.existingBindingId !== undefined], true);
                     
                     _this.up('[name=upload]').close();
