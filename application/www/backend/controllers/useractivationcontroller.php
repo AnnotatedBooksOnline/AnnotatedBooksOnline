@@ -181,14 +181,6 @@ class UserActivationController extends Controller
         });
     }
     
-    public function actionGetAutoUserAcceptance()
-    {
-        // Check permissions.
-        Authentication::assertPermissionTo('change-global-settings');
-        
-        return Setting::getSetting('auto-user-acceptance') == '1';
-    }
-    
     /**
      * Sends another activation mail in case a user did not receive or lost the initial one.
      * 

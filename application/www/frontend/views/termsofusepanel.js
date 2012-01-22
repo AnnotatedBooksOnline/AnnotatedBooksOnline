@@ -18,7 +18,7 @@ Ext.define('Ext.ux.TermsOfUse', {
         
         this.callParent();
         
-        RequestManager.getInstance().request('Main', 'textPage', {textPage: 'terms-of-use'}, this,
+        RequestManager.getInstance().request('Setting', 'getSetting', {setting: 'terms-of-use'}, this,
             function(textPage)
             {
                 var text = {
