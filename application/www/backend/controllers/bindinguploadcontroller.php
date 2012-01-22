@@ -33,6 +33,7 @@ class BindingUploadController extends Controller
         Database::getInstance()->startTransaction();
         
         // Assert that the user is authenticated. 
+        // TODO: Mathijs : Permissions when modifying bindings.
         Authentication::assertPermissionTo('upload-bindings');  
         
         // Retrieve contents of record.
