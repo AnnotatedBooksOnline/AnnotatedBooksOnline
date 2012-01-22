@@ -187,11 +187,16 @@ Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
     
     //this.zoom(newZoomLevel, zoomPosition);
     
+    var docWidth = this.documentDimensions.width  * Math.pow(2, this.zoomLevel) / 0.8;
+    var oldWidth = Math.max(this.dimensions.width, this.documentDimensions.width / 0.8);
+    var newWidth = Math.max(viewerWidth, this.documentDimensions.width / 0.8);
     
-    var newZoomLevel = this.zoomLevel + (//Math.min(
-        Math.log(viewerWidth  / this.dimensions.width)//,
-        //Math.log(viewerHeight / this.dimensions.height)
-    ) / Math.LN2;
+    var newZoomLevel = this.zoomLevel;
+
+    if (newWidth < docWidth || oldWidth < newWidth)
+    {
+        newZoomLevel += Math.log(newWidth / oldWidth) / Math.LN2;
+    }
     
     // Round zoom level if no continuous zoom is supported.
     if (!this.document.supportsContinuousZoom())
@@ -837,3 +842,4 @@ Viewport.prototype.onKeyUp = function(event)
             return;
     }
 }
+
