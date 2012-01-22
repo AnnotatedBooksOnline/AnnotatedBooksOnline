@@ -130,6 +130,9 @@ class BindingUploadController extends Controller
     */
     private function createBooks($inputBooks, $binding)
     {
+        // Mark all books for deletion temporarily. This flag will be restored for some books later.
+        $binding->getBookList()->markAllAsDeleted(true);
+        
         // Iterate over all books in the input.
         foreach ($inputBooks as $inputBook)
         {
@@ -156,8 +159,9 @@ class BindingUploadController extends Controller
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getInteger($inputBook, 'printVersion'));
             
-            // Mark the book for saving.
+            // Mark the book for saving and not for deletion.
             $book->setMarkedAsUpdated(true);
+            $book->setMarkedAsDeleted(false);
             
             // Create the book authors.
             $this->createAuthors($inputBook, $book);
