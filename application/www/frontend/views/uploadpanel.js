@@ -75,7 +75,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                             }
                         }
                     },{
-                        fieldLabel: 'Provenance',
+                        fieldLabel: 'Readers',
                         name: 'provenance',
                         anchor: '98%',
                         labelAlign: 'top',

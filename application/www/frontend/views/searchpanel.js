@@ -35,7 +35,7 @@ var bookProperties = [{
     defaultOn: true
 },{
     abbreviation: 'provenance',
-    name: 'Provenance'
+    name: 'Readers'
 },{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'
