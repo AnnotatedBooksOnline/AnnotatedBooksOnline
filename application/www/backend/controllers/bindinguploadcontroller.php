@@ -8,6 +8,7 @@ require_once 'models/book/book.php';
 require_once 'models/book/booklist.php';
 require_once 'models/binding/binding.php';
 require_once 'models/binding/bindinglist.php';
+require_once 'models/library/library.php';
 require_once 'models/library/librarylist.php';
 require_once 'models/person/person.php';
 require_once 'models/person/personlist.php';
@@ -38,22 +39,33 @@ class BindingUploadController extends Controller
         $inputScans   = self::getArray($data, 'scans');
         $inputBinding = self::getArray($data, 'binding');
         $inputBooks   = self::getArray($data,'books');
+        $inputBindingId   = self::getInteger($inputBinding, 'bindingId');
         
         // Find the name of the library the binding belongs to.
         $libraryName = $inputBinding['library'];
         $signature   = self::getString($inputBinding, 'signature');
         
         // Determine if the specified signature exists in the database already, this is not allowed.
-        if (!$this->uniqueLibrarySignature($libraryName, $signature, -1))
+        if (!$this->uniqueLibrarySignature($libraryName, $signature, $inputBindingId))
         {
             throw new ControllerException('duplicate-binding');
         }
         
-        // Create the binding and fill its attributes with the information from the request.
-        $binding = new Binding();
+        // Load an existing binding or create a new binding if no existing binding is provided.
+        $binding;
+        if ($inputBindingId == -1)
+        {
+            $binding = new Binding();
+            $binding->setStatus(Binding::STATUS_UPLOADED);
+        }
+        else 
+        {
+            $binding = new Binding($inputBindingId);
+        }
+        
+        // Fill the binding attributes.
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
-        $binding->setStatus(Binding::STATUS_UPLOADED);
         
         // Save the books.
         $this->createLibrary($libraryName, $binding);
@@ -87,16 +99,12 @@ class BindingUploadController extends Controller
         // Find the specified library in the database.
         $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
         
-        /*
-         * Create the library.
-         */
-        
         // Determine if the library exists in the database. If this is the case the new binding should link to it. If not
         // the library needs to be created.
         if ($existingLibrary !== null)
         {
             // Make the new binding link to the existing library.
-            $binding->setLibraryId($existingLibrary->getValue('libraryId'));
+            $binding->setLibraryId($existingLibrary->getLibraryId());
         }
         else
         {
@@ -121,8 +129,17 @@ class BindingUploadController extends Controller
         // Iterate over all books in the input.
         foreach ($inputBooks as $inputBook)
         {
-            // Create the book and fill its attributes with the information from the request.
-            $book = new Book();
+            // Load an existing book or create a new book if no existing binding is provided.
+            $inputBookId = self::getInteger($inputBook, 'bookId');
+            if ($inputBookId == -1) {
+                $book = new Book();
+            }
+            else
+            {
+                $book = new Book($inputBookId);
+            }
+            
+            // Fill the book attributes with information from the request.
             $book->setTitle(self::getString($inputBook, 'title'));
             $book->setMinYear(self::getInteger($inputBook, 'minYear'));
             $book->setMaxYear(self::getInteger($inputBook, 'maxYear'));
@@ -227,11 +244,16 @@ class BindingUploadController extends Controller
     private function createAuthors($inputBook, $book)
     {
         // Split all persons in the provenance.
-        $authorPersonNames = explode(',', self::getString($inputBook, 'author')); 
+        $authorPersonNames = array_map("trim", explode(',', self::getString($inputBook, 'author'))); 
         
         // Create all provenances.
         foreach($authorPersonNames as $authorPersonName)
         {
+            if ($authorPersonName == "") 
+            {
+                continue;
+            }
+            
             // Create the person for the provenance.
             $person = $this->createPerson($authorPersonName);
     
@@ -253,11 +275,16 @@ class BindingUploadController extends Controller
     private function createProvenances($inputBinding, $binding)
     {
         // Split all persons in the provenance.
-        $provenancePersonNames = explode(',', self::getString($inputBinding, 'provenance')); 
+        $provenancePersonNames = array_map("trim", explode(',', self::getString($inputBinding, 'provenance'))); 
         
         // Create all provenances.
         foreach($provenancePersonNames as $provenancePersonName)
         {
+            if ($provenancePersonName == "")
+            {
+                continue;
+            }
+            
             // Create the person for the provenance.
             $person = $this->createPerson($provenancePersonName);
             
@@ -278,11 +305,12 @@ class BindingUploadController extends Controller
      */
     private function createPerson($personName)
     {
+        Log::info("!!PersonNAME " . $personName);
         $existingPerson = PersonList::find(array('name' => $personName))->tryGet(0);
         
         if ($existingPerson !== null)
         {
-            return new Person($existingPerson->getValue('personId'));
+            return new Person($existingPerson->getPersonId());
         }
         else
         {
