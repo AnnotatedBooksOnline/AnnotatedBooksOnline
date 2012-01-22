@@ -23,6 +23,8 @@ class AuthenticationController extends Controller
         // Add the permissions of this user to the return values.
         $userValues['permissions'] = Authentication::getInstance()->getPermissionList();
         
+        Log::debug('!!!!!!!!!!!' . Configuration::getBaseURL());
+        
         return $userValues;
     }
     

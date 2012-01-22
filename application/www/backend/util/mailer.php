@@ -81,7 +81,8 @@ class Mailer
         $recipient = $user->getEmail();
         $basemessage = Setting::getSetting('activation-mail-message');
         $code = $puser->getConfirmationCode();
-        $link = Configuration::getInstance()->getString('activation-url') . $code;
+        $link = Configuration::getBaseURL() . '#activation-' . $code;
+        //$link = Configuration::getInstance()->getString('activation-url') . $code;
         
         // For the sake of security, confirm the validity of the confirmation code, which should be
         // a hexadecimal numer of 32 digits.
@@ -128,7 +129,8 @@ class Mailer
         $subject = Setting::getSetting('forgotpass-mail-subject');
         $recipient = $user->getEmail();
         $basemessage = Setting::getSetting('forgotpass-mail-message');
-        $link = Configuration::getInstance()->getString('forgotpass-url') . $token;
+        //$link = Configuration::getInstance()->getString('forgotpass-url') . $token;
+        $link = Configuration::getBaseURL() . '#restorepass-' . $token;
         
         // For the sake of security, confirm the validity of the password token, which should be
         // a hexadecimal numer of 32 digits.
