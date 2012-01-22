@@ -16,6 +16,9 @@ class Setting extends Entity
     /** Value of the setting. */
     protected $settingValue;
     
+    /** Whether the setting is visible to the client. */
+    protected $visible;
+    
     /**
      * Constructs a setting entity.
      *
@@ -36,18 +39,24 @@ class Setting extends Entity
      * exist, the default argument is returned (if one is defined; otherwise an exception is 
      * thrown).
      * 
-     * @param string $name     The name of the setting.
-     * @param string $default  The result if the setting does not exist.
+     * @param string $name         The name of the setting.
+     * @param string $default      The result if the setting does not exist.
+     * @param bool   $onlyVisible  Only publicly visible settings are returned.
      * 
      * @return string The value of the setting.
      * 
      * @throws SettingException If default is null and the setting is not present.
      */
-    public static function getSetting($name, $default = null)
+    public static function getSetting($name, $default = null, $onlyVisible = false)
     {
         try
         {
             $setting = new Setting($name);
+            
+            if($onlyVisible && !$setting->getVisible())
+            {
+                throw new SettingException('setting-not-visible', $name);
+            }
             
             return $setting->getSettingValue();
         }
@@ -96,7 +105,7 @@ class Setting extends Entity
      */
     public static function getColumns()
     {
-        return array('settingValue');
+        return array('settingValue', 'visible');
     }
     
     /**
@@ -111,6 +120,7 @@ class Setting extends Entity
         return array(
             'settingName'  => 'string',
             'settingValue' => 'string',
+            'visible'      => 'bool'
         );
     }
     
@@ -119,8 +129,9 @@ class Setting extends Entity
      */
     
     public function getSettingName()      { return $this->settingName;  }
-    public function setSettingName($name) { $this->settingName = $name; }
     
     public function getSettingValue()       { return $this->settingValue;   }
     public function setSettingValue($value) { $this->settingValue = $value; }
+    
+    public function getVisible() { return $this->visible; }
 }
