@@ -374,18 +374,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 return;
                 
             case 'reorderscan':
-                // Identify a possible existing binding passed to the upload panel.
-                var existingBinding = undefined;
-                if (data.length > 0) 
+                var existingBindingId = undefined;
+                if (data.length > 0 && data[0] !== undefined) 
                 {
-                    existingBinding = data[0];
+                    existingBindingId = data[0];
                 }
                 
                 // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
-                    title: 'Upload (reorder scans)',
+                    title: existingBindingId == undefined ? 'Upload (reorder scans)' : 'Modify binding (reorder scans)',
                     xtype: 'reorderscanform',
-                    existingBinding: existingBinding
+                    existingBindingId: existingBindingId
                 });
                 
                 break;
@@ -400,18 +399,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'selectbook':
-                // Identify a possible existing binding passed to the upload panel.
-                var existingBinding = undefined;
-                if (data.length > 0) 
+                var existingBindingId = undefined;
+                if (data.length > 0 && data[0] !== undefined) 
                 {
-                    existingBinding = data[0];
+                    existingBindingId = data[0];
                 }
                 
                 // Add a select book tab.
                 Ext.apply(tabConfig, {
-                    title: 'Upload (select books)',
+                    title: existingBindingId == undefined ? 'Upload (select books)' : 'Modify binding (select books)',
                     xtype: 'selectbookform',
-                    existingBinding: existingBinding
+                    existingBindingId: existingBindingId
                 });
                 
                 break;
@@ -493,16 +491,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
             
             case 'upload':
                 
-                // Identify a possible existing binding passed to the upload panel.
-                var existingBinding = undefined;
-                if (data.length > 0) 
+                // Identify a possible existing binding passed to the upload panel.           
+                var existingBindingId = undefined;
+                if (data.length > 0 && data[0] !== undefined) 
                 {
-                    existingBinding = data[0];
+                    existingBindingId = data[0];
                 }
                 
                 // Add an upload panel.
                 Ext.apply(tabConfig, {
-                    title: 'Upload (upload)',
+                    title: existingBindingId == undefined ? 'Upload (upload)' : 'Modify binding',
                     name: 'upload',
                     layout: 'hbox',
                     bodyPadding: 10,
@@ -513,7 +511,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     },{
                         xtype: 'uploadform',
                         selectFirst: false,
-                        existingBinding: existingBinding,
+                        existingBindingId: existingBindingId,
                         border: false,
                         width: 800,
                         autoScroll: true
