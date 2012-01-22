@@ -25,7 +25,8 @@ class ScanController extends ControllerBase
             'width',
             'height',
             'zoomLevel',
-            'scanName'
+            'scanName',
+            'bookTitle'
         ));
         
     }

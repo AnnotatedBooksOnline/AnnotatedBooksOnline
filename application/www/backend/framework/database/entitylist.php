@@ -122,11 +122,11 @@ abstract class EntityList implements IteratorAggregate
         {
             if (isset($types[$column]) && ($types[$column] == 'istring'))
             {
-                $whereConds[] = $column . ' ILIKE :' . $column;
+                $whereConds[] = $tableName . '.' . $column . ' ILIKE :' . $column;
             }
             else
             {
-                $whereConds[] = $column . ' = :' . $column;
+                $whereConds[] = $tableName . '.' . $column . ' = :' . $column;
             }
             
             $whereValues[$column] = $value;
@@ -146,8 +146,7 @@ abstract class EntityList implements IteratorAggregate
         }
         
         // Build select clause.
-        $query = Query::select()->
-            from(self::getTableName())->
+        $query = static::buildSelectionQuery()->
             where($whereConds)->
             orderBy($ordering)->
             limit($limit, $offset);
@@ -177,6 +176,15 @@ abstract class EntityList implements IteratorAggregate
         }
         
         return $list;
+    }
+    
+    /**
+     * Returns the query to select fields of this entity type.
+     */
+    protected static function buildSelectionQuery() 
+    {
+        return Query::select()->
+            from(self::getTableName());
     }
     
     /**

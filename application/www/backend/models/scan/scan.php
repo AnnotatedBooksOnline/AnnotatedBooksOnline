@@ -32,6 +32,9 @@ class Scan extends Entity
     protected $scanName;
     protected $uploadId;
     protected $bindingId;
+    
+    /** Joined attributes. */
+    protected $bookTitle;
 
     /**
      * Constructs a scan entity.
@@ -202,4 +205,7 @@ class Scan extends Entity
     
     public function getBindingId()    { return $this->bindingId; }
     public function setBindingId($id) { $this->bindingId = $id;  }
+    
+    public function getBookTitle()    { return $this->bookTitle; }
+    public function setBookTitle($bookTitle) { $this->bindingId = $id; }
 }

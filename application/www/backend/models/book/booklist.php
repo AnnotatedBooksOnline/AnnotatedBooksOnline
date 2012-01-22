@@ -7,4 +7,6 @@ require_once 'framework/database/entitylist.php';
 /**
  * Class representing a library entity list.
  */
-class BookList extends EntityList { }
+class BookList extends EntityList { 
+    
+}
