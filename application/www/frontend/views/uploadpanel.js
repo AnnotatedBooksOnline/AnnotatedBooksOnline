@@ -14,7 +14,11 @@ Ext.define('Ext.ux.BindingFieldSet', {
             RequestManager.getInstance().request(
                 'BindingUpload',
                 'uniqueLibrarySignature',
-                {library: library.getValue(), signature: signature.getValue()},
+                {
+                	library: library.getValue(), 
+                 	signature: signature.getValue(),
+                 	bindingId: _this.existingBinding !== undefined ? _this.existingBinding.bindingId : '-1'
+                },
                 this,
                 function(data)
                 {
@@ -164,6 +168,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
     getBinding: function()
     {
         return {
+        	bindingId: this.existingBinding !== undefined ? this.existingBinding.bindingId : '-1',
             library: this.down('[name=library]').getValue(),
             provenance: this.down('[name=provenance]').getValue(),
             signature: this.down('[name=signature]').getValue(),
@@ -450,6 +455,7 @@ Ext.define('Ext.ux.BookFieldset', {
         // TODO: How is this a book value? Create a book entity.
         
         return {
+        	book: this.existingBook !== undefined ? this.existingBook.get('bookId') : '-1',
             title: this.down('[name=title]').getValue(),
             author: this.down('[name=author]').getValue(),
             publisher: this.down('[name=publisher]').getValue(),
@@ -710,7 +716,7 @@ Ext.define('Ext.ux.UploadForm', {
             var result = {binding: binding, books: books, scans: scans};
             var numberOfBooks = books.length;
             
-            if (numberOfBooks > successScans)
+            if (numberOfBooks > successScans && this.existingBinding === undefined)
             {
                 this.setLoading(false);
                 

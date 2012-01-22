@@ -44,7 +44,7 @@ class BindingUploadController extends Controller
         $signature   = self::getString($inputBinding, 'signature');
         
         // Determine if the specified signature exists in the database already, this is not allowed.
-        if (!$this->uniqueLibrarySignature($libraryName, $signature))
+        if (!$this->uniqueLibrarySignature($libraryName, $signature, -1))
         {
             throw new ControllerException('duplicate-binding');
         }
@@ -414,8 +414,9 @@ class BindingUploadController extends Controller
     {
         $libraryName = self::getString($data, 'library', '', true, 256);
         $signature   = self::getString($data, 'signature', '', true, 256);
+        $bindingId   = self::getInteger($data, 'bindingId');
         
-        return $this->uniqueLibrarySignature($libraryName, $signature);
+        return $this->uniqueLibrarySignature($libraryName, $signature, $bindingId);
     }
     
     /**
@@ -425,22 +426,31 @@ class BindingUploadController extends Controller
      * @param unknown_type $signature
      * @return boolean
      */
-    public function uniqueLibrarySignature($libraryName, $signature)
+    public function uniqueLibrarySignature($libraryName, $signature, $bindingId)
     {
+        // Find the library.
         $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
-        // Determine if the specified signature exists in the database already, this is not allowed.
-        if ($existingLibrary !== null)
+        
+        // Determine if this is a new library, if this is the case the signature is valid.
+        if ($existingLibrary === null)
         {
-            Log::debug('!!!!!!!!!' . print_r($existingLibrary, true));
-            if (BindingList::find(array(
-                    'libraryId' => $existingLibrary->getLibraryId(),
-                    'signature' => $signature
-                ))->tryGet(0) !== null)
-            {
-                return false;
-            }
+            return true;
         }
         
-        return true;
+        // Find an existing binding for the library and the specified signature
+        $binding = BindingList::find(array(
+                    'libraryId' => $existingLibrary->getLibraryId(),
+                    'signature' => $signature))->tryGet(0);
+                    
+        // Determine if there is an existing binding and if this is not the binding currently being
+        // modified.
+        if ($binding !== null && $binding->getBindingId() != $bindingId)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }
