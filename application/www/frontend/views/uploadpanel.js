@@ -509,6 +509,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
             this.insert(this.items.length - 1, [{xtype: 'bookfieldset'}]);
         }
         
+        
     },
     
     fillFromExistingBinding: function(binding) {
@@ -522,7 +523,11 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 xtype: 'bookfieldset',
                 existingBook: book
             }]);
+    		
+            // Update the state of the 'delete' buttons.
+            _this.checkBooks(false);
     	});
+    	
     },
     
     getBooks: function()
@@ -549,7 +554,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
         }
         
         var current = this.down('bookfieldset');
-        
+                
         do
         {
             current.down('[name=deletebook]').setDisabled(disable);
@@ -634,6 +639,11 @@ Ext.define('Ext.ux.UploadForm', {
             listeners: {
                 validitychange: function(form, valid)
                     {
+                		if (_this.existingBindingId !== undefined)
+                		{
+                			return;
+                		}
+                		
                         var booksfieldset = this.down('booksfieldset');
                         var books = booksfieldset.getBooks();
                         
