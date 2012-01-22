@@ -19,7 +19,8 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             ],
             groupField: 'firstPage'
         });
-         var defConfig = {
+        
+        var defConfig = {
             border: false,
             width: '100%',
             layout: 'vbox',
@@ -29,7 +30,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 text: 'Modify binding',
                 handler: function()
                 {
-                    Application.getInstance().gotoTab('upload', [viewer.binding.bindingId], true);
+                    Application.getInstance().gotoTab('upload', [this.up('bindinginformationpanel').bindingModel.get('bindingId')], true);
                 }
             },
             items: [{
