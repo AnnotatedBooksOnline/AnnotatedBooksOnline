@@ -30,21 +30,36 @@ class ScanController extends ControllerBase
         // TODO: Give scan a filename. (Was previously loaded from upload.)
     }
     
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $data
+     */
     public function actionReorder($data)
     {
-        // TODO: Data may not actually be an array. Encapsulate and use self::getArray(..).
-        // TODO: Check for case that there are not scans: $scan->getBindingId() will fail.
+        // TODO: Mathijs : Permissions and authentication.
         
+        // Collect the binding id and ordered scans from the request.
+        $inputBindingId = self::getInteger($data, 'bindingId');
+        $inputOrderedScans = self::getArray($data, 'orderedScans');
+        
+        // Save the new order of the scans.
         $page = 0;
-        foreach ($data as $key => $value) 
+        foreach ($inputOrderedScans as $key => $scanId) 
         {
-            $scan = new Scan($value);
+            Log::info('!!!!!!ScanId ' . $scanId);
+            $scan = new Scan($scanId);
             $scan->setPage(++$page);
             $scan->save();
         }
         
-        $binding = new Binding($scan->getBindingId());
-        $binding->setStatus(Binding::STATUS_REORDERED);
-        $binding->save();
+        // Update the binding status if this is a new binding and not a binding
+        // being modified.
+        $binding = new Binding($inputBindingId);
+        if ($binding->getStatus() === Binding::STATUS_UPLOADED)
+        {
+            $binding->setStatus(Binding::STATUS_REORDERED);
+            $binding->save();
+        }
     }
 }

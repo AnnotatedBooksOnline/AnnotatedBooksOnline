@@ -374,10 +374,18 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 return;
                 
             case 'reorderscan':
+            	// Identify a possible existing binding passed to the upload panel.
+            	var existingBinding = undefined;
+            	if (data.length > 0) 
+            	{
+            		existingBinding = data[0];
+            	}
+            	
                 // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (reorder scans)',
-                    xtype: 'reorderscanform'
+                    xtype: 'reorderscanform',
+                    existingBinding: existingBinding
                 });
                 
                 break;
@@ -392,10 +400,18 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
                 
             case 'selectbook':
+            	// Identify a possible existing binding passed to the upload panel.
+            	var existingBinding = undefined;
+            	if (data.length > 0) 
+            	{
+            		existingBinding = data[0];
+            	}
+            	
                 // Add a select book tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (select books)',
-                    xtype: 'selectbookform'
+                    xtype: 'selectbookform',
+                    existingBinding: existingBinding
                 });
                 
                 break;

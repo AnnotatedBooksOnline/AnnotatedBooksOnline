@@ -29,29 +29,35 @@ class BookController extends ControllerBase
         return $this->handleLoad($data, 'Book', 'bookId');
     }
     
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $data
+     */
     public function actionFirstLastPages($data)
     {
-        // TODO: To Jeroen, who wrote this:
+        // TODO: Mathijs : Permissions and authentication.
         
-        // TODO: Use self::getArray(), as value may not be an array. (Gerben)
-
-        // TODO: This function is extremely UNSAFE! Unauthenticated users can alter all
-        // books this way, no data validation is performed at all, $book might not even
-        // be defined outside the foreach() loop.
-        // I would suggest to at least check that the user is authenticated, and use
-        // self::getArray() for the data array and self::getInteger() for the values.
-        // (Bert)
-        foreach ($data as $value) 
+        // Collect the binding id and selected book pages from the request.
+        $inputBindingId = self::getInteger($data, 'bindingId');
+        $inputSelectedBooks = self::getArray($data, 'selectedBooks');
+        
+        // Iterate over all selected books and store their values in the database.
+        foreach ($inputSelectedBooks as $inputSelectedBook) 
         {
-            $book = new Book($value[0]);
-            $book->setFirstPage($value[1]);
-            $book->setLastPage($value[2]);
+            $book = new Book(self::getInteger($inputSelectedBook, 'bookId'));
+            $book->setFirstPage(self::getInteger($inputSelectedBook, 'firstPage'));
+            $book->setLastPage(self::getInteger($inputSelectedBook, 'lastPage'));
             $book->save();
         }
         
+        // Update the binding status if required.
         $binding = new Binding($book->getBindingId());
-        $binding->setStatus(Binding::STATUS_SELECTED);
-        $binding->save();
+        if ($binding->getStatus != Binding::STATUS_SELECTED)
+        {
+            $binding->setStatus(Binding::STATUS_SELECTED);
+            $binding->save();
+        }
     }
     
     /**

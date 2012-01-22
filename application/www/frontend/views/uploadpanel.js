@@ -10,7 +10,8 @@ Ext.define('Ext.ux.BindingFieldSet', {
     {
         var _this = this;
         
-        function uniqueLibrarySignature(library, signature) {
+        function uniqueLibrarySignature(library, signature) 
+        {
             RequestManager.getInstance().request(
                 'BindingUpload',
                 'uniqueLibrarySignature',
@@ -752,7 +753,7 @@ Ext.define('Ext.ux.UploadForm', {
                         buttons: Ext.Msg.OK,
                         callback: function(button)
                             {
-                                Application.getInstance().gotoTab('reorderscan',[],true);
+                                Application.getInstance().gotoTab('reorderscan',[_this.existingBinding],true);
                                 _this.up('[name=upload]').close();
                             }
                     });

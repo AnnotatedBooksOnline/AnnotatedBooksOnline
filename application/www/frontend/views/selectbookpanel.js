@@ -137,7 +137,8 @@ Ext.define('Ext.ux.ScanListFieldset', {
 // TODO: Get rid of these globals! Make them class statics, or class fields.
 // TODO: This logic shouldn't even be separated over multiple main views, but one wizard view.
 
-var bindingId;
+// TODO : mathijsB . rewrite a lot in this file.
+
 var i = 0;
 var book;
 var bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
@@ -153,66 +154,78 @@ Ext.define('Ext.ux.SelectBookForm', {
     {
         var _this = this;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-            function(result)
-            {
-                if (result['status'] === 1)
+        function loadStores(bindingId) 
+        {
+            // TODO: Implement filtering serverside, to remove second filtering.
+            scanstore.filter({property: 'bindingId', value: bindingId});
+            scanstore.load();
+            bookstore.filter({property: 'bindingId', value: bindingId});
+            
+            bookstore.on('load', function()
+            { 
+                bookstore.each(function(book)
                 {
-                    bindingId = result['bindingId'];
+                    book.set('timePeriod', book.getTimePeriod());
+                    book.set('firstPage', -1);
+                    book.set('lastPage', -1);
                     
-                    // TODO: Implement filtering serverside, to remove second filtering.
-                    scanstore.filter({property: 'bindingId', value: bindingId});
-                    scanstore.load();
-                    bookstore.filter({property: 'bindingId', value: bindingId});
+                    var authors = '';
                     
-                    bookstore.on('load', function()
-                    { 
-                        bookstore.each(function(book)
+                    book.authors().load({
+                        scope: _this,
+                        callback: function(records, operation, success)
                         {
-                            book.set('timePeriod', book.getTimePeriod());
-                            book.set('firstPage', -1);
-                            book.set('lastPage', -1);
-                            
-                            var authors = '';
-                            
-                            book.authors().load({
-                                scope: _this,
-                                callback: function(records, operation, success)
-                                {
-                                    Ext.Array.each(records, function(record)
-                                    {
-                                        authors += (', ' + record.get('name'));
-                                    });
-                                    
-                                    book.set('author', authors.substring(1));
-                                }
+                            Ext.Array.each(records, function(record)
+                            {
+                                authors += (', ' + record.get('name'));
                             });
-                        });
+                            
+                            book.set('author', authors.substring(1));
+                        }
                     });
-                    
-                    bookstore.load();
-                }
-                else
-                {
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'This step of the uploading process is currently unavailable',
-                        buttons: Ext.Msg.OK
-                    });
-                    
-                    this.close();
-                }
-            }, 
-            function()
-            {
-                Ext.Msg.show({
-                    title: 'Error',
-                    msg: 'There is a problem with the server. Please try again later',
-                    buttons: Ext.Msg.OK
                 });
-                
-                this.close();
             });
+            
+            bookstore.load();
+        };
+        
+        if (this.existingBinding === undefined)
+        {
+        	RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+        		function(result)
+        		{
+                	if (result['status'] === 1)
+                	{
+                		_this.bindingId = result['bindingId'];
+                		loadStores(result['bindingId']);                 
+                	}
+                	else
+                	{
+                		Ext.Msg.show({
+                			title: 'Error',
+                			msg: 'This step of the uploading process is currently unavailable',
+                			buttons: Ext.Msg.OK
+                		});
+                    
+                		this.close();
+                	}
+        		}, 
+        		function()
+        		{
+        			Ext.Msg.show({
+        				title: 'Error',
+        				msg: 'There is a problem with the server. Please try again later',
+        				buttons: Ext.Msg.OK
+        			});
+                
+        			this.close();
+        		});
+        }
+        else
+        {
+        	this.bindingId = this.existingBinding.bindingId;
+        	loadStores(this.existingBinding.bindingId);
+        }
         
         var defConfig = {
             monitorValid: true,
@@ -445,6 +458,15 @@ Ext.define('Ext.ux.SelectBookForm', {
             }); 
         };
         
-        RequestManager.getInstance().request('Book', 'firstLastPages', fields, this, onSuccess, onFailure);
+        RequestManager.getInstance().request(
+        		'Book', 
+        		'firstLastPages', 
+        		{
+        			bindingId:this.bindingId, 
+        			selectedBooks:fields
+        		}
+        		this, 
+        		onSuccess, 
+        		onFailure);
     }
 });

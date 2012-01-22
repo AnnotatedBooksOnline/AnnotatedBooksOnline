@@ -3,9 +3,10 @@
  */
 
 // TODO: Get rid of these globals! Make them class statics, or class fields.
+// TODO : mathijsB . rewrite a lot in this file.
 
-var store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-var bindingId;
+//var store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+//var bindingId;
 
 Ext.define('Ext.ux.ReorderScanFieldset', {
     extend: 'Ext.form.FieldSet',
@@ -23,7 +24,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 height: 400,
                 allowBlank: true,
                 ddReorder: true,
-                store: store,
+                store: this.store,
                 displayField: 'filename',
                 tbar: [{
                     text: 'Go back to old ordening',
@@ -48,42 +49,53 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
 Ext.define('Ext.ux.ReorderScanForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.reorderscanform',
-    
+    store: Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'}),
     initComponent: function() 
     {
         var _this = this;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-            function(result)
-            {
-                if (result['status'] === 0)
-                {
-                    bindingId = result['bindingId'];
+        if (this.existingBinding === undefined)
+        {
+        	alert('NONON');
+        	RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+        		function(result)
+        		{
+        			if (result['status'] === 0)
+        			{
+        				_this.bindingId = result['bindingId'];
                     
-                    store.filter({property: 'bindingId', value: bindingId});
-                    store.load();
-                }
-                else
-                {
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'This step of the uploading process is currently unavailable',
-                        buttons: Ext.Msg.OK
-                    });
+        				_this.store.filter({property: 'bindingId', value: _this.bindingId});
+        				_this.store.load();
+        			}
+        			else
+        			{
+        				Ext.Msg.show({
+        					title: 'Error',
+        					msg: 'This step of the uploading process is currently unavailable',
+        					buttons: Ext.Msg.OK
+        				});
                     
-                    this.close();
-                }
-            }, 
-            function()
-            {
-                 Ext.Msg.show({
-                    title: 'Error',
-                    msg: 'There is a problem with the server. Please try again later',
-                    buttons: Ext.Msg.OK
-                });
+        				this.close();
+        			}
+        		}, 
+        		function()
+        		{
+        			Ext.Msg.show({
+        				title: 'Error',
+                    	msg: 'There is a problem with the server. Please try again later',
+                    	buttons: Ext.Msg.OK
+        			});
                 
-                this.close();
-            });
+        			this.close();
+        		});
+        }
+        else
+        {
+        	this.bindingId = this.existingBinding.bindingId;
+        	
+			_this.store.filter({property: 'bindingId', value: this.existingBinding.bindingId});
+			_this.store.load();
+        }
         
         var defConfig = {
             items: [{
@@ -91,6 +103,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
             },{
                 xtype: 'reorderscanfieldset',
                 name: 'reorder',
+                store: this.store,
                 binding: this.binding
             }],
             
@@ -105,8 +118,9 @@ Ext.define('Ext.ux.ReorderScanForm', {
     submit: function()
     {
         // Put the changes into an array.
-        var records = store;
+        var records = this.store;
         var fields  = [];
+        var _this = this;
         
         records.each(function(record)
         {
@@ -124,7 +138,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 buttons: Ext.Msg.OK
             });
             
-            Application.getInstance().gotoTab('selectbook', [], true);
+            Application.getInstance().gotoTab('selectbook', [_this.existingBinding], true);
             
             this.close();
         };
@@ -139,6 +153,15 @@ Ext.define('Ext.ux.ReorderScanForm', {
             }); 
         };
         
-        RequestManager.getInstance().request('Scan', 'reorder', fields, this, onSuccess, onFailure);
+        RequestManager.getInstance().request(
+        		'Scan', 
+        		'reorder', 
+        		{
+        			bindingId: this.bindingId,
+        			orderedScans: fields
+        		},
+        		this, 
+        		onSuccess, 
+        		onFailure);
     }
 });
