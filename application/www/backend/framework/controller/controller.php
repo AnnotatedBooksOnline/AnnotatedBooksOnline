@@ -209,7 +209,7 @@ abstract class Controller
      *
      * @return  The sanitized string value.
      */
-    protected static function getString(&$data, $key,
+    public static function getString(&$data, $key,
         $default = '', $trim = true, $maxLength = -1)
     {
         $value = isset($data[$key]) ? (string) $data[$key] : $default;
@@ -239,7 +239,7 @@ abstract class Controller
      *
      * @return  The sanitized integer value.
      */
-    protected static function getInteger(&$data, $key,
+    public static function getInteger(&$data, $key,
         $default = 0, $positive = false, $minValue = null, $maxValue = null)
     {
         return (int) self::getDouble($data, $key, $default, $positive, $minValue, $maxValue);
@@ -257,7 +257,7 @@ abstract class Controller
      *
      * @return  The sanitized double value.
      */
-    protected static function getDouble(&$data, $key,
+    public static function getDouble(&$data, $key,
         $default = 0, $positive = false, $minValue = null, $maxValue = null)
     {
         $value = isset($data[$key]) ? (double) $data[$key] : $default;
@@ -289,7 +289,7 @@ abstract class Controller
      *
      * @return  The sanitized boolean value.
      */
-    protected static function getBoolean(&$data, $key, $default = false)
+    public static function getBoolean(&$data, $key, $default = false)
     {
         $value = isset($data[$key]) ? $data[$key] : $default;
         
@@ -306,7 +306,7 @@ abstract class Controller
      *
      * @return  The sanitized array value.
      */
-    protected static function getArray(&$data, $key, $default = array(), $maxLength = -1)
+    public static function getArray(&$data, $key, $default = array(), $maxLength = -1)
     {
         $value = isset($data[$key]) ? $data[$key] : null;
         if (!is_array($value))

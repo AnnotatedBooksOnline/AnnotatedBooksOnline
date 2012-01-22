@@ -17,14 +17,12 @@ function Annotation()
 
 // Fields.
 Annotation.prototype.model;
-Annotation.prototype.annotationId;
 
 // Constructor.
 Annotation.prototype.constructor = function(model)
 {
     // Set members.
     this.model = model;
-    this.annotationId = model.get('annotationId');
     
     // Initialize.
     this.initialize();
@@ -68,9 +66,19 @@ Annotation.createFromVertices = function(vertices)
     return new Annotation(model);
 }
 
+Annotation.prototype.setVertices = function(vertices)
+{
+    // Set vertices.
+    this.model.polygon().removeAll();
+    for (var i = 0; i < vertices.length; ++i)
+    {
+        this.model.polygon().add({x: vertices[i].x, y: vertices[i].y});
+    }
+}
+
 Annotation.prototype.getId = function()
 {
-    return this.annotationId;
+    return this.model.get('annotationId');
 }
 
 Annotation.prototype.getVertices = function()
@@ -99,9 +107,10 @@ Annotation.prototype.getHash = function()
     if (this.hash === undefined)
     {
         // Check for new annotations.
-        if (this.annotationId)
+        var annotationId = this.model.get('annotationId');
+        if (annotationId)
         {
-            this.hash = 'ann-' + this.annotationId;
+            this.hash = 'ann-' + annotationId;
         }
         else
         {

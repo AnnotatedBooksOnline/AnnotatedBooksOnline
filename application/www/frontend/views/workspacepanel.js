@@ -122,17 +122,52 @@ Ext.define('Ext.ux.ExportForm', {
                     name: 'transcriptions',
                     inputValue: 'on'
                 },{
-                    xtype: 'checkbox',
-                    name: 'polygons',
+                    xtype: 'panel',
+                    border: false,
+                    name: 'transcriptionoptions',
                     style: 'margin-left: 20px;',
-                    checked: false,
-                    boxLabel: 'Display polygons on scan',
-                    disabled: true
+                    items: [{
+                        xtype: 'combobox',
+                        store: Ext.create('Ext.data.Store', {
+                            fields: ['lang', 'text'],
+                            data: [{
+                                lang: 'orig',
+                                text: 'Original'
+                            },{
+                                lang: 'eng',
+                                text: 'English'
+                            },{
+                                lang: 'both',
+                                text: 'Both'
+                            }]
+                        }),
+                        queryMode: 'local',
+                        displayField: 'text',
+                        valueField: 'lang',
+                        forceSelection: true,
+                        editable: false,
+                        fieldLabel: 'Language',
+                        disabled: true,
+                        name: 'language',
+                        listeners: {
+                            afterrender: function()
+                            {
+                                this.select('orig');
+                            }
+                        }
+                    },{
+                        xtype: 'checkbox',
+                        name: 'polygons',
+                        checked: false,
+                        boxLabel: 'Display polygons on scan',
+                        disabled: true
+                    }]
                 }],
                 listeners: {
                     change: function(field, newValue)
                     {
                         this.down('[name=polygons]').setDisabled(newValue.transcriptions != 'on');
+                        this.down('[name=language]').setDisabled(newValue.transcriptions != 'on');
                     }
                 }
             },{
@@ -168,6 +203,7 @@ Ext.define('Ext.ux.ExportForm', {
         var sendRequest = function()
         {
             _this.setLoading('Exporting...');
+            
             RequestManager.getInstance().request(
                 'Pdf',
                 'generate',
@@ -180,12 +216,15 @@ Ext.define('Ext.ux.ExportForm', {
                         controller: 'Pdf',
                         action: 'download'
                     });
+                    
                     window.location = '?' + Ext.Object.toQueryString(data);
+                    
                     _this.setLoading(false);
                 },
                 function()
                 {
                     _this.setLoading(false);
+                    
                     return true;
                 }
             );
@@ -195,16 +234,20 @@ Ext.define('Ext.ux.ExportForm', {
         values.scanId = viewer.getScanId();
         
         var pages = 1;
+        var firstExportPage = viewer.getPage() + 1;
         if (values.page == 'binding')
         {
             pages = viewer.getPageAmount();
+            firstExportPage = 1;
         }
         else if (values.page == 'range')
         {
             pages = values.pageTo - values.pageFrom + 1;
+            firstExportPage = parseInt(values.pageFrom);
         }
+        var lastExportPage = firstExportPage + pages - 1;
         var time = Math.ceil(pages / 20);
-        var size = Math.floor(0.4 + 1.2 * pages); // TODO: Make a bit better estimation.
+        var size = Math.floor(0.4 + 1.2 * pages);
         
         if (time > 10 || size > 15)
         {
@@ -215,15 +258,71 @@ Ext.define('Ext.ux.ExportForm', {
             if (hours > 0) { timestr += hours + 'h '; }
             if (minutes > 0) { timestr += minutes + 'm '; }
             if (seconds > 0) { timestr += seconds + 's '; }
-            var info = '<p>You are about to export ' + pages + ' scans. '
-                     + 'This may take some time and the resulting file may be large.</p>'
-                     + '<p>Estimated processing time: ' + timestr + '<br/>'
-                     + 'Estimated file size: ' + size + ' MB</p>';
+            var binding = viewer.getBinding().getModel();
+            var books = [];
+            binding.books().each(
+            function(book)
+            {
+                if (book.get('lastPage') >= firstExportPage && book.get('firstPage') <= lastExportPage)
+                {
+                    books.push(book);
+                }
+            });
+            var toString = function(s)
+            {
+                if (s)
+                {
+                    return s;
+                }
+                return '';
+            };
+            var info = '<p><table style="width: 100%; margin-left: 10px; margin-right: 10px">';
+            if (books.length == 1)
+            {
+                var authors = '';
+                books[0].authors().each(
+                function(author)
+                {
+                    if (authors.length != 0)
+                    {
+                        authors += ', ';
+                    }
+                    authors += author.get('name');
+                });
+                var year = books[0].get('minYear');
+                if (year != books[0].get('maxYear'))
+                {
+                    year = year + ' - ' + books[0].get('maxYear');
+                }
+                info += '<tr><td>Title</td><td>' + books[0].get('title') + '</td></tr>'
+                      + '<tr><td>Author</td><td>' + authors + '</td></tr>'
+                      + '<tr><td>Year</td><td>' + year + '</td></tr>'
+                      + '<tr><td>Location</td><td>' + toString(books[0].get('placePublished')) + '</td></tr>'
+                      + '<tr><td>Publisher</td><td>' + toString(books[0].get('publisher')) + '</td></tr>';
+            }
+            else if (books.length != 0)
+            {
+                info += '<tr style="vertical-align: top"><td>Titles</td><td>';
+                for (var i = 0; i < books.length; i++)
+                {
+                    info += books[i].get('title') + '<br/>';
+                }
+                info += '</td></tr>';
+            }
+            info += '<tr><td>Library</td><td>' + binding.get('library').libraryName + '</td></tr>'
+                  + '<tr><td style="width: 30%">Signature</td><td>' + binding.get('signature') + '</td></tr>'
+                  + '</table></p>';
+            info = '<p>You are about to export ' + pages + ' scans. '
+                 + 'This may take some time and the resulting file may be large.</p>'
+                 + info
+                 + '<p>Estimated processing time: ' + timestr + '<br/>'
+                 + 'Estimated file size: ' + size + ' MB</p>';
             var confirm = new Ext.ux.ExportConfirmWindow({
                 info: info,
                 onContinue: function()
                 {
                     sendRequest();
+                    
                     this.close();
                 },
                 onCancel: function()
@@ -231,6 +330,7 @@ Ext.define('Ext.ux.ExportForm', {
                     this.close();
                 }
             });
+            
             confirm.show();
         }
         else
@@ -286,7 +386,6 @@ Ext.define('Ext.ux.ExportConfirmWindow', {
             title: 'Exporting',
             layout: 'fit',
             width: 400,
-            height: 200,
             items: [{
                 xtype: 'exportconfirmform',
                 info: this.info
@@ -331,7 +430,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
         }
         
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
-        eventDispatcher.bind('change', this, this.onAuthenticationChange);
+        eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
     onLoggedOn: function()

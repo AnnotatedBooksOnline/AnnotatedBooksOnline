@@ -373,16 +373,19 @@ Authentication.prototype.loginInternally = function(user)
 
 Authentication.prototype.hasPermissionTo = function(action)
 {
-    // TODO: check permissions for not logged in users. 
-    if(this.user === undefined)
+    // TODO: check permissions for not logged in users.
+    
+    // If no user has logged on, there is no permission.
+    if (this.user === undefined)
     {
         return false;
     }
     
+    // Get user his permissions.
     var permissions = this.user.get('permissions');
-    for(var i = 0; i < permissions.length; ++i)
+    for (var i = permissions.length - 1; i >= 0; --i)
     {
-        if(permissions[i] == action)
+        if (permissions[i] == action)
         {
             return true;
         }

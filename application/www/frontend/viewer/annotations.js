@@ -223,12 +223,19 @@ Annotations.prototype.clear = function()
 Annotations.prototype.load = function()
 {
     // Load store. Filter will trigger a load.
+    this.store.sort('order', 'ASC', 'append', false);
     this.store.filter({property: 'scanId', value: this.scanId});
 }
 
 // Resets annotations.
 Annotations.prototype.reset = function()
 {
+    // Check for changes.
+    if (!this.dirty)
+    {
+        return;
+    }
+    
     // Reload annotations.
     this.load();
     
@@ -239,33 +246,57 @@ Annotations.prototype.reset = function()
 // Saves annotations.
 Annotations.prototype.save = function()
 {
+    // Check for changes.
+    if (!this.dirty)
+    {
+        return;
+    }
+    
     // Get all annotations.
     var annotations = [];
     
-    
-    /*
-    
-    for (var i = this.model.fields.items.length - 1; i >= 0; --i)
-    {
-        var fieldName = this.model.fields.items[i].name;
-        
-        if (values[fieldName] !== undefined)
+    this.store.data.each(
+        function(model)
         {
-            this.model.set(fieldName, values[fieldName]);
-        }
-    }
+            // Determine polygon.
+            var polygon = [];
+            model.polygon().data.each(
+                function(vertex)
+                {
+                    polygon.push({x: vertex.get('x'), y: vertex.get('y')});
+                });
+            
+            // Add annotation.
+            annotations.push({
+                annotationId: model.get('annotationId'),
+                transcriptionEng: model.get('transcriptionEng'),
+                transcriptionOrig: model.get('transcriptionOrig'),
+                polygon: polygon
+            });
+        });
     
-    */
+    // Set data.
+    var data = {
+        scanId: this.scanId,
+        annotations: annotations
+    };
     
-    
-    // TODO: Save store: does polygon get transmitted? Nope.
-    // NOTE: this.store.sync() might work, but we want revisions, so we may want to do this ourselves.
-    
-    
-    // TODO: Move save below to sync event.
-    
-    // Trigger save.
-    this.eventDispatcher.trigger('save', this);
+    // Send save request.
+    RequestManager.getInstance().request('Annotation', 'save', data, this,
+        function(annotationIds)
+        {
+            // Set annotation ids on the models.
+            for (var i = 0; i < annotations.length; ++i)
+            {
+                this.annotations[i].getModel().set('annotationId', annotationIds[i]);
+            }
+            
+            // Set us not dirty.
+            this.dirty = false;
+            
+            // Trigger save.
+            this.eventDispatcher.trigger('save', this);
+        });
 }
 
 // Sets annotation mode.
@@ -354,6 +385,10 @@ Annotations.prototype.initialize = function()
     overlaygetEventDispatcher.bind('erase', this,
         function(event, overlay, annotation) { this.onOverlayErase(annotation); });
     
+    // Watch for changing of polygons.
+    overlaygetEventDispatcher.bind('change', this,
+        function(event, overlay, annotation) { this.onOverlayChange(annotation); });
+    
     // Watch for selection of polygons.
     overlaygetEventDispatcher.bind('select', this,
         function(event, overlay, annotation) { this.onOverlaySelect(annotation); });
@@ -361,11 +396,11 @@ Annotations.prototype.initialize = function()
     // Watch for hovering.
     overlaygetEventDispatcher.bind('hover', this,
         function(event, overlay, annotation) { this.onOverlayHover(annotation); });
-        
+     
     // Watch for unhovering.
     overlaygetEventDispatcher.bind('unhover', this,
         function(event, overlay, annotation) { this.onOverlayUnhover(annotation); });
-        
+    
     // Watch for mode changes.
     overlaygetEventDispatcher.bind('modechange', this,
         function(event, overlay, mode)
@@ -467,6 +502,15 @@ Annotations.prototype.onOverlaySelect = function(annotation)
 {
     // Trigger select.
     this.eventDispatcher.trigger('select', this, annotation);
+}
+
+Annotations.prototype.onOverlayChange = function(annotation)
+{
+    // Set us dirty.
+    this.dirty = true;
+    
+    // Trigger change.
+    this.eventDispatcher.trigger('change', this);
 }
 
 Annotations.prototype.onOverlayHover = function(annotation)

@@ -184,3 +184,50 @@ var isFF = navigator.userAgent.indexOf("Firefox") != -1;
  */
 
 var hasTransforms = Modernizr.csstransforms;
+/*
+ * Default page size
+ */
+ 
+Ext.override(Ext.data.Store, {
+    pageSize: 1000000000 // 'Infinite' page size
+});
+
+Ext.override(Ext.AbstractComponent, {
+    setLoading: function(load, targetEl)
+    {
+        var me = this,
+            msg;
+
+        if (me.rendered)
+        {
+            if (load !== false && !me.collapsed)
+            {
+                if (Ext.isObject(load))
+                {
+                    throw "This implementation of setLoading does not support a config object.";
+                }
+                else if (Ext.isString(load))
+                {
+                    msg = load;
+                }
+                else
+                {
+                    msg = "Loading...";
+                }
+                if (me.loadMask)
+                {
+                    me.loadMask.unmask();
+                }
+                me.loadMask = me.loadMask || (targetEl ? me.getTargetEl() : me.el);
+                me.loadMask.mask(msg);
+            }
+            else if (me.loadMask)
+            {
+                me.loadMask.unmask();
+                me.loadMask = null;
+            }
+        }
+    }
+});
+
+
