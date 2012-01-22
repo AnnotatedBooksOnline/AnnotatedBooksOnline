@@ -25,7 +25,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 allowBlank: true,
                 ddReorder: true,
                 store: this.store,
-                displayField: 'filename',
+                displayField: 'scanName',
                 tbar: [{
                     text: 'Go back to old ordening',
                     handler: function()

@@ -24,10 +24,9 @@ class ScanController extends ControllerBase
             'width',
             'height',
             'zoomLevel',
-            //'filename'
+            'scanName'
         ));
         
-        // TODO: Give scan a filename. (Was previously loaded from upload.)
     }
     
     /**

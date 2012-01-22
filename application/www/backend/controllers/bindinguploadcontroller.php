@@ -192,6 +192,7 @@ class BindingUploadController extends Controller
             $scan->setStatus(Scan::STATUS_PENDING);
             $scan->setPage($pageNumber++);
             $scan->setUploadId($upload->getUploadId());
+            $scan->setScanName($upload->getFilename());
             
             // Identify the scan.
             $this->identifyScan($scan, $upload);
