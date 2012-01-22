@@ -55,7 +55,7 @@ if [ "$(whoami)" = "apache" ];
 then
     nohup php cronjob/pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
 else
-    sudo -u apache nohup php cronjob/pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
+    sudo -u apache nohup php cronjob/tilepyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
 fi
 
 echo "Applying database scripts..."
