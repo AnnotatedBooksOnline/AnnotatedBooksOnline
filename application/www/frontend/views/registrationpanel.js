@@ -123,7 +123,7 @@ Ext.define('Ext.ux.RegistrationForm', {
         
         if (target)
         {
-            RequestManager.getInstance().request('Main', 'textPage', {textPage: 'terms-of-use'}, this,
+            RequestManager.getInstance().request('Setting', 'getSetting', {setting: 'terms-of-use'}, this,
                 function(termsOfUse)
                 {
                     var _this = this;

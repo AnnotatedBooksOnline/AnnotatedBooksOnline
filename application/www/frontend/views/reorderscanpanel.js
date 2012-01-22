@@ -54,57 +54,17 @@ Ext.define('Ext.ux.ReorderScanForm', {
     {
         var _this = this;
         
-        if (this.existingBinding === undefined)
-        {
-            alert('NONON');
-            RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-                function(result)
-                {
-                    if (result['status'] === 0)
-                    {
-                        _this.bindingId = result['bindingId'];
-                    
-                        _this.store.filter({property: 'bindingId', value: _this.bindingId});
-                        _this.store.load();
-                    }
-                    else
-                    {
-                        Ext.Msg.show({
-                            title: 'Error',
-                            msg: 'This step of the uploading process is currently unavailable',
-                            buttons: Ext.Msg.OK
-                        });
-                    
-                        this.close();
-                    }
-                }, 
-                function()
-                {
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'There is a problem with the server. Please try again later',
-                        buttons: Ext.Msg.OK
-                    });
-                
-                    this.close();
-                });
-        }
-        else
-        {
-            this.bindingId = this.existingBinding.bindingId;
-            
-            _this.store.filter({property: 'bindingId', value: this.existingBinding.bindingId});
-            _this.store.load();
-        }
-        
+        // Load all scans for this binding.
+        _this.store.filter({property: 'bindingId', value: this.bindingId});
+        _this.store.load();
+
         var defConfig = {
             items: [{
                 xtype: 'bindinginformationfieldset'
             },{
                 xtype: 'reorderscanfieldset',
                 name: 'reorder',
-                store: this.store,
-                binding: this.binding
+                store: this.store
             }],
             
             submitButtonText: 'Save'
@@ -131,15 +91,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
         
         // Send the changes to the database.
         var onSuccess = function(data)
-        {
-            Ext.Msg.show({
-                title: 'Success',
-                msg: 'The pages were succesfully reordered.',
-                buttons: Ext.Msg.OK
-            });
-            
-            Application.getInstance().gotoTab('selectbook', [_this.existingBinding], true);
-            
+        {         
+            Application.getInstance().gotoTab('selectbook', [this.bindingId, this.isExistingBinding], true);   
             this.close();
         };
         

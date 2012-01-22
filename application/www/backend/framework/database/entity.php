@@ -107,7 +107,9 @@ abstract class Entity
      */
     public function saveDetails()
     {
-        throw new EntityException('entity-function-not-implemented');
+        // No details to save by default.
+        
+        //throw new EntityException('entity-function-not-implemented');
     }
     
     /**

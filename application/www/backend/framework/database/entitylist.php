@@ -199,7 +199,7 @@ abstract class EntityList implements IteratorAggregate
             {
                 foreach ($entities as $entity)
                 {
-                    $entity->save();
+                    $entity->saveWithDetails();
                 }
             }
         );
