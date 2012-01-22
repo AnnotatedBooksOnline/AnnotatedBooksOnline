@@ -68,6 +68,15 @@ class Book extends Entity
     }
     
     /**
+    *
+    */
+    public function loadDetails()
+    {
+        $this->authorList = AuthorList::find(array('bookId' => $this->bookId));
+        $this->bookLanguageList = BookLanguageList::find(array('bookId' => $this->bookId));
+    }
+    
+    /**
      *
      * Enter description here ...
      */

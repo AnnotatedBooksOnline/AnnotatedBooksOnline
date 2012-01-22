@@ -10,6 +10,35 @@ Ext.define('Ext.ux.UserListPanel', {
     {
         var _this = this;
         
+        // The checkbox to toggle automatic user activation.
+        // TODO: make it look a little nicer
+        var autoAcceptBox = {
+            xtype: 'checkbox',
+            boxLabel: 'Automatically accept user registration requests',
+            id: 'autoAcceptBox',
+            listeners: {
+                change: function ()
+                {
+                    var value = Ext.getCmp('autoAcceptBox').getValue();
+                    
+                    RequestManager.getInstance().request(
+                       'UserActivation',
+                       'setAutoAcceptance',
+                       {autoAccept: value},
+                       _this,
+                       function()
+                       {
+                           // No need to do anything on success.
+                       },
+                       function()
+                       {
+                           return true;
+                       }
+                   );
+                }
+            }
+        };
+        
         var store = Ext.create('Ext.ux.StoreBase', {
             model: 'Ext.ux.UserModel',
             pageSize: 20
@@ -42,7 +71,7 @@ Ext.define('Ext.ux.UserListPanel', {
         
         var defConfig = {
             border: false,
-            items: [{
+            items: [{ 
                 xtype: 'grid',
                 name: 'grid',
                 border: false,
@@ -127,6 +156,23 @@ Ext.define('Ext.ux.UserListPanel', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        // Add autoAcceptBox with current value.
+        RequestManager.getInstance().request(
+                'Setting',
+                'getSetting',
+                {setting: 'auto-user-acceptance'},
+                _this,
+                function(value)
+                {
+                    _this.insert(0, autoAcceptBox);
+                   Ext.getCmp('autoAcceptBox').setValue(value == '1');
+                },
+                function()
+                {
+                    return true;
+                }
+            );
         
         RequestManager.getInstance().request(
             'Authentication',

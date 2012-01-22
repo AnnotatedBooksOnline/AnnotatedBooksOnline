@@ -391,9 +391,9 @@ Ext.define('Ext.ux.SelectBookForm', {
         bookstore.each(function(record)
         {
             fields.push({
-            	bookId: record.get('bookId'),
-            	firstPage: record.get('firstPage'),
-            	lastPage: record.get('lastPage')
+                bookId: record.get('bookId'),
+                firstPage: record.get('firstPage'),
+                lastPage: record.get('lastPage')
             });
         });
         

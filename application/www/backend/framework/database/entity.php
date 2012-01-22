@@ -23,11 +23,21 @@ abstract class Entity
     /** Identifier of the user who has last changed this entity. */
     private $changedBy;
     
+    /** Marks the entity for deletion in an entity list. */
+    private $markedAsDeleted;
+    
+    /** Marks the entity for deletion in an entity list. */
+    private $markedAsUpdated;
+    
     /**
      * Loads this entity.
      */
     public function load()
     {
+        // By default an entity is not marked for deletion or updating.
+        $markedAsDeleted = false;
+        $markedAsUpdated = false;
+        
         // Determine if the primary keys are filled.
         if (!$this->arePrimaryKeysFilled())
         {
@@ -482,4 +492,10 @@ abstract class Entity
     {
         throw new EntityException('entity-function-not-implemented');
     }
+
+    public function getMarkedAsDeleted() { return $this->markedAsDeleted; }
+    public function setMarkedAsDeleted($marked) { $this->markedAsDeleted = $marked; }
+    
+    public function getMarkedAsUpdated() { return $this->markedAsUpdated; }
+    public function setMarkedAsUpdated($marked) { $this->markedAsUpdated = $marked; }
 }

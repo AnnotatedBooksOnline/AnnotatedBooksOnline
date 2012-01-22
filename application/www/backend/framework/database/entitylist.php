@@ -30,6 +30,7 @@ abstract class EntityList implements IteratorAggregate
      */
     public function add($entity)
     {
+        $entity->setMarkedAsUpdated(true);
         $this->entities[] = $entity;
     }
     
@@ -173,6 +174,8 @@ abstract class EntityList implements IteratorAggregate
             
             // Add entity.
             $list->add($entity);
+            
+            $entity->setMarkedAsUpdated(false);
         }
         
         return $list;
@@ -189,12 +192,11 @@ abstract class EntityList implements IteratorAggregate
     
     /**
      * Loads entities.
-     * /
-    public static function load($keyValues) 
+     */
+    public function load($keyValues) 
     {
-        // NOTE: Not yet needed, I think.
+        //$this->entities = self::find($keyValues);
     }
-    */
     
     /**
      * Saves all entities to the database.
@@ -207,10 +209,43 @@ abstract class EntityList implements IteratorAggregate
             {
                 foreach ($entities as $entity)
                 {
-                    $entity->saveWithDetails();
+                    if ($entity->getMarkedAsDeleted())
+                    {
+                        $entity->delete();
+                    } 
+                    else if ($entity->getMarkedAsUpdated())
+                    {
+                        $entity->saveWithDetails();
+                    }
                 }
             }
         );
+    }
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $marked
+     */
+    public function markAllAsDeleted($marked)
+    {
+        foreach ($this->entities as $entity)
+        {
+            $entity->setMarkedAsDeleted($marked);
+        }
+    }
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param unknown_type $marked
+     */
+    public function markAllAsUpdated($marked)
+    {
+        foreach ($this->entities as $entity)
+        {
+            $entity->setMarkedAsUpdated($marked);
+        }
     }
     
     /**
@@ -273,6 +308,30 @@ abstract class EntityList implements IteratorAggregate
             $entity->setValues($values);
         }
     }
+    
+    
+    /**
+    * Gets an entity by a key value combination.
+    *
+    * @param  $key  Name of the value.
+    * @param  $value Value.
+    * 
+    * @return  Array of values.
+    */
+    public function getByKeyValue($key, $value)
+    {
+        foreach ($this->entities as $entity)
+        {
+            $values = $entity->getValues(array($key));
+            if ($values[$key] === $value)
+            {
+                return $entity; 
+            }
+        }
+    
+        return null;
+    }
+    
     
     /**
      * Gets a value of all these entities.
