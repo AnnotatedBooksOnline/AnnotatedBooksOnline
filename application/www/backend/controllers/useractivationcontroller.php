@@ -153,7 +153,7 @@ class UserActivationController extends Controller
      * 
      * In both cases users will still require to click an activation link though.
      * 
-     * @param $data Should contain a boolean 'auto-accept', which is true if the setting should be
+     * @param $data Should contain a boolean 'autoAccept', which is true if the setting should be
      *              turned on and false if it should be turned off.
      */
     public function actionSetAutoAcceptance($data)
@@ -162,7 +162,7 @@ class UserActivationController extends Controller
         Authentication::assertPermissionTo('change-global-settings');
         
         // Fetch wheter to turn automatic acceptance on or off.
-        $newValue = self::getBoolean($data, 'auto-accept');
+        $newValue = self::getBoolean($data, 'autoAccept');
         
         // Start a transaction.
         Database::getInstance()->doTransaction(
@@ -176,7 +176,7 @@ class UserActivationController extends Controller
             {
                 Query::update('Users', array('activationStage' => User::ACTIVE_STAGE_ACCEPTED))
                         ->where('activationStage = :stage')
-                        ->execute(User::ACTIVE_STAGE_PENDING);
+                        ->execute(array('stage' => User::ACTIVE_STAGE_PENDING));
             }
         });
     }
