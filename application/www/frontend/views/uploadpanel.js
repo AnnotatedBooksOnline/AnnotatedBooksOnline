@@ -676,7 +676,8 @@ Ext.define('Ext.ux.UploadForm', {
                     _this.setLoading('Uploading...');
                     _this.checkIntervalId = setInterval(function() { _this.checkCompleted(); }, 1000);
                 }
-            }]
+            }],
+            selectFirstField: false
         };
         
         Ext.apply(this, defConfig);

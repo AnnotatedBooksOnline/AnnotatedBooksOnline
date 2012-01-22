@@ -107,7 +107,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 store: this.store,
                 deletedScanStore: this.deletedScanStore
             }],
-            
+            selectFirstField: false,
             submitButtonText: 'Save'
         };
         
