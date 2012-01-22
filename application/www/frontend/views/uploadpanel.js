@@ -622,7 +622,8 @@ Ext.define('Ext.ux.UploadForm', {
         var defConfig = {
             name: 'uploadform',
             items: [{
-                xtype: 'scanpanel'
+                xtype: 'scanpanel',
+                showExistingBindingMessage: this.existingBinding !== undefined
             },{
                 xtype: 'bindingfieldset',
                 existingBinding : this.existingBinding

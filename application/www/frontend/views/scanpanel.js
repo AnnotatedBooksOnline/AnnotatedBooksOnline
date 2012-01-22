@@ -343,23 +343,35 @@ Ext.define('Ext.ux.ScanPanel', {
             },{
                 xtype: 'container',
                 layout: {
-                    type: 'hbox',
-                    pack: 'end'
+                    type: 'column'
                 },
-                items: [{
-                    xtype: 'button',
-                    text: 'Clear scans',
-                    width: 100,
-                    handler: function()
-                    {
-                        _this.grid.removeAll();
-                    }
-                },{
-                    xtype: 'container',
-                    html: '<div style="margin-left: 10px;"><div id="' +
-                          this.uploadDivId + '"></div></div>',
-                    height: 30
-                }]
+            	items: [{
+            		columnWidth: this.showExistingBindingMessage ? .6 : 0,
+            		xtype: 'label',
+            		text: this.showExistingBindingMessage ? 'Existing scans for this binding are not shown' : ' '
+            	},{
+            		xtype: 'container',
+            		columnWidth: this.showExistingBindingMessage ? .4 : 1,
+            		layout: {
+            			align: 'right',
+            			type: 'hbox',
+            			pack: 'end'
+            		},
+            		items: [{
+            			xtype: 'button',
+            			text: 'Clear scans',
+            			width: 100,
+            			handler: function()
+            			{
+            				_this.grid.removeAll();
+            			}
+            		},{
+            			xtype: 'container',
+            			html: '<div style="margin-left: 10px;"><div id="' +
+                          	this.uploadDivId + '"></div></div>',
+                          	height: 30
+            		}]
+            	}]
             }]
         };
         
