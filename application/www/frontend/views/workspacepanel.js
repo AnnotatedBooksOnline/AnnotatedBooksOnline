@@ -407,9 +407,12 @@ Ext.define('Ext.ux.WorkspacePanel', {
     
     initComponent: function()
     {
+        var _this = this;
+        
         var defConfig = {
             layout: 'fit',
             border: false,
+            isActive: false,
             items: [{
                 xtype: 'annotationspanel',
                 title: 'Annotations',
@@ -418,45 +421,57 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 title: 'Export',
                 xtype: 'exportform',
                 viewer: this.viewer
-            }]
+            }],
+            listeners: {
+                afterrender: function()
+                {
+                    this.up('viewerpanel').on('activate', this.onTabActivate, this);
+                    this.up('viewerpanel').on('deactivate', this.onTabDeactivate, this);
+                }
+            }
         };
         
         Ext.apply(this, defConfig);
         this.callParent();
         
-        if (Authentication.getInstance().isLoggedOn())
-        {
-            this.onLoggedOn();
-        }
-        
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
         eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
-    onLoggedOn: function()
+    onTabActivate: function()
     {
-        this.insert(1, {
-            title: 'My notes',
-            xtype: 'notespanel',
-            viewer: this.viewer,
-            hidden: !Authentication.getInstance().hasPermissionTo('manage-notebook')
-        });
+        this.isActive = true;
+        this.updateTabs();
     },
     
-    onLoggedOut: function()
+    onTabDeactivate: function()
     {
-        this.remove(1);
+        this.isActive = false;
     },
     
-    onAuthenticationChange: function(event, authentication)
+    updateTabs: function()
     {
-        if (authentication.isLoggedOn())
+        var notespermission = Authentication.getInstance().hasPermissionTo('manage-notebook');
+        if (notespermission && !this.down('notespanel'))
         {
-            this.onLoggedOn();
+            this.insert(1, {
+                title: 'My notes',
+                xtype: 'notespanel',
+                viewer: this.viewer
+            });
         }
-        else
+        else if (!notespermission && this.down('notespanel'))
         {
-           this.onLoggedOut();
+            this.remove(this.down('notespanel'));
+        }
+    },
+    
+    onAuthenticationChange: function()
+    {
+        if (this.isActive)
+        {
+            this.updateTabs();
         }
     }
 });
+
