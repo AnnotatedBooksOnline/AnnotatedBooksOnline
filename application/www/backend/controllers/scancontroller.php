@@ -3,6 +3,7 @@
 
 require_once 'controllers/controllerbase.php';
 require_once 'models/scan/scanlist.php';
+require_once 'models/upload/upload.php';
 require_once 'models/binding/binding.php';
 
 /**
@@ -24,10 +25,10 @@ class ScanController extends ControllerBase
             'width',
             'height',
             'zoomLevel',
-            //'filename'
+            'scanName',
+            'bookTitle'
         ));
         
-        // TODO: Give scan a filename. (Was previously loaded from upload.)
     }
     
     /**
@@ -42,6 +43,7 @@ class ScanController extends ControllerBase
         // Collect the binding id and ordered scans from the request.
         $inputBindingId = self::getInteger($data, 'bindingId');
         $inputOrderedScans = self::getArray($data, 'orderedScans');
+        $inputDeletedScans = self::getArray($data, 'deletedScans');
         
         // Save the new order of the scans.
         $page = 0;
@@ -51,6 +53,20 @@ class ScanController extends ControllerBase
             $scan = new Scan($scanId);
             $scan->setPage(++$page);
             $scan->save();
+        }
+        
+        // Deleted the deleted scans.
+        foreach ($inputDeletedScans as $key => $scanId)
+        {
+            $scan = new Scan($scanId);
+            $scan->delete();
+            
+            // Deleted any associated uploads.
+            if ($scan->getUploadId() !== null) 
+            {
+                $upload = new Upload($scan->getUploadId());
+                $upload->delete();
+            }
         }
         
         // Update the binding status if this is a new binding and not a binding

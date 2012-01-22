@@ -18,27 +18,63 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
     {
         var defConfig = {
             items: [{
-                xtype: 'multiselect',
-                name: 'scans',
-                width: 400,
-                height: 400,
-                allowBlank: true,
-                ddReorder: true,
-                store: this.store,
-                displayField: 'filename',
-                tbar: [{
-                    text: 'Go back to old ordening',
-                    handler: function()
-                    {
-                        this.up('[name=scans]').store.sort('page', 'ASC');
-                    }
+            	xtype: 'container',
+            	layout: {
+            		align: 'left',
+            		type: 'hbox'
+            	},
+                items: [{
+                	xtype: 'multiselect',
+                	name: 'scans',
+                	width: 400,
+                	height: 400,
+                	allowBlank: true,
+                	ddReorder: true,
+                	store: this.store,
+                	displayField: 'scanName',
+                	dragGroup:'scans',
+                	dropGroup:'deletedScans',
+                	tbar: [{
+                		text: 'Scan order in binding',
+                		xtype: 'label',
+                	}]
+                },{
+                	xtype: 'multiselect',
+                	name: 'deletedscans',
+                	width: 400,
+                	height: 400,
+                	allowBlank: true,
+                	store: this.deletedScanStore,
+                	displayField: 'scanName',
+                	dragGroup:'deletedScans',
+                	dropGroup:'scans',
+                	tbar: [{
+                		text: 'Deleted scans (drag here to delete)',
+                		xtype: 'label',
+                	}]
                 }]
+            },{
+            	xtype: 'button',
+        		text: 'Go back to old ordening',
+        		handler: function()
+        		{
+        			// Reload the store from server.
+        			this.up('[name=reorderscanform]').store.load();
+        			// Reset deleted scans.
+        			this.up('[name=reorderscanform]').deletedScanStore.removeAll(false);
+        		}
             }]
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        // Hide the deleted scans list for new binding.
+        if (this.isExistingBinding === false)
+        {
+        	this.down('[name=deletedscans]').hide(true);
+        }
     }
 });
 
@@ -49,22 +85,27 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
 Ext.define('Ext.ux.ReorderScanForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.reorderscanform',
-    store: Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'}),
+    
     initComponent: function() 
     {
         var _this = this;
         
         // Load all scans for this binding.
+        _this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
         _this.store.filter({property: 'bindingId', value: this.bindingId});
         _this.store.load();
 
+        _this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+
         var defConfig = {
+        	name: 'reorderscanform',
             items: [{
                 xtype: 'bindinginformationfieldset'
             },{
                 xtype: 'reorderscanfieldset',
                 name: 'reorder',
-                store: this.store
+                store: this.store,
+                deletedScanStore: this.deletedScanStore
             }],
             
             submitButtonText: 'Save'
@@ -77,17 +118,22 @@ Ext.define('Ext.ux.ReorderScanForm', {
     
     submit: function()
     {
-        // Put the changes into an array.
-        var records = this.store;
-        var fields  = [];
         var _this = this;
         
-        records.each(function(record)
+        var orderedScanIds = [];
+        this.store.each(function(record)
         {
             var scanId = record.get('scanId');
-            
-            fields.push(scanId);
+            orderedScanIds.push(scanId);
         });
+        
+        var deletedScanIds  = [];
+        this.deletedScanStore.each(function(record)
+        {
+            var scanId = record.get('scanId');
+            deletedScanIds.push(scanId);
+        });
+        
         
         // Send the changes to the database.
         var onSuccess = function(data)
@@ -111,7 +157,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 'reorder', 
                 {
                     bindingId: this.bindingId,
-                    orderedScans: fields
+                    orderedScans: orderedScanIds,
+                    deletedScans: deletedScanIds
                 },
                 this, 
                 onSuccess, 

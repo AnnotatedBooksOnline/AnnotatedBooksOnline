@@ -29,9 +29,12 @@ class Scan extends Entity
     protected $width;
     protected $height;
     protected $zoomLevel;
-    protected $filename;
+    protected $scanName;
     protected $uploadId;
     protected $bindingId;
+    
+    /** Joined attributes. */
+    protected $bookTitle;
 
     /**
      * Constructs a scan entity.
@@ -143,7 +146,7 @@ class Scan extends Entity
      */
     public static function getColumns()
     {
-        return array('scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'bindingId');
+        return array('scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'bindingId', 'scanName');
     }
     
     /**
@@ -162,7 +165,8 @@ class Scan extends Entity
             'height'    => 'int',
             'zoomLevel' => 'int',
             'uploadId'  => 'int',
-            'bindingId' => 'int'
+            'bindingId' => 'int',
+        	'scanName'  => 'string'
         );
     }
     
@@ -177,6 +181,9 @@ class Scan extends Entity
     
     public function getPage()      { return $this->page;  }
     public function setPage($page) { $this->page = $page; }
+    
+    public function getScanName()  { return $this->scanName; }
+    public function setScanName($scanName) { $this->scanName = $scanName;}
     
     public function getStatus()        { return $this->status;    }
     public function setStatus($status) { $this->status = $status; }
@@ -198,4 +205,7 @@ class Scan extends Entity
     
     public function getBindingId()    { return $this->bindingId; }
     public function setBindingId($id) { $this->bindingId = $id;  }
+    
+    public function getBookTitle()    { return $this->bookTitle; }
+    public function setBookTitle($bookTitle) { $this->bindingId = $id; }
 }

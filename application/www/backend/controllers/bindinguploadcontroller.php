@@ -33,6 +33,7 @@ class BindingUploadController extends Controller
         Database::getInstance()->startTransaction();
         
         // Assert that the user is authenticated. 
+        // TODO: Mathijs : Permissions when modifying bindings.
         Authentication::assertPermissionTo('upload-bindings');  
         
         // Retrieve contents of record.
@@ -192,6 +193,7 @@ class BindingUploadController extends Controller
             $scan->setStatus(Scan::STATUS_PENDING);
             $scan->setPage($pageNumber++);
             $scan->setUploadId($upload->getUploadId());
+            $scan->setScanName($upload->getFilename());
             
             // Identify the scan.
             $this->identifyScan($scan, $upload);

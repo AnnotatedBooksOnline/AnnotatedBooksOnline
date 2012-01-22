@@ -103,7 +103,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
                     width:     250,
                     flex:      1,
                     sortable:  false,
-                    dataIndex: 'filename'
+                    dataIndex: 'scanName'
                 },{
                     text:      'Book title',
                     width:     250,
