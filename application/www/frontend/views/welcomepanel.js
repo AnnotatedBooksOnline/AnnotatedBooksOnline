@@ -18,7 +18,7 @@ Ext.define('Ext.ux.Welcome', {
         
         this.callParent();
         
-        RequestManager.getInstance().request('Main', 'textPage', {textPage: 'welcome'}, this,
+        RequestManager.getInstance().request('Setting', 'getSetting', {setting: 'welcome-page'}, this,
             function(textPage)
             {
                 var text = {
