@@ -326,6 +326,8 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.information = this.down('navigationpanel');
         this.workspace   = this.down('workspacepanel');
         
+        this.getEventDispatcher().bind('pagechange', this, this.changeTabTitle);
+        
         // Finally, we can go to the indicated page.
         this.gotoPage(this.pageNumber);
     },
@@ -473,6 +475,31 @@ Ext.define('Ext.ux.ViewerPanel', {
         
         // Trigger event.
         this.eventDispatcher.trigger('pagechange', this, number);
+    },
+    
+    changeTabTitle: function()
+    {
+        var bindingModel = this.getBinding().getModel();
+        
+        // Set book field label and value.
+        var book = this.getBook();
+        
+        // Set default tab title (binding uniqueness constraint)
+        var tabTitle = 'Binding: '
+                     + escape(bindingModel.get('signature')) + ', '
+                     + escape(bindingModel.get('library').libraryName); 
+        
+        if (book !== undefined)
+        {
+            tabTitle = 'Book: ' + book.get('title');
+        }
+        
+        // Update tab title, but not too long.
+        if (tabTitle.length > 47) 
+        {
+            tabTitle = tabTitle.substring(0, 46) + '...';
+        }
+        this.up('.tabpanel').getActiveTab().tab.setText(tabTitle);
     },
     
     setTool: function(tool)

@@ -388,7 +388,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var isExistingBinding = false;
                 if (data.length >= 2 && data[1] !== undefined) 
                 {
-                	isExistingBinding = true
+                    isExistingBinding = true
                 }
                 
                 // Add a reorder scan tab.
@@ -414,7 +414,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var isExistingBinding = false;
                 if (data.length >= 2 && data[1] !== undefined) 
                 {
-                	isExistingBinding = true
+                    isExistingBinding = true
                 }
                 
                 // Add a select book tab.
