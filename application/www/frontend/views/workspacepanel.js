@@ -436,7 +436,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
     onLoggedOn: function()
     {
         this.insert(1, {
-            title: 'Notes',
+            title: 'My notes',
             xtype: 'notespanel',
             viewer: this.viewer,
             hidden: !Authentication.getInstance().hasPermissionTo('manage-notebook')

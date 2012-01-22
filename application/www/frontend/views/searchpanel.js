@@ -1060,7 +1060,7 @@ Ext.define('Ext.ux.SearchPanel', {
                 layout: 'fit',
                 border: false,
                 items: [{
-                    title: 'Notes',
+                    title: 'My notes',
                     xtype: 'notespanel'
                 }]
             }]
