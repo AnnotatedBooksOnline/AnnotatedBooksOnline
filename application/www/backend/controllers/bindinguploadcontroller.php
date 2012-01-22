@@ -62,8 +62,9 @@ class BindingUploadController extends Controller
         else 
         {
             $binding = new Binding($inputBindingId);
+            $binding->loadDetails();
         }
-        
+                
         // Fill the binding attributes.
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
@@ -139,7 +140,11 @@ class BindingUploadController extends Controller
             }
             else
             {
-                $book = new Book($inputBookId);
+                // Retrieve the book to be modified from the existing binding.
+                $book = $binding->getBookList()->getByKeyValue('bookId', $inputBookId);
+                if ($book == null) {
+                    throw new ControllerException('invalid-book-id-provided');
+                }
             }
             
             // Fill the book attributes with information from the request.
@@ -150,7 +155,10 @@ class BindingUploadController extends Controller
             $book->setPlacePublished(self::getString($inputBook, 'placePublished'));
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getInteger($inputBook, 'printVersion'));
-        
+            
+            // Mark the book for saving.
+            $book->setMarkedAsUpdated(true);
+            
             // Create the book authors.
             $this->createAuthors($inputBook, $book);
             
@@ -211,13 +219,28 @@ class BindingUploadController extends Controller
     */
     private function createBookLanguages($inputBook, $book)
     {
-        // Create all book language entities.
+
+        // Mark all provenances for deletion. Provenances that should remain will be unmarked later.
+        $book->getBookLanguageList()->markAllAsDeleted(true);
+        
+        // Iterate over all languages for the book.
         foreach(self::getArray($inputBook, 'languages') as $languageId)
         {
-           $bookLanguage = new BookLanguage();
-           $bookLanguage->setLanguageId($languageId);
-              
-           $book->getBookLanguageList()->add($bookLanguage);
+            // Determine if the bindinglanguage is already.
+            $existingBookLanguage = $book->getBookLanguageList()->getByKeyValue('languageId', $languageId);
+            if ($existingBookLanguage)
+            {
+                // Prevent this provenance from being deleted.
+                $existingBookLanguage->setMarkedAsDeleted(false);
+            }
+            else
+            {
+                // Create the binding language and add it to the list.
+                $existingBookLanguage = new BookLanguage();
+                $existingBookLanguage->setLanguageId($languageId);
+                 
+                $book->getBookLanguageList()->add($existingBookLanguage);
+            }
         }
     }
     
@@ -229,13 +252,27 @@ class BindingUploadController extends Controller
     */
     private function createBindingAnnotationLanguages($inputBinding, $binding)
     {
-        // Create all book language entities.
+        // Mark all binding languages for deletion. Binding languages that should remain will be unmarked later.
+        $binding->getBindingLanguageList()->markAllAsDeleted(true);
+        
+        // Iterate over all languages for the binding.
         foreach(self::getArray($inputBinding, 'languagesofannotations') as $languageId)
         {
-            $bindingLanguage = new BindingLanguage();
-            $bindingLanguage->setLanguageId($languageId);
-             
-            $binding->getBindingLanguageList()->add($bindingLanguage);
+            // Determine if the bindinglanguage is already.
+            $existingBindingLanguage = $binding->getBindingLanguageList()->getByKeyValue('languageId', $languageId);
+            if ($existingBindingLanguage)
+            {
+                // Prevent this provenance from being deleted.
+                $existingBindingLanguage->setMarkedAsDeleted(false);
+            }
+            else
+            {
+                // Create the binding language and add it to the list.
+                $bindingLanguage = new BindingLanguage();
+                $bindingLanguage->setLanguageId($languageId);
+                 
+                $binding->getBindingLanguageList()->add($bindingLanguage);
+            }
         }
     }
     
@@ -247,6 +284,9 @@ class BindingUploadController extends Controller
     */
     private function createAuthors($inputBook, $book)
     {
+        // Mark all provenances for deletion. Provenances that should remain will be unmarked later.
+        $book->getAuthorList()->markAllAsDeleted(true);
+        
         // Split all persons in the provenance.
         $authorPersonNames = array_map("trim", explode(',', self::getString($inputBook, 'author'))); 
         
@@ -261,12 +301,23 @@ class BindingUploadController extends Controller
             // Create the person for the provenance.
             $person = $this->createPerson($authorPersonName);
     
-            // Create the provenance associating the binding with the person.
-            $author = new Author();
-            $author->setPersonId($person->getPersonId());
+            // Determine if the provenance exists already.
+            $existingAuthor = $book->getAuthorList()->getByKeyValue('personId', $person->getPersonId());
+            if ($existingAuthor)
+            {
+                // Prevent this provenance from being deleted.
+                $existingAuthor->setMarkedAsDeleted(false);
+            }
+            else
+            {
+                // Create the provenance associating the binding with the person.
+                $author = new Author();
+                $author->setPersonId($person->getPersonId());
     
-            // Add the provenance to the binding.
-            $book->getAuthorList()->add($author);
+                // Add the provenance to the binding.
+                $book->getAuthorList()->add($author);
+            }
+            
         }
     }
     
@@ -278,27 +329,43 @@ class BindingUploadController extends Controller
      */
     private function createProvenances($inputBinding, $binding)
     {
+        // Mark all provenances for deletion. Provenances that should remain will be unmarked later.
+        $binding->getProvenanceList()->markAllAsDeleted(true);
+        
         // Split all persons in the provenance.
         $provenancePersonNames = array_map("trim", explode(',', self::getString($inputBinding, 'provenance'))); 
         
         // Create all provenances.
         foreach($provenancePersonNames as $provenancePersonName)
         {
+            // Skip empty provenances.
             if ($provenancePersonName == "")
             {
                 continue;
             }
             
-            // Create the person for the provenance.
+            // Find or create the person for the provenance.
             $person = $this->createPerson($provenancePersonName);
             
-            // Create the provenance associating the binding with the person.
-            $provenance = new Provenance();
-            $provenance->setPersonId($person->getPersonId());
+            // Determine if the provenance exists already.
+            $existingProvenance = $binding->getProvenanceList()->getByKeyValue('personId', $person->getPersonId());
+            if ($existingProvenance)
+            {
+                // Prevent this provenance from being deleted.
+                $existingProvenance->setMarkedAsDeleted(false);
+            }
+            else
+            {
+                // Create the provenance associating the binding with the person.
+                $provenance = new Provenance();
+                $provenance->setPersonId($person->getPersonId());
+                
+                // Add the provenance to the binding.
+                $binding->getProvenanceList()->add($provenance);
+            }
             
-            // Add the provenance to the binding.
-            $binding->getProvenanceList()->add($provenance);
         }    
+        
     }
     
     /**

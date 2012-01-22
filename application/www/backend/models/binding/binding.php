@@ -65,11 +65,32 @@ class Binding extends Entity
         $this->bindingLanguageList = new BindingLanguageList();
     }
     
+    /**
+     * 
+     */
+    public function loadDetails()
+    {
+        $this->bookList = BookList::find(array('bindingId' => $this->bindingId));
+        $this->scanList = ScanList::find(array('bindingId' => $this->bindingId));
+        $this->provenanceList = ProvenanceList::find(array('bindingId' => $this->bindingId));
+        $this->bindingLanguageList = BindingLanguageList::find(array('bindingId' => $this->bindingId));
+        
+    }
+    
+    /**
+     * 
+     */
     public function saveDetails() 
     {
         // Save the book list.
         $this->bookList->setValue('bindingId', $this->bindingId);
         $this->bookList->save();
+        
+        // Load all book details.
+        foreach($this->bookList as $book)
+        {
+            $book->loadDetails();    
+        }
         
         // Save the scan list.
         $this->scanList->setValue('bindingId', $this->bindingId);
