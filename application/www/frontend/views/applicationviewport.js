@@ -63,6 +63,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                     Ext.MessageBox.alert('Success', 'An e-mail with' +
                                         ' instructions on how to reset your password will' +
                                         ' be send to you in a few minutes.');
+                                },
+                                function(error)
+                                {
+                                    if(error == 'user-not-found')
+                                    {
+                                        Ext.MessageBox.alert('E-mail unkown', 'The specified' +
+                                                ' e-mail address is not present in the system.');
+                                        return false;
+                                    }
+                                    else
+                                    {
+                                        return true;
+                                    }
                                 }
                             );
                         }
