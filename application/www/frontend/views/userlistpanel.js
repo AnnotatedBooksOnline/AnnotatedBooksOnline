@@ -19,22 +19,22 @@ Ext.define('Ext.ux.UserListPanel', {
             listeners: {
                 change: function ()
                 {
-                	var value = Ext.getCmp('autoAcceptBox').getValue();
-                	
-                	RequestManager.getInstance().request(
-        	           'UserActivation',
-        	           'setAutoAcceptance',
-        	           {autoAccept: value},
-        	           _this,
-        	           function()
-        	           {
-        	               // No need to do anything on success.
-        	           },
-        	           function()
-        	           {
-        	        	   return true;
-        	           }
-        	       );
+                    var value = Ext.getCmp('autoAcceptBox').getValue();
+                    
+                    RequestManager.getInstance().request(
+                       'UserActivation',
+                       'setAutoAcceptance',
+                       {autoAccept: value},
+                       _this,
+                       function()
+                       {
+                           // No need to do anything on success.
+                       },
+                       function()
+                       {
+                           return true;
+                       }
+                   );
                 }
             }
         };
@@ -159,20 +159,20 @@ Ext.define('Ext.ux.UserListPanel', {
         
         // Add autoAcceptBox with current value.
         RequestManager.getInstance().request(
- 	           'Setting',
- 	           'getSetting',
- 	           {setting: 'auto-user-acceptance'},
- 	           _this,
- 	           function(value)
- 	           {
- 	        	   _this.insert(0, autoAcceptBox);
- 	        	  Ext.getCmp('autoAcceptBox').setValue(value == '1');
- 	           },
- 	           function()
- 	           {
- 	        	   return true;
- 	           }
- 	       );
+                'Setting',
+                'getSetting',
+                {setting: 'auto-user-acceptance'},
+                _this,
+                function(value)
+                {
+                    _this.insert(0, autoAcceptBox);
+                   Ext.getCmp('autoAcceptBox').setValue(value == '1');
+                },
+                function()
+                {
+                    return true;
+                }
+            );
         
         RequestManager.getInstance().request(
             'Authentication',

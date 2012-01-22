@@ -25,7 +25,7 @@ class ScanList extends EntityList {
                              "zoomLevel",
                              "uploadId",
                              "scanName",
-        					 "Books.title as bookTitle")->
+                             "Books.title as bookTitle")->
             from(self::getTableName())->
             join("Books", 
                  array("Books.firstPage <= Scans.page",

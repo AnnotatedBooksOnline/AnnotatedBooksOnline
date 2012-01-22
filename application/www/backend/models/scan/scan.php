@@ -166,7 +166,7 @@ class Scan extends Entity
             'zoomLevel' => 'int',
             'uploadId'  => 'int',
             'bindingId' => 'int',
-        	'scanName'  => 'string'
+            'scanName'  => 'string'
         );
     }
     

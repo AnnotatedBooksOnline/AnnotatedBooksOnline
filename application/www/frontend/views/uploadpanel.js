@@ -139,10 +139,10 @@ Ext.define('Ext.ux.BindingFieldSet', {
     },
     
     fillFromExistingBinding: function(binding) {
-    	
-    	// Store the identifier of the existing binding.
-    	this.existingBindingId = binding.bindingId;
-    	
+        
+        // Store the identifier of the existing binding.
+        this.existingBindingId = binding.bindingId;
+        
         var existingBindingModel = binding.model;
         
         var provenances = "";
@@ -513,12 +513,12 @@ Ext.define('Ext.ux.BooksFieldSet', {
     },
     
     fillFromExistingBinding: function(binding) {
-    	var _this = this;
-    	
-    	// Insert a fieldset for every book in the existing book that is being modified.
-    	binding.model.booksStore.each(function(book)
-    	{
-    		_this.insert(_this.items.length - 1, 
+        var _this = this;
+        
+        // Insert a fieldset for every book in the existing book that is being modified.
+        binding.model.booksStore.each(function(book)
+        {
+            _this.insert(_this.items.length - 1, 
             [{
                 xtype: 'bookfieldset',
                 existingBook: book
@@ -686,7 +686,8 @@ Ext.define('Ext.ux.UploadForm', {
                     _this.setLoading('Uploading...');
                     _this.checkIntervalId = setInterval(function() { _this.checkCompleted(); }, 1000);
                 }
-            }]
+            }],
+            selectFirstField: false
         };
         
         Ext.apply(this, defConfig);
