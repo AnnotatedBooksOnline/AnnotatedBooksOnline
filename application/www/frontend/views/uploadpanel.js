@@ -37,8 +37,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
                 direction: 'ASC'
             }
         });
+    	
         annotationStore.load();
-        
+                
         var defConfig = {
             items: [{
                 xtype: 'container',
@@ -54,6 +55,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         name: 'library',
                         anchor: '98%',
                         labelAlign: 'top',
+                        //value: this.existingBinding !== undefined ? this.existingBinding.model.get('library')['libraryName'] : '',
                         validator: function(library)
                         {
                             var signature = _this.down('[name=signature]');
@@ -128,6 +130,35 @@ Ext.define('Ext.ux.BindingFieldSet', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        // Determine if an existing binding is modified. If this is the case display the existing
+        // binding fields in the form.
+        if (this.existingBinding !== undefined) {
+        	var existingBindingModel = this.existingBinding.model;
+        
+        	var provenances = "";
+        	existingBindingModel.provenancesStore.each(function(provenance)
+            {
+        		if (provenances !== "") 
+        		{
+        			provenances = provenances + ", ";
+        		}
+        		provenances = provenances + provenance.get('name');
+            });
+        	
+        	var languageIds = [];
+        	existingBindingModel.bindingLanguagesStore.each(function(language)
+            {
+        		languageIds.push(language.get('languageId'));
+            });
+            
+            this.down('[name=library]').setValue(existingBindingModel.get('library')['libraryName']);
+            this.down('[name=signature]').setValue(existingBindingModel.get('signature'));
+            this.down('[name=provenance]').setValue(provenances);
+            this.down('[name=languagesofannotations]').setValue(languageIds);
+
+        }
+        
     },
     
     getBinding: function()
@@ -380,6 +411,38 @@ Ext.define('Ext.ux.BookFieldset', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        // Determine if an existing book is modified. If this is the case display the existing
+        // book fields in the form.
+        if (this.existingBook !== undefined) {
+
+        	var languageIds = [];
+        	this.existingBook.bookLanguagesStore.each(function(language)
+            {
+        		languageIds.push(language.get('languageId'));
+            });
+        	
+        	
+            var authors = "";
+            this.existingBook.authorsStore.each(function(author)
+            {
+        		if (authors !== "") 
+        		{
+        			authors = authors + ", ";
+        		}
+        		authors = authors + author.get('name');
+            });
+
+            this.down('[name=title]').setValue(this.existingBook.get('title'));
+            this.down('[name=from]').setValue(this.existingBook.get('minYear'));
+            this.down('[name=to]').setValue(this.existingBook.get('maxYear'));
+            this.down('[name=publisher]').setValue(this.existingBook.get('publisher'));
+            this.down('[name=author]').setValue(authors);
+            this.down('[name=placePublished]').setValue(this.existingBook.get('placePublished'));
+            this.down('[name=version]').setValue(this.existingBook.get('version'));
+            this.down('[name=languages]').setValue(languageIds);
+ 
+        }
     },
     
     getBook: function()
@@ -414,8 +477,6 @@ Ext.define('Ext.ux.BooksFieldSet', {
         
         var defConfig = {
             items: [{
-                xtype: 'bookfieldset'
-            },{
                 xtype: 'button',
                 text: 'Add book',
                 width: 140,
@@ -431,6 +492,27 @@ Ext.define('Ext.ux.BooksFieldSet', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        // Determine if an existing binding is modified. If this is the case display the existing
+        // binding fields in the form.
+        if (this.existingBinding !== undefined) 
+        {
+        	// Insert a fieldset for every book in the existing book that is being modified.
+        	this.existingBinding.model.booksStore.each(function(book)
+            {
+        		_this.insert(_this.items.length - 1, 
+        			[{
+        				xtype: 'bookfieldset',
+        				existingBook: book
+        			}]);
+            });
+        }
+        else
+        {
+        	// Insert a blank set of books fields when a new book is being uploaded.
+        	this.insert(this.items.length - 1, [{xtype: 'bookfieldset'}]);
+        }
+        
     },
     
     getBooks: function()
@@ -495,43 +577,51 @@ Ext.define('Ext.ux.UploadForm', {
     {
         var _this = this;
         
-        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
-            function(result)
-            {
-                if (result['status'] === 2)
-                {
-                    // TODO: What to do here?
-                }
-                else
-                {
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'This step of the uploading process is currently unavailable',
-                        buttons: Ext.Msg.OK
-                    });
+        // Determine if the user is adding a new binding. If this is the case determine if the
+        // there is no existing pending binding for the user.
+        if (this.existingBinding === undefined)
+        {
+        
+        	RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this, 
+        			function(result)
+        			{
+                		if (result['status'] === 2)
+                		{
+                			// TODO: What to do here?
+                		}
+                		else
+                		{
+                			Ext.Msg.show({
+                				title: 'Error',
+                				msg: 'This step of the uploading process is currently unavailable',
+                				buttons: Ext.Msg.OK
+                			});
                     
-                    this.up('[name=upload]').close();
-                }
-            }, 
-            function()
-            {
-                Ext.Msg.show({
-                    title: 'Error',
-                    msg: 'There is a problem with the server. Please try again later',
-                    buttons: Ext.Msg.OK
-                });
+                			this.up('[name=upload]').close();
+                		}
+        			}, 
+        			function()
+        			{
+        				Ext.Msg.show({
+        					title: 'Error',
+        					msg: 'There is a problem with the server. Please try again later',
+        					buttons: Ext.Msg.OK
+        				});
                 
-                this.up('[name=upload]').close();
-            });
+        				this.up('[name=upload]').close();
+        			});
+        }
         
         var defConfig = {
             name: 'uploadform',
             items: [{
                 xtype: 'scanpanel'
             },{
-                xtype: 'bindingfieldset'
+                xtype: 'bindingfieldset',
+                existingBinding : this.existingBinding
             },{
-                xtype: 'booksfieldset'
+                xtype: 'booksfieldset',
+                existingBinding : this.existingBinding
             }],
             
             listeners: {

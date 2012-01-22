@@ -19,6 +19,10 @@ Ext.define('Ext.ux.BindingModel', {
         model: 'Ext.ux.ProvenanceModel',
         name: 'provenances',
         filterProperty: 'bindingId'
+    },{
+        model: 'Ext.ux.BindingLanguageModel',
+        name: 'bindingLanguages',
+        filterProperty: 'bindingId'
     }],
     
     proxy: {
