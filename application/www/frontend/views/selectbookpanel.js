@@ -464,7 +464,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                 {
                     bindingId:this.bindingId, 
                     selectedBooks:fields
-                }
+                },
                 this, 
                 onSuccess, 
                 onFailure);

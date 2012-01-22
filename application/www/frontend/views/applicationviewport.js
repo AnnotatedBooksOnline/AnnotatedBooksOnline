@@ -544,6 +544,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 });
                 
                 break;
+            
+            case 'termsofuse':
+                // Add a terms of use tab.
+                Ext.apply(tabConfig, {
+                    title: 'Terms of Use',
+                    xtype: 'termsofusepanel'
+                });
+                
+                break;
                 
             case 'activation':
                 // Add an activation tab.

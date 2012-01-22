@@ -1,10 +1,10 @@
 /*
- * Welcome panel class.
+ * Terms of use panel class.
  */
 
-Ext.define('Ext.ux.Welcome', {
+Ext.define('Ext.ux.TermsOfUse', {
     extend: 'Ext.Panel',
-    alias: 'widget.welcomepanel',
+    alias: 'widget.termsofusepanel',
     
     initComponent: function() 
     {        
@@ -18,7 +18,7 @@ Ext.define('Ext.ux.Welcome', {
         
         this.callParent();
         
-        RequestManager.getInstance().request('Main', 'textPage', {textPage: 'welcome'}, this,
+        RequestManager.getInstance().request('Main', 'textPage', {textPage: 'terms-of-use'}, this,
             function(textPage)
             {
                 var text = {

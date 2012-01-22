@@ -134,10 +134,11 @@ class MainController extends Controller
     {
         $textPage = self::getString($data, 'textPage');
         
-        // TODO: Secure this, prefix the name or something, as we can now get *any* setting!
+        if ($textPage !== 'terms-of-use')
+        {
+            $textPage .= '-page';
+        }
         
-        // TODO: Is it just an HTML body, or a whole HTML page?
-        // TODO: In the first case, we should put an XHTML page with body around it.
         return Setting::getSetting($textPage);
     }
     
