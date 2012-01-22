@@ -53,7 +53,7 @@ class BookController extends ControllerBase
         
         // Update the binding status if required.
         $binding = new Binding($book->getBindingId());
-        if ($binding->getStatus != Binding::STATUS_SELECTED)
+        if ($binding->getStatus() != Binding::STATUS_SELECTED)
         {
             $binding->setStatus(Binding::STATUS_SELECTED);
             $binding->save();

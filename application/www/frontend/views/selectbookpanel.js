@@ -429,11 +429,11 @@ Ext.define('Ext.ux.SelectBookForm', {
         var fields = [];
         bookstore.each(function(record)
         {
-            var bookId    = record.get('bookId');
-            var firstPage = record.get('firstPage');
-            var lastPage  = record.get('lastPage');
-            
-            fields.push([bookId, firstPage, lastPage]);
+            fields.push({
+            	bookId: record.get('bookId'),
+            	firstPage: record.get('firstPage'),
+            	lastPage: record.get('lastPage')
+            });
         });
         
         // Send the changes to the database
@@ -464,7 +464,7 @@ Ext.define('Ext.ux.SelectBookForm', {
         		{
         			bindingId:this.bindingId, 
         			selectedBooks:fields
-        		}
+        		},
         		this, 
         		onSuccess, 
         		onFailure);
