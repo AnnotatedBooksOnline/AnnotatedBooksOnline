@@ -58,6 +58,7 @@ class BindingUploadController extends Controller
         {
             $binding = new Binding();
             $binding->setStatus(Binding::STATUS_UPLOADED);
+            $binding->setUserId(Authentication::getInstance()->getUserId());
         }
         else 
         {
@@ -481,13 +482,9 @@ class BindingUploadController extends Controller
     public function actionGetBindingStatus($data)
     {
         $userId = Authentication::getInstance()->getUserId();
-        $binding = Query::select('binding.bindingId','binding.status')
-            ->from ('Scans scan')
-            ->where('upload.userId = :userId')
-            ->join('Uploads upload', "scan.uploadId = upload.uploadId", "LEFT")
-            ->join('Bindings binding', "scan.bindingId = binding.bindingId", "LEFT")
-            ->where('binding.status <= :reorderedStatus')
-            ->groupBy('binding.bindingId','binding.status')
+        $binding = Query::select('bindingId','status')
+            ->from ('Bindings')
+            ->where('status <= :reorderedStatus', 'userId = :userId')
             ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
         
         if ($binding->getAmount() === 1)
