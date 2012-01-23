@@ -223,8 +223,9 @@ Annotations.prototype.clear = function()
 Annotations.prototype.load = function()
 {
     // Load store. Filter will trigger a load.
+    this.store.filters.clear();
     this.store.sort('order', 'ASC', 'append', false);
-    this.store.filter({property: 'scanId', value: this.scanId});
+    this.store.filter('scanId', this.scanId);
 }
 
 // Resets annotations.
@@ -357,6 +358,7 @@ Annotations.prototype.initialize = function()
     var _this = this;
     this.store = Ext.create('Ext.ux.StoreBase', {
         model: 'Ext.ux.AnnotationModel',
+        pageSize: 10000,
         
         listeners: {
             'add': function(store, models)           { _this.onStoreAdd(models);           },
