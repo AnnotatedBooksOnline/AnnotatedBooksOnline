@@ -6,12 +6,12 @@ require_once 'models/binding/bindinglist.php';
 require_once 'models/language/language.php';
 
 /**
- * Binding controller class.
+ * Book language controller class.
  */
 class BookLanguageController extends ControllerBase
 {
     /**
-     * Loads provenances.
+     * Loads languages associated to books.
      */
     public function actionLoad($data)
     {

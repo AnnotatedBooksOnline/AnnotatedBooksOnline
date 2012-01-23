@@ -14,7 +14,7 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], _this, 
             function(result)
             {
-                Ext.ux.BindingModel.load(result['bindingId'], 
+                Ext.ux.BindingModel.loadRecursive(result['bindingId'], 
                 {
                     scope: _this,
                     failure: function(binding, operation) {
@@ -22,26 +22,29 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                         return undefined;
                     },
                     success: function(binding, operation) {
-                        binding.provenances().load({
-                            scope   : _this,
-                            callback:function(records, operation, success) {
-                                var provenance='';
-                                Ext.Array.each(records, function(record) {
-                                provenance += (', '+record.get('name'));
-                                });
-                                
-                                this.down('propertygrid').setSource({
+                        //load the names of the readers
+                        var readerNames='';
+                        binding.provenances().each(function(record)
+                        {
+                            readerNames+=','+record.get('name');
+                        });
+                        
+                        //load the names of the languages associated with the binding
+                        var bindingLanguages='';
+                        binding.bindingLanguages().each(function(record)
+                        {
+                            bindingLanguages+=','+record.get('languageName');
+                        });
+                        
+                        this.down('propertygrid').setSource({
                                     "a": binding.get('library').libraryName,
                                     "b": binding.get('signature'),
-                                    "c": provenance.substring(1),
-                                    "d": 'languages'
+                                    "c": readerNames.substring(1),
+                                    "d": bindingLanguages.substring(1)
                                 });
-                            }
-                        });
                     },
                     callback: function(record, operation) {}
                 });
-               
             }, 
             function()
             {});
