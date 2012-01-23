@@ -35,6 +35,9 @@ class Binding extends Entity
     /** Books for this binding. */
     protected $bookList;
     
+    /** User this binding was created by. */
+    protected $userId;
+
     /** List of all scans for this book. */
     protected $scanList;
     
@@ -132,7 +135,7 @@ class Binding extends Entity
      */
     public static function getColumns()
     {
-        return array('libraryId', 'signature', 'summary', 'status');
+        return array('libraryId', 'signature', 'summary', 'status', 'userId');
     }
     
     /**
@@ -181,4 +184,7 @@ class Binding extends Entity
     
     public function getBindingLanguageList()                     { return $this->bindingLanguageList;                 }
     public function setBindingLanguageList($bindingLanguageList) { $this->bindingLanguageList = $bindingLanguageList; }
+    
+    public function getUserId()                     { return $this->userId; }
+    public function setUserId($userId)              { $this->userId = $userId; }
 }

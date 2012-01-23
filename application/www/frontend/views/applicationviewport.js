@@ -159,15 +159,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         {
                             if (result['status'] === 0)
                             {
-                                Application.getInstance().gotoTab('reorderscan', [], true);
+                                Application.getInstance().gotoTab('reorderscan', [result['bindingId']], true);
                             }
                             else if (result['status'] === 1)
                             {
-                                Application.getInstance().gotoTab('selectbook', [], true);
+                                Application.getInstance().gotoTab('selectbook', [result['bindingId']], true);
                             }
                             else
                             {
-                                Application.getInstance().gotoTab('uploadinfo', [], true);
+                                Application.getInstance().gotoTab('uploadinfo', [result['bindingId']], true);
                             }
                         }
                     );
