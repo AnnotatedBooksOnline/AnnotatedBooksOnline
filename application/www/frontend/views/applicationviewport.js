@@ -406,7 +406,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
-                    title: isExistingBinding ? 'Upload (reorder scans)' : 'Modify binding (reorder scans)',
+                    title: isExistingBinding === true ? 'Upload (reorder scans)' : 'Modify binding (reorder scans)',
                     xtype: 'reorderscanform',
                     bindingId: data[0],
                     isExistingBinding: isExistingBinding
@@ -432,7 +432,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 // Add a select book tab.
                 Ext.apply(tabConfig, {
-                    title: isExistingBinding ? 'Upload (select books)' : 'Modify binding (select books)',
+                    title: isExistingBinding === true ? 'Upload (select books)' : 'Modify binding (select books)',
                     xtype: 'selectbookform',
                     bindingId: data[0],
                     isExistingBinding: isExistingBinding
