@@ -44,17 +44,19 @@ Ext.define('Ext.ux.HelpPanel', {
     
     updateHTML: function(record)
     {
+        var _this = this;
         var page = record;
         
-        while(page.get('HelpId').substring(2) != '-1')
+        record.expand(true, function()
         {
-            page = page.parentNode;
-        }
+            while(page.get('HelpId').substring(2) != '-1')
+            {
+                page = page.parentNode;
+            }
+            var htmltext = _this.generateHelpHTML(page,2);
+            _this.getComponent(1).update(htmltext);
+        });
         
-        record.expand(true);
-        
-        var htmltext = this.generateHelpHTML(page,2);
-        this.getComponent(1).update(htmltext);
         /*
         var content = Ext.get(record.get('pageName'));
         var height = content.getHeight();//werkt niet, wordt 14
@@ -79,3 +81,4 @@ Ext.define('Ext.ux.HelpPanel', {
         return htmltext;
     }
 });
+
