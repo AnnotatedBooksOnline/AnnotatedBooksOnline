@@ -401,12 +401,12 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var isExistingBinding = false;
                 if (data.length >= 2 && data[1] !== undefined) 
                 {
-                    isExistingBinding = true
+                    isExistingBinding = true;
                 }
                 
                 // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
-                    title: existingBindingId == isExistingBinding ? 'Upload (reorder scans)' : 'Modify binding (reorder scans)',
+                    title: isExistingBinding ? 'Upload (reorder scans)' : 'Modify binding (reorder scans)',
                     xtype: 'reorderscanform',
                     bindingId: data[0],
                     isExistingBinding: isExistingBinding
@@ -427,12 +427,12 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var isExistingBinding = false;
                 if (data.length >= 2 && data[1] !== undefined) 
                 {
-                    isExistingBinding = true
+                    isExistingBinding = true;
                 }
                 
                 // Add a select book tab.
                 Ext.apply(tabConfig, {
-                    title: existingBindingId == isExistingBinding ? 'Upload (select books)' : 'Modify binding (select books)',
+                    title: isExistingBinding ? 'Upload (select books)' : 'Modify binding (select books)',
                     xtype: 'selectbookform',
                     bindingId: data[0],
                     isExistingBinding: isExistingBinding
