@@ -431,7 +431,6 @@ Annotations.prototype.initialize = function()
     
     // Create overlay and add it.
     this.overlay = new AnnotationOverlay(this.viewport);
-    this.viewport.addOverlay(this.overlay);
     
     // Watch for creation of polygons.
     var overlaygetEventDispatcher = this.overlay.getEventDispatcher();
@@ -586,6 +585,9 @@ Annotations.prototype.onStoreBeforeLoad = function()
 {
     // We have started loading.
     this.loading = true;
+    
+    // Remove overlay for a moment.
+    this.viewport.removeOverlay(this.overlay);
 }
 
 Annotations.prototype.onStoreDataChanged = function(models)
@@ -626,6 +628,9 @@ Annotations.prototype.onStoreLoad = function(models, success)
     
     // Reset dirty marker.
     this.dirty = false;
+    
+    // Show overlay again.
+    this.viewport.addOverlay(this.overlay);
     
     // TODO: What about success?
     

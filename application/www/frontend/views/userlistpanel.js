@@ -157,22 +157,30 @@ Ext.define('Ext.ux.UserListPanel', {
         
         this.callParent();
         
-        // Add autoAcceptBox with current value.
-        RequestManager.getInstance().request(
-                'Setting',
-                'getSetting',
-                {setting: 'auto-user-acceptance'},
-                _this,
-                function(value)
-                {
-                    _this.insert(0, autoAcceptBox);
-                   Ext.getCmp('autoAcceptBox').setValue(value == '1');
-                },
-                function()
-                {
-                    return true;
-                }
-            );
+        if(Authentication.getInstance().hasPermissionTo('change-global-settings'))
+        {
+            // Add autoAcceptBox with current value.
+            RequestManager.getInstance().request(
+                    'Setting',
+                    'getSetting',
+                    {setting: 'auto-user-acceptance'},
+                    _this,
+                    function(value)
+                    {
+                        _this.insert(0, autoAcceptBox);
+                       Ext.getCmp('autoAcceptBox').setValue(value == '1');
+                    },
+                    function(error)
+                    {
+                        if(error == 'access-denied')
+                        {
+                            return false;
+                        }
+                            
+                        return true;
+                    }
+                );        
+        }
         
         RequestManager.getInstance().request(
             'Authentication',
