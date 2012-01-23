@@ -19,7 +19,7 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
                 xtype: 'textarea',
                 fieldLabel: 'Original language',
                 labelAlign: 'top',
-                name: 'transcriptionEng',
+                name: 'transcriptionOrig',
                 style: 'margin-right: 5px;',
                 flex: 1,
                 allowBlank: true
@@ -27,7 +27,7 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
                 xtype: 'textarea',
                 fieldLabel: 'English',
                 labelAlign: 'top',
-                name: 'transcriptionOrig',
+                name: 'transcriptionEng',
                 style: 'margin-left: 5px;',
                 flex: 1,
                 allowBlank: true
