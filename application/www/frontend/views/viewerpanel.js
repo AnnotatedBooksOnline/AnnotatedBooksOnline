@@ -304,6 +304,43 @@ Ext.define('Ext.ux.ViewerPanel', {
                 this.setTool(mode);
             });
         
+        // Watch for closing.
+        var _this = this;
+        this.on('beforeclose',
+            function()
+            {
+                // Check for changes.
+                if ((this.forceClose === undefined) && _this.annotations.hasChanges())
+                {
+                    Ext.MessageBox.show({
+                        title: 'Save Changes?',
+                        msg: 'Do you want to save changes?',
+                        buttons: Ext.MessageBox.YESNOCANCEL,
+                        fn: function(button)
+                        {
+                            if (button === 'yes')
+                            {
+                                // Save changes.
+                                _this.annotations.save();
+                            }
+                            else if (button === 'cancel')
+                            {
+                                return;
+                            }
+                            
+                            // Force a close.
+                            _this.forceClose = true;
+                            _this.close();
+                        },
+                        icon: Ext.MessageBox.QUESTION
+                    });
+                    
+                    return false;
+                }
+                
+                return true;
+            });
+        
         // Watch for change events on viewport.
         var eventDispatcher = this.viewport.getEventDispatcher();
         eventDispatcher.bind('change', this, this.afterViewportChange);
