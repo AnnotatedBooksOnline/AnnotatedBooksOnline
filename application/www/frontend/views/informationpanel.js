@@ -39,8 +39,11 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         
         var defConfig = {
             border: false,
-            width: '100%',
-            layout: 'vbox',
+            flex: 1,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
             autoScroll: true,
             bbar: {
                 xtype: 'button',
@@ -55,7 +58,6 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 id: 'bookInfo',
                 name: 'grid',
                 flex: 1,
-                width: '100%',
                 border: false,
                 store: this.infoPanelStore,
                 hideHeaders: true,
@@ -155,7 +157,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 viewer: this.viewer,
                 //height: '20%'
                 flex: 1
-            }],
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -163,3 +165,4 @@ Ext.define('Ext.ux.InformationPanel', {
         this.callParent();
     }
 });
+
