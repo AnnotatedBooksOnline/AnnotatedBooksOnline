@@ -33,7 +33,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     store: this.store,
                     displayField: 'scanName',
                     dragGroup:'scans',
-                    dropGroup:'deletedScans',
+                    dropGroup:'scans',
                     tbar: [{
                         text: 'Scan order in binding',
                         xtype: 'label',
@@ -46,7 +46,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     allowBlank: true,
                     store: this.deletedScanStore,
                     displayField: 'scanName',
-                    dragGroup:'deletedScans',
+                    dragGroup:'scans',
                     dropGroup:'scans',
                     tbar: [{
                         text: 'Deleted scans (drag here to delete)',
