@@ -761,7 +761,7 @@ class Pdf
             if ($this->scanAttr['rotate'])
             {
                 $this->rotate(90);
-                $this->translate(-$height, 0);
+                $this->translate(0, -$width);
                 list($width, $height) = array($height, $width);
             }
             
@@ -847,7 +847,7 @@ class Pdf
             if ($this->scanAttr['rotate'])
             {
                 $this->rotate(90);
-                $this->translate(-$width, 0);
+                $this->translate(0, -$height);
             }
             
             $this->translate(($width - $scale * ($cols - $compx))/2, ($height - $scale * ($rows - $compy))/2);
