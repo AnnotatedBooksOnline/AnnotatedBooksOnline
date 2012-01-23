@@ -14,7 +14,7 @@ Ext.define('Ext.ux.BookListFieldset', {
             items: [{
                 xtype: 'grid',
                 border: false,
-                store: bookstore,
+                store: this.store,
                 viewConfig: {
                     stripeRows: true
                 },
@@ -87,7 +87,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
             items: [{
                 xtype: 'grid',
                 border: false,
-                store: scanstore,
+                store: this.store,
                 resizable: false,
                 viewConfig: {
                     stripeRows: true
@@ -133,19 +133,6 @@ Ext.define('Ext.ux.ScanListFieldset', {
  * Select book form class.
  */
 
-
-// TODO: Get rid of these globals! Make them class statics, or class fields.
-// TODO: This logic shouldn't even be separated over multiple main views, but one wizard view.
-
-// TODO : mathijsB . rewrite a lot in this file.
-
-var i = 0;
-var book;
-var bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
-var scanstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-var tempPage;
-
-
 Ext.define('Ext.ux.SelectBookForm', {
     extend: 'Ext.ux.FormBase',
     alias: 'widget.selectbookform',
@@ -154,20 +141,24 @@ Ext.define('Ext.ux.SelectBookForm', {
     {
         var _this = this;
         
-
+        this.tempPage = undefined;
+        this.book = undefined;
+        this.i = 0;
+        
+        this.bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
+        this.scanstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+        
         // TODO: Implement filtering serverside, to remove second filtering.
-        scanstore.filter({property: 'bindingId', value: this.bindingId});
-        scanstore.load();
-        bookstore.filter({property: 'bindingId', value: this.bindingId});
+        this.scanstore.filter({property: 'bindingId', value: this.bindingId});
+        this.scanstore.load();
+        this.bookstore.filter({property: 'bindingId', value: this.bindingId});
             
-        bookstore.on('load', function()
+        this.bookstore.on('load', function()
         { 
-            bookstore.each(function(book)
+            _this.bookstore.each(function(book)
             {
                 book.set('timePeriod', book.getTimePeriod());
-                book.set('firstPage', -1);
-                book.set('lastPage', -1);
-                    
+
                 var authors = '';
                     
                 book.authors().load({
@@ -185,7 +176,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             });
         });
             
-        bookstore.load();
+        this.bookstore.load();
         
 
         var defConfig = {
@@ -194,6 +185,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                 xtype: 'bindinginformationfieldset',
             },{
                 xtype: 'booklistfieldset',
+                store: _this.bookstore
             },{
                 xtype: 'button',
                 text: 'Start selecting the first and last pages of the currently selected book',
@@ -206,7 +198,9 @@ Ext.define('Ext.ux.SelectBookForm', {
                     
                     if (selection.hasSelection())
                     {
-                        book = selection.getSelection()[0];
+                        var book = selection.getSelection()[0];
+                        _this.book = selection.getSelection()[0];
+                        
                         if (book.get('firstPage') !== -1)
                         {
                             for (var j = book.get('firstPage'); j <= book.get('lastPage'); j++)
@@ -216,8 +210,8 @@ Ext.define('Ext.ux.SelectBookForm', {
                             
                             book.set('status', '');
                         }
-                        
-                        i = 1;
+
+                        _this.i = 1;
                         
                         this.disable();
                         selection.deselectAll();
@@ -239,7 +233,8 @@ Ext.define('Ext.ux.SelectBookForm', {
                     }
                 } 
             },{
-                xtype: 'scanlistfieldset'
+                xtype: 'scanlistfieldset',
+                store: _this.scanstore
             }],
             buttons: [{
                 xtype: 'button',
@@ -263,7 +258,8 @@ Ext.define('Ext.ux.SelectBookForm', {
     // React accordingly when a scan is double clicked.
     updateForm: function(filename, page)
     {
-        if (i === 0)
+    	// When the user hasnt selected a book yet.
+        if (this.i === 0)
         {
             Ext.Msg.show({
                 title: 'No book selected',
@@ -271,105 +267,41 @@ Ext.define('Ext.ux.SelectBookForm', {
                 buttons: Ext.Msg.OK
             });
         }
-        else if (i === 1)
+        
+        // When the user has to select the start page.
+        else if (this.i === 1)
         {
-            tempPage = page;
-            if(scanstore.findRecord('page', page).get('bookTitle') === undefined)
-            {
-                this.changeBookTitle(page, book.get('title'));
-                
-                i = 2;
-                
-                return;
-            }
-            
-            Ext.Msg.show({
-                title: 'Books overlap',
-                msg: 'Books can not overlap. Please reselect a book and try again.',
-                buttons: Ext.Msg.OK
-            });
-            
+            this.changeBookTitle(page, this.book.get('title'));
+            this.startOfRange = page;
+            this.i = 2;
+
             this.endSelecting();
         }
-        else if (i === 2)
+        
+        // When the user has to select the end page.
+        else if (this.i === 2)
         {
-            var first;
-            var last;
-            
-            if (tempPage<=page)
-            {
-                first = tempPage;
-                last = page;
-            }
-            else
-            {
-                first = page;
-                last = tempPage;
-            }
-            
-            var bool  = true; // TODO: Rename to something meaningful.
-            var title = scanstore.findRecord('page',page).get('bookTitle');
-            
-            bookstore.each(function(record)
-            {
-                if (record.get('bookId') !== book.get('bookId') &&
-                   ((record.get('firstPage') <= last && record.get('firstPage') >= first) ||
-                    (record.get('lastPage')  <= last && record.get('lastPage')  >= first)))
-                {
-                    bool = false;
-                }
-            });
-            
-            if (bool)
-            {
-                book.set('lastPage', last);
-                book.set('firstPage', first);
-                if (this.allPagesFilled())
-                {
-                    this.down('[name=save]').enable();
-                }
-            }
-            else
-            {
-                Ext.Msg.show({
-                    title: 'Books overlap',
-                    msg: 'Books can not overlap. Please reselect a book and try again',
-                    buttons: Ext.Msg.OK
-                });
-                
-                this.changeBookTitle(tempPage,undefined);
-            }
-
+        	this.changeBookPageRange(this.book, this.startOfRange, page);
+        	this.i = 0;
+        	
             this.endSelecting();
         }
     },
     
     endSelecting: function()
     {
-        if (book.get('firstPage') !== -1)
-        {
-            for (var j = book.get('firstPage'); j <= book.get('lastPage'); j++)
-            {
-                this.changeBookTitle(j, book.get('title'));
-            }
-            
-            book.set('status', 'done');
-        }
-        
         this.down('button').enable();
         this.down('booklistfieldset').down('grid').enable();
         this.down('booklistfieldset').down('grid').getSelectionModel().deselectAll();
-        
-        i = 0;
     },
     
     // Returns true when all books have first and last pages.
     allPagesFilled: function()
     {
         var result = true;
-        bookstore.each(function(record)
+        this.bookstore.each(function(record)
         {
-            if (record.get('firstPage') < 0 || record.get('lastPage') < 0)
+            if (record.get('firstPage') <= 0 || record.get('lastPage') <= 0)
             {
                 result = false;
             }
@@ -378,17 +310,73 @@ Ext.define('Ext.ux.SelectBookForm', {
         return result;
     },
     
+    // Changes the page range for a book.
+    changeBookPageRange: function(book, firstPage, lastPage)
+    {
+    	var _this = this;
+    	
+    	// Store the first and last page of the book.
+    	book.set('firstPage', firstPage);
+    	book.set('lastPage', lastPage);
+    	
+    	// Adjust the page ranges of all books for the binding so that there is no overlap.
+        this.bookstore.each(function(record)
+        {
+        	if (record !== book) {
+
+        		if (record.get('firstPage') > firstPage && record.get('lastPage') < lastPage)
+        		{
+        			record.set('firstPage', -1);
+        			record.set('lastPage', -1);
+        		}
+        		else if (record.get('firstPage') < firstPage && record.get('lastPage') > firstPage)
+        		{
+        			record.set('lastPage', firstPage - 1);
+        		} 
+        		else if (record.get('firstPage') < lastPage && record.get('lastPage') > lastPage)
+        		{
+        			record.set('firstPage', lastPage + 1);
+        		}
+        	}
+        });
+        
+        // Update all scan records to reflect the book they belong to.
+        this.scanstore.each(function(scanrecord) {
+        	var title = "";
+            _this.bookstore.each(function(bookrecord)
+            {
+            	if (scanrecord.get('page') >= bookrecord.get('firstPage') 
+            			&& scanrecord.get('page') <= bookrecord.get('lastPage')) 
+            	{
+            		title = bookrecord.get('title');
+            	}
+            });
+            scanrecord.set('bookTitle', title);
+        });
+        
+        // Determine if all books have a page range set. If this is the case enable the save button.
+        if (this.allPagesFilled())
+        {
+            this.down('[name=save]').enable();
+        }
+    },
+    
     // Change the booktitle of a scan in the scanlist field.
     changeBookTitle: function(page, booktitle)
     {
-        scanstore.findRecord('page', page).set('bookTitle', booktitle);
+    	if (page <= 0)
+    	{
+    		return;
+    	}
+    	
+        this.scanstore.findRecord('page', page).set('bookTitle', booktitle);
     },
     
     submit: function()
     {
         // Put the changes into an array.
         var fields = [];
-        bookstore.each(function(record)
+        this.bookstore.each(function(record)
         {
             fields.push({
                 bookId: record.get('bookId'),
