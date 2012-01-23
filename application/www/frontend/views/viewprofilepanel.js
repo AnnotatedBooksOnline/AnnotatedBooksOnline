@@ -459,6 +459,7 @@ Ext.define('Ext.ux.ChangeRoleForm', {
     {
         var form = this.getForm();        
         var values = form.getValues();
+        var _this = this;
         
         // Decline the user.
         RequestManager.getInstance().request(
@@ -469,7 +470,7 @@ Ext.define('Ext.ux.ChangeRoleForm', {
             null,
             function()
             {
-                store.load();
+                _this.store.load();
                 Ext.WindowManager.each(
                         function(window)
                         {
