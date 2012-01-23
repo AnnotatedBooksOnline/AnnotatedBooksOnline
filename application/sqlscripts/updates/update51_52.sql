@@ -1,0 +1,6 @@
+BEGIN TRANSACTION;
+
+ALTER TABLE "Bindings" ADD COLUMN "userId" integer;
+ALTER TABLE "Bindings" ADD FOREIGN KEY ("userId") REFERENCES "Users";
+
+COMMIT;
