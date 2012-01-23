@@ -222,6 +222,12 @@ Annotations.prototype.clear = function()
 // Loads annotations.
 Annotations.prototype.load = function()
 {
+    // Check whether not yet loading.
+    if (this.loading)
+    {
+        return;
+    }
+    
     // Load store. Filter will trigger a load.
     this.store.filters.clear();
     this.store.sort('order', 'ASC', 'append', false);
@@ -544,6 +550,9 @@ Annotations.prototype.onStoreDataChanged = function(models)
         
         // All colors are available again.
         this.availableColors = this.allColors.slice();
+        
+        // Trigger clear.
+        this.eventDispatcher.trigger('clear', this);
         
         // Add annotations.
         this.onStoreAdd(models);
