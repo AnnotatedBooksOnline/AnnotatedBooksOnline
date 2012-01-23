@@ -59,6 +59,8 @@ else
 fi
 
 echo "Applying database scripts..."
+psql -c "UPDATE pg_proc SET proowner = (SELECT oid FROM pg_roles WHERE rolname = 'application') WHERE proname IN (SELECT proname FROM pg_proc JOIN pg_namespace ON pronamespace = pg_namespace.oid WHERE nspname = 'public');" $ENVIRONMENT postgres 2>/dev/null >/dev/null
+psql -c "UPDATE pg_class SET relowner = (SELECT oid FROM pg_roles WHERE rolname = 'application') WHERE relname IN (SELECT relname FROM pg_class, pg_namespace WHERE pg_namespace.oid = pg_class.relnamespace AND pg_namespace.nspname = 'public');" $ENVIRONMENT postgres 2>/dev/null >/dev/null
 cd application/application/sqlscripts/updates
 lastupdate=$(echo update*_*.sql | tr " " "\n" | sed 's/update\([0-9]\+\)_.*/\1/' | sort -n | tail -n 1)
 for i in $(seq 0 $lastupdate)
