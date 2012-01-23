@@ -80,7 +80,7 @@ class AnnotationController extends ControllerBase
                             if (($values['transcriptionEng']  === $transEng)  &&
                                 ($values['transcriptionOrig'] === $transOrig) &&
                                 ($values['polygon']           === $polygon)   &&
-                                ($values['order']             === $order))
+                                ($values['order']             === $i))
                             {
                                 $annotationIds[] = $annId;
                                 continue;

@@ -188,6 +188,16 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 this.setActiveAnnotation(this.activeModel);
             });
         
+        // Watch for clear.
+        var eventDispatcher = this.annotations.getEventDispatcher();
+        eventDispatcher.bind('clear', this,
+            function(event, annotations)
+            {
+                // Unset active model.
+                this.activeModel = undefined;
+                this.setActiveAnnotation(undefined);
+            });
+        
         // Watch for load.
         var eventDispatcher = this.annotations.getEventDispatcher();
         eventDispatcher.bind('load', this,
@@ -198,8 +208,8 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 this.resetChangesBtn.setDisabled(true);
                 
                 // Unset active model.
-                this.activeModel = undefined;
-                this.setActiveAnnotation(undefined);
+                //this.activeModel = undefined;
+                //this.setActiveAnnotation(undefined);
             });
         
         // Watch for save.
