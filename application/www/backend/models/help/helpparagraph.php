@@ -28,7 +28,6 @@ class HelpParagraph extends Entity
     
     /** The content of the page, in HTML. */
     protected $content;
-
     
     /** A cached array of subparagraphs. */
     private $subItems;
@@ -99,13 +98,18 @@ class HelpParagraph extends Entity
                             ->from('HelpParagraphs')
                             ->where('paragraphParentId = :id')
                             ->execute(array('id' => $this->helpParagraphId));
-    
-            foreach($citems as $citem)
+            
+            if ($citems->getAmount()>0);
             {
-                $this->subItems[] = new HelpParagraph($citem->getValue('controlItemId'));
+                foreach($citems as $citem)
+                {
+                    $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
+                    $helpParagraph = $helpParagraph->getValues();
+                    $this->subItems[] = $helpParagraph;
+                }
             }
         }
-    
+        
         return $this->subItems;
     }
     

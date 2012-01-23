@@ -202,6 +202,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             name: 'users',
             hidden: true
+        },{
+            text: 'Help',
+            //moet nog een icon bij
+            iconCls: 'info-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTab('help', [_this.getComponent(1).getActiveTab().title], true);
+                }
+            },
+            name: 'help'
         }];
         
         var topRegion = {
@@ -410,6 +421,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     xtype: 'reorderscanform',
                     bindingId: data[0],
                     isExistingBinding: isExistingBinding
+                });
+                
+                break;
+                
+                case 'help':
+                // Add a help tab.
+                Ext.apply(tabConfig, {
+                    title: 'Help',
+                    xtype: 'helppanel',
+                    helpTab: data[0]
                 });
                 
                 break;

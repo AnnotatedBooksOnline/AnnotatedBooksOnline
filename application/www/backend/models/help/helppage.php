@@ -78,12 +78,14 @@ class HelpPage extends Entity
             // Query contained paragraphs (but not their children).
             $citems = Query::select('helpParagraphId')
                            ->from('HelpParagraphs')
-                           ->where('helpPageId = :id AND paragraphParentId IS NULL')
+                           ->where('helpPageId = :id', 'paragraphParentId IS NULL')
                            ->execute(array('id' => $this->helpPageId));
             
             foreach($citems as $citem)
             {
-                $this->subItems[] = new HelpParagraph($citem->getValue('controlItemId'));
+                $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
+                $helpParagraph = $helpParagraph->getValues();
+                $this->subItems[] = $helpParagraph;
             }
         }
         
