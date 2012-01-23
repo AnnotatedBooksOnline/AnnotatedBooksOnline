@@ -83,6 +83,12 @@ Ext.define('Ext.ux.ScanListFieldset', {
     {
         var _this = this;
         
+        Ext.override(Ext.selection.RowModel, {
+            onRowMouseDown: function (view, record, item, index, e) {
+            this.selectWithEvent(record, e);
+            }
+        });
+        
         var defConfig = {
             items: [{
                 xtype: 'grid',
