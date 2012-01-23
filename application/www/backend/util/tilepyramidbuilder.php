@@ -121,7 +121,7 @@ class TilePyramidBuilder extends Singleton
         Log::info('Succesfully created thumbnail for scan with id %d.', $scanId);
     }
     
-    private function createThumbnailImagick($tile, $thumb, $newWidth, $newHeight)
+    private function createThumbnailImagick($tile, $thumb, $width, $height)
     {
         // Create thumbnail.
         $img = new Imagick($tile);
