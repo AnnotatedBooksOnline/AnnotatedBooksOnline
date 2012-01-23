@@ -89,7 +89,7 @@ class Annotation extends Entity
         return array(
             'annotationId'      => 'int',
             'scanId'            => 'int',
-            'polygon'           => 'lob',
+            'polygon'           => 'base64',
             'transcriptionEng'  => 'string',
             'transcriptionOrig' => 'string',
             'userId'            => 'int',
@@ -143,3 +143,4 @@ class Annotation extends Entity
     public function getOrder()       { return $this->order;   }
     public function setOrder($order) { $this->order = $order; }
 }
+

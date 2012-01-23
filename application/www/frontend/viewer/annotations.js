@@ -24,10 +24,12 @@ Annotations.prototype.eventDispatcher;
 Annotations.prototype.mode;
 Annotations.prototype.enabled;
 Annotations.prototype.loading;
+Annotations.prototype.saving;
 Annotations.prototype.dirty;
 
 Annotations.prototype.viewer;
 Annotations.prototype.viewport;
+Annotations.prototype.loadScanId;
 Annotations.prototype.scanId;
 
 Annotations.prototype.overlay;
@@ -46,6 +48,7 @@ Annotations.prototype.constructor = function(viewer)
     this.viewport = viewer.getViewport();
     this.enabled  = true;
     this.loading  = false;
+    this.saving   = false;
     this.mode     = 'view';
     this.dirty    = false;
     
@@ -215,12 +218,15 @@ Annotations.prototype.clear = function()
     // Clear store.
     this.store.removeAll();
     
+    // Set us dirty.
+    this.dirty = true;
+    
     // Trigger clear.
     this.eventDispatcher.trigger('clear', this);
 }
 
 // Loads annotations.
-Annotations.prototype.load = function()
+Annotations.prototype.load = function(force)
 {
     // Check whether not yet loading.
     if (this.loading)
@@ -228,10 +234,47 @@ Annotations.prototype.load = function()
         return;
     }
     
-    // Load store. Filter will trigger a load.
-    this.store.filters.clear();
-    this.store.sort('order', 'ASC', 'append', false);
-    this.store.filter('scanId', this.scanId);
+    // Ask user whether to save changes.
+    if (this.dirty && (force !== true))
+    {
+        var _this = this;
+        Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
+            function(button)
+            {
+                if (button === 'yes')
+                {
+                    // Save changes.
+                    _this.save();
+                }
+                
+                // Let's load some annotations.
+                _this.load(true);
+            });
+        
+        return;
+    }
+    
+    // Trigger before load event.
+    this.eventDispatcher.trigger('beforeload', this);
+    
+    // Wait until we are not saving anymore.
+    var _this = this;
+    var loadData = function()
+    {
+        // Check if saving.
+        if (_this.saving)
+        {
+            setTimeout(loadData, 100);
+            return;
+        }
+        
+        // Load store. Filter will trigger a load.
+        _this.store.filters.clear();
+        _this.store.sort('order', 'ASC', 'append', false);
+        _this.store.filter('scanId', _this.loadScanId);
+    };
+    
+    loadData();
 }
 
 // Resets annotations.
@@ -253,8 +296,8 @@ Annotations.prototype.reset = function()
 // Saves annotations.
 Annotations.prototype.save = function()
 {
-    // Check for changes.
-    if (!this.dirty)
+    // Check for changes. And whether we are loading or saving. And whether we have loaded.
+    if (!this.dirty || this.loading || this.saving || (this.scanId === undefined))
     {
         return;
     }
@@ -288,6 +331,9 @@ Annotations.prototype.save = function()
         annotations: annotations
     };
     
+    // Set us saving.
+    this.saving = true;
+    
     // Send save request.
     RequestManager.getInstance().request('Annotation', 'save', data, this,
         function(annotationIds)
@@ -297,6 +343,9 @@ Annotations.prototype.save = function()
             {
                 this.annotations[i].getModel().set('annotationId', annotationIds[i]);
             }
+            
+            // Set us not saving.
+            this.saving = false;
             
             // Set us not dirty.
             this.dirty = false;
@@ -382,7 +431,6 @@ Annotations.prototype.initialize = function()
     
     // Create overlay and add it.
     this.overlay = new AnnotationOverlay(this.viewport);
-    this.viewport.addOverlay(this.overlay);
     
     // Watch for creation of polygons.
     var overlaygetEventDispatcher = this.overlay.getEventDispatcher();
@@ -429,16 +477,16 @@ Annotations.prototype.initialize = function()
         {
             // Check if scan has really changed.
             var scanId = this.viewer.getScanId();
-            if (this.scanId !== scanId)
+            if (this.loadScanId !== scanId)
             {
-                this.scanId = scanId;
+                this.loadScanId = scanId;
                 
                 this.load();
             }
         });
     
     // Fetch first annotations.
-    this.scanId = this.viewer.getScanId();
+    this.loadScanId = this.viewer.getScanId();
     
     this.load();
 }
@@ -537,6 +585,9 @@ Annotations.prototype.onStoreBeforeLoad = function()
 {
     // We have started loading.
     this.loading = true;
+    
+    // Remove overlay for a moment.
+    this.viewport.removeOverlay(this.overlay);
 }
 
 Annotations.prototype.onStoreDataChanged = function(models)
@@ -553,6 +604,9 @@ Annotations.prototype.onStoreDataChanged = function(models)
         
         // Trigger clear.
         this.eventDispatcher.trigger('clear', this);
+        
+        // Set scan id.
+        this.scanId = this.loadScanId;
         
         // Add annotations.
         this.onStoreAdd(models);
@@ -574,6 +628,9 @@ Annotations.prototype.onStoreLoad = function(models, success)
     
     // Reset dirty marker.
     this.dirty = false;
+    
+    // Show overlay again.
+    this.viewport.addOverlay(this.overlay);
     
     // TODO: What about success?
     

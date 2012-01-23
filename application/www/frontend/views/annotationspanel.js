@@ -206,10 +206,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 // Disable save and reset buttons.
                 this.saveChangesBtn.setDisabled(true);
                 this.resetChangesBtn.setDisabled(true);
-                
-                // Unset active model.
-                //this.activeModel = undefined;
-                //this.setActiveAnnotation(undefined);
             });
         
         // Watch for save.

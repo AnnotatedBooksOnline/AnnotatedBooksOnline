@@ -296,7 +296,7 @@ AnnotationOverlay.prototype.onVertexAdd = function(polygon, vertex)
     AnnotationOverlay.base.onVertexAdd.call(this, polygon, vertex);
 }
 
-AnnotationOverlay.prototype.onVertexRemove = function(polygon, vertex)
+AnnotationOverlay.prototype.onVertexRemove = function(polygon)
 {
     // Get corresponding annotation.
     var annotation = this.getAnnotationByPolygon(polygon);
@@ -307,5 +307,5 @@ AnnotationOverlay.prototype.onVertexRemove = function(polygon, vertex)
     // Trigger change event.
     this.eventDispatcher.trigger('change', this, annotation);
     
-    AnnotationOverlay.base.onVertexRemove.call(this, polygon, vertex);
+    AnnotationOverlay.base.onVertexRemove.call(this, polygon);
 }
