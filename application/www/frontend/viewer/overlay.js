@@ -20,16 +20,19 @@ Overlay.base = DomNode.prototype;
 
 // Fields.
 Overlay.prototype.position;
-Overlay.prototype.rotation;
-Overlay.prototype.zoomLevel;
-Overlay.prototype.zoomFactor;
-Overlay.prototype.invZoomFactor;
+Overlay.prototype.rotation      = 0;
+Overlay.prototype.zoomLevel     = 0;
+Overlay.prototype.zoomFactor    = 1;
+Overlay.prototype.invZoomFactor = 1;
 
 // Constructor.
 Overlay.prototype.constructor = function()
 {
     // Create dom.
     Overlay.base.constructor.call(this, '<div class="overlay"></div>');
+    
+    // Set position.
+    this.position = {x: 0, y: 0};
     
     // Initialize.
     this.initialize();
