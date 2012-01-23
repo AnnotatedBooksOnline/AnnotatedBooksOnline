@@ -267,28 +267,28 @@ class User extends Entity
      */
     public function delete()
     {
-        $user = $this;
-        Database::getInstance()->doTransaction(function() use ($user)
+        Database::getInstance()->startTransaction();
+        
+        // Get the user id of the deleted dummy user.
+        $newId = Setting::getSetting('deleted-user-id');
+            
+        // All tables that need a userId foreign key set to the special deleted user after
+        // deleting this user.
+        $refTables = array('Uploads', 'Annotations');
+            
+        // Update references.
+        foreach ($refTables as $table)
         {
-            // Get the user id of the deleted dummy user.
-            $newId = Setting::getSetting('deleted-user-id');
+            Query::update($table, array('userId' => ':newId'))
+                ->where('userId = :oldId')
+                ->execute(array('oldId' => $this->getUserId(), 'newId' => $newId));
+        }
             
-            // All tables that need a userId foreign key set to the special deleted user after
-            // deleting this user.
-            $refTables = array('Uploads', 'Annotations');
-            
-            // Update references.
-            foreach ($refTables as $table)
-            {
-                Query::update($table, array('userId' => ':newId'))
-                    ->where('userId = :oldId')
-                    ->execute(array('oldId' => $user->getUserId(), 'newId' => $newId));
-            }
-            
-            // Now the user can safely be deleted, as the DBMS will automatically delete
-            // associated notes and shelves etc.
-            parent::delete();
-        });
+        // Now the user can safely be deleted, as the DBMS will automatically delete
+        // associated notes and shelves etc.
+        parent::delete();
+        
+        Database::getInstance()->commit();
     }
     
     // TODO: Call this method: fromUsername(..)
