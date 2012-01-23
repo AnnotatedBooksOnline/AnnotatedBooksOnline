@@ -121,7 +121,14 @@ class Pdf
             $scan = Scan::fromBindingPage($binding, $range);
             $book = Book::fromBindingPage($binding, $range);
             $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scan[0]->getPage();
-            $this->createSingleScan($scan[0], isset($book[0]) ? $book[0] : null, $binding, $transcriptions, $annotations);
+            if (count($scan) > 0)
+            {
+                $this->createSingleScan($scan[0], isset($book[0]) ? $book[0] : null, $binding, $transcriptions, $annotations);
+            }
+            else
+            {
+                throw new PdfException('pdf-no-scans');
+            }
         }
         else
         {
@@ -135,9 +142,19 @@ class Pdf
             {
                 $scans = Scan::fromBindingPage($binding, $range);
                 $books = Book::fromBindingPage($binding, $range);
-                $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scans[0]->getPage();
+                if (count($scans) > 0)
+                {
+                    $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scans[0]->getPage();
+                }
             }
-            $this->createMultiple($scans, $books, $binding, $transcriptions, $annotations, $range !== null);
+            if (count($scans) > 0)
+            {
+                $this->createMultiple($scans, $books, $binding, $transcriptions, $annotations, $range !== null);
+            }
+            else
+            {
+                throw new PdfException('pdf-no-scans');
+            }
         }
     }
     
@@ -1041,7 +1058,7 @@ class Pdf
     {
         if ($this->stackDepth-- == 0)
         {
-            throw new PdfException('pdf-creation-failed');
+            throw new PdfException('pdf-creation-error');
         }
         $this->draw('Q');
     }
@@ -1319,7 +1336,7 @@ class Pdf
         
         if ($type != 'TrueTypeUnicode')
         {
-            throw new PdfException('pdf-creation-failed');
+            throw new PdfException('pdf-creation-error');
         }
         
         if ($this->unicodeId === null)
