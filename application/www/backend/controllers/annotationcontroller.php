@@ -131,7 +131,7 @@ class AnnotationController extends ControllerBase
                     ++$i;
                 }
                 
-                // Remove all annotations that were not just added.
+                // Set all ids that need not removed as parameters.
                 $whereConds = $whereArgs = $whereTypes = array();
                 foreach ($annotationIds as $annId)
                 {
@@ -141,6 +141,13 @@ class AnnotationController extends ControllerBase
                     $whereTypes['param' . $annId] = 'int';
                 }
                 
+                // Add scan id.
+                $whereConds[] = 'scanId = :scanId';
+                
+                $whereArgs['scanId']  = $scanId;
+                $whereTypes['scanId'] = 'int';
+                
+                // Remove all annotations that were not just added.
                 Query::delete('Annotations')->where($whereConds)->execute($whereArgs, $whereTypes);
                 
                 return $annotationIds;
