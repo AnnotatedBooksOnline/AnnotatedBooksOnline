@@ -102,6 +102,40 @@ class TilePyramidBuilder extends Singleton
         $newWidth  = $conf->getInteger('thumbnail-width', 100);
         $newHeight = $conf->getInteger('thumbnail-height', 100);
         
+        if (function_exists('imagecreatefromjpeg'))
+        {
+            // Prefer to use GD.
+            $this->createThumbnailGD($input, $output, $newWidth, $newHeight);
+        }
+        else if (class_exists('Imagick'))
+        {
+            // Otherwise use ImageMagick.
+            $this->createThumbnailImagick($input, $output, $newWidth, $newHeight);
+        }
+        else
+        {
+            // As a last resort, just copy the source tile.
+            copy($input, $output);
+        }
+        
+        Log::info('Succesfully created thumbnail for scan with id %d.', $scanId);
+    }
+    
+    private function createThumbnailImagick($tile, $thumb, $newWidth, $newHeight)
+    {
+        // Create thumbnail.
+        $img = new Imagick($tile);
+        $success = $img->scaleImage($width, $height, true);
+        $img->writeImage($thumb);
+        
+        if(!$success)
+        {
+            throw new TilePyramidBuilderException('thumbnail-creation-failed');
+        }
+    }
+    
+    private function createThumbnailGD($input, $output, $newWidth, $newHeight)
+    {
         // Create image from original.
         $image = @imagecreatefromjpeg($input);
         if ($image === false)
@@ -152,8 +186,6 @@ class TilePyramidBuilder extends Singleton
         
         // Destroy thumbnail image.
         imagedestroy($thumbnail);
-        
-        Log::info('Succesfully created thumbnail for scan with id %d.', $scanId);
     }
     
     /**
@@ -298,3 +330,4 @@ class TilePyramidBuilder extends Singleton
         }
     }
 }
+
