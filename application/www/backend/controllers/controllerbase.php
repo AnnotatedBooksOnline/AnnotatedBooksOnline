@@ -11,7 +11,7 @@ abstract class ControllerBase extends Controller
     /**
      * Generalizes a load query.
      */
-    protected function handleLoad($data, $type, $idColumn = null, $columns = null)
+    protected function handleLoad($data, $type, $idColumn = null, $columns = null, array $defaultSorters = array())
     {
         // Set entity list type.
         $entityListType = $type . 'List';
@@ -58,7 +58,7 @@ abstract class ControllerBase extends Controller
         }
         
         // Retrieve the sortings from the data.
-        $sorters  = self::getArray($data, 'sorters');
+        $sorters  = array_merge(self::getArray($data, 'sorters'), $defaultSorters);
         $ordering = array();
         if ($sorters)
         {
@@ -87,3 +87,4 @@ abstract class ControllerBase extends Controller
         );
     }
 }
+
