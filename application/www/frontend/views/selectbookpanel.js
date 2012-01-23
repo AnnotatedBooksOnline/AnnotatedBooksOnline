@@ -83,6 +83,12 @@ Ext.define('Ext.ux.ScanListFieldset', {
     {
         var _this = this;
         
+        Ext.override(Ext.selection.RowModel, {
+            onRowMouseDown: function (view, record, item, index, e) {
+            this.selectWithEvent(record, e);
+            }
+        });
+        
         var defConfig = {
             items: [{
                 xtype: 'grid',
@@ -246,6 +252,27 @@ Ext.define('Ext.ux.SelectBookForm', {
                 {
                     _this.submit();
                 }
+            },{
+                xtype: 'button',
+                name: 'dropUpload',
+                text: 'Drop current upload',
+                width: 140,
+                handler: function()
+                {
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: ' All uploaded data will be lost. Are you sure you want to drop this upload?.',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    _this.drop();
+                                }
+                            }
+                    });
+                }
             }],
             selectFirstField: false
         };
@@ -258,7 +285,7 @@ Ext.define('Ext.ux.SelectBookForm', {
     // React accordingly when a scan is double clicked.
     updateForm: function(filename, page)
     {
-    	// When the user hasnt selected a book yet.
+        // When the user hasnt selected a book yet.
         if (this.i === 0)
         {
             Ext.Msg.show({
@@ -281,9 +308,9 @@ Ext.define('Ext.ux.SelectBookForm', {
         // When the user has to select the end page.
         else if (this.i === 2)
         {
-        	this.changeBookPageRange(this.book, this.startOfRange, page);
-        	this.i = 0;
-        	
+            this.changeBookPageRange(this.book, this.startOfRange, page);
+            this.i = 0;
+            
             this.endSelecting();
         }
     },
@@ -313,43 +340,43 @@ Ext.define('Ext.ux.SelectBookForm', {
     // Changes the page range for a book.
     changeBookPageRange: function(book, firstPage, lastPage)
     {
-    	var _this = this;
-    	
-    	// Store the first and last page of the book.
-    	book.set('firstPage', firstPage);
-    	book.set('lastPage', lastPage);
-    	
-    	// Adjust the page ranges of all books for the binding so that there is no overlap.
+        var _this = this;
+        
+        // Store the first and last page of the book.
+        book.set('firstPage', firstPage);
+        book.set('lastPage', lastPage);
+        
+        // Adjust the page ranges of all books for the binding so that there is no overlap.
         this.bookstore.each(function(record)
         {
-        	if (record !== book) {
+            if (record !== book) {
 
-        		if (record.get('firstPage') > firstPage && record.get('lastPage') < lastPage)
-        		{
-        			record.set('firstPage', -1);
-        			record.set('lastPage', -1);
-        		}
-        		else if (record.get('firstPage') < firstPage && record.get('lastPage') > firstPage)
-        		{
-        			record.set('lastPage', firstPage - 1);
-        		} 
-        		else if (record.get('firstPage') < lastPage && record.get('lastPage') > lastPage)
-        		{
-        			record.set('firstPage', lastPage + 1);
-        		}
-        	}
+                if (record.get('firstPage') > firstPage && record.get('lastPage') < lastPage)
+                {
+                    record.set('firstPage', -1);
+                    record.set('lastPage', -1);
+                }
+                else if (record.get('firstPage') < firstPage && record.get('lastPage') > firstPage)
+                {
+                    record.set('lastPage', firstPage - 1);
+                } 
+                else if (record.get('firstPage') < lastPage && record.get('lastPage') > lastPage)
+                {
+                    record.set('firstPage', lastPage + 1);
+                }
+            }
         });
         
         // Update all scan records to reflect the book they belong to.
         this.scanstore.each(function(scanrecord) {
-        	var title = "";
+            var title = "";
             _this.bookstore.each(function(bookrecord)
             {
-            	if (scanrecord.get('page') >= bookrecord.get('firstPage') 
-            			&& scanrecord.get('page') <= bookrecord.get('lastPage')) 
-            	{
-            		title = bookrecord.get('title');
-            	}
+                if (scanrecord.get('page') >= bookrecord.get('firstPage') 
+                        && scanrecord.get('page') <= bookrecord.get('lastPage')) 
+                {
+                    title = bookrecord.get('title');
+                }
             });
             scanrecord.set('bookTitle', title);
         });
@@ -364,11 +391,11 @@ Ext.define('Ext.ux.SelectBookForm', {
     // Change the booktitle of a scan in the scanlist field.
     changeBookTitle: function(page, booktitle)
     {
-    	if (page <= 0)
-    	{
-    		return;
-    	}
-    	
+        if (page <= 0)
+        {
+            return;
+        }
+        
         this.scanstore.findRecord('page', page).set('bookTitle', booktitle);
     },
     
@@ -413,6 +440,40 @@ Ext.define('Ext.ux.SelectBookForm', {
                 {
                     bindingId:this.bindingId, 
                     selectedBooks:fields
+                },
+                this, 
+                onSuccess, 
+                onFailure);
+    },
+    
+    drop: function()
+    {
+        // Send the drop request to the database
+        var onSuccess = function(data)
+        {
+            Ext.Msg.show({
+                title: 'Success',
+                msg: 'The upload was dropped.',
+                buttons: Ext.Msg.OK
+            }); 
+            
+            this.close();
+        };
+        
+        //Show an error
+        var onFailure = function()
+        {
+            Ext.Msg.show({
+                title: 'Error',
+                msg: 'Failed to drop the upload. Please try again.',
+                buttons: Ext.Msg.OK
+            }); 
+        };
+        RequestManager.getInstance().request(
+                'BindingUpload', 
+                'dropUpload', 
+                {
+                    bindingId:this.bindingId
                 },
                 this, 
                 onSuccess, 
