@@ -203,7 +203,7 @@ Ext.define('Ext.LoadMask',
     
     constructor: function(el, config) {
         var me = this;
-        console.log(config);
+        
         this.addEvents(
             'beforehide',
             'hide',
