@@ -17,6 +17,9 @@ class ScanController extends ControllerBase
     public function actionLoad($data)
     {
         // Handle load.
+        $defaultSorters = array(
+            array('column' => 'page', 'direction' => 'ASC')
+        );
         return $this->handleLoad($data, 'Scan', 'scanId', array(
             'scanId',
             'bindingId',
@@ -27,7 +30,7 @@ class ScanController extends ControllerBase
             'zoomLevel',
             'scanName',
             'bookTitle'
-        ));
+        ), $defaultSorters);
         
     }
     
@@ -79,3 +82,4 @@ class ScanController extends ControllerBase
         }
     }
 }
+

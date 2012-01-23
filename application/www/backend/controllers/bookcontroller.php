@@ -26,7 +26,10 @@ class BookController extends ControllerBase
     public function actionLoad($data)
     {
         // Handle load.
-        return $this->handleLoad($data, 'Book', 'bookId');
+        $defaultSorters = array(
+            array('column' => 'firstPage', 'direction' => 'ASC')
+        );
+        return $this->handleLoad($data, 'Book', 'bookId', null, $defaultSorters);
     }
     
     /**
@@ -379,3 +382,4 @@ class BookController extends ControllerBase
         }
     }
 }
+
