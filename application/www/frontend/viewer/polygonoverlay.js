@@ -250,7 +250,7 @@ PolygonOverlay.prototype.onVertexAdd = function(polygon, vertex)
     // May be implemented by subclass.
 }
 
-PolygonOverlay.prototype.onVertexRemove = function(polygon, vertex)
+PolygonOverlay.prototype.onVertexRemove = function(polygon)
 {
     // May be implemented by subclass.
 }
@@ -511,11 +511,11 @@ PolygonOverlay.prototype.onVertexMouseUp = function(event, polygon, vertex)
         }
         else
         {
-            // Trigger remove vertex event.
-            this.onVertexRemove(polygon, vertex);
-            
             // Remove vertex.
             polygon.removeVertex(vertex);
+            
+            // Trigger remove vertex event.
+            this.onVertexRemove(polygon);
         }
         
         return false;
