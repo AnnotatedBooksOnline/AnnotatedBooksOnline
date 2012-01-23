@@ -17,7 +17,7 @@ class PdfController extends Controller
     public function actionGenerate($data)
     {
         $scanId = self::getInteger($data, 'scanId');
-        $transcriptions = false;
+        $transcriptions = null;
         $annotations = false;
         $range = null;
         
