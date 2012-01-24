@@ -73,6 +73,15 @@ Polygon.prototype.update = function(position, scale, rotation)
         return;
     }
     
+    // Check for an old IE.
+    var oldIe = ($.browser.msie && ($.browser.version < 9));
+    
+    // Adjust position for old IE. Don't know why it works, but it does.
+    if (oldIe)
+    {
+        position = {x: position.x - 1, y: position.y - 1};
+    }
+    
     // Update content.
     if (this.mode !== 'create')
     {
@@ -125,7 +134,7 @@ Polygon.prototype.update = function(position, scale, rotation)
             y: 0,
             degrees: rotation * (180 / Math.PI)
         },
-        "stroke-width": Polygon.lineThickness / scale // TODO: Not for IE6/7/8?
+        "stroke-width": Polygon.lineThickness / (oldIe ? 0.8 : scale)
     }, true);
     
     // Update corners.
@@ -454,6 +463,10 @@ Polygon.prototype.initialize = function()
         }
     });
     
+    // Add polygon class. Polygon must be shown to add a class.
+    this.content.show(true);
+    this.content.addCls('polygon');
+    
     // Create lines.
     var _this = this;
     this.lines = this.overlay.surface.add({
@@ -470,10 +483,6 @@ Polygon.prototype.initialize = function()
             'click':     function(s, event) { return _this.onClick(event);     }
         }
     });
-    
-    // Add polygon class. Polygon must be shown to add a class.
-    this.content.show(true);
-    this.content.addCls('polygon');
     
     // Create corners.
     this.corners = [];

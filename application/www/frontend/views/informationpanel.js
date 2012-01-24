@@ -71,8 +71,9 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         this.callParent();
         var myData = [];
         var store = Ext.create('Ext.data.Store', {
-        model: 'Ext.ux.BookModel',
+            model: 'Ext.ux.BookModel'
         });
+        
         store.filter({property: 'bindingId', value: this.bindingModel.get('bindingId')});
         store.load({
                         scope: this,
@@ -172,7 +173,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 viewer: this.viewer,
                 //height: '20%'
                 flex: 1
-            }],
+            }]
         };
         
         Ext.apply(this, defConfig);

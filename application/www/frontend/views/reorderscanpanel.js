@@ -36,7 +36,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     dropGroup:'scans',
                     tbar: [{
                         text: 'Scan order in binding',
-                        xtype: 'label',
+                        xtype: 'label'
                     }]
                 },{
                     xtype: 'multiselect',
@@ -50,7 +50,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     dropGroup:'scans',
                     tbar: [{
                         text: 'Deleted scans (drag here to delete)',
-                        xtype: 'label',
+                        xtype: 'label'
                     }]
                 }]
             },{
@@ -60,6 +60,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 {
                     // Reload the store from server.
                     this.up('[name=reorderscanform]').store.load();
+                    
                     // Reset deleted scans.
                     this.up('[name=reorderscanform]').deletedScanStore.removeAll(false);
                 }

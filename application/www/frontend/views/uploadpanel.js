@@ -523,11 +523,11 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 xtype: 'bookfieldset',
                 existingBook: book
             }]);
-    		
+            
             // Update the state of the 'delete' buttons.
             _this.checkBooks(false);
-    	});
-    	
+        });
+        
     },
     
     getBooks: function()
@@ -629,7 +629,7 @@ Ext.define('Ext.ux.UploadForm', {
                 showExistingBindingMessage: this.existingBindingId !== undefined
             },{
                 xtype: 'bindingfieldset',
-                name: 'bindingfields',
+                name: 'bindingfields'
             },{
                 xtype: 'booksfieldset',
                 name: 'bookfields',
@@ -639,11 +639,11 @@ Ext.define('Ext.ux.UploadForm', {
             listeners: {
                 validitychange: function(form, valid)
                     {
-                		if (_this.existingBindingId !== undefined)
-                		{
-                			return;
-                		}
-                		
+                        if (_this.existingBindingId !== undefined)
+                        {
+                            return;
+                        }
+                        
                         var booksfieldset = this.down('booksfieldset');
                         var books = booksfieldset.getBooks();
                         

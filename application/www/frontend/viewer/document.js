@@ -186,18 +186,6 @@ Document.prototype.addVisibleTiles =
                 
                 img.src = this.getImageUrl(row, col, zoomLevel);
                 
-                //img.style.width   = Document.tileSize + 'px';
-                //img.style.height  = Document.tileSize + 'px';
-                
-                //img.style.display = 'none';
-                
-                //img.onload = function(event) {
-                //    var event  = event || window.event;
-                //    var target = event.target || event.srcElement;
-                //    
-                //    target.style.display = '';
-                //};
-                
                 //add it to the fragment
                 fragment.appendChild(img);
             }

@@ -560,7 +560,7 @@ Viewport.prototype.onMouseDown = function(event)
     //check if disabled
     if (this.draggingDisabled)
     {
-        return;
+        return false;
     }
     
     //start dragging
@@ -577,7 +577,7 @@ Viewport.prototype.onMouseDown = function(event)
     $(document.body).addClass("dragging");
     this.dom.addClass("dragging");
     
-    return cancelEvent(event);
+    return false;
 }
 
 Viewport.prototype.onMouseMove = function(event)
@@ -585,7 +585,7 @@ Viewport.prototype.onMouseMove = function(event)
     //dragging must have started
     if (!this.mouseDown)
     {
-        return;
+        return false;
     }
     
     //calculate delta and set new mouse position
@@ -658,6 +658,8 @@ Viewport.prototype.onMouseMove = function(event)
     
     //update viewport
     this.update(newPosition, undefined, this.rotation + deltaRotation);
+    
+    return false;
 }
 
 Viewport.prototype.onMouseUp = function(event)
@@ -665,7 +667,7 @@ Viewport.prototype.onMouseUp = function(event)
     // Dragging must have started.
     if (!this.mouseDown)
     {
-        return;
+        return false;
     }
     
     //stop dragging
@@ -690,7 +692,7 @@ Viewport.prototype.onMouseUp = function(event)
     //move delta position
     this.move(deltaPosition);
     
-    return cancelEvent(event);
+    return false;
 }
 
 Viewport.prototype.onMouseWheel = function(event)
@@ -698,7 +700,7 @@ Viewport.prototype.onMouseWheel = function(event)
     //check if disabled
     if (this.zoomingDisabled)
     {
-        return;
+        return false;
     }
     
     //calculate scroll amount (0.75 is one normal step)
@@ -730,7 +732,7 @@ Viewport.prototype.onMouseWheel = function(event)
     //zoom in
     this.zoom(newZoomLevel, mousePosition, false);
     
-    return cancelEvent(event);
+    return false;
 }
 
 Viewport.prototype.onDoubleClick = function(event)
@@ -749,6 +751,8 @@ Viewport.prototype.onDoubleClick = function(event)
     
     //zoom in
     this.zoom(newZoomLevel, mousePosition);
+    
+    return false;
 }
 
 // Handles keydown events.
@@ -764,7 +768,7 @@ Viewport.prototype.onKeyDown = function(event)
         case 32: // Space.
             this.spaceDown = true;
             
-            return;
+            break;
             
         case 36: // Home.
             if (!this.zoomingDisabled && !this.draggingDisabled && !this.rotationDisabled)
@@ -839,7 +843,7 @@ Viewport.prototype.onKeyUp = function(event)
         case 32: // Space.
             this.spaceDown = false;
             
-            return;
+            break;
     }
 }
 

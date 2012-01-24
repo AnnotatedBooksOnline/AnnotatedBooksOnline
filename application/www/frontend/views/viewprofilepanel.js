@@ -457,7 +457,7 @@ Ext.define('Ext.ux.ChangeRoleForm', {
     
     submit: function()
     {
-        var form = this.getForm();        
+        var form = this.getForm();
         var values = form.getValues();
         var _this = this;
         
@@ -480,7 +480,6 @@ Ext.define('Ext.ux.ChangeRoleForm', {
                     );
             }
         );
-        
     }
 });
 
@@ -500,7 +499,7 @@ Ext.define('Ext.ux.ChangeRoleWindow', {
                 xtype: 'changeroleform',
                 store: this.store,
                 border: false,
-                width: 400,
+                width: 400
             }]
         };
         

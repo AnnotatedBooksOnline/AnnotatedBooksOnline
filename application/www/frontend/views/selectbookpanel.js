@@ -60,7 +60,7 @@ Ext.define('Ext.ux.BookListFieldset', {
                     flex:      1,
                     sortable:  false,
                     dataIndex: 'status'
-                }],
+                }]
             }]
         };
         
@@ -125,7 +125,6 @@ Ext.define('Ext.ux.ScanListFieldset', {
         Ext.apply(this, defConfig);
         
         this.callParent();
-        
     }
 });
 
@@ -182,7 +181,7 @@ Ext.define('Ext.ux.SelectBookForm', {
         var defConfig = {
             monitorValid: true,
             items: [{
-                xtype: 'bindinginformationfieldset',
+                xtype: 'bindinginformationfieldset'
             },{
                 xtype: 'booklistfieldset',
                 store: _this.bookstore
