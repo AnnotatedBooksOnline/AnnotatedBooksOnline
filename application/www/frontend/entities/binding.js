@@ -12,7 +12,9 @@
 function Binding()
 {
     if (arguments.length)
+    {
         this.constructor.apply(this, arguments);
+    }
 }
 
 // Fields.
@@ -109,8 +111,8 @@ Binding.documentFromScan = function(scan)
         scan.get('zoomLevel'),
         function(row, col, zoomLevel)
         {
-            return 'data/tiles/' + scan.get('scanId') + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-            //return 'tiles/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
+            return 'data/tiles/' + scan.get('scanId') 
+                 + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
         }
     );
 }
