@@ -21,6 +21,7 @@ Ext.define('Ext.ux.LoginForm', {
             buttons: [{
                 xtype: 'button',
                 text: 'Cancel',
+                iconCls: 'cancel-icon',
                 width: 140,
                 handler: function()
                 {
@@ -37,6 +38,7 @@ Ext.define('Ext.ux.LoginForm', {
                 formBind: true,
                 disabled: true,
                 text: 'Login',
+                iconCls: 'login-icon',
                 width: 140,
                 handler: function()
                 {

@@ -173,6 +173,7 @@ Ext.define('Ext.ux.ExportForm', {
             },{
                 xtype: 'button',
                 text: 'Export',
+                iconCls: 'save-icon',
                 flex: 0,
                 width: 100,
                 maxWidth: 100,
@@ -358,12 +359,14 @@ Ext.define('Ext.ux.ExportConfirmForm', {
             
             buttons: [{
                 text: 'Cancel',
+                iconCls: 'cancel-icon',
                 handler: function()
                 {
                     _this.ownerCt.onCancel();
                 }
             },{
                 text: 'Continue',
+                iconCls: 'save-icon',
                 handler: function()
                 {
                     _this.ownerCt.onContinue();

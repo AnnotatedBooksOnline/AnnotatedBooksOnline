@@ -404,6 +404,7 @@ Ext.define('Ext.ux.BookFieldset', {
                 },{
                     xtype: 'button',
                     text: 'Delete book',
+                    iconCls: 'delete-book-icon',
                     name: 'deletebook',
                     disabled: true,
                     width: 140,
@@ -488,6 +489,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
             items: [{
                 xtype: 'button',
                 text: 'Add book',
+                iconCls: 'add-book-icon',
                 width: 140,
                 margin: '0 0 10 0',
                 handler: function()
@@ -659,6 +661,7 @@ Ext.define('Ext.ux.UploadForm', {
             buttons: [{
                 xtype: 'button',
                 text: 'Reset',
+                iconCls: 'cancel-icon',
                 width: 140,
                 handler: function()
                 {
@@ -681,7 +684,8 @@ Ext.define('Ext.ux.UploadForm', {
                 xtype: 'button',
                 formBind: true,
                 disabled: true,
-                text: 'Save',
+                text: 'Continue',
+                iconCls: 'accept-icon',
                 width: 140,
                 handler: function()
                 {

@@ -66,6 +66,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         text: 'Save',
                         width: 135,
                         name: 'save-changes',
+                        iconCls: 'accept-icon',
                         disabled: true,
                         style: 'margin-right: 5px',
                         handler: function()
@@ -76,6 +77,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         xtype: 'button',
                         text: 'Reset',
                         width: 135,
+                        iconCls: 'cancel-icon',
                         name: 'reset-changes',
                         disabled: true,
                         handler: function()
@@ -92,6 +94,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         text: 'Edit mode',
                         width: 135,
                         name: 'edit-mode',
+                        iconCls: 'edit-mode-icon',
                         disabled: true,
                         style: 'margin-right: 5px',
                         handler: function()
@@ -102,6 +105,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         xtype: 'button',
                         text: 'View mode',
                         width: 135,
+                        iconCls: 'view-mode-icon', // TODO
                         name: 'view-mode',
                         disabled: true,
                         hidden: true,
@@ -524,6 +528,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                             new Ext.Button({
                                 renderTo: id,
                                 text: 'Edit',
+                                iconCls: 'transcription-edit-icon',
                                 style: 'margin-right: 5px;',
                                 handler: function()
                                 {
@@ -543,7 +548,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                 
                 return '<div style="height: 22px;" id="' + id + '">&nbsp;</div>';
             },
-            width: 50
+            width: 66
         };
         
         if (this.mode === 'edit')
