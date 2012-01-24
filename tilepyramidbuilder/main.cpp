@@ -193,10 +193,10 @@ int main(int argc, char **argv)
         //Check for no input files
         if (optind == argc)
         {
-	        cerr << "An error occured: No input files." << endl;
-          showUsage(argv[0]);
-          
-          return 1;
+            cerr << "An error occured: No input files." << endl;
+            showUsage(argv[0]);
+            
+            return 1;
         }
         
         //Set settings
@@ -204,11 +204,17 @@ int main(int argc, char **argv)
         
         //Input settings
         if (input_type == "jpg" || input_type == "jpeg")
+        {
             settings.input_type = BuilderSettings::JPEG_INPUT;
+        }
         else if (input_type == "tiff")
+        {
             settings.input_type = BuilderSettings::TIFF_INPUT;
+        }
         else
+        {
             settings.input_type = BuilderSettings::AUTO_INPUT;
+        }
         
         //Output settings
         settings.output_path         = output_path;
