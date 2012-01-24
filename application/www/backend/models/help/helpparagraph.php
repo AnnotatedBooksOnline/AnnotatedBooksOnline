@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
+require_once 'util/authentication.php';
 
 /**
  * Entity representing a paragraph in a help page.
@@ -105,7 +106,10 @@ class HelpParagraph extends Entity
                 {
                     $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
                     $helpParagraph = $helpParagraph->getValues();
-                    $this->subItems[] = $helpParagraph;
+                    if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
+                    {
+                        $this->subItems[] = $helpParagraph;
+                    }
                 }
             }
         }

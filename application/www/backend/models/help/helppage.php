@@ -3,6 +3,7 @@
 
 require_once 'framework/database/entity.php';
 require_once 'models/help/helpparagraph.php';
+require_once 'util/authentication.php';
 
 /**
  * Entity representing a help page.
@@ -85,7 +86,10 @@ class HelpPage extends Entity
             {
                 $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
                 $helpParagraph = $helpParagraph->getValues();
-                $this->subItems[] = $helpParagraph;
+                if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
+                {
+                    $this->subItems[] = $helpParagraph;
+                }
             }
         }
         

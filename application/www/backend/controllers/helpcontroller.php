@@ -22,15 +22,18 @@ class HelpController extends ControllerBase
         if($node === 'root')
         {
             $result = $this->handleLoad($data, 'HelpPage', 'helpPageId');
-            foreach ($result['records'] as &$record)
+            foreach ($result['records'] as $i => &$record)
             {
                 $help = new HelpPage($record['helpPageId']);
                 $children = $help->getChildren();
-                if (empty($children))
-                    {
-                        $record['leaf'] = true;
-                    }
-                $record['HelpId'] = $record['helpPageId'].','.-1;
+                if (!empty($children))
+                {
+                    $record['HelpId'] = $record['helpPageId'].','.-1;
+                }
+                else
+                {
+                    unset($result['records'][$i]);
+                }
             }
         }
         else

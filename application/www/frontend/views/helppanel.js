@@ -10,7 +10,10 @@ Ext.define('Ext.ux.HelpPanel', {
     {
         var _this = this;
     
-        var treestore = Ext.create('Ext.data.TreeStore', {model: 'Ext.ux.HelpModel'});
+        var treestore = Ext.create('Ext.data.TreeStore', {
+            model: 'Ext.ux.HelpModel',
+            root: {HelpId: 'root'}
+        });
         
         var defConfig = {
             layout: 'border',
@@ -19,6 +22,7 @@ Ext.define('Ext.ux.HelpPanel', {
                 title: 'Index',
                 width: 200,
                 region: 'west',
+                id: 'helpTree',
                 store: treestore,
                 columns: [{ xtype: 'treecolumn',text: 'Name',  dataIndex: 'pageName'}],
                 collapsible: true,
@@ -33,13 +37,32 @@ Ext.define('Ext.ux.HelpPanel', {
                 xtype: 'panel',
                 region: 'center',
                 autoScroll: true,
-                html: 'teset <br/> klik op een item in de tree'
-            }]
+                name: 'helptext',
+                id: 'helpmain',
+                styleHtmlContent: true,
+                styleHtmlCls: 'help'
+            }],
+            listeners: {
+                afterRender: function()
+                {
+                    this.getComponent(0).expandPath('/root',undefined,undefined,function(succes,lastNode){
+                        var helppage = lastNode.findChild('pageName',this.helpTab);
+                        if(helppage == null)
+                        {
+                            helppage = lastNode.findChild('pageName', 'default');
+                        }
+                        this.updateHTML(helppage);
+                    },this);
+                }
+            }
         };
         
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
     updateHTML: function(record)
@@ -55,13 +78,11 @@ Ext.define('Ext.ux.HelpPanel', {
             }
             var htmltext = _this.generateHelpHTML(page,2);
             _this.getComponent(1).update(htmltext);
+            
+            var content = Ext.get(record.get('pageName'));
+            var height = content.getOffsetsTo(Ext.get('helpmain-body'));
+            _this.getComponent(1).body.scroll('b', height[1], false);
         });
-        
-        /*
-        var content = Ext.get(record.get('pageName'));
-        var height = content.getHeight();//werkt niet, wordt 14
-        this.getComponent(1).body.scrollTo("top", height, false);
-        */
     },
     
     generateHelpHTML: function(record,dept)
@@ -70,7 +91,7 @@ Ext.define('Ext.ux.HelpPanel', {
         var htmltext = '<h' + dept + ' id="'+ name +'">' + name + '</h' + dept + '>';
         if(dept > 2)
         {
-            htmltext += record.get('content');
+            htmltext += '<p>' + record.get('content') + '</p>';
         }
         
         for(var i=0;i<record.childNodes.length;i++)
@@ -78,7 +99,27 @@ Ext.define('Ext.ux.HelpPanel', {
             htmltext += this.generateHelpHTML(record.childNodes[i],dept+1);
         }
         
+        htmltext = htmltext.replace(
+            /[*][*]([^*]+)[|][|]([/0-9,-]+)[*][*]/g,
+            '<a style="cursor: pointer" onclick="Ext.getCmp(\''
+                + this.getId() + '\').processLink(\'$2\')">$1</a>'
+        );
+        
         return htmltext;
+    },
+    
+    processLink: function(path)
+    {
+        alert(path);
+        this.getComponent(0).collapseAll();
+        this.getComponent(0).expandPath('/root'+path,undefined,undefined,function(succes,lastNode){
+            this.updateHTML(lastNode);
+        },this);
+    },
+    
+    onAuthenticationChange: function()
+    {
+        
     }
 });
 
