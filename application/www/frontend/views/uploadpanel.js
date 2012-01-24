@@ -631,7 +631,7 @@ Ext.define('Ext.ux.UploadForm', {
                 showExistingBindingMessage: this.existingBindingId !== undefined
             },{
                 xtype: 'bindingfieldset',
-                name: 'bindingfields',
+                name: 'bindingfields'
             },{
                 xtype: 'booksfieldset',
                 name: 'bookfields',

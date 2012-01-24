@@ -50,7 +50,7 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
                 {
                     _this.submit();
                 }
-            }],
+            }]
         };
         
         Ext.apply(this, defConfig);

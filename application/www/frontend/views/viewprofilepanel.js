@@ -500,7 +500,7 @@ Ext.define('Ext.ux.ChangeRoleWindow', {
                 xtype: 'changeroleform',
                 store: this.store,
                 border: false,
-                width: 400,
+                width: 400
             }]
         };
         
