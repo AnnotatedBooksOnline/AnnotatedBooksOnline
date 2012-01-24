@@ -98,10 +98,9 @@ class HelpParagraph extends Entity
             $citems = Query::select('helpParagraphId')
                             ->from('HelpParagraphs')
                             ->where('paragraphParentId = :id')
+                            ->orderBy('title','ASC')
                             ->execute(array('id' => $this->helpParagraphId));
             
-            if ($citems->getAmount()>0);
-            {
                 foreach($citems as $citem)
                 {
                     $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
@@ -111,12 +110,18 @@ class HelpParagraph extends Entity
                         $this->subItems[] = $helpParagraph;
                     }
                 }
-            }
         }
         
         return $this->subItems;
     }
     
+    public function getValues($columns = null)
+    {
+        $helpParagraph = parent::getValues($columns);
+        $helpParagraph['helpId'] =  $helpParagraph['helpPageId'].','.$helpParagraph['helpParagraphId'];
+        $helpParagraph['pageName'] = $helpParagraph['title'];
+        return $helpParagraph;
+    }
     
     // Getters and setters.
     
