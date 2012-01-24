@@ -96,11 +96,25 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         // Determine action to use.
         switch (operation.action)
         {
-            case 'read':    request.action = 'load';   break;
-            case 'update':  request.action = 'save';   break;
-            case 'create':  request.action = 'create'; break;
-            case 'destroy': request.action = 'delete'; break;
-            default:        request.action = 'load';   break;
+            case 'read':
+                request.action = 'load';
+                break;
+            
+            case 'update':
+                request.action = 'save';
+                break;
+            
+            case 'create':
+                request.action = 'create';
+                break;
+            
+            case 'destroy':
+                request.action = 'delete';
+                break;
+            
+            default:
+                request.action = 'load';
+                break;
         }
         
         // Add request to operation.
@@ -190,7 +204,6 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         var params   = {},
             isDef    = Ext.isDefined,
             id       = operation.id,
-            //groupers = operation.groupers,
             sorters  = operation.sorters,
             filters  = operation.filters,
             page     = operation.page,
@@ -212,15 +225,6 @@ Ext.define('Ext.ux.RequestManagerProxy', {
             params.limit = limit;
         }
 
-        // NOTE: Groupers or group? operation seems to have just a group.
-        // NOTE: Anyway, do we want to support this serverside?
-        /*
-        if (groupers && (groupers.length > 0))
-        {
-            params.groupers = this.encodeSorters(groupers);
-        }
-        */
-
         if (sorters && (sorters.length > 0))
         {
             params.sorters = this.encodeSorters(sorters);
@@ -230,9 +234,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         {
             params.filters = this.encodeFilters(filters);
         }
-
-        // NOTE: Should we apply this as a filter?
-        // NOTE: Because a select on a primary key is way faster than: .. WHERE id LIKE '%10%' ..
+        
         if (id)
         {
             params.id = operation.id;
