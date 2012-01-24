@@ -104,3 +104,41 @@ a:hover
     margin-right: auto;
     display: block;
 }
+
+/* Help styling. */
+.help
+{
+    font-family:Arial,Helvetica,FreeSans,sans-serif;
+    text-align: left;
+    padding: 10px;
+    line-height: 20px;
+}
+
+.help h2
+{
+    font-size:32px;
+    line-height: 35px;
+}
+
+.help h3,h4,h5,h6
+{
+    font-size:24px;
+    line-height: 25px;
+}
+
+.help p
+{
+    font-size:16px;
+    color: #333333;
+}
+
+#helpTree .x-tree-icon-parent{
+    display : none;
+    background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
+}
+
+#helpTree .x-tree-icon-leaf {
+    display : none;
+    background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
+}
+

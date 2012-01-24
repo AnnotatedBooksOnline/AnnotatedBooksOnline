@@ -21,8 +21,8 @@ Ext.define('Ext.ux.Info', {
         RequestManager.getInstance().request('Setting', 'getSetting', {setting: 'info-page'}, this,
             function(textPage)
             {
-                var projectInfo = '<h2>Project info</h2><p>This website is free software released'
-                    + 'under GNU General Public License version 3, downloadable from '
+                var projectInfo = '<h2>Project info</h2><p>This website is free software released '
+                    + 'under GNU General Public License version 3 and downloadable from '
                     + '<a href="http://www.github.com/AnnotatedBooksOnline/AnnotatedBooksOnline" '
                     + 'target="_blank" title="Go to the GitHub of this project">GitHub</a>. The '
                     + 'content of this website is not covered by this license, please read the '

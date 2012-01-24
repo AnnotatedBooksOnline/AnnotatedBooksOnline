@@ -76,3 +76,4 @@ class Language extends Entity
     public function getLanguageName()      { return $this->languageName;  }
     public function setLanguageName($name) { $this->languageName = $name; }
 }
+

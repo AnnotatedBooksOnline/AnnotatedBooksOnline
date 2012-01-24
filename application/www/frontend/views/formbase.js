@@ -57,10 +57,6 @@ Ext.define('Ext.ux.FormBase', {
             }];
         }
         
-        // Create loading and saving masks.
-        this.loadingMask = new Ext.LoadMask(this, {msg: 'Loading...'});
-        this.savingMask  = new Ext.LoadMask(this, {msg: 'Saving...'});
-        
         // Fix bug with disabled button in ExtJS.
         this.on('afterrender', function(me)
             {
@@ -97,7 +93,7 @@ Ext.define('Ext.ux.FormBase', {
         if (id !== undefined)
         {
             // Show loading mask.
-            this.loadingMask.show();
+            this.setLoading('Loading...');
             
             // Model is a class, and we have to load an instance.
             var _this = this;
@@ -109,12 +105,12 @@ Ext.define('Ext.ux.FormBase', {
                     _this.loadRecord(model);
                     
                     // Hide loading mask.
-                    _this.loadingMask.hide();
+                    _this.setLoading(false);
                 },
                 failure: function()
                 {
                     // Hide loading mask.
-                    _this.loadingMask.hide();
+                    _this.setLoading(false);
                     
                     // Disable form.
                     _this.disable();
@@ -154,7 +150,7 @@ Ext.define('Ext.ux.FormBase', {
     saveModel: function(obj, onSuccess, onError)
     {
         // Show saving mask.
-        this.savingMask.show();
+        this.setLoading('Saving...');
         
         // Update model its values.
         this.updateModel();
@@ -165,7 +161,7 @@ Ext.define('Ext.ux.FormBase', {
             success: function()
             {
                 // Hide saving mask.
-                _this.savingMask.hide();
+                _this.setLoading(false);
                 
                 // Call success callback.
                 if (onSuccess !== undefined)
@@ -176,7 +172,7 @@ Ext.define('Ext.ux.FormBase', {
             failure: function()
             {
                 // Hide saving mask.
-                _this.savingMask.hide();
+                _this.setLoading(false);
                 
                 // Call error callback.
                 if (onError !== undefined)
@@ -198,3 +194,4 @@ Ext.define('Ext.ux.FormBase', {
         this.getForm().reset(); 
     }
 });
+

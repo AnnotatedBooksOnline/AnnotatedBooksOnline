@@ -5,7 +5,7 @@
 Ext.define('Ext.ux.BindingLanguageModel', {
     extend: 'Ext.ux.ModelBase',
     idProperty: 'bindingId',
-    fields: ['bindingId','languageId'],
+    fields: ['languageName','bindingId','languageId'],
 
     proxy: {
         type: 'requestmanager',

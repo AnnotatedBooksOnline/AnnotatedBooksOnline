@@ -22,3 +22,4 @@ class SettingController extends ControllerBase
         return Setting::getSetting($setting, null, true);
     }
 }
+

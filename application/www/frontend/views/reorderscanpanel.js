@@ -100,6 +100,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
 
         var defConfig = {
             name: 'reorderscanform',
+            selectFirstField: false,
             items: [{
                 xtype: 'bindinginformationfieldset'
             },{
@@ -108,8 +109,38 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 store: this.store,
                 deletedScanStore: this.deletedScanStore
             }],
-            selectFirstField: false,
-            submitButtonText: 'Save'
+            buttons: [{
+                xtype: 'button',
+                disabled: true,
+                name: 'save',
+                text: 'Save',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
+                }
+            },{
+                xtype: 'button',
+                name: 'dropUpload',
+                text: 'Drop current upload',
+                width: 140,
+                handler: function()
+                {
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: ' All uploaded data will be lost. Are you sure you want to drop this upload?.',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    _this.drop();
+                                }
+                            }
+                    });
+                }
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -165,5 +196,39 @@ Ext.define('Ext.ux.ReorderScanForm', {
             onSuccess, 
             onFailure
         );
+    },
+    drop: function()
+    {
+        // Send the drop request to the database
+        var onSuccess = function(data)
+        {
+            Ext.Msg.show({
+                title: 'Success',
+                msg: 'The upload was dropped.',
+                buttons: Ext.Msg.OK
+            }); 
+            
+            this.close();
+        };
+        
+        //Show an error
+        var onFailure = function()
+        {
+            Ext.Msg.show({
+                title: 'Error',
+                msg: 'Failed to drop the upload. Please try again.',
+                buttons: Ext.Msg.OK
+            }); 
+        };
+        RequestManager.getInstance().request(
+                'BindingUpload', 
+                'dropUpload', 
+                {
+                    bindingId:this.bindingId
+                },
+                this, 
+                onSuccess, 
+                onFailure);
     }
+    
 });

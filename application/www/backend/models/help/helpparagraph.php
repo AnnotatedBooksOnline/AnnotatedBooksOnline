@@ -2,6 +2,7 @@
 //[[GPL]]
 
 require_once 'framework/database/entity.php';
+require_once 'util/authentication.php';
 
 /**
  * Entity representing a paragraph in a help page.
@@ -28,7 +29,6 @@ class HelpParagraph extends Entity
     
     /** The content of the page, in HTML. */
     protected $content;
-
     
     /** A cached array of subparagraphs. */
     private $subItems;
@@ -98,17 +98,30 @@ class HelpParagraph extends Entity
             $citems = Query::select('helpParagraphId')
                             ->from('HelpParagraphs')
                             ->where('paragraphParentId = :id')
+                            ->orderBy('title','ASC')
                             ->execute(array('id' => $this->helpParagraphId));
-    
-            foreach($citems as $citem)
-            {
-                $this->subItems[] = new HelpParagraph($citem->getValue('controlItemId'));
-            }
+            
+                foreach($citems as $citem)
+                {
+                    $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
+                    $helpParagraph = $helpParagraph->getValues();
+                    if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
+                    {
+                        $this->subItems[] = $helpParagraph;
+                    }
+                }
         }
-    
+        
         return $this->subItems;
     }
     
+    public function getValues($columns = null)
+    {
+        $helpParagraph = parent::getValues($columns);
+        $helpParagraph['helpId'] =  $helpParagraph['helpPageId'].','.$helpParagraph['helpParagraphId'];
+        $helpParagraph['pageName'] = $helpParagraph['title'];
+        return $helpParagraph;
+    }
     
     // Getters and setters.
     
@@ -132,3 +145,4 @@ class HelpParagraph extends Entity
     
     
 }
+

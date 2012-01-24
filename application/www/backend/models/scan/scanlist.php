@@ -29,8 +29,8 @@ class ScanList extends EntityList {
             from(self::getTableName())->
             join("Books", 
                  array("Books.firstPage <= Scans.page",
-        			   "Books.lastPage >= Scans.page",
-        			   "Books.bindingId = Scans.bindingId"), 
-        		 "LEFT OUTER");
+                       "Books.lastPage >= Scans.page",
+                       "Books.bindingId = Scans.bindingId"), 
+                 "LEFT OUTER");
     }
 }

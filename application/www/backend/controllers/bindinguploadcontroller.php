@@ -553,4 +553,23 @@ class BindingUploadController extends Controller
             return true;
         }
     }
+    
+    
+    //TODO: Cascading in database 
+    public function actionDropUpload($data)
+    {/*
+        Authentication::assertPermissionTo('upload-bindings');  
+        $userId = Authentication::getInstance()->getUserId();
+        
+        $bindingId = self::getInteger($data, 'bindingId');
+        $binding = new Binding($bindingId);
+        if (($binding->getStatus() != 2) && ($binding->getUserId() == $userId))
+            {
+                $binding->delete();
+            }
+        else
+        {
+            throw new ControllerException('dropping-not-allowed');
+        }*/
+    }
 }

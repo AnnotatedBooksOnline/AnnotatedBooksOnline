@@ -18,6 +18,15 @@ class BindingLanguageController extends ControllerBase
         // Handle load.
         $result = $this->handleLoad($data, 'BindingLanguage');
         
+        // Also load the name of each language.
+        foreach ($result['records'] as &$record)
+        {
+            $language = new Language($record['languageId']);
+            
+            $record['languageName'] = $language->getLanguageName();
+        }
+        
         return $result;
     }
 }
+

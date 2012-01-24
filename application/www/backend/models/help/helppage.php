@@ -3,6 +3,7 @@
 
 require_once 'framework/database/entity.php';
 require_once 'models/help/helpparagraph.php';
+require_once 'util/authentication.php';
 
 /**
  * Entity representing a help page.
@@ -78,18 +79,30 @@ class HelpPage extends Entity
             // Query contained paragraphs (but not their children).
             $citems = Query::select('helpParagraphId')
                            ->from('HelpParagraphs')
-                           ->where('helpPageId = :id AND paragraphParentId IS NULL')
+                           ->where('helpPageId = :id', 'paragraphParentId IS NULL')
+                           ->orderBy('title','ASC')
                            ->execute(array('id' => $this->helpPageId));
             
             foreach($citems as $citem)
             {
-                $this->subItems[] = new HelpParagraph($citem->getValue('controlItemId'));
+                $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
+                $helpParagraph = $helpParagraph->getValues();
+                if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
+                {
+                    $this->subItems[] = $helpParagraph;
+                }
             }
         }
         
         return $this->subItems;
     }
     
+    public function getValues($columns = null)
+    {
+        $helpPage = parent::getValues($columns);
+        $helpPage['helpId'] =  $helpPage['helpPageId'].','.-1;
+        return $helpPage;
+    }
     
     // Getters and setters.
     
@@ -105,3 +118,4 @@ class HelpPage extends Entity
     public function getParentHelpPageId()    { return $this->parentHelpPageId; }
     public function setParentHelpPageId($id) { $this->parentHelpPageId = $id;  }
 }
+

@@ -224,6 +224,7 @@ Application.prototype.registerActions = function()
                 case 'selectbook':
                 case 'welcome':
                 case 'info':
+                case 'help':
                 case 'termsofuse':
                 case 'activation':
                 case 'restorepass':
@@ -277,6 +278,7 @@ Application.prototype.tabNeedsAuthentication = function(type)
         case 'register':
         case 'welcome':
         case 'info':
+        case 'help':
         case 'termsofuse':
         case 'activation':
         case 'restorepass':
