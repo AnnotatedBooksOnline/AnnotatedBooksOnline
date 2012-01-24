@@ -197,41 +197,101 @@ Ext.override(Ext.data.Store, {
  * Fix for problematic z-index of setLoading() floating LoadMask.
  */
 
-Ext.override(Ext.AbstractComponent, {
-    setLoading: function(load, targetEl)
-    {
-        var me = this,
-            msg;
-
-        if (me.rendered)
+Ext.define('Ext.LoadMask',
+{
+    extend: 'Ext.util.Observable',
+    
+    constructor: function(el, config) {
+        var me = this;
+        
+        this.addEvents(
+            'beforehide',
+            'hide',
+            'beforeshow',
+            'show',
+            'beforedestroy',
+            'destroy'
+        );
+        
+        if (el.isComponent)
         {
-            if (load !== false && !me.collapsed)
+            me.maskElement = el.getEl();
+        }
+        else
+        {
+            me.maskElement = el;
+        }
+        this.superclass.constructor.apply(this, [config]);
+        
+        if (me.store)
+        {
+            me.bindStore(me.store, true);
+        }
+    },
+
+    bindStore : function(store, initial)
+    {
+        var me = this;
+
+        if (!initial && me.store)
+        {
+            me.mun(me.store, {
+                scope: me,
+                beforeload: me.show,
+                load: me.hide,
+                exception: me.hide
+            });
+            if (!store)
             {
-                if (Ext.isObject(load))
-                {
-                    throw "This implementation of setLoading does not support a config object.";
-                }
-                else if (Ext.isString(load))
-                {
-                    msg = load;
-                }
-                else
-                {
-                    msg = "Loading...";
-                }
-                if (me.loadMask)
-                {
-                    me.loadMask.unmask();
-                }
-                me.loadMask = me.loadMask || (targetEl ? me.getTargetEl() : me.el);
-                me.loadMask.mask(msg);
-            }
-            else if (me.loadMask)
-            {
-                me.loadMask.unmask();
-                me.loadMask = null;
+                me.store = null;
             }
         }
+        if (store)
+        {
+            store = Ext.data.StoreManager.lookup(store);
+            me.mon(store, {
+                scope: me,
+                beforeload: me.show,
+                load: me.hide,
+                exception: me.hide
+            });
+        }
+        me.store = store;
+        if (store && store.isLoading())
+        {
+            me.show();
+        }
+    },
+    
+    enable: function()
+    {
+        this.show();
+    },
+    
+    disable: function()
+    {
+        this.hide();
+    },
+
+    show: function()
+    {
+        this.fireEvent('beforeshow', this);
+        this.maskElement.mask(this.msg || 'Loading...');
+        this.fireEvent('show', this);
+    },
+
+    hide: function()
+    {
+        this.fireEvent('beforehide', this);
+        this.maskElement.unmask();
+        this.fireEvent('hide', this);
+    },
+    
+    destroy: function()
+    {
+        this.fireEvent('beforedestroy', this);
+        this.hide();
+        this.fireEvent('destroy', this);
     }
 });
 

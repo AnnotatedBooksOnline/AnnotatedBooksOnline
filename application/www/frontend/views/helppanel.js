@@ -27,6 +27,9 @@ Ext.define('Ext.ux.HelpPanel', {
                 columns: [{ xtype: 'treecolumn',text: 'Name',  dataIndex: 'pageName'}],
                 collapsible: true,
                 rootVisible: false,
+                viewConfig: {
+                    loadMask: false
+                },
                 listeners: {
                     itemclick: function(t, record, item, index, e, eOpts)
                     {
