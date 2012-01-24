@@ -29,3 +29,4 @@ class BindingLanguageController extends ControllerBase
         return $result;
     }
 }
+

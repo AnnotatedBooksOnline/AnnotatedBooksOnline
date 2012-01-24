@@ -27,3 +27,4 @@ Ext.define('Ext.ux.HelpParagraphModel', {
         model: 'Ext.ux.HelpModel'
         }
 });
+

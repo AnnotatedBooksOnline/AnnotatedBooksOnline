@@ -118,3 +118,4 @@ class HelpPage extends Entity
     public function getParentHelpPageId()    { return $this->parentHelpPageId; }
     public function setParentHelpPageId($id) { $this->parentHelpPageId = $id;  }
 }
+

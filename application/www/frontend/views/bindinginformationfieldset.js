@@ -80,3 +80,4 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         this.callParent();
     }
 });
+

@@ -309,3 +309,4 @@ AnnotationOverlay.prototype.onVertexRemove = function(polygon)
     
     AnnotationOverlay.base.onVertexRemove.call(this, polygon);
 }
+

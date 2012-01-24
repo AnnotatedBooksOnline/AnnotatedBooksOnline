@@ -145,3 +145,4 @@ class HelpParagraph extends Entity
     
     
 }
+

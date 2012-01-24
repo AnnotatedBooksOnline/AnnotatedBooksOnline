@@ -126,3 +126,4 @@ class Permission extends Entity
     public function getMinRank()      { return $this->minRank;  }
     public function setMinRank($rank) { $this->minRank = $rank; }
 }
+
