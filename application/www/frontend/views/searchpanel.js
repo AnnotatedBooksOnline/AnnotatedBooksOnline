@@ -928,118 +928,124 @@ Ext.define('Ext.ux.SearchPanel', {
                 }]
             },{
                 xtype: 'panel',
-                name: 'parameters',
                 title: 'Result options',
                 border: false,
-                bodyPadding: 10,
                 collapsible: true,
-                items: function()
-                {
-                    var items = [{
-                        xtype: 'combobox',
-                        store: Ext.create('Ext.data.Store', {
-                            fields: ['number'],
-                            data: [{
-                                number: 1
-                            },{
-                                number: 2
-                            },{
-                                number: 5
-                            },{
-                                number: 10
-                            },{
-                                number: 25
-                            }]
-                        }),
-                        queryMode: 'local',
-                        displayField: 'number',
-                        valueField: 'number',
-                        forceSelection: true,
-                        editable: false,
-                        fieldLabel: 'Books per page',
-                        style: 'margin-bottom: 10px',
-                        width: 160,
-                        listeners: {
-                            select: function()
-                            {
-                                _this.down('searchresultspanel').setPageSize(this.getValue());
-                            },
-                            afterrender: function()
-                            {
-                                this.select('5');
-                            }
-                        }
-                    },{
-                        xtype: 'panel',
-                        border: false,
-                        html: 'Show:',
-                        style: 'margin-bottom: 5px;'
-                    }];
-                    
-                    var props = bookProperties.concat([{
-                        abbreviation: 'headline',
-                        name: 'Highlights',
-                        defaultOn: true
-                    },{
-                        abbreviation: 'thumbnail',
-                        name: 'Thumbnail',
-                        defaultOn: true
-                    }]);
-                    
-                    for (var i = 0; i < props.length; i++)
+                autoScroll: true,
+                flex: 3,
+                items: {
+                    xtype: 'panel',
+                    border: 0,
+                    name: 'parameters',
+                    bodyPadding: 10,
+                    items: function()
                     {
-                        items[i+2] = {
-                            xtype: 'checkbox',
-                            boxLabel: props[i].name,
-                            checked: props[i].defaultOn == true,
-                            resultField: props[i].abbreviation,
-                            index: i,
-                            style: (props[i].abbreviation == 'headline') ? 'padding-top: 10px' : '',
-                            getColumn: function()
-                            {
-                                return {
-                                    desc: this.boxLabel,
-                                    name: this.resultField,
-                                    show: this.getValue(),
-                                    index: this.index
-                                };
-                            },
+                        var items = [{
+                            xtype: 'combobox',
+                            store: Ext.create('Ext.data.Store', {
+                                fields: ['number'],
+                                data: [{
+                                    number: 1
+                                },{
+                                    number: 2
+                                },{
+                                    number: 5
+                                },{
+                                    number: 10
+                                },{
+                                    number: 25
+                                }]
+                            }),
+                            queryMode: 'local',
+                            displayField: 'number',
+                            valueField: 'number',
+                            forceSelection: true,
+                            editable: false,
+                            fieldLabel: 'Books per page',
+                            style: 'margin-bottom: 10px',
+                            width: 160,
                             listeners: {
-                                change: function ()
+                                select: function()
                                 {
-                                    this.up('searchpanel').down('searchresultspanel').updateColumns();
+                                    _this.down('searchresultspanel').setPageSize(this.getValue());
+                                },
+                                afterrender: function()
+                                {
+                                    this.select('5');
                                 }
                             }
-                        };
-                    }
-                    return items;
-                }(),
-                getColumns: function()
-                {
-                    var cols = [];
-                    for (var i = 0; i < this.items.length-2; i++)
+                        },{
+                            xtype: 'panel',
+                            border: false,
+                            html: 'Show:',
+                            style: 'margin-bottom: 5px;'
+                        }];
+                        
+                        var props = bookProperties.concat([{
+                            abbreviation: 'headline',
+                            name: 'Highlights',
+                            defaultOn: true
+                        },{
+                            abbreviation: 'thumbnail',
+                            name: 'Thumbnail',
+                            defaultOn: true
+                        }]);
+                        
+                        for (var i = 0; i < props.length; i++)
+                        {
+                            items[i+2] = {
+                                xtype: 'checkbox',
+                                boxLabel: props[i].name,
+                                checked: props[i].defaultOn == true,
+                                resultField: props[i].abbreviation,
+                                index: i,
+                                style: (props[i].abbreviation == 'headline') ? 'padding-top: 10px' : '',
+                                getColumn: function()
+                                {
+                                    return {
+                                        desc: this.boxLabel,
+                                        name: this.resultField,
+                                        show: this.getValue(),
+                                        index: this.index
+                                    };
+                                },
+                                listeners: {
+                                    change: function ()
+                                    {
+                                        this.up('searchpanel').down('searchresultspanel').updateColumns();
+                                    }
+                                }
+                            };
+                        }
+                        return items;
+                    }(),
+                    getColumns: function()
                     {
-                        cols[i] = this.items.get(i+2).getColumn();
+                        var cols = [];
+                        for (var i = 0; i < this.items.length-2; i++)
+                        {
+                            cols[i] = this.items.get(i+2).getColumn();
+                        }
+                        cols[cols.length] = {
+                            desc: 'Identifier',
+                            name: 'id',
+                            show: false,
+                            index: 0
+                        };
+                        cols[cols.length] = {
+                            desc: 'Binding',
+                            name: 'bindingId',
+                            show: false,
+                            index: 0
+                        };
+                        cols[cols.length] = {
+                            desc: 'First page',
+                            name: 'firstPage',
+                            show: false,
+                            index: 0
+                        };
+                        return cols;
                     }
-                    cols[cols.length] = {
-                        desc: 'Identifier',
-                        name: 'id',
-                        show: false,
-                        index: 0
-                    };
-                    cols[cols.length] = {
-                        desc: 'Binding',
-                        name: 'bindingId',
-                        show: false,
-                        index: 0
-                    };
-                    cols[cols.length] = {
-                        desc: 'First page',
-                        name: 'firstPage',
-                        show: false,
-                        index: 0
-                    };
-                    return cols;
                 }
             }]
         };
