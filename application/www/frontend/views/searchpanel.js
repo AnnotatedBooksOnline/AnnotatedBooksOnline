@@ -844,6 +844,7 @@ Ext.define('Ext.ux.SearchPanel', {
             },{
                 xtype: 'button',
                 text: 'Search',
+                iconCls: 'search-icon',
                 name: 'searchbutton',
                 width: 140,
                 style: 'margin: 10px;',

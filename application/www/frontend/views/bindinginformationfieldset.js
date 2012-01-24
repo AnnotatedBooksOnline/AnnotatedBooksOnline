@@ -70,6 +70,7 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                         return false;
                     }
                 },
+                style: 'margin-top: 5px; margin-bottom: 5px',
                 hideHeaders: true,
                 nameColumnWidth: 200
             }]

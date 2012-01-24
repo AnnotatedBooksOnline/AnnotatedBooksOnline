@@ -15,6 +15,7 @@ Ext.define('Ext.ux.BookListFieldset', {
                 xtype: 'grid',
                 border: false,
                 store: this.store,
+                style: 'margin-top: 5px; margin-bottom: 5px;',
                 viewConfig: {
                     stripeRows: true
                 },
@@ -95,6 +96,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
                 border: false,
                 store: this.store,
                 resizable: false,
+                style: 'margin-top: 5px; margin-bottom: 5px;',
                 viewConfig: {
                     stripeRows: true
                 },
@@ -194,7 +196,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             },{
                 xtype: 'button',
                 text: 'Start selecting the first and last pages of the currently selected book',
-                width: 140,
+                flex: 0,
                 margin: '0 0 10 0',
                 handler: function()
                 {
@@ -243,24 +245,16 @@ Ext.define('Ext.ux.SelectBookForm', {
             }],
             buttons: [{
                 xtype: 'button',
-                disabled: true,
-                name: 'save',
-                text: 'Save',
-                width: 140,
-                handler: function()
-                {
-                    _this.submit();
-                }
-            },{
-                xtype: 'button',
                 name: 'dropUpload',
-                text: 'Drop current upload',
+                text: 'Cancel',
+                iconCls: 'cancel-icon',
                 width: 140,
                 handler: function()
                 {
                     Ext.Msg.show({
                         title: 'Are you sure?',
-                        msg: ' All uploaded data will be lost. Are you sure you want to drop this upload?.',
+                        // TODO: What if we are not uploading, but modifying a binding? This message should be formulated differently.
+                        msg: 'All uploaded data will be lost. Are you sure you want to drop this upload?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
@@ -271,6 +265,17 @@ Ext.define('Ext.ux.SelectBookForm', {
                                 }
                             }
                     });
+                }
+            },{
+                xtype: 'button',
+                disabled: true,
+                name: 'save',
+                text: 'Save',
+                iconCls: 'accept-icon',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
                 }
             }],
             selectFirstField: false

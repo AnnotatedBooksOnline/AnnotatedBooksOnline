@@ -308,7 +308,23 @@ Ext.define('Ext.ux.ApplicationViewport', {
         this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
         this.tabs = this.items.get(1);
         
+        this.correctVmlSupport();
+        
         this.openTab('welcome', [], true);
+    },
+    
+    correctVmlSupport: function()
+    {
+        Ext.supports.Vml = (function()
+        {
+            var a = document.body.appendChild(document.createElement('div'));
+            a.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
+            var b = a.firstChild;
+            b.style.behavior = "url(#default#VML)";
+            var vmlSupported = b ? typeof b.adj == "object": true;
+            a.parentNode.removeChild(a);
+            return vmlSupported;
+        })();
     },
     
     getEventDispatcher: function()

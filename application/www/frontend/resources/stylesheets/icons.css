@@ -149,3 +149,44 @@
 {
     background-image: url(../icons/disk.png);
 }
+
+.transcription-edit-icon
+{
+    background-image: url(../icons/script_edit.png);
+}
+
+.edit-mode-icon
+{
+    background-image: url(../icons/pencil.png);
+}
+
+.accept-icon
+{
+    background-image: url(../icons/accept.png);
+}
+
+.cancel-icon
+{
+    background-image: url(../icons/cancel.png);
+}
+
+.view-mode-icon
+{
+    background-image: url(../icons/cursor.png);
+}
+
+.add-book-icon
+{
+    background-image: url(../icons/report_add.png);
+}
+
+.delete-book-icon
+{
+    background-image: url(../icons/report_delete.png);
+}
+
+.undo-icon
+{
+    background-image: url(../icons/arrow_undo.png);
+}
+
