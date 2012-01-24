@@ -108,21 +108,41 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         {
             var firstPage = book.get('firstPage');
             
-            var authors='';
+            var authors = '';
             book.authors().each(function(author)
             {
                 authors += (', '+author.get('name'));
             });
             
-            var bookLanguages='';
+            var version = book.get('printVersion');
+            
+            var bookLanguages ='';
             book.bookLanguages().each(function(bookLanguage)
             {
                 bookLanguages += (', '+bookLanguage.get('languageName'));
             });
             
+            var placePublished = book.get('placePublished');
+
+            
+            if(authors==='')
+            {
+                authors = ' Unknown author(s)';
+            }
+            
+            if(version==null)
+            {
+                version = 'Unknown version';
+            }
+            
+            if(placePublished==null)
+            {
+                placePublished = 'Unknown publication place';
+            }
+            
             myData.push([firstPage, authors.substring(1)]);
-            myData.push([firstPage, book.get('version')]);
-            myData.push([firstPage, book.get('placePublished')]);
+            myData.push([firstPage, version]);
+            myData.push([firstPage, placePublished]);
             myData.push([firstPage, book.getTimePeriod()]);
             myData.push([firstPage, bookLanguages.substring(1)]);
         });
