@@ -15,14 +15,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
             html: 'Welcome, <b>Guest</b>',
             cls: 'user-text',
             name: 'welcometext',
-            width: 300,
+            width: 200,
             setName: function(name)
             {
                 this.body.update('Welcome, <b>' + escape(name) + '</b>');
             }
         },{
             xtype: 'container',
-            width: 180,
+            width: 80,
             rowspan: 5
         },{
             xtype: 'button',
@@ -239,6 +239,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     xtype: 'container',
                     height: 87,
                     html: '<h1>' + document.title + '</h1><div class="version">#COLLABVERSION#</div>'
+                        + '<div style="right: 0px; top: 20px; position: absolute;">' 
+                        + '<a href="http://www.uu.nl/" target="_blank" title="Go to the website of Utrecht University"><img src="frontend/resources/images/uu-small.png"/></a> '
+                        + '<a href="http://www.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva-small.png"/></a> '
+                        + '<a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton-small.png"/></a> '
+                        + '<a href="http://www.ugent.be/" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent-small.png"/></a> '
+                        + '<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell-small.png"/></a>'
+                        + '</div>'
                 },{
                     xtype: 'container',
                     defaults: {
@@ -248,21 +255,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     items: menuButtons
                 }]
-            },{
-                xtype: 'container',
-                margin: '5 0 0 0',
-                width: 380,
-                html: '<p>' 
-                    + '<a href="http://www.uu.nl/" target="_blank" title="Go to the website of Utrecht University"><img src="frontend/resources/images/uu-small.png"/></a> '
-                    + '<a href="http://www.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva-small.png"/></a> '
-                    + '<a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton-small.png"/></a> '
-                    + '<a href="http://www.ugent.be/" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent-small.png"/></a> '
-                    + '<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell-small.png"/></a>'
-                    + '</p>'
             },{ // User items.
                 border: false,
                 bodyPadding: 10,
-                width: 320,
+                width: 220,
                 layout: {
                     type: 'table',
                     columns: 2
