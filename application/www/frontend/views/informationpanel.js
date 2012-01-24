@@ -66,10 +66,15 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 xtype: 'grid',
                 id: 'bookInfo',
                 name: 'grid',
+                scroll: false,
+                viewConfig      : {
+                style           : { overflow: 'auto', overflowX: 'hidden' }
+                },
                 flex: 1,
                 border: false,
                 store: this.infoPanelStore,
                 hideHeaders: true,
+
                 features: [{
                     ftype: 'groupingsummary',
                     groupHeaderTpl: '{name:bookName}',

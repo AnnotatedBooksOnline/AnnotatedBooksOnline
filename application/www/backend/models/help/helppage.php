@@ -80,6 +80,7 @@ class HelpPage extends Entity
             $citems = Query::select('helpParagraphId')
                            ->from('HelpParagraphs')
                            ->where('helpPageId = :id', 'paragraphParentId IS NULL')
+                           ->orderBy('title','ASC')
                            ->execute(array('id' => $this->helpPageId));
             
             foreach($citems as $citem)
@@ -96,6 +97,12 @@ class HelpPage extends Entity
         return $this->subItems;
     }
     
+    public function getValues($columns = null)
+    {
+        $helpPage = parent::getValues($columns);
+        $helpPage['helpId'] =  $helpPage['helpPageId'].','.-1;
+        return $helpPage;
+    }
     
     // Getters and setters.
     

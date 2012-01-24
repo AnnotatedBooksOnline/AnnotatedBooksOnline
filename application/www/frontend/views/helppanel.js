@@ -12,7 +12,7 @@ Ext.define('Ext.ux.HelpPanel', {
     
         var treestore = Ext.create('Ext.data.TreeStore', {
             model: 'Ext.ux.HelpModel',
-            root: {HelpId: 'root'}
+            root: {helpId: 'root'}
         });
         
         var defConfig = {
@@ -75,7 +75,7 @@ Ext.define('Ext.ux.HelpPanel', {
         
         record.expand(true, function()
         {
-            while(page.get('HelpId').substring(2) != '-1')
+            while(page.get('helpId').substring(2) != '-1')
             {
                 page = page.parentNode;
             }
@@ -125,4 +125,3 @@ Ext.define('Ext.ux.HelpPanel', {
         
     }
 });
-

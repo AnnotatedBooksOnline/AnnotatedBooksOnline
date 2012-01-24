@@ -5,7 +5,7 @@
 Ext.define('Ext.ux.HelpModel', {
     extend: 'Ext.data.Model',
     fields: ['helpPageId','pageName','content'],
-    idProperty: 'HelpId',
+    idProperty: 'helpId',
     
     proxy: {
         type: 'requestmanager',
