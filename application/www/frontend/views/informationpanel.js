@@ -44,15 +44,24 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
-            autoScroll: true,
-            bbar: {
+            buttons: [{
                 xtype: 'button',
                 text: 'Modify binding',
                 handler: function()
                 {
-                    Application.getInstance().gotoTab('upload', [this.up('bindinginformationpanel').bindingModel.get('bindingId')], true);
+                    Application.getInstance().gotoTab(
+                        'upload', 
+                        [this.up('bindinginformationpanel').bindingModel.get('bindingId')], 
+                        true);
                 }
-            },
+            },{
+                xtype: 'button',
+                text: 'Delete binding',
+                handler: function()
+                {
+                    alert('TODO');
+                }
+            }],
             items: [{
                 xtype: 'grid',
                 id: 'bookInfo',
@@ -134,6 +143,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
+            autoScroll: true,
             items: [{
                 xtype: 'bindinginformationpanel',
                 title: 'Book Information',
@@ -146,6 +156,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 xtype: 'navigationpanel',
                 //collapsed: false,
                 collapsible: true,
+                autoScroll: true,
                 viewer: this.viewer,
                 //height: '60%'
                 flex: 3
@@ -154,6 +165,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 title: 'References',
                 collapsed: true,
                 collapsible: true,
+                autoScroll: true,
                 viewer: this.viewer,
                 //height: '20%'
                 flex: 1
