@@ -31,10 +31,14 @@ uint num_lines;
 TilePyramidBuilder::TilePyramidBuilder(const BuilderSettings &settings)
 {
     //Check settings
-    if(settings.output_quality < 0 || settings.output_quality > 100)
+    if (settings.output_quality < 0 || settings.output_quality > 100)
+    {
         throw invalid_argument("Illegal quality value.");
-    if((settings.output_image_width & 1) == 1 || (settings.output_image_height & 1) == 1)
+    }
+    if ((settings.output_image_width & 1) == 1 || (settings.output_image_height & 1) == 1)
+    {
         throw invalid_argument("Dimensions of output image should be multiples of two.");
+    }
 
     //TODO: make local var
     ::settings = settings;
@@ -63,9 +67,13 @@ void TilePyramidBuilder::build(const string &filename)
             size_t e = filename.find_last_of(".");
             string ext = filename.substr(e+1);
             if (ext == "TIF" || ext == "TIFF" || ext == "tif" || ext == "tiff")
+            {
                 reader = new TIFFReader();
+            }
             else // Assume JPEG
+            {
                 reader = new JPEGReader();
+            }
         }
             
         assert(reader);
@@ -85,12 +93,12 @@ void TilePyramidBuilder::build(const string &filename)
 
         //Prepare buffers that will be used to store scanlines
         image_t buffer = new line_t[settings.output_image_height];
-        for(uint i = 0; i < settings.output_image_height; ++i)
+        for (uint i = 0; i < settings.output_image_height; ++i)
             buffer[i] = new rgb_t[buf_width];
         
         //Keep feeding horizontal chunks of the image to the tile generator
         uint y;
-        for(y = 0; y < max_y; ++y)
+        for (y = 0; y < max_y; ++y)
         {
             reader->readScanlines(buffer, settings.output_image_height);            
 
@@ -99,8 +107,10 @@ void TilePyramidBuilder::build(const string &filename)
         }
 
         //Delete buffers
-        for(uint i = 0; i < settings.output_image_height; ++i)
+        for (uint i = 0; i < settings.output_image_height; ++i)
+        {
             delete[] buffer[i];
+        }
         delete[] buffer;
         delete output_buffer;
 
@@ -110,11 +120,11 @@ void TilePyramidBuilder::build(const string &filename)
     }
     catch(...)
     {
-        //TODO
-        
         if (reader)
+        {
             delete reader;
-
+        }
+        
         throw;
     }
 }

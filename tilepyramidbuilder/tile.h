@@ -27,7 +27,7 @@ public:
     Tile(Tile *parent, uint x, uint y, uint z, uint size) :
         done(false), x_pos(x), y_pos(y), z_pos(z), size(size)
     {
-        if(size > 1)
+        if (size > 1)
         {
             uint csize = std::max(1u, size / 2);
             Tile *subtiles[] =
@@ -51,20 +51,28 @@ public:
     ///Destructor. Dealocates subtiles or image data.
     ~Tile()
     {
-        if(done)
+        if (done)
         {
             delete[] data.image;
         }
-        else if(size > 1)
+        else if (size > 1)
         {
-            if(data.subtiles[0])
+            if (data.subtiles[0])
+            {
                 delete data.subtiles[0];
-            if(data.subtiles[1])
+            }
+            if (data.subtiles[1])
+            {
                 delete data.subtiles[1];
-            if(data.subtiles[2])
+            }
+            if (data.subtiles[2])
+            {
                 delete data.subtiles[2];
-            if(data.subtiles[3])
+            }
+            if (data.subtiles[3])
+            {
                 delete data.subtiles[3];
+            }
         }
     }
 

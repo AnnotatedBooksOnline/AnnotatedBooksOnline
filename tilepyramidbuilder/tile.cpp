@@ -41,11 +41,15 @@ void Tile::flushImage()
         if (!settings.use_padding && (right > buf_width || bottom > num_lines))
         {
             if (right > buf_width)
+            {
                 params.width = settings.output_image_width - ((right - buf_width) >> (depth - z_pos));
+            }
             
             if (bottom > num_lines)
+            }
                 params.height = settings.output_image_height - ((bottom - num_lines) >> (depth - z_pos));
-                
+            }
+            
             assert(params.width <= settings.output_image_width && params.height <= settings.output_image_height);
         }
         
@@ -57,8 +61,10 @@ void Tile::flushImage()
 
         //Write data
         for (uint i = 0; i < params.height; ++i)
-             output_buffer[i] = &data.image[i * settings.output_image_width];
-             
+        {
+            output_buffer[i] = &data.image[i * settings.output_image_width];
+        }
+        
         writer.writeScanlines(output_buffer, params.height);
 
         //Finalize compression
@@ -98,15 +104,23 @@ void Tile::scaleTilesToImage()
     scaleSubtile(width / 2, height / 2, width, height, img3, output);
 
     //The new tile is defined, so the old ones can be deleted
-    if(data.subtiles[0])
+    if (data.subtiles[0])
+    {
         delete data.subtiles[0];
-    if(data.subtiles[1])
+    }
+    if (data.subtiles[1])
+    {
         delete data.subtiles[1];
-    if(data.subtiles[2])
+    }
+    if (data.subtiles[2])
+    {
         delete data.subtiles[2];
-    if(data.subtiles[3])
+    }
+    {
+    if (data.subtiles[3])
         delete data.subtiles[3];
-
+    }
+    
     data.image = output;
 }
 
@@ -114,16 +128,16 @@ void Tile::scaleTilesToImage()
 void Tile::scaleSubtile(uint from_x, uint from_y, uint width, uint height,
     rgb_t *image, rgb_t *output)
 {
-    if(image)
+    if (image)
     {
         output += from_y * width + from_x;
         
         int start_y = height / 2 - 1;
         int start_x = width  / 2 - 1;
         
-        for(int y = start_y; y >= 0; --y, image += width, output += width / 2)
+        for (int y = start_y; y >= 0; --y, image += width, output += width / 2)
         {
-            for(int x = start_x; x >= 0; --x, image += 2, ++output)
+            for (int x = start_x; x >= 0; --x, image += 2, ++output)
             {
                 *output = average(image[0], image[1], image[width], image[width + 1]);
             }
@@ -209,9 +223,13 @@ void Tile::processImageChunk(uint y, image_t chunk)
     else
     {
         if(data.subtiles[2])
+        {
             data.subtiles[2]->processImageChunk(y, chunk);
+        }
         if(data.subtiles[3])
+        {
             data.subtiles[3]->processImageChunk(y, chunk);
+        }
     }
 
     //If all subtiles are computed, compose and scale them. The flush the
