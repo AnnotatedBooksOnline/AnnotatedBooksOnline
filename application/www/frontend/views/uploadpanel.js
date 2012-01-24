@@ -523,11 +523,11 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 xtype: 'bookfieldset',
                 existingBook: book
             }]);
-    		
+            
             // Update the state of the 'delete' buttons.
             _this.checkBooks(false);
-    	});
-    	
+        });
+        
     },
     
     getBooks: function()
