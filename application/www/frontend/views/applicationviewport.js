@@ -123,7 +123,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             text: 'Edit profile',
             width: 120,
             height: 25,
-            iconCls: 'user-icon',
+            iconCls: 'edit-profile-icon',
             listeners: {
                 click: function()
                 {
@@ -510,7 +510,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.apply(tabConfig, {
                                 title: 'Profile of ' + escape(data[0]),
                                 xtype: 'viewprofilepanel',
-                                iconCls: 'user-icon'
+                                iconCls: 'profile-icon'
                             });
                             
                             // Add tab.

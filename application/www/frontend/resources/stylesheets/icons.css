@@ -235,3 +235,13 @@
     background-image: url(../icons/page_white_star.png);
 }
 
+.edit-profile-icon
+{
+    background-image: url(../icons/vcard_edit.png);
+}
+
+.profile-icon
+{
+    background-image: url(../icons/vcard.png);
+}
+
