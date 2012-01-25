@@ -117,8 +117,11 @@ class UserController extends ControllerBase
         $user->setValues($values);
         $user->save();
         
+        $userValues = $user->getValues($this->getAccessableColumns(true));
+        $userValues['permissions'] = Authentication::getInstance()->getPermissionList();
+        
         return array(
-            'records' => $user->getValues($this->getAccessableColumns(true)),
+            'records' => $userValues,
             'total'   => 1
         );
     }
@@ -141,15 +144,15 @@ class UserController extends ControllerBase
         $website     = self::getString($record, 'website', '', true, 255);
         
         $values = array(
-            'username'         => (string)$username,
-            'email'            => (string)$email,
-            'firstName'        => (string)$firstName,
-            'lastName'         => (string)$lastName,
-            'password'         => (string)$password,
-            'affiliation'      => (string)$affiliation,
-            'occupation'       => (string)$occupation,
-            'homeAddress'      => (string)$homeAddress,
-            'website'          => (string)$website,
+            'username'         => $username,
+            'email'            => $email,
+            'firstName'        => $firstName,
+            'lastName'         => $lastName,
+            'password'         => $password,
+            'affiliation'      => $affiliation,
+            'occupation'       => $occupation,
+            'homeAddress'      => $homeAddress,
+            'website'          => $website,
             'activationStage'  => User::ACTIVE_STAGE_PENDING,
             'banned'           => false,
             'rank'             => User::RANK_DEFAULT
