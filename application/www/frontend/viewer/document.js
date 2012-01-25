@@ -290,7 +290,9 @@ Document.prototype.updateLevel = function(area, zoomLevel, levelScale, mainLevel
     if (hasTransforms)
     {
         var px = isFF ? 'px' : '';
-        var temp = [matrix[0], matrix[3], matrix[1], matrix[4], matrix[2] + px, matrix[5] + px].join(',');
+        var temp = [matrix[0].toFixed(7), matrix[3].toFixed(7),
+                    matrix[1].toFixed(7), matrix[4].toFixed(7),
+                    matrix[2].toFixed(7) + px, matrix[5].toFixed(7) + px].join(',');
         var transform = 'matrix(' + temp + ')';
         
         levelContainer.style.transform       = transform;

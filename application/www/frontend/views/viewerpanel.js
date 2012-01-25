@@ -145,6 +145,24 @@ Ext.define('Ext.ux.ViewerPanel', {
                         _this.resetViewport();
                     }
                 }
+            }, {
+                iconCls: 'rotate-left-icon',
+                tooltip: 'Rotate left',
+                listeners: {
+                    click: function()
+                    {
+                        _this.rotateLeft();
+                    }
+                }
+            }, {
+                iconCls: 'rotate-right-icon',
+                tooltip: 'Rotate right',
+                listeners: {
+                    click: function()
+                    {
+                        _this.rotateRight();
+                    }
+                }
             }, '->', {
                 iconCls: 'drag-icon',
                 tooltip: 'Drag',
@@ -371,13 +389,36 @@ Ext.define('Ext.ux.ViewerPanel', {
     
     afterViewportChange: function(event)
     {
-        var sliderWidth = Math.round(
-            this.viewport.getZoomLevel() / this.viewport.getMaxZoomLevel() * 200
-        );
+        // Check for current timer.
+        if (this.timer !== undefined)
+        {
+            return;
+        }
         
-        this.skipSliderOnChange = true;
-        this.slider.setValue(sliderWidth, false);
-        this.skipSliderOnChange = false;
+        // Set timer to avoid updating to many times.
+        var _this = this;
+        this.timer = setTimeout(
+            function()
+            {
+                // Clear timer.
+                _this.timer = undefined;
+                
+                // Calculate slider width.
+                var sliderWidth = Math.round(
+                    _this.viewport.getZoomLevel() / _this.viewport.getMaxZoomLevel() * 200
+                );
+                
+                // Check difference.
+                var difference = Math.abs(_this.slider.getValue() - sliderWidth);
+                if (difference >= 2)
+                {
+                    _this.skipSliderOnChange = true;
+                    _this.slider.setValue(sliderWidth, false);
+                    _this.skipSliderOnChange = false;
+                }
+            },
+            10
+        );
     },
     
     onAuthenticationChange: function()
@@ -487,6 +528,28 @@ Ext.define('Ext.ux.ViewerPanel', {
     resetViewport: function()
     {
         this.viewport.reset();
+    },
+    
+    rotateLeft: function()
+    {
+        // Fetch rotation, and round it to the previous quarter-pi.
+        var quarterPi       = 0.25 * Math.PI;
+        var currentRotation = this.viewport.getRotation();
+        var newRotation     = Math.round(currentRotation / quarterPi - 1) * quarterPi;
+        
+        // Rotate viewport by a delta rotation.
+        this.viewport.rotate(newRotation - currentRotation);
+    },
+    
+    rotateRight: function()
+    {
+        // Fetch rotation, and round it to the next quarter-pi.
+        var quarterPi        = 0.25 * Math.PI;
+        var currentRotation = this.viewport.getRotation();
+        var newRotation     = Math.round(currentRotation / quarterPi + 1) * quarterPi;
+        
+        // Rotate viewport by a delta rotation.
+        this.viewport.rotate(newRotation - currentRotation);
     },
     
     gotoPage: function(number)

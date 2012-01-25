@@ -113,6 +113,18 @@
     background-image: url(../icons/erasevertex.png);
 }
 
+/* Viewer icons. */
+
+.rotate-left-icon
+{
+    background-image: url(../icons/rotateleft.png);
+}
+
+.rotate-right-icon
+{
+    background-image: url(../icons/rotateright.png);
+}
+
 /* Other icons. */
 
 .refresh-icon
