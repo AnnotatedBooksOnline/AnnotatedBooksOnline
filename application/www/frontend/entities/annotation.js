@@ -12,7 +12,9 @@
 function Annotation()
 {
     if (arguments.length)
+    {
         this.constructor.apply(this, arguments);
+    }
 }
 
 // Fields.

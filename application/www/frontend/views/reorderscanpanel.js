@@ -28,6 +28,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     name: 'scans',
                     width: 400,
                     height: 400,
+                    style: 'margin-right: 5px; margin-top: 5px;',
                     allowBlank: true,
                     ddReorder: true,
                     store: this.store,
@@ -43,6 +44,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     name: 'deletedscans',
                     width: 400,
                     height: 400,
+                    style: 'margin-top: 5px;',
                     allowBlank: true,
                     store: this.deletedScanStore,
                     displayField: 'scanName',
@@ -55,7 +57,9 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 }]
             },{
                 xtype: 'button',
-                text: 'Go back to old ordening',
+                text: 'Reset order',
+                style: 'margin-bottom: 5px',
+                iconCls: 'undo-icon',
                 handler: function()
                 {
                     // Reload the store from server.
@@ -111,24 +115,16 @@ Ext.define('Ext.ux.ReorderScanForm', {
             }],
             buttons: [{
                 xtype: 'button',
-                disabled: true,
-                name: 'save',
-                text: 'Save',
-                width: 140,
-                handler: function()
-                {
-                    _this.submit();
-                }
-            },{
-                xtype: 'button',
                 name: 'dropUpload',
-                text: 'Drop current upload',
+                iconCls: 'cancel-icon',
+                text: 'Cancel',
                 width: 140,
                 handler: function()
                 {
                     Ext.Msg.show({
                         title: 'Are you sure?',
-                        msg: ' All uploaded data will be lost. Are you sure you want to drop this upload?.',
+                        // TODO: What if we are not uploading, but modifying a binding? This message should be formulated differently.
+                        msg: ' All uploaded data will be lost. Are you sure you want to cancel this upload?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
@@ -139,6 +135,17 @@ Ext.define('Ext.ux.ReorderScanForm', {
                                 }
                             }
                     });
+                }
+            },{
+                xtype: 'button',
+                disabled: true,
+                name: 'save',
+                text: 'Save',
+                iconCls: 'accept-icon',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
                 }
             }]
         };

@@ -54,6 +54,16 @@ EventDispatcher.prototype.trigger = function(event)
     {
         var listener = listeners[i];
         
-        listener.method.apply(listener.obj, arguments);
+        try
+        {
+            listener.method.apply(listener.obj, arguments);
+        }
+        catch(e)
+        {
+            if (console && console.exception)
+            {
+                console.exception(e);
+            }
+        }
     }
 }

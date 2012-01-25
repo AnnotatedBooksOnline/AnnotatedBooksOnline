@@ -161,3 +161,99 @@
 {
     background-image: url(../icons/disk.png);
 }
+
+.transcription-edit-icon
+{
+    background-image: url(../icons/script_edit.png);
+}
+
+.edit-mode-icon
+{
+    background-image: url(../icons/pencil.png);
+}
+
+.accept-icon
+{
+    background-image: url(../icons/accept.png);
+}
+
+.cancel-icon
+{
+    background-image: url(../icons/cancel.png);
+}
+
+.view-mode-icon
+{
+    background-image: url(../icons/cursor.png);
+}
+
+.add-book-icon
+{
+    background-image: url(../icons/report_add.png);
+}
+
+.delete-book-icon
+{
+    background-image: url(../icons/report_delete.png);
+}
+
+.undo-icon
+{
+    background-image: url(../icons/arrow_undo.png);
+}
+
+.help-icon
+{
+    background-image: url(../icons/help.png);
+}
+
+.welcome-icon
+{
+    background-image: url(../icons/star.png);
+}
+
+.activation-icon
+{
+    background-image: url(../icons/lock_go.png);
+}
+
+.viewer-icon
+{
+    background-image: url(../icons/openbook.png);
+}
+
+.binding-edit-icon
+{
+    background-image: url(../icons/book_edit.png);
+}
+
+.export-icon
+{
+    background-image: url(../icons/page_save.png);
+}
+
+.annotations-icon
+{
+    background-image: url(../icons/page_green.png);
+}
+
+.notes-icon
+{
+    background-image: url(../icons/page_white_text.png);
+}
+
+.termsofuse-icon
+{
+    background-image: url(../icons/page_white_star.png);
+}
+
+.edit-profile-icon
+{
+    background-image: url(../icons/vcard_edit.png);
+}
+
+.profile-icon
+{
+    background-image: url(../icons/vcard.png);
+}
+

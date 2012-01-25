@@ -27,6 +27,7 @@ Ext.define('Ext.ux.HelpPanel', {
                 columns: [{ xtype: 'treecolumn',text: 'Name',  dataIndex: 'pageName'}],
                 collapsible: true,
                 rootVisible: false,
+                hideHeaders: true,
                 viewConfig: {
                     loadMask: false
                 },

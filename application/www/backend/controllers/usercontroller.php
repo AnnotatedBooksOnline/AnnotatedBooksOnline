@@ -87,29 +87,29 @@ class UserController extends ControllerBase
             else
             {
                 $values = array(
-                    'username'    => $username,
-                    'email'       => $email,
-                    'firstName'   => $firstName,
-                    'lastName'    => $lastName,
-                    'password'    => $newPassword,
-                    'affiliation' => $affiliation,
-                    'occupation'  => $occupation,
-                    'homeAddress' => $homeAddress,
-                    'website'     => $website
+                    'username'    => (string)$username,
+                    'email'       => (string)$email,
+                    'firstName'   => (string)$firstName,
+                    'lastName'    => (string)$lastName,
+                    'password'    => (string)$newPassword,
+                    'affiliation' => (string)$affiliation,
+                    'occupation'  => (string)$occupation,
+                    'homeAddress' => (string)$homeAddress,
+                    'website'     => (string)$website
                 );
             }
         }
         else
         {
             $values = array(
-                'username'    => $username,
-                'email'       => $email,
-                'firstName'   => $firstName,
-                'lastName'    => $lastName,
-                'affiliation' => $affiliation,
-                'occupation'  => $occupation,
-                'homeAddress' => $homeAddress,
-                'website'     => $website
+                'username'    => (string)$username,
+                'email'       => (string)$email,
+                'firstName'   => (string)$firstName,
+                'lastName'    => (string)$lastName,
+                'affiliation' => (string)$affiliation,
+                'occupation'  => (string)$occupation,
+                'homeAddress' => (string)$homeAddress,
+                'website'     => (string)$website
             );
         }
         
@@ -117,8 +117,11 @@ class UserController extends ControllerBase
         $user->setValues($values);
         $user->save();
         
+        $userValues = $user->getValues($this->getAccessableColumns(true));
+        $userValues['permissions'] = Authentication::getInstance()->getPermissionList();
+        
         return array(
-            'records' => $user->getValues($this->getAccessableColumns(true)),
+            'records' => $userValues,
             'total'   => 1
         );
     }

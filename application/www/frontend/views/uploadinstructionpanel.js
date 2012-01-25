@@ -44,6 +44,7 @@ Ext.define('Ext.ux.UploadInfo', {
             
         xtype: 'button',
         text: 'Continue',
+        iconCls: 'accept-icon',
         width: 140,
         handler: function()
         {

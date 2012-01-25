@@ -11,8 +11,7 @@
 // Class definition.
 function Authentication()
 {
-    //if (arguments.length)
-        this.constructor.apply(this, arguments);
+    this.constructor.apply(this, arguments);
 }
 
 // Fields.
@@ -307,20 +306,20 @@ Authentication.prototype.initialize = function()
     
     // Fetch guest permissions.
     RequestManager.getInstance().request(
-            'Authentication', 
-            'getGuestPermissionList',
-            {}, 
-            this,
-            function(permissions)
-            {
-                _this.guestPermissions = permissions;
-                this.eventDispatcher.trigger('modelchange', _this);
-            },
-            function(data)
-            {
-                // TODO: Maybe try again?
-                return true;
-            });
+        'Authentication', 
+        'getGuestPermissionList',
+        {}, 
+        this,
+        function(permissions)
+        {
+            _this.guestPermissions = permissions;
+            this.eventDispatcher.trigger('modelchange', _this);
+        },
+        function(data)
+        {
+            return true;
+        }
+    );
 }
 
 Authentication.prototype.keepAlive = function()
@@ -336,8 +335,6 @@ Authentication.prototype.keepAlive = function()
                 {
                     if (this.loggedOn)
                     {
-                        // TODO: make special time out window, that by deactivation will close.
-                        
                         // Show login window, to give the user one last chance.
                         this.loggedOn = false;
                         this.requireLogin(this,
@@ -404,7 +401,7 @@ Authentication.prototype.hasPermissionTo = function(action)
     // If no permissions are defined, use guestPermissions.
     if (this.permissions === undefined)
     {
-        if(this.guestPermissions === undefined)
+        if (this.guestPermissions === undefined)
         {
             return false;
         }

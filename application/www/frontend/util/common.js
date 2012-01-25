@@ -280,4 +280,8 @@ Ext.define('Ext.LoadMask',
 /*
  * Fix undefined reference in Ext JS.
  */
-Ext.getDoc().dom.namespaces = Ext.getDoc().dom.namespaces || {}
+try
+{
+    document.namespaces = document.namespaces || {};
+}
+catch(e) { }

@@ -11,7 +11,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     {
         var _this = this;
         this.bindingModel = this.viewer.getBinding().getModel();
-        this.sstore = Ext.create('Ext.data.ArrayStore',
+        this.infoPanelStore = Ext.create('Ext.data.ArrayStore', 
         {
             fields: [
                 {name: 'firstPage'},
@@ -20,47 +20,77 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             groupField: 'firstPage'
         });
         
+        var viewer = this.viewer;
+        Ext.util.Format.bookName = function(firstPage) 
+        {
+            var rec = viewer.getBinding().getModel().books().findRecord('firstPage',firstPage);
+            var lastPage = rec.get('lastPage');
+            var currentPage = viewer.getPage()+1;
+            if (currentPage >= firstPage && currentPage <= lastPage)
+                {
+                    return '<span style="color: #000000;">' + rec.get('title') + '</span>';
+                }
+            else
+                {
+                    return rec.get('title');
+                }
+        }
+        
         var defConfig = {
             border: false,
-            width: '100%',
-            layout: 'vbox',
-            autoScroll: true,
-            bbar: {
+            flex: 1,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            buttons: [{
                 xtype: 'button',
                 text: 'Modify binding',
                 handler: function()
                 {
-                    Application.getInstance().gotoTab('upload',
-                        [this.up('bindinginformationpanel').bindingModel.get('bindingId')], true);
+                    Application.getInstance().gotoTab(
+                        'upload', 
+                        [this.up('bindinginformationpanel').bindingModel.get('bindingId')], 
+                        true);
                 }
-            },
+            },{
+                xtype: 'button',
+                text: 'Delete binding',
+                handler: function()
+                {
+                    alert('TODO');
+                }
+            }],
             items: [{
                 xtype: 'grid',
                 id: 'bookInfo',
                 name: 'grid',
+                scroll: false,
+                viewConfig: {
+                    style: {
+                        overflow: 'auto',
+                        overflowX: 'hidden' }
+                    },
                 flex: 1,
-                width: '100%',
                 border: false,
-                store: this.sstore,
+                store: this.infoPanelStore,
                 hideHeaders: true,
+
                 features: [{
                     ftype: 'groupingsummary',
                     groupHeaderTpl: '{name:bookName}',
                     startCollapsed: true
                 }],
-                columns: [{
-                    dataIndex: 'property',
-                    flex: 1,
-                    summaryType: function(records)
-                    {
-                        return '<span style="color: (255,0,0);"> Page ' + records[0].get('firstPage') + '</span>';
+                columns: [
+                    {dataIndex: 'property', flex: 1, summaryType: function(records){
+                    return '<span style="color: (255,0,0);"> Page '+records[0].get('firstPage')+'</span>';
                     }
                 }]
             },{
                 xtype: 'label',
                 border: false,
                 html: escape(this.bindingModel.get('library').libraryName) + ', ' +
-                      escape(this.bindingModel.get('signature')),
+                        escape(this.bindingModel.get('signature')),
                 style: 'margin: 5px'
             }]
         };
@@ -73,71 +103,53 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     afterRender: function()
     {
         this.callParent();
-        
         var myData = [];
-        var store = Ext.create('Ext.data.Store', {
-            model: 'Ext.ux.BookModel'
+        this.bindingModel.books().each(function(book)
+        {
+            var firstPage = book.get('firstPage');
+            
+            var authors = '';
+            book.authors().each(function(author)
+            {
+                authors += (', '+author.get('name'));
+            });
+            
+            var version = book.get('printVersion');
+            
+            var bookLanguages ='';
+            book.bookLanguages().each(function(bookLanguage)
+            {
+                bookLanguages += (', '+bookLanguage.get('languageName'));
+            });
+            
+            var placePublished = book.get('placePublished');
+
+            
+            if(authors==='')
+            {
+                authors = ' Unknown author(s)';
+            }
+            
+            if(version==null)
+            {
+                version = 'Unknown version';
+            }
+            
+            if(placePublished==null)
+            {
+                placePublished = 'Unknown publication place';
+            }
+            
+            myData.push([firstPage, authors.substring(1)]);
+            myData.push([firstPage, version]);
+            myData.push([firstPage, placePublished]);
+            myData.push([firstPage, book.getTimePeriod()]);
+            myData.push([firstPage, bookLanguages.substring(1)]);
         });
         
-        store.filter({property: 'bindingId', value: this.bindingModel.get('bindingId')});
-        store.load({
-            scope: this,
-            callback: function(records, operation, success)
-            {
-                Ext.Array.each(records, function(record)
-                {
-                    var firstPage = record.get('firstPage');
-                    record.authors().load({
-                        scope: this,
-                        callback: function(records, operation, success)
-                        {
-                            var authors = '';
-                            Ext.Array.each(records, function(record)
-                                {
-                                    authors += (', '+record.get('name'));
-                                });
-                            myData.push([firstPage, authors.substring(1)]);
-                            myData.push([firstPage, record.get('placePublished')]);
-                            myData.push([firstPage, record.getTimePeriod()]);
-                            this.sstore.loadData(myData);
-                        }
-                    });
-                    
-                    record.bookLanguages().load({
-                        scope: this,
-                        callback: function(records, operation, success)
-                        {
-                            var languages = '';
-                            Ext.Array.each(records, function(record) 
-                                {
-                                    languages += (', '+record.get('languageName'));
-                                });
-                            myData.push([firstPage, languages.substring(1)]);
-                            this.sstore.loadData(myData);
-                        }
-                    });
-                }, this);
-                
-                this.sstore.loadData(myData);
-            }
-        });
+        this.infoPanelStore.loadData(myData);
         
         var viewer = this.viewer;
-        Ext.util.Format.bookName = function(firstPage)
-            {
-                var rec = store.findRecord('firstPage',firstPage);
-                var lastPage = rec.get('lastPage');
-                var currentPage = viewer.getPage() + 1;
-                if (currentPage >= firstPage && currentPage <= lastPage)
-                {
-                    return '<span style="color: #000000;">' + rec.get('title') + '</span>';
-                }
-                else
-                {
-                    return rec.get('title');
-                }
-            };
-        
         this.viewer.getEventDispatcher().bind('pagechange', this, function()
         {
             this.down('grid').getView().refresh();
@@ -157,6 +169,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
+            autoScroll: true,
             items: [{
                 xtype: 'bindinginformationpanel',
                 title: 'Book Information',
@@ -169,6 +182,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 xtype: 'navigationpanel',
                 //collapsed: false,
                 collapsible: true,
+                autoScroll: true,
                 viewer: this.viewer,
                 //height: '60%'
                 flex: 3
@@ -177,6 +191,7 @@ Ext.define('Ext.ux.InformationPanel', {
                 title: 'References',
                 collapsed: true,
                 collapsible: true,
+                autoScroll: true,
                 viewer: this.viewer,
                 //height: '20%'
                 flex: 1
@@ -188,3 +203,4 @@ Ext.define('Ext.ux.InformationPanel', {
         this.callParent();
     }
 });
+

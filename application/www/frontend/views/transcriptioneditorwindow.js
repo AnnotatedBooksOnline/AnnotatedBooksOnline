@@ -35,6 +35,7 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
             buttons: [{
                 xtype: 'button',
                 text: 'Cancel',
+                iconCls: 'cancel-icon',
                 width: 140,
                 handler: function()
                 {
@@ -44,7 +45,8 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
                 xtype: 'button',
                 formBind: true,
                 disabled: true,
-                text: 'Save',
+                iconCls: 'accept-icon',
+                text: 'Done',
                 width: 140,
                 handler: function()
                 {

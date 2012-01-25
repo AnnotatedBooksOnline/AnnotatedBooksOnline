@@ -411,7 +411,7 @@ Ext.define('Ext.ux.ChangeRoleForm', {
                 labelAlign: 'left',
                 items: [{
                     xtype: 'label',
-                    text: userRecord.get('rank')
+                    text: userRoles.findRecord('id',userRecord.get('rank')).get('name')
                 }]
             },{
                 xtype: 'combobox', 
