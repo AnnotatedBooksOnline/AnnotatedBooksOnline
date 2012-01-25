@@ -573,6 +573,7 @@ Ext.define('Ext.ux.SearchResultsView', {
                         this.loadData(data.records);
                         store.fireEvent('load');
                         _this.searchPanel.setLoading(false);
+                        _this.up('searchresultspanel').ownerCt.doLayout();
                     },
                     function()
                     {
@@ -760,14 +761,35 @@ Ext.define('Ext.ux.SearchResultsPanel', {
                         hidden: true,
                         name: 'noresults'
                     });
-                    results.addDocked({
+                    results.insert(0, {
                         xtype: 'pagingtoolbar',
-                        docked: 'top',
-                        store: results.getComponent(0).getStore(),
+                        name: 'topbar',
+                        store: results.down('searchresultsview').getStore(),
                         displayInfo: true,
-                        displayMsg: 'Displaying books {0} - {1} of {2}'
+                        displayMsg: 'Displaying books {0} - {1} of {2}',
+                        hidden: true
                     });
-                    results.down('pagingtoolbar').down('[itemId=refresh]').hide();
+                    results.add({
+                        xtype: 'pagingtoolbar',
+                        name: 'bottombar',
+                        store: results.down('searchresultsview').getStore(),
+                        displayInfo: true,
+                        displayMsg: 'Displaying books {0} - {1} of {2}',
+                        style: 'margin-top: -2px',
+                        hidden: true
+                    });
+                    var bottombar = results.down('[name=bottombar]');
+                    var topbar = results.down('[name=topbar]');
+                    topbar.down('[itemId=refresh]').hide();
+                    bottombar.down('[itemId=refresh]').hide();
+                    bottombar.mon(topbar, 'hide', function()
+                    {
+                        bottombar.hide();
+                    });
+                    bottombar.mon(topbar, 'show', function()
+                    {
+                        bottombar.show();
+                    });
                 }
             }
         };
