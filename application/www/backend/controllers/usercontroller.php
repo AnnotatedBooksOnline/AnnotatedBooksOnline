@@ -87,29 +87,29 @@ class UserController extends ControllerBase
             else
             {
                 $values = array(
-                    'username'    => $username,
-                    'email'       => $email,
-                    'firstName'   => $firstName,
-                    'lastName'    => $lastName,
-                    'password'    => $newPassword,
-                    'affiliation' => $affiliation,
-                    'occupation'  => $occupation,
-                    'homeAddress' => $homeAddress,
-                    'website'     => $website
+                    'username'    => (string)$username,
+                    'email'       => (string)$email,
+                    'firstName'   => (string)$firstName,
+                    'lastName'    => (string)$lastName,
+                    'password'    => (string)$newPassword,
+                    'affiliation' => (string)$affiliation,
+                    'occupation'  => (string)$occupation,
+                    'homeAddress' => (string)$homeAddress,
+                    'website'     => (string)$website
                 );
             }
         }
         else
         {
             $values = array(
-                'username'    => $username,
-                'email'       => $email,
-                'firstName'   => $firstName,
-                'lastName'    => $lastName,
-                'affiliation' => $affiliation,
-                'occupation'  => $occupation,
-                'homeAddress' => $homeAddress,
-                'website'     => $website
+                'username'    => (string)$username,
+                'email'       => (string)$email,
+                'firstName'   => (string)$firstName,
+                'lastName'    => (string)$lastName,
+                'affiliation' => (string)$affiliation,
+                'occupation'  => (string)$occupation,
+                'homeAddress' => (string)$homeAddress,
+                'website'     => (string)$website
             );
         }
         
@@ -141,15 +141,15 @@ class UserController extends ControllerBase
         $website     = self::getString($record, 'website', '', true, 255);
         
         $values = array(
-            'username'         => $username,
-            'email'            => $email,
-            'firstName'        => $firstName,
-            'lastName'         => $lastName,
-            'password'         => $password,
-            'affiliation'      => $affiliation,
-            'occupation'       => $occupation,
-            'homeAddress'      => $homeAddress,
-            'website'          => $website,
+            'username'         => (string)$username,
+            'email'            => (string)$email,
+            'firstName'        => (string)$firstName,
+            'lastName'         => (string)$lastName,
+            'password'         => (string)$password,
+            'affiliation'      => (string)$affiliation,
+            'occupation'       => (string)$occupation,
+            'homeAddress'      => (string)$homeAddress,
+            'website'          => (string)$website,
             'activationStage'  => User::ACTIVE_STAGE_PENDING,
             'banned'           => false,
             'rank'             => User::RANK_DEFAULT
