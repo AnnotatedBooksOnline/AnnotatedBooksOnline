@@ -419,11 +419,13 @@ Ext.define('Ext.ux.WorkspacePanel', {
             items: [{
                 xtype: 'annotationspanel',
                 title: 'Annotations',
-                viewer: this.viewer
+                viewer: this.viewer,
+                iconCls: 'annotations-icon'
             },{
                 title: 'Export',
                 xtype: 'exportform',
-                viewer: this.viewer
+                viewer: this.viewer,
+                iconCls: 'export-icon'
             }],
             listeners: {
                 afterrender: function()
@@ -460,7 +462,8 @@ Ext.define('Ext.ux.WorkspacePanel', {
             this.insert(1, {
                 title: 'My notes',
                 xtype: 'notespanel',
-                viewer: this.viewer
+                viewer: this.viewer,
+                iconCls: 'notes-icon'
             });
         }
         else if (!notespermission && this.down('notespanel'))

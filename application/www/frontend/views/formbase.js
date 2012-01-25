@@ -49,6 +49,7 @@ Ext.define('Ext.ux.FormBase', {
                 formBind: true,
                 disabled: true,
                 text: this.submitButtonText,
+                iconCls: 'accept-icon',
                 width: 140,
                 handler: function()
                 {

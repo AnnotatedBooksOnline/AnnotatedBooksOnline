@@ -190,3 +190,48 @@
     background-image: url(../icons/arrow_undo.png);
 }
 
+.help-icon
+{
+    background-image: url(../icons/help.png);
+}
+
+.welcome-icon
+{
+    background-image: url(../icons/star.png);
+}
+
+.activation-icon
+{
+    background-image: url(../icons/lock_go.png);
+}
+
+.viewer-icon
+{
+    background-image: url(../icons/openbook.png);
+}
+
+.binding-edit-icon
+{
+    background-image: url(../icons/book_edit.png);
+}
+
+.export-icon
+{
+    background-image: url(../icons/page_save.png);
+}
+
+.annotations-icon
+{
+    background-image: url(../icons/page_green.png);
+}
+
+.notes-icon
+{
+    background-image: url(../icons/page_white_text.png);
+}
+
+.termsofuse-icon
+{
+    background-image: url(../icons/page_white_star.png);
+}
+

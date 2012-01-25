@@ -60,7 +60,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 _this,
                                 function(data)
                                 {
-                                    Ext.MessageBox.alert('Success', 'An e-mail with' +
+                                    Ext.MessageBox.alert('Success', 'An email with' +
                                         ' instructions on how to reset your password will' +
                                         ' be send to you in a few minutes.');
                                 },
@@ -68,8 +68,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 {
                                     if(error == 'user-not-found')
                                     {
-                                        Ext.MessageBox.alert('E-mail unkown', 'The specified' +
-                                                ' e-mail address is not present in the system.');
+                                        Ext.MessageBox.alert('Email unkown', 'The specified' +
+                                                ' email address is not present in the system.');
                                         return false;
                                     }
                                     else
@@ -81,7 +81,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         }
                     }
                     
-                    Ext.MessageBox.prompt('Password forgotten.', 'Please enter your e-mail address' + 
+                    Ext.MessageBox.prompt('Password forgotten.', 'Please enter your email address' + 
                         ' to which a password restoration mail can be send:', 
                         handlePasswordForgotten);
                 }
@@ -204,8 +204,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             hidden: true
         },{
             text: 'Help',
-            //moet nog een icon bij
-            iconCls: 'info-icon',
+            iconCls: 'help-icon',
             listeners: {
                 click: function()
                 {
@@ -401,7 +400,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.apply(tabConfig, {
                                 xtype: 'viewerpanel',
                                 binding: binding,
-                                pageNumber: pageNumber
+                                pageNumber: pageNumber,
+                                iconCls: 'viewer-icon'
                             });
                             
                             // Add tab.
@@ -437,7 +437,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: isExistingBinding === true ? 'Modify binding (reorder scans)' : 'Upload (reorder scans)',
                     xtype: 'reorderscanform',
                     bindingId: data[0],
-                    isExistingBinding: isExistingBinding
+                    isExistingBinding: isExistingBinding,
+                    iconCls: isExistingBinding === true ? 'binding-edit-icon' : 'upload-icon'
                 });
                 
                 break;
@@ -447,6 +448,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Help',
                     xtype: 'helppanel',
+                    iconCls: 'help-icon',
                     helpTab: data[0]
                 });
                 
@@ -456,7 +458,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a search tab.
                 Ext.apply(tabConfig, {
                     title: 'Search',
-                    xtype: 'searchpanel'
+                    xtype: 'searchpanel',
+                    iconCls: 'search-icon'
                 });
                 
                 break;
@@ -473,7 +476,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: isExistingBinding === true ? 'Modify binding (select books)' : 'Upload (select books)',
                     xtype: 'selectbookform',
                     bindingId: data[0],
-                    isExistingBinding: isExistingBinding
+                    isExistingBinding: isExistingBinding,
+                    iconCls: isExistingBinding === true ? 'binding-edit-icon' : 'upload-icon'
                 });
                 
                 break;
@@ -482,7 +486,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a users tab.
                 Ext.apply(tabConfig, {
                     title: 'Users',
-                    xtype: 'userlistpanel'
+                    xtype: 'userlistpanel',
+                    iconCls: 'users-icon'
                 });
                 
                 break;
@@ -504,7 +509,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         {
                             Ext.apply(tabConfig, {
                                 title: 'Profile of ' + escape(data[0]),
-                                xtype: 'viewprofilepanel'
+                                xtype: 'viewprofilepanel',
+                                iconCls: 'user-icon'
                             });
                             
                             // Add tab.
@@ -534,6 +540,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Registration',
                     layout: 'hbox',
+                    iconCls: 'register-icon',
                     bodyPadding: 10,
                     items: [{
                         border: false,
@@ -567,6 +574,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: existingBindingId == undefined ? 'Upload (upload)' : 'Modify binding',
                     name: 'upload',
                     layout: 'hbox',
+                    iconCls: 'upload-icon',
                     bodyPadding: 10,
                     items: [{
                         border: false,
@@ -593,7 +601,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Welcome',
                     xtype: 'welcomepanel',
-                    closable: false
+                    closable: false,
+                    iconCls: 'welcome-icon'
                 });
                 
                 break;
@@ -602,7 +611,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an info tab.
                 Ext.apply(tabConfig, {
                     title: 'Info',
-                    xtype: 'infopanel'
+                    xtype: 'infopanel',
+                    iconCls: 'info-icon'
                 });
                 
                 break;
@@ -611,7 +621,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a terms of use tab.
                 Ext.apply(tabConfig, {
                     title: 'Terms of Use',
-                    xtype: 'termsofusepanel'
+                    xtype: 'termsofusepanel',
+                    iconCls: 'termsofuse-icon'
                 });
                 
                 break;
@@ -620,7 +631,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an activation tab.
                 Ext.apply(tabConfig, {
                     title: 'Activation',
-                    xtype: 'activationpanel'
+                    xtype: 'activationpanel',
+                    iconCls: 'activation-icon'
                 });
                 
                 break;
@@ -629,7 +641,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a password restore tab.
                 Ext.apply(tabConfig, {
                     title: 'Restore password',
-                    xtype: 'restorepasswordpanel'
+                    xtype: 'restorepasswordpanel',
+                    iconCls: 'passwordforgotten-icon'
                 });
                 
                 break;
@@ -639,7 +652,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an upload instructions tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (instructions)',
-                    xtype: 'uploadinstructionpanel'
+                    xtype: 'uploadinstructionpanel',
+                    iconCls: 'upload-icon'
                 });
                 
                 break;
