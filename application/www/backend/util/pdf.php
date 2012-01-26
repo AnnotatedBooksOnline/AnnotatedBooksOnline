@@ -570,8 +570,10 @@ class Pdf
         
         // Draw the footer.
         $this->y -= $scanHeight + 2 * 28;
+        $this->setFontSize(10);
         $this->addLink($this->drawText($this->permanentLink, false, true), $this->permanentLink);
         $this->drawText(' — ' . date('l, d M Y H:i:s T'));
+        $this->setFontSize(12);
         
         $this->writePage();
         

@@ -16,9 +16,9 @@ Ext.define('Ext.ux.BindingFieldSet', {
                 'BindingUpload',
                 'uniqueLibrarySignature',
                 {
-                    library: library.getValue(), 
-                     signature: signature.getValue(),
-                     bindingId: _this.existingBindingId !== undefined ? _this.existingBindingId : '-1'
+                    library: library.getValue(),
+                    signature: signature.getValue(),
+                    bindingId: _this.existingBindingId !== undefined ? _this.existingBindingId : -1
                 },
                 this,
                 function(data)
@@ -36,15 +36,15 @@ Ext.define('Ext.ux.BindingFieldSet', {
         
         var annotationStore = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.LanguageModel',  
-            pageSize : 250,
-            sorters : {
-                property : 'languageName',
+            pageSize: 250,
+            sorters: {
+                property: 'languageName',
                 direction: 'ASC'
             }
         });
         
         annotationStore.load();
-                
+        
         var defConfig = {
             items: [{
                 xtype: 'container',
@@ -93,7 +93,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         validator: function(signature)
                         {
                             var library = _this.down('[name=library]');
-                            if (library == null)
+                            if (library === null)
                             {
                                 return true;
                             }
@@ -134,12 +134,10 @@ Ext.define('Ext.ux.BindingFieldSet', {
         Ext.apply(this, defConfig);
         
         this.callParent();
-        
-        
     },
     
-    fillFromExistingBinding: function(binding) {
-        
+    fillFromExistingBinding: function(binding)
+    {
         // Store the identifier of the existing binding.
         this.existingBindingId = binding.bindingId;
         
@@ -152,6 +150,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
             {
                 provenances = provenances + ", ";
             }
+            
             provenances = provenances + provenance.get('name');
         });
         
@@ -165,13 +164,12 @@ Ext.define('Ext.ux.BindingFieldSet', {
         this.down('[name=signature]').setValue(existingBindingModel.get('signature'));
         this.down('[name=provenance]').setValue(provenances);
         this.down('[name=languagesofannotations]').setValue(languageIds);
-        
     },
     
     getBinding: function()
     {
         return {
-            bindingId: this.existingBindingId !== undefined ? this.existingBindingId : '-1',
+            bindingId: this.existingBindingId !== undefined ? this.existingBindingId : -1,
             library: this.down('[name=library]').getValue(),
             provenance: this.down('[name=provenance]').getValue(),
             signature: this.down('[name=signature]').getValue(),
@@ -183,6 +181,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
 /*
  * Book fieldset class (one book).
  */
+
 Ext.define('Ext.ux.BookFieldset', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.bookfieldset',
@@ -192,10 +191,10 @@ Ext.define('Ext.ux.BookFieldset', {
         var _this = this;
     
         var booklanguageStore = Ext.create('Ext.data.Store', {
-            model: 'Ext.ux.LanguageModel',  
-            pageSize : 250,
-            sorters : {
-                property : 'languageName',
+            model: 'Ext.ux.LanguageModel',
+            pageSize: 250,
+            sorters: {
+                property: 'languageName',
                 direction: 'ASC'
             }
         });
@@ -226,7 +225,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                     }
                                     else
                                     {
-                                        _this.setTitle('Book: ' + title);
+                                        _this.setTitle('Book: ' + escape(title));
                                     }
                                 }
                             }
@@ -244,6 +243,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                 minLength: 4,
                                 maxLength: 4,
                                 minValue: 1000,
+                                allowBlank: false,
                                 allowDecimals: false,
                                 listeners: {
                                     'blur': function(from, f)
@@ -298,6 +298,7 @@ Ext.define('Ext.ux.BookFieldset', {
                                 minLength: 4,
                                 maxLength: 4,
                                 minValue: 1000,
+                                allowBlank: false,
                                 allowDecimals: false,
                                 margins: '0 0 0 10',
                                 listeners: {
@@ -423,14 +424,13 @@ Ext.define('Ext.ux.BookFieldset', {
         
         // Determine if an existing book is modified. If this is the case display the existing
         // book fields in the form.
-        if (this.existingBook !== undefined) {
-
+        if (this.existingBook !== undefined)
+        {
             var languageIds = [];
             this.existingBook.bookLanguagesStore.each(function(language)
             {
                 languageIds.push(language.get('languageId'));
             });
-            
             
             var authors = "";
             this.existingBook.authorsStore.each(function(author)
@@ -614,12 +614,6 @@ Ext.define('Ext.ux.UploadForm', {
                 function()
                 {
                     _this.setLoading(false);
-                    
-                    Ext.Msg.show({
-                        title: 'Error',
-                        msg: 'There is a problem with the server. Please try again later',
-                        buttons: Ext.Msg.OK
-                    });
                 
                     this.close();
                 }
@@ -720,7 +714,8 @@ Ext.define('Ext.ux.UploadForm', {
                 // Stop loading.
                 this.setLoading(false);
                 
-                Ext.Msg.alert('An error occurred.', 'Some scans failed to upload. Please reselect them.');
+                Ext.Msg.alert('An error occurred.',
+                    'Some scans failed to upload. Please reselect them.');
                 
                 return;
             }

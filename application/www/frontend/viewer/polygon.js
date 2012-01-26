@@ -82,6 +82,12 @@ Polygon.prototype.update = function(position, scale, rotation)
         position = {x: position.x - 1, y: position.y - 1};
     }
     
+    // Rotation may not be exactly zero, this fixed an Ext JS bug.
+    if (!rotation)
+    {
+        rotation = 1e-20;
+    }
+    
     // Update content.
     if (this.mode !== 'create')
     {
