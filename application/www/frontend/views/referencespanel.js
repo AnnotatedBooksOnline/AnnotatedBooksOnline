@@ -41,16 +41,15 @@ Ext.define('Ext.ux.ReferencesPanel', {
                 fieldLabel: '...',
                 labelStyle: 'white-space: nowrap',
                 size: 50,
-                anchor: '100%'
-            },{
-                xtype: 'button',
-                text: 'Select',
-                style: 'margin-bottom: 5px',
-                handler: function()
-                {
-                    _this.select('binding-link');
-                }
-            },{
+                anchor: '100%',
+                listeners:
+                    {
+                        focus: function()
+                        {
+                            this.selectText();
+                        }
+                    }
+                },{
                 xtype: 'textfield',
                 name: 'book-link',
                 labelAlign: 'top',
@@ -58,15 +57,14 @@ Ext.define('Ext.ux.ReferencesPanel', {
                 fieldLabel: '...',
                 labelStyle: 'white-space: nowrap',
                 size: 50,
-                anchor: '100%'
-            },{
-                xtype: 'button',
-                text: 'Select',
-                style: 'margin-bottom: 5px',
-                handler: function()
-                {
-                    _this.select('book-link');
-                }
+                anchor: '100%',
+                listeners:
+                    {
+                        focus: function()
+                        {
+                            this.selectText();
+                        }
+                    }
             },{
                 xtype: 'textfield',
                 name: 'page-link',
@@ -75,15 +73,14 @@ Ext.define('Ext.ux.ReferencesPanel', {
                 readOnly: true,
                 labelStyle: 'white-space: nowrap',
                 size: 50,
-                anchor: '100%'
-            },{
-                xtype: 'button',
-                text: 'Select',
-                style: 'margin-bottom: 5px',
-                handler: function()
-                {
-                    _this.select('page-link');
-                }
+                anchor: '100%',
+                listeners:
+                    {
+                        focus: function()
+                        {
+                            this.selectText();
+                        }
+                    }
             }]
         };
         
@@ -137,10 +134,5 @@ Ext.define('Ext.ux.ReferencesPanel', {
         
         // Set page field link.
         this.down('[name=page-link]').setValue(urlPrefix + '-' + (this.viewer.getPage() + 1));
-    },
-    
-    select: function(name)
-    {
-        this.down('[name=' + name + ']').selectText();
     }
 });
