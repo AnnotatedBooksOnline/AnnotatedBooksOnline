@@ -28,6 +28,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     name: 'scans',
                     width: 400,
                     height: 400,
+                    style: 'margin-right: 5px; margin-top: 5px;',
                     allowBlank: true,
                     ddReorder: true,
                     store: this.store,
@@ -43,6 +44,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     name: 'deletedscans',
                     width: 400,
                     height: 400,
+                    style: 'margin-top: 5px;',
                     allowBlank: true,
                     store: this.deletedScanStore,
                     displayField: 'scanName',
@@ -55,7 +57,9 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 }]
             },{
                 xtype: 'button',
-                text: 'Go back to old ordening',
+                text: 'Reset order',
+                style: 'margin-bottom: 5px',
+                iconCls: 'undo-icon',
                 handler: function()
                 {
                     // Reload the store from server.
@@ -111,17 +115,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
             }],
             buttons: [{
                 xtype: 'button',
-                disabled: true,
-                name: 'save',
-                text: 'Save',
-                width: 140,
-                handler: function()
-                {
-                    _this.submit();
-                }
-            },{
-                xtype: 'button',
                 name: 'delete',
+                iconCls: 'cancel-icon',
                 text: 'Delete',
                 width: 140,
                 handler: function()
@@ -139,6 +134,17 @@ Ext.define('Ext.ux.ReorderScanForm', {
                                 }
                             }
                     });
+                }
+            },{
+                xtype: 'button',
+                disabled: true,
+                name: 'save',
+                text: 'Save',
+                iconCls: 'accept-icon',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
                 }
             }]
         };

@@ -17,6 +17,7 @@ Ext.define('Ext.ux.BookListFieldset', {
                 xtype: 'grid',
                 border: false,
                 store: this.store,
+                style: 'margin-top: 5px; margin-bottom: 5px;',
                 viewConfig: {
                     stripeRows: true
                 },
@@ -184,6 +185,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
                 disabled: true,
                 store: this.store,
                 resizable: false,
+                style: 'margin-top: 5px; margin-bottom: 5px;',
                 viewConfig: {
                     stripeRows: true
                 },
@@ -319,18 +321,9 @@ Ext.define('Ext.ux.SelectBookForm', {
             }],
             buttons: [{
                 xtype: 'button',
-                disabled: true,
-                name: 'save',
-                text: 'Save',
-                width: 140,
-                handler: function()
-                {
-                    _this.submit();
-                }
-            },{
-                xtype: 'button',
                 name: 'delete',
                 text: 'Delete',
+                iconCls: 'cancel-icon',
                 width: 140,
                 handler: function()
                 {
@@ -347,6 +340,17 @@ Ext.define('Ext.ux.SelectBookForm', {
                                 }
                             }
                     });
+                }
+            },{
+                xtype: 'button',
+                disabled: true,
+                name: 'save',
+                text: 'Save',
+                iconCls: 'accept-icon',
+                width: 140,
+                handler: function()
+                {
+                    _this.submit();
                 }
             }],
             selectFirstField: false
