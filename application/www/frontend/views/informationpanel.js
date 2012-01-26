@@ -46,6 +46,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             buttons: [{
                 xtype: 'button',
                 text: 'Modify binding',
+                name: 'modifybindingbutton',
                 handler: function()
                 {
                     Application.getInstance().gotoTab(
@@ -56,6 +57,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             },{
                 xtype: 'button',
                 text: 'Delete binding',
+                name: 'deletebindingbutton',
                 handler: function()
                 {
                     alert('TODO');
@@ -98,6 +100,15 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        if (Authentication.getInstance().hasPermissionTo('change-book-info')) {
+        	this.down("[name=modifybindingbutton]").setVisible(true);
+        	this.down("[name=deletebindingbutton]").setVisible(true);
+        } else {
+        	this.down("[name=modifybindingbutton]").setVisible(false);
+        	this.down("[name=deletebindingbutton]").setVisible(false);
+        }
+        
     },
     
     afterRender: function()
