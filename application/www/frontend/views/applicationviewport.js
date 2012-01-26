@@ -208,7 +208,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             listeners: {
                 click: function()
                 {
-                    Application.getInstance().gotoTab('help', [_this.getComponent(1).getActiveTab().title], true);
+                    Application.getInstance().gotoTab('help', [_this.down('[name=bottom]').getActiveTab().tabInfo.type], true);
                 }
             },
             name: 'help'
@@ -273,6 +273,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         var bottomRegion = {
             xtype: 'tabpanel',
+            name: 'bottom',
             flex: 1
         };
         
@@ -449,7 +450,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: 'Help',
                     xtype: 'helppanel',
                     iconCls: 'help-icon',
-                    helpTab: data[0]
+                    helpType: data[0]
                 });
                 
                 break;
