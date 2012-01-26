@@ -287,7 +287,7 @@ Annotations.prototype.reset = function()
     }
     
     // Reload annotations.
-    this.load();
+    this.load(true);
     
     // Trigger reset.
     this.eventDispatcher.trigger('reset', this);

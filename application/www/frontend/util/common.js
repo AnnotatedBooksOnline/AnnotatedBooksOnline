@@ -8,24 +8,6 @@
  * Helper functions.
  */
 
-// Stops a browser event from bubbling up.
-function cancelEvent(event)
-{
-    event = event || window.event;
-    
-    if (event.stopPropagation)
-        event.stopPropagation();
-    
-    if (event.preventDefault)
-        event.preventDefault();
-    
-    event.cancelBubble = true;
-    event.cancel       = true;
-    event.returnValue  = false;
-    
-    return false;
-}
-
 // Creates a point.
 function createPoint(x, y)
 {
@@ -139,7 +121,7 @@ function boundingBoxesIntersect(first, second)
 // Escapes a string for displaying.
 function escape(str)
 {
-    if (str==null)
+    if (str === null)
     {
         return '';
     }
@@ -298,5 +280,8 @@ Ext.define('Ext.LoadMask',
 /*
  * Fix undefined reference in Ext JS.
  */
-Ext.getDoc().dom.namespaces = Ext.getDoc().dom.namespaces || {}
-
+try
+{
+    document.namespaces = document.namespaces || {};
+}
+catch(e) { }

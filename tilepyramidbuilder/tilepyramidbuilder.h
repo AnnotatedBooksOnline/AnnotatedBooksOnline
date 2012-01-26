@@ -36,8 +36,6 @@ struct BuilderSettings
      * Only applicable on lossy compression
      */
     uint output_quality;
-
-    //TODO: More settings regarding properties of output image.
     
     /**
      * Whether or not to use padding at all. When true, images that do not fill
@@ -56,9 +54,9 @@ struct BuilderSettings
      */
     enum
     {
-    	JPEG_INPUT,
-    	TIFF_INPUT,
-    	AUTO_INPUT
+        JPEG_INPUT,
+        TIFF_INPUT,
+        AUTO_INPUT
     } input_type;
 };
 
@@ -108,8 +106,6 @@ private:
         return x;
     }
 };
-
-//TODO: make all of these members
 
 
 //Tiles with coordinates above max_x or max_y lie outside of the image

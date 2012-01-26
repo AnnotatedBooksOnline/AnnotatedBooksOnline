@@ -142,3 +142,25 @@ a:hover
     background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
 }
 
+.x-border-box .x-tab-default-top
+{
+    height: 24px !important;
+}
+
+.x-tab-default-top button, .x-tab-default-top .x-tab-inner
+{
+    height: 16px !important;
+    line-height: 16px !important;
+}
+
+.x-tab-default-top button .x-tab-icon
+{
+    margin-left: -3px;
+}
+
+.x-tab-default-top button
+{
+    margin-left: -3px;
+    padding-left: 3px;
+}
+

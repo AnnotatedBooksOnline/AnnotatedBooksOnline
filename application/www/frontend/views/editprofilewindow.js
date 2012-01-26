@@ -150,6 +150,7 @@ Ext.define('Ext.ux.EditProfileForm', {
             buttons: [{
                 xtype: 'button',
                 text: 'Cancel',
+                iconCls: 'cancel-icon',
                 width: 140,
                 handler: function()
                 {
@@ -166,6 +167,7 @@ Ext.define('Ext.ux.EditProfileForm', {
                 formBind: true,
                 disabled: true,
                 text: 'Save',
+                iconCls: 'accept-icon',
                 width: 140,
                 handler: function()
                 {

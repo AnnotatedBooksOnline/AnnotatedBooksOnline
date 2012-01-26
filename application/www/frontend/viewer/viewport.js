@@ -215,14 +215,17 @@ Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
 //gets visible area of document
 Viewport.prototype.getVisibleArea = function()
 {
-    //calculate topleft and bottomright
-    var topLeft     = this.position;
-    var bottomRight = {
-        x: topLeft.x + this.dimensions.width  * this.invZoomFactor,
-        y: topLeft.y + this.dimensions.height * this.invZoomFactor
-    };
-    
-    return rotateBoundingBox({topLeft: topLeft, bottomRight: bottomRight}, -this.rotation);
+    return this.visibleArea;
+}
+
+Viewport.prototype.getPosition = function()
+{
+    return this.position;
+}
+
+Viewport.prototype.getRotation = function()
+{
+    return this.rotation;
 }
 
 Viewport.prototype.getZoomLevel = function()
@@ -241,7 +244,7 @@ Viewport.prototype.zoom = function(newZoomLevel, viewportPosition, animate)
     // Default to center position.
     if (viewportPosition === undefined)
     {
-        viewportPosition = {x: this.dimensions.width / 2, y: this.dimensions.height / 2};
+        viewportPosition = {x: this.dimensions.width * 0.5, y: this.dimensions.height * 0.5};
     }
     
     // Clamp zoom level before factor is calculated.
@@ -307,7 +310,7 @@ Viewport.prototype.zoom = function(newZoomLevel, viewportPosition, animate)
                     // Calculate new zoom factor.
                     var newInvZoomFactor = Math.pow(2, -stepZoomLevel);
                     
-                    //set factor of how much to subtract mouse position
+                    // Set factor of how much to subtract mouse position.
                     //var factor = (oldZoomFactor * newInvZoomFactor - 1) * oldInvZoomFactor;
                     var factor = newInvZoomFactor - oldInvZoomFactor;
                     
@@ -327,6 +330,92 @@ Viewport.prototype.zoom = function(newZoomLevel, viewportPosition, animate)
     {
         // Update viewport.
         this.update(newPosition, newZoomLevel);
+    }
+}
+
+// Zooms in at a relative position to the viewport.
+Viewport.prototype.rotate = function(deltaRotation, viewportPosition, animate)
+{
+    // Check if rotation is supported.
+    if (!this.document.supportsRotation())
+    {
+        return;
+    }
+    
+    // Default to center position.
+    if (viewportPosition === undefined)
+    {
+        viewportPosition = {x: this.dimensions.width * 0.5, y: this.dimensions.height * 0.5};
+    }
+    
+    // Convert pixels to a document offset.
+    var viewportOffset = {
+        x: viewportPosition.x * this.invZoomFactor,
+        y: viewportPosition.y * this.invZoomFactor
+    };
+    
+    // Convert document offset to a document position.
+    var documentPosition = {
+        x: this.position.x + viewportOffset.x,
+        y: this.position.y + viewportOffset.y
+    };
+    
+    // Stop current animation.
+    if (this.animation !== undefined)
+    {
+        this.animation.stop(true, true);
+        this.animation = undefined;
+    }
+    
+    // Check for animation.
+    if (animate !== false)
+    {
+        // Animate rotating.
+        var _this = this;
+        
+        var oldRotation = this.rotation;
+        var newRotation = oldRotation + deltaRotation;
+        
+        this.animation = $({percentage: 0}).animate(
+            {percentage: 100},
+            {
+                duration: 200,
+                step: function(percentage)
+                {
+                    // Calculate fraction.
+                    var fraction = Math.sqrt(percentage * 0.01);
+                    
+                    // Calculate new step rotation.
+                    var stepRotation = newRotation * fraction + oldRotation * (1 - fraction);
+                    
+                    // Calculate delta rotation.
+                    var deltaRotation = stepRotation - _this.rotation;
+                    
+                    // Rotate document position.
+                    documentPosition = rotatePoint(documentPosition, deltaRotation);
+                    
+                    // Set new position of topleft coordinates.
+                    var newPosition = {
+                        x: documentPosition.x - viewportOffset.x,
+                        y: documentPosition.y - viewportOffset.y
+                    };
+                    
+                    // Update viewport.
+                    _this.update(newPosition, undefined, stepRotation);
+                }
+            }
+        );
+    }
+    else
+    {
+        // Rotate document position.
+        documentPosition = rotatePoint(documentPosition, deltaRotation);
+        
+        // Set new position of topleft coordinates.
+        var newPosition = {x: documentPosition.x - viewportOffset.x, y: documentPosition.y - viewportOffset.y};
+        
+        // Update viewport.
+        this.update(newPosition, undefined, this.rotation + deltaRotation);
     }
 }
 
@@ -531,7 +620,7 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     this.rotation = newRotation;
     
     //get visible area
-    this.visibleArea = this.getVisibleArea();
+    this.visibleArea = this.calculateVisibleArea();
     
     
     // TODO: Use level 0 dimensions, get rid of visible area calculation here?
@@ -549,6 +638,18 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     // Dispatch event.
     this.eventDispatcher.trigger('change', this.position, this.zoomLevel, this.rotation,
         this.visibleArea);
+}
+
+Viewport.prototype.calculateVisibleArea = function()
+{
+    //calculate topleft and bottomright
+    var topLeft     = this.position;
+    var bottomRight = {
+        x: topLeft.x + this.dimensions.width  * this.invZoomFactor,
+        y: topLeft.y + this.dimensions.height * this.invZoomFactor
+    };
+    
+    return rotateBoundingBox({topLeft: topLeft, bottomRight: bottomRight}, -this.rotation);
 }
 
 /*
@@ -768,7 +869,7 @@ Viewport.prototype.onKeyDown = function(event)
         case 32: // Space.
             this.spaceDown = true;
             
-            break;
+            return false;
             
         case 36: // Home.
             if (!this.zoomingDisabled && !this.draggingDisabled && !this.rotationDisabled)
@@ -776,7 +877,7 @@ Viewport.prototype.onKeyDown = function(event)
                 this.reset();
             }
             
-            break;
+            return false;
             
         case 107: // Numpad +.
             if (!this.zoomingDisabled)
@@ -784,7 +885,7 @@ Viewport.prototype.onKeyDown = function(event)
                 this.zoom(this.zoomLevel + 1);
             }
             
-            break;
+            return false;
             
         case 109: // Numpad -.
             if (!this.zoomingDisabled)
@@ -792,7 +893,7 @@ Viewport.prototype.onKeyDown = function(event)
                 this.zoom(this.zoomLevel - 1);
             }
             
-            break;
+            return false;
             
         case 37: // Left.
         case 100: // Numpad 4.
@@ -801,7 +902,7 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: -Viewport.arrowMoveDistance, y: 0});
             }
             
-            break;
+            return false;
             
         case 39: // Right.
         case 102: // Numpad 6.
@@ -810,7 +911,7 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: +Viewport.arrowMoveDistance, y: 0});
             }
             
-            break;
+            return false;
             
         case 38: // Up.
         case 104: // Numpad 8.
@@ -819,7 +920,7 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: 0, y: -Viewport.arrowMoveDistance});
             }
             
-            break;
+            return false;
             
         case 40: // Down.
         case 98: // Numpad 2.
@@ -828,7 +929,7 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: 0, y: +Viewport.arrowMoveDistance});
             }
             
-            break;
+            return false;
     }
 }
 

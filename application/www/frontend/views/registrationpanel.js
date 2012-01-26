@@ -139,6 +139,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                         
                         buttons: [{
                             text: 'Decline',
+                            iconCls: 'cancel-icon',
                             handler: function()
                             {
                                 this.up('window').close();
@@ -146,6 +147,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                             }
                         },{
                             text: 'Accept',
+                            iconCls: 'accept-icon',
                             handler: function()
                             {
                                 this.up('window').close();

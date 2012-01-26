@@ -145,11 +145,6 @@ Application.prototype.initialize = function()
             this.addHistoryAction(info.type, info.data);
         });
     
-    this.viewport.getEventDispatcher().bind('beforeclose', this, function(event, viewport, index)
-        {
-            // TODO: go to previous tab, instead of first one.
-        });
-    
     // Register actions.
     this.registerActions();
     

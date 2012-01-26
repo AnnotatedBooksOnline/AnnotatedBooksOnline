@@ -15,14 +15,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
             html: 'Welcome, <b>Guest</b>',
             cls: 'user-text',
             name: 'welcometext',
-            width: 300,
+            width: 200,
             setName: function(name)
             {
                 this.body.update('Welcome, <b>' + escape(name) + '</b>');
             }
         },{
             xtype: 'container',
-            width: 180,
+            width: 80,
             rowspan: 5
         },{
             xtype: 'button',
@@ -60,7 +60,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 _this,
                                 function(data)
                                 {
-                                    Ext.MessageBox.alert('Success', 'An e-mail with' +
+                                    Ext.MessageBox.alert('Success', 'An email with' +
                                         ' instructions on how to reset your password will' +
                                         ' be send to you in a few minutes.');
                                 },
@@ -68,8 +68,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 {
                                     if(error == 'user-not-found')
                                     {
-                                        Ext.MessageBox.alert('E-mail unkown', 'The specified' +
-                                                ' e-mail address is not present in the system.');
+                                        Ext.MessageBox.alert('Email unkown', 'The specified' +
+                                                ' email address is not present in the system.');
                                         return false;
                                     }
                                     else
@@ -81,7 +81,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         }
                     }
                     
-                    Ext.MessageBox.prompt('Password forgotten.', 'Please enter your e-mail address' + 
+                    Ext.MessageBox.prompt('Password forgotten.', 'Please enter your email address' + 
                         ' to which a password restoration mail can be send:', 
                         handlePasswordForgotten);
                 }
@@ -123,7 +123,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             text: 'Edit profile',
             width: 120,
             height: 25,
-            iconCls: 'user-icon',
+            iconCls: 'edit-profile-icon',
             listeners: {
                 click: function()
                 {
@@ -204,8 +204,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             hidden: true
         },{
             text: 'Help',
-            //moet nog een icon bij
-            iconCls: 'info-icon',
+            iconCls: 'help-icon',
             listeners: {
                 click: function()
                 {
@@ -239,6 +238,18 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     xtype: 'container',
                     height: 87,
                     html: '<h1>' + document.title + '</h1><div class="version">#COLLABVERSION#</div>'
+                        + '<div style="right: 0px; top: 20px; position: absolute;">' 
+                        + '<a href="http://www.uu.nl/en" target="_blank" title="Go to the website of Utrecht University">'
+                        + '<img src="frontend/resources/images/uu-small.png"/></a> '
+                        + '<a href="http://www.english.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam">'
+                        + '<img src="frontend/resources/images/uva-small.png"/></a> '
+                        + '<a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University">'
+                        + '<img src="frontend/resources/images/princeton-small.png"/></a> '
+                        + '<a href="http://www.ugent.be/en" target="_blank" title="Go to the website of Ghent University">'
+                        + '<img src="frontend/resources/images/ugent-small.png"/></a> '
+                        + '<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL">'
+                        + '<img src="frontend/resources/images/cell-small.png"/></a>'
+                        + '</div>'
                 },{
                     xtype: 'container',
                     defaults: {
@@ -248,21 +259,10 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     items: menuButtons
                 }]
-            },{
-                xtype: 'container',
-                margin: '5 0 0 0',
-                width: 380,
-                html: '<p>' 
-                    + '<a href="http://www.uu.nl/" target="_blank" title="Go to the website of Utrecht University"><img src="frontend/resources/images/uu-small.png"/></a> '
-                    + '<a href="http://www.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva-small.png"/></a> '
-                    + '<a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton-small.png"/></a> '
-                    + '<a href="http://www.ugent.be/" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent-small.png"/></a> '
-                    + '<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell-small.png"/></a>'
-                    + '</p>'
             },{ // User items.
                 border: false,
                 bodyPadding: 10,
-                width: 320,
+                width: 220,
                 layout: {
                     type: 'table',
                     columns: 2
@@ -303,7 +303,23 @@ Ext.define('Ext.ux.ApplicationViewport', {
         this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
         this.tabs = this.items.get(1);
         
+        this.correctVmlSupport();
+        
         this.openTab('welcome', [], true);
+    },
+    
+    correctVmlSupport: function()
+    {
+        Ext.supports.Vml = (function()
+        {
+            var a = document.body.appendChild(document.createElement('div'));
+            a.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
+            var b = a.firstChild;
+            b.style.behavior = "url(#default#VML)";
+            var vmlSupported = b ? typeof b.adj == "object": true;
+            a.parentNode.removeChild(a);
+            return vmlSupported;
+        })();
     },
     
     getEventDispatcher: function()
@@ -384,7 +400,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             Ext.apply(tabConfig, {
                                 xtype: 'viewerpanel',
                                 binding: binding,
-                                pageNumber: pageNumber
+                                pageNumber: pageNumber,
+                                iconCls: 'viewer-icon'
                             });
                             
                             // Add tab.
@@ -420,7 +437,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: isExistingBinding === true ? 'Modify binding (reorder scans)' : 'Upload (reorder scans)',
                     xtype: 'reorderscanform',
                     bindingId: data[0],
-                    isExistingBinding: isExistingBinding
+                    isExistingBinding: isExistingBinding,
+                    iconCls: isExistingBinding === true ? 'binding-edit-icon' : 'upload-icon'
                 });
                 
                 break;
@@ -430,6 +448,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Help',
                     xtype: 'helppanel',
+                    iconCls: 'help-icon',
                     helpTab: data[0]
                 });
                 
@@ -439,7 +458,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a search tab.
                 Ext.apply(tabConfig, {
                     title: 'Search',
-                    xtype: 'searchpanel'
+                    xtype: 'searchpanel',
+                    iconCls: 'search-icon'
                 });
                 
                 break;
@@ -456,7 +476,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: isExistingBinding === true ? 'Modify binding (select books)' : 'Upload (select books)',
                     xtype: 'selectbookform',
                     bindingId: data[0],
-                    isExistingBinding: isExistingBinding
+                    isExistingBinding: isExistingBinding,
+                    iconCls: isExistingBinding === true ? 'binding-edit-icon' : 'upload-icon'
                 });
                 
                 break;
@@ -465,7 +486,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a users tab.
                 Ext.apply(tabConfig, {
                     title: 'Users',
-                    xtype: 'userlistpanel'
+                    xtype: 'userlistpanel',
+                    iconCls: 'users-icon'
                 });
                 
                 break;
@@ -487,7 +509,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         {
                             Ext.apply(tabConfig, {
                                 title: 'Profile of ' + escape(data[0]),
-                                xtype: 'viewprofilepanel'
+                                xtype: 'viewprofilepanel',
+                                iconCls: 'profile-icon'
                             });
                             
                             // Add tab.
@@ -517,6 +540,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Registration',
                     layout: 'hbox',
+                    iconCls: 'register-icon',
                     bodyPadding: 10,
                     items: [{
                         border: false,
@@ -550,6 +574,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: existingBindingId == undefined ? 'Upload (upload)' : 'Modify binding',
                     name: 'upload',
                     layout: 'hbox',
+                    iconCls: 'upload-icon',
                     bodyPadding: 10,
                     items: [{
                         border: false,
@@ -576,7 +601,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Ext.apply(tabConfig, {
                     title: 'Welcome',
                     xtype: 'welcomepanel',
-                    closable: false
+                    closable: false,
+                    iconCls: 'welcome-icon'
                 });
                 
                 break;
@@ -585,7 +611,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an info tab.
                 Ext.apply(tabConfig, {
                     title: 'Info',
-                    xtype: 'infopanel'
+                    xtype: 'infopanel',
+                    iconCls: 'info-icon'
                 });
                 
                 break;
@@ -594,7 +621,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a terms of use tab.
                 Ext.apply(tabConfig, {
                     title: 'Terms of Use',
-                    xtype: 'termsofusepanel'
+                    xtype: 'termsofusepanel',
+                    iconCls: 'termsofuse-icon'
                 });
                 
                 break;
@@ -603,7 +631,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an activation tab.
                 Ext.apply(tabConfig, {
                     title: 'Activation',
-                    xtype: 'activationpanel'
+                    xtype: 'activationpanel',
+                    iconCls: 'activation-icon'
                 });
                 
                 break;
@@ -612,7 +641,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add a password restore tab.
                 Ext.apply(tabConfig, {
                     title: 'Restore password',
-                    xtype: 'restorepasswordpanel'
+                    xtype: 'restorepasswordpanel',
+                    iconCls: 'passwordforgotten-icon'
                 });
                 
                 break;
@@ -622,7 +652,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Add an upload instructions tab.
                 Ext.apply(tabConfig, {
                     title: 'Upload (instructions)',
-                    xtype: 'uploadinstructionpanel'
+                    xtype: 'uploadinstructionpanel',
+                    iconCls: 'upload-icon'
                 });
                 
                 break;

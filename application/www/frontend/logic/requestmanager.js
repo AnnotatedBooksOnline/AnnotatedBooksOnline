@@ -157,7 +157,7 @@ RequestManager.prototype.flush = function()
     // Do the actual request.
     var _this = this;
     Ext.Ajax.request({
-        url: url,
+        url: window.location.pathname + url,
         jsonData: data,
         method: 'POST',
         success: onSuccess,

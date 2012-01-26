@@ -28,209 +28,246 @@ Ext.define('Ext.ux.ViewerPanel', {
             xtype: 'viewportpanel',
             document: _this.binding.getDocument(0),
             cls: 'viewport-panel',
-            tbar: [{
-                xtype: 'slider',
-                name: 'zoom-slider',
-                hideLabel: true,
-                useTips: false,
-                x: 20,
-                y: 20,
-                width: 214,
-                minValue: 0,
-                maxValue: 200,
-                listeners: {
-                    change: function(slider, value)
-                    {
-                        if (_this.skipSliderOnChange === true)
+            dockedItems: {
+                xtype: 'toolbar',
+                dock: 'top',
+                enableOverflow: true,
+                items: [{
+                    xtype: 'slider',
+                    name: 'zoom-slider',
+                    hideLabel: true,
+                    useTips: false,
+                    x: 20,
+                    y: 20,
+                    width: 214,
+                    minValue: 0,
+                    maxValue: 200,
+                    listeners: {
+                        change: function(slider, value)
                         {
-                            _this.skipSliderOnChange = false;
-                            return;
-                        }
-                        
-                        _this.viewport.zoom(value / 200 * _this.viewport.getMaxZoomLevel(),
-                            undefined, false);
-                    }
-                },
-                cls: 'zoom-slider'
-            }, '-', {
-                iconCls: 'first-icon',
-                tooltip: 'Go to first page',
-                disabled: true,
-                name: 'first-page',
-                listeners: {
-                    click: function()
-                    {
-                        _this.gotoPage(0);
-                    }
-                }
-            },{
-                iconCls: 'previous-icon',
-                tooltip: 'Go to previous page',
-                disabled: true,
-                name: 'previous-page',
-                listeners: {
-                    click: function()
-                    {
-                        _this.gotoPage(_this.getPage() - 1);
-                    }
-                }
-            }, '-', 'Page', {
-                xtype: 'textfield',
-                width: 40,
-                value: '1',
-                maskReg: /\d+/,
-                stripCharsRe: /[^\d]+/,
-                allowNegative: false,
-                allowDecimals: false,
-                autoStripChars: true,
-                name: 'page-number',
-                validator: function(value)
-                {
-                    if ((value <= _this.getPageAmount()) && (value >= 1))
-                    {
-                        return true;
-                    }
-                    
-                    return 'Enter a page between 1 and ' + _this.getPageAmount() + ' inclusive.';
-                },
-                listeners: {
-                    blur: function()
-                    {
-                        var value = this.getValue();
-                        if ((value <= _this.getPageAmount()) && (value >= 1))
-                        {
-                            _this.gotoPage(value - 1);
+                            if (_this.skipSliderOnChange === true)
+                            {
+                                _this.skipSliderOnChange = false;
+                                return;
+                            }
+                            
+                            _this.viewport.zoom(value / 200 * _this.viewport.getMaxZoomLevel(),
+                                undefined, false);
                         }
                     },
-                    specialkey: function(field, event)
-                    {
-                        if (event.getKey() == event.ENTER)
+                    cls: 'zoom-slider'
+                }, '-', {
+                    iconCls: 'first-icon',
+                    tooltip: 'Go to first page',
+                    disabled: true,
+                    name: 'first-page',
+                    overflowText: 'Go to first page',
+                    listeners: {
+                        click: function()
                         {
-                            field.fireEvent('blur');
+                            _this.gotoPage(0);
                         }
                     }
-                }
-            },{
-                xtype: 'tbtext',
-                text: 'of ' + _this.getPageAmount(),
-                name: 'total-pages'
-            }, '-', {
-                iconCls: 'next-icon',
-                tooltip: 'Go to next page',
-                disabled: (_this.getPageAmount() == 1),
-                name: 'next-page',
-                listeners: {
-                    click: function()
-                    {
-                        _this.gotoPage(_this.getPage() + 1);
+                },{
+                    iconCls: 'previous-icon',
+                    tooltip: 'Go to previous page',
+                    disabled: true,
+                    name: 'previous-page',
+                    overflowText: 'Go to previous page',
+                    listeners: {
+                        click: function()
+                        {
+                            _this.gotoPage(_this.getPage() - 1);
+                        }
                     }
-                }
-            },{
-                iconCls: 'last-icon',
-                tooltip: 'Go to last page',
-                disabled: (_this.getPageAmount() == 1),
-                name: 'last-page',
-                listeners: {
-                    click: function()
+                }, '-', 'Page', {
+                    xtype: 'textfield',
+                    width: 40,
+                    value: '1',
+                    maskReg: /\d+/,
+                    stripCharsRe: /[^\d]+/,
+                    allowNegative: false,
+                    allowDecimals: false,
+                    autoStripChars: true,
+                    name: 'page-number',
+                    validator: function(value)
                     {
-                        _this.gotoPage(_this.getPageAmount() - 1);
+                        if ((value <= _this.getPageAmount()) && (value >= 1))
+                        {
+                            return true;
+                        }
+                        
+                        return 'Enter a page between 1 and ' + _this.getPageAmount() + ' inclusive.';
+                    },
+                    listeners: {
+                        blur: function()
+                        {
+                            var value = this.getValue();
+                            if ((value <= _this.getPageAmount()) && (value >= 1))
+                            {
+                                _this.gotoPage(value - 1);
+                            }
+                        },
+                        specialkey: function(field, event)
+                        {
+                            if (event.getKey() == event.ENTER)
+                            {
+                                field.fireEvent('blur');
+                            }
+                        }
                     }
-                }
-            }, '-', {
-                iconCls: 'refresh-icon',
-                tooltip: 'Reset viewer',
-                listeners: {
-                    click: function()
-                    {
-                        _this.resetViewport();
+                },{
+                    xtype: 'tbtext',
+                    text: 'of ' + _this.getPageAmount(),
+                    name: 'total-pages'
+                }, '-', {
+                    iconCls: 'next-icon',
+                    tooltip: 'Go to next page',
+                    disabled: (_this.getPageAmount() == 1),
+                    name: 'next-page',
+                    overflowText: 'Go to next page',
+                    listeners: {
+                        click: function()
+                        {
+                            _this.gotoPage(_this.getPage() + 1);
+                        }
                     }
-                }
-            }, '->', {
-                iconCls: 'drag-icon',
-                tooltip: 'Drag',
-                enableToggle: true,
-                allowDepress: false,
-                pressed: true,
-                name: 'view-tool',
-                listeners: {
-                    toggle: function()
-                    {
-                        _this.setTool('view');
+                },{
+                    iconCls: 'last-icon',
+                    tooltip: 'Go to last page',
+                    disabled: (_this.getPageAmount() == 1),
+                    name: 'last-page',
+                    overflowText: 'Go to last page',
+                    listeners: {
+                        click: function()
+                        {
+                            _this.gotoPage(_this.getPageAmount() - 1);
+                        }
                     }
-                }
-            },{
-                iconCls: 'polygon-icon',
-                tooltip: 'Add a polygon annotation',
-                enableToggle: true,
-                allowDepress: false,
-                name: 'polygon-tool',
-                listeners: {
-                    toggle: function()
-                    {
-                        _this.setTool('polygon');
+                }, '-', {
+                    iconCls: 'refresh-icon',
+                    tooltip: 'Reset viewer',
+                    overflowText: 'Reset viewer',
+                    listeners: {
+                        click: function()
+                        {
+                            _this.resetViewport();
+                        }
                     }
-                }
-            },{
-                iconCls: 'rectangle-icon',
-                tooltip: 'Add a rectangle annotation',
-                enableToggle: true,
-                allowDepress: false,
-                name: 'rectangle-tool',
-                listeners: {
-                    toggle: function()
-                    {
-                        _this.setTool('rectangle');
+                }, {
+                    iconCls: 'rotate-left-icon',
+                    tooltip: 'Rotate left',
+                    overflowText: 'Rotate left',
+                    listeners: {
+                        click: function()
+                        {
+                            _this.rotateLeft();
+                        }
                     }
-                }
-            },{
-                iconCls: 'vertex-icon',
-                tooltip: 'Move a vertex',
-                enableToggle: true,
-                allowDepress: false,
-                name: 'vertex-tool',
-                listeners: {
-                    toggle: function()
-                    {
-                        _this.setTool('vertex');
+                }, {
+                    iconCls: 'rotate-right-icon',
+                    tooltip: 'Rotate right',
+                    overflowText: 'Rotate right',
+                    listeners: {
+                        click: function()
+                        {
+                            _this.rotateRight();
+                        }
                     }
-                }
-            },{
-                iconCls: 'add-vertex-icon',
-                tooltip: 'Add a vertex',
-                enableToggle: true,
-                allowDepress: false,
-                name: 'addvertex-tool',
-                listeners: {
-                    toggle: function()
-                    {
-                        _this.setTool('addvertex');
+                }, '->', {
+                    iconCls: 'drag-icon',
+                    tooltip: 'Drag',
+                    enableToggle: true,
+                    allowDepress: false,
+                    pressed: true,
+                    overflowText: 'Drag',
+                    name: 'view-tool',
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.setTool('view');
+                        }
                     }
-                }
-            },{
-                iconCls: 'erase-vertex-icon',
-                tooltip: 'Erase a vertex',
-                enableToggle: true,
-                allowDepress: false,
-                name: 'erasevertex-tool',
-                listeners: {
-                    toggle: function()
-                    {
-                        _this.setTool('erasevertex');
+                },{
+                    iconCls: 'polygon-icon',
+                    tooltip: 'Add a polygon annotation',
+                    enableToggle: true,
+                    allowDepress: false,
+                    overflowText: 'Add a polygon annotation',
+                    name: 'polygon-tool',
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.setTool('polygon');
+                        }
                     }
-                }
-            },{
-                iconCls: 'erase-icon',
-                tooltip: 'Erase an annotation',
-                enableToggle: true,
-                allowDepress: false,
-                name: 'erase-tool',
-                listeners: {
-                    toggle: function()
-                    {
-                        _this.setTool('erase');
+                },{
+                    iconCls: 'rectangle-icon',
+                    tooltip: 'Add a rectangle annotation',
+                    enableToggle: true,
+                    allowDepress: false,
+                    overflowText: 'Add a rectangle annotation',
+                    name: 'rectangle-tool',
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.setTool('rectangle');
+                        }
                     }
-                }
-            }]
+                },{
+                    iconCls: 'vertex-icon',
+                    tooltip: 'Move a vertex',
+                    enableToggle: true,
+                    allowDepress: false,
+                    overflowText: 'Move a vertex',
+                    name: 'vertex-tool',
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.setTool('vertex');
+                        }
+                    }
+                },{
+                    iconCls: 'add-vertex-icon',
+                    tooltip: 'Add a vertex',
+                    enableToggle: true,
+                    allowDepress: false,
+                    overflowText: 'Add a vertex',
+                    name: 'addvertex-tool',
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.setTool('addvertex');
+                        }
+                    }
+                },{
+                    iconCls: 'erase-vertex-icon',
+                    tooltip: 'Erase a vertex',
+                    enableToggle: true,
+                    allowDepress: false,
+                    overflowText: 'Erase a vertex',
+                    name: 'erasevertex-tool',
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.setTool('erasevertex');
+                        }
+                    }
+                },{
+                    iconCls: 'erase-icon',
+                    tooltip: 'Erase an annotation',
+                    enableToggle: true,
+                    allowDepress: false,
+                    overflowText: 'Erase an annotation',
+                    name: 'erase-tool',
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.setTool('erase');
+                        }
+                    }
+                }]
+            }
         };
         
         var westRegion = {
@@ -250,8 +287,8 @@ Ext.define('Ext.ux.ViewerPanel', {
             split: true,
             collapsible: true,
             collapsed: false,
-            width: 300,
-            minWidth: 300,
+            width: 310,
+            minWidth: 310,
             layout: 'fit',
             title: 'Workspace'
         };
@@ -371,13 +408,36 @@ Ext.define('Ext.ux.ViewerPanel', {
     
     afterViewportChange: function(event)
     {
-        var sliderWidth = Math.round(
-            this.viewport.getZoomLevel() / this.viewport.getMaxZoomLevel() * 200
-        );
+        // Check for current timer.
+        if (this.timer !== undefined)
+        {
+            return;
+        }
         
-        this.skipSliderOnChange = true;
-        this.slider.setValue(sliderWidth, false);
-        this.skipSliderOnChange = false;
+        // Set timer to avoid updating to many times.
+        var _this = this;
+        this.timer = setTimeout(
+            function()
+            {
+                // Clear timer.
+                _this.timer = undefined;
+                
+                // Calculate slider width.
+                var sliderWidth = Math.round(
+                    _this.viewport.getZoomLevel() / _this.viewport.getMaxZoomLevel() * 200
+                );
+                
+                // Check difference.
+                var difference = Math.abs(_this.slider.getValue() - sliderWidth);
+                if (difference >= 2)
+                {
+                    _this.skipSliderOnChange = true;
+                    _this.slider.setValue(sliderWidth, false);
+                    _this.skipSliderOnChange = false;
+                }
+            },
+            10
+        );
     },
     
     onAuthenticationChange: function()
@@ -487,6 +547,28 @@ Ext.define('Ext.ux.ViewerPanel', {
     resetViewport: function()
     {
         this.viewport.reset();
+    },
+    
+    rotateLeft: function()
+    {
+        // Fetch rotation, and round it to the previous quarter-pi.
+        var quarterPi       = 0.25 * Math.PI;
+        var currentRotation = this.viewport.getRotation();
+        var newRotation     = Math.round(currentRotation / quarterPi - 1) * quarterPi;
+        
+        // Rotate viewport by a delta rotation.
+        this.viewport.rotate(newRotation - currentRotation);
+    },
+    
+    rotateRight: function()
+    {
+        // Fetch rotation, and round it to the next quarter-pi.
+        var quarterPi        = 0.25 * Math.PI;
+        var currentRotation = this.viewport.getRotation();
+        var newRotation     = Math.round(currentRotation / quarterPi + 1) * quarterPi;
+        
+        // Rotate viewport by a delta rotation.
+        this.viewport.rotate(newRotation - currentRotation);
     },
     
     gotoPage: function(number)
