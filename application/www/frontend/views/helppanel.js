@@ -117,7 +117,7 @@ Ext.define('Ext.ux.HelpPanel', {
         }
         
         htmltext = htmltext.replace(
-            /[*][*]([^*]+)[|][|]([/A-z,-]+)[*][*]/g,
+            /[*][*]([^*]+)[|][|]([/A-z, ]+)[*][*]/g,
             '<a style="cursor: pointer" onclick="Ext.getCmp(\''
                 + this.getId() + '\').processLink(\'$2\')">$1</a>'
         );
