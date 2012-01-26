@@ -46,7 +46,7 @@ void Tile::flushImage()
             }
             
             if (bottom > num_lines)
-            }
+            {
                 params.height = settings.output_image_height - ((bottom - num_lines) >> (depth - z_pos));
             }
             
