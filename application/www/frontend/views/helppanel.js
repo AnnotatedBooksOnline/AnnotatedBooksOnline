@@ -65,7 +65,7 @@ Ext.define('Ext.ux.HelpPanel', {
         
         this.down('[name=helpindex]').expandPath('/root', undefined, undefined, function(succes, lastNode)
         {
-            var helppage = lastNode.findChild('helpType',this.helpTab);
+            var helppage = lastNode.findChild('helpType',this.helpType);
             if (helppage === null)
             {
                 helppage = lastNode.findChild('helpType', 'welcome');
