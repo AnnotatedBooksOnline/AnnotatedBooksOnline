@@ -556,7 +556,7 @@ class BindingUploadController extends Controller
     
     
     //TODO: Cascading in database 
-    public function actionDropUpload($data)
+    public function actionDeleteUpload($data)
     {/*
         Authentication::assertPermissionTo('upload-bindings');  
         $userId = Authentication::getInstance()->getUserId();

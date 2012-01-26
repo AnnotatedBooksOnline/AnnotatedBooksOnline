@@ -121,21 +121,21 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 }
             },{
                 xtype: 'button',
-                name: 'dropUpload',
-                text: 'Drop current upload',
+                name: 'delete',
+                text: 'Delete',
                 width: 140,
                 handler: function()
                 {
                     Ext.Msg.show({
                         title: 'Are you sure?',
-                        msg: ' All uploaded data will be lost. Are you sure you want to drop this upload?.',
+                        msg: ' This binding will be deleted. Are you sure?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
                             {
                                 if (button == 'yes')
                                 {
-                                    _this.drop();
+                                    _this.deleteBinding();
                                 }
                             }
                     });
@@ -197,14 +197,14 @@ Ext.define('Ext.ux.ReorderScanForm', {
             onFailure
         );
     },
-    drop: function()
+    deleteBinding: function()
     {
         // Send the drop request to the database
         var onSuccess = function(data)
         {
             Ext.Msg.show({
                 title: 'Success',
-                msg: 'The upload was dropped.',
+                msg: 'The binding was successfully deleted.',
                 buttons: Ext.Msg.OK
             }); 
             
@@ -216,13 +216,13 @@ Ext.define('Ext.ux.ReorderScanForm', {
         {
             Ext.Msg.show({
                 title: 'Error',
-                msg: 'Failed to drop the upload. Please try again.',
+                msg: 'Failed to delete the binding. Please try again.',
                 buttons: Ext.Msg.OK
             }); 
         };
         RequestManager.getInstance().request(
                 'BindingUpload', 
-                'dropUpload', 
+                'deleteUpload', 
                 {
                     bindingId:this.bindingId
                 },

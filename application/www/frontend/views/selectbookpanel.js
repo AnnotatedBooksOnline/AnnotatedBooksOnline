@@ -11,6 +11,8 @@ Ext.define('Ext.ux.BookListFieldset', {
         var _this = this;
         
         var defConfig = {
+            layout: 'fit',
+            autoscroll: true,
             items: [{
                 xtype: 'grid',
                 border: false,
@@ -20,47 +22,28 @@ Ext.define('Ext.ux.BookListFieldset', {
                 },
                 columns: [{
                     text:      'Title',
-                    width:     150,
                     flex:      1,
                     sortable:  false,
                     dataIndex: 'title'
                 },{
-                    text:      'Time period',
-                    width:     150,
-                    flex:      1,
-                    sortable:  false,
-                    dataIndex: 'timePeriod'
-                },{
-                    text:      'Author',
-                    width:     150,
-                    flex:      1,
-                    sortable:  false,
-                    dataIndex: 'author'
-                },{
-                    text:      'Languages',
-                    width:     250,
-                    flex:      1,
-                    sortable:  false,
-                    dataIndex: 'languages'
-                },{
-                    text:      'Publisher',
-                    width:     150,
-                    flex:      1,
-                    sortable:  false,
-                    dataIndex: 'publisher'
-                },{
-                    text:      'Place published',
-                    width:     150,
-                    flex:      1,
-                    sortable:  false,
-                    dataIndex: 'placePublished'
-                },{
                     text:      'Status',
-                    width:     150,
-                    flex:      1,
+                    width:     75,
                     sortable:  false,
                     dataIndex: 'status'
-                }]
+                }],
+                listeners: 
+                {
+                    itemclick: function(view, record)
+                    {
+                        this.up('selectbookform').down('bookinformationfieldset').setBook(record);
+                    },
+                    itemdblclick: function(view, record)
+                    {
+                        this.disable();
+                        this.up('selectbookform').setCurrentBook(record);
+                        this.up('selectbookform').down('scanlistfieldset').down('grid').enable();
+                    }
+                }
             }]
         };
         
@@ -71,6 +54,110 @@ Ext.define('Ext.ux.BookListFieldset', {
 });
 
 /*
+ * Book fieldset class.
+ */
+Ext.define('Ext.ux.BookInformationFieldSet', {
+    extend: 'Ext.form.FieldSet',
+    alias: 'widget.bookinformationfieldset',
+    title: 'Book information',
+    collapsible: true,
+    initComponent: function()
+    {
+        var _this = this;
+        
+        //TODO: wrapping?
+        var defConfig = {
+            autoScroll: true,
+            items: [{
+                xtype: 'propertygrid',
+                propertyNames: {
+                    a: 'Title',
+                    b: 'Author(s)',
+                    c: 'Version',
+                    d: 'Place published',
+                    e: 'Publisher',
+                    f: 'Time period',
+                    g: 'Languages'
+                },
+                source: {
+                    "a": ' ',
+                    "b": ' ',
+                    "c": ' ',
+                    "d": ' ',
+                    "e": ' ',
+                    "f": ' ',
+                    "g": ' '
+                },
+                listeners: {
+                    // Prevent editing
+                    beforeedit: function() {
+                        return false;
+                    }
+                },
+                hideHeaders: true,
+                nameColumnWidth: 100
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    },
+    //TODO: Do this in a more elegant way
+    setBook: function(book)
+    {
+        var authors = '';
+        book.authors().each(function(author)
+        {
+            authors += (', '+author.get('name'));
+        });
+        
+        var version = book.get('printVersion');
+        
+        var bookLanguages ='';
+        book.bookLanguages().each(function(bookLanguage)
+        {
+            bookLanguages += (', '+bookLanguage.get('languageName'));
+        });
+        
+        var placePublished = book.get('placePublished');
+        var publisher = book.get('publisher');
+        
+        if(authors==='')
+        {
+            authors = ' Unknown author(s)';
+        }
+        
+        if(version==null)
+        {
+            version = 'Unknown version';
+        }
+        
+        if(placePublished==null)
+        {
+            placePublished = 'Unknown publication place';
+        }
+        
+        if(publisher==null)
+        {
+            publisher = 'Unknown publisher';
+        }
+    
+        this.down('propertygrid').setSource({
+                    "a": book.get('title'),
+                    "b": authors.substring(1),
+                    "c": version,
+                    "d": placePublished,
+                    "e": publisher,
+                    "f": book.getTimePeriod(),
+                    "g": bookLanguages.substring(1)
+                });
+    }
+});
+
+
+
+/*
  * Scan list fieldset class.
  */
 Ext.define('Ext.ux.ScanListFieldset', {
@@ -78,7 +165,6 @@ Ext.define('Ext.ux.ScanListFieldset', {
     alias: 'widget.scanlistfieldset',
     title: 'Scans',
     collapsible: false,
-    
     initComponent: function()
     {
         var _this = this;
@@ -90,9 +176,12 @@ Ext.define('Ext.ux.ScanListFieldset', {
         });
         
         var defConfig = {
+            layout: 'fit',
+            autoscroll: true,
             items: [{
                 xtype: 'grid',
                 border: false,
+                disabled: true,
                 store: this.store,
                 resizable: false,
                 viewConfig: {
@@ -162,22 +251,22 @@ Ext.define('Ext.ux.SelectBookForm', {
         { 
             _this.bookstore.each(function(book)
             {
-                book.set('timePeriod', book.getTimePeriod());
-
-                var authors = '';
-                    
-                book.authors().load({
-                    scope: _this,
-                    callback: function(records, operation, success)
-                    {
-                        Ext.Array.each(records, function(record)
-                        {
-                            authors += (', ' + record.get('name'));
-                        });
-                          
-                        book.set('author', authors.substring(1));
-                    }
-                });
+                if(book.get('firstPage') === null||book.get('lastPage') === null)
+                {
+                    book.set('status', 'unfinished');
+                }
+                else
+                {
+                    book.set('status', 'done');
+                }
+                
+                if (_this.allPagesFilled())
+                {
+                    _this.down('[name=save]').enable();
+                }
+                
+                book.authors().load();
+                book.bookLanguages().load();
             });
         });
             
@@ -186,60 +275,47 @@ Ext.define('Ext.ux.SelectBookForm', {
 
         var defConfig = {
             monitorValid: true,
+            layout:'border',
+            defaults: {
+                collapsible: false,
+                split: true
+            },
             items: [{
-                xtype: 'bindinginformationfieldset'
+                titlebar: false,
+                region:'west',
+                width: 327,
+                bodyPadding: 10,
+                xtype: 'panel',
+                layout: {
+                    type: 'vbox',
+                    align : 'stretch'
+                    },
+                items:[{
+                    xtype: 'panel',
+                    border: false,
+                    flex: 1,
+                    cls: 'plaintext',
+                    html: '<h2>Instructions:</h2><p>In this screen you will need to assign the scans to the books. '
+                        +'First you will need to select a book by double clicking. '
+                        +'Afterwards you can select the first page and the last page'
+                        +' of the book in any order by double clicking. When you have done this for all books,'
+                        +'you can press the save button and the binding will be added to the database.</p>'
+                    },{
+                    xtype: 'booklistfieldset',
+                    store: _this.bookstore,
+                    flex: 1
+                    },{
+                    xtype: 'bookinformationfieldset',
+                    store: _this.bookstore,
+                    flex: 1
+                    }]
             },{
-                xtype: 'booklistfieldset',
-                store: _this.bookstore
-            },{
-                xtype: 'button',
-                text: 'Start selecting the first and last pages of the currently selected book',
-                width: 140,
-                margin: '0 0 10 0',
-                handler: function()
-                {
-                    var grid = this.up('selectbookform').down('booklistfieldset').down('grid');
-                    var selection = grid.getSelectionModel();
-                    
-                    if (selection.hasSelection())
-                    {
-                        var book = selection.getSelection()[0];
-                        _this.book = selection.getSelection()[0];
-                        
-                        if (book.get('firstPage') !== -1)
-                        {
-                            for (var j = book.get('firstPage'); j <= book.get('lastPage'); j++)
-                            {
-                                _this.changeBookTitle(j, undefined);
-                            }
-                            
-                            book.set('status', '');
-                        }
-
-                        _this.i = 1;
-                        
-                        this.disable();
-                        selection.deselectAll();
-                        grid.disable();
-                        
-                        Ext.Msg.show({
-                            title: 'Select pages',
-                            msg: 'You should now select the starting and ending page of \''
-                                + book.get('title') + '\' by double clicking',
-                            buttons: Ext.Msg.OK
-                        });
-                    }
-                    else
-                    {
-                        Ext.Msg.show({
-                            title: 'No book selected',
-                            msg: 'You should first select a book and press the button',
-                            buttons: Ext.Msg.OK});
-                    }
-                } 
-            },{
+                title: 'Scans',
                 xtype: 'scanlistfieldset',
-                store: _this.scanstore
+                store: _this.scanstore,
+                collapsible: false,
+                region:'center',
+                margins: '5 0 0 0'
             }],
             buttons: [{
                 xtype: 'button',
@@ -253,21 +329,21 @@ Ext.define('Ext.ux.SelectBookForm', {
                 }
             },{
                 xtype: 'button',
-                name: 'dropUpload',
-                text: 'Drop current upload',
+                name: 'delete',
+                text: 'Delete',
                 width: 140,
                 handler: function()
                 {
                     Ext.Msg.show({
                         title: 'Are you sure?',
-                        msg: ' All uploaded data will be lost. Are you sure you want to drop this upload?.',
+                        msg: ' This binding will be deleted. Are you sure?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
                             {
                                 if (button == 'yes')
                                 {
-                                    _this.drop();
+                                    _this.deleteBinding();
                                 }
                             }
                     });
@@ -284,28 +360,16 @@ Ext.define('Ext.ux.SelectBookForm', {
     // React accordingly when a scan is double clicked.
     updateForm: function(filename, page)
     {
-        // When the user hasnt selected a book yet.
-        if (this.i === 0)
-        {
-            Ext.Msg.show({
-                title: 'No book selected',
-                msg: 'You should first select a book.',
-                buttons: Ext.Msg.OK
-            });
-        }
-        
         // When the user has to select the start page.
-        else if (this.i === 1)
+        if (this.i === 0)
         {
             this.changeBookTitle(page, this.book.get('title'));
             this.startOfRange = page;
-            this.i = 2;
-
-            this.endSelecting();
+            this.i = 1;
         }
         
         // When the user has to select the end page.
-        else if (this.i === 2)
+        else if (this.i === 1)
         {
             this.changeBookPageRange(this.book, this.startOfRange, page);
             this.i = 0;
@@ -316,9 +380,8 @@ Ext.define('Ext.ux.SelectBookForm', {
     
     endSelecting: function()
     {
-        this.down('button').enable();
+        this.down('scanlistfieldset').down('grid').disable();
         this.down('booklistfieldset').down('grid').enable();
-        this.down('booklistfieldset').down('grid').getSelectionModel().deselectAll();
     },
     
     // Returns true when all books have first and last pages.
@@ -344,16 +407,17 @@ Ext.define('Ext.ux.SelectBookForm', {
         // Store the first and last page of the book.
         book.set('firstPage', firstPage);
         book.set('lastPage', lastPage);
-        
+        book.set('status', 'done');
         // Adjust the page ranges of all books for the binding so that there is no overlap.
         this.bookstore.each(function(record)
         {
             if (record !== book) {
-
                 if (record.get('firstPage') > firstPage && record.get('lastPage') < lastPage)
                 {
-                    record.set('firstPage', -1);
-                    record.set('lastPage', -1);
+                    record.set('firstPage', null);
+                    record.set('lastPage', null);
+                    record.set('status', 'unfinished');
+                    _this.down('[name=save]').disable();
                 }
                 else if (record.get('firstPage') < firstPage && record.get('lastPage') > firstPage)
                 {
@@ -387,6 +451,19 @@ Ext.define('Ext.ux.SelectBookForm', {
         }
     },
     
+    setCurrentBook: function(book)
+    {
+        this.book = book;
+        if (book.get('firstPage') !== null)
+        {
+            for (var j = book.get('firstPage'); j <= book.get('lastPage'); j++)
+            {
+                this.changeBookTitle(j, null);
+            }
+            book.set('status', 'unfinished');
+        }
+    },
+    
     // Change the booktitle of a scan in the scanlist field.
     changeBookTitle: function(page, booktitle)
     {
@@ -394,7 +471,6 @@ Ext.define('Ext.ux.SelectBookForm', {
         {
             return;
         }
-        
         this.scanstore.findRecord('page', page).set('bookTitle', booktitle);
     },
     
@@ -445,14 +521,14 @@ Ext.define('Ext.ux.SelectBookForm', {
                 onFailure);
     },
     
-    drop: function()
+    deleteBinding: function()
     {
         // Send the drop request to the database
         var onSuccess = function(data)
         {
             Ext.Msg.show({
                 title: 'Success',
-                msg: 'The upload was dropped.',
+                msg: 'The binding was successfully deleted.',
                 buttons: Ext.Msg.OK
             }); 
             
@@ -464,13 +540,13 @@ Ext.define('Ext.ux.SelectBookForm', {
         {
             Ext.Msg.show({
                 title: 'Error',
-                msg: 'Failed to drop the upload. Please try again.',
+                msg: 'Failed to delete the binding. Please try again.',
                 buttons: Ext.Msg.OK
             }); 
         };
         RequestManager.getInstance().request(
                 'BindingUpload', 
-                'dropUpload', 
+                'deleteUpload', 
                 {
                     bindingId:this.bindingId
                 },
