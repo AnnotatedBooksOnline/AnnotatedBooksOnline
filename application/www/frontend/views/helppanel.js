@@ -92,7 +92,7 @@ Ext.define('Ext.ux.HelpPanel', {
                 page = page.parentNode;
             }
             
-            var htmltext = _this.generateHelpHTML(page, 2);
+            var htmltext = _this.generateHelpHTML(page, 1);
             _this.down('[name=helptext]').update(htmltext);
             
             var content = Ext.get(record.get('pageName'));
@@ -106,7 +106,7 @@ Ext.define('Ext.ux.HelpPanel', {
     {
         var name = record.get('pageName');
         var htmltext = '<h' + depth + ' id="'+ name +'">' + name + '</h' + depth + '>';
-        if (depth > 2)
+        if (depth > 1)
         {
             htmltext += '<p>' + record.get('content') + '</p>';
         }
