@@ -12,18 +12,16 @@ Ext.define('Ext.ux.UploadInfo', {
         var defConfig = {
             bodyPadding: 10,
             cls: 'white-tab',
-            frame: true
+            frame: true,
             items: [{
+                xtype: 'button',
+                text: 'Continue',
+                iconCls: 'accept-icon',
+                width: 140,
+                handler: function()
                 {
-                    xtype: 'button',
-                    text: 'Continue',
-                    iconCls: 'accept-icon',
-                    width: 140,
-                    handler: function()
-                    {
-                        Application.getInstance().gotoTab('upload',[],true);
-                        this.up('uploadinstructionpanel').close();
-                    }
+                    Application.getInstance().gotoTab('upload',[],true);
+                    this.up('uploadinstructionpanel').close();
                 }
             }]
         };
