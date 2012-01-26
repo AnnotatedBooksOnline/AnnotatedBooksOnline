@@ -16,6 +16,9 @@ class HelpPage extends Entity
     /** The name of the page. */
     protected $pageName;
     
+    /** The type of the page. */
+    protected $helpType;
+    
     /** A cached array of paragraphs. */
     private $subItems;
     
@@ -49,14 +52,15 @@ class HelpPage extends Entity
     
     public static function getColumns()
     {
-        return array('pageName');
+        return array('pageName', 'helpType');
     }
     
     public static function getColumnTypes()
     {
         return array(
             'helpPageId'       => 'int',
-            'pageName'         => 'string'
+            'pageName'         => 'string',
+            'helpType'         => 'string'
         );
     }
     
@@ -105,6 +109,9 @@ class HelpPage extends Entity
     }
     
     // Getters and setters.
+    
+    public function getHelpType()    { return $this->helpType; }
+    public function setHelpType($type) { $this->helpType = $type;  }
     
     public function getHelpPageId()    { return $this->helpPageId; }
     public function setHelpPageId($id) { $this->helpPageId = $id;  }

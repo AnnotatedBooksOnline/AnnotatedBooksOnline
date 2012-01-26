@@ -455,7 +455,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: 'Help',
                     xtype: 'helppanel',
                     iconCls: 'help-icon',
-                    helpTab: data[0] // TODO: Might not exist.
+                    helpType: data[0] // TODO: Might not exist.
                 });
                 
                 break;
