@@ -309,12 +309,21 @@ Ext.define('Ext.ux.SelectBookForm', {
                     flex: 1
                 }]
             },{
-                title: 'Scans',
-                xtype: 'scanlistfieldset',
-                store: _this.scanstore,
-                collapsible: false,
+                xtype: 'panel',
                 region:'center',
-                margins: '5 0 0 0'
+                margins: '5 0 0 0',
+                items: [{
+                    xtype: 'bindinginformationfieldset',
+                    bindingId: this.bindingId,
+                    collapsible: false
+                },{
+                	title: 'Scans',
+                	xtype: 'scanlistfieldset',
+                	store: _this.scanstore,
+                	collapsible: false,
+                	layout: 'fit'
+                }]
+                
             }],
             buttons: [{
                 xtype: 'button',

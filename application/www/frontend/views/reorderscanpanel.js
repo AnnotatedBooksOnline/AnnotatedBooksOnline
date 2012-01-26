@@ -102,7 +102,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
             name: 'reorderscanform',
             selectFirstField: false,
             items: [{
-                xtype: 'bindinginformationfieldset'
+                xtype: 'bindinginformationfieldset',
+                bindingId: this.bindingId
             },{
                 xtype: 'reorderscanfieldset',
                 name: 'reorder',
