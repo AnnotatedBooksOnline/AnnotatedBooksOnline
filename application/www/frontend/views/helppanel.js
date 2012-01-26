@@ -28,7 +28,7 @@ Ext.define('Ext.ux.HelpPanel', {
                 name: 'helpindex',
                 cls: 'help-tree',
                 store: treestore,
-                columns: [{xtype: 'treecolumn', text: 'Name', dataIndex: 'pageName'}],
+                columns: [{xtype: 'treecolumn', text: 'Name', dataIndex: 'pageName', flex: 1}],
                 collapsible: true,
                 rootVisible: false,
                 viewConfig: {
@@ -87,7 +87,7 @@ Ext.define('Ext.ux.HelpPanel', {
         
         record.expand(true, function()
         {
-            while (page.get('helpId').substring(2) != '-1')
+            while (page.parentNode.get('pageName') != 'root')
             {
                 page = page.parentNode;
             }
