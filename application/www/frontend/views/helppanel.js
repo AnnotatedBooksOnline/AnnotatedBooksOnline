@@ -85,13 +85,13 @@ Ext.define('Ext.ux.HelpPanel', {
         
         this.path = record.getPath();
         
-        record.expand(true, function()
+        while (page.parentNode.get('pageName') != 'root')
         {
-            while (page.parentNode.get('pageName') != 'root')
-            {
-                page = page.parentNode;
-            }
-            
+            page = page.parentNode;
+        }
+        
+        page.expand(true, function()
+        {
             var htmltext = _this.generateHelpHTML(page, 1);
             _this.down('[name=helptext]').update(htmltext);
             
