@@ -137,7 +137,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 }
             },{
                 xtype: 'button',
-                disabled: true,
+                disabled: false,
                 name: 'save',
                 text: 'Save',
                 iconCls: 'accept-icon',
