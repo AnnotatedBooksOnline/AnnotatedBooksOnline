@@ -118,7 +118,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                         var fromValue = parseInt(from.getValue());
                         var toValue = parseInt(to.getValue());
                         
-                        if (direction=='up')
+                        if (direction === 'up')
                         {
                             fromValue++;
                         }
@@ -168,7 +168,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                         var fromValue = parseInt(from.getValue());
                         var toValue = parseInt(to.getValue());
                         
-                        if (direction=='up')
+                        if (direction === 'up')
                         {
                             toValue++;
                         }
@@ -430,8 +430,6 @@ Ext.define('Ext.ux.SearchResultsView', {
                     '<hr style="margin: 0px;">',
                 '</tpl>',
             ],
-//            trackOver: true,
-//            overItemCls: 'x-item-over',
             itemSelector: 'table.bookitem',
             region: 'center',
             listeners: {
@@ -455,11 +453,13 @@ Ext.define('Ext.ux.SearchResultsView', {
         var thumbnail = '';
         var properties = '';
         var _this = this;
+        
         var fields = [];
         for (var field in data)
         {
             fields.push(field);
         }
+        
         fields.sort(function(a, b)
         {
             var aa = _this.cols.findRecord('name', a);
@@ -472,6 +472,7 @@ Ext.define('Ext.ux.SearchResultsView', {
             bb = bb.get('index');
             return (aa > bb) - (aa < bb);
         });
+        
         for (var i = 0; i < fields.length; i++)
         {
             var field = fields[i];
@@ -732,13 +733,11 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         var defConfig = {
             title: 'Search results',
             border: false,
-            layout: 'border',
-            items: [{
-                xtype: 'panel',
+            layout: 'fit',
+            items: {
                 name: 'results',
-                border: false,
-                region: 'center'
-            }],
+                border: false
+            },
             searchPageSize: 5,
             searchSorters: [],
             listeners: {
@@ -860,6 +859,7 @@ Ext.define('Ext.ux.SearchPanel', {
             region: 'center',
             xtype: 'panel',
             autoScroll: true,
+            style: 'margin-left: 5px;',
             items: [{
                 title: 'Search',
                 xtype: 'searchfieldspanel'
