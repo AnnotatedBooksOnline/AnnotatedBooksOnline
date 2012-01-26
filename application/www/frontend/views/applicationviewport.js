@@ -585,6 +585,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     iconCls: 'upload-icon',
                     bodyPadding: 10,
+                    cls: 'white-tab',
+                    frame: true,
                     items: [{
                         border: false,
                         plain: true,

@@ -3,7 +3,6 @@
 
 require_once('framework/util/exceptionbase.php');
 require_once('framework/util/configuration.php');
-require_once('framework/util/translator.php');
 require_once('framework/util/log.php');
 
 // Exceptions.
@@ -136,11 +135,8 @@ abstract class Controller
             // Determine if the action method exists in the controller.
             if (method_exists($controller, $methodName))
             {
-                if($actionName != 'keepalive')
-                {
-                    // Log a messsage.
-                    Log::info("Handling action '%s' of controller '%s'.", $actionName, $controllerName);
-                }
+                // Log a messsage.
+                Log::trace("Handling action '%s' of controller '%s'.", $actionName, $controllerName);
                 
                 // Calculate start time.
                 $start = microtime(true);
@@ -151,12 +147,9 @@ abstract class Controller
                 // Calculate end time.
                 $end = microtime(true);
                 
-                if($actionName != 'keepalive')
-                {
-                    // Log a messsage.
-                    Log::debug("Action '%s' of controller '%s' took %dms.",
-                        $actionName, $controllerName, round(1000 * ($end - $start)));
-                }
+                // Log a messsage.
+                Log::trace("Action '%s' of controller '%s' took %dms.",
+                    $actionName, $controllerName, round(1000 * ($end - $start)));
             }
             else
             {

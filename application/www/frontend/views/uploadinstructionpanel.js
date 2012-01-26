@@ -6,6 +6,9 @@ Ext.define('Ext.ux.UploadInfo', {
     extend: 'Ext.form.Panel',
     alias: 'widget.uploadinstructionpanel',
     bodyPadding: 10,
+    cls: 'white-tab',
+    frame: true,
+    
     // TODO: get from database
     items: [{
         xtype: 'panel',

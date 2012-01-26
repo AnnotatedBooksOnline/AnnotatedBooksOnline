@@ -132,6 +132,24 @@ Ext.define('Ext.ux.UploadGrid', {
         this.eventDispatcher.trigger('clear', this);
     },
     
+    remove: function(id)
+    {
+        // Fetch model.
+        var model = this.getUploadById(id);
+        if (model !== null)
+        {
+            // Remove model from store and remove progress.
+            var existingId    = model.get('id');
+            var existingToken = model.get('token');
+            
+            this.store.remove(model);
+            delete this.progressById[id];
+            
+            // Trigger remove.
+            this.eventDispatcher.trigger('remove', this, existingId, existingToken);
+        }
+    },
+    
     /*
      * Private methods.
      */
@@ -167,7 +185,16 @@ Ext.define('Ext.ux.UploadGrid', {
                 {
                     xtype: 'actioncolumn',
                     width: 50,
-                    items: [] // TODO: Add buttons.
+                    items: [{
+                        tooltip: 'Remove',
+                        iconCls: 'remove-icon',
+                        handler: function(grid, index)
+                        {
+                            var id = grid.getStore().getAt(index).get('id');
+                            
+                            _this.remove(id);
+                        }
+                    }]
                 }
             ]
         };
@@ -235,7 +262,7 @@ Ext.define('Ext.ux.UploadGrid', {
                 }
             }, 1);
         
-        return '<div style="height: 22px;" id="' + id + '"></div>';
+        return '<div id="' + id + '"></div>';
     },
     
     renderStatus: function(value)

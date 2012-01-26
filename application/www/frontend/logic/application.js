@@ -130,12 +130,20 @@ Application.prototype.initialize = function()
     this.requestManager = RequestManager.getInstance();
     this.authentication = Authentication.getInstance();
     
-    // Initialize history and quicktips.
-    Ext.History.init();
+    // Initialize quicktips.
     Ext.tip.QuickTipManager.init();
     
     // Create application viewport.
     this.viewport = new Ext.ux.ApplicationViewport();
+    
+    // Create history iframe.
+    $(document.body).append('<form id="history-form" class="x-hide-display">' +
+                            '    <input type="hidden" id="x-history-field" />' +
+                            '    <iframe id="x-history-frame" src="about:blank"></iframe>' +
+                            '</form>');
+    
+    // Initialize history.
+    Ext.History.init();
     
     // Listen for tab changes
     this.viewport.getEventDispatcher().bind('activate', this, function(event, viewport, index)

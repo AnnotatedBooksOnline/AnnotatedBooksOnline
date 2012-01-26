@@ -1,8 +1,6 @@
 <?php
 //[[GPL]]
 
-require_once('framework/util/translator.php');
-
 /**
  * Exception base class.
  */
@@ -13,6 +11,9 @@ class ExceptionBase extends Exception
     public function __construct($id)
     {
         $this->id = $id;
+        
+        // Load translator.
+        require_once('framework/util/translator.php');
         
         // Translate the message according to the id.
         $args    = func_get_args();

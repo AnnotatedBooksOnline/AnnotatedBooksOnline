@@ -72,4 +72,3 @@ function __($id)
     // Get the translation entry.
     return Translator::getInstance()->getEntry($id, $args);
 }
-
