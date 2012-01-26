@@ -287,8 +287,8 @@ Ext.define('Ext.ux.ViewerPanel', {
             split: true,
             collapsible: true,
             collapsed: false,
-            width: 310,
-            minWidth: 310,
+            width: 300,
+            minWidth: 300,
             layout: 'fit',
             title: 'Workspace'
         };

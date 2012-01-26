@@ -11,7 +11,9 @@ Ext.define('Ext.ux.TermsOfUse', {
         var _this = this;
         
         var defConfig = {
-            bodyPadding: 10
+            bodyPadding: 10,
+            cls: 'white-tab',
+            frame: true
         };
         
         Ext.apply(this, defConfig);

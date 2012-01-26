@@ -450,7 +450,6 @@ Ext.define('Ext.ux.BookFieldset', {
             this.down('[name=placePublished]').setValue(this.existingBook.get('placePublished'));
             this.down('[name=version]').setValue(this.existingBook.get('version'));
             this.down('[name=languages]').setValue(languageIds);
- 
         }
     },
     
@@ -481,6 +480,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
     alias: 'widget.booksfieldset',
     title: 'Books',
     collapsible: true,
+    
     initComponent: function()
     {
         var _this = this;
@@ -510,11 +510,10 @@ Ext.define('Ext.ux.BooksFieldSet', {
             // Insert a blank set of books fields when a new book is being uploaded.
             this.insert(this.items.length - 1, [{xtype: 'bookfieldset'}]);
         }
-        
-        
     },
     
-    fillFromExistingBinding: function(binding) {
+    fillFromExistingBinding: function(binding)
+    {
         var _this = this;
         
         // Insert a fieldset for every book in the existing book that is being modified.
@@ -529,7 +528,6 @@ Ext.define('Ext.ux.BooksFieldSet', {
             // Update the state of the 'delete' buttons.
             _this.checkBooks(false);
         });
-        
     },
     
     getBooks: function()
@@ -556,7 +554,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
         }
         
         var current = this.down('bookfieldset');
-                
+        
         do
         {
             current.down('[name=deletebook]').setDisabled(disable);
@@ -593,8 +591,9 @@ Ext.define('Ext.ux.UploadForm', {
     initComponent: function() 
     {
         var _this = this;
-        var numberOfScans = 0;
-
+        
+        this.numberOfScans = 0;
+        
         // Determine if the user is adding a new binding. If this is the case determine if the
         // there is no existing pending binding for the user.
         if (this.existingBindingId !== undefined)
@@ -609,7 +608,8 @@ Ext.define('Ext.ux.UploadForm', {
                     
                     _this.down('[name=bindingfields]').fillFromExistingBinding(binding);
                     _this.down('[name=bookfields]').fillFromExistingBinding(binding);
-                    numberOfScans = binding.getScanAmount();
+                    
+                    _this.numberOfScans = binding.getScanAmount();
                 },
                 function()
                 {
@@ -642,20 +642,20 @@ Ext.define('Ext.ux.UploadForm', {
             
             listeners: {
                 validitychange: function(form, valid)
+                {
+                    if (_this.existingBindingId !== undefined)
                     {
-                        if (_this.existingBindingId !== undefined)
-                        {
-                            return;
-                        }
-                        
-                        var booksfieldset = this.down('booksfieldset');
-                        var books = booksfieldset.getBooks();
-                        
-                        var current = booksfieldset.down('bookfieldset');
-                        do {
-                            current.down('[name=deletebook]').setDisabled(valid);
-                        } while (current = current.nextSibling('bookfieldset'));
+                        return;
                     }
+                    
+                    var booksfieldset = this.down('booksfieldset');
+                    var books = booksfieldset.getBooks();
+                    
+                    var current = booksfieldset.down('bookfieldset');
+                    do {
+                        current.down('[name=deletebook]').setDisabled(valid);
+                    } while (current = current.nextSibling('bookfieldset'));
+                }
             },
             
             buttons: [{
@@ -689,8 +689,7 @@ Ext.define('Ext.ux.UploadForm', {
                 width: 140,
                 handler: function()
                 {
-                    _this.setLoading('Uploading...');
-                    _this.checkIntervalId = setInterval(function() { _this.checkCompleted(); }, 1000);
+                    _this.submit();
                 }
             }],
             selectFirstField: false
@@ -703,11 +702,13 @@ Ext.define('Ext.ux.UploadForm', {
     
     checkCompleted: function()
     {
-        var scans = this.down('scanpanel').getValues();
-        var waiting = false;
-        var successScans = numberOfScans;
-        var _this = this;
+        var waiting      = false;
+        var successScans = this.numberOfScans;
         
+        // Get scans.
+        var scans = this.down('scanpanel').getValues();
+        
+        // Check each scan status.
         for (var i = 0; i < scans.length; i++)
         {
             if (scans[i].status == 'success')
@@ -716,11 +717,12 @@ Ext.define('Ext.ux.UploadForm', {
             }
             else if (scans[i].status == 'error')
             {
+                // Stop loading.
                 this.setLoading(false);
-                this.setLoading('Some scans failed to upload. Please reselect them.');
                 
-                waiting = true;
-                break;
+                Ext.Msg.alert('An error occurred.', 'Some scans failed to upload. Please reselect them.');
+                
+                return;
             }
             else
             {
@@ -729,67 +731,69 @@ Ext.define('Ext.ux.UploadForm', {
             }
         }
         
-        if (!waiting)
+        // Wait for uploads if they are not uploaded yet.
+        if (waiting)
         {
-            var binding = this.down('bindingfieldset').getBinding();
-            var books = this.down('booksfieldset').getBooks();
-            var result = {binding: binding, books: books, scans: scans};
-            var numberOfBooks = books.length;
+            var _this = this;
+            setTimeout(function() { _this.checkCompleted(); }, 1000);
             
-            if (numberOfBooks > successScans && this.existingBindingId === undefined)
+            return;
+        }
+        
+        // Stop loading.
+        this.setLoading(false);
+        
+        // Check scan amount.
+        var binding = this.down('bindingfieldset').getBinding();
+        var books = this.down('booksfieldset').getBooks();
+        var data = {binding: binding, books: books, scans: scans};
+        var numberOfBooks = books.length;
+        
+        if (numberOfBooks > successScans && this.existingBindingId === undefined)
+        {
+            if (numberOfBooks === 1)
             {
-                this.setLoading(false);
-                
-                if (numberOfBooks === 1) {
-                    this.setLoading('There need to be at least ' + numberOfBooks
-                                   + ' successfully uploaded scan, because there is '
-                                   + numberOfBooks + ' book. Please add more scans.'
-                                   + ' Waiting for more scans...');
-                }
-                else
-                {
-                    this.setLoading('There need to be at least ' + numberOfBooks
-                                   + ' successfully uploaded scans, because there are '
-                                   + numberOfBooks + ' books. Please add more scans.'
-                                   + ' Waiting for more scans...');
-                }
+                Ext.Msg.alert('An error occurred.',
+                    'There need to be at least one successfully uploaded scan, '
+                  + 'because there is one book. Please add more scans.');
             }
             else
             {
-                clearInterval(this.checkIntervalId);
-                
-                this.setLoading(false);
-                this.setLoading('Saving...');
-                
-                RequestManager.getInstance().request('BindingUpload', 'upload', result, this,
-                function(result)
-                {
-                    this.setLoading(false);
-                    
-                    Application.getInstance().gotoTab('reorderscan', [result['bindingId'], _this.existingBindingId !== undefined], true);
-                    
-                    _this.up('[name=upload]').close();
-                    
-                },
-                function()
-                {
-                    this.setLoading(false);
-                    
-                    return true;
-                });
+                Ext.Msg.alert('An error occurred.',
+                    'There need to be at least ' + numberOfBooks
+                  + ' successfully uploaded scans, because there are '
+                  + numberOfBooks + ' books. Please add more scans.');
             }
+            
+            return;
         }
+        
+        // Save binding.
+        this.setLoading('Saving...');
+        
+        RequestManager.getInstance().request('BindingUpload', 'upload', data, this,
+            function(result)
+            {
+                // We're done here, go to reorderscan tab.
+                this.setLoading(false);
+                
+                Application.getInstance().gotoTab('reorderscan', [result.bindingId, this.existingBindingId !== undefined], true);
+                
+                this.up('[name=upload]').close();
+            },
+            function()
+            {
+                this.setLoading(false);
+                
+                return true;
+            });
     },
     
     submit: function()
     {
-        this.setLoading("Uploading...", true);
+        this.setLoading('Uploading...');
         
-        var values = this.getValues();
-        
-        //alert(this.getValues(false));
-        
-        // TODO: Do something here.
+        this.checkCompleted();
     },
     
     reset: function()

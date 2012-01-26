@@ -18,9 +18,6 @@ Ext.define('Ext.ux.HelpPanel', {
             }
         });
         
-        //kan waarschijnlijk weg
-        this.path = '/root';
-        
         var defConfig = {
             layout: 'border',
             items: [{
@@ -28,10 +25,10 @@ Ext.define('Ext.ux.HelpPanel', {
                 title: 'Index',
                 width: 200,
                 region: 'west',
-                id: 'helpTree',
                 name: 'helpindex',
+                cls: 'help-tree',
                 store: treestore,
-                columns: [{ xtype: 'treecolumn',text: 'Name',  dataIndex: 'pageName'}],
+                columns: [{xtype: 'treecolumn', text: 'Name', dataIndex: 'pageName'}],
                 collapsible: true,
                 rootVisible: false,
                 viewConfig: {
@@ -51,20 +48,7 @@ Ext.define('Ext.ux.HelpPanel', {
                 id: 'helpmain',
                 styleHtmlContent: true,
                 styleHtmlCls: 'help'
-            }],
-            listeners: {
-                afterRender: function()
-                {
-                    this.down('[name=helpindex]').expandPath('/root',undefined,undefined,function(succes,lastNode){
-                        var helppage = lastNode.findChild('helpType',this.helpType);
-                        if(helppage == null)
-                        {
-                            helppage = lastNode.findChild('helpType', 'welcome');
-                        }
-                        this.updateHTML(helppage);
-                    },this);
-                }
-            }
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -73,6 +57,25 @@ Ext.define('Ext.ux.HelpPanel', {
         
         var eventDispatcher = Authentication.getInstance().getEventDispatcher();
         eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
+    },
+    
+    afterRender: function()
+    {
+        this.callParent();
+        
+        this.down('[name=helpindex]').expandPath('/root', undefined, undefined, function(succes, lastNode)
+        {
+            var helppage = lastNode.findChild('helpType',this.helpTab);
+            if (helppage === null)
+            {
+                helppage = lastNode.findChild('helpType', 'welcome');
+            }
+            
+            if (helppage)
+            {
+                this.updateHTML(helppage);
+            }
+        },this);
     },
     
     updateHTML: function(record)
@@ -84,32 +87,33 @@ Ext.define('Ext.ux.HelpPanel', {
         
         record.expand(true, function()
         {
-            //move this up
-            while(page.parentNode.get('pageName') != 'root')
+            while (page.get('helpId').substring(2) != '-1')
             {
                 page = page.parentNode;
             }
-            var htmltext = _this.generateHelpHTML(page,2);
+            
+            var htmltext = _this.generateHelpHTML(page, 2);
             _this.down('[name=helptext]').update(htmltext);
             
             var content = Ext.get(record.get('pageName'));
             var height = content.getOffsetsTo(Ext.get('helpmain-body'));
+            
             _this.down('[name=helptext]').body.scroll('b', height[1], false);
         });
     },
     
-    generateHelpHTML: function(record,depth)
+    generateHelpHTML: function(record, depth)
     {
         var name = record.get('pageName');
         var htmltext = '<h' + depth + ' id="'+ name +'">' + name + '</h' + depth + '>';
-        if(depth > 2)
+        if (depth > 2)
         {
             htmltext += '<p>' + record.get('content') + '</p>';
         }
         
-        for(var i=0;i<record.childNodes.length;i++)
+        for (var i = 0; i < record.childNodes.length; ++i)
         {
-            htmltext += this.generateHelpHTML(record.childNodes[i],depth+1);
+            htmltext += this.generateHelpHTML(record.childNodes[i], depth + 1);
         }
         
         htmltext = htmltext.replace(
@@ -122,15 +126,16 @@ Ext.define('Ext.ux.HelpPanel', {
     
     processLink: function(path)
     {
-        alert(path);
         var tree = this.down('[name=helpindex]');
         tree.collapseAll();
-        pathArray = path.split('/',undefined)
+        
+        pathArray = path.split('/', undefined)
         record = tree.getRootNode();
+        
         for(var i=0;i<pathArray.length;i++)
         {
             record.expand(false,function(){
-                record = record.findChild('pageName',pathArray[i]);
+                record = record.findChild('pageName', pathArray[i]);
                 if (record == null)
                     i = pathArray.length;
             },this);

@@ -47,6 +47,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
             listeners: {
                 click: function()
                 {
+                    // TODO: Move this, we can't know of any logic like this.
+                    
                     function handlePasswordForgotten(button, email)
                     {
                         if (button == 'ok')
@@ -66,10 +68,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 },
                                 function(error)
                                 {
-                                    if(error == 'user-not-found')
+                                    if (error == 'user-not-found')
                                     {
                                         Ext.MessageBox.alert('Email unkown', 'The specified' +
                                                 ' email address is not present in the system.');
+                                        
                                         return false;
                                     }
                                     else
@@ -82,7 +85,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     }
                     
                     Ext.MessageBox.prompt('Password forgotten.', 'Please enter your email address' + 
-                        ' to which a password restoration mail can be send:', 
+                        ' to which a password restoration mail can be send:',
                         handlePasswordForgotten);
                 }
             },
@@ -208,7 +211,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
             listeners: {
                 click: function()
                 {
-                    Application.getInstance().gotoTab('help', [_this.down('[name=bottom]').getActiveTab().tabInfo.type], true);
+                    var tabInfo = _this.getTabInfo();
+                    
+                    Application.getInstance().gotoTab('help', [tabInfo.type], true);
                 }
             },
             name: 'help'
@@ -227,7 +232,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 xtype: 'container',
                 width: 120,
                 cls: 'header-logo'
-            },{ //Title, with menu below.
+            },{ // Title, with menu below.
                 xtype: 'container',
                 layout: {
                     type: 'vbox',
@@ -237,7 +242,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 items: [{
                     xtype: 'container',
                     height: 87,
-                    html: '<h1>' + document.title + '</h1><div class="version">#COLLABVERSION#</div>'
+                    html: '<h1>' + escape(document.title) + '</h1><div class="version">#COLLABVERSION#</div>'
                         + '<div style="right: 0px; top: 20px; position: absolute;">' 
                         + '<a href="http://www.uu.nl/en" target="_blank" title="Go to the website of Utrecht University">'
                         + '<img src="frontend/resources/images/uu-small.png"/></a> '
@@ -273,8 +278,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         var bottomRegion = {
             xtype: 'tabpanel',
-            name: 'bottom',
-            flex: 1
+            flex: 1,
+            cls: 'main-tabpanel'
         };
         
         var _this = this;
@@ -444,13 +449,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 break;
                 
-                case 'help':
+            case 'help':
                 // Add a help tab.
                 Ext.apply(tabConfig, {
                     title: 'Help',
                     xtype: 'helppanel',
                     iconCls: 'help-icon',
-                    helpType: data[0]
+                    helpType: data[0] // TODO: Might not exist.
                 });
                 
                 break;
@@ -467,7 +472,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
             case 'selectbook':
                 var isExistingBinding = false;
-                if (data.length >= 2 && data[1] !== undefined) 
+                if (data.length >= 2 && data[1] !== undefined)
                 {
                     isExistingBinding = true;
                 }
@@ -543,6 +548,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     iconCls: 'register-icon',
                     bodyPadding: 10,
+                    cls: 'white-tab',
+                    frame: true,
                     items: [{
                         border: false,
                         plain: true,
@@ -562,7 +569,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 break;
             
             case 'upload':
-                
                 // Identify a possible existing binding passed to the upload panel.           
                 var existingBindingId = undefined;
                 if (data.length > 0 && data[0] !== undefined) 
@@ -701,11 +707,21 @@ Ext.define('Ext.ux.ApplicationViewport', {
     
     closeTab: function(index)
     {
+        if (index === undefined)
+        {
+            return this.tabs.getActiveTab().close();
+        }
+        
         this.tabs.items.get(index).close();
     },
     
     getTabInfo: function(index)
     {
+        if (index === undefined)
+        {
+            return this.tabs.getActiveTab().tabInfo;
+        }
+        
         return this.tabs.items.get(index).tabInfo;
     },
     
@@ -733,8 +749,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {         
         if (authentication.isLoggedOn())
         {
-            //this.down('[name=users]').show();
-            //this.down('[name=upload]').show();
             this.down('[name=logout]').show();
             this.down('[name=profile]').show();
             this.down('[name=login]').hide();
@@ -743,37 +757,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
         else
         {
-            //this.down('[name=users]').hide();
-            //this.down('[name=upload]').hide();
             this.down('[name=logout]').hide();
             this.down('[name=profile]').hide();
             this.down('[name=login]').show();
             this.down('[name=register]').show();
             this.down('[name=password]').show();
         }
-        
-        // Display upload and users buttons when having permission.
-        if(Authentication.getInstance().hasPermissionTo('view-users-part'))
-        {
-            this.down('[name=users]').show();
-        }
-        else
-        {
-            this.down('[name=users]').hide();
-        }
-        if(Authentication.getInstance().hasPermissionTo('upload-bindings'))
-        {
-            this.down('[name=upload]').show();
-        }
-        else
-        {
-            this.down('[name=upload]').hide();
-        }
-        
     },
     
     onAuthenticationModelChange: function(event, authentication)
     {
+        // Set user his name.
         if (authentication.isLoggedOn())
         {
             this.down('[name=welcometext]').setName(authentication.getFullName());
@@ -781,6 +775,25 @@ Ext.define('Ext.ux.ApplicationViewport', {
         else
         {
             this.down('[name=welcometext]').setName('Guest');
+        }
+        
+        // Display upload and users buttons when when user has permission.
+        if (Authentication.getInstance().hasPermissionTo('view-users-part'))
+        {
+            this.down('[name=users]').show();
+        }
+        else
+        {
+            this.down('[name=users]').hide();
+        }
+        
+        if (Authentication.getInstance().hasPermissionTo('upload-bindings'))
+        {
+            this.down('[name=upload]').show();
+        }
+        else
+        {
+            this.down('[name=upload]').hide();
         }
     }
 });

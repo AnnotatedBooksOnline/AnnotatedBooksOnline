@@ -48,6 +48,18 @@
     margin-bottom: 7px;
 }
 
+/* Style main tab panel. */
+.main-tabpanel > div.x-panel-body
+{
+    border-width: 0px;
+}
+
+/* Style white tabs. */
+.white-tab, .white-tab .x-panel-body
+{
+    background: #FFF;
+}
+
 /* Style all hyperlinks. */
 a
 {
@@ -116,35 +128,43 @@ a:hover
 
 .help h2
 {
-    font-size:32px;
+    font-size: 32px;
     line-height: 35px;
 }
 
-.help h3,h4,h5,h6
+.help h3, .help h4, .help h5, .help h6
 {
-    font-size:24px;
+    font-size: 24px;
     line-height: 25px;
 }
 
 .help p
 {
-    font-size:16px;
+    font-size: 16px;
     color: #333333;
 }
 
-#helpTree .x-tree-icon-parent{
-    display : none;
-    background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
-}
-
-#helpTree .x-tree-icon-leaf {
-    display : none;
-    background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
-}
-
-.x-border-box .x-tab-default-top
+.help-tree .x-tree-icon-parent
 {
-    height: 24px !important;
+    display : none;
+    background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
+}
+
+.help-tree .x-tree-icon-leaf
+{
+    display : none;
+    background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
+}
+
+/* Tab styling. */
+.x-tab
+{
+    padding-top: 2px !important;
+}
+
+.x-tab em
+{
+    padding-left: 3px !important;
 }
 
 .x-tab-default-top button, .x-tab-default-top .x-tab-inner
@@ -153,14 +173,14 @@ a:hover
     line-height: 16px !important;
 }
 
-.x-tab-default-top button .x-tab-icon
+/* IE tab styling. */
+.x-nbr .x-tab
 {
-    margin-left: -3px;
+    padding-top: 0px !important;
 }
 
-.x-tab-default-top button
+.x-nbr .x-tab-default-top button, .x-nbr .x-tab-default-top .x-tab-inner
 {
-    margin-left: -3px;
-    padding-left: 3px;
+    height: 13px !important;
+    line-height: 13px !important;
 }
-
