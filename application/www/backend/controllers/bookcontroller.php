@@ -38,13 +38,24 @@ class BookController extends ControllerBase
      * @param unknown_type $data
      */
     public function actionFirstLastPages($data)
-    {
-        // TODO: Mathijs : Permissions and authentication.
-        
+    {               
         // Collect the binding id and selected book pages from the request.
         $inputBindingId = self::getInteger($data, 'bindingId');
         $inputSelectedBooks = self::getArray($data, 'selectedBooks');
         
+        // Load the binding to be modified from the database.
+        $binding = new Binding($inputBindingId);
+        
+        // Determine if this is a binding that is being modified. This is the case if the binding
+        // status is not 'uploaded' or 'reordered'
+        if ($binding->getStatus() != Binding::STATUS_UPLOADED 
+           && $binding->getStatus() != Binding::STATUS_REORDERED) {
+            
+            // Assert the user has permission to modify bindings.
+            Authentication::assertPermissionTo('change-book-info');
+        }
+        
+        // TODO : MathijsB make this safer.
         // Iterate over all selected books and store their values in the database.
         foreach ($inputSelectedBooks as $inputSelectedBook) 
         {
@@ -55,7 +66,6 @@ class BookController extends ControllerBase
         }
         
         // Update the binding status if required.
-        $binding = new Binding($book->getBindingId());
         if ($binding->getStatus() != Binding::STATUS_SELECTED)
         {
             $binding->setStatus(Binding::STATUS_SELECTED);
