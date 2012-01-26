@@ -156,6 +156,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 click: function()
                 {
                     // TODO: Move this, we can't know of any logic like this.
+                    // TODO: You do know a user can just click the back button in the browser, right?
+                    // TODO: Or go to the upload tab directly.
                     
                     RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
                         function(result)
