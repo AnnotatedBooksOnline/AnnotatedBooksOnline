@@ -2,11 +2,7 @@
  * Reorder scan fieldset class.
  */
 
-// TODO: Get rid of these globals! Make them class statics, or class fields.
 // TODO : mathijsB . rewrite a lot in this file.
-
-//var store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-//var bindingId;
 
 Ext.define('Ext.ux.ReorderScanFieldset', {
     extend: 'Ext.form.FieldSet',
@@ -97,11 +93,11 @@ Ext.define('Ext.ux.ReorderScanForm', {
         
         // Load all scans for this binding.
         _this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-        _this.store.filter({property: 'bindingId', value: this.bindingId});
+        _this.store.filter('bindingId', this.bindingId);
         _this.store.load();
-
+        
         _this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-
+        
         var defConfig = {
             name: 'reorderscanform',
             selectFirstField: false,
@@ -127,12 +123,12 @@ Ext.define('Ext.ux.ReorderScanForm', {
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
+                        {
+                            if (button == 'yes')
                             {
-                                if (button == 'yes')
-                                {
-                                    _this.deleteBinding();
-                                }
+                                _this.deleteBinding();
                             }
+                        }
                     });
                 }
             },{
@@ -172,35 +168,23 @@ Ext.define('Ext.ux.ReorderScanForm', {
             deletedScanIds.push(scanId);
         });
         
-        
         // Send the changes to the database.
         var onSuccess = function(data)
-        {         
-            Application.getInstance().gotoTab('selectbook', [this.bindingId, this.isExistingBinding], true);   
+        {
+            Application.getInstance().gotoTab('selectbook', [this.bindingId, this.isExistingBinding], true);
             this.close();
         };
         
-        // Show an error.
-        var onFailure = function()
-        {
-            Ext.Msg.show({
-                title: 'Error',
-                msg: 'Failed to reorder the pages. Please try again.',
-                buttons: Ext.Msg.OK
-            }); 
-        };
-        
         RequestManager.getInstance().request(
-            'Scan', 
-            'reorder', 
+            'Scan',
+            'reorder',
             {
                 bindingId: this.bindingId,
                 orderedScans: orderedScanIds,
                 deletedScans: deletedScanIds
             },
-            this, 
-            onSuccess, 
-            onFailure
+            this,
+            onSuccess
         );
     },
     deleteBinding: function()
@@ -217,24 +201,12 @@ Ext.define('Ext.ux.ReorderScanForm', {
             this.close();
         };
         
-        //Show an error
-        var onFailure = function()
-        {
-            Ext.Msg.show({
-                title: 'Error',
-                msg: 'Failed to delete the binding. Please try again.',
-                buttons: Ext.Msg.OK
-            }); 
-        };
         RequestManager.getInstance().request(
-                'BindingUpload', 
-                'deleteUpload', 
-                {
-                    bindingId:this.bindingId
-                },
-                this, 
-                onSuccess, 
-                onFailure);
+            'BindingUpload', 
+            'deleteUpload', 
+            {bindingId: this.bindingId},
+            this,
+            onSuccess
+        );
     }
-    
 });

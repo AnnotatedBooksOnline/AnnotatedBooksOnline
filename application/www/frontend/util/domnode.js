@@ -37,7 +37,10 @@ DomNode.prototype.insert = function(element, before)
     else
         before = null;
     
-    element.insertBefore(this.dom.get(0), before);
+    if (before)
+        element.insertBefore(this.dom.get(0), before);
+    else
+        element.appendChild(this.dom.get(0));
 }
 
 DomNode.prototype.remove = function()

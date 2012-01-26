@@ -241,25 +241,23 @@ Ext.define('Ext.ux.SelectBookForm', {
         this.book = undefined;
         this.i = 0;
         
-        this.bookstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.BookModel'});
-        this.scanstore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+        this.bookstore = Ext.create('Ext.ux.StoreBase', {model: 'Ext.ux.BookModel', pageSize: 10000});
+        this.scanstore = Ext.create('Ext.ux.StoreBase', {model: 'Ext.ux.ScanModel', pageSize: 10000});
         
-        // TODO: Implement filtering serverside, to remove second filtering.
-        this.scanstore.filter({property: 'bindingId', value: this.bindingId});
-        this.scanstore.load();
-        this.bookstore.filter({property: 'bindingId', value: this.bindingId});
-            
+        this.scanstore.filter('bindingId', this.bindingId);
+        this.bookstore.filter('bindingId', this.bindingId);
+        
         this.bookstore.on('load', function()
         { 
             _this.bookstore.each(function(book)
             {
-                if(book.get('firstPage') === null||book.get('lastPage') === null)
+                if (book.get('firstPage') === null||book.get('lastPage') === null)
                 {
-                    book.set('status', 'unfinished');
+                    book.set('status', 'Unfinished');
                 }
                 else
                 {
-                    book.set('status', 'done');
+                    book.set('status', 'Done');
                 }
                 
                 if (_this.allPagesFilled())
@@ -274,7 +272,6 @@ Ext.define('Ext.ux.SelectBookForm', {
             
         this.bookstore.load();
         
-
         var defConfig = {
             monitorValid: true,
             layout:'border',
@@ -291,8 +288,8 @@ Ext.define('Ext.ux.SelectBookForm', {
                 layout: {
                     type: 'vbox',
                     align : 'stretch'
-                    },
-                items:[{
+                },
+                items: [{
                     xtype: 'panel',
                     border: false,
                     flex: 1,
@@ -310,7 +307,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                     xtype: 'bookinformationfieldset',
                     store: _this.bookstore,
                     flex: 1
-                    }]
+                }]
             },{
                 title: 'Scans',
                 xtype: 'scanlistfieldset',
@@ -329,7 +326,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                 {
                     Ext.Msg.show({
                         title: 'Are you sure?',
-                        msg: ' This binding will be deleted. Are you sure?',
+                        msg: 'This binding will be deleted. Are you sure?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
@@ -411,7 +408,8 @@ Ext.define('Ext.ux.SelectBookForm', {
         // Store the first and last page of the book.
         book.set('firstPage', firstPage);
         book.set('lastPage', lastPage);
-        book.set('status', 'done');
+        book.set('status', 'Done');
+        
         // Adjust the page ranges of all books for the binding so that there is no overlap.
         this.bookstore.each(function(record)
         {
@@ -420,7 +418,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                 {
                     record.set('firstPage', null);
                     record.set('lastPage', null);
-                    record.set('status', 'unfinished');
+                    record.set('status', 'Unfinished');
                     _this.down('[name=save]').disable();
                 }
                 else if (record.get('firstPage') < firstPage && record.get('lastPage') > firstPage)
@@ -464,7 +462,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             {
                 this.changeBookTitle(j, null);
             }
-            book.set('status', 'unfinished');
+            book.set('status', 'Unfinished');
         }
     },
     
@@ -491,7 +489,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             });
         });
         
-        // Send the changes to the database
+        // Send the changes to the database.
         var onSuccess = function(data)
         {
             Ext.Msg.show({
@@ -503,31 +501,20 @@ Ext.define('Ext.ux.SelectBookForm', {
             this.close();
         };
         
-        //Show an error
-        var onFailure = function()
-        {
-            Ext.Msg.show({
-                title: 'Error',
-                msg: 'Failed to save the first page and last page data. Please try again.',
-                buttons: Ext.Msg.OK
-            }); 
-        };
-        
         RequestManager.getInstance().request(
-                'Book', 
-                'firstLastPages', 
-                {
-                    bindingId:this.bindingId, 
-                    selectedBooks:fields
-                },
-                this, 
-                onSuccess, 
-                onFailure);
+            'Book', 
+            'firstLastPages', 
+            {
+                bindingId:this.bindingId, 
+                selectedBooks:fields
+            },
+            this,
+            onSuccess);
     },
     
     deleteBinding: function()
     {
-        // Send the drop request to the database
+        // Send the drop request to the database.
         var onSuccess = function(data)
         {
             Ext.Msg.show({
@@ -539,23 +526,13 @@ Ext.define('Ext.ux.SelectBookForm', {
             this.close();
         };
         
-        //Show an error
-        var onFailure = function()
-        {
-            Ext.Msg.show({
-                title: 'Error',
-                msg: 'Failed to delete the binding. Please try again.',
-                buttons: Ext.Msg.OK
-            }); 
-        };
         RequestManager.getInstance().request(
-                'BindingUpload', 
-                'deleteUpload', 
-                {
-                    bindingId:this.bindingId
-                },
-                this, 
-                onSuccess, 
-                onFailure);
+            'BindingUpload', 
+            'deleteUpload', 
+            {
+                bindingId:this.bindingId
+            },
+            this,
+            onSuccess);
     }
 });

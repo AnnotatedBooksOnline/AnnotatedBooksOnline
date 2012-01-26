@@ -125,6 +125,10 @@ class HelpParagraph extends Entity
     
     // Getters and setters.
     
+    
+    public function getHelpType()    { return $this->helpType; }
+    public function setHelpType($type) { $this->helpType = $type;  }
+    
     public function getHelpParagraphId()    { return $this->helpParagraphId; }
     public function setHelpParagraphId($id) { $this->helpParagraphId = $id;  }
     

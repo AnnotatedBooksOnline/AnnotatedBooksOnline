@@ -311,7 +311,7 @@ Ext.define('Ext.ux.ExportForm', {
                 info += '</td></tr>';
             }
             info += '<tr><td>Library</td><td>' + binding.get('library').libraryName + '</td></tr>'
-                  + '<tr><td style="width: 30%">Signature</td><td>' + binding.get('signature') + '</td></tr>'
+                  + '<tr><td style="width: 30%">Shelfmark</td><td>' + binding.get('signature') + '</td></tr>'
                   + '</table></p>';
             info = '<p>You are about to export ' + pages + ' scans. '
                  + 'This may take some time and the resulting file may be large.</p>'
@@ -415,7 +415,6 @@ Ext.define('Ext.ux.WorkspacePanel', {
         var defConfig = {
             layout: 'fit',
             border: false,
-            isActive: false,
             items: [{
                 xtype: 'annotationspanel',
                 title: 'Annotations',
@@ -426,14 +425,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 xtype: 'exportform',
                 viewer: this.viewer,
                 iconCls: 'export-icon'
-            }],
-            listeners: {
-                afterrender: function()
-                {
-                    this.up('viewerpanel').on('activate', this.onTabActivate, this);
-                    this.up('viewerpanel').on('deactivate', this.onTabDeactivate, this);
-                }
-            }
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -443,21 +435,17 @@ Ext.define('Ext.ux.WorkspacePanel', {
         eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
-    onTabActivate: function()
+    afterRender: function()
     {
-        this.isActive = true;
-        this.updateTabs();
+        this.callParent();
+        
+        this.onAuthenticationChange();
     },
     
-    onTabDeactivate: function()
+    onAuthenticationChange: function()
     {
-        this.isActive = false;
-    },
-    
-    updateTabs: function()
-    {
-        var notespermission = Authentication.getInstance().hasPermissionTo('manage-notebook');
-        if (notespermission && !this.down('notespanel'))
+        var notesPermission = Authentication.getInstance().hasPermissionTo('manage-notebook');
+        if (notesPermission && !this.down('notespanel'))
         {
             this.insert(1, {
                 title: 'My notes',
@@ -466,17 +454,9 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 iconCls: 'notes-icon'
             });
         }
-        else if (!notespermission && this.down('notespanel'))
+        else if (!notesPermission && this.down('notespanel'))
         {
             this.remove(this.down('notespanel'));
-        }
-    },
-    
-    onAuthenticationChange: function()
-    {
-        if (this.isActive)
-        {
-            this.updateTabs();
         }
     }
 });

@@ -16,6 +16,9 @@ class HelpPage extends Entity
     /** The name of the page. */
     protected $pageName;
     
+    /** The type of the page. */
+    protected $helpType;
+    
     /** A cached array of paragraphs. */
     private $subItems;
     
@@ -49,19 +52,20 @@ class HelpPage extends Entity
     
     public static function getColumns()
     {
-        return array('pageName');
+        return array('pageName', 'helpType');
     }
     
     public static function getColumnTypes()
     {
         return array(
             'helpPageId'       => 'int',
-            'pageName'         => 'string'
+            'pageName'         => 'string',
+            'helpType'         => 'string'
         );
     }
     
     
-    // Helpers.
+   // Helpers.
     
     public function getChildren()
     {
@@ -83,14 +87,26 @@ class HelpPage extends Entity
                            ->orderBy('title','ASC')
                            ->execute(array('id' => $this->helpPageId));
             
+            $introduction;
             foreach($citems as $citem)
             {
                 $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
                 $helpParagraph = $helpParagraph->getValues();
                 if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
                 {
-                    $this->subItems[] = $helpParagraph;
+                    if ($helpParagraph['title'] == 'Introduction')
+                    {
+                        $introduction = $helpParagraph;
+                    }
+                    else
+                    {
+                        $this->subItems[] = $helpParagraph;
+                    }
                 }
+            }
+            if (isset($introduction))
+            {
+                array_unshift($this->subItems,$introduction);
             }
         }
         
@@ -105,6 +121,9 @@ class HelpPage extends Entity
     }
     
     // Getters and setters.
+    
+    public function getHelpType()    { return $this->helpType; }
+    public function setHelpType($type) { $this->helpType = $type;  }
     
     public function getHelpPageId()    { return $this->helpPageId; }
     public function setHelpPageId($id) { $this->helpPageId = $id;  }

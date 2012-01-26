@@ -31,7 +31,7 @@ var bookProperties = [{
     name: 'Library'
 },{
     abbreviation: 'signature',
-    name: 'Signature',
+    name: 'Shelfmark',
     defaultOn: true
 },{
     abbreviation: 'provenance',
@@ -74,17 +74,17 @@ Ext.define('Ext.ux.SearchColumnModel', {
  */
 
 Ext.define('Ext.ux.YearBetweenField', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.yearbetweenfield',
     
     initComponent: function()
     {
         var defConfig = {
+            border: false,
             layout: {
                 type: 'hbox'
             },
             defaults: {
-                flex: 0,
                 xtype: 'numberfield',
                 allowDecimals: false,
                 autoStripChars: true,
@@ -93,7 +93,8 @@ Ext.define('Ext.ux.YearBetweenField', {
                 labelWidth: 'auto',
                 style: 'margin-right: 5px;',
                 allowBlank: true,
-                enableKeyEvents: true
+                enableKeyEvents: true,
+                flex: 0
             },
             items: [{
                 name: 'from',
@@ -118,7 +119,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                         var fromValue = parseInt(from.getValue());
                         var toValue = parseInt(to.getValue());
                         
-                        if (direction=='up')
+                        if (direction === 'up')
                         {
                             fromValue++;
                         }
@@ -168,7 +169,7 @@ Ext.define('Ext.ux.YearBetweenField', {
                         var fromValue = parseInt(from.getValue());
                         var toValue = parseInt(to.getValue());
                         
-                        if (direction=='up')
+                        if (direction === 'up')
                         {
                             toValue++;
                         }
@@ -251,10 +252,11 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                     this.ownerCt.getComponent(2).setDisabled(false);
                     var value = this.ownerCt.getComponent(1).getXType() == 'textfield' ? this.ownerCt.getComponent(1).getValue() : '';
                     this.ownerCt.remove(this.ownerCt.getComponent(1));
+                    
                     switch (combo.getValue())
                     {
                         case 'year':
-                            this.ownerCt.insert(1, [{xtype: 'yearbetweenfield', name: 'value'}]);
+                            this.ownerCt.insert(1, [{xtype: 'yearbetweenfield', name: 'value', flex: 5, height: 27}]);
                             break;
                             
                         case 'select':
@@ -266,7 +268,7 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                             break;
                             
                         default:
-                            this.ownerCt.insert(1, [{xtype: 'textfield', name: 'value', value: value}]);
+                            this.ownerCt.insert(1, [{xtype: 'textfield', name: 'value', value: value, flex: 5}]);
                             break;
                     }
                     
@@ -307,9 +309,7 @@ Ext.define('Ext.ux.SearchField', {
                 type: 'hbox'
             },
             defaults: {
-                flex: 0,
                 style: 'margin-right: 15px;',
-                width: 500,
                 allowBlank: true,
                 listeners: {
                     specialkey: function(field, e)
@@ -324,11 +324,13 @@ Ext.define('Ext.ux.SearchField', {
             },
             items: [{
                 xtype: 'searchcomboboxfield',
-                name: 'type'
+                name: 'type',
+                flex: 0
             },{
                 xtype: 'textfield',
                 name: 'value',
-                disabled: true
+                disabled: true,
+                flex: 5
             },{
                 xtype: 'button',
                 name: 'close',
@@ -430,8 +432,6 @@ Ext.define('Ext.ux.SearchResultsView', {
                     '<hr style="margin: 0px;">',
                 '</tpl>',
             ],
-//            trackOver: true,
-//            overItemCls: 'x-item-over',
             itemSelector: 'table.bookitem',
             region: 'center',
             listeners: {
@@ -455,11 +455,13 @@ Ext.define('Ext.ux.SearchResultsView', {
         var thumbnail = '';
         var properties = '';
         var _this = this;
+        
         var fields = [];
         for (var field in data)
         {
             fields.push(field);
         }
+        
         fields.sort(function(a, b)
         {
             var aa = _this.cols.findRecord('name', a);
@@ -472,6 +474,7 @@ Ext.define('Ext.ux.SearchResultsView', {
             bb = bb.get('index');
             return (aa > bb) - (aa < bb);
         });
+        
         for (var i = 0; i < fields.length; i++)
         {
             var field = fields[i];
@@ -732,13 +735,11 @@ Ext.define('Ext.ux.SearchResultsPanel', {
         var defConfig = {
             title: 'Search results',
             border: false,
-            layout: 'border',
-            items: [{
-                xtype: 'panel',
+            layout: 'fit',
+            items: {
                 name: 'results',
-                border: false,
-                region: 'center'
-            }],
+                border: false
+            },
             searchPageSize: 5,
             searchSorters: [],
             listeners: {
@@ -860,6 +861,7 @@ Ext.define('Ext.ux.SearchPanel', {
             region: 'center',
             xtype: 'panel',
             autoScroll: true,
+            style: 'margin-left: 5px;',
             items: [{
                 title: 'Search',
                 xtype: 'searchfieldspanel'

@@ -156,6 +156,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 click: function()
                 {
                     // TODO: Move this, we can't know of any logic like this.
+                    // TODO: You do know a user can just click the back button in the browser, right?
+                    // TODO: Or go to the upload tab directly.
                     
                     RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
                         function(result)
@@ -213,7 +215,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 {
                     var tabInfo = _this.getTabInfo();
                     
-                    Application.getInstance().gotoTab('help', [tabInfo.type], true);
+                    Application.getInstance().gotoTabUnique('help', [tabInfo.type], true);
                 }
             },
             name: 'help'
@@ -455,7 +457,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: 'Help',
                     xtype: 'helppanel',
                     iconCls: 'help-icon',
-                    helpTab: data[0] // TODO: Might not exist.
+                    helpType: data[0] // TODO: Might not exist.
                 });
                 
                 break;
@@ -583,6 +585,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     iconCls: 'upload-icon',
                     bodyPadding: 10,
+                    cls: 'white-tab',
+                    frame: true,
                     items: [{
                         border: false,
                         plain: true,
@@ -692,6 +696,25 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     obj.tabInfo.data.join('-');
                 
                 return (obj.tabInfo.type == type) && (joinedData === tabJoinedData);
+            });
+        
+        // Go to that tab.
+        if (index >= 0)
+        {
+            this.tabs.setActiveTab(index);
+        }
+        else if (openIfNotAvailable === true)
+        {
+            this.openTab(type, data);
+        }
+    },
+    
+    gotoTabUnique: function(type, data, openIfNotAvailable)
+    {
+        // Try to match the type
+        var index = this.tabs.items.findIndexBy(function(obj, key)
+            {
+                return (obj.tabInfo.type == type);
             });
         
         // Go to that tab.

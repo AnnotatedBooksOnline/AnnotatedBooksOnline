@@ -130,18 +130,6 @@ class MainController extends Controller
         $entry->output();
     }
     
-//     public function actionTextPage($data)
-//     {
-//         $textPage = self::getString($data, 'textPage');
-        
-//         if ($textPage !== 'terms-of-use')
-//         {
-//             $textPage .= '-page';
-//         }
-        
-//         return Setting::getSetting($textPage);
-//     }
-    
     private function getJavascriptFilenames()
     {
         // Fetch main content.
@@ -232,7 +220,7 @@ class MainController extends Controller
         foreach ($files as $location)
         {
             $content = file_get_contents($location);
-
+            
             if (substr($location, -6) == 'min.js')
             {
                 $entry->append($content);

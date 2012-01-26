@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LD_LIBRARY_PATH="/opt/libjpeg-turbo/lib64:$LD_LIBARY_PATH"
+
 ENVIRONMENT="devtest"
 VERSION_TO_DEPLOY="master"
 
@@ -24,7 +26,6 @@ cp -R application/application/www/* .
 
 echo "Deploying properties..."
 cp -f "application/application/www/backend/config/${ENVIRONMENT}/config.ini" "backend/config/config.ini"
-chown -R apache:apache *
 
 sed -i "s/#COLLABVERSION#/${ENVIRONMENT} ${VERSION_TO_DEPLOY}/g" frontend/views/applicationviewport.js
 
@@ -38,10 +39,10 @@ mkdir bin
 cp -f application/tilepyramidbuilder/pyramid_builder bin/tilepyramidbuilder
 
 echo "Deploying cronjob..."
-old_php_instance=$(ps aux | grep "php cronjob/pyramidbuilder" | grep $ENVIRONMENT | grep -v "grep" | awk '{print $2}')
+old_php_instance=$(ps aux | grep "php cronjob/tilepyramidbuilder" | grep $ENVIRONMENT | grep -v "grep" | awk '{print $2}')
 
 # TODO : TBH I dont think this does what i want it to do :D
-if [ -n $old_php_instance ];
+if [ -n "$old_php_instance" ];
 then
     echo "Found and killing old tilebuilder instance ${old_php_instance}"
     kill -9 $old_php_instance
@@ -53,9 +54,9 @@ cp -rf application/tilepyramidbuilder/cronjob cronjob
 # TODO : Make it run under 'application'? Right now it is apache else update.php doesn't like it.
 if [ "$(whoami)" = "apache" ];
 then
-    nohup php cronjob/pyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
+    nohup php cronjob/tilepyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null </dev/null &
 else
-    sudo -u apache nohup php cronjob/tilepyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null &
+    nohup sudo -u apache php cronjob/tilepyramidbuilder.php "/var/www/html/${ENVIRONMENT}/backend" 2>/dev/null 1>/dev/null </dev/null &
 fi
 
 echo "Applying database scripts..."
@@ -68,6 +69,9 @@ do
     cat update${i}_$(($i+1)).sql | psql $ENVIRONMENT application 2>/dev/null >/dev/null
 done
 cd ../../../..
+
+echo "Setting owners..."
+chown -R apache:apache *
 
 echo "Done."
 

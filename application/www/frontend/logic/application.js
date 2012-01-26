@@ -105,7 +105,7 @@ Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
             this.authentication.requireLogin(this, function()
                 {
                     // Redirect call.
-                    this.viewport.openTab(type, data, openIfNotAvailable);
+                    this.viewport.gotoTab(type, data, openIfNotAvailable);
                 });
             
             return;
@@ -120,6 +120,31 @@ Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
     this.viewport.gotoTab(type, data, openIfNotAvailable);
 }
 
+Application.prototype.gotoTabUnique = function(type, data, openIfNotAvailable)
+{
+    // Check if allowed type.
+    if (!this.authentication.isLoggedOn())
+    {
+        if (this.tabNeedsAuthentication(type))
+        {
+            this.authentication.requireLogin(this, function()
+                {
+                    // Redirect call.
+                    this.viewport.gotoTabUnique(type, data, openIfNotAvailable);
+                });
+            
+            return;
+        }
+    }
+    else if (this.tabNeedsNoAuthentication(type))
+    {
+        return;
+    }
+    
+    // Redirect call.
+    this.viewport.gotoTabUnique(type, data, openIfNotAvailable);
+}
+
 /*
  * Private methods.
  */
@@ -130,12 +155,20 @@ Application.prototype.initialize = function()
     this.requestManager = RequestManager.getInstance();
     this.authentication = Authentication.getInstance();
     
-    // Initialize history and quicktips.
-    Ext.History.init();
+    // Initialize quicktips.
     Ext.tip.QuickTipManager.init();
     
     // Create application viewport.
     this.viewport = new Ext.ux.ApplicationViewport();
+    
+    // Create history iframe.
+    $(document.body).append('<form id="history-form" class="x-hide-display">' +
+                            '    <input type="hidden" id="x-history-field" />' +
+                            '    <iframe id="x-history-frame" src="about:blank"></iframe>' +
+                            '</form>');
+    
+    // Initialize history.
+    Ext.History.init();
     
     // Listen for tab changes
     this.viewport.getEventDispatcher().bind('activate', this, function(event, viewport, index)

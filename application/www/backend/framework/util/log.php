@@ -38,6 +38,29 @@ class Log extends Singleton
     }
     
     /**
+     * Adds a trace message.
+     *
+     * @param  $format  The format of the message.
+     * @param  ...      The arguments of the format.
+     */
+    public static function trace($format)
+    {
+        // Check whether to log it.
+        $instance = self::getInstance();
+        if ($instance->level < 5)
+        {
+            return;
+        }
+        
+        // Get arguments of the function, minus the format
+        $args = func_get_args();
+        array_shift($args);
+        
+        // Add a line.
+        $instance->appendLine('TRACE', vsprintf($format, $args));
+    }
+    
+    /**
      * Adds a debug message.
      *
      * @param  $format  The format of the message.
