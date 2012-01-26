@@ -489,6 +489,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
             items: [{
                 xtype: 'button',
                 text: 'Add book',
+                name: 'addbook',
                 iconCls: 'add-book-icon',
                 width: 140,
                 margin: '0 0 10 0',
@@ -576,7 +577,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 current.destroy();
             }
             
-            this.checkBooks();
+            this.checkBooks(false);
         }
     }
 });
@@ -637,17 +638,20 @@ Ext.define('Ext.ux.UploadForm', {
             listeners: {
                 validitychange: function(form, valid)
                 {
-                    if (_this.existingBindingId !== undefined)
-                    {
-                        return;
-                    }
-                    
                     var booksfieldset = this.down('booksfieldset');
                     var books = booksfieldset.getBooks();
+                    var disable = valid;
+                    
+                    booksfieldset.down('[name=addbook]').setDisabled(disable);
+                    
+                    if (books.length == 1)
+                    {
+                        disable = true;
+                    }
                     
                     var current = booksfieldset.down('bookfieldset');
                     do {
-                        current.down('[name=deletebook]').setDisabled(valid);
+                        current.down('[name=deletebook]').setDisabled(disable);
                     } while (current = current.nextSibling('bookfieldset'));
                 }
             },
