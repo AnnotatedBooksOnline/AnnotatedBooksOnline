@@ -59,7 +59,7 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                 xtype: 'propertygrid',
                 propertyNames: {
                     a: 'Library',
-                    b: 'Signature',
+                    b: 'Shelfmark',
                     c: 'Readers',
                     d: 'Languages of annotations'
                 },

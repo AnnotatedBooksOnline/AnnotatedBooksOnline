@@ -86,7 +86,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                     layout: 'anchor',
                     defaultType: 'textfield',
                     items: [{
-                        fieldLabel: 'Signature *',
+                        fieldLabel: 'Shelfmark *',
                         name: 'signature',
                         anchor: '100%',
                         labelAlign: 'top',
