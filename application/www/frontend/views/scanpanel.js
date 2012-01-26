@@ -2,7 +2,7 @@
  * Scan grid class.
  */
 Ext.define('Ext.ux.UploadGrid', {
-    extend: 'Ext.grid.Panel',
+    extend: 'Ext.panel.Panel',
     alias: 'widget.uploadgrid',
     
     /*
@@ -30,12 +30,15 @@ Ext.define('Ext.ux.UploadGrid', {
     
     setStatus: function(id, status)
     {
+        console.log(status);
         if (status == 'success')
         {
             this.setProgress(id, 100);
         }
         
-        this.getUploadById(id).set('status', status);
+        var record = this.getUploadById(id);
+        record.set('status', status);
+        record.save();
     },
     
     setProgress: function(id, progress)
@@ -46,16 +49,13 @@ Ext.define('Ext.ux.UploadGrid', {
             return;
         }
         
-        // Set progress for rendering progressbar.
         this.progressById[id] = progress;
         
-        // Get progressbar component.
-        var progressBar = Ext.getCmp(id);
-        
-        // Update progress bar.
-        if (progressBar)
+        var record = this.getUploadById(id);
+        if (record)
         {
-            progressBar.updateProgress(progress / 100, Math.round(progress) + '%', true);
+            record.set('progress', progress);
+            record.save();
         }
     },
     
@@ -140,39 +140,46 @@ Ext.define('Ext.ux.UploadGrid', {
     {
         this.progressById = {};
         
+        var _this = this;
+        
         this.store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'token', 'filename', 'progressbar', 'status']
+            fields: ['id', 'token', 'filename', 'progress', 'status']
         });
         
         this.eventDispatcher = new EventDispatcher();
         
-        var _this = this;
-        var defConfig = {
-            store: this.store,
-            columns: [
-                {header: 'Filename', dataIndex: 'filename', flex: 1},
-                {header: 'Size', dataIndex: 'size', renderer: this.renderSize},
-                {
-                    header: 'Progress',
-                    dataIndex: 'progressbar',
-                    width: 150,
-                    resizable: false,
-                    sortable: false,
-                    renderer: function()
+        this.listeners = {
+            afterrender: function()
+            {
+                _this.store.on({
+                    add: function(store, records)
                     {
-                        return _this.renderProgressBar.apply(_this, arguments);
+                        for (var i = 0; i < records.length; i++)
+                        {
+                            var record = records[i];
+                            var progress = new UploadProgress(_this.body.dom, record.get('id'), record.get('filename'));
+                            progress.setStatus(_this.renderStatus(record.get('status')));
+                        }
+                    },
+                    update: function(store, record)
+                    {
+                        var progress = new UploadProgress(_this.body.dom, record.get('id'));
+                        progress.setStatus(_this.renderStatus(record.get('status')));
+                        progress.setProgress(record.get('progress'));
+                    },
+                    remove: function(store, record)
+                    {
+                        var progress = new UploadProgress(_this.body.dom, record.get('id'));
+                        progress.destroy();
+                    },
+                    clear: function()
+                    {
+                        _this.body.dom.removeChild(_this.body.dom.childNodes[0]);
                     }
-                },
-                {header: 'Status', dataIndex: 'status', renderer: this.renderStatus},
-                {
-                    xtype: 'actioncolumn',
-                    width: 50,
-                    items: [] // TODO: Add buttons.
-                }
-            ]
+                });
+            }
         };
-        
-        Ext.apply(this, defConfig);
+        this.autoScroll = true;
         
         this.callParent();
     },
@@ -200,42 +207,6 @@ Ext.define('Ext.ux.UploadGrid', {
         {
             return Math.round(value * 10) / 10 + ' B';
         }
-    },
-    
-    renderProgressBar: function(value, metaData, model)
-    {
-        // Get model id.
-        var id = model.get('id');
-        
-        // Render progressbar delayed.
-        var _this = this;
-        setTimeout(function()
-            {
-                // Empty div as there may be an older progressbar.
-                $('#' + id).empty();
-                
-                // Get progress. Note that value does not contain this, it contains
-                // nothing as we do not want to couple the progress value to the progressbar
-                // immediately because that generates too many rerenders.
-                var progress = _this.progressById[id] || 0;
-                
-                try
-                {
-                    new Ext.ProgressBar({
-                        renderTo: id,
-                        id: id,
-                        value: progress / 100,
-                        animate: false,
-                        text: Math.round(progress) + '%'
-                    });
-                }
-                catch (e)
-                {
-                    // Model might already have been removed/replaced.
-                }
-            }, 1);
-        
-        return '<div style="height: 22px;" id="' + id + '"></div>';
     },
     
     renderStatus: function(value)
@@ -277,7 +248,8 @@ Ext.define('Ext.ux.UploadGrid', {
             token: token,
             filename: filename,
             size: size,
-            status: status
+            status: status,
+            progress: 0
         });
         
         // Trigger add.
