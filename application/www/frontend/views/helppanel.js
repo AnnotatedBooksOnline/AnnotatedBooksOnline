@@ -22,9 +22,9 @@ Ext.define('Ext.ux.HelpPanel', {
                 title: 'Index',
                 width: 200,
                 region: 'west',
-                id: 'helpTree',
+                cls: 'help-tree',
                 store: treestore,
-                columns: [{ xtype: 'treecolumn',text: 'Name',  dataIndex: 'pageName'}],
+                columns: [{xtype: 'treecolumn', text: 'Name', dataIndex: 'pageName'}],
                 collapsible: true,
                 rootVisible: false,
                 hideHeaders: true,
@@ -45,20 +45,7 @@ Ext.define('Ext.ux.HelpPanel', {
                 id: 'helpmain',
                 styleHtmlContent: true,
                 styleHtmlCls: 'help'
-            }],
-            listeners: {
-                afterRender: function()
-                {
-                    this.getComponent(0).expandPath('/root',undefined,undefined,function(succes,lastNode){
-                        var helppage = lastNode.findChild('pageName',this.helpTab);
-                        if(helppage == null)
-                        {
-                            helppage = lastNode.findChild('pageName', 'default');
-                        }
-                        this.updateHTML(helppage);
-                    },this);
-                }
-            }
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -69,6 +56,25 @@ Ext.define('Ext.ux.HelpPanel', {
         eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
+    afterRender: function()
+    {
+        this.callParent();
+        
+        this.getComponent(0).expandPath('/root', undefined, undefined, function(succes, lastNode)
+        {
+            var helppage = lastNode.findChild('pageName',this.helpTab);
+            if (helppage === null)
+            {
+                helppage = lastNode.findChild('pageName', 'default');
+            }
+            
+            if (helppage)
+            {
+                this.updateHTML(helppage);
+            }
+        },this);
+    },
+    
     updateHTML: function(record)
     {
         var _this = this;
@@ -76,31 +82,33 @@ Ext.define('Ext.ux.HelpPanel', {
         
         record.expand(true, function()
         {
-            while(page.get('helpId').substring(2) != '-1')
+            while (page.get('helpId').substring(2) != '-1')
             {
                 page = page.parentNode;
             }
-            var htmltext = _this.generateHelpHTML(page,2);
+            
+            var htmltext = _this.generateHelpHTML(page, 2);
             _this.getComponent(1).update(htmltext);
             
             var content = Ext.get(record.get('pageName'));
             var height = content.getOffsetsTo(Ext.get('helpmain-body'));
+            
             _this.getComponent(1).body.scroll('b', height[1], false);
         });
     },
     
-    generateHelpHTML: function(record,dept)
+    generateHelpHTML: function(record, dept)
     {
         var name = record.get('pageName');
         var htmltext = '<h' + dept + ' id="'+ name +'">' + name + '</h' + dept + '>';
-        if(dept > 2)
+        if (dept > 2)
         {
             htmltext += '<p>' + record.get('content') + '</p>';
         }
         
-        for(var i=0;i<record.childNodes.length;i++)
+        for (var i = 0; i < record.childNodes.length; ++i)
         {
-            htmltext += this.generateHelpHTML(record.childNodes[i],dept+1);
+            htmltext += this.generateHelpHTML(record.childNodes[i], dept + 1);
         }
         
         htmltext = htmltext.replace(
@@ -114,15 +122,15 @@ Ext.define('Ext.ux.HelpPanel', {
     
     processLink: function(path)
     {
-        alert(path);
         this.getComponent(0).collapseAll();
-        this.getComponent(0).expandPath('/root'+path,undefined,undefined,function(succes,lastNode){
+        this.getComponent(0).expandPath('/root' + path, undefined, undefined, function(succes, lastNode)
+        {
             this.updateHTML(lastNode);
         },this);
     },
     
     onAuthenticationChange: function()
     {
-        
+        // TODO: Needed?
     }
 });

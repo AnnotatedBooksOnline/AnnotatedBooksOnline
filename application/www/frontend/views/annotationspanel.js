@@ -578,6 +578,12 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         // Retain whitespace.
         metadata.style = 'white-space: normal;';
         
+        // Check for null or undefined.
+        if (!text)
+        {
+            return '';
+        }
+        
         // Replace newlines with spaces.
         text = text.replace(/\s*(\r\n|\n|\r)\s*/g, ' ');
         
