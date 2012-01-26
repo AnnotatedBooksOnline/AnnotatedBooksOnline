@@ -325,7 +325,10 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                                         {username: username,
                                          accepted: false},
                                         null,
-                                        null
+                                        function()
+                                        {
+                                            store.load();
+                                        }
                                     );  
                                 }
                             }

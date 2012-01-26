@@ -533,6 +533,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             // Loading is finished.
                             this.down('tabpanel').setLoading(false);
                         }
+                        else
+                        {
+                            // Loading is finished.
+                            this.down('tabpanel').setLoading(false);
+                        }
                     },
                     function()
                     {

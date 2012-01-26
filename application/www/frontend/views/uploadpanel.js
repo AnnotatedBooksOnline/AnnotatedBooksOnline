@@ -592,25 +592,24 @@ Ext.define('Ext.ux.UploadForm', {
     initComponent: function() 
     {
         var _this = this;
-        
         this.numberOfScans = 0;
         
         // Determine if the user is adding a new binding. If this is the case determine if the
         // there is no existing pending binding for the user.
         if (this.existingBindingId !== undefined)
-        {
-            _this.setLoading('Loading binding information...');
-            
+        {            
+            _this.setLoading('Loading binding information...');   
+
             // Fetch binding.
             Binding.createFromId(this.existingBindingId, this,
                 function(binding)
-                {
-                    _this.setLoading(false);
-                    
+                {                    
                     _this.down('[name=bindingfields]').fillFromExistingBinding(binding);
                     _this.down('[name=bookfields]').fillFromExistingBinding(binding);
-                    
                     _this.numberOfScans = binding.getScanAmount();
+                    
+                    _this.setLoading(false);
+
                 },
                 function()
                 {
@@ -696,6 +695,7 @@ Ext.define('Ext.ux.UploadForm', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+       
     },
     
     checkCompleted: function()
@@ -705,8 +705,11 @@ Ext.define('Ext.ux.UploadForm', {
         
         // Get scans.
         var scans = this.down('scanpanel').getValues();
-        
-        // Check each scan status.
+        var waiting = false;
+        var _this = this;
+        var successScans = this.numberOfScans;
+
+
         for (var i = 0; i < scans.length; i++)
         {
             if (scans[i].status == 'success')
