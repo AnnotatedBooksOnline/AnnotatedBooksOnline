@@ -1,51 +1,7 @@
 ﻿BEGIN TRANSAcTION;
 
---Add types
-ALTER TABLE "HelpPages" ADD COLUMN "helpType" varChar(30);
-
-UPDATE "HelpPages" SET "helpType" = 'viewprofile' WHERE "pageName" = 'Edit profile';
-UPDATE "HelpPages" SET "helpType" = 'register' WHERE "pageName" = 'Register';
-UPDATE "HelpPages" SET "helpType" = 'search' WHERE "pageName" = 'Search';
-UPDATE "HelpPages" SET "helpType" = 'users' WHERE "pageName" = 'Userlist';
-UPDATE "HelpPages" SET "helpType" = 'binding' WHERE "pageName" = 'Viewer';
-UPDATE "HelpPages" SET "helpType" = 'welcome' WHERE "pageName" = 'Welcome';
-
---Add a few links
-UPDATE "HelpParagraphs" SET "content" = '<p>
-    In case you ever want to change your password or the personal information you entered during 
-
-**Register||Register**, simply press the ''Edit profile'' button while logged in. It will open a popup window 
-
-in which you can edit your email address, first and last name, affiliation, occupation, website and password.
-</p>
-
-<p>
-    In case you wish to edit your password, make sure to fill in the ''Current password'' field as well as 
-
-''New password'' (and repeating the new password in the ''Repeat password'' field). This is an extra security 
-
-check.
-</p>' WHERE "title" = 'Edit profile' AND "helpPageId" = (SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" 
-
-= 'Edit profile');
-
-UPDATE "HelpParagraphs" SET "content" = '<p>
-    The viewer is used to view scans, read and add transcriptions and download the books for study offline.
-</p>
-
-<p>
-    What do you want to do?
-</p>
-<ul>
-    <li>**Zoom and rotate a page**</li>
-    <li>**Go to another page||Viewer/Go to another page**</li>
-    <li>**View information about a binding** TODO</li>
-    <li>**Link to a page, book or binding||Viewer/Link to a page, book or binding**</li>
-    <li>**Export to pdf** </li>
-    <li>**Read transcriptions of annotations** TODO</li>
-    <li>**Add and edit transcriptions** TODO</li>
-</ul>' WHERE "title" = 'Introduction' AND "helpPageId" = (SELECT "helpPageId" FROM "HelpPages" WHERE 
-
-"pageName" = 'Viewer');
+-- Change edit profile.
+UPDATE "HelpParagraphs" SET "helpPageId" = (SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Welcome') WHERE "title" = 'Edit profile';
+DELETE FROM "HelpPages" WHERE "pageName" = 'Edit profile';
 
 COMMIT;
