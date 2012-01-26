@@ -311,7 +311,7 @@ Ext.define('Ext.ux.ExportForm', {
                 info += '</td></tr>';
             }
             info += '<tr><td>Library</td><td>' + binding.get('library').libraryName + '</td></tr>'
-                  + '<tr><td style="width: 30%">Signature</td><td>' + binding.get('signature') + '</td></tr>'
+                  + '<tr><td style="width: 30%">Shelfmark</td><td>' + binding.get('signature') + '</td></tr>'
                   + '</table></p>';
             info = '<p>You are about to export ' + pages + ' scans. '
                  + 'This may take some time and the resulting file may be large.</p>'
