@@ -493,6 +493,7 @@ Viewport.prototype.getDocument = function()
 Viewport.prototype.setDocument = function(document)
 {
     this.document.remove();
+    delete this.document;
     
     this.document           = document;
     this.documentDimensions = document.getDimensions();

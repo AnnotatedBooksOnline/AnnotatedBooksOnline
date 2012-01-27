@@ -359,9 +359,16 @@ Ext.define('Ext.ux.SelectBookForm', {
             selectFirstField: false
         };
         
+        
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        // Hide the delete button for existing binding.
+        if (this.isExistingBinding)
+        {
+            this.down('[name=delete]').hide();
+        }
     },
     
     // React accordingly when a scan is double clicked.
