@@ -320,7 +320,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         Ext.supports.Vml = (function()
         {
-            var a = document.body.appendChild(document.createElement('div'));
+            var a = document.createElement('div');
+            a = document.body.appendChild(a) || a;
             a.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
             var b = a.firstChild;
             b.style.behavior = "url(#default#VML)";
