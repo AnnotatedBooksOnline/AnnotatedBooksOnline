@@ -318,17 +318,24 @@ Ext.define('Ext.ux.ApplicationViewport', {
     
     correctVmlSupport: function()
     {
-        Ext.supports.Vml = (function()
+        if (!Ext.supports.Vml)
         {
-            var a = document.createElement('div');
-            a = document.body.appendChild(a) || a;
-            a.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
-            var b = a.firstChild;
-            b.style.behavior = "url(#default#VML)";
-            var vmlSupported = b ? typeof b.adj == "object": true;
-            a.parentNode.removeChild(a);
-            return vmlSupported;
-        })();
+            try
+            {
+                Ext.supports.Vml = (function()
+                {
+                    var a = document.createElement('div');
+                    a = document.body.appendChild(a) || a;
+                    a.innerHTML = '<v:shape id="vml_flag1" adj="1" />';
+                    var b = a.firstChild;
+                    b.style.behavior = "url(#default#VML)";
+                    var vmlSupported = b ? typeof b.adj == "object": true;
+                    a.parentNode.removeChild(a);
+                    return vmlSupported;
+                })();
+            }
+            catch(e) {}
+        }
     },
     
     getEventDispatcher: function()
