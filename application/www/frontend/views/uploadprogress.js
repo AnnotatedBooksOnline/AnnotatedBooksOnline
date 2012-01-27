@@ -7,7 +7,7 @@ function UploadProgress()
     this.constructor.apply(this, arguments);
 }
 
-UploadProgress.prototype.constructor = function(target, id, filename, oncancel)
+UploadProgress.prototype.constructor = function(target, id, filename, size, oncancel)
 {
     this.containerElement = document.getElementById(id);
 
@@ -27,10 +27,16 @@ UploadProgress.prototype.constructor = function(target, id, filename, oncancel)
         this.containerElement.id = id;
 
         var filenameText = document.createElement('td');
-        filenameText.style.width = '430px';
+        filenameText.style.width = '350px';
         filenameText.style.verticalAlign = 'middle';
         filenameText.className = "x-grid-cell x-grid-cell-first x-grid-cell-inner";
         filenameText.appendChild(document.createTextNode(filename));
+
+        var filesizeText = document.createElement('td');
+        filesizeText.style.width = '80px';
+        filesizeText.style.verticalAlign = 'middle';
+        filesizeText.className = "x-grid-cell x-grid-cell-inner";
+        filesizeText.appendChild(document.createTextNode(size));
 
         var progressBarContainer = document.createElement('td');
         progressBarContainer.style.width = '212px';
@@ -80,6 +86,7 @@ UploadProgress.prototype.constructor = function(target, id, filename, oncancel)
         this.statusTextElement = statusText;
 
         this.containerElement.appendChild(filenameText);
+        this.containerElement.appendChild(filesizeText);
         this.containerElement.appendChild(progressBarContainer);
         this.containerElement.appendChild(statusText);
         this.containerElement.appendChild(cancelContainer);
@@ -91,8 +98,8 @@ UploadProgress.prototype.constructor = function(target, id, filename, oncancel)
     {
         this.targetElement = target;
         this.fileNameElement = this.containerElement.childNodes[0];
-        this.progressBarElement = this.containerElement.childNodes[1].firstChild;
-        this.statusTextElement = this.containerElement.childNodes[2];
+        this.progressBarElement = this.containerElement.childNodes[2].firstChild;
+        this.statusTextElement = this.containerElement.childNodes[3];
     }
 }
 

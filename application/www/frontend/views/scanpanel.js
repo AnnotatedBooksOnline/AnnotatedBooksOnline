@@ -160,7 +160,7 @@ Ext.define('Ext.ux.UploadGrid', {
         var _this = this;
         
         this.store = Ext.create('Ext.data.Store', {
-            fields: ['id', 'token', 'filename', 'progress', 'status']
+            fields: ['id', 'token', 'filename', 'progress', 'status', 'size']
         });
         
         this.eventDispatcher = new EventDispatcher();
@@ -179,7 +179,12 @@ Ext.define('Ext.ux.UploadGrid', {
                         for (var i = 0; i < records.length; i++)
                         {
                             var record = records[i];
-                            var progress = new UploadProgress(_this.body.dom, record.get('id'), record.get('filename'), onCancel);
+                            var progress = new UploadProgress(
+                                _this.body.dom, record.get('id'),
+                                record.get('filename'),
+                                _this.renderSize(record.get('size')),
+                                onCancel
+                            );
                             progress.setStatus(_this.renderStatus(record.get('status')));
                             progress.setProgress(record.get('progress'));
                         }
