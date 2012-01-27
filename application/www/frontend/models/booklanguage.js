@@ -4,7 +4,7 @@
 
 Ext.define('Ext.ux.BookLanguageModel', {
     extend: 'Ext.ux.ModelBase',
-    idProperty: 'bookId',
+    idProperty: 'languageId',
     fields: ['languageName','bookId','languageId'],
 
     proxy: {
