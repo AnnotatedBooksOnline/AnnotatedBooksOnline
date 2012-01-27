@@ -500,6 +500,11 @@ Viewport.prototype.setDocument = function(document)
     this.documentDimensions = document.getDimensions();
     this.maxZoomLevel       = document.getMaxZoomLevel();
     
+    // The document dimension is rounded down. To be sure we display the entire document
+    // we should increase this number to the upper bound of the document dimension.
+    this.documentDimensions.width++;
+    this.documentDimensions.height++;
+    
     this.document.insert(this);
     
     // Reinsert overlays.
