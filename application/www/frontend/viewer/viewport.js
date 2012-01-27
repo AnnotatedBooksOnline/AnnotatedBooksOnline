@@ -493,11 +493,17 @@ Viewport.prototype.getDocument = function()
 Viewport.prototype.setDocument = function(document)
 {
     this.document.remove();
+    this.document.destroy();
     delete this.document;
     
     this.document           = document;
     this.documentDimensions = document.getDimensions();
     this.maxZoomLevel       = document.getMaxZoomLevel();
+    
+    // The document dimension is rounded down. To be sure we display the entire document
+    // we should increase this number to the upper bound of the document dimension.
+    this.documentDimensions.width++;
+    this.documentDimensions.height++;
     
     this.document.insert(this);
     

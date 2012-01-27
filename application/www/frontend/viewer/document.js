@@ -381,12 +381,15 @@ Document.prototype.updateLevels = function(area)
     {
         if (this.levelContainers[i])
         {
-            this.updateLevel(area, i, levelZeroScale * Math.pow(2, i), true);
+            this.updateLevel(area, i, levelZeroScale * Math.pow(2, -i), true);
         }
     }
-    this.updateLevel(area, ceiledZoomLevel,     scale,     true);
-    this.updateLevel(area, ceiledZoomLevel - 1, scale * 2, false);
-    this.updateLevel(area, ceiledZoomLevel - 2, scale * 4, false);
+    if (ceiledZoomLevel > Document.minLevelDisplay)
+    {
+        this.updateLevel(area, ceiledZoomLevel,     scale,     true);
+        this.updateLevel(area, ceiledZoomLevel - 1, scale * 2, false);
+        this.updateLevel(area, ceiledZoomLevel - 2, scale * 4, false);
+    }
     
     //hide all levels above current zoom level, show all level above it
     for (var i = 0; i < this.levelContainers.length; ++i)

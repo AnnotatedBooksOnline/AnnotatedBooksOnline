@@ -178,15 +178,12 @@ Ext.define('Ext.ux.ScanListFieldset', {
         
         var defConfig = {
             layout: 'fit',
-            autoScroll: true,
             items: [{
                 xtype: 'grid',
                 border: false,
                 disabled: true,
                 store: this.store,
-                autoScroll: true,
                 resizable: false,
-                style: 'margin-top: 5px; margin-bottom: 5px;',
                 viewConfig: {
                     stripeRows: true
                 },
@@ -282,6 +279,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                 region:'west',
                 width: 327,
                 bodyPadding: 10,
+                margin: '0 5 0 0',
                 xtype: 'panel',
                 layout: {
                     type: 'vbox',
@@ -292,24 +290,25 @@ Ext.define('Ext.ux.SelectBookForm', {
                     border: false,
                     flex: 1,
                     cls: 'plaintext',
-                    html: '<h2>Instructions:</h2><p>In this screen you will need to assign the scans to the books. '
-                        +'First you will need to select a book by double clicking. '
-                        +'Afterwards you can select the first page and the last page'
-                        +' of the book in any order by double clicking. When you have done this for all books,'
-                        +'you can press the save button and the binding will be added to the database.</p>'
+                    html: '<h2>Instructions</h2><p>In this screen you will need to assign the scans to the books. '
+                        + 'First you will need to select a book by double clicking. '
+                        + 'Afterwards you can select the first page and the last page'
+                        + ' of the book in any order by double clicking. When you have done this for all books,'
+                        + 'you can press the save button and the binding will be added to the database.</p>'
                     },{
-                    xtype: 'booklistfieldset',
-                    store: _this.bookstore,
-                    flex: 1
+                        xtype: 'booklistfieldset',
+                        store: _this.bookstore,
+                        flex: 1
                     },{
-                    xtype: 'bookinformationfieldset',
-                    store: _this.bookstore,
-                    flex: 1
+                        xtype: 'bookinformationfieldset',
+                        store: _this.bookstore,
+                        flex: 1
                 }]
             },{
                 xtype: 'panel',
                 region:'center',
-                margins: '5 0 0 0',
+                bodyPadding: 10,
+                autoScroll: true,
                 items: [{
                     xtype: 'bindinginformationfieldset',
                     bindingId: this.bindingId,
@@ -547,6 +546,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                 bindingId:this.bindingId
             },
             this,
-            onSuccess);
+            onSuccess
+        );
     }
 });
