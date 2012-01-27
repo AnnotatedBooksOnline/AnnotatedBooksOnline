@@ -878,7 +878,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.reset();
             }
             
-            return false;
+            break;
+            //return false;
             
         case 107: // Numpad +.
             if (!this.zoomingDisabled)
@@ -886,7 +887,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.zoom(this.zoomLevel + 1);
             }
             
-            return false;
+            break;
+            //return false;
             
         case 109: // Numpad -.
             if (!this.zoomingDisabled)
@@ -894,7 +896,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.zoom(this.zoomLevel - 1);
             }
             
-            return false;
+            break;
+            //return false;
             
         case 37: // Left.
         case 100: // Numpad 4.
@@ -903,7 +906,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: -Viewport.arrowMoveDistance, y: 0});
             }
             
-            return false;
+            break;
+            //return false;
             
         case 39: // Right.
         case 102: // Numpad 6.
@@ -912,7 +916,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: +Viewport.arrowMoveDistance, y: 0});
             }
             
-            return false;
+            break;
+            //return false;
             
         case 38: // Up.
         case 104: // Numpad 8.
@@ -921,7 +926,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: 0, y: -Viewport.arrowMoveDistance});
             }
             
-            return false;
+            break;
+            //return false;
             
         case 40: // Down.
         case 98: // Numpad 2.
@@ -930,7 +936,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: 0, y: +Viewport.arrowMoveDistance});
             }
             
-            return false;
+            break;
+            //return false;
     }
 }
 
