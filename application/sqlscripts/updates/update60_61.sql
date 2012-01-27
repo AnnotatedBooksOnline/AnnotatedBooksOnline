@@ -1,4 +1,4 @@
-﻿BEGIN TRANSAcTION;
+﻿BEGIN TRANSACTION;
 
 --Add types
 ALTER TABLE "HelpPages" ADD COLUMN "helpType" varChar(30);
