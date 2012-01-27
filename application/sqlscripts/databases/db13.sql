@@ -1,4 +1,4 @@
-﻿-- 
+-- 
 -- SQL for PostgreSQL. Database encoding must be UTF-8.
 -- 
 
