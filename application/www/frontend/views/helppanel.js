@@ -38,7 +38,7 @@ Ext.define('Ext.ux.HelpPanel', {
                     itemclick: function(t, record, item, index, e, eOpts)
                     {
                         _this.updateHTML(record);
-                    },
+                    }
                 }
             },{
                 xtype: 'panel',
