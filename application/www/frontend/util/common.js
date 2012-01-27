@@ -145,10 +145,13 @@ function getCookies()
         var cookie = parts[i].split('=');
         
         // Trim spaces from name and value, and decode them.
-        var name  = decodeURIComponent(cookie[0].replace(/^\s+|\s+$/g, ''));
-        var value = decodeURIComponent(cookie[1].replace(/^\s+|\s+$/g, ''));
-        
-        cookies.push({name: name, value: value});
+        if (cookie.length === 2)
+        {
+            var name  = decodeURIComponent(cookie[0].replace(/^\s+|\s+$/g, ''));
+            var value = decodeURIComponent(cookie[1].replace(/^\s+|\s+$/g, ''));
+            
+            cookies.push({name: name, value: value});
+        }
     }
     
     return cookies;

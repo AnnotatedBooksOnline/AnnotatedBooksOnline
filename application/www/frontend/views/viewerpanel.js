@@ -39,7 +39,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                     useTips: false,
                     x: 20,
                     y: 20,
-                    width: 214,
+                    width: 150,
                     minValue: 0,
                     maxValue: 200,
                     listeners: {

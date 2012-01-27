@@ -65,7 +65,7 @@ class HelpPage extends Entity
     }
     
     
-    // Helpers.
+   // Helpers.
     
     public function getChildren()
     {
@@ -87,14 +87,26 @@ class HelpPage extends Entity
                            ->orderBy('title','ASC')
                            ->execute(array('id' => $this->helpPageId));
             
+            $introduction;
             foreach($citems as $citem)
             {
                 $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
                 $helpParagraph = $helpParagraph->getValues();
                 if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
                 {
-                    $this->subItems[] = $helpParagraph;
+                    if ($helpParagraph['title'] == 'Introduction')
+                    {
+                        $introduction = $helpParagraph;
+                    }
+                    else
+                    {
+                        $this->subItems[] = $helpParagraph;
+                    }
                 }
+            }
+            if (isset($introduction))
+            {
+                array_unshift($this->subItems,$introduction);
             }
         }
         

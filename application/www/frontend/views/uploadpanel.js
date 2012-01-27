@@ -86,7 +86,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                     layout: 'anchor',
                     defaultType: 'textfield',
                     items: [{
-                        fieldLabel: 'Signature *',
+                        fieldLabel: 'Shelfmark *',
                         name: 'signature',
                         anchor: '100%',
                         labelAlign: 'top',
@@ -489,6 +489,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
             items: [{
                 xtype: 'button',
                 text: 'Add book',
+                name: 'addbook',
                 iconCls: 'add-book-icon',
                 width: 140,
                 margin: '0 0 10 0',
@@ -576,7 +577,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 current.destroy();
             }
             
-            this.checkBooks();
+            this.checkBooks(false);
         }
     }
 });
@@ -591,25 +592,24 @@ Ext.define('Ext.ux.UploadForm', {
     initComponent: function() 
     {
         var _this = this;
-        
         this.numberOfScans = 0;
         
         // Determine if the user is adding a new binding. If this is the case determine if the
         // there is no existing pending binding for the user.
         if (this.existingBindingId !== undefined)
-        {
-            _this.setLoading('Loading binding information...');
-            
+        {            
+            _this.setLoading('Loading binding information...');   
+
             // Fetch binding.
             Binding.createFromId(this.existingBindingId, this,
                 function(binding)
-                {
-                    _this.setLoading(false);
-                    
+                {                    
                     _this.down('[name=bindingfields]').fillFromExistingBinding(binding);
                     _this.down('[name=bookfields]').fillFromExistingBinding(binding);
-                    
                     _this.numberOfScans = binding.getScanAmount();
+                    
+                    _this.setLoading(false);
+
                 },
                 function()
                 {
@@ -637,17 +637,20 @@ Ext.define('Ext.ux.UploadForm', {
             listeners: {
                 validitychange: function(form, valid)
                 {
-                    if (_this.existingBindingId !== undefined)
-                    {
-                        return;
-                    }
-                    
                     var booksfieldset = this.down('booksfieldset');
                     var books = booksfieldset.getBooks();
+                    var disable = valid;
+                    
+                    booksfieldset.down('[name=addbook]').setDisabled(disable);
+                    
+                    if (books.length == 1)
+                    {
+                        disable = true;
+                    }
                     
                     var current = booksfieldset.down('bookfieldset');
                     do {
-                        current.down('[name=deletebook]').setDisabled(valid);
+                        current.down('[name=deletebook]').setDisabled(disable);
                     } while (current = current.nextSibling('bookfieldset'));
                 }
             },
@@ -692,6 +695,7 @@ Ext.define('Ext.ux.UploadForm', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+       
     },
     
     checkCompleted: function()
@@ -701,8 +705,11 @@ Ext.define('Ext.ux.UploadForm', {
         
         // Get scans.
         var scans = this.down('scanpanel').getValues();
-        
-        // Check each scan status.
+        var waiting = false;
+        var _this = this;
+        var successScans = this.numberOfScans;
+
+
         for (var i = 0; i < scans.length; i++)
         {
             if (scans[i].status == 'success')

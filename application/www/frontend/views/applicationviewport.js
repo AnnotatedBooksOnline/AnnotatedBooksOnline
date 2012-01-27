@@ -533,6 +533,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             // Loading is finished.
                             this.down('tabpanel').setLoading(false);
                         }
+                        else
+                        {
+                            // Loading is finished.
+                            this.down('tabpanel').setLoading(false);
+                        }
                     },
                     function()
                     {
@@ -585,6 +590,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     iconCls: 'upload-icon',
                     bodyPadding: 10,
+                    cls: 'white-tab',
+                    frame: true,
                     items: [{
                         border: false,
                         plain: true,

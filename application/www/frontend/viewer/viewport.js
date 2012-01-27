@@ -868,8 +868,8 @@ Viewport.prototype.onKeyDown = function(event)
     {
         case 32: // Space.
             this.spaceDown = true;
-            
-            return false;
+            break;
+            //return false;
             
         case 36: // Home.
             if (!this.zoomingDisabled && !this.draggingDisabled && !this.rotationDisabled)

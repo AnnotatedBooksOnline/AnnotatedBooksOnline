@@ -30,7 +30,6 @@ Ext.define('Ext.ux.UploadGrid', {
     
     setStatus: function(id, status)
     {
-        console.log(status);
         if (status == 'success')
         {
             this.setProgress(id, 100);
@@ -132,6 +131,24 @@ Ext.define('Ext.ux.UploadGrid', {
         this.eventDispatcher.trigger('clear', this);
     },
     
+    remove: function(id)
+    {
+        // Fetch model.
+        var model = this.getUploadById(id);
+        if (model !== null)
+        {
+            // Remove model from store and remove progress.
+            var existingId    = model.get('id');
+            var existingToken = model.get('token');
+            
+            this.store.remove(model);
+            delete this.progressById[id];
+            
+            // Trigger remove.
+            this.eventDispatcher.trigger('remove', this, existingId, existingToken);
+        }
+    },
+    
     /*
      * Private methods.
      */
@@ -148,6 +165,11 @@ Ext.define('Ext.ux.UploadGrid', {
         
         this.eventDispatcher = new EventDispatcher();
         
+        var onCancel = function(id)
+        {
+            _this.remove(id);
+        }
+        
         this.listeners = {
             afterrender: function()
             {
@@ -157,8 +179,9 @@ Ext.define('Ext.ux.UploadGrid', {
                         for (var i = 0; i < records.length; i++)
                         {
                             var record = records[i];
-                            var progress = new UploadProgress(_this.body.dom, record.get('id'), record.get('filename'));
+                            var progress = new UploadProgress(_this.body.dom, record.get('id'), record.get('filename'), onCancel);
                             progress.setStatus(_this.renderStatus(record.get('status')));
+                            progress.setProgress(record.get('progress'));
                         }
                     },
                     update: function(store, record)
@@ -249,7 +272,7 @@ Ext.define('Ext.ux.UploadGrid', {
             filename: filename,
             size: size,
             status: status,
-            progress: 0
+            progress: status === 'success' ? 100 : 0
         });
         
         // Trigger add.

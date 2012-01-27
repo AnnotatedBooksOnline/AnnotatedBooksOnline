@@ -99,7 +99,7 @@ a:hover
 
 .plaintext h2
 {
-    font-size: 120%;
+    font-size: 125%;
     margin-bottom: 0.5em;
     font-weight: bold;
 }
@@ -124,35 +124,70 @@ a:hover
     text-align: left;
     padding: 10px;
     line-height: 20px;
+    font-size:13px;
+    min-width: 25em;
+    max-width: 50em;
+}
+
+.help li
+{
+    list-style: disc;
+    text-align: left;
+    padding-top:2px;
+    margin: 0 0 0 40px;
+}
+
+.help h1
+{
+    font-size: 145%;
+    line-height: 35px;
+    border-bottom-style: ridge; 
+    border-bottom-color: E9E8F6; 
+    border-bottom-width: 5px;
+    margin-bottom: 0.5em;
 }
 
 .help h2
 {
-    font-size: 32px;
-    line-height: 35px;
+    font-size: 130%;
+    margin-bottom: 0.5em;
+    font-weight: bold;
 }
 
-.help h3, .help h4, .help h5, .help h6
+.help h3
 {
-    font-size: 24px;
-    line-height: 25px;
+    font-size: 110%;
+    margin-bottom: 0em;
+}
+
+.help h4, .help h5, .help h6
+{
+    font-size: 200%;
 }
 
 .help p
 {
-    font-size: 16px;
+
+    font-size:13px;
     color: #333333;
+    margin-bottom: 0.5em;
 }
 
 .help-tree .x-tree-icon-parent
 {
-    display : none;
+    display : none !important;
+    background-image: none !important;
+}
+
+.help-tree.x-grid-tree-node-expanded .x-tree-icon-parent
+{
+    display : none !important;
     background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
 }
 
 .help-tree .x-tree-icon-leaf
 {
-    display : none;
+    display : none !important;
     background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
 }
 
@@ -183,4 +218,12 @@ a:hover
 {
     height: 13px !important;
     line-height: 13px !important;
+}
+
+/* Grid action tab image styling. */
+.x-action-col-cell img
+{
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
 }

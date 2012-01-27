@@ -4,10 +4,10 @@
 
 function UploadProgress()
 {
-this.constructor.apply(this, arguments);
+    this.constructor.apply(this, arguments);
 }
 
-UploadProgress.prototype.constructor = function(target, id, filename)
+UploadProgress.prototype.constructor = function(target, id, filename, oncancel)
 {
     this.containerElement = document.getElementById(id);
 
@@ -27,7 +27,7 @@ UploadProgress.prototype.constructor = function(target, id, filename)
         this.containerElement.id = id;
 
         var filenameText = document.createElement('td');
-        filenameText.style.width = '400px';
+        filenameText.style.width = '430px';
         filenameText.style.verticalAlign = 'middle';
         filenameText.className = "x-grid-cell x-grid-cell-first x-grid-cell-inner";
         filenameText.appendChild(document.createTextNode(filename));
@@ -55,10 +55,25 @@ UploadProgress.prototype.constructor = function(target, id, filename)
         progressBarContainer.appendChild(progressBar);
 
         var statusText = document.createElement('td');
-        statusText.style.width = '140px';
+        statusText.style.width = '80px';
         statusText.style.verticalAlign = 'middle';
         statusText.className = "x-grid-cell x-grid-cell-inner";
         statusText.innerHTML = "&nbsp;";
+
+        var cancelContainer = document.createElement('td');
+        cancelContainer.className = "x-grid-cell x-grid-cell-inner";
+        cancelContainer.style.width = '28px';
+        var cancelButton = document.createElement('div');
+        cancelButton.style.width = '16px';
+        cancelButton.style.height = '16px';
+        cancelButton.style.cursor = 'pointer';
+        cancelButton.className = 'remove-icon';
+        cancelButton.title = 'Remove';
+        cancelButton.onclick = function()
+        {
+            oncancel(id);
+        };
+        cancelContainer.appendChild(cancelButton);
 
         this.fileNameElement = filenameText;
         this.progressBarElement = progressBar;
@@ -67,6 +82,7 @@ UploadProgress.prototype.constructor = function(target, id, filename)
         this.containerElement.appendChild(filenameText);
         this.containerElement.appendChild(progressBarContainer);
         this.containerElement.appendChild(statusText);
+        this.containerElement.appendChild(cancelContainer);
 
         target.appendChild(this.containerElement);
         this.targetElement = target;
