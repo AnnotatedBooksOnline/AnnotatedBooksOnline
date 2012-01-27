@@ -10,7 +10,7 @@ Ext.define('Ext.ux.UserListPanel', {
     {
         var _this = this;
         
-        var startup = true;
+        var thisChange = false;
         
         // The checkbox to toggle automatic user activation.
         var autoAcceptBox = {
@@ -28,8 +28,13 @@ Ext.define('Ext.ux.UserListPanel', {
                         changedTo = 'on';
                     }
                     
-                    if (!startup) 
+                    if (thisChange)
                     {
+                        thisChange = false;
+                    }
+                    else
+                    {
+                        thisChange = true;
                         Ext.Msg.show({
                             title: 'Are you sure?',
                             msg: 'Are you sure you want to change the auto user acceptance to \''
@@ -54,13 +59,14 @@ Ext.define('Ext.ux.UserListPanel', {
                                            return true;
                                        }
                                    );
+                                   thisChange = false;
+                                }
+                                else
+                                {
+                                    Ext.getCmp('autoAcceptBox').setValue(!value);
                                 }
                             }
                         });
-                    }
-                    else
-                    {
-                        startup = false;
                     }
                 }
             }
