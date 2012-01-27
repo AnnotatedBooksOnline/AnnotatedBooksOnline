@@ -38,7 +38,7 @@ Ext.define('Ext.ux.HelpPanel', {
                     itemclick: function(t, record, item, index, e, eOpts)
                     {
                         _this.updateHTML(record);
-                    }
+                    },
                 }
             },{
                 xtype: 'panel',
@@ -148,22 +148,25 @@ Ext.define('Ext.ux.HelpPanel', {
     
     onAuthenticationChange: function()
     {
-        var treestore = this.down('[name=helpindex]').getStore();
-        treestore.getRootNode().removeAll();
-        treestore.load({
-            scope: this,
-            callback: function() {
-                this.down('[name=helpindex]').expandPath(this.path,undefined,undefined,function(succes,lastNode){
-                    if(succes)
-                    {
-                        this.updateHTML(lastNode);
-                    }
-                    else
-                    {
-                        this.updateHTML(this.down('[name=helpindex]').getRootNode().findChild('helpType','welcome'));
-                    }
-                },this);
-            }
-        });
+        if(!this.down('[name=helpindex]').getStore().isLoading())
+        {
+            var treestore = this.down('[name=helpindex]').getStore();
+            treestore.getRootNode().removeAll();
+            treestore.load({
+                scope: this,
+                callback: function() {
+                    this.down('[name=helpindex]').expandPath(this.path,undefined,undefined,function(succes,lastNode){
+                        if(succes)
+                        {
+                            this.updateHTML(lastNode);
+                        }
+                        else
+                        {
+                            this.updateHTML(this.down('[name=helpindex]').getRootNode().findChild('helpType','welcome'));
+                        }
+                    },this);
+                }
+            });
+        }
     }
 });
