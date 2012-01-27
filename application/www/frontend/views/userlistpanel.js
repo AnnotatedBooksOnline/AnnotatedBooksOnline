@@ -10,7 +10,7 @@ Ext.define('Ext.ux.UserListPanel', {
     {
         var _this = this;
         
-        var thisChange = false;
+        var thisChange = true;
         
         // The checkbox to toggle automatic user activation.
         var autoAcceptBox = {
