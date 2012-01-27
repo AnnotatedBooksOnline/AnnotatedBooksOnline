@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 ALTER TABLE "Annotations" ADD COLUMN "changedUserId" integer;
 ALTER TABLE "Annotations" ADD COLUMN "timeChanged" timestamp without time zone;
