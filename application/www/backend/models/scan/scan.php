@@ -14,7 +14,7 @@ class Scan extends Entity
     const STATUS_PENDING    = 1; // Scan is new and waiting to be processed.
     const STATUS_PROCESSING = 2; // Scan is currently being processed.
     const STATUS_ERROR      = 3; // Processing the scan has failed.
-    const STATUS_DELETED    = 4; // This scan has been deleted by the uploader or a moderator/admin.
+    const STATUS_DELETED    = 6; // This scan has been deleted by the uploader or a moderator/admin.
     const STATUS_PROCESSED  = 5; // Scan is fully processed, but some settings might not be set yet.
     
     /** Scan type constants. */

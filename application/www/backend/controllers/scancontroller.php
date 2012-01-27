@@ -56,6 +56,10 @@ class ScanController extends ControllerBase
             
             // Assert the user has permission to modify bindings.
             Authentication::assertPermissionTo('change-book-info');
+        } else {
+
+            // Assert the user has permission to upload bindings.
+            Authentication::assertPermissionTo('upload-bindings');
         }
         
         // TODO : MathijsB make this safer.
@@ -73,8 +77,11 @@ class ScanController extends ControllerBase
         // Deleted the deleted scans.
         foreach ($inputDeletedScans as $key => $scanId)
         {
+            // Mark the scan as deleted.
             $scan = new Scan($scanId);
-            $scan->delete();
+            $scan->setStatus(Scan::STATUS_DELETED);
+            $scan->setUploadId(null);
+            $scan->save();
             
             // Deleted any associated uploads.
             if ($scan->getUploadId() !== null) 

@@ -53,6 +53,10 @@ class BookController extends ControllerBase
             
             // Assert the user has permission to modify bindings.
             Authentication::assertPermissionTo('change-book-info');
+        } else {
+
+            // Assert the user has permission to upload bindings.
+            Authentication::assertPermissionTo('upload-bindings');
         }
         
         // TODO : MathijsB make this safer.

@@ -55,12 +55,37 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                         true);
                 }
             },{
+            	
                 xtype: 'button',
                 text: 'Delete binding',
                 name: 'deletebindingbutton',
                 handler: function()
                 {
-                    alert('TODO');
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Deletes the user afterwards.
+                    Ext.Msg.show({
+                    	title: 'Are you sure?',
+                    	msg: 'You are about to delete this binding, this can not be undone. Are you sure?',
+                    	buttons: Ext.Msg.YESNO,
+                    	icon: Ext.Msg.QUESTION,
+                    	callback: function(button)
+                    	{
+                    		if (button == 'yes')
+                            {
+                            	// Ban the user.
+                            	RequestManager.getInstance().request(
+                            			'Binding',
+                            			'delete',
+                            			{bindingId: _this.bindingModel.get('bindingId')},
+                            			_this,
+                            			function()
+                            			{
+                            				Application.getInstance().viewport.closeTab();
+                            			}
+                            	);
+                            }
+                        }
+                    });  
                 }
             }],
             items: [{
