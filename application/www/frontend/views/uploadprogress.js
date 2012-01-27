@@ -105,6 +105,7 @@ UploadProgress.prototype.constructor = function(target, id, filename, size, onca
 
 UploadProgress.prototype.setProgress = function(percentage)
 {
+    percentage = Math.round(percentage);
     var width = (2 * percentage) + 'px';
     this.progressBarElement.childNodes[1].style.width = width;
     this.progressBarElement.childNodes[1].childNodes[0].style.width = width;
