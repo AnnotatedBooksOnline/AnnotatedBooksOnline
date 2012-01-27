@@ -289,18 +289,22 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         var history = '';
         if (model !== undefined)
         {
-            var createdName = Authentication.getInstance().getUserModel().getFullName();
+            var user = Authentication.getInstance().getUserModel()
+            var createdName = 'Unknown';
+            var changedName = 'Unknown';
+            if (user != undefined)
+            {
+                createdName = user.getFullName();
+                changedName = user.getFullName();
+            }
             var timeCreated = 'now';
-            var changedName = Authentication.getInstance().getUserModel().getFullName();
             var timeChanged = 'now';
             
-            if (model.get('timeCreated')!==null)
-            {
-                createdName = model.get('createdName');
-                timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
-                changedName = model.get('changedName');
-                timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
-            }
+            createdName = model.get('createdName');
+            timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
+            changedName = model.get('changedName');
+            timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
+            
             history = '<table><tr><td><b> Created by:</b></td><td>' + createdName +
                 '</td><td>' + timeCreated +
                 '</td></tr><tr><td><b>Last modified by:</b></td><td>' + changedName +
