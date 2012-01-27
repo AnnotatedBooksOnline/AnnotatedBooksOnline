@@ -33,15 +33,17 @@ Document.prototype.levelTimers;
 //constants
 Document.tileSize    = 256;
 Document.invTileSize = 1 / Document.tileSize;
+Document.minLevelDisplay = 1;
 
 //constructor
-Document.prototype.constructor = function(width, height, zoomLevels, getImageUrl)
+Document.prototype.constructor = function(width, height, zoomLevels, getImageUrl, thumbnailUrl)
 {
     //set members
     this.dimensions   = {width: width, height: height};
     this.maxZoomLevel = zoomLevels - 1;
     
     this.getImageUrl = getImageUrl;
+    this.thumbnailUrl = thumbnailUrl;
     
     //create dom
     Document.base.constructor.call(this, '<div class="document"></div>');
@@ -101,7 +103,14 @@ Document.prototype.initialize = function()
     this.levelTimers  = [];
     for (var i = 0; i <= this.maxZoomLevel; ++i)
     {
-        this.dom.append('<div class="level" style="display: none;"></div>');
+        if (i <= Document.minLevelDisplay)
+        {
+            this.dom.append('<div class="level"></div>');
+        }
+        else
+        {
+            this.dom.append('<div class="level" style="display: none;"></div>');
+        }
         
         var width  = Math.pow(2, i) * this.dimensions.width;
         var height = Math.pow(2, i) * this.dimensions.height;
@@ -111,12 +120,24 @@ Document.prototype.initialize = function()
         
         this.levelSizes.push({width: width, height: height, cols: cols, rows: rows});
         this.levelOffsets.push({x: 0, y: 0});
-        this.levelVisible.push(false);
+        this.levelVisible.push(i <= Document.minLevelDisplay);
         this.levelTimers.push(undefined);
     }
     
     //get level containers
     this.levelContainers = $(".level", this.dom).get();
+    
+    //add the thumbnail as default image, as it is already loaded.
+    if (this.thumbnailUrl)
+    {
+        var thumbnail = document.createElement('img');
+        thumbnail.src = this.thumbnailUrl;
+        thumbnail.style.left = '0px';
+        thumbnail.style.top = '0px';
+        thumbnail.style.width = this.dimensions.width + 'px';
+        thumbnail.style.height = this.dimensions.height + 'px';
+        this.levelContainers[0].appendChild(thumbnail);
+    }
     
     //set event listeners
     this.dom.bind('selectstart', false);
@@ -353,7 +374,16 @@ Document.prototype.updateLevels = function(area)
     //calculate scale of base layer
     var scale = this.zoomFactor / ceiledZoomFactor;
     
-    //handle three main levels
+    var levelZeroScale = Math.pow(2, ceiledZoomLevel) * scale;
+    
+    //handle three main levels + minimal visible levels
+    for (var i = 0; i <= Document.minLevelDisplay; i++)
+    {
+        if (this.levelContainers[i])
+        {
+            this.updateLevel(area, i, levelZeroScale * Math.pow(2, i), true);
+        }
+    }
     this.updateLevel(area, ceiledZoomLevel,     scale,     true);
     this.updateLevel(area, ceiledZoomLevel - 1, scale * 2, false);
     this.updateLevel(area, ceiledZoomLevel - 2, scale * 4, false);
@@ -362,7 +392,7 @@ Document.prototype.updateLevels = function(area)
     for (var i = 0; i < this.levelContainers.length; ++i)
     {
         var delta = ceiledZoomLevel - i;
-        if ((delta < 0) || (delta >= 3) && this.levelVisible[i])
+        if ((delta < 0) || (delta >= 3) && this.levelVisible[i] && i > Document.minLevelDisplay)
         {
             var container = this.levelContainers[i];
             

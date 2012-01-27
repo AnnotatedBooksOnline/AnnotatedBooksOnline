@@ -38,7 +38,7 @@ Ext.define('Ext.ux.HelpPanel', {
                     itemclick: function(t, record, item, index, e, eOpts)
                     {
                         _this.updateHTML(record);
-                    }
+                    },
                 }
             },{
                 xtype: 'panel',
@@ -85,14 +85,14 @@ Ext.define('Ext.ux.HelpPanel', {
         
         this.path = record.getPath();
         
-        record.expand(true, function()
+        while (page.parentNode.get('pageName') != 'root')
         {
-            while (page.parentNode.get('pageName') != 'root')
-            {
-                page = page.parentNode;
-            }
-            
-            var htmltext = _this.generateHelpHTML(page, 2);
+            page = page.parentNode;
+        }
+        
+        page.expand(true, function()
+        {
+            var htmltext = _this.generateHelpHTML(page, 1);
             _this.down('[name=helptext]').update(htmltext);
             
             var content = Ext.get(record.get('pageName'));
@@ -106,7 +106,7 @@ Ext.define('Ext.ux.HelpPanel', {
     {
         var name = record.get('pageName');
         var htmltext = '<h' + depth + ' id="'+ name +'">' + name + '</h' + depth + '>';
-        if (depth > 2)
+        if (depth > 1)
         {
             htmltext += '<p>' + record.get('content') + '</p>';
         }
@@ -117,7 +117,7 @@ Ext.define('Ext.ux.HelpPanel', {
         }
         
         htmltext = htmltext.replace(
-            /[*][*]([^*]+)[|][|]([/A-z,-]+)[*][*]/g,
+            /[*][*]([^*]+)[|][|]([/A-z, ]+)[*][*]/g,
             '<a style="cursor: pointer" onclick="Ext.getCmp(\''
                 + this.getId() + '\').processLink(\'$2\')">$1</a>'
         );
@@ -148,22 +148,25 @@ Ext.define('Ext.ux.HelpPanel', {
     
     onAuthenticationChange: function()
     {
-        var treestore = this.down('[name=helpindex]').getStore();
-        treestore.getRootNode().removeAll();
-        treestore.load({
-            scope: this,
-            callback: function() {
-                this.down('[name=helpindex]').expandPath(this.path,undefined,undefined,function(succes,lastNode){
-                    if(succes)
-                    {
-                        this.updateHTML(lastNode);
-                    }
-                    else
-                    {
-                        this.updateHTML(this.down('[name=helpindex]').getRootNode().findChild('helpType','welcome'));
-                    }
-                },this);
-            }
-        });
+        if(!this.down('[name=helpindex]').getStore().isLoading())
+        {
+            var treestore = this.down('[name=helpindex]').getStore();
+            treestore.getRootNode().removeAll();
+            treestore.load({
+                scope: this,
+                callback: function() {
+                    this.down('[name=helpindex]').expandPath(this.path,undefined,undefined,function(succes,lastNode){
+                        if(succes)
+                        {
+                            this.updateHTML(lastNode);
+                        }
+                        else
+                        {
+                            this.updateHTML(this.down('[name=helpindex]').getRootNode().findChild('helpType','welcome'));
+                        }
+                    },this);
+                }
+            });
+        }
     }
 });

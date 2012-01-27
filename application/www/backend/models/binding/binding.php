@@ -15,7 +15,8 @@ class Binding extends Entity
     /** Binding status constants. */
     const STATUS_UPLOADED  = 0,
           STATUS_REORDERED = 1,
-          STATUS_SELECTED  = 2;
+          STATUS_SELECTED  = 2,
+          STATUS_DELETED   = 3;
     
     /** Id of this binding. */
     protected $bindingId;

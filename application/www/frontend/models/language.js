@@ -3,7 +3,7 @@
  */
 
 Ext.define('Ext.ux.LanguageModel', {
-    extend: 'Ext.data.Model',
+    extend: 'Ext.ux.ModelBase',
     idProperty: 'languageId',
     fields: ['languageName','languageId'],
     

@@ -12,7 +12,7 @@ Ext.define('Ext.ux.BookListFieldset', {
         
         var defConfig = {
             layout: 'fit',
-            autoscroll: true,
+            autoScroll: true,
             items: [{
                 xtype: 'grid',
                 border: false,
@@ -178,12 +178,13 @@ Ext.define('Ext.ux.ScanListFieldset', {
         
         var defConfig = {
             layout: 'fit',
-            autoscroll: true,
+            autoScroll: true,
             items: [{
                 xtype: 'grid',
                 border: false,
                 disabled: true,
                 store: this.store,
+                autoScroll: true,
                 resizable: false,
                 style: 'margin-top: 5px; margin-bottom: 5px;',
                 viewConfig: {
@@ -191,20 +192,17 @@ Ext.define('Ext.ux.ScanListFieldset', {
                 },
                 columns: [{
                     text:      'Page number',
-                    width:     50,
                     flex:      1,
                     sortable:  false,
                     dataIndex: 'page'
                 },{
                     text:      'Filename',
-                    width:     250,
-                    flex:      1,
+                    flex:      2,
                     sortable:  false,
                     dataIndex: 'scanName'
                 },{
                     text:      'Book title',
-                    width:     250,
-                    flex:      1,
+                    flex:      2,
                     sortable:  false,
                     dataIndex: 'bookTitle'
                 }],
@@ -309,12 +307,21 @@ Ext.define('Ext.ux.SelectBookForm', {
                     flex: 1
                 }]
             },{
-                title: 'Scans',
-                xtype: 'scanlistfieldset',
-                store: _this.scanstore,
-                collapsible: false,
+                xtype: 'panel',
                 region:'center',
-                margins: '5 0 0 0'
+                margins: '5 0 0 0',
+                items: [{
+                    xtype: 'bindinginformationfieldset',
+                    bindingId: this.bindingId,
+                    collapsible: false
+                },{
+                	title: 'Scans',
+                	xtype: 'scanlistfieldset',
+                	store: _this.scanstore,
+                	collapsible: false,
+                	layout: 'fit'
+                }]
+                
             }],
             buttons: [{
                 xtype: 'button',
