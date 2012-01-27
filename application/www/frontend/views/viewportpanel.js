@@ -23,13 +23,16 @@ Ext.define('Ext.ux.ViewportPanel', {
     {
         this.callParent();
         
-        var size = this.getSize();
+        var size = this.body.getSize();
         this.viewport = new Viewport(size.width, size.height, this.document);
     },
     
     afterComponentLayout: function(width, height)
     {
-        this.viewport.setDimensions(width, height);
+        this.callParent(arguments);
+        
+        var size = this.body.getSize();
+        this.viewport.setDimensions(size.width, size.height);
         
         if (this.insertedViewport === undefined)
         {
@@ -38,15 +41,14 @@ Ext.define('Ext.ux.ViewportPanel', {
             
             this.insertedViewport = true;
         }
-        
-        this.callParent(arguments);
     },
     
     setSize: function(width, height, animate)
-    {
-        this.viewport.setDimensions(width, height);
-        
+    {        
         this.callParent(arguments);
+        
+        var size = this.body.getSize();
+        this.viewport.setDimensions(size.width, size.height);
     },
     
     getViewport: function()

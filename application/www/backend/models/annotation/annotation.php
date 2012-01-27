@@ -16,9 +16,11 @@ class Annotation extends Entity
     protected $polygon;
     protected $transcriptionEng;
     protected $transcriptionOrig;
-    protected $userId;
+    protected $createdUserId;
     protected $timeCreated;
     protected $order;
+    protected $changedUserId;
+    protected $timeChanged;
     
     /**
      * Constructs an annotation entity.
@@ -76,7 +78,7 @@ class Annotation extends Entity
      */
     public static function getColumns()
     {
-        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'userId', 'timeCreated', 'order');
+        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'createdUserId', 'timeCreated', 'order', 'changedUserId', 'timeChanged');
     }
     
     /**
@@ -92,9 +94,11 @@ class Annotation extends Entity
             'polygon'           => 'base64',
             'transcriptionEng'  => 'string',
             'transcriptionOrig' => 'string',
-            'userId'            => 'int',
+            'createdUserId'     => 'int',
             'timeCreated'       => 'timestamp',
-            'order'             => 'int'
+            'order'             => 'int',
+            'changedUserId'     => 'int',
+            'timeChanged'       => 'timestamp',
         );
     }
     
@@ -134,13 +138,19 @@ class Annotation extends Entity
         }
     }
     
-    public function getUserId()    { return $this->userId; }
-    public function setUserId($id) { $this->userId = $id;  }
+    public function getCreatedUserId()    { return $this->createdUserId; }
+    public function setCreatedUserId($id) { $this->createdUserId = $id;  }
     
-    public function getTimeCreated()      { return $this->timeCreated;  }
+    public function getTimeCreated()      { return date('Y-m-d',$this->timeCreated);  }
     public function setTimeCreated($time) { $this->timeCreated = $time; }
     
     public function getOrder()       { return $this->order;   }
     public function setOrder($order) { $this->order = $order; }
+    
+    public function getChangedUserId()    { return $this->changedUserId; }
+    public function setChangedUserId($id) { $this->changedUserId = $id;  }
+    
+    public function getTimeChanged()      { return date('Y-m-d',$this->timeChanged);  }
+    public function setTimeChanged($time) { $this->timeChanged = $time; }
 }
 

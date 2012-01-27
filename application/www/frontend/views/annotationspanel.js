@@ -38,14 +38,25 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             border: false,
             layout: 'border',
             items: [{
+                xtype: 'panel',
                 region: 'north',
-                html: 'Please select an annotation below.',
-                name: 'active-annotation',
+                layout: 'anchor',
                 bodyPadding: 5,
                 border: false,
-                autoScroll: true,
                 height: 200,
-                resizable: { handles: 's' }
+                resizable: { handles: 's' },
+                items: [{
+                    html: 'Please select an annotation below.',
+                    anchor: '0, -40',
+                    autoScroll: true,
+                    name: 'active-annotation'
+                },{
+                    xtype: 'panel',
+                    height: '40', //should be 3em or something similar
+                    name: 'annotation-history',
+                    html: '',
+                    cls: 'annoHistory'
+                }]
             },{
                 xtype: 'annotationsgrid',
                 name: 'grid',
@@ -153,6 +164,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         // Fetch some components.
         this.langChooser      = this.down('[name=lang-chooser]');
         this.activeAnnotation = this.down('[name=active-annotation]');
+        this.annotationHist   = this.down('[name=annotation-history]');
         this.controls         = this.down('[name=controls]');
         this.grid             = this.down('[name=grid]');
         this.saveChangesBtn   = this.down('[name=save-changes]');
@@ -267,6 +279,36 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         
         // Show contents of new model.
         this.activeAnnotation.body.update(escape(text));
+        
+        // Fetch annotation history
+        this.updateHistory(model);
+    },
+    
+    updateHistory: function(model)
+    {
+        var history = '';
+        if (model !== undefined)
+        {
+            var createdName = Authentication.getInstance().getUserModel().getFullName();
+            var timeCreated = 'now';
+            var changedName = Authentication.getInstance().getUserModel().getFullName();
+            var timeChanged = 'now';
+            
+            if (model.get('timeCreated')!==null)
+            {
+                createdName = model.get('createdName');
+                timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
+                changedName = model.get('changedName');
+                timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
+            }
+            history = '<table><tr><td><b> Created by:</b></td><td>' + createdName +
+                '</td><td>' + timeCreated +
+                '</td></tr><tr><td><b>Last modified by:</b></td><td>' + changedName +
+                '</td><td>' + timeChanged +
+                '</td></tr></table>';
+        }
+        
+        this.annotationHist.body.update(history);
     },
     
     markDirty: function()
@@ -338,6 +380,8 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     {
         // Save annotations.
         this.annotations.save();
+        this.annotations.load();
+        this.updateHistory(this.activeModel);
     },
     
     resetChanges: function()
