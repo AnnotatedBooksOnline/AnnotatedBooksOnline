@@ -301,9 +301,10 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             var timeChanged = 'now';
             
             createdName = model.get('createdName');
-            timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
+            // TODO: change back to F j, Y with good layout of table.
+            timeCreated = Ext.Date.format(model.get('timeCreated'), 'd/m/Y');
             changedName = model.get('changedName');
-            timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
+            timeChanged = Ext.Date.format(model.get('timeChanged'), 'd/m/Y');
             
             history = '<table><tr><td><b> Created by:</b></td><td>' + createdName +
                 '</td><td>' + timeCreated +
