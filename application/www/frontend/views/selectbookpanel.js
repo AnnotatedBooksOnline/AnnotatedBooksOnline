@@ -181,7 +181,6 @@ Ext.define('Ext.ux.ScanListFieldset', {
             items: [{
                 xtype: 'grid',
                 border: false,
-                disabled: true,
                 store: this.store,
                 resizable: false,
                 viewConfig: {

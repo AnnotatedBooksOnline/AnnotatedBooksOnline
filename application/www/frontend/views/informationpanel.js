@@ -57,7 +57,6 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             },{
                 xtype: 'button',
                 text: 'Delete binding',
-                disabled: true,
                 name: 'deletebindingbutton',
                 handler: function()
                 {

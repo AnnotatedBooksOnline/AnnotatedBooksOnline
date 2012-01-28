@@ -115,7 +115,6 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 name: 'delete',
                 iconCls: 'cancel-icon',
                 text: 'Delete',
-                disabled: true,
                 hidden: this.isExistingBinding,
                 width: 140,
                 handler: function()
