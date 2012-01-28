@@ -57,6 +57,7 @@ class AnnotationController extends ControllerBase
                 // Insert every annotation.
                 $i = 0;
                 $annotationIds = array();
+                $time = time();
                 foreach ($annotations as $annotation)
                 {
                     // Fetch values.
@@ -75,33 +76,33 @@ class AnnotationController extends ControllerBase
                     }
                     
                     // Fetch or create annotation.
-                    $setChangedUserId = false;
-                    $time = time();
+                    $setChanged = false;
                     if ($annId > 0)
                     {
                         // Load existing annotation.
                         $ann = new Annotation($annId);
                         
                         // Check for changes.
-                        if (!$setChangedUserId)
+                        if (!$setChanged)
                         {
                             $values = $ann->getValues(
                                 array('transcriptionEng', 'transcriptionOrig', 'polygon', 'order'));
                             
-                            if (($values['transcriptionEng']  === $transEng)  &&
-                                ($values['transcriptionOrig'] === $transOrig) &&
-                                ($values['polygon']           === $polygon)   &&
-                                ($values['order']             === $i))
+                            if (($values['order']             === $i)                                       &&
+                                (AnnotationController::textEqual($values['transcriptionEng'], $transEng))   &&
+                                (AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) &&
+                                (AnnotationController::polygonEqual($values['polygon'], $polygon)))
                             {
                                 $annotationIds[] = $annId;
+                                $i++;
                                 continue;
                             }
                             
                             // Check whether to set the changedUserId
-                            $setChangedUserId =
-                                ($values['transcriptionEng']  !== $transEng)  ||
-                                ($values['transcriptionOrig'] !== $transOrig) ||
-                                ($values['polygon']           !== $polygon);
+                            $setChanged =
+                                (!AnnotationController::textEqual($values['transcriptionEng'], $transEng))   ||
+                                (!AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) ||
+                                (!AnnotationController::polygonEqual($values['polygon'], $polygon));
                         }
                     }
                     else
@@ -110,7 +111,7 @@ class AnnotationController extends ControllerBase
                         $ann = new Annotation();
                         $ann->setTimeCreated($time);
                         $ann->setCreatedUserId($userId);
-                        $setChangedUserId = true;
+                        $setChanged = true;
                     }
                     
                     // Set its values.
@@ -120,15 +121,15 @@ class AnnotationController extends ControllerBase
                             'transcriptionOrig' => $transOrig,
                             'polygon'           => $polygon,
                             'order'             => $i,
-                            'scanId'            => $scanId,
-                            'timeChanged'       => $time
+                            'scanId'            => $scanId
                         )
                     );
                     
                     // Set user id.
-                    if ($setChangedUserId)
+                    if ($setChanged)
                     {
                         $ann->setChangedUserId($userId);
+                        $ann->setTimeChanged($time);
                     }
                     
                     // Save it.
@@ -163,5 +164,41 @@ class AnnotationController extends ControllerBase
                 return $annotationIds;
             }
         );
+    }
+    
+    /**
+     * Compares two polygons for equality with delta.
+     */
+    public static function polygonEqual($a, $b)
+    {
+        // Checks for equality of two vertices.
+        $vertexEqual = function($a, $b)
+        {
+            $delta = 0.000001;
+            return $a !== null && $b !== null && abs($a['x'] - $b['x']) < $delta && abs($a['y'] - $b['y']) < $delta;
+        };
+        
+        // Zip the two polygons together.
+        $zip = array_map(null, $a, $b);
+        
+        // Check for equality of all vertices.
+        foreach ($zip as $vertex)
+        {
+            if (!$vertexEqual($vertex[0], $vertex[1]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Compares two texts for equality, ignoring line ending differences and trailing/leading whitespace.
+     */
+    public static function textEqual($a, $b)
+    {
+        $safeA = str_replace("\r\n", "\n", rtrim($a));
+        $safeB = str_replace("\r\n", "\n", rtrim($b));
+        return $safeA === $safeB;
     }
 }

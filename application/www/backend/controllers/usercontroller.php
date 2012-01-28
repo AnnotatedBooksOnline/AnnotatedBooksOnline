@@ -36,7 +36,7 @@ class UserController extends ControllerBase
         $userId = Authentication::getInstance()->getUserId();
         
         // Remove columns that user does not have access to.
-        foreach ($result['records'] as &$record)
+        foreach ($result['records'] as $i => &$record)
         {
             if ($record['userId'] === $userId)
             {
@@ -276,6 +276,10 @@ class UserController extends ControllerBase
         if ($user === null)
         {
             throw new ControllerException('user-does-not-exist', $username);
+        }
+        if ($user->getUserId() == Authentication::getInstance()->getUserId())
+        {
+            throw new ControllerException('cannot-delete-yourself');
         }
         
         // Delete the user.

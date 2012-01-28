@@ -14,8 +14,17 @@ Ext.define('Ext.ux.UserListPanel', {
         
         var store = Ext.create('Ext.ux.StoreBase', {
             model: 'Ext.ux.UserModel',
-            pageSize: 20
+            pageSize: 20,
+                        remoteFilter: false
         });
+                     
+        store.filter([{
+            filterFn: function(record)
+            {
+                return record.get('username') != '<deleted user>';
+            }
+        }]);
+                    
         
         // The checkbox to toggle automatic user activation.
         var autoAcceptBox = {
