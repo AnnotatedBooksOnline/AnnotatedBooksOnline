@@ -274,7 +274,7 @@ class User extends Entity
             
         // All tables that need a userId foreign key set to the special deleted user after
         // deleting this user.
-        $refTables = array('Uploads');
+        $refTables = array('Uploads', 'Bindings');
             
         // Update references.
         foreach ($refTables as $table)
