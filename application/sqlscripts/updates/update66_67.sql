@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 -- Make scan dimensions floating-point.
 ALTER TABLE "Scans" ALTER "width" TYPE real;
