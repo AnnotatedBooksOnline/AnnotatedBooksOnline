@@ -75,7 +75,7 @@ class AnnotationController extends ControllerBase
                     }
                     
                     // Fetch or create annotation.
-                    $setUserId = false;
+                    $setChangedUserId = false;
                     $time = time();
                     if ($annId > 0)
                     {
@@ -83,7 +83,7 @@ class AnnotationController extends ControllerBase
                         $ann = new Annotation($annId);
                         
                         // Check for changes.
-                        if (!$setUserId)
+                        if (!$setChangedUserId)
                         {
                             $values = $ann->getValues(
                                 array('transcriptionEng', 'transcriptionOrig', 'polygon', 'order'));
@@ -96,16 +96,21 @@ class AnnotationController extends ControllerBase
                                 $annotationIds[] = $annId;
                                 continue;
                             }
+                            
+                            // Check whether to set the changedUserId
+                            $setChangedUserId =
+                                ($values['transcriptionEng']  !== $transEng)  ||
+                                ($values['transcriptionOrig'] !== $transOrig) ||
+                                ($values['polygon']           !== $polygon);
                         }
                     }
                     else
                     {
                         // Create new annotation.
                         $ann = new Annotation();
-                        
                         $ann->setTimeCreated($time);
-                        
-                        $setUserId = true;
+                        $ann->setCreatedUserId($userId);
+                        $setChangedUserId = true;
                     }
                     
                     // Set its values.
@@ -116,15 +121,14 @@ class AnnotationController extends ControllerBase
                             'polygon'           => $polygon,
                             'order'             => $i,
                             'scanId'            => $scanId,
-                            'changedUserId'     => $userId,
                             'timeChanged'       => $time
                         )
                     );
                     
                     // Set user id.
-                    if ($setUserId)
+                    if ($setChangedUserId)
                     {
-                        $ann->setCreatedUserId($userId);
+                        $ann->setChangedUserId($userId);
                     }
                     
                     // Save it.
