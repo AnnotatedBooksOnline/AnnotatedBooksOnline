@@ -56,26 +56,26 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 // the 'ban' button.
                 if (store.data.get(0).get('banned') == '0') 
                 {
-                    _this.down('[id=unban]').setDisabled(true);
-                    _this.down('[id=ban]').setDisabled(false);
+                    _this.down('[name=unban]').setDisabled(true);
+                    _this.down('[name=ban]').setDisabled(false);
                 } 
                 else 
                 {
-                    _this.down('[id=ban]').setDisabled(true);
-                    _this.down('[id=unban]').setDisabled(false);
+                    _this.down('[name=ban]').setDisabled(true);
+                    _this.down('[name=unban]').setDisabled(false);
                 }
                 
                 // Enable the 'accept' and 'decline' buttons when the user is pending
                 // activation. Disable them otherwise.
                 if (store.data.get(0).get('activationStage') == '0') 
                 {
-                    _this.down('[id=accept]').setDisabled(false);
-                    _this.down('[id=decline]').setDisabled(false);
+                    _this.down('[name=accept]').setDisabled(false);
+                    _this.down('[name=decline]').setDisabled(false);
                 }
                 else
                 {
-                    _this.down('[id=accept]').setDisabled(true);
-                    _this.down('[id=decline]').setDisabled(true);                    
+                    _this.down('[name=accept]').setDisabled(true);
+                    _this.down('[name=decline]').setDisabled(true);                    
                 }
                 
             },
@@ -143,7 +143,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             },{
                 xtype: 'button',
                 text: 'Unban user',
-                id: 'unban',
+                name: 'unban',
                 width: '140',
                 hidden: !Authentication.getInstance().hasPermissionTo('ban-users'),
                 //enabled: store.data[0].get('banned') == '1',
@@ -178,7 +178,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             },{
                 xtype: 'button',
                 text: 'Ban user',
-                id: 'ban',
+                name: 'ban',
                 width: '140',
                 hidden: !Authentication.getInstance().hasPermissionTo('ban-users'),
                 //enabled: store.data[0].get('banned') == '0',
@@ -213,7 +213,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             },{
                 xtype: 'button',
                 text: 'Delete user',
-                id: 'delete',
+                name: 'delete',
                 width: '140',
                 hidden: !Authentication.getInstance().hasPermissionTo('delete-users'),
                 handler: function ()
@@ -248,7 +248,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             },{
                 xtype: 'button',
                 text: 'Change Role',
-                id: 'changerole',
+                name: 'changerole',
                 width: '140',
                 hidden: !Authentication.getInstance().hasPermissionTo('change-user-roles'),
                 handler: function ()
@@ -267,7 +267,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             },{
                 xtype: 'button',
                 text: 'Accept',
-                id: 'accept',
+                name: 'accept',
                 width: '140',
                 hidden: !Authentication.getInstance().hasPermissionTo('accept-registrations'),
                 handler: function ()
@@ -302,7 +302,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
             },{
                 xtype: 'button',
                 text: 'Decline',
-                id: 'decline',
+                name: 'decline',
                 width: '140',
                 hidden: !Authentication.getInstance().hasPermissionTo('accept-registrations'),
                 handler: function ()
@@ -511,3 +511,4 @@ Ext.define('Ext.ux.ChangeRoleWindow', {
         this.callParent();
     }
 });
+
