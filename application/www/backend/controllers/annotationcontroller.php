@@ -96,7 +96,6 @@ class AnnotationController extends ControllerBase
                                 $annotationIds[] = $annId;
                                 continue;
                             }
-                            
                         }
                     }
                     else

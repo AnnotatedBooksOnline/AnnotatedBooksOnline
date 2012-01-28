@@ -54,6 +54,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                     xtype: 'panel',
                     height: '40', //should be 3em or something similar
                     name: 'annotation-history',
+                    autoScroll: true,
                     html: '',
                     cls: 'annoHistory'
                 }]
@@ -301,10 +302,17 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             var timeChanged = 'now';
             
             createdName = model.get('createdName');
-            // TODO: change back to F j, Y with good layout of table.
-            timeCreated = Ext.Date.format(model.get('timeCreated'), 'd/m/Y');
             changedName = model.get('changedName');
-            timeChanged = Ext.Date.format(model.get('timeChanged'), 'd/m/Y');
+            
+            // TODO: change back to F j, Y with good layout of table.
+            if (model.get('timeCreated') != undefined && model.get('timeCreated') != null)
+            {
+                timeCreated = Ext.Date.format(model.get('timeCreated'), 'd/m/Y');
+            }
+            if (model.get('timeChanged') != undefined && model.get('timeChanged') != null)
+            {
+                timeChanged = Ext.Date.format(model.get('timeChanged'), 'd/m/Y');
+            }
             
             history = '<table><tr><td><b> Created by:</b></td><td>' + createdName +
                 '</td><td>' + timeCreated +
@@ -369,7 +377,8 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                                 // Reset changes.
                                 _this.resetChanges();
                             }
-                        });
+                        }
+                    );
                 }
             }
         }
