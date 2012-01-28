@@ -235,7 +235,7 @@ Annotations.prototype.load = function(force)
     }
     
     // Ask user whether to save changes.
-    if (this.dirty && (force !== true))
+    if (!this.saving && this.dirty && (force !== true))
     {
         var _this = this;
         Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
