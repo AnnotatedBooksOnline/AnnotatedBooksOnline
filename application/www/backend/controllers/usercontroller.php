@@ -277,6 +277,10 @@ class UserController extends ControllerBase
         {
             throw new ControllerException('user-does-not-exist', $username);
         }
+        if ($user->getUserId() == Authentication::getInstance()->getUserId())
+        {
+            throw new ControllerException('cannot-delete-yourself');
+        }
         
         // Delete the user.
         $user->delete();
