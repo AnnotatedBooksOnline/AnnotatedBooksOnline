@@ -127,6 +127,18 @@ class UserController extends ControllerBase
     }
     
     /**
+     * Helper function that validates an e-mail address.
+     */
+    private function validEmailAddress($email)
+    {
+        // This method avoids a bug in preg_match.
+        $splitmail = explode('@', $email);
+        return count($splitmail) == 2 &&
+               preg_match("/^([\w]+)(.[\w]+)*/", $splitmail[0]) &&
+               preg_match("/([\w-]+\.){1,5}([A-Za-z]){2,4}$/", $splitmail[1]);
+    }
+    
+    /**
      * Creates a user.
      */
     public function actionCreate($data)
@@ -158,14 +170,16 @@ class UserController extends ControllerBase
             'rank'             => User::RANK_DEFAULT
         );
         
+        Log::debug('!!!!!!' . $email);
+        
         // Check incoming values: username existance, email existance, correct pattern for 
         // username, correct pattern for email and no empty required fields.
         if ($this->actionUsernameExists(array('username' => $username)) 
          || $this->actionEmailExists(array('email' => $email))
          || !preg_match("/^[A-Za-z\d\._'@ ]*$/", $username)
-         || !preg_match("/^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/", $email)
+         || !$this->validEmailAddress($email)
          || $username==="" || $email==="" || $firstName==="" || $lastName==="" || $password==="")
-        {
+        {            
             throw new RegistrationFailedException('registration-failed');
         }
         

@@ -11,37 +11,37 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         var _this = this;
         
 
-       	Ext.ux.BindingModel.loadRecursive(this.bindingId, 
-       	{
-       	      scope: _this,
-       	      failure: function(binding, operation) {
-       	           //handleError
-       	           return undefined;
-       	      },
-       	      success: function(binding, operation) {
-       	           //load the names of the readers
-       	           var readerNames='';
-       	           binding.provenances().each(function(record)
-       	           {
-       	               readerNames+=','+record.get('name');
-       	           });
-       	                
-       	           //load the names of the languages associated with the binding
-       	           var bindingLanguages='';
-       	           binding.bindingLanguages().each(function(record)
-       	           {
-       	                bindingLanguages+=','+record.get('languageName');
-       	           });
-        	                
-       	           this.down('propertygrid').setSource({
-       	                      "a": binding.get('library').libraryName,
-       	                      "b": binding.get('signature'),
-       	                      "c": readerNames.substring(1),
-       	                      "d": bindingLanguages.substring(1)
-       	                 });
-       	       },
-       	       callback: function(record, operation) {}
-       	});
+        Ext.ux.BindingModel.loadRecursive(this.bindingId, 
+        {
+              scope: _this,
+              failure: function(binding, operation) {
+                   //handleError
+                   return undefined;
+              },
+              success: function(binding, operation) {
+                   //load the names of the readers
+                   var readerNames='';
+                   binding.provenances().each(function(record)
+                   {
+                       readerNames+=','+record.get('name');
+                   });
+                        
+                   //load the names of the languages associated with the binding
+                   var bindingLanguages='';
+                   binding.bindingLanguages().each(function(record)
+                   {
+                        bindingLanguages+=','+record.get('languageName');
+                   });
+                         
+                   this.down('propertygrid').setSource({
+                              "a": binding.get('library').libraryName,
+                              "b": binding.get('signature'),
+                              "c": readerNames.substring(1),
+                              "d": bindingLanguages.substring(1)
+                         });
+               },
+               callback: function(record, operation) {}
+        });
         
 
         
