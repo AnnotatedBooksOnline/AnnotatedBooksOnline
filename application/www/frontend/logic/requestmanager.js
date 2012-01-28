@@ -200,10 +200,7 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
         }
     }
     else
-    {
-        // Determine stack trace.
-        trace = trace || '(not available)';
-        
+    {        
         // Call error callback.
         var result;
         if (request.onError !== undefined)
@@ -221,9 +218,19 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
 
 RequestManager.showErrorMessage = function(code, message, trace)
 {
-    // Let the stack trace stay as HTML, it is a serverside exception.
     var messageContent = escape('An error occurred, message: \'' +
-        message + '\', code: \'' + code + '\', stack trace:' + "\n\n") + trace;
+        message + '\', code: \'' + code + '\''); 
+    
+    // Add stack trace, if present.
+    if(trace)
+    {
+        // Let the stack trace stay as HTML, it is a serverside exception.
+        messageContent += escape(', stack trace:' + "\n\n") + trace;
+    }
+    else
+    {
+        messageContent += escape(".\n\n");
+    }
     
     Ext.Msg.show({
         title: message,

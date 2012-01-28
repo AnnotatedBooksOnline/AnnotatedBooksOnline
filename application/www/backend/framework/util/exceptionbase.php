@@ -19,8 +19,9 @@ class ExceptionBase extends Exception
         $args    = func_get_args();
         $args[0] = 'error-' . $id;
         $message = call_user_func_array('__', $args);
+        $timestamp = gmdate('Y/m/d H:i:s');
         
-        parent::__construct($message);
+        parent::__construct($timestamp . ' - ' . $message);
     }
     
     /**
