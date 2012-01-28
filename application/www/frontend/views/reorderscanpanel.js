@@ -102,7 +102,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
             name: 'reorderscanform',
             selectFirstField: false,
             items: [{
-                xtype: 'bindinginformationfieldset'
+                xtype: 'bindinginformationfieldset',
+                bindingId: this.bindingId
             },{
                 xtype: 'reorderscanfieldset',
                 name: 'reorder',
@@ -114,6 +115,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 name: 'delete',
                 iconCls: 'cancel-icon',
                 text: 'Delete',
+                hidden: this.isExistingBinding,
                 width: 140,
                 handler: function()
                 {
@@ -133,6 +135,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 }
             },{
                 xtype: 'button',
+                disabled: false,
                 name: 'save',
                 text: 'Save',
                 iconCls: 'accept-icon',

@@ -274,7 +274,7 @@ class User extends Entity
             
         // All tables that need a userId foreign key set to the special deleted user after
         // deleting this user.
-        $refTables = array('Uploads', 'Annotations');
+        $refTables = array('Uploads', 'Bindings');
             
         // Update references.
         foreach ($refTables as $table)
@@ -283,6 +283,14 @@ class User extends Entity
                 ->where('userId = :oldId')
                 ->execute(array('oldId' => $this->getUserId(), 'newId' => $newId));
         }
+        
+        // Also change Annotations user ids, which have a different name.
+        Query::update('Annotations', array('createdUserId' => ':newId'))
+            ->where('createdUserId = :oldId')
+            ->execute(array('oldId' => $this->getUserId(), 'newId' => $newId));
+        Query::update('Annotations', array('changedUserId' => ':newId'))
+            ->where('changedUserId = :oldId')
+            ->execute(array('oldId' => $this->getUserId(), 'newId' => $newId));
             
         // Now the user can safely be deleted, as the DBMS will automatically delete
         // associated notes and shelves etc.

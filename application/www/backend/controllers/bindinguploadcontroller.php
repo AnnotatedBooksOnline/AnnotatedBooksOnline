@@ -33,7 +33,6 @@ class BindingUploadController extends Controller
         Database::getInstance()->startTransaction();
         
         // Assert that the user is authenticated. 
-        // TODO: Mathijs : Permissions when modifying bindings.
         Authentication::assertPermissionTo('upload-bindings');  
         
         // Retrieve contents of record.
@@ -62,6 +61,10 @@ class BindingUploadController extends Controller
         }
         else 
         {
+            // Assert the user has permission to modify bindings.
+            Authentication::assertPermissionTo('change-book-info');
+            
+            // Load the existing binding with all its attribute entities.
             $binding = new Binding($inputBindingId);
             $binding->loadDetails();
         }

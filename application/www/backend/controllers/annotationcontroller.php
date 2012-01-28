@@ -16,7 +16,17 @@ class AnnotationController extends ControllerBase
     public function actionLoad($data)
     {
         // Handle load.
-        return $this->handleLoad($data, 'Annotation', 'annotationId');
+        $result = $this->handleLoad($data, 'Annotation', 'annotationId');
+                
+        // Also load the name of each language.
+        foreach ($result['records'] as &$record)
+        {
+            $createdUser = new User($record['createdUserId']);
+            $changedUser = new User($record['changedUserId']);
+            $record['createdName'] = $createdUser->getFirstName()." ".$createdUser->getLastName();
+            $record['changedName'] = $changedUser->getFirstName()." ".$changedUser->getLastName();
+        }
+        return $result;
     }
     
     /**
@@ -66,6 +76,7 @@ class AnnotationController extends ControllerBase
                     
                     // Fetch or create annotation.
                     $setUserId = false;
+                    $time = time();
                     if ($annId > 0)
                     {
                         // Load existing annotation.
@@ -85,13 +96,6 @@ class AnnotationController extends ControllerBase
                                 $annotationIds[] = $annId;
                                 continue;
                             }
-                            
-                            // Remove this if we want user id to be the creator of the
-                            // annotation, not the last modifier.
-                            $setUserId =
-                                ($values['transcriptionEng']  !== $transEng)  ||
-                                ($values['transcriptionOrig'] !== $transOrig) ||
-                                ($values['polygon']           !== $polygon);
                         }
                     }
                     else
@@ -99,7 +103,7 @@ class AnnotationController extends ControllerBase
                         // Create new annotation.
                         $ann = new Annotation();
                         
-                        $ann->setTimeCreated(time());
+                        $ann->setTimeCreated($time);
                         
                         $setUserId = true;
                     }
@@ -112,13 +116,15 @@ class AnnotationController extends ControllerBase
                             'polygon'           => $polygon,
                             'order'             => $i,
                             'scanId'            => $scanId,
+                            'changedUserId'     => $userId,
+                            'timeChanged'       => $time
                         )
                     );
                     
                     // Set user id.
                     if ($setUserId)
                     {
-                        $ann->setUserId($userId);
+                        $ann->setCreatedUserId($userId);
                     }
                     
                     // Save it.

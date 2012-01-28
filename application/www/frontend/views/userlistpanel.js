@@ -10,8 +10,9 @@ Ext.define('Ext.ux.UserListPanel', {
     {
         var _this = this;
         
+        var thisChange = true;
+        
         // The checkbox to toggle automatic user activation.
-        // TODO: make it look a little nicer
         var autoAcceptBox = {
             xtype: 'checkbox',
             boxLabel: 'Automatically accept user registration requests',
@@ -20,21 +21,53 @@ Ext.define('Ext.ux.UserListPanel', {
                 change: function ()
                 {
                     var value = Ext.getCmp('autoAcceptBox').getValue();
+                    var changedTo = 'off';
                     
-                    RequestManager.getInstance().request(
-                       'UserActivation',
-                       'setAutoAcceptance',
-                       {autoAccept: value},
-                       _this,
-                       function()
-                       {
-                           // No need to do anything on success.
-                       },
-                       function()
-                       {
-                           return true;
-                       }
-                   );
+                    if (value) 
+                    {
+                        changedTo = 'on';
+                    }
+                    
+                    if (thisChange)
+                    {
+                        thisChange = false;
+                    }
+                    else
+                    {
+                        thisChange = true;
+                        Ext.Msg.show({
+                            title: 'Are you sure?',
+                            msg: 'Are you sure you want to change the auto user acceptance to \''
+                                + changedTo + '\'?',
+                            buttons: Ext.Msg.YESNO,
+                            icon: Ext.Msg.QUESTION,
+                            callback: function(button)
+                            {
+                                if (button == 'yes')
+                                {
+                                    RequestManager.getInstance().request(
+                                       'UserActivation',
+                                       'setAutoAcceptance',
+                                       {autoAccept: value},
+                                       _this,
+                                       function()
+                                       {
+                                           // No need to do anything on success.
+                                       },
+                                       function()
+                                       {
+                                           return true;
+                                       }
+                                   );
+                                   thisChange = false;
+                                }
+                                else
+                                {
+                                    Ext.getCmp('autoAcceptBox').setValue(!value);
+                                }
+                            }
+                        });
+                    }
                 }
             }
         };

@@ -31,6 +31,7 @@ class ScanList extends EntityList {
                  array("Books.firstPage <= Scans.page",
                        "Books.lastPage >= Scans.page",
                        "Books.bindingId = Scans.bindingId"), 
-                 "LEFT OUTER");
+                 "LEFT OUTER")
+            ->where("NOT Scans.status = " . Scan::STATUS_DELETED);
     }
 }

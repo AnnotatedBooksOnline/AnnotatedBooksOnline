@@ -493,6 +493,8 @@ Viewport.prototype.getDocument = function()
 Viewport.prototype.setDocument = function(document)
 {
     this.document.remove();
+    this.document.destroy();
+    delete this.document;
     
     this.document           = document;
     this.documentDimensions = document.getDimensions();
@@ -868,8 +870,8 @@ Viewport.prototype.onKeyDown = function(event)
     {
         case 32: // Space.
             this.spaceDown = true;
-            
-            return false;
+            break;
+            //return false;
             
         case 36: // Home.
             if (!this.zoomingDisabled && !this.draggingDisabled && !this.rotationDisabled)
@@ -877,7 +879,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.reset();
             }
             
-            return false;
+            break;
+            //return false;
             
         case 107: // Numpad +.
             if (!this.zoomingDisabled)
@@ -885,7 +888,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.zoom(this.zoomLevel + 1);
             }
             
-            return false;
+            break;
+            //return false;
             
         case 109: // Numpad -.
             if (!this.zoomingDisabled)
@@ -893,7 +897,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.zoom(this.zoomLevel - 1);
             }
             
-            return false;
+            break;
+            //return false;
             
         case 37: // Left.
         case 100: // Numpad 4.
@@ -902,7 +907,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: -Viewport.arrowMoveDistance, y: 0});
             }
             
-            return false;
+            break;
+            //return false;
             
         case 39: // Right.
         case 102: // Numpad 6.
@@ -911,7 +917,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: +Viewport.arrowMoveDistance, y: 0});
             }
             
-            return false;
+            break;
+            //return false;
             
         case 38: // Up.
         case 104: // Numpad 8.
@@ -920,7 +927,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: 0, y: -Viewport.arrowMoveDistance});
             }
             
-            return false;
+            break;
+            //return false;
             
         case 40: // Down.
         case 98: // Numpad 2.
@@ -929,7 +937,8 @@ Viewport.prototype.onKeyDown = function(event)
                 this.move({x: 0, y: +Viewport.arrowMoveDistance});
             }
             
-            return false;
+            break;
+            //return false;
     }
 }
 

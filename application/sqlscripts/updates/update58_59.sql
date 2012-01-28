@@ -1,4 +1,4 @@
-BEGIN TRANSAcTION;
+BEGIN TRANSACTION;
 
 -- Change register help a little bit.
 

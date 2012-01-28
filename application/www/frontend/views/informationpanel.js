@@ -27,13 +27,13 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             var lastPage = rec.get('lastPage');
             var currentPage = viewer.getPage()+1;
             if (currentPage >= firstPage && currentPage <= lastPage)
-                {
-                    return '<span style="color: #000000;">' + rec.get('title') + '</span>';
-                }
+            {
+                return '<span style="color: #000000;">' + rec.get('title') + '</span>';
+            }
             else
-                {
-                    return rec.get('title');
-                }
+            {
+                return rec.get('title');
+            }
         }
         
         var defConfig = {
@@ -46,6 +46,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             buttons: [{
                 xtype: 'button',
                 text: 'Modify binding',
+                name: 'modifybindingbutton',
                 handler: function()
                 {
                     Application.getInstance().gotoTab(
@@ -56,9 +57,34 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             },{
                 xtype: 'button',
                 text: 'Delete binding',
+                name: 'deletebindingbutton',
                 handler: function()
                 {
-                    alert('TODO');
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Deletes the user afterwards.
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: 'You are about to delete this binding, this can not be undone. Are you sure?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                        {
+                            if (button == 'yes')
+                            {
+                                // Ban the user.
+                                RequestManager.getInstance().request(
+                                        'Binding',
+                                        'delete',
+                                        {bindingId: _this.bindingModel.get('bindingId')},
+                                        _this,
+                                        function()
+                                        {
+                                            Application.getInstance().viewport.closeTab();
+                                        }
+                                );
+                            }
+                        }
+                    });  
                 }
             }],
             items: [{
@@ -69,8 +95,9 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 viewConfig: {
                     style: {
                         overflow: 'auto',
-                        overflowX: 'hidden' }
-                    },
+                        overflowX: 'hidden' 
+                    }
+                },
                 flex: 1,
                 border: false,
                 store: this.infoPanelStore,
@@ -81,9 +108,12 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                     groupHeaderTpl: '{name:bookName}',
                     startCollapsed: true
                 }],
-                columns: [
-                    {dataIndex: 'property', flex: 1, summaryType: function(records){
-                    return '<span style="color: (255,0,0);"> Page '+records[0].get('firstPage')+'</span>';
+                columns: [{
+                    dataIndex: 'property',
+                    flex: 1, 
+                    summaryType: function(records) {
+                        return '<span style="color: (255,0,0);"> Page '
+                               + records[0].get('firstPage') + '</span>';
                     }
                 }]
             },{
@@ -98,6 +128,18 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         Ext.apply(this, defConfig);
         
         this.callParent();
+        
+        if (Authentication.getInstance().hasPermissionTo('change-book-info'))
+        {
+            this.down("[name=modifybindingbutton]").setVisible(true);
+            this.down("[name=deletebindingbutton]").setVisible(true);
+        }
+        else
+        {
+            this.down("[name=modifybindingbutton]").setVisible(false);
+            this.down("[name=deletebindingbutton]").setVisible(false);
+        }
+        
     },
     
     afterRender: function()

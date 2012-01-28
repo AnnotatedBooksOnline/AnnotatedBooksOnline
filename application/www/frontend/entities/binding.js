@@ -113,6 +113,7 @@ Binding.documentFromScan = function(scan)
         {
             return 'data/tiles/' + scan.get('scanId') 
                  + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-        }
+        },
+        'data/thumbnails/' + scan.get('scanId') + '.jpg'
     );
 }

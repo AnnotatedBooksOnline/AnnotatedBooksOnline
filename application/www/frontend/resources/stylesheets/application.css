@@ -99,7 +99,7 @@ a:hover
 
 .plaintext h2
 {
-    font-size: 120%;
+    font-size: 125%;
     margin-bottom: 0.5em;
     font-weight: bold;
 }
@@ -132,9 +132,9 @@ a:hover
     margin: 0 0 0 40px;
 }
 
-.help h2
+.help h1
 {
-    font-size: 27px;
+    font-size: 145%;
     line-height: 35px;
     border-bottom-style: ridge;
     border-bottom-color: E9E8F6;
@@ -142,11 +142,22 @@ a:hover
     margin-bottom: 0.5em;
 }
 
-.help h3, .help h4, .help h5, .help h6
+.help h2
 {
-    font-size: 18px;
-    line-height: 25px;
+    font-size: 130%;
     margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.help h3
+{
+    font-size: 110%;
+    margin-bottom: 0em;
+}
+
+.help h4, .help h5, .help h6
+{
+    font-size: 200%;
 }
 
 .help p
@@ -154,6 +165,11 @@ a:hover
     font-size: 13px;
     color: #333;
     margin-bottom: 0.5em;
+}
+
+.annoHistory  td
+{
+    padding:0em 0.3em;
 }
 
 .help-tree .x-tree-icon-parent
