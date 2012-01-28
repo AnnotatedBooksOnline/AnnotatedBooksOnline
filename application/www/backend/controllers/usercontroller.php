@@ -48,14 +48,6 @@ class UserController extends ControllerBase
             }
         }
         
-        // Filter <deleted user> from result.
-        $dummyUser = Setting::getSetting('deleted-user-id');
-        $result['records'] = array_filter($result['records'],
-                                function($user) use ($dummyUser)
-                                {
-                                    return $user['userId'] != $dummyUser;
-                                });
-        
         return $result;
     }
     
