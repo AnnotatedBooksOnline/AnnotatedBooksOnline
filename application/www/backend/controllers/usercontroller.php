@@ -36,7 +36,7 @@ class UserController extends ControllerBase
         $userId = Authentication::getInstance()->getUserId();
         
         // Remove columns that user does not have access to.
-        foreach ($result['records'] as &$record)
+        foreach ($result['records'] as $i => &$record)
         {
             if ($record['userId'] === $userId)
             {
@@ -47,6 +47,14 @@ class UserController extends ControllerBase
                 $record = array_intersect_key($record, $columns);
             }
         }
+        
+        // Filter <deleted user> from result.
+        $dummyUser = Setting::getSetting('deleted-user-id');
+        $result['records'] = array_filter($result['records'],
+                                function($user) use ($dummyUser)
+                                {
+                                    return $user['userId'] != $dummyUser;
+                                });
         
         return $result;
     }
