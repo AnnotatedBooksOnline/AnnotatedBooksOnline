@@ -57,6 +57,7 @@ class AnnotationController extends ControllerBase
                 // Insert every annotation.
                 $i = 0;
                 $annotationIds = array();
+                $time = time();
                 foreach ($annotations as $annotation)
                 {
                     // Fetch values.
@@ -75,15 +76,14 @@ class AnnotationController extends ControllerBase
                     }
                     
                     // Fetch or create annotation.
-                    $setChangedUserId = false;
-                    $time = time();
+                    $setChanged = false;
                     if ($annId > 0)
                     {
                         // Load existing annotation.
                         $ann = new Annotation($annId);
                         
                         // Check for changes.
-                        if (!$setChangedUserId)
+                        if (!$setChanged)
                         {
                             $values = $ann->getValues(
                                 array('transcriptionEng', 'transcriptionOrig', 'polygon', 'order'));
@@ -94,11 +94,12 @@ class AnnotationController extends ControllerBase
                                 (AnnotationController::polygonEqual($values['polygon'], $polygon)))
                             {
                                 $annotationIds[] = $annId;
+                                $i++;
                                 continue;
                             }
                             
                             // Check whether to set the changedUserId
-                            $setChangedUserId =
+                            $setChanged =
                                 (!AnnotationController::textEqual($values['transcriptionEng'], $transEng))   ||
                                 (!AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) ||
                                 (!AnnotationController::polygonEqual($values['polygon'], $polygon));
@@ -110,7 +111,7 @@ class AnnotationController extends ControllerBase
                         $ann = new Annotation();
                         $ann->setTimeCreated($time);
                         $ann->setCreatedUserId($userId);
-                        $setChangedUserId = true;
+                        $setChanged = true;
                     }
                     
                     // Set its values.
@@ -120,15 +121,15 @@ class AnnotationController extends ControllerBase
                             'transcriptionOrig' => $transOrig,
                             'polygon'           => $polygon,
                             'order'             => $i,
-                            'scanId'            => $scanId,
-                            'timeChanged'       => $time
+                            'scanId'            => $scanId
                         )
                     );
                     
                     // Set user id.
-                    if ($setChangedUserId)
+                    if ($setChanged)
                     {
                         $ann->setChangedUserId($userId);
+                        $ann->setTimeChanged($time);
                     }
                     
                     // Save it.
