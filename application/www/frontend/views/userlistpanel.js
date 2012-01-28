@@ -12,6 +12,11 @@ Ext.define('Ext.ux.UserListPanel', {
         
         var thisChange = true;
         
+        var store = Ext.create('Ext.ux.StoreBase', {
+            model: 'Ext.ux.UserModel',
+            pageSize: 20
+        });
+        
         // The checkbox to toggle automatic user activation.
         var autoAcceptBox = {
             xtype: 'checkbox',
@@ -37,8 +42,8 @@ Ext.define('Ext.ux.UserListPanel', {
                         thisChange = true;
                         Ext.Msg.show({
                             title: 'Are you sure?',
-                            msg: 'Are you sure you want to change the auto user acceptance to \''
-                                + changedTo + '\'?',
+                            msg: 'Are you sure you want to turn automatic user acceptance '
+                                + changedTo + '?',
                             buttons: Ext.Msg.YESNO,
                             icon: Ext.Msg.QUESTION,
                             callback: function(button)
@@ -52,7 +57,7 @@ Ext.define('Ext.ux.UserListPanel', {
                                        _this,
                                        function()
                                        {
-                                           // No need to do anything on success.
+                                           store.load();
                                        },
                                        function()
                                        {
@@ -71,11 +76,6 @@ Ext.define('Ext.ux.UserListPanel', {
                 }
             }
         };
-        
-        var store = Ext.create('Ext.ux.StoreBase', {
-            model: 'Ext.ux.UserModel',
-            pageSize: 20
-        });
         
         store.loadPage(1);
         
