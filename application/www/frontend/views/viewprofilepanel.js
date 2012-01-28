@@ -20,7 +20,6 @@ Ext.define('Ext.ux.ViewProfilePanel', {
         
         store.filter('username', username);
         
-        
         store.on('datachanged',
             function(store)
             {
