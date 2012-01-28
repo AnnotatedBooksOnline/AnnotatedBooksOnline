@@ -88,10 +88,10 @@ class AnnotationController extends ControllerBase
                             $values = $ann->getValues(
                                 array('transcriptionEng', 'transcriptionOrig', 'polygon', 'order'));
                             
-                            if (($values['transcriptionEng']  === $transEng)  &&
-                                ($values['transcriptionOrig'] === $transOrig) &&
-                                ($values['polygon']           === $polygon)   &&
-                                ($values['order']             === $i))
+                            if (($values['order']             === $i)                                       &&
+                                (AnnotationController::textEqual($values['transcriptionEng'], $transEng))   &&
+                                (AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) &&
+                                (AnnotationController::polygonEqual($values['polygon'], $polygon)))
                             {
                                 $annotationIds[] = $annId;
                                 continue;
@@ -99,9 +99,9 @@ class AnnotationController extends ControllerBase
                             
                             // Check whether to set the changedUserId
                             $setChangedUserId =
-                                ($values['transcriptionEng']  !== $transEng)  ||
-                                ($values['transcriptionOrig'] !== $transOrig) ||
-                                ($values['polygon']           !== $polygon);
+                                (!AnnotationController::textEqual($values['transcriptionEng'], $transEng))   ||
+                                (!AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) ||
+                                (!AnnotationController::polygonEqual($values['polygon'], $polygon));
                         }
                     }
                     else
@@ -163,5 +163,41 @@ class AnnotationController extends ControllerBase
                 return $annotationIds;
             }
         );
+    }
+    
+    /**
+     * Compares two polygons for equality with delta.
+     */
+    public static function polygonEqual($a, $b)
+    {
+        // Checks for equality of two vertices.
+        $vertexEqual = function($a, $b)
+        {
+            $delta = 0.000001;
+            return $a !== null && $b !== null && abs($a['x'] - $b['x']) < $delta && abs($a['y'] - $b['y']) < $delta;
+        };
+        
+        // Zip the two polygons together.
+        $zip = array_map(null, $a, $b);
+        
+        // Check for equality of all vertices.
+        foreach ($zip as $vertex)
+        {
+            if (!$vertexEqual($vertex[0], $vertex[1]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Compares two texts for equality, ignoring line ending differences and trailing/leading whitespace.
+     */
+    public static function textEqual($a, $b)
+    {
+        $safeA = str_replace("\r\n", "\n", rtrim($a));
+        $safeB = str_replace("\r\n", "\n", rtrim($b));
+        return $safeA === $safeB;
     }
 }
