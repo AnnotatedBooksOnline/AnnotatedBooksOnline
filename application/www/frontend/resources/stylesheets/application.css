@@ -120,65 +120,57 @@ a:hover
 /* Help styling. */
 .help
 {
-    font-family:Arial,Helvetica,FreeSans,sans-serif;
-    text-align: left;
     padding: 10px;
     line-height: 20px;
-    font-size:13px;
-    min-width: 25em;
-    max-width: 50em;
+    font-size: 13px;
 }
 
 .help li
 {
     list-style: disc;
-    text-align: left;
-    padding-top:2px;
+    padding-top: 2px;
     margin: 0 0 0 40px;
 }
 
 .help h2
 {
-    font-size:27px;
+    font-size: 27px;
     line-height: 35px;
-    color: #000000;
-    border-bottom-style: ridge; 
-    border-bottom-color: E9E8F6; 
+    border-bottom-style: ridge;
+    border-bottom-color: E9E8F6;
     border-bottom-width: 5px;
     margin-bottom: 0.5em;
 }
 
 .help h3, .help h4, .help h5, .help h6
 {
-    font-size:18px;
+    font-size: 18px;
     line-height: 25px;
-    color: #000000;
     margin-bottom: 0.5em;
 }
 
 .help p
 {
-
-    font-size:13px;
-    color: #333333;
+    font-size: 13px;
+    color: #333;
     margin-bottom: 0.5em;
 }
 
 .help-tree .x-tree-icon-parent
 {
-    display : none !important;
+    display: none !important;
     background-image: none !important;
 }
 
 .help-tree.x-grid-tree-node-expanded .x-tree-icon-parent
 {
-    display : none !important;
+    display: none !important;
     background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
 }
 
 .help-tree .x-tree-icon-leaf
 {
-    display : none !important;
+    display: none !important;
     background-image: url(../../external/extjs/resources/themes/images/default/tree/s.gif) !important;
 }
 
