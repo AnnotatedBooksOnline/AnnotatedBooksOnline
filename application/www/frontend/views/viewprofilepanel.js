@@ -16,6 +16,8 @@ Ext.define('Ext.ux.ViewProfilePanel', {
         
         var username = this.tabInfo.data[0];
         
+        var isLoggedInUser = username == Authentication.getInstance().getUserModel().get('username');
+        
         store.filter('username', username);
         
         
@@ -74,8 +76,8 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 }
                 else
                 {
-                    _this.down('[name=accept]').setDisabled(true);
-                    _this.down('[name=decline]').setDisabled(true);                    
+                    _this.down('[name=accept]').hide();
+                    _this.down('[name=decline]').hide();
                 }
                 
             },
@@ -86,6 +88,10 @@ Ext.define('Ext.ux.ViewProfilePanel', {
         
         var defConfig = {
             flex: 1,
+            defaults: {
+                margin: 3
+            },
+            bodyPadding: 5,
             items: [{
                 xtype: 'propertygrid',
                 
@@ -145,7 +151,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Unban user',
                 name: 'unban',
                 width: '140',
-                hidden: !Authentication.getInstance().hasPermissionTo('ban-users'),
+                hidden: !Authentication.getInstance().hasPermissionTo('ban-users') || isLoggedInUser,
                 //enabled: store.data[0].get('banned') == '1',
                 handler: function ()
                 {
@@ -180,7 +186,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Ban user',
                 name: 'ban',
                 width: '140',
-                hidden: !Authentication.getInstance().hasPermissionTo('ban-users'),
+                hidden: !Authentication.getInstance().hasPermissionTo('ban-users') || isLoggedInUser,
                 //enabled: store.data[0].get('banned') == '0',
                 handler: function ()
                 {
@@ -215,7 +221,7 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 text: 'Delete user',
                 name: 'delete',
                 width: '140',
-                hidden: !Authentication.getInstance().hasPermissionTo('delete-users'),
+                hidden: !Authentication.getInstance().hasPermissionTo('delete-users') || isLoggedInUser,
                 handler: function ()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.
