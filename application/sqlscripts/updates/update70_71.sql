@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 --Insert upload into HelpPages
 INSERT INTO "HelpPages" ("pageName", "helpType") VALUES ('Upload', 'upload');
