@@ -194,7 +194,7 @@ class Book extends Entity
             'preciseDate'    => 'date',
             'placePublished' => 'string',
             'publisher'      => 'string',
-            'printVersion'   => 'integer',
+            'printVersion'   => 'string',
             'firstPage'      => 'int',
             'lastPage'       => 'int'
         );
