@@ -167,7 +167,8 @@ class UserController extends ControllerBase
             'website'          => $website,
             'activationStage'  => User::ACTIVE_STAGE_PENDING,
             'banned'           => false,
-            'rank'             => User::RANK_DEFAULT
+            'rank'             => User::RANK_DEFAULT,
+            'registrationDate' => time()
         );
         
         Log::debug('!!!!!!' . $email);

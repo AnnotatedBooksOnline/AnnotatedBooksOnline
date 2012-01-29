@@ -95,6 +95,12 @@ class User extends Entity
     /** Password restoration token. */
     protected $passwordRestoreToken;
     
+    /** Registration date of this user. */
+    protected $registrationDate;
+    
+    /** Timestamp this user has last logged in. */
+    protected $lastActive;
+    
     /**
      * Constructs a user by id.
      *
@@ -353,7 +359,7 @@ class User extends Entity
     {
         return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
                      'affiliation', 'occupation', 'website', 'homeAddress', 'activationStage',
-                     'banned', 'rank', 'passwordRestoreToken');
+                     'banned', 'rank', 'passwordRestoreToken', 'registrationDate', 'lastActive');
     }
     
     /**
@@ -377,7 +383,9 @@ class User extends Entity
             'activationStage'      => 'int',
             'banned'               => 'boolean',
             'rank'                 => 'int',
-            'passwordRestoreToken' => 'string'
+            'passwordRestoreToken' => 'string',
+            'registrationDate'	   => 'date',
+            'lastActive'		   => 'timestamp'
         );
     }
     
@@ -429,6 +437,11 @@ class User extends Entity
     public function getActivationStage()       { return $this->activationStage;   }
     public function setActivationStage($stage) { $this->activationStage = $stage; }
     
+    public function getRegistrationDate()       {  return $this->registrationDate; }
+    public function setRegistrationDate($registrationDate) { $this->registrationDate = $registrationDate; }
+    
+    public function getLastActive()       { return $this->lastActive;  }
+    public function setLastActive($lastActive) { $this->lastActive = $lastActive; }
     
     // Active getters are redirected to activation stage. 
     public function getActive()        
