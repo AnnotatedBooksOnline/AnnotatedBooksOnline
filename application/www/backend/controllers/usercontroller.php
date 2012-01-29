@@ -439,7 +439,8 @@ class UserController extends ControllerBase
         if (Authentication::getInstance()->hasPermissionTo('view-users-complete'))
         {
             return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
-                         'occupation', 'website', 'homeAddress', 'activationStage', 'banned', 'rank');
+                         'occupation', 'website', 'homeAddress', 'activationStage', 'banned', 'rank',
+                         'registrationDate', 'lastActive');
         }
         else if($loggedOnUser)
         {

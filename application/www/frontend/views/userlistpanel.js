@@ -111,6 +111,69 @@ Ext.define('Ext.ux.UserListPanel', {
             }
         }
         
+        function renderBanned(banned) 
+        {
+            if (banned === true) 
+            {
+                return 'Yes';
+            } 
+            else 
+            {
+                return 'No';
+            }
+        }
+        
+        function renderActivationStage(activationStage)
+        {
+            if (activationStage == '0') 
+            {
+                return 'Pending';
+            } 
+            else if (activationStage == '1') 
+            {
+                return 'Accepted';
+            } 
+            else if (activationStage == '2') 
+            {
+                return 'Declined';
+            } 
+            else if (activationStage == '3') 
+            {
+                return 'Active';
+            }
+        }
+        
+        function renderRank(rank)
+        {
+            if (rank == '10') 
+            {
+                return 'Normal user';
+            } 
+            else if (rank == '40') 
+            {
+                return 'Moderator';
+            } 
+            else if (rank == '50') 
+            {
+                return 'Administrator';
+            }
+        }
+        
+        function renderDate(unixtime) 
+        {
+        	var date = new Date(unixtime * 1000);
+        	return date.toDateString();
+        }
+        
+        function renderTimestamp(unixtime)
+        {
+        	var date = new Date(unixtime * 1000);
+        	var h = date.getHours();
+        	var m = date.getMinutes();
+        	// TODO : lol
+        	return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
+        }
+        
         var defConfig = {
             border: false,
             items: [{ 
@@ -158,6 +221,41 @@ Ext.define('Ext.ux.UserListPanel', {
                     text:      'Address',
                     flex:      2,
                     dataIndex: 'homeAddress',
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Role',
+                    flex:      2,
+                    dataIndex: 'rank',
+                    renderer:  renderRank,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Banned',
+                    flex:      2,
+                    dataIndex: 'banned',
+                    renderer:  renderBanned,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Status',
+                    flex:      2,
+                    dataIndex: 'activationStage',
+                    renderer:  renderActivationStage,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Registration date',
+                    flex:      2,
+                    dataIndex: 'registrationDate',
+                    renderer:  renderDate,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Last active',
+                    flex:      2,
+                    dataIndex: 'lastActive',
+                    renderer:  renderTimestamp,
                     hidden:    true,
                     hideable:  false
                 }],

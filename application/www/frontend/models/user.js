@@ -20,6 +20,8 @@ Ext.define('Ext.ux.UserModel', {
        {name: 'rank'},
        {name: 'activationStage'},
        {name: 'permissions'},
+       {name: 'registrationDate'},
+       {name: 'lastActive'},
        
        // Passwords are needed for registration and profile. Not filled when fetching a user.
        {name: 'password'},
