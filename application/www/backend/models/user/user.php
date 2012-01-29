@@ -277,6 +277,12 @@ class User extends Entity
         
         // Get the user id of the deleted dummy user.
         $newId = Setting::getSetting('deleted-user-id');
+        
+        // Make sure its not the dummy user itself that is being deleted.
+        if($newId === $this->getUserId())
+        {
+            throw new EntityException();
+        }
             
         // All tables that need a userId foreign key set to the special deleted user after
         // deleting this user.
