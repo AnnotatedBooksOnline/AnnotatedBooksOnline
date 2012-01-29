@@ -18,6 +18,8 @@ CREATE TABLE "HelpContents"
     PRIMARY KEY ("helpContentId"),
     FOREIGN KEY ("helpParagraphId")
       REFERENCES "HelpParagraphs"
+    
+    UNIQUE ("helpParagraphId", "settingValue");
 );
 
 -- Move contents from HelpParagraphs to new table.
