@@ -458,6 +458,7 @@ class Pdf
                 $width = $this->numberWidth($page);
                 $this->pushState();
                     $this->translate($this->pageWidth - $this->textMarginR - $width, $bottom);
+                    $this->addToSubset($this->toUTF16BEArray((string)$page));
                     $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$page) . ' Tj ET');
                 $this->popState();
                 
@@ -911,6 +912,7 @@ class Pdf
             list($x, $y) = $transformedPoints[0];
             $this->translate($x, $y);
             $this->translate(-$width / 2, -$this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4);
+            $this->addToSubset($this->toUTF16BEArray((string)$i));
             $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET');
         
         $this->popState();
@@ -1214,6 +1216,9 @@ class Pdf
             $javascript = '/Names << /JavaScript ' . $jsId . ' 0 R >>';
         }
         
+        // Write the subsetted fonts to the output. //TODO: subset
+        $this->writeFonts();
+        
         // TODO: index/outline? See PDF1.7 specs at page 367+
         
         // Fill the page catalog.
@@ -1277,6 +1282,124 @@ class Pdf
             {
                 unset($this->$var);
             }
+        }
+    }
+    
+    /**
+     * Writes the font files.
+     */
+    private function writeFonts()
+    {
+        $fontPath = 'util/fonts/';
+        
+        foreach ($this->fontInfo as $fontName => $fontInfo)
+        {
+            include($fontPath . $fontInfo['FontFile']);
+            
+            require $fontPath . 'subset.php';
+            
+            ksort($cw);
+            $ws = array();
+            foreach ($cw as $char => $width)
+            {
+                if (isset($fontInfo['SubsetChars'][$char]))
+                {
+                    $ws[$char] = $width;
+                }
+            }
+
+            $prevwidth = -1;
+            $inRange = false;
+            $inList = false;
+            $w = '[';
+            foreach ($ws as $char => $width)
+            {
+                if (isset($ws[$char+1]) && $ws[$char+1] == $width && isset($ws[$char+2]) && $ws[$char+2] == $width && $prevwidth != $width)
+                {
+                    if ($inList)
+                    {
+                        $w .= ' ]'."\n";
+                    }
+                    $w .= ' ' . $char;
+                    $prevwidth = $width;
+                    $inRange = true;
+                    $inList = false;
+                    continue;
+                }
+                else if ((!isset($ws[$char+1]) || $ws[$char+1] != $width) && $prevwidth == $width && $inRange && !$inList)
+                {
+                    $w .= ' ' . $char . ' ' . $width."\n";
+                    $inRange = false;
+                    continue;
+                }
+                else if ($prevwidth != $width && isset($ws[$char+1]) && !$inList)
+                {
+                    $w .= ' ' . $char . ' [ ' . $width;
+                    $inList = true;
+                }
+                else if ($inList)
+                {
+                    $w .= ' ' . $width;
+                    if (!isset($ws[$char+1]))
+                    {
+                        $w .= ' ]'."\n";
+                        $inList = false;
+                    }
+                }
+                else if ($prevwidth != $width)
+                {
+                    $w .= ' ' . $char . ' [ ' . $width . ' ]'."\n";
+                }
+                $prevwidth = $width;
+            }
+            $w .= ' ]';
+
+            $subsetFont = _getTrueTypeFontSubset(gzuncompress(file_get_contents($fontPath . $file)), $fontInfo['SubsetChars']);
+
+            $fontFileId = $this->newStream('/Filter /FlateDecode /Length1 ' . strlen($subsetFont), gzcompress($subsetFont));
+            $ctgId = $this->newStream('/Filter /FlateDecode', file_get_contents($fontPath . $ctg));
+            $fontDescId = $this->newObject("<<\n" .
+                "/Type /FontDescriptor\n" .
+                "/FontName /" . $name . "\n" .
+                "/Flags " . $desc['Flags'] . "\n" .
+                "/FontBBox " . $desc['FontBBox'] . "\n" .
+                "/ItalicAngle " . $desc['ItalicAngle'] . "\n" .
+                "/Ascent " . $desc['Ascent'] . "\n" .
+                "/Descent " . $desc['Descent'] . "\n" .
+                "/Leading " . $desc['Leading'] . "\n" .
+                "/CapHeight " . $desc['CapHeight'] . "\n" .
+                "/XHeight " . $desc['XHeight'] . "\n" .
+                "/StemV " . $desc['StemV'] . "\n" .
+                "/StemH " . $desc['StemH'] . "\n" .
+                "/AvgWidth " . $desc['AvgWidth'] . "\n" .
+                "/MaxWidth " . $desc['MaxWidth'] . "\n" .
+                "/MissingWidth " . $desc['MissingWidth'] . "\n" .
+                "/FontFile2 " . $fontFileId. " 0 R\n" .
+                ">>", true);
+            $descendantFontsId = $this->newObject("<<\n" .
+                "/Type /Font\n" .
+                "/Subtype /CIDFontType2\n" .
+                "/BaseFont /" . $name . "\n" .
+                "/CIDSystemInfo\n<<\n" .
+                "/Registry (Adobe)\n" .
+                "/Ordering (Identity)\n" .
+                "/Supplement 0\n" .
+                ">>\n" .
+                "/FontDescriptor " . $fontDescId . " 0 R\n" .
+                "/DW " . $dw . "\n" .
+                "/W " . $w . "\n" .
+                "/CIDToGIDMap " . $ctgId . " 0 R\n" .
+                ">>", true);
+            $this->updateObject($fontInfo['FontObject'],
+                "<<\n" .
+                "/Type /Font\n" .
+                "/Subtype /Type0\n" .
+                "/BaseFont /" . $name . "\n" .
+                "/Name /" . $fontName . "\n" .
+                "/ToUnicode " . $this->unicodeId . " 0 R\n" .
+                "/Encoding /Identity-H\n" .
+                "/DescendantFonts [" . $descendantFontsId . " 0 R]\n" .
+                ">>", true);
         }
     }
     
@@ -1396,106 +1519,12 @@ class Pdf
         $this->fontSizes[$fontName] = $cw;
         $this->fontInfo[$fontName] = $desc;
 
-        ksort($cw);
-        // TODO: subset?
-        $ws = array();
-        foreach ($cw as $char => $width)
-        {
-            if ($width != $dw)
-            {
-                $ws[$char] = $width;
-            }
-        }
-        $prevwidth = -1;
-        $inRange = false;
-        $inList = false;
-        $w = '[';
-        foreach ($cw as $char => $width)
-        {
-            if (isset($cw[$char+1]) && $cw[$char+1] == $width && isset($cw[$char+2]) && $cw[$char+2] == $width && $prevwidth != $width)
-            {
-                if ($inList)
-                {
-                    $w .= ' ]'."\n";
-                }
-                $w .= ' ' . $char;
-                $prevwidth = $width;
-                $inRange = true;
-                $inList = false;
-                continue;
-            }
-            else if ((!isset($cw[$char+1]) || $cw[$char+1] != $width) && $prevwidth == $width && $inRange && !$inList)
-            {
-                $w .= ' ' . $char . ' ' . $width."\n";
-                $inRange = false;
-                continue;
-            }
-            else if ($prevwidth != $width && isset($cw[$char+1]) && !$inList)
-            {
-                $w .= ' ' . $char . ' [ ' . $width;
-                $inList = true;
-            }
-            else if ($inList)
-            {
-                $w .= ' ' . $width;
-                if (!isset($cw[$char+1]))
-                {
-                    $w .= ' ]'."\n";
-                    $inList = false;
-                }
-            }
-            else if ($prevwidth != $width)
-            {
-                $w .= ' ' . $char . ' [ ' . $width . ' ]'."\n";
-            }
-            $prevwidth = $width;
-        }
-        $w .= ' ]';
+        $fontId = $this->newObject('', false);
 
-        $fontFileId = $this->newStream('/Filter /FlateDecode /Length1 ' . $originalsize, file_get_contents($fontPath . $file));
-        $ctgId = $this->newStream('/Filter /FlateDecode', file_get_contents($fontPath . $ctg));
-        $fontDescId = $this->newObject("<<\n" .
-            "/Type /FontDescriptor\n" .
-            "/FontName /" . $name . "\n" .
-            "/Flags " . $desc['Flags'] . "\n" .
-            "/FontBBox " . $desc['FontBBox'] . "\n" .
-            "/ItalicAngle " . $desc['ItalicAngle'] . "\n" .
-            "/Ascent " . $desc['Ascent'] . "\n" .
-            "/Descent " . $desc['Descent'] . "\n" .
-            "/Leading " . $desc['Leading'] . "\n" .
-            "/CapHeight " . $desc['CapHeight'] . "\n" .
-            "/XHeight " . $desc['XHeight'] . "\n" .
-            "/StemV " . $desc['StemV'] . "\n" .
-            "/StemH " . $desc['StemH'] . "\n" .
-            "/AvgWidth " . $desc['AvgWidth'] . "\n" .
-            "/MaxWidth " . $desc['MaxWidth'] . "\n" .
-            "/MissingWidth " . $desc['MissingWidth'] . "\n" .
-            "/FontFile2 " . $fontFileId. " 0 R\n" .
-            ">>", true);
-        $descendantFontsId = $this->newObject("<<\n" .
-            "/Type /Font\n" .
-            "/Subtype /CIDFontType2\n" .
-            "/BaseFont /" . $name . "\n" .
-            "/CIDSystemInfo\n<<\n" .
-            "/Registry (Adobe)\n" .
-            "/Ordering (Identity)\n" .
-            "/Supplement 0\n" .
-            ">>\n" .
-            "/FontDescriptor " . $fontDescId . " 0 R\n" .
-            "/DW " . $dw . "\n" .
-            "/W " . $w . "\n" .
-            "/CIDToGIDMap " . $ctgId . " 0 R\n" .
-            ">>", true);
-        $fontId = $this->newObject("<<\n" .
-            "/Type /Font\n" .
-            "/Subtype /Type0\n" .
-            "/BaseFont /" . $name . "\n" .
-            "/Name /" . $fontName . "\n" .
-            "/ToUnicode " . $this->unicodeId . " 0 R\n" .
-            "/Encoding /Identity-H\n" .
-            "/DescendantFonts [" . $descendantFontsId . " 0 R]\n" .
-            ">>", true);
-            
+        $this->fontInfo[$fontName]['FontFile'] = $fontFile;
+        $this->fontInfo[$fontName]['FontObject'] = $fontId;
+        $this->fontInfo[$fontName]['SubsetChars'] = array();
+
         $this->fonts .= "/" . $fontName . " " . $fontId . " 0 R\n";
             
         return $cw;
@@ -1521,6 +1550,16 @@ class Pdf
         $this->textMarginT = $margin;
         $this->textMarginR = $margin;
         $this->textMarginB = $margin;
+    }
+    
+    // TODO: document
+    private function addToSubset($text)
+    {
+        foreach ($text as $char)
+        {
+            $c = ((ord($char[0]) << 8) + ord($char[1]));
+            $this->fontInfo[$this->font]['SubsetChars'][$c] = true;
+        }
     }
     
     /**
@@ -1656,14 +1695,9 @@ class Pdf
                             }
                             $this->draw('BT');
                             $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
-                            if ($endOfString && $text[$i][1] == "\n" && $text[$i][0] == "\0")
-                            {
-                                $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                            }
-                            else
-                            {
-                                $this->draw($this->fromUTF16BEArray(array_slice($text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                            }
+                            $textToDraw = array_slice($text, $prevEnd, $lastSpace - $prevEnd);
+                            $this->addToSubset($textToDraw);
+                            $this->draw($this->fromUTF16BEArray($textToDraw) . ' Tj');
                             $this->draw('ET');
                         $this->popState();
                     }
