@@ -35,12 +35,6 @@ Ext.define('Ext.ux.UserListPanel', {
                 change: function ()
                 {
                     var value = Ext.getCmp('autoAcceptBox').getValue();
-                    var changedTo = 'off';
-                    
-                    if (value) 
-                    {
-                        changedTo = 'on';
-                    }
                     
                     if (thisChange)
                     {
@@ -49,20 +43,39 @@ Ext.define('Ext.ux.UserListPanel', {
                     else
                     {
                         thisChange = true;
+                        
+                        var message, buttons;
+                        if(value)
+                        {
+                            message = 'You are about to turn on automatic user acceptance. '
+                                    + 'Do you also want to automatically accept all users '
+                                    + 'currently waiting for acceptance?'
+                                    + 'Clicking cancel will keep automatic user acceptance '
+                                    + 'turned off.';
+                            buttons = Ext.Msg.YESNOCANCEL;
+                        }
+                        else
+                        {
+                            message = 'Are you sure you want to turn automatic user acceptance '
+                                    + 'off? After this, you will need to activate new users '
+                                    + 'manually.';
+                            buttons = Ext.Msg.YESNO;
+                        }
+                        
                         Ext.Msg.show({
-                            title: 'Are you sure?',
-                            msg: 'Are you sure you want to turn automatic user acceptance '
-                                + changedTo + '?',
-                            buttons: Ext.Msg.YESNO,
+                            title: 'Automatic acception',
+                            msg: message,
+                            buttons: buttons,
                             icon: Ext.Msg.QUESTION,
                             callback: function(button)
                             {
-                                if (button == 'yes')
+                                if (button == 'yes' || (value && button == 'no'))
                                 {
                                     RequestManager.getInstance().request(
                                        'UserActivation',
                                        'setAutoAcceptance',
-                                       {autoAccept: value},
+                                       {autoAccept: value,
+                                        acceptAllPending: value && button == 'yes'},
                                        _this,
                                        function()
                                        {
@@ -161,17 +174,17 @@ Ext.define('Ext.ux.UserListPanel', {
         
         function renderDate(unixtime) 
         {
-        	var date = new Date(unixtime * 1000);
-        	return date.toDateString();
+            var date = new Date(unixtime * 1000);
+            return date.toDateString();
         }
         
         function renderTimestamp(unixtime)
         {
-        	var date = new Date(unixtime * 1000);
-        	var h = date.getHours();
-        	var m = date.getMinutes();
-        	// TODO : lol
-        	return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
+            var date = new Date(unixtime * 1000);
+            var h = date.getHours();
+            var m = date.getMinutes();
+            // TODO : lol
+            return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
         }
         
         var defConfig = {
