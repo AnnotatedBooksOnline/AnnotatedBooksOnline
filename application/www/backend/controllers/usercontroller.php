@@ -171,8 +171,6 @@ class UserController extends ControllerBase
             'registrationDate' => time()
         );
         
-        Log::debug('!!!!!!' . $email);
-        
         // Check incoming values: username existance, email existance, correct pattern for 
         // username, correct pattern for email and no empty required fields.
         if ($this->actionUsernameExists(array('username' => $username)) 
@@ -183,8 +181,6 @@ class UserController extends ControllerBase
         {            
             throw new RegistrationFailedException('registration-failed');
         }
-        
-        // TODO: Check lengths and website.
      
         // Create user and pendinguser entries in a transaction.
         Database::getInstance()->doTransaction(
