@@ -142,8 +142,6 @@ class UserActivationController extends Controller
             return true;
         });
         
-        // TODO: Throw an exception on failure, instead of returning false.
-        
         return $success;
     }
     

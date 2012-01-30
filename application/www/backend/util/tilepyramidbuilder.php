@@ -298,8 +298,8 @@ class TilePyramidBuilder extends Singleton
         
         while (true)
         {
-            // Resolve inconsistencies every 20 rounds.
-            if ($round >= 20)
+            // Resolve inconsistencies every 200 rounds.
+            if ($round >= 200)
             {
                 $this->resolveInconsistencies();
                 $round = 0;
