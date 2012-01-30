@@ -421,6 +421,7 @@ Ext.define('Ext.ux.ScanPanel', {
             button_width: 100,
             button_height: 22,
             button_cursor: SWFUpload.CURSOR.HAND,
+            button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
             
             // File description.
             file_post_name: 'file',
