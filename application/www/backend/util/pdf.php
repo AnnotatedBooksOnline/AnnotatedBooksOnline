@@ -1355,12 +1355,13 @@ class Pdf
             $w .= ' ]';
 
             $subsetFont = _getTrueTypeFontSubset(gzuncompress(file_get_contents($fontPath . $file)), $fontInfo['SubsetChars']);
+            $subsetIdentifier = strtoupper(strtr(substr(md5($subsetFont), 0, 6), '0123456789','GHIJKLMNOP'));
 
             $fontFileId = $this->newStream('/Filter /FlateDecode /Length1 ' . strlen($subsetFont), gzcompress($subsetFont));
             $ctgId = $this->newStream('/Filter /FlateDecode', file_get_contents($fontPath . $ctg));
             $fontDescId = $this->newObject("<<\n" .
                 "/Type /FontDescriptor\n" .
-                "/FontName /" . $name . "\n" .
+                "/FontName /" . $subsetIdentifier . '+' . $name . "\n" .
                 "/Flags " . $desc['Flags'] . "\n" .
                 "/FontBBox " . $desc['FontBBox'] . "\n" .
                 "/ItalicAngle " . $desc['ItalicAngle'] . "\n" .
@@ -1379,7 +1380,7 @@ class Pdf
             $descendantFontsId = $this->newObject("<<\n" .
                 "/Type /Font\n" .
                 "/Subtype /CIDFontType2\n" .
-                "/BaseFont /" . $name . "\n" .
+                "/BaseFont /" . $subsetIdentifier . '+' . $name . "\n" .
                 "/CIDSystemInfo\n<<\n" .
                 "/Registry (Adobe)\n" .
                 "/Ordering (Identity)\n" .
@@ -1394,7 +1395,7 @@ class Pdf
                 "<<\n" .
                 "/Type /Font\n" .
                 "/Subtype /Type0\n" .
-                "/BaseFont /" . $name . "\n" .
+                "/BaseFont /" . $subsetIdentifier . '+' . $name . "\n" .
                 "/Name /" . $fontName . "\n" .
                 "/ToUnicode " . $this->unicodeId . " 0 R\n" .
                 "/Encoding /Identity-H\n" .
