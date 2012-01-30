@@ -1011,6 +1011,26 @@ class Pdf
     }
     
     /**
+     * Sets the contents of the given PDF object to a stream with the given contents and finalizes the object.
+     *
+     * @param integer $id       The object ID to manipulate.
+     * @param string  $headers  Additional stream dictionary contents (/Length is generated automatically).
+     * @param string  $contents The raw content data.
+     *
+     * @return integer The object ID.
+     */
+    private function setStream($id, $headers, $contents)
+    {
+        return $this->updateObject($id, "<<\n"
+                                 . $headers
+                                 . "\n/Length " . strlen($contents) . "\n"
+                                 . ">>\n"
+                                 . "stream\n"
+                                 . $contents
+                                 . "\nendstream", true);
+    }
+    
+    /**
      * Adds a new PDF resource reference.
      *
      * @param integer $objectId The object ID to add as a reference.
@@ -1373,21 +1393,65 @@ class Pdf
             $this->unicodeId = $this->newStream('/Filter /FlateDecode', gzcompress($table));
         }
         
-        $this->fontSizes[$name] = $cw;
-        $this->fontInfo[$name] = $desc;
+        $this->fontSizes[$fontName] = $cw;
+        $this->fontInfo[$fontName] = $desc;
+
         ksort($cw);
-        $prevchar = -1;
-        $w = '[ 0 [';
+        // TODO: subset?
+        $ws = array();
         foreach ($cw as $char => $width)
         {
-            for ($c = $prevchar + 1; $c < $char; $c++)
+            if ($width != $dw)
             {
-                $w .= ' ' . $dw;
+                $ws[$char] = $width;
             }
-            $w .= ' ' . $width;
-            $prevchar = $char;
         }
-        $w .= ' ] ]';
+        $prevwidth = -1;
+        $inRange = false;
+        $inList = false;
+        $w = '[';
+        foreach ($cw as $char => $width)
+        {
+            if (isset($cw[$char+1]) && $cw[$char+1] == $width && isset($cw[$char+2]) && $cw[$char+2] == $width && $prevwidth != $width)
+            {
+                if ($inList)
+                {
+                    $w .= ' ]'."\n";
+                }
+                $w .= ' ' . $char;
+                $prevwidth = $width;
+                $inRange = true;
+                $inList = false;
+                continue;
+            }
+            else if ((!isset($cw[$char+1]) || $cw[$char+1] != $width) && $prevwidth == $width && $inRange && !$inList)
+            {
+                $w .= ' ' . $char . ' ' . $width."\n";
+                $inRange = false;
+                continue;
+            }
+            else if ($prevwidth != $width && isset($cw[$char+1]) && !$inList)
+            {
+                $w .= ' ' . $char . ' [ ' . $width;
+                $inList = true;
+            }
+            else if ($inList)
+            {
+                $w .= ' ' . $width;
+                if (!isset($cw[$char+1]))
+                {
+                    $w .= ' ]'."\n";
+                    $inList = false;
+                }
+            }
+            else if ($prevwidth != $width)
+            {
+                $w .= ' ' . $char . ' [ ' . $width . ' ]'."\n";
+            }
+            $prevwidth = $width;
+        }
+        $w .= ' ]';
+
         $fontFileId = $this->newStream('/Filter /FlateDecode /Length1 ' . $originalsize, file_get_contents($fontPath . $file));
         $ctgId = $this->newStream('/Filter /FlateDecode', file_get_contents($fontPath . $ctg));
         $fontDescId = $this->newObject("<<\n" .
