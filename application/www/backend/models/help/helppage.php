@@ -38,23 +38,41 @@ class HelpPage extends Entity
     }
     
     
-    // Standard entity functions.
-    
+    /**
+     * Gets the table name.
+     *
+     * @return  The table name.
+     */
     public static function getTableName()
     {
         return 'HelpPages';
     }
     
+    /**
+     * Gets the primary keys.
+     *
+     * @return  Array of all primary keys.
+     */
     public static function getPrimaryKeys()
     {
         return array('helpPageId');
     }
     
+    /**
+     * Gets all the columns.
+     *
+     * @return  Array of all columns, except primary keys.
+     */
     public static function getColumns()
     {
         return array('pageName', 'helpType');
     }
     
+    /**
+     * Gets all the column types, per column, including primary keys.
+     *
+     * @return  Array of all column types.
+     */
     public static function getColumnTypes()
     {
         return array(
@@ -65,8 +83,11 @@ class HelpPage extends Entity
     }
     
     
-   // Helpers.
-    
+    /**
+     * Returns all the children of a node based on the current permissions
+     *
+     * @return  Array of help paragraphs.
+     */
     public function getChildren()
     {
         // Confirm that id is set.
@@ -87,13 +108,18 @@ class HelpPage extends Entity
                            ->orderBy('title','ASC')
                            ->execute(array('id' => $this->helpPageId));
             
+            // Temporary variable to store introduction paragraph
             $introduction;
+            
             foreach($citems as $citem)
             {
                 $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
                 $helpParagraph = $helpParagraph->getValues();
+                
+                // Check whether the user has permission to view this help paragraph.
                 if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
                 {
+                    // Store the introduction paragraph.
                     if ($helpParagraph['title'] == 'Introduction')
                     {
                         $introduction = $helpParagraph;
@@ -104,26 +130,29 @@ class HelpPage extends Entity
                     }
                 }
             }
+            // When there is an introduction paragraph, put it up front. 
             if (isset($introduction))
             {
                 array_unshift($this->subItems,$introduction);
             }
         }
-        
+        // Return the children of this node.
         return $this->subItems;
     }
+    
     
     public function getValues($columns = null)
     {
         $helpPage = parent::getValues($columns);
+        
+        //Also return the id consisting of the id of the help page ande the help paragraph
         $helpPage['helpId'] =  $helpPage['helpPageId'].','.-1;
         return $helpPage;
     }
     
-    // Getters and setters.
-    
-    public function getHelpType()    { return $this->helpType; }
-    public function setHelpType($type) { $this->helpType = $type;  }
+    /**
+     * Getters and setters.
+     */
     
     public function getHelpPageId()    { return $this->helpPageId; }
     public function setHelpPageId($id) { $this->helpPageId = $id;  }
@@ -136,5 +165,9 @@ class HelpPage extends Entity
     
     public function getParentHelpPageId()    { return $this->parentHelpPageId; }
     public function setParentHelpPageId($id) { $this->parentHelpPageId = $id;  }
+    
+    public function getHelpType()      { return $this->helpType; }
+    public function setHelpType($type) { $this->helpType = $type;  }
+    
 }
 

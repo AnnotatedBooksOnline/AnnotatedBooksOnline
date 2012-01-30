@@ -36,14 +36,12 @@ class ScanController extends ControllerBase
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $data
+     * Reorders the scans of a binding
      */
     public function actionReorder($data)
     {     
         // Collect the binding id and ordered scans from the request.
-        $inputBindingId = self::getInteger($data, 'bindingId');
+        $inputBindingId    = self::getInteger($data, 'bindingId');
         $inputOrderedScans = self::getArray($data, 'orderedScans');
         $inputDeletedScans = self::getArray($data, 'deletedScans');
         
@@ -56,8 +54,9 @@ class ScanController extends ControllerBase
             
             // Assert the user has permission to modify bindings.
             Authentication::assertPermissionTo('change-book-info');
-        } else {
-
+        } 
+        else 
+        {
             // Assert the user has permission to upload bindings.
             Authentication::assertPermissionTo('upload-bindings');
         }

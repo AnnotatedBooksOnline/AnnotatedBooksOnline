@@ -18,7 +18,7 @@ class AnnotationController extends ControllerBase
         // Handle load.
         $result = $this->handleLoad($data, 'Annotation', 'annotationId');
                 
-        // Also load the name of each language.
+        // Also load the name of the users who created and last modified the annotation.
         foreach ($result['records'] as &$record)
         {
             $createdUser = new User($record['createdUserId']);
@@ -98,7 +98,7 @@ class AnnotationController extends ControllerBase
                                 continue;
                             }
                             
-                            // Check whether to set the changedUserId
+                            // Check whether the transcription or the polygon itself changed
                             $setChanged =
                                 (!AnnotationController::textEqual($values['transcriptionEng'], $transEng))   ||
                                 (!AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) ||
@@ -142,7 +142,7 @@ class AnnotationController extends ControllerBase
                     ++$i;
                 }
                 
-                // Set all ids that need not removed as parameters.
+                // Set all ids that need not be removed as parameters.
                 $whereConds = $whereArgs = $whereTypes = array();
                 foreach ($annotationIds as $annId)
                 {

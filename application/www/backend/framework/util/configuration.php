@@ -130,7 +130,9 @@ class Configuration extends Singleton
         return (bool) $this->getString($name, $default);
     }
     
-    // Adds settings from a file.
+    /**
+     *  Adds settings from a file.
+     */
     private function addSettings($filename)
     {
         // Check for file.

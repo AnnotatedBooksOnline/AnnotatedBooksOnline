@@ -84,22 +84,22 @@ class Library extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
-    public function getLibraryId()               { return $this->libraryId;       }
-    public function setLibraryId($libraryId)     { $this->libraryId = $libraryId; }
+    public function getLibraryId()           { return $this->libraryId;       }
+    public function setLibraryId($libraryId) { $this->libraryId = $libraryId; }
     
     public function getLibraryName()             { return $this->libraryName;         }
     public function setLibraryName($libraryName) { $this->libraryName = $libraryName; }
     
-    public function getLibraryAddress()                 { return $this->libraryAddress;           }
-    public function setLibraryAddress($libraryAddress)  { $this->libraryAddress = libraryAddress; }
+    public function getLibraryAddress()                { return $this->libraryAddress;           }
+    public function setLibraryAddress($libraryAddress) { $this->libraryAddress = libraryAddress; }
     
     public function getWebsite()         { return $this->website;     }
     public function setWebsite($website) { $this->website = $website; }
     
-    public function getInfo()          { return $this->info;  }
-    public function setInfo($info)     { $this->info = $info; }
+    public function getInfo()      { return $this->info;  }
+    public function setInfo($info) { $this->info = $info; }
 }

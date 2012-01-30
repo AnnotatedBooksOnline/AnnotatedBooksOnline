@@ -183,6 +183,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
                 border: false,
                 store: this.store,
                 resizable: false,
+                disabled: true,
                 viewConfig: {
                     stripeRows: true
                 },
@@ -409,9 +410,22 @@ Ext.define('Ext.ux.SelectBookForm', {
     },
     
     // Changes the page range for a book.
-    changeBookPageRange: function(book, firstPage, lastPage)
+    changeBookPageRange: function(book, startOfRange, endOfRange)
     {
         var _this = this;
+        var firstPage;
+        var lastPage;
+        
+        if (startOfRange <= endOfRange)
+        {
+            firstPage = startOfRange;
+            lastPage = endOfRange;
+        }
+        else
+        {
+            firstPage = endOfRange;
+            lastPage = startOfRange;
+        }
         
         // Store the first and last page of the book.
         book.set('firstPage', firstPage);

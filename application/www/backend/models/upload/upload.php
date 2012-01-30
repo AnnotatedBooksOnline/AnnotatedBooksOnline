@@ -198,7 +198,7 @@ class Upload extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

@@ -42,6 +42,12 @@ class Author extends AssociativeEntity
         }
     }
     
+    /**
+     * Returns all the authors which belong to one book
+     *
+     * @param $book  The book model
+     * @return  Array of author models
+     */
     public static function fromBook($book)
     {
         // TODO: Use AuthorList.
@@ -103,7 +109,7 @@ class Author extends AssociativeEntity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

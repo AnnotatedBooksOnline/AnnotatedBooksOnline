@@ -17,7 +17,9 @@ require_once 'models/scan/scan.php';
 require_once 'models/language/bindinglanguage.php';
 require_once 'models/language/booklanguage.php';
 
-// Exceptions.
+/**
+ * Exceptions.
+ */
 class BindingStatusException extends ExceptionBase { }
 
 /**
@@ -36,10 +38,10 @@ class BindingUploadController extends Controller
         Authentication::assertPermissionTo('upload-bindings');  
         
         // Retrieve contents of record.
-        $inputScans   = self::getArray($data, 'scans');
-        $inputBinding = self::getArray($data, 'binding');
-        $inputBooks   = self::getArray($data,'books');
-        $inputBindingId   = self::getInteger($inputBinding, 'bindingId');
+        $inputScans     = self::getArray($data, 'scans');
+        $inputBinding   = self::getArray($data, 'binding');
+        $inputBooks     = self::getArray($data,'books');
+        $inputBindingId = self::getInteger($inputBinding, 'bindingId');
         
         // Find the name of the library the binding belongs to.
         $libraryName = $inputBinding['library'];
@@ -97,11 +99,8 @@ class BindingUploadController extends Controller
     }
     
     /**
-    *
-    * Enter description here ...
-    * @param unknown_type $provenancePersonNames
-    * @param unknown_type $binding
-    */
+     * Creates a new library.
+     */
     private function createLibrary($libraryName, $binding)
     {
         // Find the specified library in the database.
@@ -127,11 +126,8 @@ class BindingUploadController extends Controller
     }
     
     /**
-    *
-    * Enter description here ...
-    * @param unknown_type $provenancePersonNames
-    * @param unknown_type $binding
-    */
+     * Creates all the binding's books.
+     */
     private function createBooks($inputBooks, $binding)
     {
         // Mark all books for deletion temporarily. This flag will be restored for some books later.
@@ -142,14 +138,16 @@ class BindingUploadController extends Controller
         {
             // Load an existing book or create a new book if no existing binding is provided.
             $inputBookId = self::getInteger($inputBook, 'bookId');
-            if ($inputBookId == -1) {
+            if ($inputBookId == -1) 
+            {
                 $book = new Book();
             }
             else
             {
                 // Retrieve the book to be modified from the existing binding.
                 $book = $binding->getBookList()->getByKeyValue('bookId', $inputBookId);
-                if ($book == null) {
+                if ($book == null) 
+                {
                     throw new ControllerException('invalid-book-id-provided');
                 }
             }
@@ -179,10 +177,7 @@ class BindingUploadController extends Controller
     }
     
     /**
-     *
-     * Enter description here ...
-     * @param unknown_type $provenancePersonNames
-     * @param unknown_type $binding
+     * Creates the scans belonging to this binding.
      */
     private function createScans($inputScans, $binding)
     {
@@ -220,30 +215,27 @@ class BindingUploadController extends Controller
     }
     
     /**
-    *
-    * Enter description here ...
-    * @param unknown_type $provenancePersonNames
-    * @param unknown_type $binding
-    */
+     * Creates all the links between books and languages.
+     */
     private function createBookLanguages($inputBook, $book)
     {
 
-        // Mark all provenances for deletion. Provenances that should remain will be unmarked later.
+        // Mark all book languages for deletion. Booklanguageses that should remain will be unmarked later.
         $book->getBookLanguageList()->markAllAsDeleted(true);
         
         // Iterate over all languages for the book.
         foreach(self::getArray($inputBook, 'languages') as $languageId)
         {
-            // Determine if the bindinglanguage is already.
+            // Determine if the book language exists already.
             $existingBookLanguage = $book->getBookLanguageList()->getByKeyValue('languageId', $languageId);
             if ($existingBookLanguage)
             {
-                // Prevent this provenance from being deleted.
+                // Prevent this language from being deleted.
                 $existingBookLanguage->setMarkedAsDeleted(false);
             }
             else
             {
-                // Create the binding language and add it to the list.
+                // Create the book language and add it to the list.
                 $existingBookLanguage = new BookLanguage();
                 $existingBookLanguage->setLanguageId($languageId);
                  
@@ -253,10 +245,7 @@ class BindingUploadController extends Controller
     }
     
     /**
-    *
-    * Enter description here ...
-    * @param unknown_type $provenancePersonNames
-    * @param unknown_type $binding
+    * Creates all the languages of annotations linked to the binding.
     */
     private function createBindingAnnotationLanguages($inputBinding, $binding)
     {
@@ -266,11 +255,11 @@ class BindingUploadController extends Controller
         // Iterate over all languages for the binding.
         foreach(self::getArray($inputBinding, 'languagesofannotations') as $languageId)
         {
-            // Determine if the bindinglanguage is already.
+            // Determine if the binding language exists already.
             $existingBindingLanguage = $binding->getBindingLanguageList()->getByKeyValue('languageId', $languageId);
             if ($existingBindingLanguage)
             {
-                // Prevent this provenance from being deleted.
+                // Prevent this binding language from being deleted.
                 $existingBindingLanguage->setMarkedAsDeleted(false);
             }
             else
@@ -278,18 +267,15 @@ class BindingUploadController extends Controller
                 // Create the binding language and add it to the list.
                 $bindingLanguage = new BindingLanguage();
                 $bindingLanguage->setLanguageId($languageId);
-                 
+                
                 $binding->getBindingLanguageList()->add($bindingLanguage);
             }
         }
     }
     
     /**
-    *
-    * Enter description here ...
-    * @param unknown_type $provenancePersonNames
-    * @param unknown_type $binding
-    */
+     * Creates all the authors of the book.
+     */
     private function createAuthors($inputBook, $book)
     {
         // Mark all provenances for deletion. Provenances that should remain will be unmarked later.
@@ -325,15 +311,11 @@ class BindingUploadController extends Controller
                 // Add the provenance to the binding.
                 $book->getAuthorList()->add($author);
             }
-            
         }
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $provenancePersonNames
-     * @param unknown_type $binding
+     * Creates all the provenances of the binding.
      */
     private function createProvenances($inputBinding, $binding)
     {
@@ -371,16 +353,11 @@ class BindingUploadController extends Controller
                 // Add the provenance to the binding.
                 $binding->getProvenanceList()->add($provenance);
             }
-            
         }    
-        
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $inputBinding
-     * @param unknown_type $binding
+     * Creates a person.
      */
     private function createPerson($personName)
     {
@@ -397,16 +374,13 @@ class BindingUploadController extends Controller
             $person = new Person();
             $person->setName($personName);
             $person->save();
-             
+            
             return $person;
         }
     }
     
     /**
-     * Fills a scans attributes based on an upload.
-     * @param $scan
-     * @param $upload
-     * @throws ControllerException
+     * Links a scan to an upload.
      */
     private function identifyScan($scan, $upload) 
     {
@@ -445,42 +419,7 @@ class BindingUploadController extends Controller
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $data
-     * @return multitype:unknown |multitype:number
-     */
-    public function actionGetBinding($data)
-    {
-        $userId = Authentication::getInstance()->getUserId();
-        
-        $bindingId = Query::select('binding.bindingId','binding.status')
-            ->from ('Scans scan')
-            ->where('upload.userId = :userId')
-            ->join('Uploads upload', "scan.uploadId = upload.uploadId", "LEFT")
-            ->join('Bindings binding', "scan.bindingId = binding.bindingId", "LEFT")
-            ->where('binding.status <= :reorderedStatus')
-            ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED));
-        
-        if ($bindingId->getAmount() !== 0)
-        {
-            $status = $bindingId->getFirstRow()->getValue('status');
-            $bId    = $bindingId->getFirstRow()->getValue('bindingId');
-            
-            return (array('status' => $status, 'bindingId' => $bId));
-        }
-        else
-        {
-            return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
-        }
-    }
-    
-    /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $data
-     * @throws BindingStatusException
-     * @return multitype:unknown |multitype:number
+     * Unnecessary
      */
     public function actionGetBindingStatus($data)
     {
@@ -508,10 +447,7 @@ class BindingUploadController extends Controller
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $data
-     * @return boolean
+     * Returns whether the combination of library and signature in the sent data is unique.
      */
     public function actionUniqueLibrarySignature($data)
     {
@@ -523,11 +459,7 @@ class BindingUploadController extends Controller
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $libraryName
-     * @param unknown_type $signature
-     * @return boolean
+     * Returns whether the inputcombination of library and signature is unique.
      */
     public function uniqueLibrarySignature($libraryName, $signature, $bindingId)
     {
@@ -558,7 +490,9 @@ class BindingUploadController extends Controller
     }
     
     
-    //TODO: Cascading in database 
+    /**
+     * Deletes a binding.
+     */
     public function actionDeleteUpload($data)
     {/*
         Authentication::assertPermissionTo('upload-bindings');  
@@ -572,7 +506,7 @@ class BindingUploadController extends Controller
             }
         else
         {
-            throw new ControllerException('dropping-not-allowed');
+            throw new ControllerException('deleting-not-allowed');
         }*/
     }
 }

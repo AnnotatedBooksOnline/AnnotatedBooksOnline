@@ -32,21 +32,35 @@ class ResultSet implements IteratorAggregate
         $this->statement = $statement;
     }
     
+    /**
+     * Destructs a ResultSet.
+     *
+     * @param PDOStamement $statement  The PDO statement. Should already have been executed.
+     */
     public function __destruct()
     {
         $this->statement->closeCursor();
     }
 
+    /**
+     * Returns an Iterator of a ResultSet.
+     */
     public function getIterator()
     {
         return new ResultSetIterator($this, $this->statement);
     }
     
+    /**
+     * Returns the amount of rows in a ResultSet.
+     */
     public function getAmount() 
     {
         return $this->statement->rowCount();
     }
     
+    /**
+     * Returns first row of a ResultSet or returns null.
+     */
     public function tryGetFirstRow()
     {
         $row = $this->statement->fetch(PDO::FETCH_ASSOC);
@@ -54,6 +68,9 @@ class ResultSet implements IteratorAggregate
         return ($row ? new ResultSetRow($row) : null);
     }
     
+   /**
+     * Returns first row of a ResultSet or throws an exception.
+     */
     public function getFirstRow()
     {
         $row = $this->statement->fetch(PDO::FETCH_ASSOC);
@@ -66,6 +83,9 @@ class ResultSet implements IteratorAggregate
         return new ResultSetRow($row);
     }
     
+    /**
+     * Returns an array of the ResultSet's contents
+     */
     public function asArrays() 
     {
         $records = array();
@@ -98,6 +118,9 @@ class ResultSetIterator implements Iterator
         $this->next();
     }
     
+    /**
+     * Returns the next value.
+     */
     public function next()
     {
         ++$this->i;
@@ -109,21 +132,33 @@ class ResultSetIterator implements Iterator
         $this->curr = $this->statement->fetch(PDO::FETCH_ASSOC);
     }
     
+    /**
+     * Returns the current key.
+     */
     public function key()
     {
         return $this->i;
     }
     
+    /**
+     * Returns the current value.
+     */
     public function current()
     {
         return new ResultSetRow($this->curr);
     }
     
+    /**
+     * Checks whether there exists another value.
+     */
     public function valid()
     {
         return $this->i < $this->statement->rowCount();
     }
     
+    /**
+     * Sets the current index to zero.
+     */
     public function rewind()
     {
         if ($this->i > 0)
@@ -140,6 +175,9 @@ class ResultSetRow
 {
     private $row;
 
+    /**
+     * Constructs a ResultSetRow.
+     */
     public function __construct($row)
     {
         foreach ($row as $key => $val)

@@ -72,13 +72,13 @@ class Person extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
-    public function getPersonId()              { return $this->personId;      }
-    public function setPersonId($personId)     { $this->personId = $personId; }
+    public function getPersonId()          { return $this->personId;      }
+    public function setPersonId($personId) { $this->personId = $personId; }
     
-    public function getName()                  { return $this->name;  }
-    public function setName($name)             { $this->name = $name; }
+    public function getName()      { return $this->name;  }
+    public function setName($name) { $this->name = $name; }
 }

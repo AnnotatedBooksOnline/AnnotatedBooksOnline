@@ -19,7 +19,7 @@ class BindingController extends ControllerBase
         // Handle load.
         $result = $this->handleLoad($data, 'Binding', 'bindingId');
         
-        // Also load each library of the each binding.
+        // Also load the library of each binding.
         foreach ($result['records'] as &$record)
         {
             $library = new Library($record['libraryId']);
@@ -31,7 +31,7 @@ class BindingController extends ControllerBase
     }
     
     /**
-     * 
+     * Deletes a binding
      */
     public function actionDelete($data) {
         

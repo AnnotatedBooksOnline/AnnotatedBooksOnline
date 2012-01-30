@@ -32,6 +32,12 @@ class Provenance extends AssociativeEntity
         }
     }
     
+    /**
+     * Returns all the readers of one binding
+     *
+     * @param $binding  The binding model
+     * @return  Array of provenance models
+     */
     public static function fromBinding($binding)
     {
         // TODO: Create ProvenanceList to do this.
@@ -97,13 +103,13 @@ class Provenance extends AssociativeEntity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
-    public function getBindingId()               { return $this->bindingId;       }
-    public function setBindingId($bindingId)     { $this->bindingId = $bindingId; }
+    public function getBindingId()           { return $this->bindingId;       }
+    public function setBindingId($bindingId) { $this->bindingId = $bindingId; }
     
-    public function getPersonId()             { return $this->personId;      }
-    public function setPersonId($personId)    { $this->personId = $personId; }
+    public function getPersonId()          { return $this->personId;      }
+    public function setPersonId($personId) { $this->personId = $personId; }
 }

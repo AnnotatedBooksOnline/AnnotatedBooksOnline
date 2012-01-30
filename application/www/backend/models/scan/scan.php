@@ -21,16 +21,34 @@ class Scan extends Entity
     const TYPE_JPEG = "jpeg";
     const TYPE_TIFF = "tiff";
     
-    /** Table attributes. */
+    /** The Id of this scan. */
     protected $scanId;
+    
+    /** The type of this scan. */
     protected $scanType;
+    
+    /** The page number of this scan. */
     protected $page;
+    
+    /** The status of this scan. */
     protected $status;
+    
+    /** The width of this scan. */
     protected $width;
+    
+    /** The height of this scan. */
     protected $height;
+    
+    /** The maximum zoom level of this scan. */
     protected $zoomLevel;
+    
+    /** The filename of this scan. */
     protected $scanName;
+    
+    /** The Id of the upload corresponding to this scan. */
     protected $uploadId;
+    
+    /** The Id of the binding to which this scan belongs. */
     protected $bindingId;
     
     /** Joined attributes. */
@@ -71,6 +89,12 @@ class Scan extends Entity
         return $scan;
     }
     
+    /**
+     * Returns all the books belonging to one binding
+     *
+     * @param $binding  The binding model
+     * @return  Array of scan models
+     */
     public static function fromBinding($binding)
     {
         // TODO: Use scan list here.
@@ -91,6 +115,13 @@ class Scan extends Entity
         return $scans;
     }
     
+    /**
+     * Returns all the scans of a certain page range which belong to one binding
+     *
+     * @param $binding  The binding model
+     * @param $range    The page range
+     * @return  Array of scan models
+     */
     public static function fromBindingPage($binding, $range)
     {
         // TODO: Use scan list here.
@@ -146,7 +177,8 @@ class Scan extends Entity
      */
     public static function getColumns()
     {
-        return array('scanType', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'bindingId', 'scanName');
+        return array('scanType', 'page', 'status', 'width', 'height',
+            'zoomLevel', 'uploadId', 'bindingId', 'scanName');
     }
     
     /**
@@ -170,7 +202,7 @@ class Scan extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
@@ -206,6 +238,6 @@ class Scan extends Entity
     public function getBindingId()    { return $this->bindingId; }
     public function setBindingId($id) { $this->bindingId = $id;  }
     
-    public function getBookTitle()    { return $this->bookTitle; }
-    public function setBookTitle($bookTitle) { $this->bindingId = $id; }
+    public function getBookTitle()           { return $this->bookTitle; }
+    public function setBookTitle($bookTitle) { $this->bindingId = $id;  }
 }

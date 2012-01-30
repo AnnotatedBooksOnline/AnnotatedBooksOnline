@@ -116,7 +116,7 @@ class Permission extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

@@ -98,7 +98,7 @@ class BindingLanguage extends AssociativeEntity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

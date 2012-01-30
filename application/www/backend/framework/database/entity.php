@@ -3,7 +3,9 @@
 
 require_once 'framework/database/database.php';
 
-// Exceptions.
+/*
+ * Exceptions.
+ */
 class EntityException extends ExceptionBase { }
 
 /**
@@ -493,6 +495,10 @@ abstract class Entity
         throw new EntityException('entity-function-not-implemented');
     }
 
+    /**
+     * Getters and setters.
+     */
+    
     public function getMarkedAsDeleted() { return $this->markedAsDeleted; }
     public function setMarkedAsDeleted($marked) { $this->markedAsDeleted = $marked; }
     

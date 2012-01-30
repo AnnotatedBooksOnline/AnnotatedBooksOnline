@@ -124,11 +124,11 @@ class Setting extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
-    public function getSettingName()      { return $this->settingName;  }
+    public function getSettingName() { return $this->settingName;  }
     
     public function getSettingValue()       { return $this->settingValue;   }
     public function setSettingValue($value) { $this->settingValue = $value; }

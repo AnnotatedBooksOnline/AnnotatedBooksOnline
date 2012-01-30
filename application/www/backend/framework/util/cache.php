@@ -11,7 +11,7 @@ class CacheEntry
     protected $dependencyTimestamp;
     
     /**
-     * Constructor.
+     * Constructs a cache entry.
      */
     public function __construct($key)
     {

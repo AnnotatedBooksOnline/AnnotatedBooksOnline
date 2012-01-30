@@ -72,13 +72,13 @@ class Note extends AssociativeEntity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
-    public function getUserId()         { return $this->userId;    }
-    public function setUserId($userId)  { $this->userId = $userId; }
+    public function getUserId()        { return $this->userId;    }
+    public function setUserId($userId) { $this->userId = $userId; }
     
-    public function getText()           { return $this->text;  }
-    public function setText($text)      { $this->text = $text; }
+    public function getText()      { return $this->text;  }
+    public function setText($text) { $this->text = $text; }
 }

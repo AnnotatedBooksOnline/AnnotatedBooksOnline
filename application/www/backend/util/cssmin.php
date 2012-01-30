@@ -56,7 +56,9 @@ class StylesheetMinifier
         return $input;
     }
     
-    // Replaces a CSS url.
+    /**
+     * Replaces a CSS url.
+     */
     private function replaceUrl($match)
     {
         $url = $match[1];
@@ -70,6 +72,9 @@ class StylesheetMinifier
         return 'url(' . $this->relativeRealpath($this->directory . $url) . ')';
     }
     
+    /**
+     * Returns the relative real path.
+     */
     private function relativeRealpath($path)
     {
         do

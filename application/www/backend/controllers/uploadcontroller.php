@@ -137,7 +137,7 @@ class UploadController extends Controller
             'filename'  => self::getString($file, 'name'),
             'size'      => self::getInteger($file, 'size'),
             'status'    => Upload::STATUS_AVAILABLE,
-            'timestamp' => time(),
+            'timestamp' => time()
         ));
         
         // Save file.

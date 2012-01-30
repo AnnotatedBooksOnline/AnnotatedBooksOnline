@@ -10,6 +10,9 @@ require_once 'util/authentication.php';
  */
 class NoteController extends Controller
 {
+    /**
+     * Loads a note.
+     */
     public function actionLoad($data)
     {
         //Authentication::assertLoggedOn();
@@ -36,6 +39,9 @@ class NoteController extends Controller
         return array('records' => $note->getValues(), 'total' => 1);
     }
     
+    /**
+     * Saves a note.
+     */
     public function actionSave($data)
     {       
         // Check permissions.

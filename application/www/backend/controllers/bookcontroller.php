@@ -6,7 +6,9 @@ require_once 'util/authentication.php';
 require_once 'models/book/booklist.php';
 require_once 'models/binding/binding.php';
 
-// Exceptions.
+/**
+ * Exceptions.
+ */
 class BookNotFoundException extends ExceptionBase
 {
     public function __construct($bookId)
@@ -33,14 +35,14 @@ class BookController extends ControllerBase
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $data
+     * Sets the first and last pages of the books
      */
     public function actionFirstLastPages($data)
     {               
+        
+        Database::getInstance()->startTransaction();
         // Collect the binding id and selected book pages from the request.
-        $inputBindingId = self::getInteger($data, 'bindingId');
+        $inputBindingId     = self::getInteger($data, 'bindingId');
         $inputSelectedBooks = self::getArray($data, 'selectedBooks');
         
         // Load the binding to be modified from the database.
@@ -49,12 +51,13 @@ class BookController extends ControllerBase
         // Determine if this is a binding that is being modified. This is the case if the binding
         // status is not 'uploaded' or 'reordered'
         if ($binding->getStatus() != Binding::STATUS_UPLOADED 
-           && $binding->getStatus() != Binding::STATUS_REORDERED) {
-            
+           && $binding->getStatus() != Binding::STATUS_REORDERED) 
+        {
             // Assert the user has permission to modify bindings.
             Authentication::assertPermissionTo('change-book-info');
-        } else {
-
+        } 
+        else 
+        {
             // Assert the user has permission to upload bindings.
             Authentication::assertPermissionTo('upload-bindings');
         }
@@ -63,9 +66,15 @@ class BookController extends ControllerBase
         // Iterate over all selected books and store their values in the database.
         foreach ($inputSelectedBooks as $inputSelectedBook) 
         {
+            $firstPage = self::getInteger($inputSelectedBook, 'firstPage');
+            $lastPage = self::getInteger($inputSelectedBook, 'lastPage');
+            if ($firstPage > $lastPage)
+            {
+                throw new ControllerException('faulty-page-order');
+            }
             $book = new Book(self::getInteger($inputSelectedBook, 'bookId'));
-            $book->setFirstPage(self::getInteger($inputSelectedBook, 'firstPage'));
-            $book->setLastPage(self::getInteger($inputSelectedBook, 'lastPage'));
+            $book->setFirstPage($firstPage);
+            $book->setLastPage($lastPage);
             $book->save();
         }
         
@@ -75,6 +84,7 @@ class BookController extends ControllerBase
             $binding->setStatus(Binding::STATUS_SELECTED);
             $binding->save();
         }
+        Database::getInstance()->commit();
     }
     
     /**
@@ -87,9 +97,21 @@ class BookController extends ControllerBase
         $query = Query::select('COUNT(books.bookId)')
             ->from('Books books')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
-            ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
-            ->join('Scans invalidScans', array('bindings.bindingId = invalidScans.bindingId', 'invalidScans.status < :scanStatus'), 'LEFT')
-            ->join('Scans firstScan', array('bindings.bindingId = firstScan.bindingId', 'books.firstPage = firstScan.page'), 'LEFT INNER')
+            ->join(
+                'Libraries libraries', 
+                array('bindings.libraryId = libraries.libraryId'), 
+                'LEFT'
+                )
+            ->join(
+                'Scans invalidScans',
+                array('bindings.bindingId = invalidScans.bindingId','invalidScans.status < :scanStatus'),
+                'LEFT'
+                )
+            ->join(
+                'Scans firstScan',
+                array('bindings.bindingId = firstScan.bindingId', 'books.firstPage = firstScan.page'),
+                'LEFT INNER'
+                )
             ->where('bindings.status = :bindingStatus', 'invalidScans.status IS NULL');
         
         // The bindings accumulator.
@@ -100,9 +122,15 @@ class BookController extends ControllerBase
         $c = 0;
         
         // Adds a fulltext search to the query.
-        $addFulltext = function($name, $columns, $value, $addheadline = false, $altvector = null) use (&$query, &$binds, &$c, &$headline)
+        $addFulltext = function(
+            $name, $columns, $value, $addheadline = false, $altvector = null
+        ) 
+            use (&$query, &$binds, &$c, &$headline)
         {
-            BookController::addFulltext($name, $columns, $value, $addheadline, $altvector, $query, $binds, $c, $headline);
+            BookController::addFulltext(
+                $name, $columns, $value, $addheadline,
+                $altvector, $query, $binds, $c, $headline
+            );
         };
         
         // Process all search selectors and add them to the query.
@@ -110,7 +138,10 @@ class BookController extends ControllerBase
         foreach ($selectors as $selector)
         {
             // If any data is missing or invalid, do not process the selector.
-            if (isset($selector['type']) && isset($selector['value']) && (is_array($selector['value']) || trim($selector['value']) != ""))
+            if (isset($selector['type'])      &&
+                isset($selector['value'])     && 
+                (is_array($selector['value']) ||
+                trim($selector['value']) != "")) 
             {
                 $value = $selector['value'];
                 switch ((string) $selector['type'])
@@ -197,16 +228,37 @@ class BookController extends ControllerBase
         $limit = self::getInteger($data, 'limit', 5, true);
         $offset = $limit * (self::getInteger($data, 'page', 0, true) - 1);
         $query->limit($limit, $offset);
-        $query->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'books.printVersion', 'books.fulltext');
+        $query->groupBy(
+            'books.bookId', 'books.title', 'books.minYear',
+            'books.maxYear', 'books.placePublished', 'books.publisher',
+            'books.firstPage', 'bindings.bindingId', 'bindings.signature',
+            'libraries.libraryName', 'books.printVersion', 'books.fulltext'
+            );
 
         $results = $query->execute($binds);
 
-        $query = Query::select('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'authorNames(books.bookId)', 'provenanceNames(bindings.bindingId)', 'scans.scanId', 'bookLanguageNames(books.bookId)', 'bindingLanguageNames(bindings.bindingId)', 'books.printVersion')
+        $query = Query::select(
+            'books.bookId', 'books.title', 'books.minYear', 'books.maxYear',
+            'books.placePublished', 'books.publisher', 'books.firstPage',
+            'bindings.bindingId', 'bindings.signature', 'libraries.libraryName',
+            'authorNames(books.bookId)', 'provenanceNames(bindings.bindingId)',
+            'scans.scanId', 'bookLanguageNames(books.bookId)',
+            'bindingLanguageNames(bindings.bindingId)', 'books.printVersion'
+            )
             ->from('Books books')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
             ->join('Libraries libraries', array('bindings.libraryId = libraries.libraryId'), 'LEFT')
-            ->join('Scans scans', array('bindings.bindingId = scans.bindingId', 'books.firstPage = scans.page'), 'LEFT INNER')
-            ->groupBy('books.bookId', 'books.title', 'books.minYear', 'books.maxYear', 'books.placePublished', 'books.publisher', 'books.firstPage', 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName', 'authornames', 'provenancenames', 'scans.scanId', 'bindinglanguagenames', 'booklanguagenames', 'books.printVersion', 'books.fulltext')
+            ->join('Scans scans',
+                array('bindings.bindingId = scans.bindingId', 'books.firstPage = scans.page'),
+                'LEFT INNER'
+                )
+            ->groupBy(
+                'books.bookId', 'books.title', 'books.minYear', 'books.maxYear',
+                'books.placePublished', 'books.publisher', 'books.firstPage',
+                'bindings.bindingId', 'bindings.signature', 'libraries.libraryName',
+                'authornames', 'provenancenames', 'scans.scanId', 'bindinglanguagenames',
+                'booklanguagenames', 'books.printVersion', 'books.fulltext'
+                )
             ->where('books.bookId = :bookId');
         $binds = array();
         
@@ -285,7 +337,8 @@ class BookController extends ControllerBase
         {
             $result['exact'][] = array(
                 'like' => $exacts[1][$i] == '-' ? ' !~* ' : ' ~* ',
-                'value' => '(^|[^[:alpha:]])' . preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)',
+                'value' => '(^|[^[:alpha:]])' . 
+                    preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)',
                 'positive' => $exacts[1][$i] != '-'
             );
         }
@@ -342,7 +395,9 @@ class BookController extends ControllerBase
      * @param int     $c           The current binding counter.
      * @param string  $headline    The current headline query string.
      */
-    public static function addFulltext($name, $columns, $value, $addheadline, $altvector, Query &$query, array &$binds, &$c, &$headline)
+    public static function addFulltext(
+        $name, $columns, $value, $addheadline,
+        $altvector, Query &$query, array &$binds, &$c, &$headline)
     {
         // Decompose the textual query
         $split = BookController::splitFulltextQuery($value);

@@ -3,7 +3,9 @@
 
 require_once 'framework/database/entity.php';
 
-// Exceptions.
+/**
+ * Exceptions.
+ */
 class UserNotFoundException extends ExceptionBase
 {
     public function __construct($username)
@@ -381,14 +383,14 @@ class User extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
     public function getUserId()    { return $this->userId; }
     
-    public function setUsername($username) { $this->username = $username; }
     public function getUsername()          { return $this->username;      }
+    public function setUsername($username) { $this->username = $username; }
     
     public function setPassword($password)
     {
@@ -398,30 +400,30 @@ class User extends Entity
     public function getEmail()       { return $this->email;   }
     public function setEmail($email) { $this->email = $email; }
     
-    public function setFirstName($firstName) { $this->firstName = $firstName; }
     public function getFirstName()           { return $this->firstName;       }
+    public function setFirstName($firstName) { $this->firstName = $firstName; }
     
-    public function setLastName($lastName) { $this->lastName = $lastName; }
     public function getLastName()          { return $this->lastName;      }
+    public function setLastName($lastName) { $this->lastName = $lastName; }
     
-    public function setAffiliation($affiliation) { $this->affiliation = $affiliation; }
     public function getAffiliation()             { return $this->affiliation;         }
+    public function setAffiliation($affiliation) { $this->affiliation = $affiliation; }
     
-    public function setOccupation($occupation) { $this->occupation = $occupation; }
     public function getOccupation()            { return $this->occupation;        }
+    public function setOccupation($occupation) { $this->occupation = $occupation; }
     
-    public function setWebsite($website) { $this->website = $website; }
     public function getWebsite()         { return $this->website;     }
+    public function setWebsite($website) { $this->website = $website; }
     
-    public function setHomeAddress($address) { $this->homeAddress = $address; }
     public function getHomeAddress()         { return $this->homeAddress;     }
+    public function setHomeAddress($address) { $this->homeAddress = $address; }
     
-    public function setBanned($banned) { $this->banned = $banned; }
     public function getBanned()        { return $this->banned;    }
+    public function setBanned($banned) { $this->banned = $banned; }
     public function isBanned()         { return $this->banned;    }
     
-    public function setRank($rank) { $this->rank = $rank; }
     public function getRank()      { return $this->rank;  }
+    public function setRank($rank) { $this->rank = $rank; }
     
     public function getPasswordRestoreToken()       { return $this->passwordRestoreToken;   }
     public function setPasswordRestoreToken($token) { $this->passwordRestoreToken = $token; }

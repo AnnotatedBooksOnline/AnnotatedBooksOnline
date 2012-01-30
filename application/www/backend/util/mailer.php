@@ -7,7 +7,9 @@ require_once 'models/setting/setting.php';
 require_once 'models/user/user.php';
 require_once 'framework/util/log.php';
 
-// Exceptions.
+/**
+ * Exceptions.
+ */
 class MailerException extends ExceptionBase { }
 
 /**
@@ -99,6 +101,11 @@ class Mailer
         self::sendMail($recipient, $subject, $message);
     }
     
+    /**
+     * Sends a standard registration declined mail to the specified PendingUser.
+     * 
+     * @param PendingUser $puser The pending user entity, its values should be set.
+     */
     public static function sendUserDeclinedMail($puser)
     {
         // Retrieve associated User entity.
@@ -116,6 +123,13 @@ class Mailer
         self::sendMail($recipient, $subject, $message);
     }
     
+    /**
+     * Sends a standard password restoration mail to the specified User.
+     * 
+     * @param User $user The user entity, its values should be set.
+     * @throws MailerException When something goes wrong, like the e-mail not being accepted for
+     *                         delivery. 
+     */
     public static function sendPasswordRestorationMail($user)
     {
         // Determine the restoration token.

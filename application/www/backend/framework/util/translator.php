@@ -46,7 +46,9 @@ class Translator extends Singleton
         }
     }
     
-    // Adds language file entries from a directory.
+    /**
+     *  Adds language file entries from a directory.
+     */
     private function addEntries($directory)
     {
         // Load the entries from the language files in the directory.
@@ -62,7 +64,9 @@ class Translator extends Singleton
     }
 }
 
-// Define a shortcut function to get an entry.
+/**
+ * Define a shortcut function to get an entry.
+ */
 function __($id)
 {
     // Get arguments of the function, minus the id.

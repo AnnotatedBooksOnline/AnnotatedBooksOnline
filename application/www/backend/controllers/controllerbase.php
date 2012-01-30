@@ -11,7 +11,8 @@ abstract class ControllerBase extends Controller
     /**
      * Generalizes a load query.
      */
-    protected function handleLoad($data, $type, $idColumn = null, $columns = null, array $defaultSorters = array())
+    protected function handleLoad($data, $type, $idColumn = null, $columns = null,
+                                    array $defaultSorters = array())
     {
         // Set entity list type.
         $entityListType = $type . 'List';

@@ -36,7 +36,10 @@
  * SOFTWARE.
  */
 
-// Exceptions.
+ /** 
+  * Exceptions.
+  */
+
 class JavascriptMinifierException extends ExceptionBase
 {
     public function __construct($msg)

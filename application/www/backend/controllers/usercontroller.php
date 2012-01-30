@@ -145,15 +145,15 @@ class UserController extends ControllerBase
     {
         $record = self::getArray($data, 'record');
         
-        $username    = self::getString($record, 'username', '', true, 30);
-        $email       = self::getString($record, 'email', '', true, 255);
-        $firstName   = self::getString($record, 'firstName', '', true, 50);
-        $lastName    = self::getString($record, 'lastName', '', true, 50);
-        $password    = self::getString($record, 'password', '', false, 32);
-        $affiliation = self::getString($record, 'affiliation', '', true, 50);
-        $occupation  = self::getString($record, 'occupation', '', true, 50);
-        $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
-        $website     = self::getString($record, 'website', '', true, 255);
+        $username    = self::getString($record, 'username',    '', true,  30);
+        $email       = self::getString($record, 'email',       '', true,  255);
+        $firstName   = self::getString($record, 'firstName',   '', true,  50);
+        $lastName    = self::getString($record, 'lastName',    '', true,  50);
+        $password    = self::getString($record, 'password',    '', false, 32);
+        $affiliation = self::getString($record, 'affiliation', '', true,  50);
+        $occupation  = self::getString($record, 'occupation',  '', true,  50);
+        $homeAddress = self::getString($record, 'homeAddress', '', true,  255);
+        $website     = self::getString($record, 'website',     '', true,  255);
         
         $values = array(
             'username'         => $username,
@@ -263,7 +263,7 @@ class UserController extends ControllerBase
     }
     
     /**
-     * Deletes an user.
+     * Deletes a user.
      */
     public function actionDeleteUser($data)
     {
@@ -322,10 +322,7 @@ class UserController extends ControllerBase
     
     /**
      * Sends an e-mail to the user containing a link with which he/she can enter a new password.
-     * 
      * The only information a user needs to specify for this is an e-mail address.
-     * 
-     * @param $data Should have an 'email' key.
      */
     public function actionPasswordForgotten($data)
     {
@@ -364,7 +361,7 @@ class UserController extends ControllerBase
         
         // Fetch username and new role.
         $username = self::getString($data, 'username', '', true, 30);
-        $newrank = self::getInteger($data, 'role');
+        $newrank  = self::getInteger($data, 'role');
         
         // Change the user rank.
         $user = User::fromUsername($username);
@@ -379,8 +376,6 @@ class UserController extends ControllerBase
     
     /**
      * Changes a user's forgotten password based on a token.
-     * 
-     * @param $data Should contain a 'token' and a newly entered 'password'.
      */
     public function actionChangeForgottenPassword($data)
     {

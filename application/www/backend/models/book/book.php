@@ -45,8 +45,10 @@ class Book extends Entity
     /** Last page. */
     protected $lastPage;
     
+    /** list containing all the languages linked to this book. */
     protected $bookLanguageList;
     
+    /** list containing all the authors of this book. */
     protected $authorList;
     
     /**
@@ -68,8 +70,8 @@ class Book extends Entity
     }
     
     /**
-    *
-    */
+     * Loads all the associated lists.
+     */
     public function loadDetails()
     {
         $this->authorList = AuthorList::find(array('bookId' => $this->bookId));
@@ -77,8 +79,7 @@ class Book extends Entity
     }
     
     /**
-     *
-     * Enter description here ...
+     * Saves all the associated lists.
      */
     public function saveDetails() 
     {
@@ -91,6 +92,12 @@ class Book extends Entity
         $this->bookLanguageList->save();
     }
     
+    /**
+     * Returns all the books from one binding
+     *
+     * @param $binding  The binding model
+     * @return  Array of book models
+     */
     public static function fromBinding($binding)
     {
         // TODO: Use BookList here.
@@ -112,6 +119,13 @@ class Book extends Entity
         return $books;
     }
     
+    /**
+     * Returns all the books from one binding in a certain page range
+     *
+     * @param $book  The book model
+     * @param $range  The page range
+     * @return  Array of book models
+     */
     public static function fromBindingPage($binding, $range)
     {
         // TODO: Use BookList here.
@@ -200,7 +214,7 @@ class Book extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

@@ -11,6 +11,7 @@ class HelpPageList extends EntityList
 {
     public function add($helpPage)
     {
+        //Only add help pages which have children.
         $children = $helpPage->getChildren();
         if(!empty($children))
         {

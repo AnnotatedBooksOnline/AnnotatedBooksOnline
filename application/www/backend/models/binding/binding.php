@@ -70,7 +70,7 @@ class Binding extends Entity
     }
     
     /**
-     * 
+     * Loads all associtated entity lists.
      */
     public function loadDetails()
     {
@@ -78,11 +78,10 @@ class Binding extends Entity
         $this->scanList = ScanList::find(array('bindingId' => $this->bindingId));
         $this->provenanceList = ProvenanceList::find(array('bindingId' => $this->bindingId));
         $this->bindingLanguageList = BindingLanguageList::find(array('bindingId' => $this->bindingId));
-        
     }
     
     /**
-     * 
+     * Saves all associated entity lists.
      */
     public function saveDetails() 
     {
@@ -155,7 +154,7 @@ class Binding extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

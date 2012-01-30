@@ -22,7 +22,7 @@ class TilePyramidBuilder extends Singleton
     /** Singleton instance. */
     protected static $instance;
     
-    /** An queue of scan ids representing scans waiting to be processed. */
+    /** A queue of scan ids representing scans waiting to be processed. */
     private $queue;
      
     protected function __construct()

@@ -6,7 +6,9 @@ require_once 'framework/util/session.php';
 require_once 'models/user/user.php';
 require_once 'models/permission/permission.php';
 
-// Exceptions.
+/**
+ * Exceptions.
+ */
 class NotLoggedOnException extends ExceptionBase
 {
     public function __construct()
@@ -191,7 +193,7 @@ class Authentication extends Singleton
         $user = $this->getUser();
         
         // Get its rank, or no rank if no user is logged in.
-        $rank = $user === null ? User::RANK_NONE : $user->getRank();
+        $rank = ($user === null ? User::RANK_NONE : $user->getRank());
         
         // Check permission.
         return Permission::rankHasPermission($action, $rank);
@@ -208,7 +210,7 @@ class Authentication extends Singleton
         $user = $this->getUser();
         
         // Get its rank, or no rank if no user is logged in.
-        $rank = $user === null ? User::RANK_NONE : $user->getRank();
+        $rank = ($user === null ? User::RANK_NONE : $user->getRank());
         
         return Permission::getPermissionListForRank($rank);
     }

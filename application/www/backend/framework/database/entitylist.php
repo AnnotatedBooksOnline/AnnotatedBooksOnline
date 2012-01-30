@@ -223,9 +223,7 @@ abstract class EntityList implements IteratorAggregate
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $marked
+     * Marks all entities as deleted.
      */
     public function markAllAsDeleted($marked)
     {
@@ -236,9 +234,7 @@ abstract class EntityList implements IteratorAggregate
     }
     
     /**
-     * 
-     * Enter description here ...
-     * @param unknown_type $marked
+     * Marks all entities as updated.
      */
     public function markAllAsUpdated($marked)
     {

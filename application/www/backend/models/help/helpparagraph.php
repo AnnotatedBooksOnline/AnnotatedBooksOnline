@@ -49,23 +49,41 @@ class HelpParagraph extends Entity
     }
     
     
-    // Standard entity functions.
-    
+    /**
+     * Gets the table name.
+     *
+     * @return  The table name.
+     */
     public static function getTableName()
     {
         return 'HelpParagraphs';
     }
     
+    /**
+     * Gets the primary keys.
+     *
+     * @return  Array of all primary keys.
+     */
     public static function getPrimaryKeys()
     {
         return array('helpParagraphId');
     }
     
+    /**
+     * Gets all the columns.
+     *
+     * @return  Array of all columns, except primary keys.
+     */
     public static function getColumns()
     {
         return array('helpPageId', 'paragraphParentId', 'actionName', 'title', 'content');
     }
     
+    /**
+     * Gets all the column types, per column, including primary keys.
+     *
+     * @return  Array of all column types.
+     */
     public static function getColumnTypes()
     {
         return array(
@@ -79,8 +97,11 @@ class HelpParagraph extends Entity
     }
     
     
-    // Helpers.
-    
+    /**
+     * Returns all the children of a node based on the current permissions
+     *
+     * @return  Array of help paragraphs.
+     */
     public function getChildren()
     {
         // Confirm that id is set.
@@ -105,29 +126,31 @@ class HelpParagraph extends Entity
                 {
                     $helpParagraph = new HelpParagraph($citem->getValue('helpParagraphId'));
                     $helpParagraph = $helpParagraph->getValues();
+                    // Check whether the user has permission to view this help paragraph.
                     if (Authentication::getInstance()->hasPermissionTo($helpParagraph['actionName']))
                     {
                         $this->subItems[] = $helpParagraph;
                     }
                 }
         }
-        
+        // Return the children of this node.
         return $this->subItems;
     }
     
     public function getValues($columns = null)
     {
         $helpParagraph = parent::getValues($columns);
+        //Also return the id consisting of the id of the help page ande the help paragraph
         $helpParagraph['helpId'] =  $helpParagraph['helpPageId'].','.$helpParagraph['helpParagraphId'];
+        
         $helpParagraph['pageName'] = $helpParagraph['title'];
         return $helpParagraph;
     }
     
-    // Getters and setters.
+    /**
+     * Getters and setters.
+     */
     
-    
-    public function getHelpType()    { return $this->helpType; }
-    public function setHelpType($type) { $this->helpType = $type;  }
     
     public function getHelpParagraphId()    { return $this->helpParagraphId; }
     public function setHelpParagraphId($id) { $this->helpParagraphId = $id;  }
@@ -147,6 +170,8 @@ class HelpParagraph extends Entity
     public function getContent()     { return $this->content; }
     public function setContent($con) { $this->content = $con; }
     
+    public function getHelpType()      { return $this->helpType; }
+    public function setHelpType($type) { $this->helpType = $type;  }
     
 }
 

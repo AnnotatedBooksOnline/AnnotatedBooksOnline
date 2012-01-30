@@ -66,7 +66,7 @@ class Language extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

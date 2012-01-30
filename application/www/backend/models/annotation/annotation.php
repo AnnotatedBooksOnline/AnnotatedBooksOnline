@@ -10,16 +10,34 @@ require_once 'models/scan/scan.php';
  */
 class Annotation extends Entity
 {
-    /** Fields. */
+    /** Id of this annotation. */
     protected $annotationId;
+    
+    /** Id of the scan to which this annotation belongs. */
     protected $scanId;
+    
+    /** The polygon of this annotation. */
     protected $polygon;
+    
+    /** The English translation of the transcribed text. */
     protected $transcriptionEng;
+    
+    /** The transcribed text. */
     protected $transcriptionOrig;
+    
+    /** The Id of the user who created this annotation. */
     protected $createdUserId;
+    
+    /** The time and date on which this annotation was created. */
     protected $timeCreated;
+    
+    /** The position of this annotation on the list of annotation which belong to one scan. */
     protected $order;
+    
+    /** The Id of the user who last modified this annotation. */
     protected $changedUserId;
+    
+    /** the time and date on which this annotation was last modified. */
     protected $timeChanged;
     
     /**
@@ -37,6 +55,12 @@ class Annotation extends Entity
         }
     }
     
+    /**
+     * Returns all the annotations which belong to one scan
+     *
+     * @param $scan  The scan model
+     * @return  Array of annotation models
+     */
     public static function fromScan($scan)
     {
         // TODO: Use AnnotationList.
@@ -78,7 +102,8 @@ class Annotation extends Entity
      */
     public static function getColumns()
     {
-        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'createdUserId', 'timeCreated', 'order', 'changedUserId', 'timeChanged');
+        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'createdUserId',
+            'timeCreated', 'order', 'changedUserId', 'timeChanged');
     }
     
     /**
@@ -102,7 +127,7 @@ class Annotation extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

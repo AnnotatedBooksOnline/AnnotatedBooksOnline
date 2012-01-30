@@ -105,7 +105,7 @@ class PendingUser extends Entity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     

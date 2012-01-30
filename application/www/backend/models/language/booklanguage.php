@@ -98,7 +98,7 @@ class BookLanguage extends AssociativeEntity
         );
     }
     
-    /*
+    /**
      * Getters and setters.
      */
     
