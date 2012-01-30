@@ -52,6 +52,7 @@ UploadProgress.prototype.constructor = function(target, id, filename, size, onca
         var progress = document.createElement('div');
         progress.className = 'x-progress-bar';
         progress.style.width = '0px';
+        progress.style.overflow = 'hidden';
         var progressText = document.createElement('div');
         progressText.className = 'x-progress-text';
         progressText.style.width = '200px';
@@ -108,7 +109,6 @@ UploadProgress.prototype.setProgress = function(percentage)
     percentage = Math.round(percentage);
     var width = (2 * percentage) + 'px';
     this.progressBarElement.childNodes[1].style.width = width;
-    this.progressBarElement.childNodes[1].childNodes[0].style.width = width;
     this.progressBarElement.childNodes[0].innerHTML = percentage + '%';
     this.progressBarElement.childNodes[1].childNodes[0].innerHTML = percentage + '%';
 }
