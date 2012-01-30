@@ -1,4 +1,4 @@
-BEGIN TRANSACTION;
+﻿BEGIN TRANSACTION;
 
 -- Redesigns HelpParagraphs, allowing content to depend on a setting.
 
@@ -17,9 +17,9 @@ CREATE TABLE "HelpContents"
 
     PRIMARY KEY ("helpContentId"),
     FOREIGN KEY ("helpParagraphId")
-      REFERENCES "HelpParagraphs"
+      REFERENCES "HelpParagraphs",
     
-    UNIQUE ("helpParagraphId", "settingValue");
+    UNIQUE ("helpParagraphId", "settingValue")
 );
 
 -- Move contents from HelpParagraphs to new table.
