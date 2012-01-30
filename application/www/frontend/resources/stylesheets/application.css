@@ -89,6 +89,12 @@ a:hover
     vertical-align: bottom;
 }
 
+.plaintext > *
+{
+    font-size: 108%;
+    line-height: 150%;
+}
+
 /* Plaintext styling. */
 .plaintext h1
 {
@@ -99,7 +105,7 @@ a:hover
 
 .plaintext h2
 {
-    font-size: 125%;
+    font-size: 130%;
     margin-bottom: 0.5em;
     font-weight: bold;
 }
@@ -118,11 +124,11 @@ a:hover
 }
 
 /* Help styling. */
-.help
+.help > *
 {
     padding: 10px;
-    line-height: 20px;
-    font-size: 13px;
+    line-height: 150%;
+    font-size: 108%;
 }
 
 .help li
@@ -135,7 +141,7 @@ a:hover
 .help h1
 {
     font-size: 145%;
-    line-height: 35px;
+    line-height: 175%;
     border-bottom-style: ridge;
     border-bottom-color: E9E8F6;
     border-bottom-width: 5px;
@@ -162,12 +168,11 @@ a:hover
 
 .help p
 {
-    font-size: 13px;
     color: #333;
     margin-bottom: 0.5em;
 }
 
-.annoHistory  td
+.annoHistory td
 {
     padding:0em 0.3em;
 }

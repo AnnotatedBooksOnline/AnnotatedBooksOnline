@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 -- Add links to logos for welcome page
 UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
