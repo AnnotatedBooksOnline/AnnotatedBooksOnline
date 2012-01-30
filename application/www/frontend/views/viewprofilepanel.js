@@ -106,9 +106,24 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     homeAddress: 'Address',
                     activationStage: 'Status',
                     banned: 'Banned',
-                    rank: 'Rank'
+                    rank: 'Rank',
+                    registrationDate: 'Registration date',
+                    lastActive: 'Last actve'
                 },
                 customRenderers: {
+                	registrationDate: function(unixtime) 
+                    {
+                    	var date = new Date(unixtime * 1000);
+                    	return date.toDateString();
+                    },
+                	lastActive: function (unixtime)
+                    {
+                    	var date = new Date(unixtime * 1000);
+                    	var h = date.getHours();
+                    	var m = date.getMinutes();
+                    	// TODO : lol
+                    	return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
+                    },
                     banned: function(banned){
                         if (banned === true) {
                             return 'Yes';

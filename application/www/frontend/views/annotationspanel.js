@@ -392,10 +392,20 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     
     saveChanges: function()
     {
-        // Save annotations.
-        this.annotations.save();
-        this.annotations.load();
-        this.updateHistory(this.activeModel);
+        // Ask user whether to save changes.
+        var _this = this;
+        Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
+            function(button)
+            {
+                if (button === 'yes')
+                {
+                    // Save changes.
+                    _this.annotations.save();
+                    _this.annotations.load();
+                    _this.updateHistory(this.activeModel);
+                }
+            }
+        );
     },
     
     resetChanges: function()
@@ -450,7 +460,8 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             viewConfig: {
                 plugins: {
                     ptype: 'gridviewdragdrop',
-                    dragText: 'Drag and drop to reorganize'
+                    dragText: 'Drag and drop to reorganize',
+                    pluginId: 'dragdrop'
                 },
                 stripeRows: false,
                 listeners: {
@@ -493,8 +504,12 @@ Ext.define('Ext.ux.AnnotationsGrid', {
     {
         this.callParent();
         
+        // Fetch DragDrop plugin
+        this.dragdrop = this.getView().getPlugin('dragdrop');
+        
         // Set mode.
         this.mode = 'view';
+        this.dragdrop.disable();
         
         // Watch for events.
         var eventDispatcher = this.annotations.getEventDispatcher();
@@ -679,5 +694,15 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         {
             _this.reconfigure(null, _this.getColumns());
         }, 1);
+        
+        // Set dragdrop
+        if (mode === 'edit')
+        {
+            this.dragdrop.enable();
+        }
+        else
+        {
+            this.dragdrop.disable();
+        }
     }
 });

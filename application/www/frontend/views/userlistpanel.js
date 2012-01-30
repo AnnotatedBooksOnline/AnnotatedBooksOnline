@@ -35,12 +35,6 @@ Ext.define('Ext.ux.UserListPanel', {
                 change: function ()
                 {
                     var value = Ext.getCmp('autoAcceptBox').getValue();
-                    var changedTo = 'off';
-                    
-                    if (value) 
-                    {
-                        changedTo = 'on';
-                    }
                     
                     if (thisChange)
                     {
@@ -49,20 +43,39 @@ Ext.define('Ext.ux.UserListPanel', {
                     else
                     {
                         thisChange = true;
+                        
+                        var message, buttons;
+                        if(value)
+                        {
+                            message = 'You are about to turn on automatic user acceptance. '
+                                    + 'Do you also want to automatically accept all users '
+                                    + 'currently waiting for acceptance?'
+                                    + 'Clicking cancel will keep automatic user acceptance '
+                                    + 'turned off.';
+                            buttons = Ext.Msg.YESNOCANCEL;
+                        }
+                        else
+                        {
+                            message = 'Are you sure you want to turn automatic user acceptance '
+                                    + 'off? After this, you will need to activate new users '
+                                    + 'manually.';
+                            buttons = Ext.Msg.YESNO;
+                        }
+                        
                         Ext.Msg.show({
-                            title: 'Are you sure?',
-                            msg: 'Are you sure you want to turn automatic user acceptance '
-                                + changedTo + '?',
-                            buttons: Ext.Msg.YESNO,
+                            title: 'Automatic acception',
+                            msg: message,
+                            buttons: buttons,
                             icon: Ext.Msg.QUESTION,
                             callback: function(button)
                             {
-                                if (button == 'yes')
+                                if (button == 'yes' || (value && button == 'no'))
                                 {
                                     RequestManager.getInstance().request(
                                        'UserActivation',
                                        'setAutoAcceptance',
-                                       {autoAccept: value},
+                                       {autoAccept: value,
+                                        acceptAllPending: value && button == 'yes'},
                                        _this,
                                        function()
                                        {
@@ -109,6 +122,69 @@ Ext.define('Ext.ux.UserListPanel', {
             {
                 return '<a href="http://' + escapedWebsite + '" target="_blank">' + escapedWebsite + '</a>';
             }
+        }
+        
+        function renderBanned(banned) 
+        {
+            if (banned === true) 
+            {
+                return 'Yes';
+            } 
+            else 
+            {
+                return 'No';
+            }
+        }
+        
+        function renderActivationStage(activationStage)
+        {
+            if (activationStage == '0') 
+            {
+                return 'Pending';
+            } 
+            else if (activationStage == '1') 
+            {
+                return 'Accepted';
+            } 
+            else if (activationStage == '2') 
+            {
+                return 'Declined';
+            } 
+            else if (activationStage == '3') 
+            {
+                return 'Active';
+            }
+        }
+        
+        function renderRank(rank)
+        {
+            if (rank == '10') 
+            {
+                return 'Normal user';
+            } 
+            else if (rank == '40') 
+            {
+                return 'Moderator';
+            } 
+            else if (rank == '50') 
+            {
+                return 'Administrator';
+            }
+        }
+        
+        function renderDate(unixtime) 
+        {
+            var date = new Date(unixtime * 1000);
+            return date.toDateString();
+        }
+        
+        function renderTimestamp(unixtime)
+        {
+            var date = new Date(unixtime * 1000);
+            var h = date.getHours();
+            var m = date.getMinutes();
+            // TODO : lol
+            return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
         }
         
         var defConfig = {
@@ -158,6 +234,41 @@ Ext.define('Ext.ux.UserListPanel', {
                     text:      'Address',
                     flex:      2,
                     dataIndex: 'homeAddress',
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Role',
+                    flex:      2,
+                    dataIndex: 'rank',
+                    renderer:  renderRank,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Banned',
+                    flex:      2,
+                    dataIndex: 'banned',
+                    renderer:  renderBanned,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Status',
+                    flex:      2,
+                    dataIndex: 'activationStage',
+                    renderer:  renderActivationStage,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Registration date',
+                    flex:      2,
+                    dataIndex: 'registrationDate',
+                    renderer:  renderDate,
+                    hidden:    true,
+                    hideable:  false
+                },{
+                    text:      'Last active',
+                    flex:      2,
+                    dataIndex: 'lastActive',
+                    renderer:  renderTimestamp,
                     hidden:    true,
                     hideable:  false
                 }],

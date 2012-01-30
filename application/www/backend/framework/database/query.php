@@ -372,6 +372,8 @@ class Query
         }
         
         $this->returningClause .= implode(', ', array_map(array($this, 'escapeIdentifier'), $columns));
+        
+        return $this;
     }
     
     

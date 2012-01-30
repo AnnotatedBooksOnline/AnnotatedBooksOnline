@@ -39,6 +39,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         var defConfig = {
             border: false,
             flex: 1,
+            autoHeight: true,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -129,6 +130,15 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         
         this.callParent();
         
+        // Handle authentication changes.
+        Authentication.getInstance().getEventDispatcher().bind('modelchange', this, this.onAuthenticationChange);
+        
+        // Update the panel according to the current authentication.
+        this.onAuthenticationChange();
+        
+    },
+    onAuthenticationChange: function()
+    {
         if (Authentication.getInstance().hasPermissionTo('change-book-info'))
         {
             this.down("[name=modifybindingbutton]").setVisible(true);
@@ -140,8 +150,10 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             this.down("[name=deletebindingbutton]").setVisible(false);
         }
         
+        // TODO : Make the layout correctly expand.
+        
+        this.up('[name=informationpanel]').doLayout();
     },
-    
     afterRender: function()
     {
         this.callParent();
@@ -207,6 +219,7 @@ Ext.define('Ext.ux.InformationPanel', {
     {
         var defConfig = {
             border: false,
+            name: 'informationpanel',
             layout: {
                 type: 'vbox',
                 align: 'stretch'

@@ -142,8 +142,6 @@ class UserActivationController extends Controller
             return true;
         });
         
-        // TODO: Throw an exception on failure, instead of returning false.
-        
         return $success;
     }
     
@@ -155,6 +153,9 @@ class UserActivationController extends Controller
      * 
      * @param $data Should contain a boolean 'autoAccept', which is true if the setting should be
      *              turned on and false if it should be turned off.
+     *              Additionally, if autoAccept is true, there should be a boolean 'acceptAllPending'
+     *              that indicates whether all users currently waiting for activation should also be
+     *              activated.
      */
     public function actionSetAutoAcceptance($data)
     {
@@ -163,20 +164,39 @@ class UserActivationController extends Controller
         
         // Fetch wheter to turn automatic acceptance on or off.
         $newValue = self::getBoolean($data, 'autoAccept');
+        $acceptAll = $newValue && self::getBoolean($data, 'acceptAllPending');
         
         // Start a transaction.
         Database::getInstance()->doTransaction(
-        function() use ($newValue)
+        function() use ($newValue, $acceptAll)
         {
             // Set the setting.
             Setting::setSetting('auto-user-acceptance', $newValue ? '1' : '0');
             
-            // If auto acceptance is turned on, accept all users waiting for acception.
-            if($newValue)
+            // If requested, accept all users waiting for acception.
+            if($acceptAll)
             {
-                Query::update('Users', array('activationStage' => User::ACTIVE_STAGE_ACCEPTED))
-                        ->where('activationStage = :stage')
-                        ->execute(array('stage' => User::ACTIVE_STAGE_PENDING));
+                $accepted = Query::update('Users', array('activationStage' => User::ACTIVE_STAGE_ACCEPTED))
+                                ->where('activationStage = :stage')
+                                ->returning('userId')
+                                ->execute(array('stage' => User::ACTIVE_STAGE_PENDING));
+                
+                // Send activation mails.
+                foreach($accepted as $row)
+                {
+                    $userId = $row->getValue('userId');
+                    
+                    // Find associated PendingUser.
+                    $puserId = Query::select('pendingUserId')
+                                     ->from('PendingUsers')
+                                     ->where('userId = :userId')
+                                     ->execute(array('userId' => $userId))
+                                     ->tryGetFirstRow()
+                                     ->getValue('pendingUserId');
+                    
+                    // Send mail.
+                    Mailer::sendActivationMail(new PendingUser($puserId));
+                }
             }
         });
     }

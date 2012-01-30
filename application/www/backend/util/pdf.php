@@ -16,9 +16,7 @@ require_once 'models/language/booklanguagelist.php';
 require_once 'models/setting/setting.php';
 require_once 'framework/util/log.php';
 
-/**
- * Exceptions.
- */
+// Exceptions.
 class PdfException extends ExceptionBase
 {
     public function __construct()
@@ -96,14 +94,11 @@ class Pdf
      *
      * @param Binding    $binding        The Binding to export.
      * @param CacheEntry $cacheEntry     The CacheEntry to export to.
-     * @param mixed      $range          The range of pages to export. This may be null for all,
-     *                                   a number for a single page and an array of two numbers for a range.
+     * @param mixed      $range          The range of pages to export. This may be null for all, a number for a single page and an array of two numbers for a range.
      * @param callback   $transcriptions Function that extracts required transcription languages from Annotations.
-     * @param boolean    $annotations    Whether to include annotations on the scans. 
-     *                                   Only valid on combination with transcriptions parameter set.
+     * @param boolean    $annotations    Whether to include annotations on the scans. Only valid on combination with transcriptions parameter set.
      */
-    public function __construct(Binding $binding, CacheEntry $cacheEntry,
-        $range = null, $transcriptions = null, $annotations = false)
+    public function __construct(Binding $binding, CacheEntry $cacheEntry, $range = null, $transcriptions = null, $annotations = false)
     {
         $this->productUrl = $this->pageUrl();
         $this->productName = Setting::getSetting('project-title');
@@ -118,20 +113,17 @@ class Pdf
         $this->setPageSize(595, 842);
         
         // Load the default font.
-        $this->addFont('DejaVuSans', 'dejavusans.php');
-        $this->font = 'DejaVuSans';
+        $this->addFont('FullUnicodeSans', 'fullunicodesans.php');
+        $this->font = 'FullUnicodeSans';
         
         if ($range !== null && !is_array($range))
         {
             $scan = Scan::fromBindingPage($binding, $range);
             $book = Book::fromBindingPage($binding, $range);
-            $this->permanentLink = $this->productUrl . '#binding-'
-                . $binding->getBindingId() . '-' . $scan[0]->getPage();
+            $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scan[0]->getPage();
             if (count($scan) > 0)
             {
-                $this->createSingleScan($scan[0], 
-                    (isset($book[0]) ? $book[0] : null), 
-                    $binding, $transcriptions, $annotations);
+                $this->createSingleScan($scan[0], isset($book[0]) ? $book[0] : null, $binding, $transcriptions, $annotations);
             }
             else
             {
@@ -152,8 +144,7 @@ class Pdf
                 $books = Book::fromBindingPage($binding, $range);
                 if (count($scans) > 0)
                 {
-                    $this->permanentLink = $this->productUrl . '#binding-'
-                        . $binding->getBindingId() . '-' . $scans[0]->getPage();
+                    $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scans[0]->getPage();
                 }
             }
             if (count($scans) > 0)
@@ -270,8 +261,7 @@ class Pdf
      * @param boolean  $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
      * @param boolean  $subset         Whether this selection of pages is a subset of the binding.
      */
-    private function createMultiple(array $scans, array $books, Binding $binding,
-        $transcriptions = null, $annotations = false, $subset = false)
+    private function createMultiple(array $scans, array $books, Binding $binding, $transcriptions = null, $annotations = false, $subset = false)
     {
         // Make title page.
         if (count($books) == 1)
@@ -282,7 +272,7 @@ class Pdf
             
             $minYear = $books[0]->getMinYear();
             $maxYear = $books[0]->getMaxYear();
-            $year = $minYear == ($maxYear ? $minYear : ($minYear . ' – ' . $maxYear));
+            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
             
             $this->setFontSize(14);
             $this->drawText($this->getAuthorNames($books[0]) . ', ' . $year);
@@ -459,8 +449,7 @@ class Pdf
                 $this->setFontSize(14);
                 list(, $bottom, , $top) = $this->drawText($book->getTitle());
                 $this->textMarginR += 30;
-                $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 1 w S Q',
-                    $this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $bottom));
+                $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 1 w S Q', $this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $bottom));
                 $this->y -= 2;
                 
                 // Draw page number.
@@ -469,8 +458,8 @@ class Pdf
                 $width = $this->numberWidth($page);
                 $this->pushState();
                     $this->translate($this->pageWidth - $this->textMarginR - $width, $bottom);
-                    $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . 
-                        $this->fromUTF8((string)$page) . ' Tj ET');
+                    $this->addToSubset($this->toUTF16BEArray((string)$page));
+                    $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$page) . ' Tj ET');
                 $this->popState();
                 
                 $minYear = $book->getMinYear();
@@ -504,8 +493,7 @@ class Pdf
                 $this->textMarginL -= 18;
                 $this->x = $this->textMarginL;
                 $this->y -= 20;
-                $this->addLink(array($this->textMarginL, $bottom,
-                    $this->pageWidth - $this->textMarginR, $top), null, false, $this->pages[$bookmark[1]-1]);
+                $this->addLink(array($this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $top), null, false, $this->pages[$bookmark[1]-1]);
             }
             $this->writePage();
             
@@ -526,13 +514,10 @@ class Pdf
      * @param Scan     $scan           The scan to export.
      * @param Book     $book           The encapsulating book, or null if none.
      * @param Binding  $binding        The encapsulating binding.
-     * @param callback $transcriptions Function that extracts required 
-     *                                 transcription languages from Annotations.
-     * @param boolean  $annotations    Whether to include annotations on top of the scans.
-     *                                 Only valid in conjunction with a set transcriptions parameter.
+     * @param callback $transcriptions Function that extracts required transcription languages from Annotations.
+     * @param boolean  $annotations    Whether to include annotations on top of the scans. Only valid in conjunction with a set transcriptions parameter.
      */
-    private function createSingleScan(Scan $scan, Book $book = null,
-        Binding $binding, $transcriptions = null, $annotations = false)
+    private function createSingleScan(Scan $scan, Book $book = null, Binding $binding, $transcriptions = null, $annotations = false)
     {
         if ($transcriptions !== null)
         {
@@ -549,7 +534,7 @@ class Pdf
         {
             $minYear = $book->getMinYear();
             $maxYear = $book->getMaxYear();
-            $year = ($minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear));
+            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
             $fields[] = $this->getAuthorNames($book);
             $fields[] = $book->getTitle();
             $fields[] = $year;
@@ -697,9 +682,7 @@ class Pdf
             $circle[$i] = $circle[$i] * $r + $x - $r;
             $circle[$i+1] = $circle[$i+1] * $r + $y;
         }
-        $this->draw(vsprintf(
-            '%F %F m %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c h',
-            $circle));
+        $this->draw(vsprintf('%F %F m %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c %F %F %F %F %F %F c h', $circle));
     }
     
     /**
@@ -887,8 +870,7 @@ class Pdf
                 $this->translate(0, -$height);
             }
             
-            $this->translate(($width - $scale * ($cols - $compx))/2,
-                ($height - $scale * ($rows - $compy))/2);
+            $this->translate(($width - $scale * ($cols - $compx))/2, ($height - $scale * ($rows - $compy))/2);
             
             // Calculate X and Y scales.
             $sx = $scale * ($cols - $compx) / $scan->getWidth();
@@ -929,17 +911,15 @@ class Pdf
             $width = $this->numberWidth($i);
             list($x, $y) = $transformedPoints[0];
             $this->translate($x, $y);
-            $this->translate(-$width / 2, -$this->fontSize / 2 +
-                $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4);
-            $this->draw('BT /' . $this->font . ' ' . $this->fontSize .
-                ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET');
+            $this->translate(-$width / 2, -$this->fontSize / 2 + $this->fontInfo[$this->font]['XHeight'] * $this->fontSize / 1000 / 4);
+            $this->addToSubset($this->toUTF16BEArray((string)$i));
+            $this->draw('BT /' . $this->font . ' ' . $this->fontSize . ' Tf ' . $this->fromUTF8((string)$i) . ' Tj ET');
         
         $this->popState();
     }
     
     /**
-     * Calculates the width of a numerical string. 
-     * It is assumed that the input is numeric and the number will fit on the line.
+     * Calculates the width of a numerical string. It is assumed that the input is numeric and the number will fit on the line.
      *
      * @param integer $number The number to calculate the textual width of.
      */
@@ -949,7 +929,7 @@ class Pdf
         $width = 0;
         foreach ($num as $char)
         {
-            $width += (isset($this->fontSizes[$this->font][ord($char)]) ? $this->fontSizes[$this->font][ord($char)] : 600);
+            $width += isset($this->fontSizes[$this->font][ord($char)]) ? $this->fontSizes[$this->font][ord($char)] : 600;
         }
         $width *= $this->fontSize / 1000;
         return $width;
@@ -959,8 +939,7 @@ class Pdf
      * Creates a new PDF object with the given contents.
      *
      * @param string  $contents The raw content data.
-     * @param boolean $final    Whether this object can immediately 
-     *                          be written to the output (when true, updateObject() cannot be used).
+     * @param boolean $final    Whether this object can immediately be written to the output (when true, updateObject() cannot be used).
      *
      * @return integer The object ID.
      */
@@ -975,8 +954,7 @@ class Pdf
      *
      * @param integer $id       The object ID to manipulate.
      * @param string  $contents The raw content data.
-     * @param boolean $final    Whether this object can immediately be written to the output 
-     *                          (when true, updateObject() can no longer be used).
+     * @param boolean $final    Whether this object can immediately be written to the output (when true, updateObject() can no longer be used).
      *
      * @return integer The object ID.
      */
@@ -1032,6 +1010,26 @@ class Pdf
                               . "stream\n"
                               . $contents
                               . "\nendstream", true);
+    }
+    
+    /**
+     * Sets the contents of the given PDF object to a stream with the given contents and finalizes the object.
+     *
+     * @param integer $id       The object ID to manipulate.
+     * @param string  $headers  Additional stream dictionary contents (/Length is generated automatically).
+     * @param string  $contents The raw content data.
+     *
+     * @return integer The object ID.
+     */
+    private function setStream($id, $headers, $contents)
+    {
+        return $this->updateObject($id, "<<\n"
+                                 . $headers
+                                 . "\n/Length " . strlen($contents) . "\n"
+                                 . ">>\n"
+                                 . "stream\n"
+                                 . $contents
+                                 . "\nendstream", true);
     }
     
     /**
@@ -1218,14 +1216,15 @@ class Pdf
             $javascript = '/Names << /JavaScript ' . $jsId . ' 0 R >>';
         }
         
+        // Write the subsetted fonts to the output.
+        $this->writeFonts();
+        
         // TODO: index/outline? See PDF1.7 specs at page 367+
         
         // Fill the page catalog.
-        $this->catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $this->pagesId . 
-            ' 0 R /OpenAction [ ' . $this->pages[0] . ' 0 R /Fit ] ' . $javascript . ' >>');
+        $this->catalogId = $this->newObject('<< /Type /Catalog /Pages ' . $this->pagesId . ' 0 R /OpenAction [ ' . $this->pages[0] . ' 0 R /Fit ] ' . $javascript . ' >>');
         $pages = implode(' 0 R ', array_values($this->pages)) . ' 0 R';
-        $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . 
-            ' /Kids [ ' . $pages . ' ] >>');
+        $this->updateObject($this->pagesId, '<< /Type /Pages /Count ' . count($this->pages) . ' /Kids [ ' . $pages . ' ] >>');
         
         // Fill the document information catalog.
         $infoId = $this->newObject("<<\n" .
@@ -1270,8 +1269,7 @@ class Pdf
         $this->out('xref');
         $this->out('0 ' . ($this->numObjects + 1));
         $this->out($xref);
-        $this->out('trailer << /Size ' . ($this->numObjects + 1) . ' /Root ' . 
-            $this->catalogId . ' 0 R /Info ' . $infoId . ' 0 R >>');
+        $this->out('trailer << /Size ' . ($this->numObjects + 1) . ' /Root ' . $this->catalogId . ' 0 R /Info ' . $infoId . ' 0 R >>');
         $this->out('startxref');
         $this->out($offset);
         $this->out('%%EOF');
@@ -1284,6 +1282,117 @@ class Pdf
             {
                 unset($this->$var);
             }
+        }
+    }
+    
+    /**
+     * Writes the font files.
+     */
+    private function writeFonts()
+    {
+        $fontPath = 'util/fonts/';
+        
+        foreach ($this->fontInfo as $fontName => $fontInfo)
+        {
+            include($fontPath . $fontInfo['FontFile']);
+            
+            require $fontPath . 'subset.php';
+            
+            ksort($cw);
+            $ws = $cw;
+            $prevwidth = -1;
+            $inRange = false;
+            $inList = false;
+            $w = '[';
+            foreach ($ws as $char => $width)
+            {
+                if (isset($ws[$char+1]) && $ws[$char+1] == $width && isset($ws[$char+2]) && $ws[$char+2] == $width && $prevwidth != $width)
+                {
+                    if ($inList)
+                    {
+                        $w .= ' ]'."\n";
+                    }
+                    $w .= ' ' . $char;
+                    $prevwidth = $width;
+                    $inRange = true;
+                    $inList = false;
+                    continue;
+                }
+                else if ((!isset($ws[$char+1]) || $ws[$char+1] != $width) && $prevwidth == $width && $inRange && !$inList)
+                {
+                    $w .= ' ' . $char . ' ' . $width."\n";
+                    $inRange = false;
+                    continue;
+                }
+                else if ($prevwidth != $width && isset($ws[$char+1]) && !$inList)
+                {
+                    $w .= ' ' . $char . ' [ ' . $width;
+                    $inList = true;
+                }
+                else if ($inList)
+                {
+                    $w .= ' ' . $width;
+                    if (!isset($ws[$char+1]))
+                    {
+                        $w .= ' ]'."\n";
+                        $inList = false;
+                    }
+                }
+                else if ($prevwidth != $width)
+                {
+                    $w .= ' ' . $char . ' [ ' . $width . ' ]'."\n";
+                }
+                $prevwidth = $width;
+            }
+            $w .= ' ]';
+
+            $subsetFont = _getTrueTypeFontSubset(gzuncompress(file_get_contents($fontPath . $file)), $fontInfo['SubsetChars']);
+            $subsetIdentifier = strtoupper(strtr(substr(md5($subsetFont), 0, 6), '0123456789','GHIJKLMNOP'));
+
+            $fontFileId = $this->newStream('/Filter /FlateDecode /Length1 ' . strlen($subsetFont), gzcompress($subsetFont));
+            $ctgId = $this->newStream('/Filter /FlateDecode', file_get_contents($fontPath . $ctg));
+            $fontDescId = $this->newObject("<<\n" .
+                "/Type /FontDescriptor\n" .
+                "/FontName /" . $subsetIdentifier . '+' . $name . "\n" .
+                "/Flags " . $desc['Flags'] . "\n" .
+                "/FontBBox " . $desc['FontBBox'] . "\n" .
+                "/ItalicAngle " . $desc['ItalicAngle'] . "\n" .
+                "/Ascent " . $desc['Ascent'] . "\n" .
+                "/Descent " . $desc['Descent'] . "\n" .
+                "/Leading " . $desc['Leading'] . "\n" .
+                "/CapHeight " . $desc['CapHeight'] . "\n" .
+                "/XHeight " . $desc['XHeight'] . "\n" .
+                "/StemV " . $desc['StemV'] . "\n" .
+                "/StemH " . $desc['StemH'] . "\n" .
+                "/AvgWidth " . $desc['AvgWidth'] . "\n" .
+                "/MaxWidth " . $desc['MaxWidth'] . "\n" .
+                "/MissingWidth " . $desc['MissingWidth'] . "\n" .
+                "/FontFile2 " . $fontFileId. " 0 R\n" .
+                ">>", true);
+            $descendantFontsId = $this->newObject("<<\n" .
+                "/Type /Font\n" .
+                "/Subtype /CIDFontType2\n" .
+                "/BaseFont /" . $subsetIdentifier . '+' . $name . "\n" .
+                "/CIDSystemInfo\n<<\n" .
+                "/Registry (Adobe)\n" .
+                "/Ordering (Identity)\n" .
+                "/Supplement 0\n" .
+                ">>\n" .
+                "/FontDescriptor " . $fontDescId . " 0 R\n" .
+                "/DW " . $dw . "\n" .
+                "/W " . $w . "\n" .
+                "/CIDToGIDMap " . $ctgId . " 0 R\n" .
+                ">>", true);
+            $this->updateObject($fontInfo['FontObject'],
+                "<<\n" .
+                "/Type /Font\n" .
+                "/Subtype /Type0\n" .
+                "/BaseFont /" . $subsetIdentifier . '+' . $name . "\n" .
+                "/Name /" . $fontName . "\n" .
+                "/ToUnicode " . $this->unicodeId . " 0 R\n" .
+                "/Encoding /Identity-H\n" .
+                "/DescendantFonts [" . $descendantFontsId . " 0 R]\n" .
+                ">>", true);
         }
     }
     
@@ -1339,15 +1448,19 @@ class Pdf
     }
     
     /**
-     * Converts an UTF-8 string to an UTF-16BE multibyte character array.
+     * Converts a string to an UTF-16BE multibyte character array.
      *
-     * @param string $text The string to convert.
+     * @param string  $text      The string to convert.
+     * @param boolean $isUTF16BE Whether the string already is UTF-16BE. If not, it will assume UTF-8.
      *
      * @return array A multibyte character array.
      */
-    private function toUTF16BEArray($text)
+    private function toUTF16BEArray($text, $isUTF16BE = false)
     {
-        $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+        if (!$isUTF16BE)
+        {
+            $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+        }
         $text = array_chunk(str_split($text), 2);
         return $text;
     }
@@ -1400,66 +1513,15 @@ class Pdf
             $this->unicodeId = $this->newStream('/Filter /FlateDecode', gzcompress($table));
         }
         
-        $this->fontSizes[$name] = $cw;
-        $this->fontInfo[$name] = $desc;
-        ksort($cw);
-        $prevchar = -1;
-        $w = '[ 0 [';
-        foreach ($cw as $char => $width)
-        {
-            for ($c = $prevchar + 1; $c < $char; $c++)
-            {
-                $w .= ' ' . $dw;
-            }
-            $w .= ' ' . $width;
-            $prevchar = $char;
-        }
-        $w .= ' ] ]';
-        $fontFileId = $this->newStream('/Filter /FlateDecode /Length1 ' .
-            $originalsize, file_get_contents($fontPath . $file));
-        $ctgId = $this->newStream('/Filter /FlateDecode', file_get_contents($fontPath . $ctg));
-        $fontDescId = $this->newObject("<<\n" .
-            "/Type /FontDescriptor\n" .
-            "/FontName /" . $name . "\n" .
-            "/Flags " . $desc['Flags'] . "\n" .
-            "/FontBBox " . $desc['FontBBox'] . "\n" .
-            "/ItalicAngle " . $desc['ItalicAngle'] . "\n" .
-            "/Ascent " . $desc['Ascent'] . "\n" .
-            "/Descent " . $desc['Descent'] . "\n" .
-            "/Leading " . $desc['Leading'] . "\n" .
-            "/CapHeight " . $desc['CapHeight'] . "\n" .
-            "/XHeight " . $desc['XHeight'] . "\n" .
-            "/StemV " . $desc['StemV'] . "\n" .
-            "/StemH " . $desc['StemH'] . "\n" .
-            "/AvgWidth " . $desc['AvgWidth'] . "\n" .
-            "/MaxWidth " . $desc['MaxWidth'] . "\n" .
-            "/MissingWidth " . $desc['MissingWidth'] . "\n" .
-            "/FontFile2 " . $fontFileId. " 0 R\n" .
-            ">>", true);
-        $descendantFontsId = $this->newObject("<<\n" .
-            "/Type /Font\n" .
-            "/Subtype /CIDFontType2\n" .
-            "/BaseFont /" . $name . "\n" .
-            "/CIDSystemInfo\n<<\n" .
-            "/Registry (Adobe)\n" .
-            "/Ordering (Identity)\n" .
-            "/Supplement 0\n" .
-            ">>\n" .
-            "/FontDescriptor " . $fontDescId . " 0 R\n" .
-            "/DW " . $dw . "\n" .
-            "/W " . $w . "\n" .
-            "/CIDToGIDMap " . $ctgId . " 0 R\n" .
-            ">>", true);
-        $fontId = $this->newObject("<<\n" .
-            "/Type /Font\n" .
-            "/Subtype /Type0\n" .
-            "/BaseFont /" . $name . "\n" .
-            "/Name /" . $fontName . "\n" .
-            "/ToUnicode " . $this->unicodeId . " 0 R\n" .
-            "/Encoding /Identity-H\n" .
-            "/DescendantFonts [" . $descendantFontsId . " 0 R]\n" .
-            ">>", true);
-            
+        $this->fontSizes[$fontName] = $cw;
+        $this->fontInfo[$fontName] = $desc;
+
+        $fontId = $this->newObject('', false);
+
+        $this->fontInfo[$fontName]['FontFile'] = $fontFile;
+        $this->fontInfo[$fontName]['FontObject'] = $fontId;
+        $this->fontInfo[$fontName]['SubsetChars'] = array();
+
         $this->fonts .= "/" . $fontName . " " . $fontId . " 0 R\n";
             
         return $cw;
@@ -1485,6 +1547,20 @@ class Pdf
         $this->textMarginT = $margin;
         $this->textMarginR = $margin;
         $this->textMarginB = $margin;
+    }
+    
+    /**
+     * Adds all glyphs of the current text to the subset cache.
+     *
+     * @param array $text The text, compatible with the output of toUTF16BEAray.
+     */
+    private function addToSubset($text)
+    {
+        foreach ($text as $char)
+        {
+            $c = ((ord($char[0]) << 8) + ord($char[1]));
+            $this->fontInfo[$this->font]['SubsetChars'][$c] = true;
+        }
     }
     
     /**
@@ -1527,8 +1603,7 @@ class Pdf
                     ($this->headerContinued ? ' (continued)' : '') . 
                     "\n");
                 $bottom -= $this->fontInfo[$this->font]['Descent'] * $this->fontSize / 1000 * 0.5;
-                $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 0.5 w S Q',
-                    $this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $bottom));
+                $this->draw(sprintf('q %F %F m %F %F l h 0 0 0 RG 0.5 w S Q', $this->textMarginL, $bottom, $this->pageWidth - $this->textMarginR, $bottom));
             }
             $this->setFontSize($oldFontSize);
         }
@@ -1540,7 +1615,9 @@ class Pdf
         $maxX = $this->x;
         $tempX = $this->x;
         
-        $lines = mb_split("\n", $text);
+        // First, convert to UTF-16BE to split the lines correctly.
+        $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+        $lines = mb_split("\0\n", $text);
         $numlines = count($lines);
         for ($l = 0; $l < $numlines; $l++)
         {
@@ -1554,7 +1631,7 @@ class Pdf
                 continue;
             }
             
-            $text = $this->toUTF16BEArray($text);
+            $text = $this->toUTF16BEArray($text, true);
             $length = count($text);
         
             $x = $this->x;
@@ -1612,9 +1689,7 @@ class Pdf
                         $this->pushState();
                             if ($center)
                             {
-                                $offset = ($this->pageWidth - $this->textMarginL -
-                                    $this->textMarginR - ($x - $this->x) + 
-                                    ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
+                                $offset = ($this->pageWidth - $this->textMarginL - $this->textMarginR - ($x - $this->x) + ($endOfString ? 0 : $widthSinceSpace + $charWidth * $this->fontSize / 1000)) / 2;
                                 $this->translate($this->x + $offset, $this->y);
                             }
                             else
@@ -1623,16 +1698,9 @@ class Pdf
                             }
                             $this->draw('BT');
                             $this->draw('/' . $this->font . ' ' . $this->fontSize . ' Tf');
-                            if ($endOfString && $text[$i][1] == "\n" && $text[$i][0] == "\0")
-                            {
-                                $this->draw($this->fromUTF16BEArray(array_slice(
-                                    $text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                            }
-                            else
-                            {
-                                $this->draw($this->fromUTF16BEArray(array_slice(
-                                    $text, $prevEnd, $lastSpace - $prevEnd)) . ' Tj');
-                            }
+                            $textToDraw = array_slice($text, $prevEnd, $lastSpace - $prevEnd);
+                            $this->addToSubset($textToDraw);
+                            $this->draw($this->fromUTF16BEArray($textToDraw) . ' Tj');
                             $this->draw('ET');
                         $this->popState();
                     }
@@ -1684,14 +1752,10 @@ class Pdf
         {
             $this->pagesId = $this->newObject('');
         }
-        $resourcesId = $this->newObject("<< /XObject <<\n" . 
-            $this->resources . "\n>> /Font <<\n" . $this->fonts . "\n>> >>", true);
+        $resourcesId = $this->newObject("<< /XObject <<\n" . $this->resources . "\n>> /Font <<\n" . $this->fonts . "\n>> >>", true);
         $this->resources = '';
         
-        $pageId = $this->newObject('<< /Type /Page /Parent ' . 
-            $this->pagesId . ' 0 R /Resources ' . $resourcesId . ' 0 R /Contents ' . 
-            $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight .
-            ' ] ' . $annots . '>>', true);
+        $pageId = $this->newObject('<< /Type /Page /Parent ' . $this->pagesId . ' 0 R /Resources ' . $resourcesId . ' 0 R /Contents ' . $drawId . ' 0 R /MediaBox [ 0 0 ' . $this->pageWidth . ' ' . $this->pageHeight . ' ] ' . $annots . '>>', true);
         $this->pages[] = $pageId;
         $this->resetPosition();
         $this->pageHasText = false;

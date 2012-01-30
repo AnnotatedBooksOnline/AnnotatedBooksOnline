@@ -159,7 +159,7 @@ class BindingUploadController extends Controller
             $book->setPreciseDate(self::getString($inputBook, 'preciseDate'));
             $book->setPlacePublished(self::getString($inputBook, 'placePublished'));
             $book->setPublisher(self::getString($inputBook, 'publisher'));
-            $book->setPrintVersion(self::getInteger($inputBook, 'printVersion'));
+            $book->setPrintVersion(self::getString($inputBook, 'printVersion'));
             
             // Mark the book for saving and not for deletion.
             $book->setMarkedAsUpdated(true);

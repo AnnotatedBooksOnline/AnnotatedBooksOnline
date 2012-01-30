@@ -21,7 +21,7 @@ class AuthenticationController extends Controller
         // Login.
         $user = Authentication::getInstance()->login($username, $password);
         
-        $userValues = $user->getValues(); // TODO: just get the important ones..
+        $userValues = $user->getValues();
         
         // Add the permissions of this user to the return values.
         $userValues['permissions'] = Authentication::getInstance()->getPermissionList();
@@ -68,7 +68,7 @@ class AuthenticationController extends Controller
             return;
         }
         
-        $userValues = $user->getValues(); // TODO: just get the important ones..
+        $userValues = $user->getValues();
         
         // Add the permissions of this user to the return values.
         $userValues['permissions'] = Authentication::getInstance()->getPermissionList();

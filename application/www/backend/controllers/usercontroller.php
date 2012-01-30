@@ -167,10 +167,9 @@ class UserController extends ControllerBase
             'website'          => $website,
             'activationStage'  => User::ACTIVE_STAGE_PENDING,
             'banned'           => false,
-            'rank'             => User::RANK_DEFAULT
+            'rank'             => User::RANK_DEFAULT,
+            'registrationDate' => time()
         );
-        
-        Log::debug('!!!!!!' . $email);
         
         // Check incoming values: username existance, email existance, correct pattern for 
         // username, correct pattern for email and no empty required fields.
@@ -182,8 +181,6 @@ class UserController extends ControllerBase
         {            
             throw new RegistrationFailedException('registration-failed');
         }
-        
-        // TODO: Check lengths and website.
      
         // Create user and pendinguser entries in a transaction.
         Database::getInstance()->doTransaction(
@@ -433,7 +430,8 @@ class UserController extends ControllerBase
         if (Authentication::getInstance()->hasPermissionTo('view-users-complete'))
         {
             return array('userId', 'username', 'email', 'firstName', 'lastName', 'affiliation',
-                         'occupation', 'website', 'homeAddress', 'activationStage', 'banned', 'rank');
+                         'occupation', 'website', 'homeAddress', 'activationStage', 'banned', 'rank',
+                         'registrationDate', 'lastActive');
         }
         else if($loggedOnUser)
         {

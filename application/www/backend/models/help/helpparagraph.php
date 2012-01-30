@@ -3,6 +3,7 @@
 
 require_once 'framework/database/entity.php';
 require_once 'util/authentication.php';
+require_once 'models/setting/setting.php';
 
 /**
  * Entity representing a paragraph in a help page.
@@ -27,8 +28,9 @@ class HelpParagraph extends Entity
     /** The title of the paragraph. */
     protected $title;
     
-    /** The content of the page, in HTML. */
-    protected $content;
+    /** If not null, the content depends on this setting. */
+    protected $settingName;
+    
     
     /** A cached array of subparagraphs. */
     private $subItems;
@@ -76,7 +78,7 @@ class HelpParagraph extends Entity
      */
     public static function getColumns()
     {
-        return array('helpPageId', 'paragraphParentId', 'actionName', 'title', 'content');
+        return array('helpPageId', 'paragraphParentId', 'actionName', 'title', 'settingName');
     }
     
     /**
@@ -92,7 +94,7 @@ class HelpParagraph extends Entity
             'paragraphParentId'     => 'int',
             'actionName'            => 'string',
             'title'                 => 'string',
-            'content'               => 'string'
+            'settingName'           => 'string'
         );
     }
     
@@ -144,6 +146,7 @@ class HelpParagraph extends Entity
         $helpParagraph['helpId'] =  $helpParagraph['helpPageId'].','.$helpParagraph['helpParagraphId'];
         
         $helpParagraph['pageName'] = $helpParagraph['title'];
+        $helpParagraph['content'] = $this->getContent();
         return $helpParagraph;
     }
     
@@ -167,11 +170,45 @@ class HelpParagraph extends Entity
     public function getTitle()       { return $this->title;   }
     public function setTitle($title) { $this->title = $title; }
     
-    public function getContent()     { return $this->content; }
-    public function setContent($con) { $this->content = $con; }
+    public function getSettingName()      { return $this->settingName;  }
+    public function setSettingName($name) { $this->settingName = $name; }
     
     public function getHelpType()      { return $this->helpType; }
     public function setHelpType($type) { $this->helpType = $type;  }
     
+    /**
+     * Retrieves the HTML content of this paragraph using the HelpContents table.
+     * 
+     * The entity should be loaded before this is called.
+     * 
+     * @return string The content of this paragraph.
+     */
+    public function getContent()
+    {
+        $query = Query::select('content')->from('HelpContents')
+                                         ->where('helpParagraphId = :paragraph');
+        $args = array('paragraph' => $this->helpParagraphId);
+        
+        if($this->settingName === null)
+        {
+            $query->where('settingValue IS NULL');
+        }
+        else
+        {
+            $query->where('settingValue = :setting');
+            $args['setting'] = Setting::getSetting($this->settingName);
+        }
+        
+        $row = $query->execute($args)->tryGetFirstRow();
+        
+        if($row === null)
+        {
+            throw new EntityException('entity-record-not-found');
+        }
+        else
+        {
+            return $row->getValue('content');
+        }
+    }
 }
 

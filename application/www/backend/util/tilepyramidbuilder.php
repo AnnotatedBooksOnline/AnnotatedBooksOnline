@@ -33,7 +33,8 @@ class TilePyramidBuilder extends Singleton
     /**
      * Runs the pyramid builder on an image. Blocks until the image has been completely processed.
      * 
-     * @param $scan A scan entity with its fields filled in.
+     * @param Scan   $scan   A scan entity with its fields filled in.
+     * @param Upload $upload The upload associated with the scan.
      * 
      * @throws TilePyramidBuilderException When the builder returns with a nonzero error code, meaning
      *                                 an error has occured.
@@ -63,7 +64,7 @@ class TilePyramidBuilder extends Singleton
         
         $command = "$builderpath -q $quality -i $scantype -p $outpath -f $tileformat $imgfile";
         
-        // Check for a relative path, and make the absolute.
+        // Check for a relative path, and make it absolute.
         if (preg_match('#^\.[\.]?/#', $builderpath))
         {
             $command = getcwd() . '/' . $command;
@@ -297,8 +298,8 @@ class TilePyramidBuilder extends Singleton
         
         while (true)
         {
-            // Resolve inconsistencies every 20 rounds.
-            if ($round >= 20)
+            // Resolve inconsistencies every 200 rounds.
+            if ($round >= 200)
             {
                 $this->resolveInconsistencies();
                 $round = 0;

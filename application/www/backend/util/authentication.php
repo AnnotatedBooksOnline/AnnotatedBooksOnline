@@ -116,6 +116,10 @@ class Authentication extends Singleton
         $this->user        = User::fromUsernameAndPassword($username, $password);
         $this->fetchedUser = true;
         
+        // Update the last active time of the user.
+        $this->user->setLastActive(time());
+        $this->user->save();
+        
         Session::getInstance()->setVar('userId', $this->getUser()->getUserId());
         
         return $this->user;
