@@ -113,8 +113,8 @@ class Pdf
         $this->setPageSize(595, 842);
         
         // Load the default font.
-        $this->addFont('DejaVuSans', 'dejavusans.php');
-        $this->font = 'DejaVuSans';
+        $this->addFont('FullUnicodeSans', 'fullunicodesans.php');
+        $this->font = 'FullUnicodeSans';
         
         if ($range !== null && !is_array($range))
         {
