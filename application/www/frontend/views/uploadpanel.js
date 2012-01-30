@@ -586,7 +586,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
  * Upload form class.
  */
 Ext.define('Ext.ux.UploadForm', {
-    extend: 'Ext.ux.FormBase',
+    extend: 'Ext.form.Panel',
     alias: 'widget.uploadform',
     
     initComponent: function() 
@@ -626,12 +626,53 @@ Ext.define('Ext.ux.UploadForm', {
                 xtype: 'scanpanel',
                 showExistingBindingMessage: this.existingBindingId !== undefined
             },{
-                xtype: 'bindingfieldset',
-                name: 'bindingfields'
-            },{
-                xtype: 'booksfieldset',
-                name: 'bookfields',
-                hasExistingBinding : this.existingBindingId !== undefined
+                xtype: 'panel',
+                border: false,
+                items: [{
+                    xtype: 'bindingfieldset',
+                    name: 'bindingfields'
+                },{
+                    xtype: 'booksfieldset',
+                    name: 'bookfields',
+                    hasExistingBinding : this.existingBindingId !== undefined
+                },{
+                    xtype: 'panel',
+                    border: false,
+                    buttons: [{
+                        xtype: 'button',
+                        text: 'Reset',
+                        iconCls: 'cancel-icon',
+                        width: 140,
+                        handler: function()
+                        {
+                            Ext.Msg.show({
+                                title: 'Are you sure?',
+                                msg: 'You are about to reset the complete form. Data will be lost and ' +
+                                     'this action can\'t be undone. Are you sure?',
+                                buttons: Ext.Msg.YESNO,
+                                icon: Ext.Msg.QUESTION,
+                                callback: function(button)
+                                {
+                                    if (button == 'yes')
+                                    {
+                                        _this.reset();
+                                    }
+                                }
+                            });
+                        }
+                    },{
+                        xtype: 'button',
+                        formBind: true,
+                        disabled: true,
+                        text: 'Continue',
+                        iconCls: 'accept-icon',
+                        width: 140,
+                        handler: function()
+                        {
+                            _this.submit();
+                        }
+                    }]
+                }]
             }],
             
             listeners: {
@@ -654,41 +695,6 @@ Ext.define('Ext.ux.UploadForm', {
                     } while (current = current.nextSibling('bookfieldset'));
                 }
             },
-            
-            buttons: [{
-                xtype: 'button',
-                text: 'Reset',
-                iconCls: 'cancel-icon',
-                width: 140,
-                handler: function()
-                {
-                    Ext.Msg.show({
-                        title: 'Are you sure?',
-                        msg: 'You are about to reset the complete form. Data will be lost and ' +
-                             'this action can\'t be undone. Are you sure?',
-                        buttons: Ext.Msg.YESNO,
-                        icon: Ext.Msg.QUESTION,
-                        callback: function(button)
-                        {
-                            if (button == 'yes')
-                            {
-                                _this.reset();
-                            }
-                        }
-                    });
-                }
-            },{
-                xtype: 'button',
-                formBind: true,
-                disabled: true,
-                text: 'Continue',
-                iconCls: 'accept-icon',
-                width: 140,
-                handler: function()
-                {
-                    _this.submit();
-                }
-            }],
             selectFirstField: false
         };
         
