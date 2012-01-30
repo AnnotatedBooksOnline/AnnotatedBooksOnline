@@ -152,7 +152,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         
         // TODO : Make the layout correctly expand.
         
-        this.up('[name=informationpanel]').doLayout();
+        //this.up('[name=informationpanel]').doLayout();
     },
     afterRender: function()
     {
