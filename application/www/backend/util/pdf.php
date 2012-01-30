@@ -1216,7 +1216,7 @@ class Pdf
             $javascript = '/Names << /JavaScript ' . $jsId . ' 0 R >>';
         }
         
-        // Write the subsetted fonts to the output. //TODO: subset
+        // Write the subsetted fonts to the output.
         $this->writeFonts();
         
         // TODO: index/outline? See PDF1.7 specs at page 367+
@@ -1299,15 +1299,7 @@ class Pdf
             require $fontPath . 'subset.php';
             
             ksort($cw);
-            $ws = array();
-            foreach ($cw as $char => $width)
-            {
-                if (isset($fontInfo['SubsetChars'][$char]))
-                {
-                    $ws[$char] = $width;
-                }
-            }
-
+            $ws = $cw;
             $prevwidth = -1;
             $inRange = false;
             $inList = false;
@@ -1553,7 +1545,11 @@ class Pdf
         $this->textMarginB = $margin;
     }
     
-    // TODO: document
+    /**
+     * Adds all glyphs of the current text to the subset cache.
+     *
+     * @param array $text The text, compatible with the output of toUTF16BEAray.
+     */
     private function addToSubset($text)
     {
         foreach ($text as $char)
