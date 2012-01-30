@@ -1448,15 +1448,19 @@ class Pdf
     }
     
     /**
-     * Converts an UTF-8 string to an UTF-16BE multibyte character array.
+     * Converts a string to an UTF-16BE multibyte character array.
      *
-     * @param string $text The string to convert.
+     * @param string  $text      The string to convert.
+     * @param boolean $isUTF16BE Whether the string already is UTF-16BE. If not, it will assume UTF-8.
      *
      * @return array A multibyte character array.
      */
-    private function toUTF16BEArray($text)
+    private function toUTF16BEArray($text, $isUTF16BE = false)
     {
-        $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+        if (!$isUTF16BE)
+        {
+            $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+        }
         $text = array_chunk(str_split($text), 2);
         return $text;
     }
@@ -1611,7 +1615,9 @@ class Pdf
         $maxX = $this->x;
         $tempX = $this->x;
         
-        $lines = mb_split("\n", $text);
+        // First, convert to UTF-16BE to split the lines correctly.
+        $text = mb_convert_encoding($text, 'UTF-16BE', 'UTF-8');
+        $lines = mb_split("\0\n", $text);
         $numlines = count($lines);
         for ($l = 0; $l < $numlines; $l++)
         {
@@ -1625,7 +1631,7 @@ class Pdf
                 continue;
             }
             
-            $text = $this->toUTF16BEArray($text);
+            $text = $this->toUTF16BEArray($text, true);
             $length = count($text);
         
             $x = $this->x;
