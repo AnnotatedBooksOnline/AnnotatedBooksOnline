@@ -497,7 +497,7 @@ class BindingUploadController extends Controller
     {
         Authentication::assertPermissionTo('upload-bindings');  
         $userId = Authentication::getInstance()->getUserId();
-        
+        $inputBindingId = self::getInteger($data, 'bindingId');
         $binding = new Binding($inputBindingId);
         if (($binding->getStatus() != 2) && ($binding->getUserId() == $userId))
             {
