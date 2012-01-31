@@ -445,9 +445,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var isExistingBinding = false;
                 if (data.length >= 2 && data[1] !== undefined) 
                 {
-                    isExistingBinding = true;
+                    isExistingBinding = data[1];
                 }
-                
+                alert(isExistingBinding);
                 // Add a reorder scan tab.
                 Ext.apply(tabConfig, {
                     title: isExistingBinding === true ? 'Modify binding (reorder scans)' : 'Upload (reorder scans)',
