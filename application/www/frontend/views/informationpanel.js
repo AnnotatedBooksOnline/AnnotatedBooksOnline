@@ -20,9 +20,10 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             groupField: 'firstPage'
         });
         
-        var viewer = this.viewer;
-        Ext.util.Format.bookName = function(firstPage) 
+        Ext.util.Format.bookName = function(firstPage, parent) 
         {
+            var view = Ext.getCmp(parent.rows[0].viewId);
+            var viewer = view.up('bindinginformationpanel').viewer;
             var rec = viewer.getBinding().getModel().books().findRecord('firstPage',firstPage);
             var lastPage = rec.get('lastPage');
             var currentPage = viewer.getPage()+1;
@@ -90,7 +91,6 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             }],
             items: [{
                 xtype: 'grid',
-                id: 'bookInfo',
                 name: 'grid',
                 scroll: false,
                 viewConfig: {
@@ -106,7 +106,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
 
                 features: [{
                     ftype: 'groupingsummary',
-                    groupHeaderTpl: '{name:bookName}',
+                    groupHeaderTpl: '{name:bookName(parent)}',
                     startCollapsed: true
                 }],
                 columns: [{

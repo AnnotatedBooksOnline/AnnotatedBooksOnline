@@ -124,9 +124,13 @@ a:hover
 }
 
 /* Help styling. */
-.help > *
+.help
 {
     padding: 10px;
+}
+
+.help > *
+{
     line-height: 150%;
     font-size: 108%;
 }
