@@ -298,19 +298,19 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 createdName = user.getFullName();
                 changedName = user.getFullName();
             }
-            var timeCreated = 'now';
-            var timeChanged = 'now';
+            var timeCreated = Ext.Date.format(new Date(Ext.Date.now()), 'F j, Y');
+            var timeChanged = Ext.Date.format(new Date(Ext.Date.now()), 'F j, Y');
             
-            createdName = model.get('createdName');
-            changedName = model.get('changedName');
             
             // TODO: Make a good layout of the table.
-            if (model.get('timeCreated') != undefined && model.get('timeCreated') != null)
+            if (model.get('createdName') != undefined && model.get('timeCreated') != null)
             {
+                createdName = model.get('createdName');
                 timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
             }
-            if (model.get('timeChanged') != undefined && model.get('timeChanged') != null)
+            if (model.get('changedName') != undefined && model.get('timeChanged') != null)
             {
+                changedName = model.get('changedName');
                 timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
             }
             
