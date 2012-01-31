@@ -202,7 +202,10 @@ Ext.define('Ext.ux.UploadGrid', {
                     },
                     clear: function()
                     {
-                        _this.body.dom.removeChild(_this.body.dom.childNodes[0]);
+                        if (_this.body.dom.childNodes.length > 0)
+                        {
+                            _this.body.dom.removeChild(_this.body.dom.childNodes[0]);
+                        }
                     }
                 });
             }
@@ -335,11 +338,16 @@ Ext.define('Ext.ux.ScanPanel', {
         var _this = this;
         var defConfig = {
             border: false,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            height: 240,
             items: [{
                 title: 'Scans',
                 xtype: 'uploadgrid',
                 height: 200,
-                margin: '0 0 12 0'
+                margin: '0 0 6 0'
             },{
                 xtype: 'container',
                 layout: {
@@ -367,6 +375,7 @@ Ext.define('Ext.ux.ScanPanel', {
                         }
                     },{
                         xtype: 'container',
+                        width: 110,
                         html: '<div style="margin-left: 10px;"><div id="' +
                               this.uploadDivId + '"></div></div>',
                               height: 30
@@ -421,7 +430,7 @@ Ext.define('Ext.ux.ScanPanel', {
             button_width: 100,
             button_height: 22,
             button_cursor: SWFUpload.CURSOR.HAND,
-            button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
+            button_window_mode: SWFUpload.WINDOW_MODE.OPAQUE,
             
             // File description.
             file_post_name: 'file',

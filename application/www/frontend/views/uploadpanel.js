@@ -46,6 +46,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
         annotationStore.load();
         
         var defConfig = {
+            style: 'padding-top: 5px; padding-bottom: 5px',
             items: [{
                 xtype: 'container',
                 anchor: '100%',
@@ -201,6 +202,7 @@ Ext.define('Ext.ux.BookFieldset', {
         booklanguageStore.load();
         
         var defConfig = {
+            style: 'background-color: #FBFBFB',
             items: [{
                 xtype: 'container',
                 anchor: '100%',
@@ -486,6 +488,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
         var _this = this;
         
         var defConfig = {
+            style: 'padding-top: 5px',
             items: [{
                 xtype: 'button',
                 text: 'Add book',
@@ -701,7 +704,6 @@ Ext.define('Ext.ux.UploadForm', {
         Ext.apply(this, defConfig);
         
         this.callParent();
-       
     },
     
     checkCompleted: function()
@@ -806,7 +808,7 @@ Ext.define('Ext.ux.UploadForm', {
     
     reset: function()
     {
-        this.callParent();
+        this.getForm().reset();
         
         this.down('scanpanel').reset();
         this.down('booksfieldset').reset();
