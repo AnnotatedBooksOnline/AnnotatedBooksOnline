@@ -14,7 +14,9 @@
 function AnnotationOverlay(viewport)
 {
     if (arguments.length)
+    {
         this.constructor.apply(this, arguments);
+    }
 }
 
 AnnotationOverlay.prototype = new PolygonOverlay;

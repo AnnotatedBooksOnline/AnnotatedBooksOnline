@@ -313,8 +313,6 @@ class User extends Entity
         Database::getInstance()->commit();
     }
     
-    // TODO: Call this method: fromUsername(..)
-    
     /**
      * Calculates a secure hash for the given password.
      *
