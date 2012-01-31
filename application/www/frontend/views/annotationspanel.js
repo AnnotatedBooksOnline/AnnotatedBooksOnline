@@ -47,12 +47,12 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 resizable: { handles: 's' },
                 items: [{
                     html: 'Please select an annotation below.',
-                    anchor: '0, -40',
+                    anchor: '0, -60',
                     autoScroll: true,
                     name: 'active-annotation'
                 },{
                     xtype: 'panel',
-                    height: '40', //should be 3em or something similar
+                    height: '60', //should be 3em or something similar
                     name: 'annotation-history',
                     autoScroll: true,
                     html: '',
@@ -304,21 +304,20 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             createdName = model.get('createdName');
             changedName = model.get('changedName');
             
-            // TODO: change back to F j, Y with good layout of table.
+            // TODO: Make a good layout of the table.
             if (model.get('timeCreated') != undefined && model.get('timeCreated') != null)
             {
-                timeCreated = Ext.Date.format(model.get('timeCreated'), 'd/m/Y');
+                timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
             }
             if (model.get('timeChanged') != undefined && model.get('timeChanged') != null)
             {
-                timeChanged = Ext.Date.format(model.get('timeChanged'), 'd/m/Y');
+                timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
             }
             
-            history = '<table><tr><td><b> Created by:</b></td><td>' + createdName +
-                '</td><td>' + timeCreated +
-                '</td></tr><tr><td><b>Last modified by:</b></td><td>' + changedName +
-                '</td><td>' + timeChanged +
-                '</td></tr></table>';
+            history = '<b> Created by: </b>' + createdName + '<br>' +
+                '<p style="color:#333;font-size:11px;"> on ' + timeCreated + '<br></p>' +
+                '<b> Last modified by: </b>' + changedName + '<br>' +
+                '<p style="color:#333;font-size:11px;"> on ' + timeChanged + '<br></p>' 
         }
         
         this.annotationHist.body.update(history);
