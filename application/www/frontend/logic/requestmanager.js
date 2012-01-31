@@ -167,7 +167,7 @@ RequestManager.prototype.flush = function()
 
 RequestManager.prototype.onRequestFinished = function(request, success, response, decode)
 {
-    var data, message, code, trace;
+    var data, message, code, trace, timestamp;
     
     // Try to decode response text.
     try
@@ -177,18 +177,23 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
         
         if (!success)
         {
-            message = data.message;
-            code    = data.code;
-            trace   = data.trace;
+            message   = data.message;
+            code      = data.code;
+            trace     = data.trace;
+            timestamp = data.timestamp;
         }
     }
     catch (e)
     {
         success = false;
         
-        code    = 'error';
-        message = 'Server error.';
-        trace   = response;
+        var date = new Date();
+        
+        code      = 'error';
+        message   = 'Server error.';
+        trace     = response;
+        timestamp = date.getUTCFullYear() + '/' + (date.getUTCMonth() + 1) + '/' + date.getUTCDate() + ' '
+                  + date.getUTCHours() + ':' + date.getUTCMinutes() + ':' + date.getUTCSeconds();
     }
     
     // Call the right callback.
@@ -200,29 +205,29 @@ RequestManager.prototype.onRequestFinished = function(request, success, response
         }
     }
     else
-    {        
+    {
         // Call error callback.
         var result;
         if (request.onError !== undefined)
         {
-            result = request.onError.call(request.object, code, message, trace);
+            result = request.onError.call(request.object, code, message, trace, timestamp);
         }
         
         // Show an error if error handler did not handle this error.
         if (result !== false)
         {
-            RequestManager.showErrorMessage(code, message, trace);
+            RequestManager.showErrorMessage(code, message, trace, timestamp);
         }
     }
 }
 
-RequestManager.showErrorMessage = function(code, message, trace)
+RequestManager.showErrorMessage = function(code, message, trace, timestamp)
 {
     var messageContent = escape('An error occurred, message: \'' +
-        message + '\', code: \'' + code + '\''); 
+        message + '\', code: \'' + code + '\', timestamp: ' + timestamp);
     
     // Add stack trace, if present.
-    if(trace)
+    if (trace)
     {
         // Let the stack trace stay as HTML, it is a serverside exception.
         messageContent += escape(', stack trace:' + "\n\n") + trace;

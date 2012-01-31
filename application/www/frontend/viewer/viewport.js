@@ -164,7 +164,7 @@ Viewport.prototype.removeOverlays = function(overlay)
     this.overlays = [];
 }
 
-//sets dimensions of viewer
+// Sets dimensions of viewer.
 Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
 {
     var deltaDimensions = {
@@ -187,13 +187,13 @@ Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
     
     //this.zoom(newZoomLevel, zoomPosition);
     
-    var docWidth = this.documentDimensions.width  * Math.pow(2, this.zoomLevel) / 0.8;
+    var docWidth = this.documentDimensions.width * this.zoomFactor / 0.8;
     var oldWidth = Math.max(this.dimensions.width, this.documentDimensions.width / 0.8);
     var newWidth = Math.max(viewerWidth, this.documentDimensions.width / 0.8);
     
     var newZoomLevel = this.zoomLevel;
-
-    if (newWidth < docWidth || oldWidth < newWidth)
+    
+    if ((newWidth < docWidth) || (oldWidth < newWidth))
     {
         newZoomLevel += Math.log(newWidth / oldWidth) / Math.LN2;
     }
@@ -518,27 +518,27 @@ Viewport.prototype.setDocument = function(document)
 
 Viewport.prototype.initialize = function()
 {
-    //set dimensions
+    // Set dimensions.
     this.dom.width(this.dimensions.width + "px");
     this.dom.height(this.dimensions.height + "px");
     
-    //append document to our dom
+    // Append document to our dom.
     this.document.insert(this);
     
-    //initialize viewport
+    // Initialize viewport.
     this.reset();
     
-    //set event listeners
+    // Set event listeners.
     var _this = this;
-    this.dom.bind('mousewheel',    function(event) { return _this.onMouseWheel(event); });
-    this.dom.bind('mousedown',     function(event) { return _this.onMouseDown(event);  });
+    this.dom.bind('mousewheel',    function(event) { return _this.onMouseWheel(event);  });
+    this.dom.bind('mousedown',     function(event) { return _this.onMouseDown(event);   });
     this.dom.bind('dblclick',      function(event) { return _this.onDoubleClick(event); });
-    $(document).bind('keydown',    function(event) { return _this.onKeyDown(event);    });
-    $(document).bind('keyup',      function(event) { return _this.onKeyUp(event);      });
-    $(document).bind('mousemove',  function(event) { return _this.onMouseMove(event);  });
-    $(document).bind('mouseup',    function(event) { return _this.onMouseUp(event);    });
+    $(document).bind('keydown',    function(event) { return _this.onKeyDown(event);     });
+    $(document).bind('keyup',      function(event) { return _this.onKeyUp(event);       });
+    $(document).bind('mousemove',  function(event) { return _this.onMouseMove(event);   });
+    $(document).bind('mouseup',    function(event) { return _this.onMouseUp(event);     });
     
-    //add mouse scroll event for firefox
+    // Add mouse scroll event for Firefox.
     if (window.addEventListener)
     {
         this.dom.get(0).addEventListener('DOMMouseScroll',
@@ -621,12 +621,8 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     this.position = newPosition;
     this.rotation = newRotation;
     
-    //get visible area
+    // Get visible area.
     this.visibleArea = this.calculateVisibleArea();
-    
-    
-    // TODO: Use level 0 dimensions, get rid of visible area calculation here?
-    
     
     // Update document.
     this.document.update(this.position, this.zoomLevel, this.rotation, this.visibleArea);
@@ -644,7 +640,7 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
 
 Viewport.prototype.calculateVisibleArea = function()
 {
-    //calculate topleft and bottomright
+    // Calculate topleft and bottomright.
     var topLeft     = this.position;
     var bottomRight = {
         x: topLeft.x + this.dimensions.width  * this.invZoomFactor,
@@ -773,26 +769,26 @@ Viewport.prototype.onMouseUp = function(event)
         return false;
     }
     
-    //stop dragging
+    // Stop dragging.
     this.mouseDown = false;
     
-    //show normal cursor
+    // Show normal cursor.
     $(document.body).removeClass("dragging");
     this.dom.removeClass("dragging");
     
-    //check for rotation
+    // Check for rotation.
     if (this.spaceDown)
     {
         return;
     }
     
-    //calculate new position
+    // Calculate new position.
     var deltaPosition = {
         x: -this.deltaPosition.x * Viewport.dragEaseFactor,
         y: -this.deltaPosition.y * Viewport.dragEaseFactor
     };
     
-    //move delta position
+    // Move delta position.
     this.move(deltaPosition);
     
     return false;
@@ -800,13 +796,13 @@ Viewport.prototype.onMouseUp = function(event)
 
 Viewport.prototype.onMouseWheel = function(event)
 {
-    //check if disabled
+    // Check if disabled.
     if (this.zoomingDisabled)
     {
         return false;
     }
     
-    //calculate scroll amount (0.75 is one normal step)
+    // Calculate scroll amount (0.75 is one normal step).
     var amount = event.detail ? event.detail * -1 : event.wheelDelta / 40;
     amount /= 0.75;
     
@@ -820,19 +816,19 @@ Viewport.prototype.onMouseWheel = function(event)
         amount *= Viewport.scrollFactor;
     }
     
-    //get new zoom level
+    // Get new zoom level.
     var newZoomLevel = this.zoomLevel + amount;
     
-    //get offset of viewport dom
+    // Get offset of viewport dom.
     var domOffset = this.dom.offset();
     
-    //calculate mouse position within viewport
+    // Calculate mouse position within viewport.
     var mousePosition = {
         x: event.pageX - domOffset.left,
         y: event.pageY - domOffset.top
     };
     
-    //zoom in
+    // Zoom in.
     this.zoom(newZoomLevel, mousePosition, false);
     
     return false;
@@ -840,19 +836,19 @@ Viewport.prototype.onMouseWheel = function(event)
 
 Viewport.prototype.onDoubleClick = function(event)
 {
-    //get new zoom level
+    // Get new zoom level.
     var newZoomLevel = this.zoomLevel + 1;
     
-    //get offset of viewport dom
+    // Get offset of viewport dom.
     var domOffset = this.dom.offset();
     
-    //calculate mouse position within viewport
+    // Calculate mouse position within viewport.
     var mousePosition = {
         x: event.pageX - domOffset.left,
         y: event.pageY - domOffset.top
     };
     
-    //zoom in
+    // Zoom in.
     this.zoom(newZoomLevel, mousePosition);
     
     return false;
@@ -864,14 +860,18 @@ Viewport.prototype.onKeyDown = function(event)
     // Check which key.
     var keyCode = event.which || event.keyCode;
     
-    // TODO: Add key handling: arrows, '+' and '-' and 'home'.
-    
     switch (keyCode)
     {
         case 32: // Space.
             this.spaceDown = true;
+            
+            // Cancel event if mouse is down.
+            if (this.mouseDown)
+            {
+                return false;
+            }
+            
             break;
-            //return false;
             
         case 36: // Home.
             if (!this.zoomingDisabled && !this.draggingDisabled && !this.rotationDisabled)
@@ -880,7 +880,6 @@ Viewport.prototype.onKeyDown = function(event)
             }
             
             break;
-            //return false;
             
         case 107: // Numpad +.
             if (!this.zoomingDisabled)
@@ -889,7 +888,6 @@ Viewport.prototype.onKeyDown = function(event)
             }
             
             break;
-            //return false;
             
         case 109: // Numpad -.
             if (!this.zoomingDisabled)
@@ -898,7 +896,6 @@ Viewport.prototype.onKeyDown = function(event)
             }
             
             break;
-            //return false;
             
         case 37: // Left.
         case 100: // Numpad 4.
@@ -908,7 +905,6 @@ Viewport.prototype.onKeyDown = function(event)
             }
             
             break;
-            //return false;
             
         case 39: // Right.
         case 102: // Numpad 6.
@@ -918,7 +914,6 @@ Viewport.prototype.onKeyDown = function(event)
             }
             
             break;
-            //return false;
             
         case 38: // Up.
         case 104: // Numpad 8.
@@ -928,7 +923,6 @@ Viewport.prototype.onKeyDown = function(event)
             }
             
             break;
-            //return false;
             
         case 40: // Down.
         case 98: // Numpad 2.
@@ -938,7 +932,6 @@ Viewport.prototype.onKeyDown = function(event)
             }
             
             break;
-            //return false;
     }
 }
 
@@ -953,7 +946,12 @@ Viewport.prototype.onKeyUp = function(event)
         case 32: // Space.
             this.spaceDown = false;
             
+            // Cancel event if mouse is down.
+            if (this.mouseDown)
+            {
+                return false;
+            }
+            
             break;
     }
 }
-

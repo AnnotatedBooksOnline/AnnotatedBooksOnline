@@ -39,6 +39,7 @@ Ext.define('Ext.ux.RequestManagerProxy', {
         this.addEvents('exception');
         
         config = config || {};
+        
         this.callParent([config]);
     },
     

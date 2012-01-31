@@ -105,15 +105,15 @@ Binding.prototype.initialize = function()
 
 Binding.documentFromScan = function(scan)
 { 
+    var prefix = 'data/tiles/' + scan.get('scanId') + '/tile_';
+    
     return new Document(
         scan.get('width'),
         scan.get('height'),
         scan.get('zoomLevel'),
         function(row, col, zoomLevel)
         {
-            return 'data/tiles/' + scan.get('scanId') 
-                 + '/tile_' + zoomLevel + '_' + col + '_' + row + '.jpg';
-        },
-        'data/thumbnails/' + scan.get('scanId') + '.jpg'
+            return prefix + zoomLevel + '_' + col + '_' + row + '.jpg';
+        }
     );
 }
