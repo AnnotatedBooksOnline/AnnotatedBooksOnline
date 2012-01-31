@@ -132,8 +132,8 @@ class UploadController extends Controller
         $location = self::getString($file, 'tmp_name');
         $upload->setContent($location, true);
         
-        $expectedFileSize = self::getInteger($file, 'size');
-        $receivedFileSize = strlen($upload->getContent());
+        $expectedFileSize = $upload->getSize();
+        $receivedFileSize = self::getInteger($file, 'size');
         if ($expectedFileSize !== $receivedFileSize)
         {
             throw new UploadException('upload-failed');
