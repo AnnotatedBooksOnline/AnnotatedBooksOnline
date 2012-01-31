@@ -327,7 +327,6 @@ Ext.define('Ext.ux.SelectBookForm', {
                 name: 'delete',
                 text: 'Delete',
                 iconCls: 'cancel-icon',
-                disabled: true,
                 hidden: this.isExistingBinding,
                 width: 140,
                 handler: function()

@@ -40,7 +40,7 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                     
                     if(bindingLanguages === '')
                     {
-                        bindingLanguages = 'No language(s)';
+                        bindingLanguages = ' No language(s)';
                     }
                          
                    this.down('propertygrid').setSource({
