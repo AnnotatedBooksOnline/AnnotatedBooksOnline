@@ -392,7 +392,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 Binding.createFromId(bindingId, this,
                     function(binding)
                     {
-                        var correctStatus = true;
+                        var correctStatus = binding.getScanAmount() > 0;
                         
                         // Check for correct binding status.
                         if (binding.getModel().get('status') !== 2)
@@ -429,6 +429,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 this.tabs.setActiveTab(newTab);
                             }
                         }
+                        else
+                        {
+                            Ext.Msg.show({
+                                title:'Error',
+                                msg: 'The ' +
+                                    (data.length == 1 ? 'binding' : 'book') +
+                                    ' you are trying to view is not (yet) available.',
+                                icon: Ext.Msg.ERROR,
+                                buttons: Ext.Msg.OK
+                            });
+                        }
                         
                         // Loading is finished.
                         this.down('tabpanel').setLoading(false);
@@ -464,7 +475,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: 'Help',
                     xtype: 'helppanel',
                     iconCls: 'help-icon',
-                    helpType: data[0] // TODO: Might not exist.
+                    helpType: data[0]
                 });
                 
                 break;
@@ -536,15 +547,19 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             {
                                 _this.tabs.setActiveTab(newTab);
                             }
-                            
-                            // Loading is finished.
-                            this.down('tabpanel').setLoading(false);
                         }
                         else
                         {
-                            // Loading is finished.
-                            this.down('tabpanel').setLoading(false);
+                            Ext.Msg.show({
+                                title:'Error',
+                                msg: 'The requested user \'' + escape(username) + '\' does not exist.',
+                                icon: Ext.Msg.ERROR,
+                                buttons: Ext.Msg.OK
+                            });
                         }
+                        
+                        // Loading is finished.
+                        this.down('tabpanel').setLoading(false);
                     },
                     function()
                     {
