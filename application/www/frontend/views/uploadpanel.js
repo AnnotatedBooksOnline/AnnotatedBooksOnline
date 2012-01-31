@@ -682,7 +682,7 @@ Ext.define('Ext.ux.UploadForm', {
                     var books = booksfieldset.getBooks();
                     var disable = valid;
                     
-                    booksfieldset.down('[name=addbook]').setDisabled(disable);
+                    //booksfieldset.down('[name=addbook]').setDisabled(disable);
                     
                     if (books.length == 1)
                     {
