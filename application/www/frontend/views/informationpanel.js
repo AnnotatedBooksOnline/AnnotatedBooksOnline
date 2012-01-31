@@ -184,12 +184,12 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 authors = ' Unknown author(s)';
             }
             
-            if(version==null)
+            if(version==='')
             {
                 version = 'Unknown version';
             }
             
-            if(placePublished==null)
+            if(placePublished==='')
             {
                 placePublished = 'Unknown publication place';
             }

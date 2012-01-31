@@ -32,6 +32,16 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                    {
                         bindingLanguages+=','+record.get('languageName');
                    });
+                   
+                    if(readerNames === '')
+                    {
+                        readerNames = ' Unknown reader(s)';
+                    }
+                    
+                    if(bindingLanguages === '')
+                    {
+                        bindingLanguages = 'No language(s)';
+                    }
                          
                    this.down('propertygrid').setSource({
                               "a": binding.get('library').libraryName,

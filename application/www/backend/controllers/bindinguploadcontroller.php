@@ -494,19 +494,19 @@ class BindingUploadController extends Controller
      * Deletes a binding.
      */
     public function actionDeleteUpload($data)
-    {/*
+    {
         Authentication::assertPermissionTo('upload-bindings');  
         $userId = Authentication::getInstance()->getUserId();
         
-        $bindingId = self::getInteger($data, 'bindingId');
-        $binding = new Binding($bindingId);
+        $binding = new Binding($inputBindingId);
         if (($binding->getStatus() != 2) && ($binding->getUserId() == $userId))
             {
-                $binding->delete();
+                $binding->setStatus(Binding::STATUS_DELETED);
+                $binding->save();
             }
         else
         {
             throw new ControllerException('deleting-not-allowed');
-        }*/
+        }
     }
 }
