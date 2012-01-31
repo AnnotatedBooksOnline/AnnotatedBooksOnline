@@ -33,14 +33,22 @@ DomNode.prototype.insert = function(element, before)
     element = (element.dom !== undefined) ? element.dom.get(0) : $(element).get(0);
     
     if (before !== undefined)
+    {
         before = (before.dom !== undefined) ? before.dom.get(0) : $(before).get(0);
+    }
     else
+    {
         before = null;
+    }
     
     if (before)
+    {
         element.insertBefore(this.dom.get(0), before);
+    }
     else
+    {
         element.appendChild(this.dom.get(0));
+    }
 }
 
 DomNode.prototype.remove = function()

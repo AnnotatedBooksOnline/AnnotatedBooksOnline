@@ -5,7 +5,9 @@
 Ext.define('Ext.ux.BookModel', {
     extend: 'Ext.ux.ModelBase',
     idProperty: 'bookId',
-    fields: ['bookId', 'bindingId', 'title', 'minYear', 'maxYear', 'author', 'languages', 'publisher', 'placePublished', 'firstPage', 'lastPage', 'version', 'printVersion'],
+    fields: ['bookId', 'bindingId', 'title', 'minYear', 'maxYear',
+             'author', 'languages', 'publisher', 'placePublished',
+             'firstPage', 'lastPage', 'version', 'printVersion'],
     
     hasMany: [{
         model: 'Ext.ux.AuthorModel',
