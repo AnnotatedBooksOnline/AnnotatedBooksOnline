@@ -1,4 +1,4 @@
-﻿BEGIN TRANSACTION;
+BEGIN TRANSACTION;
 
 -- Redesigns HelpParagraphs, allowing content to depend on a setting.
 
