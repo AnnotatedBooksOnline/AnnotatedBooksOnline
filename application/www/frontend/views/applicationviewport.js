@@ -429,6 +429,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 this.tabs.setActiveTab(newTab);
                             }
                         }
+                        else
+                        {
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: 'The selected binding is currently unavailable.',
+                                buttons: Ext.Msg.OK
+                            }); 
+                        }
                         
                         // Loading is finished.
                         this.down('tabpanel').setLoading(false);
@@ -544,6 +552,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         {
                             // Loading is finished.
                             this.down('tabpanel').setLoading(false);
+                            Ext.Msg.show({
+                                title: 'Error',
+                                msg: 'The selected user profile is currently unavailable for viewing.',
+                                buttons: Ext.Msg.OK
+                            }); 
                         }
                     },
                     function()

@@ -62,7 +62,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 handler: function()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.
-                    // Deletes the user afterwards.
+                    // Deletes the binding afterwards.
                     Ext.Msg.show({
                         title: 'Are you sure?',
                         msg: 'You are about to delete this binding, this can not be undone. Are you sure?',
