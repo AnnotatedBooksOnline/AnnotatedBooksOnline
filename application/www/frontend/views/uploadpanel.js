@@ -402,8 +402,14 @@ Ext.define('Ext.ux.BookFieldset', {
                     margin: '5 0 10 0',
                     handler: function()
                     {
-                        _this.enterDummyInformation();
                         _this.up('booksfieldset').checkBooks(true);
+                        
+                        //Destroy the mandatory fields so their validators dissapear
+                        _this.down('[name=title]').destroy();
+                        _this.down('[name=from]').destroy();
+                        _this.down('[name=to]').destroy();
+                        _this.down('[name=languages]').destroy();
+
                         _this.destroy();
                     }
                 }]
@@ -459,15 +465,6 @@ Ext.define('Ext.ux.BookFieldset', {
             placePublished: this.down('[name=placePublished]').getValue(),
             printVersion: this.down('[name=version]').getValue()
         };
-    },
-    
-    enterDummyInformation: function()
-    {
-        this.down('[name=title]').setValue('a');
-        this.down('[name=from]').setValue(1000);
-        this.down('[name=to]').setValue(1000);
-        var firstLanguage = this.down('[name=languages]').getStore().first();
-        this.down('[name=languages]').setValue(firstLanguage);
     }
 });
 
