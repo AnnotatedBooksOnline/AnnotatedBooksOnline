@@ -42,7 +42,7 @@ class UploadController extends Controller
         
         $userId = Authentication::getInstance()->getUserId();
         
-        $resultSet = Query::select('token', 'filename', 'size', 'Scans.status AS status')
+        $resultSet = Query::select('token', 'filename', 'size', 'Uploads.status AS status')
             ->from('Uploads')
             ->join('Scans', "Scans.uploadId = Uploads.uploadId", "LEFT")
             ->where('userId = :userId', "Scans.scanId is null")
@@ -54,8 +54,8 @@ class UploadController extends Controller
         {
             $values = $row->getValues();
             
-            $values['status'] =
-                ($values['status'] == Upload::STATUS_AVAILABLE) ? 'success' : 'error';
+            $values['status'] = 
+                ($values['status'] === Upload::STATUS_AVAILABLE) ? 'success' : 'error';
             
             $result[] = $values;
         }
@@ -132,17 +132,10 @@ class UploadController extends Controller
         $location = self::getString($file, 'tmp_name');
         $upload->setContent($location, true);
         
-        $expectedFileSize = $upload->getSize();
-        $receivedFileSize = self::getInteger($file, 'size');
-        if ($expectedFileSize !== $receivedFileSize)
-        {
-            throw new UploadException('upload-failed');
-        }
-        
         // Set values on file.
         $upload->setValues(array(
             'filename'  => self::getString($file, 'name'),
-            'size'      => $expectedFileSize,
+            'size'      => self::getInteger($file, 'size'),
             'status'    => Upload::STATUS_AVAILABLE,
             'timestamp' => time()
         ));
