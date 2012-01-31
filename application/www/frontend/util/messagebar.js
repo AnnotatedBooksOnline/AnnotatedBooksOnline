@@ -12,7 +12,9 @@
 function MessageBar()
 {
     if (arguments.length)
+    {
         this.constructor.apply(this, arguments);
+    }
 }
 
 MessageBar.prototype = new DomNode;

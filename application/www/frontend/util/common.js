@@ -206,6 +206,7 @@ Ext.define('Ext.LoadMask',
         {
             me.maskElement = el;
         }
+        
         this.superclass.constructor.apply(this, [config]);
         
         if (me.store)

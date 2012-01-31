@@ -29,11 +29,11 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             var currentPage = viewer.getPage()+1;
             if (currentPage >= firstPage && currentPage <= lastPage)
             {
-                return '<span style="color: #000000;">' + rec.get('title') + '</span>';
+                return '<span style="white-space: normal;color: #000000;">' + rec.get('title') + '</span>';
             }
             else
             {
-                return rec.get('title');
+                return '<span style="white-space: normal;">' + rec.get('title') + '</span>';
             }
         }
         
