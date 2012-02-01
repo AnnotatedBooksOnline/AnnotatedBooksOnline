@@ -18,10 +18,10 @@ require_once 'models/language/bindinglanguage.php';
 require_once 'models/language/booklanguage.php';
 
 /** Minimum scan width */
-define(MIN_SCAN_SIZE_X, 256);
+define("MIN_SCAN_SIZE_X", 256);
 
 /** Minimum scan height */
-define(MIN_SCAN_SIZE_Y, 256);
+define("MIN_SCAN_SIZE_Y", 256);
 
 /**
  * Exceptions.
