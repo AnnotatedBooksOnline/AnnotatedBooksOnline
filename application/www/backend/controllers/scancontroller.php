@@ -54,7 +54,7 @@ class ScanController extends ControllerBase
         $binding->loadDetails();
         
         $page = 0;
-        $orderChanged = false;
+        $deleteBookPageNumbers = false;
         
         // Iterate over all scans in the provided new order.
         foreach ($inputOrderedScans as $key => $scanId)
@@ -69,19 +69,7 @@ class ScanController extends ControllerBase
                 $scan->setPage($page);
                 $scan->setMarkedAsUpdated(true);
                 
-                $orderChanged = true;
-            }
-        }
-        
-        // Determine if the order of scans has changed. If this is the case clear the starting page
-        // and ending page for all books in this binding.
-        if ($inputOrderedScans === true) 
-        {
-            foreach ($binding->getBookList() as $book)
-            {
-                $book->setFirstPage(null);
-                $book->setLastPage(null);
-                $book->setMarkedAsUpdated(true);
+                $deleteBookPageNumbers = true;
             }
         }
                 
@@ -93,12 +81,26 @@ class ScanController extends ControllerBase
             $scan->setStatus(Scan::STATUS_DELETED);
             $scan->setUploadId(null);
             $scan->save();
+            
+            $deleteBookPageNumbers = true;
       
             // Deleted any associated uploads.
             if ($scan->getUploadId() !== null) 
             {
                 $upload = new Upload($scan->getUploadId());
                 $upload->delete();
+            }
+        }
+        
+        // Determine if the order of scans has changed. If this is the case clear the starting page
+        // and ending page for all books in this binding.
+        if ($deleteBookPageNumbers === true)
+        {
+            foreach ($binding->getBookList() as $book)
+            {
+                $book->setFirstPage(null);
+                $book->setLastPage(null);
+                $book->setMarkedAsUpdated(true);
             }
         }
         
