@@ -318,7 +318,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         if (Authentication.getInstance().isLoggedOn())
         {
-        	this.updateUploadButtonTitle();
+            this.updateUploadButtonTitle();
         }
         
         this.openTab('welcome', [], true);
