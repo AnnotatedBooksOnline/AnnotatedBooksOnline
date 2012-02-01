@@ -751,6 +751,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
         if (index >= 0)
         {
             this.tabs.setActiveTab(index);
+            
+            //update the tab if the tab has an updateTab function
+            var theTab = this.tabs.getActiveTab();
+            if (theTab.updateTab !== undefined)
+            {
+                theTab.updateTab(data, theTab);
+            }
         }
         else if (openIfNotAvailable === true)
         {
