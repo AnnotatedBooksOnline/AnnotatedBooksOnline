@@ -452,8 +452,6 @@ Ext.define('Ext.ux.BookFieldset', {
     
     getBook: function()
     {
-        // TODO: How is this a book value? Create a book entity.
-        
         return {
             bookId: this.existingBook !== undefined ? this.existingBook.get('bookId') : '-1',
             title: this.down('[name=title]').getValue(),

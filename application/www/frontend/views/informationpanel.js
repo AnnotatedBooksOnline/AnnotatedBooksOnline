@@ -5,8 +5,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.bindinginformationpanel',
     layout: 'fit',
-    
-    //TODO: Commenting and cleaning up
+
     initComponent: function() 
     {
         var _this = this;
@@ -20,21 +19,21 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             groupField: 'firstPage'
         });
         
-        //Method to render grouping header
+        //Method to render grouping header.
         Ext.util.Format.bookName = function(firstPage, parent) 
         {
             //Get the viewer
             var view = Ext.getCmp(parent.rows[0].viewId);
             var viewer = view.up('bindinginformationpanel').viewer;
             
-            //Find the first and last pages of the current book
+            //Find the first and last pages of the current book.
             var rec = viewer.getBinding().getModel().books().findRecord('firstPage',firstPage);
             var lastPage = rec.get('lastPage');
             
-            //Get the current page
+            //Get the current page.
             var currentPage = viewer.getPage()+1;
             
-            //Mark the currently selected book
+            //Mark the currently selected book.
             if (currentPage >= firstPage && currentPage <= lastPage)
             {
                 return '<span style="white-space: normal;color: #000000;">' + rec.get('title') + '</span>';
@@ -215,7 +214,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         
         var viewer = this.viewer;
         
-        //Update grid when page changes
+        //Update grid when page changes.
         this.viewer.getEventDispatcher().bind('pagechange', this, function()
         {
             this.down('grid').getView().refresh();
@@ -240,18 +239,15 @@ Ext.define('Ext.ux.InformationPanel', {
             items: [{
                 xtype: 'bindinginformationpanel',
                 title: 'Book Information',
-                //collapsed: false,
                 collapsible: true,
                 viewer: this.viewer,
                 minHeight: 200,
                 flex: 1
             },{
                 xtype: 'navigationpanel',
-                //collapsed: false,
                 collapsible: true,
                 autoScroll: true,
                 viewer: this.viewer,
-                //height: '60%'
                 flex: 3
              },{
                 xtype: 'referencespanel',
@@ -260,7 +256,6 @@ Ext.define('Ext.ux.InformationPanel', {
                 collapsible: true,
                 autoScroll: true,
                 viewer: this.viewer,
-                //height: '20%'
                 flex: 1
             }]
         };

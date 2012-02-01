@@ -444,7 +444,7 @@ Ext.define('Ext.ux.ScanPanel', {
                 },
             file_queue_error_handler: function(file, code, message)
                 {
-                    // NOTE: Just omit error?
+                    //Show no error.
                 },
             upload_start_handler: function(file)
                 {

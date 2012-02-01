@@ -11,12 +11,7 @@ Ext.define('Ext.ux.EditProfileForm', {
         var _this = this;
         
         var defConfig = {
-            items: [/*{
-                name: 'username',
-                fieldLabel: 'Username',
-                minLength: 6,
-                maxLength: 30
-            },*/{
+            items: [{
                 name: 'email',
                 fieldLabel: 'Email Address',
                 allowBlank: false,
