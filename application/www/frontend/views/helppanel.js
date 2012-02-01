@@ -69,6 +69,14 @@ Ext.define('Ext.ux.HelpPanel', {
     
     getHelpType: function(type)
     {
+        switch (type)
+        {
+            case 'uploadinfo':
+            case 'reorderscan':
+            case 'selectbook':
+                type = 'upload';
+        }
+    
         this.down('[name=helpindex]').expandPath('/root', undefined, undefined, function(succes, lastNode)
         {
             var helppage = lastNode.findChild('helpType',type);
