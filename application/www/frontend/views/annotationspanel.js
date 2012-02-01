@@ -63,6 +63,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 name: 'grid',
                 region: 'center',
                 height: 350,
+                style: 'height: 100%',
                 viewer: this.viewer
             },{
                 name: 'controls',
@@ -290,6 +291,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         var history = '';
         if (model !== undefined)
         {
+            //Get the current user's name
             var user = Authentication.getInstance().getUserModel()
             var createdName = 'Unknown';
             var changedName = 'Unknown';
@@ -298,11 +300,12 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 createdName = user.getFullName();
                 changedName = user.getFullName();
             }
+            //Get the current time
             var timeCreated = Ext.Date.format(new Date(Ext.Date.now()), 'F j, Y');
             var timeChanged = Ext.Date.format(new Date(Ext.Date.now()), 'F j, Y');
             
             
-            // TODO: Make a good layout of the table.
+            // When the annotation was created by someone else change the values
             if (model.get('createdName') != undefined && model.get('timeCreated') != null)
             {
                 createdName = model.get('createdName');
@@ -314,12 +317,14 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
             }
             
+            //Set the text
             history = '<b> Created by: </b>' + createdName + '<br>' +
                 '<p style="color:#333;font-size:11px;"> on ' + timeCreated + '<br></p>' +
                 '<b> Last modified by: </b>' + changedName + '<br>' +
                 '<p style="color:#333;font-size:11px;"> on ' + timeChanged + '<br></p>' 
         }
         
+        //Update the history panel
         this.annotationHist.body.update(history);
     },
     

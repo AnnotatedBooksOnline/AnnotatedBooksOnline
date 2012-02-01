@@ -10,7 +10,6 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
     {
         var _this = this;
         
-
         Ext.ux.BindingModel.loadRecursive(this.bindingId, 
         {
               scope: _this,

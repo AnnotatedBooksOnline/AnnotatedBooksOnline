@@ -66,7 +66,6 @@ Ext.define('Ext.ux.BookInformationFieldSet', {
     {
         var _this = this;
         
-        //TODO: wrapping?
         var defConfig = {
             autoScroll: true,
             items: [{
@@ -104,7 +103,6 @@ Ext.define('Ext.ux.BookInformationFieldSet', {
         
         this.callParent();
     },
-    //TODO: Do this in a more elegant way
     setBook: function(book)
     {
         var authors = '';

@@ -22,8 +22,10 @@ Ext.define('Ext.ux.ReferencesPanel', {
     
     initComponent: function()
     {
+        // Get binding model from viewer.
         this.bindingModel = this.viewer.getBinding().getModel();
         
+        //Calculate url prefix.
         this.urlPrefix = location.protocol + '//'
                        + location.hostname + location.pathname
                        +'#binding-' + this.bindingModel.get('bindingId');

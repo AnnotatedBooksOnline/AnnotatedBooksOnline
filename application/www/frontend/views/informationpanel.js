@@ -20,13 +20,21 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             groupField: 'firstPage'
         });
         
+        //Method to render grouping header
         Ext.util.Format.bookName = function(firstPage, parent) 
         {
+            //Get the viewer
             var view = Ext.getCmp(parent.rows[0].viewId);
             var viewer = view.up('bindinginformationpanel').viewer;
+            
+            //Find the first and last pages of the current book
             var rec = viewer.getBinding().getModel().books().findRecord('firstPage',firstPage);
             var lastPage = rec.get('lastPage');
+            
+            //Get the current page
             var currentPage = viewer.getPage()+1;
+            
+            //Mark the currently selected book
             if (currentPage >= firstPage && currentPage <= lastPage)
             {
                 return '<span style="white-space: normal;color: #000000;">' + rec.get('title') + '</span>';
@@ -160,6 +168,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         var myData = [];
         this.bindingModel.books().each(function(book)
         {
+            //Fetch all book data.
             var firstPage = book.get('firstPage');
             
             var authors = '';
@@ -194,6 +203,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 placePublished = 'Unknown publication place';
             }
             
+            //Add the book to the grouping grid.
             myData.push([firstPage, authors.substring(1)]);
             myData.push([firstPage, version]);
             myData.push([firstPage, placePublished]);
@@ -204,6 +214,8 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         this.infoPanelStore.loadData(myData);
         
         var viewer = this.viewer;
+        
+        //Update grid when page changes
         this.viewer.getEventDispatcher().bind('pagechange', this, function()
         {
             this.down('grid').getView().refresh();
