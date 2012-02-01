@@ -331,7 +331,7 @@ class User extends Entity
         
         // Use Blowfish with 1024 passes to generate a sufficiently secure password.
         $algorithm = '$2a';
-        $passes = '$10';
+        $passes    = '$10';
         
         return crypt($password, $algorithm . $passes . '$' . $salt);
     }

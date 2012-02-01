@@ -230,11 +230,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             height: 120,
             cls: 'header',
-            items: [{ // Header logo.
+            items: [{ 
+                // Header logo.
                 xtype: 'container',
                 width: 120,
                 cls: 'header-logo'
-            },{ // Title, with menu below.
+            },{ 
+                // Title, with menu below.
                 xtype: 'container',
                 layout: {
                     type: 'vbox',
@@ -266,7 +268,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     items: menuButtons
                 }]
-            },{ // User items.
+            },{ 
+                // User items.
                 border: false,
                 bodyPadding: 10,
                 width: 220,
@@ -753,6 +756,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
         if (index >= 0)
         {
             this.tabs.setActiveTab(index);
+            
+            //update the tab if the tab has an updateTab function
+            var theTab = this.tabs.getActiveTab();
+            if (theTab.updateTab !== undefined)
+            {
+                theTab.updateTab(data, theTab);
+            }
         }
         else if (openIfNotAvailable === true)
         {

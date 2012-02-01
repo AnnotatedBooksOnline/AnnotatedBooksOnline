@@ -89,7 +89,8 @@ Ext.define('Ext.ux.RegistrationForm', {
                 hideLabel: true,
                 style: 'margin-top: 15px;',
                 
-                boxLabel: 'I have read and accept the <a href="#register" title="Show the terms of use" class="terms">terms of use</a>.',
+                boxLabel: 'I have read and accept the <a href="#register" title="Show the terms of use"' +
+                    'class="terms">terms of use</a>.',
 
                 // Listener to open the terms of use page link in a modal window.
                 listeners: {

@@ -10,7 +10,7 @@ Ext.define('Ext.ux.RestorePasswordForm', {
     {  
         var _this = this;
         
-        var defConfig = { 
+        var defConfig = {
                 title : 'Enter a new password',
                 items: [{
                     name: 'password',
@@ -29,8 +29,7 @@ Ext.define('Ext.ux.RestorePasswordForm', {
                         var password = this.previousSibling('[name=password]');
                         return (value === password.getValue()) ? true : 'Passwords do not match.';
                     }
-                }
-                ],
+                }],
                 
                 submitButtonText: 'Ok',
                 
@@ -122,28 +121,27 @@ Ext.define('Ext.ux.RestorePasswordPanel', {
                 
         var defConfig =
         {
-                title: 'Restore password',
-                layout: 'hbox',
-                bodyPadding: 10,
-                items: [{
-                        border: false,
-                        plain: true,
-                        flex: 1
-                    },{
-                        xtype: 'restorepasswordform',
-                        border: false,
-                        width: 400,
-                        height: 150
-                    },{
-                        border: false,
-                        plain: true,
-                        flex: 1
-                    }]
-            }
+            title: 'Restore password',
+            layout: 'hbox',
+            bodyPadding: 10,
+            items: [{
+                border: false,
+                plain: true,
+                flex: 1
+            },{
+                xtype: 'restorepasswordform',
+                border: false,
+                width: 400,
+                height: 150
+            },{
+                border: false,
+                plain: true,
+                flex: 1
+            }]
+        }
         
         Ext.apply(_this, defConfig);
         this.callParent();
     }
-
-
+    
 });

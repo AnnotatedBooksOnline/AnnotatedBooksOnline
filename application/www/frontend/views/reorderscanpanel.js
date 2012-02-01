@@ -34,7 +34,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     tbar: [{
                         text: 'Scan order in binding',
                         xtype: 'label'
-                    }]/*
+                    }]
                 },{
                     xtype: 'multiselect',
                     name: 'deletedscans',
@@ -49,7 +49,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     tbar: [{
                         text: 'Deleted scans (drag here to delete)',
                         xtype: 'label'
-                    }]*/
+                    }]
                 }]
             },{
                 xtype: 'button',

@@ -225,6 +225,17 @@ Application.prototype.initialize = function()
     
     // Handle authentication changes.
     this.authentication.getEventDispatcher().bind('change', this, this.onAuthenticationChange);
+    
+    // Check for old browsers.
+    var oldBrowser = ($.browser.msie    && ($.browser.version < 9))      || // Internet Explorer.
+                     ($.browser.webkit  && ($.browser.version < 534.24)) || // Chrome, Safari.
+                     ($.browser.opera   && ($.browser.version < 11))     || // Opera.
+                     ($.browser.mozilla && ($.browser.version < 4));        // Firefox.
+    
+    if (oldBrowser)
+    {
+        MessageBar.show('For an optimal book viewing experience, please upgrade your browser.', 10000);
+    }
 }
 
 Application.prototype.registerActions = function()

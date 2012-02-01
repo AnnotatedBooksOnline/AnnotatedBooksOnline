@@ -339,7 +339,7 @@ class Query
             array_map(array($this, 'coalesceEmpty'),
                 array_map(array($this, 'escapeIdentifier'), $columns)));
         
-        $query = $this->escapeIdentifier($query); // TODO: Can't we make an abstraction of the query?
+        $query = $this->escapeIdentifier($query);
         
         $this->columns[] = 'ts_headline(\'english\', ' . $columns .
             ', to_tsquery(\'english\', ' . $query . '), \'StartSel=<b>, StopSel=</b>, MaxWords=100, MinWords=25, ShortWord=3, HighlightAll=FALSE\') AS ' . $this->escapeIdentifier($as);
@@ -737,7 +737,7 @@ class Query
             {
                 $identifier = $this->escapeIdentifier($matches[1]);
                 $operator   = $matches[2];
-                $value      = $this->escapeIdentifier($matches[3]); // TODO: Determine somehow whether identifier or value.
+                $value      = $this->escapeIdentifier($matches[3]);
                 
                 $clauses[] = $identifier . ' ' . $operator . ' ' . $value;
             }

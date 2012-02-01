@@ -8,17 +8,17 @@
  * Dom node class.
  */
 
-//class definition
+// Class definition.
 function DomNode()
 {
     if (arguments.length)
         this.constructor.apply(this, arguments);
 }
 
-//members
+// Fields.
 DomNode.prototype.dom;
 
-//constructor
+// Constructor.
 DomNode.prototype.constructor = function(dom)
 {
     this.dom = $(dom);
