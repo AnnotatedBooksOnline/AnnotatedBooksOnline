@@ -2,8 +2,6 @@
  * Reorder scan fieldset class.
  */
 
-// TODO : mathijsB . rewrite a lot in this file.
-
 Ext.define('Ext.ux.ReorderScanFieldset', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.reorderscanfieldset',
