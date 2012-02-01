@@ -330,7 +330,7 @@ abstract class Controller
         // Get exception info.
         $stackTrace = $e->getTraceAsString();
         $message    = $e->getMessage();
-        $timestamp  = $e->getTimestamp();
+        $timestamp  = ($e instanceof ExceptionBase) ? $e->getTimestamp() : "";
         $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
         
         // Set result.
