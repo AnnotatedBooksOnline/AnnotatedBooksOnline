@@ -51,28 +51,49 @@ class ScanController extends ControllerBase
         
         // Load the binding to be modified from the database.
         $binding = new Binding($inputBindingId);
-       
-        // TODO : MathijsB make this safer.
+        $binding->loadDetails();
         
-        // Save the new order of the scans.
         $page = 0;
-        foreach ($inputOrderedScans as $key => $scanId) 
+        $orderChanged = false;
+        
+        // Iterate over all scans in the provided new order.
+        foreach ($inputOrderedScans as $key => $scanId)
         {
-            Log::info('!!!!!!ScanId ' . $scanId);
-            $scan = new Scan($scanId);
-            $scan->setPage(++$page);
-            $scan->save();
+            $page++;
+            $scan = $binding->getScanList()->getByKeyValue('scanId', $scanId);
+            
+            // Determine if the page number changed for this scan. If this is the case update
+            // the scan in the database.
+            if ($scan != null && $page != $scan->getPage()) 
+            {
+                $scan->setPage($page);
+                $scan->setMarkedAsUpdated(true);
+                
+                $orderChanged = true;
+            }
         }
         
-        // Deleted the deleted scans.
+        // Determine if the order of scans has changed. If this is the case clear the starting page
+        // and ending page for all books in this binding.
+        if ($inputOrderedScans === true) 
+        {
+            foreach ($binding->getBookList() as $book)
+            {
+                $book->setFirstPage(null);
+                $book->setLastPage(null);
+                $book->setMarkedAsUpdated(true);
+            }
+        }
+                
+        // Iterate over all scans to be deleted.
         foreach ($inputDeletedScans as $key => $scanId)
         {
-            // Mark the scan as deleted.
-            $scan = new Scan($scanId);
+            // Get the scan from the binding and mark it as deleted.
+            $scan = $binding->getScanList()->getByKeyValue('scanId', $scanId);
             $scan->setStatus(Scan::STATUS_DELETED);
             $scan->setUploadId(null);
             $scan->save();
-            
+      
             // Deleted any associated uploads.
             if ($scan->getUploadId() !== null) 
             {
@@ -83,7 +104,7 @@ class ScanController extends ControllerBase
         
         // Update the binding status/
         $binding->setStatus(Binding::STATUS_REORDERED);
-        $binding->save();
+        $binding->saveWithDetails();
     }
 }
 

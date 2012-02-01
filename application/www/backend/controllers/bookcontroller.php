@@ -51,27 +51,30 @@ class BookController extends ControllerBase
         
         // Load the binding to be modified from the database.
         $binding = new Binding($inputBindingId);
-
-        // TODO : MathijsB make this safer.
+        $binding->loadDetails();
+        
         // Iterate over all selected books and store their values in the database.
         foreach ($inputSelectedBooks as $inputSelectedBook) 
         {
             $firstPage = self::getInteger($inputSelectedBook, 'firstPage');
             $lastPage = self::getInteger($inputSelectedBook, 'lastPage');
+            
             if ($firstPage > $lastPage)
             {
                 throw new ControllerException('faulty-page-order');
             }
-            $book = new Book(self::getInteger($inputSelectedBook, 'bookId'));
+            
+            $book = $binding->getBookList()->getByKeyValue('bookId', self::getInteger($inputSelectedBook, 'bookId'));
             $book->setFirstPage($firstPage);
             $book->setLastPage($lastPage);
-            $book->save();
+            
+            $book->setMarkedAsUpdated(true);
         }
         
         // Update the binding status.
         $binding->setStatus(Binding::STATUS_SELECTED);
-        $binding->save();
-            
+        $binding->saveWithDetails();
+                    
         Database::getInstance()->commit();
     }
     

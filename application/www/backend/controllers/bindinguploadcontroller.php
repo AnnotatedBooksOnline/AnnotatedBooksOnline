@@ -145,7 +145,7 @@ class BindingUploadController extends Controller
             else
             {
                 // Retrieve the book to be modified from the existing binding.
-                $book = $binding->getBookList()->getByKeyValue('bookId', $inputBookId);
+                $book = $binding->getBookList()->getByKeyValue('bookId', $inputBookId);                
                 if ($book == null) 
                 {
                     throw new ControllerException('invalid-book-id-provided');
@@ -161,19 +161,15 @@ class BindingUploadController extends Controller
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getString($inputBook, 'printVersion'));
             
-            // No binding or book id known yet.
-            $book->setFirstPage(null);
-            $book->setLastPage(null);
-            
-            // Mark the book for saving and not for deletion.
-            $book->setMarkedAsUpdated(true);
-            $book->setMarkedAsDeleted(false);
-            
             // Create the book authors.
             $this->createAuthors($inputBook, $book);
             
             // Create the book languages.
             $this->createBookLanguages($inputBook, $book);
+            
+            // Markt the book as updated so it will be updated or inserted into the database.
+            $book->setMarkedAsUpdated(true);
+            $book->setMarkedAsDeleted(false);
             
             // Add the book to the binding.
             $binding->getBookList()->add($book);
