@@ -95,7 +95,6 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                 xtype: 'propertygrid',
                 
                 propertyNames: {
-                    // userId: 'Identifier',
                     username: 'Username',
                     email: 'Email',
                     firstName: 'First name',
@@ -111,17 +110,17 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     lastActive: 'Last actve'
                 },
                 customRenderers: {
-                	registrationDate: function(unixtime) 
+                    registrationDate: function(unixtime) 
                     {
-                    	var date = new Date(unixtime * 1000);
-                    	return date.toDateString();
+                        var date = new Date(unixtime * 1000);
+                        return date.toDateString();
                     },
-                	lastActive: function (unixtime)
+                    lastActive: function (unixtime)
                     {
-                    	var date = new Date(unixtime * 1000);
-                    	var h = date.getHours();
-                    	var m = date.getMinutes();
-                    	return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
+                        var date = new Date(unixtime * 1000);
+                        var h = date.getHours();
+                        var m = date.getMinutes();
+                        return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
                     },
                     banned: function(banned){
                         if (banned === true) {
