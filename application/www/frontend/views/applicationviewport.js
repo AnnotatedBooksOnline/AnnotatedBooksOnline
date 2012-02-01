@@ -316,6 +316,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         this.correctVmlSupport();
         
+        if (Authentication.getInstance().isLoggedOn())
+        {
+        	this.updateUploadButtonTitle();
+        }
+        
         this.openTab('welcome', [], true);
     },
     
@@ -751,6 +756,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
         if (index >= 0)
         {
             this.tabs.setActiveTab(index);
+            
+            //update the tab if the tab has an updateTab function
+            var theTab = this.tabs.getActiveTab();
+            if (theTab.updateTab !== undefined)
+            {
+                theTab.updateTab(data, theTab);
+            }
         }
         else if (openIfNotAvailable === true)
         {
@@ -798,6 +810,24 @@ Ext.define('Ext.ux.ApplicationViewport', {
         this.eventDispatcher.trigger(event, this, index);
     },
     
+    updateUploadButtonTitle: function() {
+    	var _this = this;
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
+        	function(result)
+            {
+                if (result['status'] === 0 || result['status'] === 1)
+                {
+            		console.log(result);
+                	_this.down('[name=upload]').setText('Complete binding');
+                }
+                else
+                {
+                	_this.down('[name=upload]').setText('Upload');
+                }
+            }
+        );
+    },
+    
     onAuthenticationChange: function(event, authentication)
     {         
         if (authentication.isLoggedOn())
@@ -807,6 +837,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
             this.down('[name=login]').hide();
             this.down('[name=register]').hide();
             this.down('[name=password]').hide();
+            
+            this.updateUploadButtonTitle();
         }
         else
         {

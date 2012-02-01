@@ -40,6 +40,10 @@ class ScanController extends ControllerBase
      */
     public function actionReorder($data)
     {     
+        
+        // Assert the user has permission to upload bindings.
+        Authentication::assertPermissionTo('upload-bindings');
+        
         // Collect the binding id and ordered scans from the request.
         $inputBindingId    = self::getInteger($data, 'bindingId');
         $inputOrderedScans = self::getArray($data, 'orderedScans');
@@ -47,41 +51,39 @@ class ScanController extends ControllerBase
         
         // Load the binding to be modified from the database.
         $binding = new Binding($inputBindingId);
+        $binding->loadDetails();
         
-        // Determine if this is a binding that is being modified. This is the case if the binding
-        // status is not 'uploaded' or 'reordered'
-        if ($binding->getStatus() != Binding::STATUS_UPLOADED) {
-            
-            // Assert the user has permission to modify bindings.
-            Authentication::assertPermissionTo('change-book-info');
-        } 
-        else 
-        {
-            // Assert the user has permission to upload bindings.
-            Authentication::assertPermissionTo('upload-bindings');
-        }
-        
-        // TODO : MathijsB make this safer.
-        
-        // Save the new order of the scans.
         $page = 0;
-        foreach ($inputOrderedScans as $key => $scanId) 
-        {
-            Log::info('!!!!!!ScanId ' . $scanId);
-            $scan = new Scan($scanId);
-            $scan->setPage(++$page);
-            $scan->save();
-        }
+        $deleteBookPageNumbers = false;
         
-        // Deleted the deleted scans.
+        // Iterate over all scans in the provided new order.
+        foreach ($inputOrderedScans as $key => $scanId)
+        {
+            $page++;
+            $scan = $binding->getScanList()->getByKeyValue('scanId', $scanId);
+            
+            // Determine if the page number changed for this scan. If this is the case update
+            // the scan in the database.
+            if ($scan != null && $page != $scan->getPage()) 
+            {
+                $scan->setPage($page);
+                $scan->setMarkedAsUpdated(true);
+                
+                $deleteBookPageNumbers = true;
+            }
+        }
+                
+        // Iterate over all scans to be deleted.
         foreach ($inputDeletedScans as $key => $scanId)
         {
-            // Mark the scan as deleted.
-            $scan = new Scan($scanId);
+            // Get the scan from the binding and mark it as deleted.
+            $scan = $binding->getScanList()->getByKeyValue('scanId', $scanId);
             $scan->setStatus(Scan::STATUS_DELETED);
             $scan->setUploadId(null);
             $scan->save();
             
+            $deleteBookPageNumbers = true;
+      
             // Deleted any associated uploads.
             if ($scan->getUploadId() !== null) 
             {
@@ -90,13 +92,21 @@ class ScanController extends ControllerBase
             }
         }
         
-        // Update the binding status if this is a new binding and not a binding
-        // being modified.
-        if ($binding->getStatus() === Binding::STATUS_UPLOADED)
+        // Determine if the order of scans has changed. If this is the case clear the starting page
+        // and ending page for all books in this binding.
+        if ($deleteBookPageNumbers === true)
         {
-            $binding->setStatus(Binding::STATUS_REORDERED);
-            $binding->save();
+            foreach ($binding->getBookList() as $book)
+            {
+                $book->setFirstPage(null);
+                $book->setLastPage(null);
+                $book->setMarkedAsUpdated(true);
+            }
         }
+        
+        // Update the binding status/
+        $binding->setStatus(Binding::STATUS_REORDERED);
+        $binding->saveWithDetails();
     }
 }
 

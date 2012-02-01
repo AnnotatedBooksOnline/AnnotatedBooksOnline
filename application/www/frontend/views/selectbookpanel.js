@@ -261,8 +261,23 @@ Ext.define('Ext.ux.SelectBookForm', {
                 book.authors().load();
                 book.bookLanguages().load();
             });
+            
+            _this.scanstore.each(function(scanrecord) {
+                var title = "";
+                _this.bookstore.each(function(bookrecord)
+                {
+                    if (scanrecord.get('page') >= bookrecord.get('firstPage') 
+                            && scanrecord.get('page') <= bookrecord.get('lastPage')) 
+                    {
+                        title = bookrecord.get('title');
+                    }
+                });
+                scanrecord.set('bookTitle', title);
+            });
+            
         });
             
+        this.scanstore.load();
         this.bookstore.load();
         
         var defConfig = {

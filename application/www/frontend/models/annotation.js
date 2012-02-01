@@ -18,7 +18,6 @@ Ext.define('Ext.ux.AnnotationModel', {
         name: 'polygon'
     },
     
-    // NOTE: text, etc.
     
     proxy: {
         type: 'requestmanager',

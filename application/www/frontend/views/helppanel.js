@@ -26,6 +26,7 @@ Ext.define('Ext.ux.HelpPanel', {
                 width: 200,
                 region: 'west',
                 name: 'helpindex',
+                id: 'helptree',
                 cls: 'help-tree',
                 store: treestore,
                 columns: [{xtype: 'treecolumn', text: 'Name', dataIndex: 'pageName', flex: 1}],
@@ -59,23 +60,43 @@ Ext.define('Ext.ux.HelpPanel', {
         eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
-    afterRender: function()
+    updateTab: function(data, scope)
     {
-        this.callParent();
+        scope.down('[name=helpindex]').collapseAll();
         
+        scope.getHelpType(data[0]);
+    },
+    
+    getHelpType: function(type)
+    {
+        switch (type)
+        {
+            case 'uploadinfo':
+            case 'reorderscan':
+            case 'selectbook':
+                type = 'upload';
+        }
+    
         this.down('[name=helpindex]').expandPath('/root', undefined, undefined, function(succes, lastNode)
         {
-            var helppage = lastNode.findChild('helpType',this.helpType);
+            var helppage = lastNode.findChild('helpType',type);
             if (helppage === null)
             {
                 helppage = lastNode.findChild('helpType', 'welcome');
             }
             
-            if (helppage)
+            if (helppage !== null)
             {
                 this.updateHTML(helppage);
             }
         },this);
+    },
+    
+    afterRender: function()
+    {
+        this.callParent();
+        
+        this.getHelpType(this.helpType);
     },
     
     updateHTML: function(record)
