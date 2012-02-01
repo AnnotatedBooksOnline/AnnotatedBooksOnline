@@ -184,7 +184,6 @@ Ext.define('Ext.ux.UserListPanel', {
             var date = new Date(unixtime * 1000);
             var h = date.getHours();
             var m = date.getMinutes();
-            // TODO : lol
             return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
         }
         
