@@ -117,3 +117,15 @@ Binding.documentFromScan = function(scan)
         }
     );
 }
+
+Binding.prototype.destroy = function()
+{
+    // Destroy documents.
+    for (var i = this.scans.length - 1; i >= 0; --i)
+    {
+        if (this.documents[i] !== undefined)
+        {
+            this.documents[i].destroy();
+        }
+    }
+}

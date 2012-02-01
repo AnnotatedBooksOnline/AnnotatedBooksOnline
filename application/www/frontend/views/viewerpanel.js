@@ -396,14 +396,29 @@ Ext.define('Ext.ux.ViewerPanel', {
             viewer: this
         });
         
-        // Get them
+        // Get them.
         this.information = this.down('navigationpanel');
         this.workspace   = this.down('workspacepanel');
         
+        // Change tab title on page change.
         this.getEventDispatcher().bind('pagechange', this, this.changeTabTitle);
         
         // Finally, we can go to the indicated page.
         this.gotoPage(this.pageNumber);
+    },
+    
+    destroy: function()
+    {
+        // Unsubscribe from authentication changes.
+        Authentication.getInstance().getEventDispatcher().unbind('modelchange', this, this.onAuthenticationChange);
+        
+        // Destroy annotations.
+        this.annotations.destroy();
+        
+        // Destroy binding.
+        this.binding.destroy();
+        
+        this.callParent();
     },
     
     afterViewportChange: function(event)
@@ -610,7 +625,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         
         if (book !== undefined)
         {
-            tabTitle = 'Book: ' + book.get('title');
+            tabTitle = 'Book: ' + escape(book.get('title'));
         }
         
         // Update tab title, but not too long.
@@ -618,6 +633,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         {
             tabTitle = tabTitle.substring(0, 46) + '...';
         }
+        
         this.up('.tabpanel').getActiveTab().tab.setText(tabTitle);
     },
     

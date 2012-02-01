@@ -298,7 +298,7 @@ Ext.define('Ext.ux.UserListPanel', {
                         if ((model.get('dataIndex') !== 'email') && (model.get('dataIndex') !== 'website'))
                         {
                             var name = model.get('username');
-        
+                            
                             RequestManager.getInstance().request(
                                 'Authentication',
                                 'hasPermissionTo',
@@ -322,7 +322,7 @@ Ext.define('Ext.ux.UserListPanel', {
         
         this.callParent();
         
-        if(Authentication.getInstance().hasPermissionTo('change-global-settings'))
+        if (Authentication.getInstance().hasPermissionTo('change-global-settings'))
         {
             // Add autoAcceptBox with current value.
             RequestManager.getInstance().request(
@@ -333,18 +333,18 @@ Ext.define('Ext.ux.UserListPanel', {
                     function(value)
                     {
                         _this.insert(0, autoAcceptBox);
-                       Ext.getCmp('autoAcceptBox').setValue(value == '1');
+                        Ext.getCmp('autoAcceptBox').setValue(value == '1');
                     },
                     function(error)
                     {
-                        if(error == 'access-denied')
+                        if (error == 'access-denied')
                         {
                             return false;
                         }
                             
                         return true;
                     }
-                );        
+                );
         }
         
         RequestManager.getInstance().request(

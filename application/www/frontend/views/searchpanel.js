@@ -1119,6 +1119,15 @@ Ext.define('Ext.ux.SearchPanel', {
         eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
+    destroy: function()
+    {
+        // Unsubscribe from authentication changes.
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.unbind('modelchange', this, this.onAuthenticationChange);
+        
+        this.callParent();
+    },
+    
     onLoggedOn: function()
     {
         if (Authentication.getInstance().hasPermissionTo('manage-notebook'))

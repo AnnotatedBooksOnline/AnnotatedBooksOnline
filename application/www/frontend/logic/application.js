@@ -50,7 +50,7 @@ Application.getInstance = function()
 }
 
 // Gets event dispatcher.
-Viewport.prototype.getEventDispatcher = function()
+Application.prototype.getEventDispatcher = function()
 {
     return this.eventDispatcher;
 }
@@ -118,31 +118,6 @@ Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
     
     // Redirect call.
     this.viewport.gotoTab(type, data, openIfNotAvailable);
-}
-
-Application.prototype.gotoTabUnique = function(type, data, openIfNotAvailable)
-{
-    // Check if allowed type.
-    if (!this.authentication.isLoggedOn())
-    {
-        if (this.tabNeedsAuthentication(type))
-        {
-            this.authentication.requireLogin(this, function()
-                {
-                    // Redirect call.
-                    this.viewport.gotoTabUnique(type, data, openIfNotAvailable);
-                });
-            
-            return;
-        }
-    }
-    else if (this.tabNeedsNoAuthentication(type))
-    {
-        return;
-    }
-    
-    // Redirect call.
-    this.viewport.gotoTabUnique(type, data, openIfNotAvailable);
 }
 
 /*
@@ -342,7 +317,6 @@ Application.prototype.tabNeedsNoAuthentication = function(type)
 }
 
 // Start application.
-Ext.require(['*']);
 Ext.onReady(function()
     {
         // Fetch an application instance to show it.

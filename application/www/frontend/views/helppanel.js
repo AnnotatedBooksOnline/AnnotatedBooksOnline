@@ -59,6 +59,15 @@ Ext.define('Ext.ux.HelpPanel', {
         eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
+    destroy: function()
+    {
+        // Unsubscribe from authentication changes.
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.unbind('modelchange', this, this.onAuthenticationChange);
+        
+        this.callParent();
+    },
+    
     afterRender: function()
     {
         this.callParent();

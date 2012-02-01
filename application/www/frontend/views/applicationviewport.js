@@ -215,7 +215,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 {
                     var tabInfo = _this.getTabInfo();
                     
-                    Application.getInstance().gotoTabUnique('help', [tabInfo.type], true);
+                    Application.getInstance().gotoTab('help', [tabInfo.type], true);
                 }
             },
             name: 'help'
@@ -723,25 +723,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     obj.tabInfo.data.join('-');
                 
                 return (obj.tabInfo.type == type) && (joinedData === tabJoinedData);
-            });
-        
-        // Go to that tab.
-        if (index >= 0)
-        {
-            this.tabs.setActiveTab(index);
-        }
-        else if (openIfNotAvailable === true)
-        {
-            this.openTab(type, data);
-        }
-    },
-    
-    gotoTabUnique: function(type, data, openIfNotAvailable)
-    {
-        // Try to match the type
-        var index = this.tabs.items.findIndexBy(function(obj, key)
-            {
-                return (obj.tabInfo.type == type);
             });
         
         // Go to that tab.
