@@ -17,6 +17,12 @@ require_once 'models/scan/scan.php';
 require_once 'models/language/bindinglanguage.php';
 require_once 'models/language/booklanguage.php';
 
+/** Minimum scan width */
+define(MIN_SCAN_SIZE_X, 256);
+
+/** Minimum scan height */
+define(MIN_SCAN_SIZE_Y, 256);
+
 /**
  * Exceptions.
  */
@@ -27,11 +33,6 @@ class BindingStatusException extends ExceptionBase { }
  */
 class BindingUploadController extends Controller
 {
-    /** Minimum scan width */
-    const MIN_SCAN_SIZE_X = 256;
-    
-    /** Minimum scan height */
-    const MIN_SCAN_SIZE_Y = 256;
     
     /**
      * Uploads a binding.
