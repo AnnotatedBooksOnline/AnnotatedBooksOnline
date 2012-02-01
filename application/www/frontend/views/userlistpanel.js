@@ -15,7 +15,7 @@ Ext.define('Ext.ux.UserListPanel', {
         var store = Ext.create('Ext.ux.StoreBase', {
             model: 'Ext.ux.UserModel',
             pageSize: 20,
-                        remoteFilter: false
+            remoteFilter: false
         });
                      
         store.filter([{
@@ -24,7 +24,6 @@ Ext.define('Ext.ux.UserListPanel', {
                 return record.get('username') != '<deleted user>';
             }
         }]);
-                    
         
         // The checkbox to toggle automatic user activation.
         var autoAcceptBox = {
@@ -45,7 +44,8 @@ Ext.define('Ext.ux.UserListPanel', {
                         thisChange = true;
                         
                         var message, buttons;
-                        if(value)
+                        
+                        if (value)
                         {
                             message = 'You are about to turn on automatic user acceptance. '
                                     + 'Do you also want to automatically accept all users '
@@ -86,6 +86,7 @@ Ext.define('Ext.ux.UserListPanel', {
                                            return true;
                                        }
                                    );
+                                   
                                    thisChange = false;
                                 }
                                 else
@@ -197,7 +198,8 @@ Ext.define('Ext.ux.UserListPanel', {
                 columns: [{
                     text:      'Username',
                     flex:      2,
-                    dataIndex: 'username'
+                    dataIndex: 'username',
+                    renderer: 'htmlEncode'
                 },{
                     text:      'E-mail',
                     flex:      1,
@@ -206,23 +208,27 @@ Ext.define('Ext.ux.UserListPanel', {
                 },{
                     text:      'First name',
                     flex:      1,
-                    dataIndex: 'firstName'
+                    dataIndex: 'firstName',
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Last name',
                     flex:      2,
-                    dataIndex: 'lastName'
+                    dataIndex: 'lastName',
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Affiliation',
                     flex:      1,
                     dataIndex: 'affiliation',
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Occupation',
                     flex:      1,
                     dataIndex: 'occupation',
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Website',
                     flex:      2,
@@ -235,42 +241,48 @@ Ext.define('Ext.ux.UserListPanel', {
                     flex:      2,
                     dataIndex: 'homeAddress',
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Role',
                     flex:      2,
                     dataIndex: 'rank',
                     renderer:  renderRank,
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Banned',
                     flex:      2,
                     dataIndex: 'banned',
                     renderer:  renderBanned,
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Status',
                     flex:      2,
                     dataIndex: 'activationStage',
                     renderer:  renderActivationStage,
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Registration date',
                     flex:      2,
                     dataIndex: 'registrationDate',
                     renderer:  renderDate,
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 },{
                     text:      'Last active',
                     flex:      2,
                     dataIndex: 'lastActive',
                     renderer:  renderTimestamp,
                     hidden:    true,
-                    hideable:  false
+                    hideable:  false,
+                    renderer: 'htmlEncode'
                 }],
                 tbar: {
                     xtype: 'pagingtoolbar',
