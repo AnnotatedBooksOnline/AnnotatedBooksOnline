@@ -27,6 +27,12 @@ class BindingStatusException extends ExceptionBase { }
  */
 class BindingUploadController extends Controller
 {
+    /** Minimum scan width */
+    const MIN_SCAN_SIZE_X = 256;
+    
+    /** Minimum scan height */
+    const MIN_SCAN_SIZE_Y = 256;
+    
     /**
      * Uploads a binding.
      */
@@ -403,6 +409,12 @@ class BindingUploadController extends Controller
         else 
         {
             throw new ControllerException('unsupported-file-type');
+        }
+        
+        if ($scanUploadImageIdentification[0] < MIN_SCAN_SIZE_X
+            || $scanUploadImageIdentification[1] < MIN_SCAN_SIZE_Y)
+        {
+            throw new ControllerException('image-too-small');
         }
         
         $columns = $scanUploadImageIdentification[0] / 256; // TODO: Constant!
