@@ -2,8 +2,6 @@
  * Reorder scan fieldset class.
  */
 
-// TODO : mathijsB . rewrite a lot in this file.
-
 Ext.define('Ext.ux.ReorderScanFieldset', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.reorderscanfieldset',
@@ -34,7 +32,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     tbar: [{
                         text: 'Scan order in binding',
                         xtype: 'label'
-                    }]/*
+                    }]
                 },{
                     xtype: 'multiselect',
                     name: 'deletedscans',
@@ -49,7 +47,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     tbar: [{
                         text: 'Deleted scans (drag here to delete)',
                         xtype: 'label'
-                    }]*/
+                    }]
                 }]
             },{
                 xtype: 'button',

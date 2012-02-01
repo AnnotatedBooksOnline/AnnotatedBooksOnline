@@ -6,13 +6,13 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.bindinginformationpanel',
     
-    //TODO: Commenting and cleaning up
     initComponent: function() 
     {
         var _this = this;
+        
         this.bindingModel = this.viewer.getBinding().getModel();
-        this.infoPanelStore = Ext.create('Ext.data.ArrayStore', 
-        {
+        
+        this.infoPanelStore = Ext.create('Ext.data.ArrayStore', {
             fields: [
                 {name: 'firstPage'},
                 {name: 'property'}
@@ -20,13 +20,21 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             groupField: 'firstPage'
         });
         
+        // Renders grouping header.
         Ext.util.Format.bookName = function(firstPage, parent) 
         {
+            // Get the viewer.
             var view = Ext.getCmp(parent.rows[0].viewId);
             var viewer = view.up('bindinginformationpanel').viewer;
-            var rec = viewer.getBinding().getModel().books().findRecord('firstPage',firstPage);
+            
+            // Find the first and last pages of the current book.
+            var rec = viewer.getBinding().getModel().books().findRecord('firstPage', firstPage);
             var lastPage = rec.get('lastPage');
+            
+            // Get the current page.
             var currentPage = viewer.getPage()+1;
+            
+            // Mark the currently selected book.
             if (currentPage >= firstPage && currentPage <= lastPage)
             {
                 return '<span style="white-space: normal;color: #000000;">' + escape(rec.get('title')) + '</span>';
@@ -38,8 +46,8 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         }
         
         var defConfig = {
-            border: false,
             layout: 'fit',
+            border: false,
             flex: 1,
             autoHeight: true,
             layout: {
@@ -54,7 +62,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 {
                     Application.getInstance().gotoTab(
                         'upload', 
-                        [this.up('bindinginformationpanel').bindingModel.get('bindingId')],
+                        [this.up('bindinginformationpanel').bindingModel.get('bindingId')], 
                         true);
                 }
             },{
@@ -74,7 +82,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                         {
                             if (button == 'yes')
                             {
-                                // Delete the binding.
+                                // Ban the user.
                                 RequestManager.getInstance().request(
                                     'Binding',
                                     'delete',
@@ -97,14 +105,14 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 viewConfig: {
                     style: {
                         overflow: 'auto',
-                        overflowX: 'hidden' 
+                        overflowX: 'hidden'
                     }
                 },
                 flex: 1,
                 border: false,
                 store: this.infoPanelStore,
                 hideHeaders: true,
-
+                
                 features: [{
                     ftype: 'groupingsummary',
                     groupHeaderTpl: '{name:bookName(parent)}',
@@ -113,7 +121,8 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 columns: [{
                     dataIndex: 'property',
                     flex: 1, 
-                    summaryType: function(records) {
+                    summaryType: function(records)
+                    {
                         return '<span style="color: (255,0,0);"> Page '
                                + records[0].get('firstPage') + '</span>';
                     }
@@ -170,6 +179,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         var myData = [];
         this.bindingModel.books().each(function(book)
         {
+            // Fetch all book data.
             var firstPage = book.get('firstPage');
             
             var authors = '';
@@ -180,30 +190,30 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             
             var version = book.get('printVersion');
             
-            var bookLanguages ='';
+            var bookLanguages = '';
             book.bookLanguages().each(function(bookLanguage)
             {
-                bookLanguages += (', '+bookLanguage.get('languageName'));
+                bookLanguages += (', ' + bookLanguage.get('languageName'));
             });
             
             var placePublished = book.get('placePublished');
-
             
-            if(authors==='')
+            if (authors === '')
             {
                 authors = ' Unknown author(s)';
             }
             
-            if(version==='')
+            if (version === '')
             {
                 version = 'Unknown version';
             }
             
-            if(placePublished==='')
+            if (placePublished==='')
             {
                 placePublished = 'Unknown publication place';
             }
             
+            // Add the book to the grouping grid.
             myData.push([firstPage, authors.substring(1)]);
             myData.push([firstPage, version]);
             myData.push([firstPage, placePublished]);
@@ -214,6 +224,8 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         this.infoPanelStore.loadData(myData);
         
         var viewer = this.viewer;
+        
+        // Update grid when page changes.
         this.viewer.getEventDispatcher().bind('pagechange', this, function()
         {
             this.down('grid').getView().refresh();

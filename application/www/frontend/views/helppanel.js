@@ -9,7 +9,7 @@ Ext.define('Ext.ux.HelpPanel', {
     initComponent: function()
     {
         var _this = this;
-    
+        
         var treestore = Ext.create('Ext.data.TreeStore', {
             model: 'Ext.ux.HelpModel',
             root: {
@@ -24,8 +24,12 @@ Ext.define('Ext.ux.HelpPanel', {
                 xtype: 'treepanel',
                 title: 'Index',
                 width: 200,
+                selModel: Ext.create('Ext.selection.TreeModel', {
+                    enableKeyNav: false
+                }),
                 region: 'west',
                 name: 'helpindex',
+                id: 'helptree',
                 cls: 'help-tree',
                 store: treestore,
                 columns: [{xtype: 'treecolumn', text: 'Name', dataIndex: 'pageName', flex: 1}],
@@ -68,23 +72,45 @@ Ext.define('Ext.ux.HelpPanel', {
         this.callParent();
     },
     
-    afterRender: function()
+    //UpdateTab is called from the applicationviewport by gotoTabUnique
+    updateTab: function(data, scope)
     {
-        this.callParent();
+        scope.down('[name=helpindex]').collapseAll();
         
+        scope.getHelpType(data[0]);
+    },
+    
+    //Find the correct helpPage corresponding to the type
+    getHelpType: function(type)
+    {
+        switch (type)
+        {
+            case 'uploadinfo':
+            case 'reorderscan':
+            case 'selectbook':
+                type = 'upload';
+        }
+    
         this.down('[name=helpindex]').expandPath('/root', undefined, undefined, function(succes, lastNode)
         {
-            var helppage = lastNode.findChild('helpType',this.helpType);
+            var helppage = lastNode.findChild('helpType',type);
             if (helppage === null)
             {
                 helppage = lastNode.findChild('helpType', 'welcome');
             }
             
-            if (helppage)
+            if (helppage !== null)
             {
                 this.updateHTML(helppage);
             }
         },this);
+    },
+    
+    afterRender: function()
+    {
+        this.callParent();
+        
+        this.getHelpType(this.helpType);
     },
     
     updateHTML: function(record)
@@ -104,13 +130,14 @@ Ext.define('Ext.ux.HelpPanel', {
             var htmltext = _this.generateHelpHTML(page, 1);
             _this.down('[name=helptext]').update(htmltext);
             
+            //Scroll to the paragraph
             var content = Ext.get(record.get('pageName'));
             var height = content.getOffsetsTo(Ext.get('helpmain-body'));
-            
             _this.down('[name=helptext]').body.scroll('b', height[1], false);
         });
     },
     
+    //Recursively create html from the helpModels
     generateHelpHTML: function(record, depth)
     {
         var name = record.get('pageName');
@@ -125,6 +152,7 @@ Ext.define('Ext.ux.HelpPanel', {
             htmltext += this.generateHelpHTML(record.childNodes[i], depth + 1);
         }
         
+        //Parse links
         htmltext = htmltext.replace(
             /[*][*]([^*]+)[|][|]([/A-z, ]+)[*][*]/g,
             '<a style="cursor: pointer" onclick="Ext.getCmp(\''
@@ -149,12 +177,14 @@ Ext.define('Ext.ux.HelpPanel', {
                     i = pathArray.length;
             },this);
         }
+        
         if(record != null)
         {
             this.updateHTML(record);
         }
     },
     
+    //Reload the tree on an authenticationchange
     onAuthenticationChange: function()
     {
         if(!this.down('[name=helpindex]').getStore().isLoading())
@@ -171,6 +201,7 @@ Ext.define('Ext.ux.HelpPanel', {
                         }
                         else
                         {
+                            //Go to the welcome page if the previous path is no longer accesible
                             this.updateHTML(this.down('[name=helpindex]').getRootNode().findChild('helpType','welcome'));
                         }
                     },this);

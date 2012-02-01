@@ -215,7 +215,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 {
                     var tabInfo = _this.getTabInfo();
                     
-                    Application.getInstance().gotoTab('help', [tabInfo.type], true);
+                    Application.getInstance().gotoTabUnique('help', [tabInfo.type], true);
                 }
             },
             name: 'help'
@@ -230,11 +230,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             height: 120,
             cls: 'header',
-            items: [{ // Header logo.
+            items: [{ 
+                // Header logo.
                 xtype: 'container',
                 width: 120,
                 cls: 'header-logo'
-            },{ // Title, with menu below.
+            },{ 
+                // Title, with menu below.
                 xtype: 'container',
                 layout: {
                     type: 'vbox',
@@ -266,7 +268,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     layout: 'hbox',
                     items: menuButtons
                 }]
-            },{ // User items.
+            },{ 
+                // User items.
                 border: false,
                 bodyPadding: 10,
                 width: 220,
@@ -313,9 +316,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         this.correctVmlSupport();
         
+        if (Authentication.getInstance().isLoggedOn())
+        {
+            this.updateUploadButtonTitle();
+        }
+        
         this.openTab('welcome', [], true);
     },
     
+    // TODO: Remove this, as it's IE6 only.
     correctVmlSupport: function()
     {
         if (!Ext.supports.Vml)
@@ -736,6 +745,32 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
     },
     
+    gotoTabUnique: function(type, data, openIfNotAvailable)
+    {
+        // Try to match the type
+        var index = this.tabs.items.findIndexBy(function(obj, key)
+            {
+                return (obj.tabInfo.type == type);
+            });
+        
+        // Go to that tab.
+        if (index >= 0)
+        {
+            this.tabs.setActiveTab(index);
+            
+            //update the tab if the tab has an updateTab function
+            var theTab = this.tabs.getActiveTab();
+            if (theTab.updateTab !== undefined)
+            {
+                theTab.updateTab(data, theTab);
+            }
+        }
+        else if (openIfNotAvailable === true)
+        {
+            this.openTab(type, data);
+        }
+    },
+    
     closeTab: function(index)
     {
         if (index === undefined)
@@ -776,8 +811,28 @@ Ext.define('Ext.ux.ApplicationViewport', {
         this.eventDispatcher.trigger(event, this, index);
     },
     
+    // TODO: Remove this, how it this a task of the application viewport?
+    // TODO: It should not even know of any tab content.
+    updateUploadButtonTitle: function() {
+        var _this = this;
+        
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
+            function(result)
+            {
+                if (result['status'] === 0 || result['status'] === 1)
+                {
+                    _this.down('[name=upload]').setText('Complete binding');
+                }
+                else
+                {
+                    _this.down('[name=upload]').setText('Upload');
+                }
+            }
+        );
+    },
+    
     onAuthenticationChange: function(event, authentication)
-    {         
+    {
         if (authentication.isLoggedOn())
         {
             this.down('[name=logout]').show();
@@ -785,6 +840,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
             this.down('[name=login]').hide();
             this.down('[name=register]').hide();
             this.down('[name=password]').hide();
+            
+            this.updateUploadButtonTitle();
         }
         else
         {

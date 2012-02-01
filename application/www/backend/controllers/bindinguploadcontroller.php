@@ -27,6 +27,12 @@ class BindingStatusException extends ExceptionBase { }
  */
 class BindingUploadController extends Controller
 {
+    /** Minimum scan width */
+    const MIN_SCAN_SIZE_X = 256;
+    
+    /** Minimum scan height */
+    const MIN_SCAN_SIZE_Y = 256;
+    
     /**
      * Uploads a binding.
      */
@@ -34,8 +40,8 @@ class BindingUploadController extends Controller
     {
         Database::getInstance()->startTransaction();
         
-        // Assert that the user is authenticated. 
-        Authentication::assertPermissionTo('upload-bindings');  
+        // Assert that the user is authenticated.
+        Authentication::assertPermissionTo('upload-bindings');
         
         // Retrieve contents of record.
         $inputScans     = self::getArray($data, 'scans');
@@ -47,19 +53,11 @@ class BindingUploadController extends Controller
         $libraryName = $inputBinding['library'];
         $signature   = self::getString($inputBinding, 'signature');
         
-        // Determine if the specified signature exists in the database already, this is not allowed.
-        if (!$this->uniqueLibrarySignature($libraryName, $signature, $inputBindingId))
-        {
-            throw new ControllerException('duplicate-binding');
-        }
-        
         // Load an existing binding or create a new binding if no existing binding is provided.
         $binding;
         if ($inputBindingId == -1)
         {
             $binding = new Binding();
-            $binding->setStatus(Binding::STATUS_UPLOADED);
-            $binding->setUserId(Authentication::getInstance()->getUserId());
         }
         else 
         {
@@ -70,10 +68,18 @@ class BindingUploadController extends Controller
             $binding = new Binding($inputBindingId);
             $binding->loadDetails();
         }
-                
+        
+        // Determine if the specified signature exists in the database already, this is not allowed.
+        if (!$this->uniqueLibrarySignature($libraryName, $signature, $inputBindingId))
+        {
+            throw new ControllerException('duplicate-binding');
+        }
+        
         // Fill the binding attributes.
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
+        $binding->setStatus(Binding::STATUS_UPLOADED);
+        $binding->setUserId(Authentication::getInstance()->getUserId());
         
         // Save the books.
         $this->createLibrary($libraryName, $binding);
@@ -145,7 +151,7 @@ class BindingUploadController extends Controller
             else
             {
                 // Retrieve the book to be modified from the existing binding.
-                $book = $binding->getBookList()->getByKeyValue('bookId', $inputBookId);
+                $book = $binding->getBookList()->getByKeyValue('bookId', $inputBookId);                
                 if ($book == null) 
                 {
                     throw new ControllerException('invalid-book-id-provided');
@@ -161,15 +167,15 @@ class BindingUploadController extends Controller
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getString($inputBook, 'printVersion'));
             
-            // Mark the book for saving and not for deletion.
-            $book->setMarkedAsUpdated(true);
-            $book->setMarkedAsDeleted(false);
-            
             // Create the book authors.
             $this->createAuthors($inputBook, $book);
             
             // Create the book languages.
             $this->createBookLanguages($inputBook, $book);
+            
+            // Markt the book as updated so it will be updated or inserted into the database.
+            $book->setMarkedAsUpdated(true);
+            $book->setMarkedAsDeleted(false);
             
             // Add the book to the binding.
             $binding->getBookList()->add($book);
@@ -403,6 +409,12 @@ class BindingUploadController extends Controller
         else 
         {
             throw new ControllerException('unsupported-file-type');
+        }
+        
+        if ($scanUploadImageIdentification[0] < MIN_SCAN_SIZE_X
+            || $scanUploadImageIdentification[1] < MIN_SCAN_SIZE_Y)
+        {
+            throw new ControllerException('image-too-small');
         }
         
         $columns = $scanUploadImageIdentification[0] / 256; // TODO: Constant!

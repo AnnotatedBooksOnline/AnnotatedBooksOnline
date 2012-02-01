@@ -250,7 +250,8 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                 select: function(combo)
                 {
                     this.ownerCt.getComponent(2).setDisabled(false);
-                    var value = this.ownerCt.getComponent(1).getXType() == 'textfield' ? this.ownerCt.getComponent(1).getValue() : '';
+                    var value = 
+                        this.ownerCt.getComponent(1).getXType() == 'textfield' ? this.ownerCt.getComponent(1).getValue() : '';
                     this.ownerCt.remove(this.ownerCt.getComponent(1));
                     
                     switch (combo.getValue())

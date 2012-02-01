@@ -41,49 +41,40 @@ class BookController extends ControllerBase
     {               
         
         Database::getInstance()->startTransaction();
+        
+        // Assert the user has permission to upload bindings.
+        Authentication::assertPermissionTo('upload-bindings');
+        
         // Collect the binding id and selected book pages from the request.
         $inputBindingId     = self::getInteger($data, 'bindingId');
         $inputSelectedBooks = self::getArray($data, 'selectedBooks');
         
         // Load the binding to be modified from the database.
         $binding = new Binding($inputBindingId);
+        $binding->loadDetails();
         
-        // Determine if this is a binding that is being modified. This is the case if the binding
-        // status is not 'uploaded' or 'reordered'
-        if ($binding->getStatus() != Binding::STATUS_UPLOADED 
-           && $binding->getStatus() != Binding::STATUS_REORDERED) 
-        {
-            // Assert the user has permission to modify bindings.
-            Authentication::assertPermissionTo('change-book-info');
-        } 
-        else 
-        {
-            // Assert the user has permission to upload bindings.
-            Authentication::assertPermissionTo('upload-bindings');
-        }
-        
-        // TODO : MathijsB make this safer.
         // Iterate over all selected books and store their values in the database.
         foreach ($inputSelectedBooks as $inputSelectedBook) 
         {
             $firstPage = self::getInteger($inputSelectedBook, 'firstPage');
             $lastPage = self::getInteger($inputSelectedBook, 'lastPage');
+            
             if ($firstPage > $lastPage)
             {
                 throw new ControllerException('faulty-page-order');
             }
-            $book = new Book(self::getInteger($inputSelectedBook, 'bookId'));
+            
+            $book = $binding->getBookList()->getByKeyValue('bookId', self::getInteger($inputSelectedBook, 'bookId'));
             $book->setFirstPage($firstPage);
             $book->setLastPage($lastPage);
-            $book->save();
+            
+            $book->setMarkedAsUpdated(true);
         }
         
-        // Update the binding status if required.
-        if ($binding->getStatus() != Binding::STATUS_SELECTED)
-        {
-            $binding->setStatus(Binding::STATUS_SELECTED);
-            $binding->save();
-        }
+        // Update the binding status.
+        $binding->setStatus(Binding::STATUS_SELECTED);
+        $binding->saveWithDetails();
+                    
         Database::getInstance()->commit();
     }
     

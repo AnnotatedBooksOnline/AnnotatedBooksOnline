@@ -120,6 +120,31 @@ Application.prototype.gotoTab = function(type, data, openIfNotAvailable)
     this.viewport.gotoTab(type, data, openIfNotAvailable);
 }
 
+Application.prototype.gotoTabUnique = function(type, data, openIfNotAvailable)
+{
+    // Check if allowed type.
+    if (!this.authentication.isLoggedOn())
+    {
+        if (this.tabNeedsAuthentication(type))
+        {
+            this.authentication.requireLogin(this, function()
+                {
+                    // Redirect call.
+                    this.viewport.gotoTabUnique(type, data, openIfNotAvailable);
+                });
+            
+            return;
+        }
+    }
+    else if (this.tabNeedsNoAuthentication(type))
+    {
+        return;
+    }
+    
+    // Redirect call.
+    this.viewport.gotoTabUnique(type, data, openIfNotAvailable);
+}
+
 /*
  * Private methods.
  */

@@ -412,7 +412,9 @@ Viewport.prototype.rotate = function(deltaRotation, viewportPosition, animate)
         documentPosition = rotatePoint(documentPosition, deltaRotation);
         
         // Set new position of topleft coordinates.
-        var newPosition = {x: documentPosition.x - viewportOffset.x, y: documentPosition.y - viewportOffset.y};
+        var newPosition = {
+            x: documentPosition.x - viewportOffset.x,
+            y: documentPosition.y - viewportOffset.y};
         
         // Update viewport.
         this.update(newPosition, undefined, this.rotation + deltaRotation);
@@ -575,42 +577,60 @@ Viewport.prototype.update = function(newPosition, newZoomLevel, newRotation)
     //do some bounds checking, and center document if smaller than viewport
     var scaledMargin = Viewport.margin * newInvZoomLevel;
     
-    var topLeft     = {x: -scaledMargin, y: -scaledMargin};
+    var topLeft     = {
+        x: -scaledMargin,
+        y: -scaledMargin
+    };
     var bottomRight = {
         x: this.documentDimensions.width  + scaledMargin,
         y: this.documentDimensions.height + scaledMargin
     };
     
-    var documentBox = rotateBoundingBox({topLeft: topLeft, bottomRight: bottomRight}, newRotation);
+    var documentBox = rotateBoundingBox(
+        {topLeft: topLeft, bottomRight: bottomRight},
+        newRotation
+    );
     
     var areaWidth  = (documentBox.bottomRight.x - documentBox.topLeft.x) * newZoomFactor;
     var areaHeight = (documentBox.bottomRight.y - documentBox.topLeft.y) * newZoomFactor;
     
     if (areaWidth < this.dimensions.width)
     {
-        var centerOffset = {x: this.documentDimensions.width * 0.5, 
-                            y: this.documentDimensions.height * 0.5};
+        var centerOffset = {
+            x: this.documentDimensions.width * 0.5, 
+            y: this.documentDimensions.height * 0.5
+        };
         var rotatedCenterOffset = rotatePoint(centerOffset, newRotation);
         
         newPosition.x = rotatedCenterOffset.x - this.dimensions.width * 0.5 * newInvZoomLevel;
     }
     else if (newPosition.x < documentBox.topLeft.x)
-        newPosition.x = documentBox.topLeft.x;
+        {
+            newPosition.x = documentBox.topLeft.x;
+        }
     else if (newPosition.x > (documentBox.bottomRight.x - this.dimensions.width * newInvZoomLevel))
-        newPosition.x = documentBox.bottomRight.x - this.dimensions.width * newInvZoomLevel;
+        {
+            newPosition.x = documentBox.bottomRight.x - this.dimensions.width * newInvZoomLevel;
+        }
     
     if (areaHeight < this.dimensions.height)
     {
-        var centerOffset = {x: this.documentDimensions.width * 0.5, 
-                            y: this.documentDimensions.height * 0.5};
+        var centerOffset = {
+            x: this.documentDimensions.width * 0.5, 
+            y: this.documentDimensions.height * 0.5
+        };
         var rotatedCenterOffset = rotatePoint(centerOffset, newRotation);
         
         newPosition.y = rotatedCenterOffset.y - this.dimensions.height * 0.5 * newInvZoomLevel;
     }
     else if (newPosition.y < documentBox.topLeft.y)
-        newPosition.y = documentBox.topLeft.y;
+        {
+            newPosition.y = documentBox.topLeft.y;
+        }
     else if (newPosition.y > (documentBox.bottomRight.y - this.dimensions.height * newInvZoomLevel))
-        newPosition.y = documentBox.bottomRight.y - this.dimensions.height * newInvZoomLevel;
+        {
+            newPosition.y = documentBox.bottomRight.y - this.dimensions.height * newInvZoomLevel;
+        }
     
     //set new zoom level and factors
     this.zoomLevel     = newZoomLevel;

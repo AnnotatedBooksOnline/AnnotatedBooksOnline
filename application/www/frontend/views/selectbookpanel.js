@@ -66,7 +66,6 @@ Ext.define('Ext.ux.BookInformationFieldSet', {
     {
         var _this = this;
         
-        //TODO: wrapping?
         var defConfig = {
             autoScroll: true,
             items: [{
@@ -104,7 +103,6 @@ Ext.define('Ext.ux.BookInformationFieldSet', {
         
         this.callParent();
     },
-    //TODO: Do this in a more elegant way
     setBook: function(book)
     {
         var authors = '';
@@ -263,8 +261,23 @@ Ext.define('Ext.ux.SelectBookForm', {
                 book.authors().load();
                 book.bookLanguages().load();
             });
+            
+            _this.scanstore.each(function(scanrecord) {
+                var title = "";
+                _this.bookstore.each(function(bookrecord)
+                {
+                    if (scanrecord.get('page') >= bookrecord.get('firstPage') 
+                            && scanrecord.get('page') <= bookrecord.get('lastPage')) 
+                    {
+                        title = bookrecord.get('title');
+                    }
+                });
+                scanrecord.set('bookTitle', title);
+            });
+            
         });
             
+        this.scanstore.load();
         this.bookstore.load();
         
         var defConfig = {
