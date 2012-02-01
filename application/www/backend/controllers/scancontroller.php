@@ -40,6 +40,10 @@ class ScanController extends ControllerBase
      */
     public function actionReorder($data)
     {     
+        
+        // Assert the user has permission to upload bindings.
+        Authentication::assertPermissionTo('upload-bindings');
+        
         // Collect the binding id and ordered scans from the request.
         $inputBindingId    = self::getInteger($data, 'bindingId');
         $inputOrderedScans = self::getArray($data, 'orderedScans');
@@ -47,20 +51,7 @@ class ScanController extends ControllerBase
         
         // Load the binding to be modified from the database.
         $binding = new Binding($inputBindingId);
-        
-        // Determine if this is a binding that is being modified. This is the case if the binding
-        // status is not 'uploaded' or 'reordered'
-        if ($binding->getStatus() != Binding::STATUS_UPLOADED) {
-            
-            // Assert the user has permission to modify bindings.
-            Authentication::assertPermissionTo('change-book-info');
-        } 
-        else 
-        {
-            // Assert the user has permission to upload bindings.
-            Authentication::assertPermissionTo('upload-bindings');
-        }
-        
+       
         // TODO : MathijsB make this safer.
         
         // Save the new order of the scans.
@@ -90,13 +81,9 @@ class ScanController extends ControllerBase
             }
         }
         
-        // Update the binding status if this is a new binding and not a binding
-        // being modified.
-        if ($binding->getStatus() === Binding::STATUS_UPLOADED)
-        {
-            $binding->setStatus(Binding::STATUS_REORDERED);
-            $binding->save();
-        }
+        // Update the binding status/
+        $binding->setStatus(Binding::STATUS_REORDERED);
+        $binding->save();
     }
 }
 

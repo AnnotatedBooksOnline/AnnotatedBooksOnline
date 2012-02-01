@@ -775,9 +775,33 @@ Ext.define('Ext.ux.UploadForm', {
     
     submit: function()
     {
-        this.setLoading('Uploading...');
-        
-        this.checkCompleted();
+    	var _this = this;
+    	
+    	if (this.existingBindingId !== undefined) 
+    	{
+    		// Shows a window to doublecheck if this is what the user wanted.
+    		// Save changes to binding afterwards.
+    		Ext.Msg.show({
+    			title: 'Are you sure?',
+    			msg: "Modifying a binding will make the binding invisible for other users until you have completed the 'Modify Binding' wizard. You can at any time resume this wizard by pressing the 'Complete binding' button in the application menu. Are you sure you want to continue?",
+    			buttons: Ext.Msg.YESNO,
+    			icon: Ext.Msg.QUESTION,
+            	callback: function(button)
+            	{
+            		if (button == 'yes')
+            		{
+            			_this.setLoading('Uploading...');
+            			_this.checkCompleted();
+            		}
+            	}
+    		});
+    	}
+    	else
+    	{
+			this.setLoading('Uploading...');
+			this.checkCompleted();		
+    	}
+       
     },
     
     reset: function()

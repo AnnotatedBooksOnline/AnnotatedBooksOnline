@@ -34,8 +34,8 @@ class BindingUploadController extends Controller
     {
         Database::getInstance()->startTransaction();
         
-        // Assert that the user is authenticated. 
-        Authentication::assertPermissionTo('upload-bindings');  
+        // Assert that the user is authenticated.
+        Authentication::assertPermissionTo('upload-bindings');
         
         // Retrieve contents of record.
         $inputScans     = self::getArray($data, 'scans');
@@ -47,19 +47,11 @@ class BindingUploadController extends Controller
         $libraryName = $inputBinding['library'];
         $signature   = self::getString($inputBinding, 'signature');
         
-        // Determine if the specified signature exists in the database already, this is not allowed.
-        if (!$this->uniqueLibrarySignature($libraryName, $signature, $inputBindingId))
-        {
-            throw new ControllerException('duplicate-binding');
-        }
-        
         // Load an existing binding or create a new binding if no existing binding is provided.
         $binding;
         if ($inputBindingId == -1)
         {
             $binding = new Binding();
-            $binding->setStatus(Binding::STATUS_UPLOADED);
-            $binding->setUserId(Authentication::getInstance()->getUserId());
         }
         else 
         {
@@ -70,10 +62,18 @@ class BindingUploadController extends Controller
             $binding = new Binding($inputBindingId);
             $binding->loadDetails();
         }
-                
+        
+        // Determine if the specified signature exists in the database already, this is not allowed.
+        if (!$this->uniqueLibrarySignature($libraryName, $signature, $inputBindingId))
+        {
+            throw new ControllerException('duplicate-binding');
+        }
+        
         // Fill the binding attributes.
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
+        $binding->setStatus(Binding::STATUS_UPLOADED);
+        $binding->setUserId(Authentication::getInstance()->getUserId());
         
         // Save the books.
         $this->createLibrary($libraryName, $binding);
@@ -160,6 +160,10 @@ class BindingUploadController extends Controller
             $book->setPlacePublished(self::getString($inputBook, 'placePublished'));
             $book->setPublisher(self::getString($inputBook, 'publisher'));
             $book->setPrintVersion(self::getString($inputBook, 'printVersion'));
+            
+            // No binding or book id known yet.
+            $book->setFirstPage(null);
+            $book->setLastPage(null);
             
             // Mark the book for saving and not for deletion.
             $book->setMarkedAsUpdated(true);
