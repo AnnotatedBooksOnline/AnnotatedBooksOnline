@@ -21,7 +21,15 @@ abstract class Controller
         // Check for a non-SSL connection.
         if (empty($_SERVER['HTTPS']))
         {
-            $forceSsl = Configuration::getInstance()->getBoolean('force-ssl', false);
+            // Check if we want to force an SSL connection.
+            try
+            {
+                $forceSsl = Configuration::getInstance()->getBoolean('force-ssl', false);
+            }
+            catch (Exception $e)
+            {
+                $forceSsl = false;
+            }
             
             // Ensure the content is accessed securely.
             if ($forceSsl)
@@ -110,6 +118,7 @@ abstract class Controller
                 // Show exception as HTML.
                 echo '<h1>' . htmlspecialchars($output['message']) . '</h1>';
                 echo '<b>Code:</b> ' . htmlspecialchars($output['code']) . '<br />';
+                echo '<b>Timestamp:</b> ' . htmlspecialchars($output['timestamp']) . '<br />';
                 
                 if (isset($exception['trace']))
                 {
@@ -321,10 +330,11 @@ abstract class Controller
         // Get exception info.
         $stackTrace = $e->getTraceAsString();
         $message    = $e->getMessage();
+        $timestamp  = $e->getTimestamp();
         $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
         
         // Set result.
-        $result = array('message' => $message, 'code' => $code);
+        $result = array('message' => $message, 'code' => $code, 'timestamp' => $timestamp);
         
         // Configuration may be the cause, so catch exceptions.
         try

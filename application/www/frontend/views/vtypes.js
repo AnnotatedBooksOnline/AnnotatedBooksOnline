@@ -25,6 +25,7 @@ Ext.apply(Ext.form.VTypes, {
                 if (data)
                 {
                     field.markInvalid('Username already in use.');
+                    return false;
                 }
             }
         );

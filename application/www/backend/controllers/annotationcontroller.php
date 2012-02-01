@@ -17,15 +17,17 @@ class AnnotationController extends ControllerBase
     {
         // Handle load.
         $result = $this->handleLoad($data, 'Annotation', 'annotationId');
-                
+        
         // Also load the name of the users who created and last modified the annotation.
         foreach ($result['records'] as &$record)
         {
             $createdUser = new User($record['createdUserId']);
             $changedUser = new User($record['changedUserId']);
-            $record['createdName'] = $createdUser->getFirstName()." ".$createdUser->getLastName();
-            $record['changedName'] = $changedUser->getFirstName()." ".$changedUser->getLastName();
+            
+            $record['createdName'] = $createdUser->getFirstName() . ' ' . $createdUser->getLastName();
+            $record['changedName'] = $changedUser->getFirstName() . ' ' . $changedUser->getLastName();
         }
+        
         return $result;
     }
     
@@ -88,13 +90,14 @@ class AnnotationController extends ControllerBase
                             $values = $ann->getValues(
                                 array('transcriptionEng', 'transcriptionOrig', 'polygon', 'order'));
                             
-                            if (($values['order']             === $i)                                       &&
+                            if (($values['order'] === $i)                                                   &&
                                 (AnnotationController::textEqual($values['transcriptionEng'], $transEng))   &&
                                 (AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) &&
                                 (AnnotationController::polygonEqual($values['polygon'], $polygon)))
                             {
                                 $annotationIds[] = $annId;
-                                $i++;
+                                ++$i;
+                                
                                 continue;
                             }
                             
@@ -111,6 +114,7 @@ class AnnotationController extends ControllerBase
                         $ann = new Annotation();
                         $ann->setTimeCreated($time);
                         $ann->setCreatedUserId($userId);
+                        
                         $setChanged = true;
                     }
                     
@@ -174,8 +178,9 @@ class AnnotationController extends ControllerBase
         // Checks for equality of two vertices.
         $vertexEqual = function($a, $b)
         {
-            $delta = 0.000001;
-            return $a !== null && $b !== null && abs($a['x'] - $b['x']) < $delta && abs($a['y'] - $b['y']) < $delta;
+            $delta = 1e-6;
+            
+            return ($a !== null) && ($b !== null) && (abs($a['x'] - $b['x']) < $delta) && (abs($a['y'] - $b['y']) < $delta);
         };
         
         // Zip the two polygons together.
@@ -189,6 +194,7 @@ class AnnotationController extends ControllerBase
                 return false;
             }
         }
+        
         return true;
     }
     
@@ -199,6 +205,7 @@ class AnnotationController extends ControllerBase
     {
         $safeA = str_replace("\r\n", "\n", rtrim($a));
         $safeB = str_replace("\r\n", "\n", rtrim($b));
+        
         return $safeA === $safeB;
     }
 }

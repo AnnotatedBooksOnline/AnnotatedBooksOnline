@@ -7,10 +7,13 @@
 class ExceptionBase extends Exception
 {
     private $id;
+    private $timestamp;
     
     public function __construct($id)
     {
-        $this->id = $id;
+        // Set id and timestamp.
+        $this->id        = $id;
+        $this->timestamp = time();
         
         // Load translator.
         require_once('framework/util/translator.php');
@@ -19,9 +22,18 @@ class ExceptionBase extends Exception
         $args    = func_get_args();
         $args[0] = 'error-' . $id;
         $message = call_user_func_array('__', $args);
-        $timestamp = gmdate('Y/m/d H:i:s');
         
-        parent::__construct($timestamp . ' - ' . $message);
+        parent::__construct($message);
+    }
+    
+    /**
+     * Gets the exception its formatted timestamp.
+     *
+     * @return  The exception its timestamp.
+     */
+    public function getTimestamp()
+    {
+        return gmdate('Y/m/d H:i:s', $this->timestamp);
     }
     
     /**

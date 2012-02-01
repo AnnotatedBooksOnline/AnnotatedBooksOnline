@@ -178,4 +178,3 @@ class Annotation extends Entity
     public function getTimeChanged()      { return date('Y-m-d',$this->timeChanged);  }
     public function setTimeChanged($time) { $this->timeChanged = $time; }
 }
-

@@ -47,13 +47,14 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 resizable: { handles: 's' },
                 items: [{
                     html: 'Please select an annotation below.',
-                    anchor: '0, -60',
+                    anchor: '0, -70',
                     autoScroll: true,
                     name: 'active-annotation'
                 },{
                     xtype: 'panel',
-                    height: '60', //should be 3em or something similar
+                    height: '65',
                     name: 'annotation-history',
+                    style: 'margin-top: 5px;',
                     autoScroll: true,
                     html: '',
                     cls: 'annoHistory'
@@ -63,7 +64,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 name: 'grid',
                 region: 'center',
                 height: 350,
-                style: 'height: 100%',
                 viewer: this.viewer
             },{
                 name: 'controls',
@@ -118,7 +118,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         xtype: 'button',
                         text: 'View mode',
                         width: 135,
-                        iconCls: 'view-mode-icon', // TODO
+                        iconCls: 'view-mode-icon',
                         name: 'view-mode',
                         disabled: true,
                         hidden: true,
@@ -291,40 +291,43 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         var history = '';
         if (model !== undefined)
         {
-            //Get the current user's name
-            var user = Authentication.getInstance().getUserModel()
+            // Fetch user name.
             var createdName = 'Unknown';
             var changedName = 'Unknown';
-            if (user != undefined)
+            
+            // Default to our own user name.
+            var user = Authentication.getInstance().getUserModel();
+            if (user !== undefined)
             {
                 createdName = user.getFullName();
                 changedName = user.getFullName();
             }
-            //Get the current time
+            
+            // Default to current date.
             var timeCreated = Ext.Date.format(new Date(Ext.Date.now()), 'F j, Y');
             var timeChanged = Ext.Date.format(new Date(Ext.Date.now()), 'F j, Y');
             
-            
-            // When the annotation was created by someone else change the values
-            if (model.get('createdName') != undefined && model.get('timeCreated') != null)
+            // Set created info from model if available.
+            if (model.get('createdName') && model.get('timeCreated'))
             {
                 createdName = model.get('createdName');
                 timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
             }
-            if (model.get('changedName') != undefined && model.get('timeChanged') != null)
+            
+            // Set changed info from model if available.
+            if (model.get('changedName') && model.get('timeChanged'))
             {
                 changedName = model.get('changedName');
                 timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
             }
             
-            //Set the text
-            history = '<b> Created by: </b>' + createdName + '<br>' +
-                '<p style="color:#333;font-size:11px;"> on ' + timeCreated + '<br></p>' +
-                '<b> Last modified by: </b>' + changedName + '<br>' +
-                '<p style="color:#333;font-size:11px;"> on ' + timeChanged + '<br></p>' 
+            // Create history HTML.
+            history = '<b> Created by: </b>' + escape(createdName) + '<br>' +
+                '<p style="color: #333; font-size: 11px;"> on ' + escape(timeCreated) + '<br></p>' +
+                '<b> Last modified by: </b>' + escape(changedName) + '<br>' +
+                '<p style="color: #333; font-size: 11px;"> on ' + escape(timeChanged) + '<br></p>';
         }
         
-        //Update the history panel
         this.annotationHist.body.update(history);
     },
     
@@ -396,20 +399,8 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     
     saveChanges: function()
     {
-        // Ask user whether to save changes.
-        var _this = this;
-        Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
-            function(button)
-            {
-                if (button === 'yes')
-                {
-                    // Save changes.
-                    _this.annotations.save();
-                    _this.annotations.load();
-                    _this.updateHistory(this.activeModel);
-                }
-            }
-        );
+        // Save changes.
+        this.annotations.save();
     },
     
     resetChanges: function()

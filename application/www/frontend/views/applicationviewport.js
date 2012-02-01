@@ -497,7 +497,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 var isExistingBinding = false;
                 if (data.length >= 2 && data[1] !== undefined)
                 {
-                    isExistingBinding = true;
+                    isExistingBinding = data[1];
                 }
                 
                 // Add a select book tab.
@@ -613,7 +613,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     title: existingBindingId == undefined ? 'Upload (upload)' : 'Modify binding',
                     name: 'upload',
                     layout: 'hbox',
-                    iconCls: 'upload-icon',
+                    iconCls: existingBindingId == undefined ? 'upload-icon' : 'binding-edit-icon',
                     bodyPadding: 10,
                     cls: 'white-tab',
                     frame: true,

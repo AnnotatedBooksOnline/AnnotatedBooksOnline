@@ -8,19 +8,24 @@
  * Event dispatcher class.
  */
 
+// Class definition.
 function EventDispatcher()
 {
     this.constructor();
 }
 
-//members
+// Fields.
 EventDispatcher.prototype.events;
 
-//methods
+// Constructor.
 EventDispatcher.prototype.constructor = function()
 {
     this.events = {};
 }
+
+/*
+ * Public methods.
+ */
 
 EventDispatcher.prototype.bind = function(event, obj, method)
 {

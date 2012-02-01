@@ -10,30 +10,6 @@ Ext.define('Ext.ux.BindingFieldSet', {
     {
         var _this = this;
         
-        function uniqueLibrarySignature(library, signature) 
-        {
-            RequestManager.getInstance().request(
-                'BindingUpload',
-                'uniqueLibrarySignature',
-                {
-                    library: library.getValue(),
-                    signature: signature.getValue(),
-                    bindingId: _this.existingBindingId !== undefined ? _this.existingBindingId : -1
-                },
-                this,
-                function(data)
-                {
-                    if (!data)
-                    {
-                        signature.markInvalid('The combination of library and signature is not ' +
-                                              'unique in our system.');
-                        library.markInvalid('The combination of library and signature is not '+ 
-                                            'unique in our system.');
-                    }
-                }
-            );
-        };
-        
         var annotationStore = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.LanguageModel',  
             pageSize: 250,
@@ -61,19 +37,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         name: 'library',
                         anchor: '98%',
                         labelAlign: 'top',
-                        validator: function(library)
-                        {
-                            var signature = _this.down('[name=signature]');
-                            if (signature == null)
-                            {
-                                return true;
-                            }
-                            else 
-                            {
-                                uniqueLibrarySignature(this, signature);
-                                return true;
-                            }
-                        }
+                        allowBlank: false
                     },{
                         fieldLabel: 'Readers',
                         name: 'provenance',
@@ -91,18 +55,40 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         name: 'signature',
                         anchor: '100%',
                         labelAlign: 'top',
+                        allowBlank: false,
                         validator: function(signature)
                         {
-                            var library = _this.down('[name=library]');
-                            if (library === null)
+                            var libraryField = _this.down('[name=library]');
+                            if (libraryField != null)
                             {
-                                return true;
+                                RequestManager.getInstance().request(
+                                    'BindingUpload',
+                                    'uniqueLibrarySignature',
+                                    {
+                                        library: libraryField.getValue(),
+                                        signature: signature,
+                                        bindingId: _this.existingBindingId !== undefined ? _this.existingBindingId : -1
+                                    },
+                                    this,
+                                    function(data)
+                                    {
+                                        if (!data)
+                                        {
+                                            var signatureField = _this.down('[name=signature]');
+                                            
+                                            signatureField.markInvalid('The combination of library and signature ' +
+                                                                       'is not unique in our system.');
+                                            libraryField.markInvalid('The combination of library and signature '+ 
+                                                                     'is not unique in our system.');
+                                            
+                                            return false;
+                                        }
+                                    }
+                                );
                             }
-                            else 
-                            {
-                                uniqueLibrarySignature(library, this);
-                                return true;
-                            }
+                            
+                            libraryField.clearInvalid();
+                            return true;
                         }
                     },{
                         xtype: 'combobox', 
@@ -217,6 +203,7 @@ Ext.define('Ext.ux.BookFieldset', {
                             name: 'title',
                             anchor: '98%',
                             labelAlign: 'top',
+                            allowBlank: false,
                             height: 42,
                             listeners: {
                                 'change': function(t, title)
@@ -359,6 +346,7 @@ Ext.define('Ext.ux.BookFieldset', {
                             editable: false,
                             height: 42,
                             forceSelection: true,
+                            allowBlank: false,
                             listeners: {
                                 specialkey: function(field, e)
                                 {
@@ -415,6 +403,13 @@ Ext.define('Ext.ux.BookFieldset', {
                     handler: function()
                     {
                         _this.up('booksfieldset').checkBooks(true);
+                        
+                        //Destroy the mandatory fields so their validators dissapear
+                        _this.down('[name=title]').destroy();
+                        _this.down('[name=from]').destroy();
+                        _this.down('[name=to]').destroy();
+                        _this.down('[name=languages]').destroy();
+
                         _this.destroy();
                     }
                 }]
@@ -677,27 +672,6 @@ Ext.define('Ext.ux.UploadForm', {
                     }]
                 }]
             }],
-            
-            listeners: {
-                validitychange: function(form, valid)
-                {
-                    var booksfieldset = this.down('booksfieldset');
-                    var books = booksfieldset.getBooks();
-                    var disable = valid;
-                    
-                    booksfieldset.down('[name=addbook]').setDisabled(disable);
-                    
-                    if (books.length == 1)
-                    {
-                        disable = true;
-                    }
-                    
-                    var current = booksfieldset.down('bookfieldset');
-                    do {
-                        current.down('[name=deletebook]').setDisabled(disable);
-                    } while (current = current.nextSibling('bookfieldset'));
-                }
-            },
             selectFirstField: false
         };
         
