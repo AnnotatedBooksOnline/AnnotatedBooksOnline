@@ -201,7 +201,7 @@ Ext.define('Ext.ux.ExportForm', {
     {
         var _this = this;
         
-        var sendRequest = function()
+        var sendRequest = function(timeout)
         {
             _this.setLoading('Exporting...');
             
@@ -227,7 +227,8 @@ Ext.define('Ext.ux.ExportForm', {
                     _this.setLoading(false);
                     
                     return true;
-                }
+                },
+                timeout
             );
         };
         
@@ -335,7 +336,7 @@ Ext.define('Ext.ux.ExportForm', {
                 info: info,
                 onContinue: function()
                 {
-                    sendRequest();
+                    sendRequest(3000 * time);
                     
                     this.close();
                 },
@@ -349,7 +350,7 @@ Ext.define('Ext.ux.ExportForm', {
         }
         else
         {
-            sendRequest();
+            sendRequest(3000 * time);
         }
     }
 });

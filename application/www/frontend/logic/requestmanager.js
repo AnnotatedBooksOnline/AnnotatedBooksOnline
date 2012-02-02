@@ -42,7 +42,7 @@ RequestManager.getInstance = function()
     return RequestManager.instance;
 }
 
-RequestManager.prototype.request = function(controller, action, data, object, onSuccess, onError)
+RequestManager.prototype.request = function(controller, action, data, object, onSuccess, onError, timeout)
 {
     var request = {
         controller: controller,
@@ -52,9 +52,16 @@ RequestManager.prototype.request = function(controller, action, data, object, on
         onSuccess: onSuccess,
         onError: onError
     };
+    
+    if (timeout)
+    {
+        this.flush();
+        request.timeout = timeout;
+    }
+    
     this.requests.push(request);
     
-    if (this.requests.length >= 10)
+    if (this.requests.length >= 10 || timeout)
     {
         this.flush();
     }
@@ -74,6 +81,8 @@ RequestManager.prototype.flush = function()
     // Fetch current requests and empty queue.
     var requests  = this.requests;
     this.requests = [];
+    
+    var timeout = 30000;
     
     // Bail if no requests.
     if (requests.length === 0)
@@ -101,6 +110,11 @@ RequestManager.prototype.flush = function()
             {
                 _this.onRequestFinished(request, false, result.responseText);
             };
+        
+        if (request.timeout)
+        {
+            timeout = request.timeout;
+        }
     }
     else
     {
@@ -161,7 +175,8 @@ RequestManager.prototype.flush = function()
         jsonData: data,
         method: 'POST',
         success: onSuccess,
-        failure: onError
+        failure: onError,
+        timeout: timeout
     });
 }
 
