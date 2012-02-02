@@ -366,6 +366,16 @@ abstract class EntityList implements IteratorAggregate
         return $result;
     }
     
+    /**
+     * Returns the entities.
+     *
+     * @return  Array of models.
+     */
+    public function getEntities()
+    {
+        return $this->entities;
+    }
+    
     /*
      * Helper static functions.
      */

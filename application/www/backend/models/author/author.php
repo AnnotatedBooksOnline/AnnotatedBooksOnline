@@ -3,6 +3,7 @@
 
 require_once 'framework/database/assocentity.php';
 require_once 'framework/database/database.php';
+require_once 'models/author/authorlist.php';
 
 /**
  * Class representing a author entity. Associatieve between book and person.
@@ -50,19 +51,7 @@ class Author extends AssociativeEntity
      */
     public static function fromBook($book)
     {
-        // TODO: Use AuthorList.
-        
-        $result = Query::select('personId', 'bookId')
-            ->from('Authors')
-            ->where('bookId = :book')
-            ->execute(array('book' => $book->getBookId()));
-            
-        $authors = array();
-        foreach ($result as $author)
-        {
-            $authors[] = new Author($author->getValue('personId'), $author->getValue('bookId'), true);
-        }
-        
+        $authors = AuthorList::find(array('bookId' => $book->getBookId()))->getEntities();
         return $authors;
     }
     
