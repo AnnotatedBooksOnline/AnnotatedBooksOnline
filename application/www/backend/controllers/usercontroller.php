@@ -56,9 +56,8 @@ class UserController extends ControllerBase
      */
     public function actionSave($data)
     {
-        // TODO: Proper permissions. Really, check user id !!!
-        
-        Authentication::assertLoggedOn();
+        // Fetch ID of currently logged in user, error if nobody is logged in.
+        $ownId = Authentication::getInstance()->getUserId();
         
         // Fetch values.
         $record = self::getArray($data, 'record');
@@ -75,7 +74,11 @@ class UserController extends ControllerBase
         $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
         $website     = self::getString($record, 'website', '', true, 255);
         
-        // TODO: Check everything, as in create.
+        // Make sure the user is editing itself.
+        if($userId != $ownId)
+        {
+            throw new AccessDeniedException();
+        }
         
         // Check if a new password is entered, in which case we need to check if the old password
         // is correct.
