@@ -679,7 +679,6 @@ Viewport.prototype.onMouseDown = function(event)
     //check if disabled
     if (this.draggingDisabled)
     {
-        //return;
         return false;
     }
     
@@ -705,7 +704,6 @@ Viewport.prototype.onMouseMove = function(event)
     //dragging must have started
     if (!this.mouseDown)
     {
-        //return;
         return false;
     }
     
@@ -788,7 +786,7 @@ Viewport.prototype.onMouseUp = function(event)
     // Dragging must have started.
     if (!this.mouseDown)
     {
-        return;
+        return false;
     }
     
     // Stop dragging.
@@ -812,6 +810,7 @@ Viewport.prototype.onMouseUp = function(event)
     
     // Move delta position.
     this.move(deltaPosition);
+    
     return false;
 }
 
