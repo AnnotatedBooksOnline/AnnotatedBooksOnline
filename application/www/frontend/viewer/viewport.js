@@ -173,20 +173,6 @@ Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
     };
     
     
-    //TODO: figure this out
-    
-    
-    //var fraction = viewerWidth / this.dimensions.width;//Math.min(.., viewerHeight / this.dimensions.height);
-    //var newZoomLevel = this.zoomLevel + Math.log(fraction) / Math.LN2;
-    
-    //var zoomPosition = {
-    //    x: viewerWidth  / 2 - deltaDimensions.x / 2,
-    //    y: viewerHeight / 2 - deltaDimensions.y / 2
-    //};
-    //var deltaZoomLevel 
-    
-    //this.zoom(newZoomLevel, zoomPosition);
-    
     var docWidth = this.documentDimensions.width * this.zoomFactor / 0.8;
     var oldWidth = Math.max(this.dimensions.width, this.documentDimensions.width / 0.8);
     var newWidth = Math.max(viewerWidth, this.documentDimensions.width / 0.8);

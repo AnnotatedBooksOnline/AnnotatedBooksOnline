@@ -759,7 +759,8 @@ Ext.define('Ext.ux.UploadForm', {
                 // We're done here, go to reorderscan tab.
                 this.setLoading(false);
                 
-                Application.getInstance().gotoTab('reorderscan', [result.bindingId, this.existingBindingId !== undefined], true);
+                Application.getInstance().gotoTab('reorderscan',
+                    [result.bindingId, this.existingBindingId !== undefined], true);
                 
                 this.up('[name=upload]').close();
             },
@@ -781,7 +782,10 @@ Ext.define('Ext.ux.UploadForm', {
             // Save changes to binding afterwards.
             Ext.Msg.show({
                 title: 'Are you sure?',
-                msg: "Modifying a binding will make the binding invisible for other users until you have completed the 'Modify Binding' wizard. You can at any time resume this wizard by pressing the 'Complete binding' button in the application menu. Are you sure you want to continue?",
+                msg: "Modifying a binding will make the binding invisible" +
+                    "for other users until you have completed the 'Modify Binding' wizard. " +
+                    "You can at any time resume this wizard by pressing the 'Complete binding'" +
+                    " button in the application menu. Are you sure you want to continue?",
                 buttons: Ext.Msg.YESNO,
                 icon: Ext.Msg.QUESTION,
                 callback: function(button)

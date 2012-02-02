@@ -10,7 +10,8 @@ Ext.apply(Ext.form.VTypes, {
     
         if (!usernameRegExp.test(value))
         {
-            field.markInvalid('Not a valid username. An username may only contain numbers, letters (lowercase and uppercase), spaces, and symbols of this list: _.\'@');
+            field.markInvalid('Not a valid username. An username may only contain numbers, ' +
+                'letters (lowercase and uppercase), spaces, and symbols of this list: _.\'@');
             return false;
         }
         

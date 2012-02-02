@@ -484,11 +484,13 @@ Ext.define('Ext.ux.SearchResultsView', {
             {
                 if (field == 'headline')
                 {
-                    properties += '<tr><td></td><td style="font-style: italic; padding-top: 5px">' + data[field] + '</td></tr>';
+                    properties += '<tr><td></td><td style="font-style: italic; padding-top: 5px">' 
+                        + data[field] + '</td></tr>';
                 }
                 else if (field == 'thumbnail')
                 {
-                    thumbnail = '<td><img src="' + data[field] + '" style="max-width: 50px; max-height: 67px;"/></td>'
+                    thumbnail = '<td><img src="' + data[field] + 
+                        '" style="max-width: 50px; max-height: 67px;"/></td>'
                 }
                 else
                 {

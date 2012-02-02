@@ -115,7 +115,6 @@ class Setting extends Entity
      */
     public static function getColumnTypes()
     {
-        // TODO: Rename to name, value.
         
         return array(
             'settingName'  => 'string',

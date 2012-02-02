@@ -390,8 +390,8 @@ class User extends Entity
             'banned'               => 'boolean',
             'rank'                 => 'int',
             'passwordRestoreToken' => 'string',
-            'registrationDate'	   => 'date',
-            'lastActive'		   => 'timestamp'
+            'registrationDate'     => 'date',
+            'lastActive'           => 'timestamp'
         );
     }
     

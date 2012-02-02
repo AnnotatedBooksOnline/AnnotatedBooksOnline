@@ -428,6 +428,7 @@ Ext.define('Ext.ux.SelectBookForm', {
         var firstPage;
         var lastPage;
         
+        //Determine what the start and the end of the range is.
         if (startOfRange <= endOfRange)
         {
             firstPage = startOfRange;
@@ -548,7 +549,7 @@ Ext.define('Ext.ux.SelectBookForm', {
     
     deleteBinding: function()
     {
-        // Send the drop request to the database.
+        // Send the delete request to the database.
         var onSuccess = function(data)
         {
             Ext.Msg.show({

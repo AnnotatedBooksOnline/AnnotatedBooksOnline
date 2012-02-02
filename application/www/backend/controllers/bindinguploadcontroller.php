@@ -418,8 +418,8 @@ class BindingUploadController extends Controller
             throw new ControllerException('image-too-small');
         }
         
-        $columns = $scanUploadImageIdentification[0] / 256; // TODO: Constant!
-        $rows    = $scanUploadImageIdentification[1] / 256; // TODO: Constant!
+        $columns = $scanUploadImageIdentification[0] / 256;
+        $rows    = $scanUploadImageIdentification[1] / 256;
         
         $maxZoomLevel = ceil(log(max($columns, $rows), 2));
         

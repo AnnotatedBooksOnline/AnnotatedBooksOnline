@@ -426,7 +426,6 @@ Annotations.prototype.initialize = function()
             'update': function(store, model)         { _this.onStoreDataChanged([model]);  },
             'datachanged': function(store, models)   { _this.onStoreDataChanged(models);   }
             
-            // TODO: update vertices? Not for now..
         }
     });
     
@@ -632,8 +631,6 @@ Annotations.prototype.onStoreLoad = function(models, success)
     
     // Show overlay again.
     this.viewport.addOverlay(this.overlay);
-    
-    // TODO: What about success?
     
     // Models have already been added by datachanged event handler.
     
