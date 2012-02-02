@@ -38,7 +38,7 @@ EventDispatcher.prototype.bind = function(event, obj, method)
     listeners.push({method: method, obj: obj});
 }
 
-EventDispatcher.prototype.unbind = function(event, obj, listener)
+EventDispatcher.prototype.unbind = function(event, obj, method)
 {
     var listeners = this.events[event];
     if (listeners === undefined)
@@ -48,7 +48,7 @@ EventDispatcher.prototype.unbind = function(event, obj, listener)
     
     for (var i = 0; i < listeners.length; ++i)
     {
-        if ((listeners[i].method == listener) && (listeners[i].obj == obj))
+        if ((listeners[i].method === method) && (listeners[i].obj === obj))
         {
             listeners.splice(i, 1);
         }
@@ -71,12 +71,6 @@ EventDispatcher.prototype.trigger = function(event)
         {
             listener.method.apply(listener.obj, arguments);
         }
-        catch(e)
-        {
-            if (console && console.exception)
-            {
-                console.exception(e);
-            }
-        }
+        catch (e) { }
     }
 }

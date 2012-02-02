@@ -1,6 +1,7 @@
 /*
  * Binding fieldset class.
  */
+
 Ext.define('Ext.ux.BindingInformationFieldSet', {
     extend: 'Ext.form.FieldSet',
     alias: 'widget.bindinginformationfieldset',
@@ -10,49 +11,49 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
     {
         var _this = this;
         
-        Ext.ux.BindingModel.loadRecursive(this.bindingId, 
+        Ext.ux.BindingModel.loadRecursive(this.bindingId,
         {
-              scope: _this,
-              failure: function(binding, operation) {
-                   //handleError
-                   return undefined;
-              },
-              success: function(binding, operation) {
-                   //load the names of the readers
-                   var readerNames='';
-                   binding.provenances().each(function(record)
-                   {
-                       readerNames+=','+record.get('name');
-                   });
-                        
-                   //load the names of the languages associated with the binding
-                   var bindingLanguages='';
-                   binding.bindingLanguages().each(function(record)
-                   {
-                        bindingLanguages+=','+record.get('languageName');
-                   });
-                   
-                    if(readerNames === '')
-                    {
-                        readerNames = ' Unknown reader(s)';
-                    }
-                    
-                    if(bindingLanguages === '')
-                    {
-                        bindingLanguages = ' No language(s)';
-                    }
-                         
-                   this.down('propertygrid').setSource({
-                              "a": binding.get('library').libraryName,
-                              "b": binding.get('signature'),
-                              "c": readerNames.substring(1),
-                              "d": bindingLanguages.substring(1)
-                         });
-               },
-               callback: function(record, operation) {}
+            scope: _this,
+            failure: function(binding, operation)
+            {
+                // Handle error.
+                return undefined;
+            },
+            success: function(binding, operation)
+            {
+                // Load the names of the readers.
+                var readerNames = '';
+                binding.provenances().each(function(record)
+                {
+                    readerNames += ',' + record.get('name');
+                });
+                
+                // Load the names of the languages associated with the binding.
+                var bindingLanguages = '';
+                binding.bindingLanguages().each(function(record)
+                {
+                     bindingLanguages += ',' + record.get('languageName');
+                });
+                
+                if (readerNames === '')
+                {
+                    readerNames = ' Unknown reader(s)';
+                }
+                
+                if (bindingLanguages === '')
+                {
+                    bindingLanguages = ' No language(s)';
+                }
+                
+                this.down('propertygrid').setSource({
+                    "a": binding.get('library').libraryName,
+                    "b": binding.get('signature'),
+                    "c": readerNames.substring(1),
+                    "d": bindingLanguages.substring(1)
+                });
+            },
+            callback: function(record, operation) { }
         });
-        
-
         
         var store = Ext.create('Ext.data.Store', {
             model: 'Ext.ux.BindingModel'
@@ -86,4 +87,3 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
         this.callParent();
     }
 });
-

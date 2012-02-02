@@ -50,7 +50,7 @@ Application.getInstance = function()
 }
 
 // Gets event dispatcher.
-Viewport.prototype.getEventDispatcher = function()
+Application.prototype.getEventDispatcher = function()
 {
     return this.eventDispatcher;
 }
@@ -342,7 +342,6 @@ Application.prototype.tabNeedsNoAuthentication = function(type)
 }
 
 // Start application.
-Ext.require(['*']);
 Ext.onReady(function()
     {
         // Fetch an application instance to show it.

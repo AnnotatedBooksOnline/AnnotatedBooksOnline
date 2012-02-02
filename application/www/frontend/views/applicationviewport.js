@@ -318,12 +318,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         if (Authentication.getInstance().isLoggedOn())
         {
-        	this.updateUploadButtonTitle();
+            this.updateUploadButtonTitle();
         }
         
         this.openTab('welcome', [], true);
     },
     
+    // TODO: Remove this, as it's IE6 only.
     correctVmlSupport: function()
     {
         if (!Ext.supports.Vml)
@@ -810,26 +811,28 @@ Ext.define('Ext.ux.ApplicationViewport', {
         this.eventDispatcher.trigger(event, this, index);
     },
     
+    // TODO: Remove this, how it this a task of the application viewport?
+    // TODO: It should not even know of any tab content.
     updateUploadButtonTitle: function() {
-    	var _this = this;
+        var _this = this;
+        
         RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
-        	function(result)
+            function(result)
             {
                 if (result['status'] === 0 || result['status'] === 1)
                 {
-            		console.log(result);
-                	_this.down('[name=upload]').setText('Complete binding');
+                    _this.down('[name=upload]').setText('Complete binding');
                 }
                 else
                 {
-                	_this.down('[name=upload]').setText('Upload');
+                    _this.down('[name=upload]').setText('Upload');
                 }
             }
         );
     },
     
     onAuthenticationChange: function(event, authentication)
-    {         
+    {
         if (authentication.isLoggedOn())
         {
             this.down('[name=logout]').show();

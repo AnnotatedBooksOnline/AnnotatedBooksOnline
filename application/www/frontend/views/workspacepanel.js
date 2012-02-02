@@ -246,6 +246,7 @@ Ext.define('Ext.ux.ExportForm', {
             pages = values.pageTo - values.pageFrom + 1;
             firstExportPage = parseInt(values.pageFrom);
         }
+        
         var lastExportPage = firstExportPage + pages - 1;
         var time = Math.ceil(pages / 20);
         var size = Math.floor(0.4 + 1.2 * pages);
@@ -254,21 +255,27 @@ Ext.define('Ext.ux.ExportForm', {
         {
             var seconds = time % 60;
             var minutes = Math.floor(time / 60) % 60;
-            var hours = Math.floor(time / 3600);
+            var hours   = Math.floor(time / 3600);
+            
             var timestr = '';
-            if (hours > 0) { timestr += hours + 'h '; }
+            
+            if (hours > 0)   { timestr += hours   + 'h '; }
             if (minutes > 0) { timestr += minutes + 'm '; }
             if (seconds > 0) { timestr += seconds + 's '; }
+            
             var binding = viewer.getBinding().getModel();
             var books = [];
+            
             binding.books().each(
-            function(book)
-            {
-                if (book.get('lastPage') >= firstExportPage && book.get('firstPage') <= lastExportPage)
+                function(book)
                 {
-                    books.push(book);
+                    if (book.get('lastPage') >= firstExportPage && book.get('firstPage') <= lastExportPage)
+                    {
+                        books.push(book);
+                    }
                 }
-            });
+            );
+            
             var toString = function(s)
             {
                 if (s)
@@ -277,7 +284,9 @@ Ext.define('Ext.ux.ExportForm', {
                 }
                 return '';
             };
+            
             var info = '<p><table style="width: 100%; margin-left: 10px; margin-right: 10px">';
+            
             if (books.length == 1)
             {
                 var authors = '';
@@ -295,29 +304,33 @@ Ext.define('Ext.ux.ExportForm', {
                 {
                     year = year + ' - ' + books[0].get('maxYear');
                 }
-                info += '<tr><td>Title</td><td>' + books[0].get('title') + '</td></tr>'
-                      + '<tr><td>Author</td><td>' + authors + '</td></tr>'
-                      + '<tr><td>Year</td><td>' + year + '</td></tr>'
-                      + '<tr><td>Location</td><td>' + toString(books[0].get('placePublished')) + '</td></tr>'
-                      + '<tr><td>Publisher</td><td>' + toString(books[0].get('publisher')) + '</td></tr>';
+                
+                info += '<tr><td>Title</td><td>' + escape(books[0].get('title')) + '</td></tr>'
+                      + '<tr><td>Author</td><td>' + escape(authors) + '</td></tr>'
+                      + '<tr><td>Year</td><td>' + escape(year) + '</td></tr>'
+                      + '<tr><td>Location</td><td>' + escape(toString(books[0].get('placePublished'))) + '</td></tr>'
+                      + '<tr><td>Publisher</td><td>' + escape(toString(books[0].get('publisher'))) + '</td></tr>';
             }
             else if (books.length != 0)
             {
                 info += '<tr style="vertical-align: top"><td>Titles</td><td>';
                 for (var i = 0; i < books.length; i++)
                 {
-                    info += books[i].get('title') + '<br/>';
+                    info += escape(books[i].get('title')) + '<br/>';
                 }
                 info += '</td></tr>';
             }
-            info += '<tr><td>Library</td><td>' + binding.get('library').libraryName + '</td></tr>'
-                  + '<tr><td style="width: 30%">Shelfmark</td><td>' + binding.get('signature') + '</td></tr>'
+            
+            info += '<tr><td>Library</td><td>' + escape(binding.get('library').libraryName) + '</td></tr>'
+                  + '<tr><td style="width: 30%">Shelfmark</td><td>' + escape(binding.get('signature')) + '</td></tr>'
                   + '</table></p>';
+            
             info = '<p>You are about to export ' + pages + ' scans. '
                  + 'This may take some time and the resulting file may be large.</p>'
                  + info
                  + '<p>Estimated processing time: ' + timestr + '<br/>'
                  + 'Estimated file size: ' + size + ' MB</p>';
+            
             var confirm = new Ext.ux.ExportConfirmWindow({
                 info: info,
                 onContinue: function()
@@ -430,16 +443,26 @@ Ext.define('Ext.ux.WorkspacePanel', {
         
         Ext.apply(this, defConfig);
         this.callParent();
-        
-        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
-        eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
     },
     
     afterRender: function()
     {
         this.callParent();
         
+        // Watch for authentication changes.
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.bind('modelchange', this, this.onAuthenticationChange);
+        
         this.onAuthenticationChange();
+    },
+    
+    destroy: function()
+    {
+        // Unsubscribe from authentication changes.
+        var eventDispatcher = Authentication.getInstance().getEventDispatcher();
+        eventDispatcher.unbind('modelchange', this, this.onAuthenticationChange);
+        
+        this.callParent();
     },
     
     onAuthenticationChange: function()
@@ -460,4 +483,3 @@ Ext.define('Ext.ux.WorkspacePanel', {
         }
     }
 });
-

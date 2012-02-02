@@ -9,6 +9,7 @@
  *
  * Manages all annotatations. Keeps them in sync with viewer and its store.
  * Knows nothing about polygons. Knows about annotations colors.
+ * Owns annotations, annotation store and annotation overlay.
  */
 
 // Class definition.
@@ -433,32 +434,32 @@ Annotations.prototype.initialize = function()
     this.overlay = new AnnotationOverlay(this.viewport);
     
     // Watch for creation of polygons.
-    var overlaygetEventDispatcher = this.overlay.getEventDispatcher();
-    overlaygetEventDispatcher.bind('create', this,
+    var overlayEventDispatcher = this.overlay.getEventDispatcher();
+    overlayEventDispatcher.bind('create', this,
         function(event, overlay, annotation) { this.onOverlayCreate(annotation); });
     
     // Watch for erasing of polygons.
-    overlaygetEventDispatcher.bind('erase', this,
+    overlayEventDispatcher.bind('erase', this,
         function(event, overlay, annotation) { this.onOverlayErase(annotation); });
     
     // Watch for changing of polygons.
-    overlaygetEventDispatcher.bind('change', this,
+    overlayEventDispatcher.bind('change', this,
         function(event, overlay, annotation) { this.onOverlayChange(annotation); });
     
     // Watch for selection of polygons.
-    overlaygetEventDispatcher.bind('select', this,
+    overlayEventDispatcher.bind('select', this,
         function(event, overlay, annotation) { this.onOverlaySelect(annotation); });
     
     // Watch for hovering.
-    overlaygetEventDispatcher.bind('hover', this,
+    overlayEventDispatcher.bind('hover', this,
         function(event, overlay, annotation) { this.onOverlayHover(annotation); });
      
     // Watch for unhovering.
-    overlaygetEventDispatcher.bind('unhover', this,
+    overlayEventDispatcher.bind('unhover', this,
         function(event, overlay, annotation) { this.onOverlayUnhover(annotation); });
     
     // Watch for mode changes.
-    overlaygetEventDispatcher.bind('modechange', this,
+    overlayEventDispatcher.bind('modechange', this,
         function(event, overlay, mode)
         {
             if (this.mode !== mode)
@@ -694,4 +695,10 @@ Annotations.prototype.onStoreRemove = function(model)
         this.annotations.splice(index, 1);
         this.overlay.removeAnnotation(annotation);
     }
+}
+
+Annotations.prototype.destroy = function()
+{
+    // Destroy overlay.
+    this.overlay.destroy();
 }

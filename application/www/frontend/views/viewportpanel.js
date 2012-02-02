@@ -1,5 +1,7 @@
 /*
  * Viewport panel class.
+ *
+ * Owns viewport.
  */
 
 Ext.define('Ext.ux.ViewportPanel', {
@@ -41,6 +43,14 @@ Ext.define('Ext.ux.ViewportPanel', {
             
             this.insertedViewport = true;
         }
+    },
+    
+    destroy: function()
+    {
+        // Destroy viewport.
+        this.viewport.destroy();
+        
+        this.callParent();
     },
     
     setSize: function(width, height, animate)

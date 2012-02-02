@@ -56,7 +56,8 @@ class UserController extends ControllerBase
      */
     public function actionSave($data)
     {
-        // TODO: Proper permissions.
+        // TODO: Proper permissions. Really, check user id !!!
+        
         Authentication::assertLoggedOn();
         
         // Fetch values.
@@ -74,7 +75,7 @@ class UserController extends ControllerBase
         $homeAddress = self::getString($record, 'homeAddress', '', true, 255);
         $website     = self::getString($record, 'website', '', true, 255);
         
-        // TODO: Check everything, as in save.
+        // TODO: Check everything, as in create.
         
         // Check if a new password is entered, in which case we need to check if the old password
         // is correct.

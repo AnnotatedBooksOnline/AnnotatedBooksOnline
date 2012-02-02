@@ -679,7 +679,7 @@ Viewport.prototype.onMouseDown = function(event)
     //check if disabled
     if (this.draggingDisabled)
     {
-        return false;
+        return;
     }
     
     //start dragging
@@ -695,8 +695,6 @@ Viewport.prototype.onMouseDown = function(event)
     //show grabbing cursor
     $(document.body).addClass("dragging");
     this.dom.addClass("dragging");
-    
-    return false;
 }
 
 Viewport.prototype.onMouseMove = function(event)
@@ -786,7 +784,7 @@ Viewport.prototype.onMouseUp = function(event)
     // Dragging must have started.
     if (!this.mouseDown)
     {
-        return false;
+        return;
     }
     
     // Stop dragging.
@@ -810,8 +808,6 @@ Viewport.prototype.onMouseUp = function(event)
     
     // Move delta position.
     this.move(deltaPosition);
-    
-    return false;
 }
 
 Viewport.prototype.onMouseWheel = function(event)

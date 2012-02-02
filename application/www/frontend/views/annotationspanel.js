@@ -38,7 +38,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             border: false,
             layout: 'border',
             items: [{
-                xtype: 'panel',
                 region: 'north',
                 layout: 'anchor',
                 bodyPadding: 5,
@@ -52,7 +51,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                     name: 'active-annotation'
                 },{
                     xtype: 'panel',
-                    height: '65',
+                    height: 65,
                     name: 'annotation-history',
                     style: 'margin-top: 5px;',
                     autoScroll: true,
@@ -63,7 +62,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 xtype: 'annotationsgrid',
                 name: 'grid',
                 region: 'center',
-                height: 350,
                 viewer: this.viewer
             },{
                 name: 'controls',
@@ -238,6 +236,14 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         
         // Handle authentication model changes.
         Authentication.getInstance().getEventDispatcher().bind('modelchange', this, this.onAuthenticationChange);
+    },
+    
+    destroy: function()
+    {
+        // Unsubscribe from authentication changes.
+        Authentication.getInstance().getEventDispatcher().unbind('modelchange', this, this.onAuthenticationChange);
+        
+        this.callParent();
     },
     
     setLanguage: function(language)
@@ -511,12 +517,12 @@ Ext.define('Ext.ux.AnnotationsGrid', {
     {
         this.callParent();
         
-        // Fetch DragDrop plugin
+        // Fetch drag and drop plugin, and disable it.
         this.dragdrop = this.getView().getPlugin('dragdrop');
+        this.dragdrop.disable();
         
         // Set mode.
         this.mode = 'view';
-        this.dragdrop.disable();
         
         // Watch for events.
         var eventDispatcher = this.annotations.getEventDispatcher();
