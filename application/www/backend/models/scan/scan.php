@@ -96,7 +96,7 @@ class Scan extends Entity
      */
     public static function fromBinding($binding)
     {
-        $sorters = array(array('column' => 'page', 'direction' => 'ASC'));
+        $sorters = array('page' => 'ASC');
         $scans = ScanList::find(
             array('bindingId' => $binding->getBindingId()), 0, null, $sorters)->getEntities();
         return $scans;

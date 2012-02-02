@@ -101,7 +101,7 @@ class Book extends Entity
      */
     public static function fromBinding($binding)
     {
-        $sorters = array(array('column' => 'firstPage', 'direction' => 'ASC'));
+        $sorters = array('firstPage' => 'ASC');
         $books = BookList::find(
             array('bindingId' => $binding->getBindingId()), 0, null, $sorters)->getEntities();
         return $books;
