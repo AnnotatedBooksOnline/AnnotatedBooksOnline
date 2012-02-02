@@ -39,11 +39,10 @@ class BookController extends ControllerBase
      */
     public function actionFirstLastPages($data)
     {               
-        
-        Database::getInstance()->startTransaction();
-        
         // Assert the user has permission to upload bindings.
         Authentication::assertPermissionTo('upload-bindings');
+        
+        Database::getInstance()->startTransaction();
         
         // Collect the binding id and selected book pages from the request.
         $inputBindingId     = self::getInteger($data, 'bindingId');
