@@ -624,7 +624,6 @@ Ext.define('Ext.ux.SortComboBox', {
                 labelSeparator: '',
                 labelWidth: 'auto',
                 style: 'margin-left: 5px;',
-                //fieldLabel: 'Inverted',
                 labelAlign: 'right'
             }],
             getSorter: function()
