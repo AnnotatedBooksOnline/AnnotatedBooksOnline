@@ -317,6 +317,10 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             if (model.get('createdName') && model.get('timeCreated'))
             {
                 createdName = model.get('createdName');
+                if (createdName === '')
+                {
+                    createdName = 'deleted user'
+                }
                 timeCreated = Ext.Date.format(model.get('timeCreated'), 'F j, Y');
             }
             
@@ -324,6 +328,10 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             if (model.get('changedName') && model.get('timeChanged'))
             {
                 changedName = model.get('changedName');
+                if (changedName === '')
+                {
+                    changedName = 'deleted user'
+                }
                 timeChanged = Ext.Date.format(model.get('timeChanged'), 'F j, Y');
             }
             
