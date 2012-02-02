@@ -47,19 +47,16 @@ Ext.define('Ext.ux.UserListPanel', {
                         
                         if (value)
                         {
-                            message = 'You are about to turn on automatic user acceptance. '
+                            message = 'Automatic user acceptance will now be turned on. '
                                     + 'Do you also want to automatically accept all users '
-                                    + 'currently waiting for acceptance?'
-                                    + 'Clicking cancel will keep automatic user acceptance '
-                                    + 'turned off.';
+                                    + 'currently waiting for acceptance?';
                             buttons = Ext.Msg.YESNOCANCEL;
                         }
                         else
                         {
-                            message = 'Are you sure you want to turn automatic user acceptance '
-                                    + 'off? After this, you will need to activate new users '
-                                    + 'manually.';
-                            buttons = Ext.Msg.YESNO;
+                            message = 'Automatic user acceptance will now be turned off. New'
+                                    + ' users should now be accepted manually.';
+                            buttons = Ext.Msg.OKCANCEL;
                         }
                         
                         Ext.Msg.show({
@@ -69,7 +66,7 @@ Ext.define('Ext.ux.UserListPanel', {
                             icon: Ext.Msg.QUESTION,
                             callback: function(button)
                             {
-                                if (button == 'yes' || (value && button == 'no'))
+                                if (button == 'yes' || button == 'ok' || (value && button == 'no'))
                                 {
                                     RequestManager.getInstance().request(
                                        'UserActivation',
