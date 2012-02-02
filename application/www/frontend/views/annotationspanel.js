@@ -405,8 +405,20 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     
     saveChanges: function()
     {
-        // Save changes.
-        this.annotations.save();
+        // Ask user whether to save changes.
+        var _this = this;
+        Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
+            function(button)
+            {
+                if (button === 'yes')
+                {
+                    // Save changes.
+                    _this.annotations.save();
+                    _this.annotations.load();
+                    _this.updateHistory(this.activeModel);
+                }
+            }
+        );
     },
     
     resetChanges: function()
