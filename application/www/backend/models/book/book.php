@@ -6,6 +6,7 @@ require_once 'models/scan/scanlist.php';
 require_once 'models/author/authorlist.php';
 require_once 'models/language/booklanguagelist.php';
 require_once 'models/binding/binding.php';
+require_once 'models/book/booklist.php';
 
 /**
  * Class representing a book entity.
@@ -100,22 +101,9 @@ class Book extends Entity
      */
     public static function fromBinding($binding)
     {
-        // TODO: Use BookList here.
-        
-        $result = Query::select('bookId')
-            ->from('Books')
-            ->where('bindingId = :binding')
-            ->orderBy('firstPage', 'ASC')
-            ->execute(array(
-                'binding' => $binding->getBindingId()
-            ));
-            
-        $books = array();
-        foreach($result as $book)
-        {
-            $books[] = new Book($book->getValue('bookId'));
-        }
-        
+        $sorters = array(array('column' => 'firstPage', 'direction' => 'ASC'));
+        $books = BookList::find(
+            array('bindingId' => $binding->getBindingId()), 0, null, $sorters)->getEntities();
         return $books;
     }
     
@@ -128,8 +116,6 @@ class Book extends Entity
      */
     public static function fromBindingPage($binding, $range)
     {
-        // TODO: Use BookList here.
-        
         if (is_array($range))
         {
             $from = $range[0];

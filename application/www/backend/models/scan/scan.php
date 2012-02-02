@@ -96,21 +96,9 @@ class Scan extends Entity
      */
     public static function fromBinding($binding)
     {
-        // TODO: Use scan list here.
-        
-        $result = Query::select('scanId')
-            ->from('Scans')
-            ->where('bindingId = :binding')
-            ->orderBy('page', 'ASC')
-            ->execute(array('binding' => $binding->getBindingId()));
-            
-        $scans = array();
-        
-        foreach ($result as $scan)
-        {
-            $scans[] = new Scan($scan->getValue('scanId'));
-        }
-        
+        $sorters = array(array('column' => 'page', 'direction' => 'ASC'));
+        $scans = ScanList::find(
+            array('bindingId' => $binding->getBindingId()), 0, null, $sorters)->getEntities();
         return $scans;
     }
     
@@ -123,36 +111,34 @@ class Scan extends Entity
      */
     public static function fromBindingPage($binding, $range)
     {
-        // TODO: Use scan list here.
-        
-        if (is_array($range))
-        {
-            $from = $range[0];
-            $to   = $range[1];
-        }
-        else
-        {
-            $from = $range;
-            $to   = $range;
-        }
-        
-        $result = Query::select('scanId')
-            ->from('Scans')
-            ->where('bindingId = :binding', 'page >= :from', 'page <= :to')
-            ->orderBy('page', 'ASC')
-            ->execute(array(
-                'binding' => $binding->getBindingId(),
-                'from'    => $from,
-                'to'      => $to
-            ));
-            
-        $scans = array();
-        foreach ($result as $scan)
-        {
-            $scans[] = new Scan($scan->getValue('scanId'));
-        }
-        
-        return $scans;
+       if (is_array($range))
+              {
+                  $from = $range[0];
+                  $to   = $range[1];
+              }
+              else
+              {
+                  $from = $range;
+                  $to   = $range;
+              }
+              
+              $result = Query::select('scanId')
+                  ->from('Scans')
+                  ->where('bindingId = :binding', 'page >= :from', 'page <= :to')
+                  ->orderBy('page', 'ASC')
+                  ->execute(array(
+                      'binding' => $binding->getBindingId(),
+                      'from'    => $from,
+                      'to'      => $to
+                  ));
+          
+       $scans = array();
+       foreach ($result as $scan)
+       {
+           $scans[] = new Scan($scan->getValue('scanId'));
+       }
+       
+       return $scans;
     }
     
     /**

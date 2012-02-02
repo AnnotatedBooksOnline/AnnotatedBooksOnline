@@ -4,6 +4,7 @@
 require_once 'framework/database/entity.php';
 require_once 'framework/database/database.php';
 require_once 'models/scan/scan.php';
+require_once 'models/annotation/annotationlist.php';
 
 /**
  * Class representing an annotation entity.
@@ -63,21 +64,7 @@ class Annotation extends Entity
      */
     public static function fromScan($scan)
     {
-        // TODO: Use AnnotationList.
-        
-        $result = Query::select('annotationId')
-            ->from('Annotations')
-            ->where('scanId = :scan')
-            ->execute(array(
-                'scan' => $scan->getScanId()
-            ));
-            
-        $annotations = array();
-        foreach($result as $annotation)
-        {
-            $annotations[] = new Annotation($annotation->getValue('annotationId'));
-        }
-        
+        $annotations = AnnotationList::find(array('scanId' => $scan->getScanId()))->getEntities();
         return $annotations;
     }
     

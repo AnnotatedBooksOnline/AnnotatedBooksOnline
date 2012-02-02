@@ -40,23 +40,7 @@ class Provenance extends AssociativeEntity
      */
     public static function fromBinding($binding)
     {
-        // TODO: Create ProvenanceList to do this.
-        
-        $result = Query::select('personId', 'bindingId')
-            ->from('Provenances')
-            ->where('bindingId = :binding')
-            ->execute(array('binding' => $binding->getBindingId()));
-            
-        $provenances = array();
-        
-        foreach ($result as $provenance)
-        {
-            $provenances[] = new Provenance(
-                $provenance->getValue('bindingId'),
-                $provenance->getValue('personId')
-            );
-        }
-        
+        $provenances = ProvenanceList::find(array('bookId' => $book->getBookId()))->getEntities();
         return $provenances;
     }
     
