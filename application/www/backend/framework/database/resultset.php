@@ -114,7 +114,6 @@ class ResultSetIterator implements Iterator
         $this->statement = $stat;
         $this->i         = -1;
         
-        // TODO: This is wrong behaviour: an empty list should also be iterable.
         $this->next();
     }
     

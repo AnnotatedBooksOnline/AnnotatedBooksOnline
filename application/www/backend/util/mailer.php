@@ -84,7 +84,6 @@ class Mailer
         $basemessage = Setting::getSetting('activation-mail-message');
         $code = $puser->getConfirmationCode();
         $link = Configuration::getBaseURL() . '#activation-' . $code;
-        //$link = Configuration::getInstance()->getString('activation-url') . $code;
         
         // For the sake of security, confirm the validity of the confirmation code, which should be
         // a hexadecimal numer of 32 digits.

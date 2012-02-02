@@ -195,8 +195,6 @@ class TilePyramidBuilder extends Singleton
      * 
      * NOTE: Only call this when there are no other threads running the tile pyramid builder 
      * simultaniously.
-     * 
-     * TODO: Let this remove erronous input or output files.
      */
     public function resolveInconsistencies()
     {

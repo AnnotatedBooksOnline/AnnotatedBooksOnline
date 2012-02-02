@@ -2,77 +2,33 @@
 //[[GPL]]
 
 /**
- * An object of this class represents a query that is being build. Using its functions, the query 
- * can be safely (not vulnerable to injections) expanded. The order in which the functions are used
- * is irrelevant, but an exception is thrown when conflicts arise (e.g. when calling update and 
- * select on the same object without clearing).
- * 
- * When finished, you can call execute() which executes the query. This method construct a
- * {@link ResultSet} and returns it.  
- * 
- * <b>Definitions:</b>
- * The following definitions will be used in the documentation of this class:
- * 
- *  - SQL identifier: a string representing something like a SQL table or column name. It should 
- *                    start with a letter or underscore and its following characters should be 
- *                    letters, underscores, digits or $-signs. With letters characters in range 
- *                    a-z and A-Z are meant. SQL supports non-ASCII letters but this definition 
- *                    doesn't.
- *                    Illegal SQL identifiers will be detected when calling prepare() and result in
- *                    an exception.
- *  
- *  - SQL value:      a UTF-8 string or something convertible to that representing a SQL string 
- *                    literal that will be used in the query as a new column value or something a 
- *                    column value can be compared to. These values will be properly escaped, 
- *                    meaning they should be injection-proof and can directy depend on user input
- *                    (assuming there is no bug in the code of the prepare-function). 
- *                    (Strings containing) integer and floating point values can be used to 
- *                    represent numeric SQL values. This might not, however, be possible with some
- *                    other types (like hexadecimal strings representing BLOB's). Use parameter 
- *                    markers for these.
- *                    Variables that are NULL will be interpreted as a SQL NULL.
- *  
- *  - Parameter marker: Either a single '?' or a string which first character is a ':', followed by
- *                      some identifier representing a parameter name. You can only use one style 
- *                      per query: either question marks or named parameters. These markers will be
- *                      directly placed inside the incomplete query fed to PDO::prepare and allow
- *                      the database to partially prepare the query, so multiple executions with
- *                      different parameters will occur faster.
- *                      After preparation, variables need to bound to these markers using 
- *                      PDOStatement::execute() or PDOStatement::bindValue().
- *                      For more information: see http://nl.php.net/manual/en/pdo.prepare.php
- *                       
- *
- * <b>Chaining</b>
- * All member function of {@link QueryBuilder}, with the exception of prepare(). Return a reference
- * to the object they were called on (return $this). This allows 'chaining' operations, as can be
- * seen in the examples.
- * 
- * <b>Examples</b>
- * \verbatim
- * 
- * // Simple selection.
- * $qb->select(array('username', 'affiliation'))->from('User')->where(array('userid' => $uid));
- * $stat = $qb->prepare();
- * 
- * // Another selection, with ?-marker.
- * $qb->from('TEIFile')->select()->where(array('createDate' => '<= ?'));
- * 
- * // Building and executing an insertion query with named parameter markers.
- * $stat = $qb->insert('PendingUser', array('pendingUserID'    => ':pid', 
- *                                          'confirmationCode' => ':code',
- *                                          'expirationDate'   => endOfYear()))->prepare();
- * $stat->execute(array(':pid' => $user1, ':code' => generateCode()));
- * $stat->execute(array(':pid' => $user2, ':code' => generateCode()));
- * 
- * // Query which deletes all books from between 1500 and 1512 that are written in either Japanese 
- * // or German.
- * $qb->delete('Book')->where('minYear >= 1500', 'maxYear <= 1512', 
- *                             _or('language LIKE ja%', 'language LIKE de%'));
- * 
- * \endverbatim
- * 
- */
+    EXAMPLES:
+    
+    
+    Complex example:
+    
+        $query = Query::select('u.userId')->
+                 from('Users u')->
+                 count('id', 'grantTotal')->
+                 aggregate('MAX', 'maximum')->
+                 where('username = :username', 'passwordHash = :hash')->
+                 whereOr('username = :username', 'passwordHash = :hash')->
+                 join('OtherTable o', array('o.id = u.id', 'o.name = u.name'), 'LEFT')->
+                 limit(0, 1)->
+                 orderBy('u.username', 'desc')->
+                 groupBy('u.name');
+        
+        $rowSet = $query->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
+    
+    
+    Simple example:
+    
+        Query::delete('Users')->where('userId = :id')->execute(array('id' => $userId);
+    
+    
+    See also the User model.
+    
+*/
 class Query
 {
     /** Query kind: 'SELECT', 'INSERT', 'UPDATE' or 'DELETE'. */
@@ -118,38 +74,6 @@ class Query
         
         $this->kind = $kind;
     }    
-    
-    
-    /*
-    
-    
-    EXAMPLES:
-    
-    
-    Complex example:
-    
-        $query = Query::select('u.userId')->
-                 from('Users u')->
-                 count('id', 'grantTotal')->
-                 aggregate('MAX', 'maximum')->
-                 where('username = :username', 'passwordHash = :hash')->
-                 whereOr('username = :username', 'passwordHash = :hash')->
-                 join('OtherTable o', array('o.id = u.id', 'o.name = u.name'), 'LEFT')->
-                 limit(0, 1)->
-                 orderBy('u.username', 'desc')->
-                 groupBy('u.name');
-        
-        $rowSet = $query->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
-    
-    
-    Simple example:
-    
-        Query::delete('Users')->where('userId = :id')->execute(array('id' => $userId);
-    
-    
-    See also the User model.
-    
-    */
     
     /*
      * Helper methods.

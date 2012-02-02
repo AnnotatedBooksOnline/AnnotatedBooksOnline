@@ -74,7 +74,6 @@ Ext.define('Ext.ux.Activation', {
             },
             function(data)
             {
-                // TODO ...
                 _this.add({
                     xtype: 'container',
                     items: {

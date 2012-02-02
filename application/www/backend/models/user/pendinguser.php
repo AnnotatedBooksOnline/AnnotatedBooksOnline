@@ -50,8 +50,6 @@ class PendingUser extends Entity
     {
         $result = new PendingUser();
         
-        // TODO: Make expiration setting.
-        
         // Expiration dates are set to one week after the current day.
         $expirationDate = time() + 7 * 24 * 60 * 60;
         
