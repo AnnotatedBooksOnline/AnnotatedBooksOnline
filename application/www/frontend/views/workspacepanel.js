@@ -248,8 +248,8 @@ Ext.define('Ext.ux.ExportForm', {
         }
         
         var lastExportPage = firstExportPage + pages - 1;
-        var time = Math.ceil(pages / 20);
-        var size = Math.floor(0.4 + 1.2 * pages);
+        var time = Math.ceil(pages / 3);
+        var size = Math.floor(0.1 + 1.2 * pages);
         
         if (time > 10 || size > 15)
         {

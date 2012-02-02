@@ -154,6 +154,9 @@ class FileCacheEntry extends CacheEntry
         // Unset time limit.
         set_time_limit(0);
         
+        // Do not use output buffers.
+        ob_end_flush();
+        
         // Pass file through.
         readfile($this->filename);
     }
