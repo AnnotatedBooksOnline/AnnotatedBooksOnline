@@ -311,7 +311,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
     {
         this.callParent();
         
-        this.menu = this.items.get(0); // NOTE: this is the panel, should be the toolbar..
+        this.menu = this.items.get(0);
         this.tabs = this.items.get(1);
         
         this.correctVmlSupport();
@@ -324,7 +324,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
         this.openTab('welcome', [], true);
     },
     
-    // TODO: Remove this, as it's IE6 only.
     correctVmlSupport: function()
     {
         if (!Ext.supports.Vml)
