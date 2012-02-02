@@ -778,25 +778,47 @@ Ext.define('Ext.ux.UploadForm', {
         
         if (this.existingBindingId !== undefined) 
         {
-            // Shows a window to doublecheck if this is what the user wanted.
-            // Save changes to binding afterwards.
-            Ext.Msg.show({
-                title: 'Are you sure?',
-                msg: "Modifying a binding will make the binding invisible" +
-                    "for other users until you have completed the 'Modify Binding' wizard. " +
-                    "You can at any time resume this wizard by pressing the 'Complete binding'" +
-                    " button in the application menu. Are you sure you want to continue?",
-                buttons: Ext.Msg.YESNO,
-                icon: Ext.Msg.QUESTION,
-                callback: function(button)
-                {
-                    if (button == 'yes')
+            // If the user is adding scans this doublechecks if he really wants to.
+            var moreScansUnsafe = this.down('scanpanel').getValues().length > 0;
+            if (moreScansUnsave)
+            {
+                Ext.Msg.show({
+                    title: 'Are you sure?',
+                    msg: "Are you sure you want to add new scans to this binding",
+                    buttons: Ext.Msg.YESNO,
+                    icon: Ext.Msg.QUESTION,
+                    callback: function(button)
                     {
-                        _this.setLoading('Uploading...');
-                        _this.checkCompleted();
+                        if (button == 'yes')
+                        {
+                            moreScansUnsave = false;
+                        }
                     }
-                }
-            });
+                });
+            }
+            
+            if (!moreScansUnsave)
+            {
+                // Shows a window to doublecheck if this is what the user wanted.
+                // Save changes to binding afterwards.
+                Ext.Msg.show({
+                    title: 'Are you sure?',
+                    msg: "Modifying a binding will make the binding invisible" +
+                        "for other users until you have completed the 'Modify Binding' wizard. " +
+                        "You can at any time resume this wizard by pressing the 'Complete binding'" +
+                        " button in the application menu. Are you sure you want to continue?",
+                    buttons: Ext.Msg.YESNO,
+                    icon: Ext.Msg.QUESTION,
+                    callback: function(button)
+                    {
+                        if (button == 'yes')
+                        {
+                            _this.setLoading('Uploading...');
+                            _this.checkCompleted();
+                        }
+                    }
+                });
+            }
         }
         else
         {
