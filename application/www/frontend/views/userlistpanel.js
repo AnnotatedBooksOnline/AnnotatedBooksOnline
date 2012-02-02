@@ -64,6 +64,7 @@ Ext.define('Ext.ux.UserListPanel', {
                             msg: message,
                             buttons: buttons,
                             icon: Ext.Msg.QUESTION,
+                            closable: false,
                             callback: function(button)
                             {
                                 if (button == 'yes' || button == 'ok' || (value && button == 'no'))
