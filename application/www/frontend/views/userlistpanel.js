@@ -187,7 +187,7 @@ Ext.define('Ext.ux.UserListPanel', {
             return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
         }
         
-        var defConfig = {
+                var defConfig = {
             border: false,
             items: [{ 
                 xtype: 'grid',
@@ -198,36 +198,36 @@ Ext.define('Ext.ux.UserListPanel', {
                     text:      'Username',
                     flex:      2,
                     dataIndex: 'username',
-                    renderer: 'htmlEncode'
+                    renderer:  'htmlEncode'
                 },{
                     text:      'E-mail',
-                    flex:      1,
-                    renderer:  renderEmail,
-                    dataIndex: 'email'
+                    flex:      2,
+                    dataIndex: 'email',
+                    renderer:  renderEmail
                 },{
                     text:      'First name',
                     flex:      1,
                     dataIndex: 'firstName',
-                    renderer: 'htmlEncode'
+                    renderer:  'htmlEncode'
                 },{
                     text:      'Last name',
                     flex:      2,
                     dataIndex: 'lastName',
-                    renderer: 'htmlEncode'
+                    renderer:  'htmlEncode'
                 },{
                     text:      'Affiliation',
                     flex:      1,
                     dataIndex: 'affiliation',
+                    renderer:  'htmlEncode',
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 },{
                     text:      'Occupation',
                     flex:      1,
                     dataIndex: 'occupation',
+                    renderer:  'htmlEncode',
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 },{
                     text:      'Website',
                     flex:      2,
@@ -239,49 +239,44 @@ Ext.define('Ext.ux.UserListPanel', {
                     text:      'Address',
                     flex:      2,
                     dataIndex: 'homeAddress',
+                    renderer:  'htmlEncode',
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 },{
                     text:      'Role',
                     flex:      2,
                     dataIndex: 'rank',
                     renderer:  renderRank,
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 },{
                     text:      'Banned',
-                    flex:      2,
+                    flex:      1,
                     dataIndex: 'banned',
                     renderer:  renderBanned,
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 },{
                     text:      'Status',
                     flex:      2,
                     dataIndex: 'activationStage',
                     renderer:  renderActivationStage,
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 },{
                     text:      'Registration date',
                     flex:      2,
                     dataIndex: 'registrationDate',
                     renderer:  renderDate,
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 },{
                     text:      'Last active',
                     flex:      2,
                     dataIndex: 'lastActive',
                     renderer:  renderTimestamp,
                     hidden:    true,
-                    hideable:  false,
-                    renderer: 'htmlEncode'
+                    hideable:  false
                 }],
                 tbar: {
                     xtype: 'pagingtoolbar',
