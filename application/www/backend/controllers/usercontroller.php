@@ -91,7 +91,6 @@ class UserController extends ControllerBase
             else
             {
                 $values = array(
-                    'username'    => (string)$username,
                     'email'       => (string)$email,
                     'firstName'   => (string)$firstName,
                     'lastName'    => (string)$lastName,
@@ -106,7 +105,6 @@ class UserController extends ControllerBase
         else
         {
             $values = array(
-                'username'    => (string)$username,
                 'email'       => (string)$email,
                 'firstName'   => (string)$firstName,
                 'lastName'    => (string)$lastName,
