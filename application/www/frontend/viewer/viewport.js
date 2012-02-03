@@ -903,7 +903,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 37: // Left.
+        //case 37: // Left.
         case 100: // Numpad 4.
             if (!this.draggingDisabled)
             {
@@ -912,7 +912,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 39: // Right.
+        //case 39: // Right.
         case 102: // Numpad 6.
             if (!this.draggingDisabled)
             {
@@ -921,7 +921,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 38: // Up.
+        //case 38: // Up.
         case 104: // Numpad 8.
             if (!this.draggingDisabled)
             {
@@ -930,7 +930,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 40: // Down.
+        //case 40: // Down.
         case 98: // Numpad 2.
             if (!this.draggingDisabled)
             {

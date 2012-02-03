@@ -445,7 +445,7 @@ class BindingUploadController extends Controller
     }
     
     /**
-     * Unnecessary
+     * Returns the binding and it's status which the user is currently uploading/modifying
      */
     public function actionGetBindingStatus($data)
     {
