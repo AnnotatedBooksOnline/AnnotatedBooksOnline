@@ -87,15 +87,42 @@ Ext.define('Ext.ux.ReorderScanForm', {
     
     initComponent: function() 
     {
+        this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+        this.store.filter('bindingId', this.bindingId);
+        
+        this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+
+        // A temporary solution to the problem of accessing upload panels through url
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
+            function(result)
+            {
+                if (result['status'] === 0 && result['bindingId'] === this.bindingId && this.bindingId !== undefined)
+                {
+                    this.store.load();
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable for this binding.',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.close();
+                }
+            },
+            function()
+            {
+                 Ext.Msg.show({
+                    title: 'Error',
+                    msg: 'There is a problem with the server. Please try again later.',
+                    buttons: Ext.Msg.OK
+                });
+                this.close();
+            }
+        );
+        
         var _this = this;
-        
-        // Load all scans for this binding.
-        _this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-        _this.store.filter('bindingId', this.bindingId);
-        _this.store.load();
-        
-        _this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
-        
+       
         var defConfig = {
             name: 'reorderscanform',
             selectFirstField: false,

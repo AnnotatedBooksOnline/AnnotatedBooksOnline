@@ -44,13 +44,16 @@ Ext.define('Ext.ux.BindingInformationFieldSet', {
                 {
                     bindingLanguages = ' No language(s)';
                 }
-                
-                this.down('propertygrid').setSource({
-                    "a": binding.get('library').libraryName,
-                    "b": binding.get('signature'),
-                    "c": readerNames.substring(1),
-                    "d": bindingLanguages.substring(1)
-                });
+                var grid = this.down('propertygrid');
+                if (grid !== null)
+                {
+                    grid.setSource({
+                        "a": binding.get('library').libraryName,
+                        "b": binding.get('signature'),
+                        "c": readerNames.substring(1),
+                        "d": bindingLanguages.substring(1)
+                    });
+                }
             },
             callback: function(record, operation) { }
         });

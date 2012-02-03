@@ -276,9 +276,36 @@ Ext.define('Ext.ux.SelectBookForm', {
             });
             
         });
-            
-        this.scanstore.load();
-        this.bookstore.load();
+        
+        // A temporary solution to the problem of accessing upload panels through url
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
+            function(result)
+            {
+                if (result['status'] === 1 && result['bindingId'] === this.bindingId && this.bindingId !== undefined)
+                {
+                    this.scanstore.load();
+                    this.bookstore.load();
+                }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable for this binding.',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.close();
+                }
+            },
+            function()
+            {
+                 Ext.Msg.show({
+                    title: 'Error',
+                    msg: 'There is a problem with the server. Please try again later.',
+                    buttons: Ext.Msg.OK
+                });
+                this.close();
+            }
+        );
         
         var defConfig = {
             monitorValid: true,

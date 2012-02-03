@@ -589,32 +589,58 @@ Ext.define('Ext.ux.UploadForm', {
     {
         var _this = this;
         this.numberOfScans = 0;
-        
-        // Determine if the user is adding a new binding. If this is the case determine if the
-        // there is no existing pending binding for the user.
-        if (this.existingBindingId !== undefined)
-        {            
-            _this.setLoading('Loading binding information...');   
-
-            // Fetch binding.
-            Binding.createFromId(this.existingBindingId, this,
-                function(binding)
-                {                    
-                    _this.down('[name=bindingfields]').fillFromExistingBinding(binding);
-                    _this.down('[name=bookfields]').fillFromExistingBinding(binding);
-                    _this.numberOfScans = binding.getScanAmount();
-                    
-                    _this.setLoading(false);
-
-                },
-                function()
+        // A temporary solution to the problem of accessing upload panels through url
+        RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
+            function(result)
+            {
+                if (result['status'] === 2)
                 {
-                    _this.setLoading(false);
-                
-                    this.close();
+                    // Determine if the user is adding a new binding. If this is the case determine if the
+                    // there is no existing pending binding for the user.
+                    if (this.existingBindingId !== undefined)
+                    {            
+                        _this.setLoading('Loading binding information...');   
+
+                        // Fetch binding.
+                        Binding.createFromId(this.existingBindingId, this,
+                            function(binding)
+                            {                    
+                                _this.down('[name=bindingfields]').fillFromExistingBinding(binding);
+                                _this.down('[name=bookfields]').fillFromExistingBinding(binding);
+                                _this.numberOfScans = binding.getScanAmount();
+                                
+                                _this.setLoading(false);
+
+                            },
+                            function()
+                            {
+                                _this.setLoading(false);
+                            
+                                this.up('[name=upload]').close();
+                            }
+                        );
+                    }
                 }
-            );
-        }
+                else
+                {
+                    Ext.Msg.show({
+                        title: 'Error',
+                        msg: 'This step of the uploading process is currently unavailable for this binding.',
+                        buttons: Ext.Msg.OK
+                    });
+                    this.up('[name=upload]').close();
+                }
+            },
+            function()
+            {
+                 Ext.Msg.show({
+                    title: 'Error',
+                    msg: 'There is a problem with the server. Please try again later.',
+                    buttons: Ext.Msg.OK
+                });
+                this.close();
+            }
+        );
         
         var defConfig = {
             name: 'uploadform',
@@ -776,6 +802,8 @@ Ext.define('Ext.ux.UploadForm', {
     // Save changes to binding afterwards.
     showAreYouSureMessage: function()
     {
+        var _this = this;
+        
         Ext.Msg.show({
             title: 'Are you sure?',
             msg: "Modifying a binding will make the binding invisible" +
