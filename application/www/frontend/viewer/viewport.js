@@ -27,7 +27,7 @@ Viewport.prototype.mousePosition;
 Viewport.prototype.deltaPosition;
 Viewport.prototype.mouseRotation;
 Viewport.prototype.mouseDown = false;
-Viewport.prototype.spaceDown = false;
+Viewport.prototype.shiftDown = false;
 
 Viewport.prototype.draggingDisabled = false;
 Viewport.prototype.zoomingDisabled  = false;
@@ -703,7 +703,7 @@ Viewport.prototype.onMouseMove = function(event)
     //check for rotation
     var deltaRotation = 0;
     var newPosition;
-    if (this.spaceDown && this.document.supportsRotation() && !this.rotationDisabled)
+    if (this.shiftDown && this.document.supportsRotation() && !this.rotationDisabled)
     {
         //get offset of viewport dom
         var domOffset = this.dom.offset();
@@ -783,7 +783,7 @@ Viewport.prototype.onMouseUp = function(event)
     this.dom.removeClass("dragging");
     
     // Check for rotation.
-    if (this.spaceDown)
+    if (this.shiftDown)
     {
         return;
     }
@@ -868,8 +868,8 @@ Viewport.prototype.onKeyDown = function(event)
     
     switch (keyCode)
     {
-        case 32: // Space.
-            this.spaceDown = true;
+        case 16: // Shift.
+            this.shiftDown = true;
             
             // Cancel event if mouse is down.
             if (this.mouseDown)
@@ -950,7 +950,7 @@ Viewport.prototype.onKeyUp = function(event)
     switch (keyCode)
     {
         case 32: // Space.
-            this.spaceDown = false;
+            this.shiftDown = false;
             
             // Cancel event if mouse is down.
             if (this.mouseDown)
