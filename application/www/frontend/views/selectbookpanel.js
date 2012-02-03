@@ -554,12 +554,13 @@ Ext.define('Ext.ux.SelectBookForm', {
         // Send the changes to the database.
         var onSuccess = function(data)
         {
+        
+            Application.getInstance().viewport.updateUploadButtonTitle();
             Ext.Msg.show({
                 title: 'Success',
                 msg: 'The data was succesfully added to the system.',
                 buttons: Ext.Msg.OK
             }); 
-            
             this.close();
         };
         

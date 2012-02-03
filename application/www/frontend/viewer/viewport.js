@@ -27,7 +27,7 @@ Viewport.prototype.mousePosition;
 Viewport.prototype.deltaPosition;
 Viewport.prototype.mouseRotation;
 Viewport.prototype.mouseDown = false;
-Viewport.prototype.spaceDown = false;
+Viewport.prototype.ctrlDown = false;
 
 Viewport.prototype.draggingDisabled = false;
 Viewport.prototype.zoomingDisabled  = false;
@@ -703,7 +703,7 @@ Viewport.prototype.onMouseMove = function(event)
     //check for rotation
     var deltaRotation = 0;
     var newPosition;
-    if (this.spaceDown && this.document.supportsRotation() && !this.rotationDisabled)
+    if (this.ctrlDown && this.document.supportsRotation() && !this.rotationDisabled)
     {
         //get offset of viewport dom
         var domOffset = this.dom.offset();
@@ -783,7 +783,7 @@ Viewport.prototype.onMouseUp = function(event)
     this.dom.removeClass("dragging");
     
     // Check for rotation.
-    if (this.spaceDown)
+    if (this.ctrlDown)
     {
         return;
     }
@@ -868,8 +868,8 @@ Viewport.prototype.onKeyDown = function(event)
     
     switch (keyCode)
     {
-        case 32: // Space.
-            this.spaceDown = true;
+        case 17: // Ctrl.
+            this.ctrlDown = true;
             
             // Cancel event if mouse is down.
             if (this.mouseDown)
@@ -903,7 +903,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 37: // Left.
+        //case 37: // Left.
         case 100: // Numpad 4.
             if (!this.draggingDisabled)
             {
@@ -912,7 +912,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 39: // Right.
+        //case 39: // Right.
         case 102: // Numpad 6.
             if (!this.draggingDisabled)
             {
@@ -921,7 +921,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 38: // Up.
+        //case 38: // Up.
         case 104: // Numpad 8.
             if (!this.draggingDisabled)
             {
@@ -930,7 +930,7 @@ Viewport.prototype.onKeyDown = function(event)
             
             break;
             
-        case 40: // Down.
+        //case 40: // Down.
         case 98: // Numpad 2.
             if (!this.draggingDisabled)
             {
@@ -949,8 +949,8 @@ Viewport.prototype.onKeyUp = function(event)
     
     switch (keyCode)
     {
-        case 32: // Space.
-            this.spaceDown = false;
+        case 17: // Crl.
+            this.ctrlDown = false;
             
             // Cancel event if mouse is down.
             if (this.mouseDown)

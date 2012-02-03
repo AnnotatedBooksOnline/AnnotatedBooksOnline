@@ -483,6 +483,17 @@ Ext.define('Ext.ux.ViewerPanel', {
             }
         }
         
+        //Remove these tools when using an older version of Internet Explorer
+        //as we haven't been able to get these to work correctly.
+        //This can be removed when these tools work properly in these browsers.
+        if($.browser.msie && ($.browser.version < 9))
+        {
+            this.down('[name=rectangle-tool]').hide();
+            this.down('[name=vertex-tool]').hide();
+            this.down('[name=addvertex-tool]').hide();
+            this.down('[name=erasevertex-tool]').hide();
+        }
+        
         // Set view tool if tools are not visible.
         if (!visible && (this.tool !== 'view'))
         {

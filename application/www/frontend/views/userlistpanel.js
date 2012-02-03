@@ -361,7 +361,7 @@ Ext.define('Ext.ux.UserListPanel', {
         for (var i=0; i < columns.length; i++)
         {
             var column = columns[i];
-            column.hideable = true; // doesn't work?
+            column.hideable = true;
             column.show();
         }
     }
