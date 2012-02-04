@@ -33,7 +33,10 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                         text: 'Scan order in binding',
                         xtype: 'label'
                     }]
-                },{
+                }
+                //Commentend because it was unfinished
+                //Commentend because it was unfinished
+                /*,{
                     xtype: 'multiselect',
                     name: 'deletedscans',
                     width: 400,
@@ -48,7 +51,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                         text: 'Deleted scans (drag here to delete)',
                         xtype: 'label'
                     }]
-                }]
+                }*/]
             },{
                 xtype: 'button',
                 text: 'Reset order',
@@ -60,7 +63,7 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                     this.up('[name=reorderscanform]').store.load();
                     
                     // Reset deleted scans.
-                    this.up('[name=reorderscanform]').deletedScanStore.removeAll(false);
+                    //this.up('[name=reorderscanform]').deletedScanStore.removeAll(false);
                 }
             }]
         };
@@ -72,7 +75,8 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
         // Hide the deleted scans list for new binding.
         if (this.isExistingBinding === false)
         {
-            this.down('[name=deletedscans]').hide(true);
+            //uncomment when it does not cause any bugs
+            //this.down('[name=deletedscans]').hide(true);
         }
     }
 });
@@ -90,7 +94,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
         this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
         this.store.filter('bindingId', this.bindingId);
         
-        this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
+        //this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
 
         // A temporary solution to the problem of accessing upload panels through url
         RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
@@ -132,8 +136,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
             },{
                 xtype: 'reorderscanfieldset',
                 name: 'reorder',
-                store: this.store,
-                deletedScanStore: this.deletedScanStore
+                store: this.store//,
+                //deletedScanStore: this.deletedScanStore
             }],
             buttons: [{
                 xtype: 'button',
@@ -188,13 +192,13 @@ Ext.define('Ext.ux.ReorderScanForm', {
             orderedScanIds.push(scanId);
         });
         
-        var deletedScanIds  = [];
+        /*var deletedScanIds  = [];
         this.deletedScanStore.each(function(record)
         {
             var scanId = record.get('scanId');
             deletedScanIds.push(scanId);
         });
-        
+        */
         // Send the changes to the database.
         var onSuccess = function(data)
         {
@@ -208,7 +212,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
             {
                 bindingId: this.bindingId,
                 orderedScans: orderedScanIds,
-                deletedScans: deletedScanIds
+                //empty
+                deletedScans: []
             },
             this,
             onSuccess

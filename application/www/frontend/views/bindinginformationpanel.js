@@ -64,6 +64,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                         'upload', 
                         [this.up('bindinginformationpanel').bindingModel.get('bindingId')], 
                         true);
+                    this.up('viewerpanel').close();
                 }
             },{
                 xtype: 'button',
