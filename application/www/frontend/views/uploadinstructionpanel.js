@@ -43,7 +43,7 @@ Ext.define('Ext.ux.UploadInfo', {
                         cls: 'plaintext',
                         html: textPage +
                         //remove this when the problem is solved
-                        '<br/>Take care not to open or switch to another tab while uploading scans if you are not using Internet Explorer, for this may stop the uploading process.'
+                        '<br/><b style="color:red;">IMPORTANT: </b>Take care not to open or switch to another tab while uploading scans if you are not using Internet Explorer, for this may stop the uploading process.'
                     }
                 };
                 
