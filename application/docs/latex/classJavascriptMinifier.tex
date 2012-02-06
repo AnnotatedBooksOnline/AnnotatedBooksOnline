@@ -102,30 +102,20 @@ Javascript minifier class.
 \hypertarget{classJavascriptMinifier_a3758aa5599a06cb1365171b4ef7cb818}{
 \index{JavascriptMinifier@{JavascriptMinifier}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{input}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::\_\-\_\-construct (\$ {\em input})}}
 \label{classJavascriptMinifier_a3758aa5599a06cb1365171b4ef7cb818}
 Constructor.
 
 
-\begin{DoxyParams}[1]{Parameters}
-string & {\em \$input} & Javascript to be minified. \\
-\hline
-\end{DoxyParams}
+\begin{DoxyParams}{Parameters}
+\item[{\em string}]\$input Javascript to be minified. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classJavascriptMinifier_a0c75407b85df75294ca362f65285df79}{
 \index{JavascriptMinifier@{JavascriptMinifier}!action@{action}}
 \index{action@{action}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{action}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::action (
-\begin{DoxyParamCaption}
-\item[{\$}]{command}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{action}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::action (\$ {\em command})\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classJavascriptMinifier_a0c75407b85df75294ca362f65285df79}
 Action -\/-\/ do something! What to do is determined by the \$command argument.
 
@@ -133,27 +123,19 @@ action treats a string as a single character. Wow! action recognizes a regular e
 
 \hyperlink{classJavascriptMinifier_af6ec11eefc8cd9f0e456fa9d37a8c59d}{next()}  \hyperlink{classJavascriptMinifier_ae7e2ae85b89dcd36f10c8298cc5c8749}{get()} 
 \begin{DoxyExceptions}{Exceptions}
-{\em \hyperlink{classJavascriptMinifierException}{JavascriptMinifierException}} & If parser errors are found:
+\item[{\em \hyperlink{classJavascriptMinifierException}{JavascriptMinifierException}}]If parser errors are found:
 \begin{DoxyItemize}
 \item Unterminated string literal
 \item Unterminated regular expression set in regex literal
 \item Unterminated regular expression literal 
-\end{DoxyItemize}\\
-\hline
-\end{DoxyExceptions}
+\end{DoxyItemize}\end{DoxyExceptions}
 
-\begin{DoxyParams}[1]{Parameters}
-int & {\em \$command} & One of class constants: ACTION\_\-KEEP\_\-A Output A. Copy B to A. Get the next B. ACTION\_\-DELETE\_\-A Copy B to A. Get the next B. (Delete A). ACTION\_\-DELETE\_\-A\_\-B Get the next B. (Delete B). \\
-\hline
-\end{DoxyParams}
+\begin{DoxyParams}{Parameters}
+\item[{\em int}]\$command One of class constants: ACTION\_\-KEEP\_\-A Output A. Copy B to A. Get the next B. ACTION\_\-DELETE\_\-A Copy B to A. Get the next B. (Delete A). ACTION\_\-DELETE\_\-A\_\-B Get the next B. (Delete B). \end{DoxyParams}
 \hypertarget{classJavascriptMinifier_ae7e2ae85b89dcd36f10c8298cc5c8749}{
 \index{JavascriptMinifier@{JavascriptMinifier}!get@{get}}
 \index{get@{get}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::get (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::get ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classJavascriptMinifier_ae7e2ae85b89dcd36f10c8298cc5c8749}
 Get next char. Convert ctrl char to space.
 
@@ -163,11 +145,7 @@ string$|$null
 \hypertarget{classJavascriptMinifier_a0a745cbf92ba3dd748b736b1f20abd87}{
 \index{JavascriptMinifier@{JavascriptMinifier}!isAlphaNum@{isAlphaNum}}
 \index{isAlphaNum@{isAlphaNum}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{isAlphaNum}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::isAlphaNum (
-\begin{DoxyParamCaption}
-\item[{\$}]{c}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{isAlphaNum}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::isAlphaNum (\$ {\em c})\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classJavascriptMinifier_a0a745cbf92ba3dd748b736b1f20abd87}
 Is \$c a letter, digit, underscore, dollar sign, or non-\/ASCII character.
 
@@ -177,11 +155,7 @@ bool
 \hypertarget{classJavascriptMinifier_a67114eb8f254e1765a79ba839e979715}{
 \index{JavascriptMinifier@{JavascriptMinifier}!min@{min}}
 \index{min@{min}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{min}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::min (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{min}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::min ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classJavascriptMinifier_a67114eb8f254e1765a79ba839e979715}
 Perform minification, return result
 
@@ -191,49 +165,33 @@ string
 \hypertarget{classJavascriptMinifier_ab08f36fceb7761733428ba4ce9375b71}{
 \index{JavascriptMinifier@{JavascriptMinifier}!minify@{minify}}
 \index{minify@{minify}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{minify}]{\setlength{\rightskip}{0pt plus 5cm}static JavascriptMinifier::minify (
-\begin{DoxyParamCaption}
-\item[{\$}]{js}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{minify}]{\setlength{\rightskip}{0pt plus 5cm}static JavascriptMinifier::minify (\$ {\em js})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classJavascriptMinifier_ab08f36fceb7761733428ba4ce9375b71}
 Minifies Javascript.
 
 \hyperlink{classJavascriptMinifier_a3758aa5599a06cb1365171b4ef7cb818}{\_\-\_\-construct()}  \hyperlink{classJavascriptMinifier_a67114eb8f254e1765a79ba839e979715}{min()} 
-\begin{DoxyParams}[1]{Parameters}
-string & {\em \$js} & Javascript to be minified \\
-\hline
-\end{DoxyParams}
+\begin{DoxyParams}{Parameters}
+\item[{\em string}]\$js Javascript to be minified \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 string 
 \end{DoxyReturn}
 \hypertarget{classJavascriptMinifier_af6ec11eefc8cd9f0e456fa9d37a8c59d}{
 \index{JavascriptMinifier@{JavascriptMinifier}!next@{next}}
 \index{next@{next}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{next}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::next (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{next}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::next ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classJavascriptMinifier_af6ec11eefc8cd9f0e456fa9d37a8c59d}
 Get the next character, skipping over comments. \hyperlink{classJavascriptMinifier_a7cb211bf16d3b5cc798d8fed55adff5e}{peek()} is used to see if a '/' is followed by a '/' or '$\ast$'.
 
 \hyperlink{classJavascriptMinifier_ae7e2ae85b89dcd36f10c8298cc5c8749}{get()}  \hyperlink{classJavascriptMinifier_a7cb211bf16d3b5cc798d8fed55adff5e}{peek()} 
 \begin{DoxyExceptions}{Exceptions}
-{\em \hyperlink{classJavascriptMinifierException}{JavascriptMinifierException}} & On unterminated comment. \\
-\hline
-\end{DoxyExceptions}
+\item[{\em \hyperlink{classJavascriptMinifierException}{JavascriptMinifierException}}]On unterminated comment. \end{DoxyExceptions}
 \begin{DoxyReturn}{Returns}
 string 
 \end{DoxyReturn}
 \hypertarget{classJavascriptMinifier_a7cb211bf16d3b5cc798d8fed55adff5e}{
 \index{JavascriptMinifier@{JavascriptMinifier}!peek@{peek}}
 \index{peek@{peek}!JavascriptMinifier@{JavascriptMinifier}}
-\subsubsection[{peek}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::peek (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{peek}]{\setlength{\rightskip}{0pt plus 5cm}JavascriptMinifier::peek ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classJavascriptMinifier_a7cb211bf16d3b5cc798d8fed55adff5e}
 Get next char. If is ctrl character, translate to a space or newline.
 

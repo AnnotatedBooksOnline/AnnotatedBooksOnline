@@ -1,0 +1,23 @@
+<map id="G" name="G">
+<area shape="rect" href="$classEntity.html" title="Entity" alt="" coords="5,411,61,437"/>
+<area shape="rect" href="$classAnnotation.html" title="Annotation" alt="" coords="129,56,212,83"/>
+<area shape="rect" href="$classAssociativeEntity.html" title="AssociativeEntity" alt="" coords="111,107,231,133"/>
+<area shape="rect" href="$classBinding.html" title="Binding" alt="" coords="139,157,203,184"/>
+<area shape="rect" href="$classBook.html" title="Book" alt="" coords="145,208,196,235"/>
+<area shape="rect" href="$classHelpPage.html" title="HelpPage" alt="" coords="132,259,209,285"/>
+<area shape="rect" href="$classHelpParagraph.html" title="HelpParagraph" alt="" coords="117,309,224,336"/>
+<area shape="rect" href="$classLanguage.html" title="Language" alt="" coords="132,360,209,387"/>
+<area shape="rect" href="$classLibrary.html" title="Library" alt="" coords="141,411,200,437"/>
+<area shape="rect" href="$classPendingUser.html" title="PendingUser" alt="" coords="123,461,219,488"/>
+<area shape="rect" href="$classPermission.html" title="Permission" alt="" coords="128,512,213,539"/>
+<area shape="rect" href="$classPerson.html" title="Person" alt="" coords="140,563,201,589"/>
+<area shape="rect" href="$classScan.html" title="Scan" alt="" coords="145,613,196,640"/>
+<area shape="rect" href="$classSetting.html" title="Setting" alt="" coords="140,664,201,691"/>
+<area shape="rect" href="$classUpload.html" title="Upload" alt="" coords="140,715,201,741"/>
+<area shape="rect" href="$classUser.html" title="User" alt="" coords="147,765,195,792"/>
+<area shape="rect" href="$classAuthor.html" title="Author" alt="" coords="311,5,369,32"/>
+<area shape="rect" href="$classBindingLanguage.html" title="BindingLanguage" alt="" coords="280,56,400,83"/>
+<area shape="rect" href="$classBookLanguage.html" title="BookLanguage" alt="" coords="287,107,393,133"/>
+<area shape="rect" href="$classNote.html" title="Note" alt="" coords="316,157,364,184"/>
+<area shape="rect" href="$classProvenance.html" title="Provenance" alt="" coords="296,208,384,235"/>
+</map>

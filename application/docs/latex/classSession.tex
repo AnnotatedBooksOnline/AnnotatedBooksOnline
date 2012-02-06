@@ -2,10 +2,22 @@
 \section{Session Class Reference}
 \label{classSession}\index{Session@{Session}}
 }
-Inheritance diagram for Session:\begin{figure}[H]
+
+
+Inheritance diagram for Session:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classSession}
+\includegraphics[width=124pt]{classSession__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Session:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=124pt]{classSession__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -38,11 +50,7 @@ Represents the current user session.
 \hypertarget{classSession_a36373ba15d6c8f932aeea02d7320d7c8}{
 \index{Session@{Session}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Session@{Session}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Session::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Session::\_\-\_\-construct ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classSession_a36373ba15d6c8f932aeea02d7320d7c8}
 Constructs a session class instance. 
 
@@ -54,76 +62,49 @@ Reimplemented from \hyperlink{classSingleton}{Singleton}.
 \hypertarget{classSession_a1747aaae205a1e90e14cb9de48120cd8}{
 \index{Session@{Session}!exists@{exists}}
 \index{exists@{exists}!Session@{Session}}
-\subsubsection[{exists}]{\setlength{\rightskip}{0pt plus 5cm}Session::exists (
-\begin{DoxyParamCaption}
-\item[{\$}]{name}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{exists}]{\setlength{\rightskip}{0pt plus 5cm}Session::exists (\$ {\em name})}}
 \label{classSession_a1747aaae205a1e90e14cb9de48120cd8}
 Checks whether a variable exists in the session.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$name} & Name of the variable.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$name}]Name of the variable.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 Whether the variable exists. 
 \end{DoxyReturn}
 \hypertarget{classSession_a8cbfa64ffa31a33a61d62d4396985e07}{
 \index{Session@{Session}!getVar@{getVar}}
 \index{getVar@{getVar}!Session@{Session}}
-\subsubsection[{getVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::getVar (
-\begin{DoxyParamCaption}
-\item[{\$}]{name}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{getVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::getVar (\$ {\em name})}}
 \label{classSession_a8cbfa64ffa31a33a61d62d4396985e07}
 Sets a session variable.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$name} & Name of the variable.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$name}]Name of the variable.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The value of the variable or the empty string if it does not exist. 
 \end{DoxyReturn}
 \hypertarget{classSession_aed85e756b6654874dfd6c94f0382d061}{
 \index{Session@{Session}!setVar@{setVar}}
 \index{setVar@{setVar}!Session@{Session}}
-\subsubsection[{setVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::setVar (
-\begin{DoxyParamCaption}
-\item[{\$}]{name, }
-\item[{\$}]{value}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{setVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::setVar (\$ {\em name}, \/  \$ {\em value})}}
 \label{classSession_aed85e756b6654874dfd6c94f0382d061}
 Sets a session variable.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$name} & Name of the variable. \\
-\hline
-{\em \$value} & Value of the variable. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$name}]Name of the variable. \item[{\em \$value}]Value of the variable. \end{DoxyParams}
 \hypertarget{classSession_ac0b791332d81ad7f542edeee935d0db4}{
 \index{Session@{Session}!unsetVar@{unsetVar}}
 \index{unsetVar@{unsetVar}!Session@{Session}}
-\subsubsection[{unsetVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::unsetVar (
-\begin{DoxyParamCaption}
-\item[{\$}]{name}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{unsetVar}]{\setlength{\rightskip}{0pt plus 5cm}Session::unsetVar (\$ {\em name})}}
 \label{classSession_ac0b791332d81ad7f542edeee935d0db4}
 Unsets a session variable.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$name} & Name of the variable. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$name}]Name of the variable. \end{DoxyParams}
 
 
 \subsection{Member Data Documentation}

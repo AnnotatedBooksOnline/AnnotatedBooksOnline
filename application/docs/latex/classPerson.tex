@@ -2,10 +2,22 @@
 \section{Person Class Reference}
 \label{classPerson}\index{Person@{Person}}
 }
-Inheritance diagram for Person:\begin{figure}[H]
+
+
+Inheritance diagram for Person:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classPerson}
+\includegraphics[height=400pt]{classPerson__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Person:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classPerson__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for Person:\begin{figure}[H]
 \item 
 \hyperlink{classPerson_ae90ab9571c872e6b130d2cf46c1b47ce}{\_\-\_\-construct} (\$personId=null)
 \item 
-\hypertarget{classPerson_afadb1ac8614a060035c9992d2663e27e}{
-{\bfseries getPersonId} ()}
-\label{classPerson_afadb1ac8614a060035c9992d2663e27e}
-
+\hyperlink{classPerson_afadb1ac8614a060035c9992d2663e27e}{getPersonId} ()
 \item 
 \hypertarget{classPerson_a0033c4269f371539c82017b8e422ba39}{
 {\bfseries setPersonId} (\$personId)}
@@ -60,30 +69,20 @@ Class representing a person entity.
 \hypertarget{classPerson_ae90ab9571c872e6b130d2cf46c1b47ce}{
 \index{Person@{Person}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Person@{Person}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Person::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{personId = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Person::\_\-\_\-construct (\$ {\em personId} = {\ttfamily null})}}
 \label{classPerson_ae90ab9571c872e6b130d2cf46c1b47ce}
 Constructs a person by id.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the person. Default (null) will create a new person. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the person. Default (null) will create a new person. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classPerson_aeab90b54dcfecd955b00bd64ceec6eae}{
 \index{Person@{Person}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Person@{Person}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPerson_aeab90b54dcfecd955b00bd64ceec6eae}
 Gets all the columns.
 
@@ -97,11 +96,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classPerson_aed60680c05bbf313249396521da7df27}{
 \index{Person@{Person}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Person@{Person}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPerson_aed60680c05bbf313249396521da7df27}
 Gets all the column types, per column, including primary keys.
 
@@ -112,14 +107,15 @@ Array of all column types.
 
 Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
 
-\hypertarget{classPerson_a127a92657a50a2a51c8892dd625af9ee}{
+\hypertarget{classPerson_afadb1ac8614a060035c9992d2663e27e}{
+\index{Person@{Person}!getPersonId@{getPersonId}}
+\index{getPersonId@{getPersonId}!Person@{Person}}
+\subsubsection[{getPersonId}]{\setlength{\rightskip}{0pt plus 5cm}Person::getPersonId ()}}
+\label{classPerson_afadb1ac8614a060035c9992d2663e27e}
+Getters and setters. \hypertarget{classPerson_a127a92657a50a2a51c8892dd625af9ee}{
 \index{Person@{Person}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Person@{Person}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPerson_a127a92657a50a2a51c8892dd625af9ee}
 Gets the primary keys.
 
@@ -133,11 +129,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classPerson_ab68a8aed417028b7755fb8c6c6fb2b62}{
 \index{Person@{Person}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Person@{Person}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Person::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPerson_ab68a8aed417028b7755fb8c6c6fb2b62}
 Gets the table name.
 

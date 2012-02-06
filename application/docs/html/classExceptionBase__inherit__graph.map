@@ -1,0 +1,28 @@
+<map id="G" name="G">
+<area shape="rect" href="$classAccessDeniedException.html" title="{AccessDeniedException\n||+ __construct()\l}" alt="" coords="5,181,168,261"/>
+<area shape="rect" href="$classBindingStatusException.html" title="{BindingStatusException\n||}" alt="" coords="192,181,352,261"/>
+<area shape="rect" href="$classBookNotFoundException.html" title="{BookNotFoundException\n||+ __construct()\l}" alt="" coords="376,181,541,261"/>
+<area shape="rect" href="$classConfigurationException.html" title="{ConfigurationException\n||}" alt="" coords="565,181,720,261"/>
+<area shape="rect" href="$classControllerException.html" title="{ControllerException\n||}" alt="" coords="744,181,877,261"/>
+<area shape="rect" href="$classDatabaseException.html" title="{DatabaseException\n||}" alt="" coords="901,181,1035,261"/>
+<area shape="rect" href="$classEntityException.html" title="{EntityException\n||}" alt="" coords="1059,181,1171,261"/>
+<area shape="rect" href="$classFormatException.html" title="{FormatException\n||}" alt="" coords="1195,181,1315,261"/>
+<area shape="rect" href="$classJavascriptMinifierException.html" title="{JavascriptMinifierException\n||+ __construct()\l}" alt="" coords="1339,181,1515,261"/>
+<area shape="rect" href="$classMailerException.html" title="{MailerException\n||}" alt="" coords="1539,181,1653,261"/>
+<area shape="rect" href="$classNotLoggedOnException.html" title="{NotLoggedOnException\n||+ __construct()\l}" alt="" coords="1677,181,1835,261"/>
+<area shape="rect" href="$classPasswordIncorrectException.html" title="{PasswordIncorrectException\n||}" alt="" coords="1859,181,2045,261"/>
+<area shape="rect" href="$classPdfException.html" title="{PdfException\n||+ __construct()\l}" alt="" coords="2069,181,2179,261"/>
+<area shape="rect" href="$classQueryFormatException.html" title="{QueryFormatException\n||}" alt="" coords="2203,181,2357,261"/>
+<area shape="rect" href="$classRegistrationFailedException.html" title="{RegistrationFailedException\n||}" alt="" coords="2381,181,2565,261"/>
+<area shape="rect" href="$classResultSetException.html" title="{ResultSetException\n||}" alt="" coords="2589,181,2725,261"/>
+<area shape="rect" href="$classSettingException.html" title="{SettingException\n||}" alt="" coords="2749,181,2869,261"/>
+<area shape="rect" href="$classSingletonException.html" title="{SingletonException\n||}" alt="" coords="2893,181,3027,261"/>
+<area shape="rect" href="$classTilePyramidBuilderException.html" title="{TilePyramidBuilderException\n||}" alt="" coords="3051,181,3237,261"/>
+<area shape="rect" href="$classUploadException.html" title="{UploadException\n||}" alt="" coords="3261,181,3381,261"/>
+<area shape="rect" href="$classUserActivationException.html" title="{UserActivationException\n||}" alt="" coords="3405,181,3568,261"/>
+<area shape="rect" href="$classUserBannedException.html" title="{UserBannedException\n||+ __construct()\l}" alt="" coords="3592,181,3741,261"/>
+<area shape="rect" href="$classUserNotFoundException.html" title="{UserNotFoundException\n||+ __construct()\l}" alt="" coords="3765,181,3928,261"/>
+<area shape="rect" href="$classUserPendingException.html" title="{UserPendingException\n||+ __construct()\l}" alt="" coords="3952,181,4104,261"/>
+<area shape="rect" href="$classUserShouldActivateException.html" title="{UserShouldActivateException\n||+ __construct()\l}" alt="" coords="4128,181,4320,261"/>
+<area shape="rect" href="$classSettingNotFoundException.html" title="{SettingNotFoundException\n||}" alt="" coords="555,309,731,389"/>
+</map>

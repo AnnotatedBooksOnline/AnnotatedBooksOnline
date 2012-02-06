@@ -2,10 +2,22 @@
 \section{UserController Class Reference}
 \label{classUserController}\index{UserController@{UserController}}
 }
-Inheritance diagram for UserController:\begin{figure}[H]
+
+
+Inheritance diagram for UserController:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{classUserController}
+\includegraphics[height=400pt]{classUserController__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for UserController:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classUserController__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -42,124 +54,62 @@ Inheritance diagram for UserController:\begin{figure}[H]
 \hypertarget{classUserController_a3e41d7a8100c0a094330227a872b100a}{
 \index{UserController@{UserController}!actionBanUser@{actionBanUser}}
 \index{actionBanUser@{actionBanUser}!UserController@{UserController}}
-\subsubsection[{actionBanUser}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionBanUser (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionBanUser}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionBanUser (\$ {\em data})}}
 \label{classUserController_a3e41d7a8100c0a094330227a872b100a}
 Bans a user. \hypertarget{classUserController_ad0a71c9656f67576fc07b7b58b94640e}{
 \index{UserController@{UserController}!actionChangeForgottenPassword@{actionChangeForgottenPassword}}
 \index{actionChangeForgottenPassword@{actionChangeForgottenPassword}!UserController@{UserController}}
-\subsubsection[{actionChangeForgottenPassword}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionChangeForgottenPassword (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionChangeForgottenPassword}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionChangeForgottenPassword (\$ {\em data})}}
 \label{classUserController_ad0a71c9656f67576fc07b7b58b94640e}
-Changes a user's forgotten password based on a token.
-
-
-\begin{DoxyParams}{Parameters}
-{\em \$data} & Should contain a 'token' and a newly entered 'password'. \\
-\hline
-\end{DoxyParams}
-\hypertarget{classUserController_ab1b1338f5cbaaaa66a8f8e2f56029b14}{
+Changes a user's forgotten password based on a token. \hypertarget{classUserController_ab1b1338f5cbaaaa66a8f8e2f56029b14}{
 \index{UserController@{UserController}!actionChangeRole@{actionChangeRole}}
 \index{actionChangeRole@{actionChangeRole}!UserController@{UserController}}
-\subsubsection[{actionChangeRole}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionChangeRole (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionChangeRole}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionChangeRole (\$ {\em data})}}
 \label{classUserController_ab1b1338f5cbaaaa66a8f8e2f56029b14}
 Change the role (rank) of a user.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Should contain 'username' and 'role', the latter being a number indicating the new rank of this user. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Should contain 'username' and 'role', the latter being a number indicating the new rank of this user. \end{DoxyParams}
 \hypertarget{classUserController_a76cd84168a31f120db7c870d122f2270}{
 \index{UserController@{UserController}!actionCreate@{actionCreate}}
 \index{actionCreate@{actionCreate}!UserController@{UserController}}
-\subsubsection[{actionCreate}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionCreate (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionCreate}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionCreate (\$ {\em data})}}
 \label{classUserController_a76cd84168a31f120db7c870d122f2270}
 Creates a user. \hypertarget{classUserController_af0a863a6fb8e1abb0e5830bb787c580c}{
 \index{UserController@{UserController}!actionDeleteUser@{actionDeleteUser}}
 \index{actionDeleteUser@{actionDeleteUser}!UserController@{UserController}}
-\subsubsection[{actionDeleteUser}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionDeleteUser (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionDeleteUser}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionDeleteUser (\$ {\em data})}}
 \label{classUserController_af0a863a6fb8e1abb0e5830bb787c580c}
-Deletes an user. \hypertarget{classUserController_a6a6bb3ce82990762f17460bf6b57595f}{
+Deletes a user. \hypertarget{classUserController_a6a6bb3ce82990762f17460bf6b57595f}{
 \index{UserController@{UserController}!actionEmailExists@{actionEmailExists}}
 \index{actionEmailExists@{actionEmailExists}!UserController@{UserController}}
-\subsubsection[{actionEmailExists}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionEmailExists (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionEmailExists}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionEmailExists (\$ {\em data})}}
 \label{classUserController_a6a6bb3ce82990762f17460bf6b57595f}
 Checks whether an email address already exists as an email adress or username. \hypertarget{classUserController_a7295cd724ff78bf67971bc98423405e0}{
 \index{UserController@{UserController}!actionLoad@{actionLoad}}
 \index{actionLoad@{actionLoad}!UserController@{UserController}}
-\subsubsection[{actionLoad}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionLoad (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionLoad}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionLoad (\$ {\em data})}}
 \label{classUserController_a7295cd724ff78bf67971bc98423405e0}
 Loads users. \hypertarget{classUserController_a871a1c07ec9fc14a41a57d1e6268aa6d}{
 \index{UserController@{UserController}!actionPasswordForgotten@{actionPasswordForgotten}}
 \index{actionPasswordForgotten@{actionPasswordForgotten}!UserController@{UserController}}
-\subsubsection[{actionPasswordForgotten}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionPasswordForgotten (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionPasswordForgotten}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionPasswordForgotten (\$ {\em data})}}
 \label{classUserController_a871a1c07ec9fc14a41a57d1e6268aa6d}
-Sends an e-\/mail to the user containing a link with which he/she can enter a new password.
-
-The only information a user needs to specify for this is an e-\/mail address.
-
-
-\begin{DoxyParams}{Parameters}
-{\em \$data} & Should have an 'email' key. \\
-\hline
-\end{DoxyParams}
-\hypertarget{classUserController_aa2eeb49ff1dbd448a986e97a72179fb5}{
+Sends an e-\/mail to the user containing a link with which he/she can enter a new password. The only information a user needs to specify for this is an e-\/mail address. \hypertarget{classUserController_aa2eeb49ff1dbd448a986e97a72179fb5}{
 \index{UserController@{UserController}!actionSave@{actionSave}}
 \index{actionSave@{actionSave}!UserController@{UserController}}
-\subsubsection[{actionSave}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionSave (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionSave}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionSave (\$ {\em data})}}
 \label{classUserController_aa2eeb49ff1dbd448a986e97a72179fb5}
 Saves a user. \hypertarget{classUserController_a4506a9975c5185621d76a163c514dbd9}{
 \index{UserController@{UserController}!actionUnBanUser@{actionUnBanUser}}
 \index{actionUnBanUser@{actionUnBanUser}!UserController@{UserController}}
-\subsubsection[{actionUnBanUser}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionUnBanUser (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionUnBanUser}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionUnBanUser (\$ {\em data})}}
 \label{classUserController_a4506a9975c5185621d76a163c514dbd9}
 Unbans a user. \hypertarget{classUserController_a68423799af006a035af5f5a7dc466166}{
 \index{UserController@{UserController}!actionUsernameExists@{actionUsernameExists}}
 \index{actionUsernameExists@{actionUsernameExists}!UserController@{UserController}}
-\subsubsection[{actionUsernameExists}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionUsernameExists (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionUsernameExists}]{\setlength{\rightskip}{0pt plus 5cm}UserController::actionUsernameExists (\$ {\em data})}}
 \label{classUserController_a68423799af006a035af5f5a7dc466166}
 Checks whether a username already exists as an username or email address. 
 

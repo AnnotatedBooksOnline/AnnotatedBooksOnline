@@ -2,10 +2,22 @@
 \section{Binding Class Reference}
 \label{classBinding}\index{Binding@{Binding}}
 }
-Inheritance diagram for Binding:\begin{figure}[H]
+
+
+Inheritance diagram for Binding:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classBinding}
+\includegraphics[height=400pt]{classBinding__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Binding:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classBinding__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,12 +25,11 @@ Inheritance diagram for Binding:\begin{figure}[H]
 \item 
 \hyperlink{classBinding_a0abc79cbae099b6074a023de794ba7d6}{\_\-\_\-construct} (\$id=null)
 \item 
+\hyperlink{classBinding_a023428000f04edf6e7654caedfe023d7}{loadDetails} ()
+\item 
 \hyperlink{classBinding_a7fe288b95f637d4dee16918f985df0ff}{saveDetails} ()
 \item 
-\hypertarget{classBinding_a4b2ec4db2835ba983bdbb9bdba2d8d1c}{
-{\bfseries getBindingId} ()}
-\label{classBinding_a4b2ec4db2835ba983bdbb9bdba2d8d1c}
-
+\hyperlink{classBinding_a4b2ec4db2835ba983bdbb9bdba2d8d1c}{getBindingId} ()
 \item 
 \hypertarget{classBinding_a13413fc3d41fd1c16d1126850bd6269f}{
 {\bfseries setBindingId} (\$bindingId)}
@@ -104,6 +115,16 @@ Inheritance diagram for Binding:\begin{figure}[H]
 {\bfseries setBindingLanguageList} (\$bindingLanguageList)}
 \label{classBinding_a76f118ba96e8fefbf419bdac2d128e68}
 
+\item 
+\hypertarget{classBinding_a3be827b9389fe7900bced4dc091e3a0d}{
+{\bfseries getUserId} ()}
+\label{classBinding_a3be827b9389fe7900bced4dc091e3a0d}
+
+\item 
+\hypertarget{classBinding_a8eaf8c4dd247d19d4e49779a23360474}{
+{\bfseries setUserId} (\$userId)}
+\label{classBinding_a8eaf8c4dd247d19d4e49779a23360474}
+
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
@@ -130,6 +151,11 @@ const {\bfseries STATUS\_\-REORDERED} = 1}
 const {\bfseries STATUS\_\-SELECTED} = 2}
 \label{classBinding_a4cd41675d4a2d1683981fce67de2b641}
 
+\item 
+\hypertarget{classBinding_a1f7764fe42804772f01231d3b8938beb}{
+const {\bfseries STATUS\_\-DELETED} = 3}
+\label{classBinding_a1f7764fe42804772f01231d3b8938beb}
+
 \end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
@@ -146,6 +172,8 @@ const {\bfseries STATUS\_\-SELECTED} = 2}
 \item 
 \hyperlink{classBinding_abf327f008d27256a4756e6e08819d87b}{\$bookList}
 \item 
+\hyperlink{classBinding_ab62d5639d1a6f658de8a5fda326cc30d}{\$userId}
+\item 
 \hyperlink{classBinding_a1ba6844e15978a1136a50632f30e29b6}{\$scanList}
 \item 
 \hyperlink{classBinding_a9f4c618edbd6df5e1972aae7350e37d4}{\$provenanceList}
@@ -161,30 +189,25 @@ Class representing a binding entity.
 \hypertarget{classBinding_a0abc79cbae099b6074a023de794ba7d6}{
 \index{Binding@{Binding}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Binding@{Binding}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Binding::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{id = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Binding::\_\-\_\-construct (\$ {\em id} = {\ttfamily null})}}
 \label{classBinding_a0abc79cbae099b6074a023de794ba7d6}
 Constructs a binding by id.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the binding. Default (null) will create a new binding. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the binding. Default (null) will create a new binding. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classBinding_a4caf9958cba0f34b8b08aae313afc9ec}{
+\hypertarget{classBinding_a4b2ec4db2835ba983bdbb9bdba2d8d1c}{
+\index{Binding@{Binding}!getBindingId@{getBindingId}}
+\index{getBindingId@{getBindingId}!Binding@{Binding}}
+\subsubsection[{getBindingId}]{\setlength{\rightskip}{0pt plus 5cm}Binding::getBindingId ()}}
+\label{classBinding_a4b2ec4db2835ba983bdbb9bdba2d8d1c}
+Getters and setters. \hypertarget{classBinding_a4caf9958cba0f34b8b08aae313afc9ec}{
 \index{Binding@{Binding}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Binding@{Binding}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBinding_a4caf9958cba0f34b8b08aae313afc9ec}
 Gets all the columns.
 
@@ -198,11 +221,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classBinding_aded437d056ec24770d8bf4eebdeec36e}{
 \index{Binding@{Binding}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Binding@{Binding}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBinding_aded437d056ec24770d8bf4eebdeec36e}
 Gets all the column types, per column, including primary keys.
 
@@ -216,11 +235,7 @@ Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Ent
 \hypertarget{classBinding_ac7539d5770936644b98be102ed66a4e5}{
 \index{Binding@{Binding}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Binding@{Binding}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBinding_ac7539d5770936644b98be102ed66a4e5}
 Gets the primary keys.
 
@@ -234,11 +249,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classBinding_aee5dd30aab182b19046ab5164da4c649}{
 \index{Binding@{Binding}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Binding@{Binding}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Binding::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBinding_aee5dd30aab182b19046ab5164da4c649}
 Gets the table name.
 
@@ -249,16 +260,17 @@ The table name.
 
 Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
 
-\hypertarget{classBinding_a7fe288b95f637d4dee16918f985df0ff}{
+\hypertarget{classBinding_a023428000f04edf6e7654caedfe023d7}{
+\index{Binding@{Binding}!loadDetails@{loadDetails}}
+\index{loadDetails@{loadDetails}!Binding@{Binding}}
+\subsubsection[{loadDetails}]{\setlength{\rightskip}{0pt plus 5cm}Binding::loadDetails ()}}
+\label{classBinding_a023428000f04edf6e7654caedfe023d7}
+Loads all associtated entity lists. \hypertarget{classBinding_a7fe288b95f637d4dee16918f985df0ff}{
 \index{Binding@{Binding}!saveDetails@{saveDetails}}
 \index{saveDetails@{saveDetails}!Binding@{Binding}}
-\subsubsection[{saveDetails}]{\setlength{\rightskip}{0pt plus 5cm}Binding::saveDetails (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{saveDetails}]{\setlength{\rightskip}{0pt plus 5cm}Binding::saveDetails ()}}
 \label{classBinding_a7fe288b95f637d4dee16918f985df0ff}
-Saves entity its relations. 
+Saves all associated entity lists. 
 
 Reimplemented from \hyperlink{classEntity_a48cdc3830bf695078a69a56f23e1b874}{Entity}.
 
@@ -310,7 +322,12 @@ Signature of the binding \hypertarget{classBinding_a1320ef2d72d40ce811c675afc602
 \index{\$summary@{\$summary}!Binding@{Binding}}
 \subsubsection[{\$summary}]{\setlength{\rightskip}{0pt plus 5cm}Binding::\$summary\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classBinding_ae960edd7ba2a427c3853936f0e1a380e}
-Summary of the contents of the binding. \hypertarget{classBinding_a501dc5e8d8952bcbd5d022a299c416fd}{
+Summary of the contents of the binding. \hypertarget{classBinding_ab62d5639d1a6f658de8a5fda326cc30d}{
+\index{Binding@{Binding}!\$userId@{\$userId}}
+\index{\$userId@{\$userId}!Binding@{Binding}}
+\subsubsection[{\$userId}]{\setlength{\rightskip}{0pt plus 5cm}Binding::\$userId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classBinding_ab62d5639d1a6f658de8a5fda326cc30d}
+\hyperlink{classUser}{User} this binding was created by. \hypertarget{classBinding_a501dc5e8d8952bcbd5d022a299c416fd}{
 \index{Binding@{Binding}!STATUS\_\-UPLOADED@{STATUS\_\-UPLOADED}}
 \index{STATUS\_\-UPLOADED@{STATUS\_\-UPLOADED}!Binding@{Binding}}
 \subsubsection[{STATUS\_\-UPLOADED}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Binding::STATUS\_\-UPLOADED} = 0}}

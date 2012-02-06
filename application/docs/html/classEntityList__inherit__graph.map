@@ -1,0 +1,15 @@
+<map id="G" name="G">
+<area shape="rect" href="$classAnnotationList.html" title="{AnnotationList\n||}" alt="" coords="5,533,109,613"/>
+<area shape="rect" href="$classAuthorList.html" title="{AuthorList\n||}" alt="" coords="133,533,213,613"/>
+<area shape="rect" href="$classBindingLanguageList.html" title="{BindingLanguageList\n||}" alt="" coords="237,533,379,613"/>
+<area shape="rect" href="$classBindingList.html" title="{BindingList\n||}" alt="" coords="403,533,488,613"/>
+<area shape="rect" href="$classBookLanguageList.html" title="{BookLanguageList\n||}" alt="" coords="512,533,640,613"/>
+<area shape="rect" href="$classBookList.html" title="{BookList\n||}" alt="" coords="664,533,736,613"/>
+<area shape="rect" href="$classHelpPageList.html" title="{HelpPageList\n||+ add()\l}" alt="" coords="760,533,859,613"/>
+<area shape="rect" href="$classLanguageList.html" title="{LanguageList\n||}" alt="" coords="883,533,981,613"/>
+<area shape="rect" href="$classLibraryList.html" title="{LibraryList\n||}" alt="" coords="1005,533,1085,613"/>
+<area shape="rect" href="$classPersonList.html" title="{PersonList\n||}" alt="" coords="1109,533,1192,613"/>
+<area shape="rect" href="$classProvenanceList.html" title="{ProvenanceList\n||}" alt="" coords="1216,533,1325,613"/>
+<area shape="rect" href="$classScanList.html" title="{ScanList\n||}" alt="" coords="1349,533,1421,613"/>
+<area shape="rect" href="$classUserList.html" title="{UserList\n||}" alt="" coords="1445,533,1515,613"/>
+</map>

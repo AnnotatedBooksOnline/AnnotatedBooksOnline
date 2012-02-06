@@ -2,10 +2,22 @@
 \section{UserActivationController Class Reference}
 \label{classUserActivationController}\index{UserActivationController@{UserActivationController}}
 }
-Inheritance diagram for UserActivationController:\begin{figure}[H]
+
+
+Inheritance diagram for UserActivationController:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classUserActivationController}
+\includegraphics[width=194pt]{classUserActivationController__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for UserActivationController:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classUserActivationController__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -28,43 +40,27 @@ Inheritance diagram for UserActivationController:\begin{figure}[H]
 \hypertarget{classUserActivationController_a7d2da0a8372cbc230a473e49a4bf8ed4}{
 \index{UserActivationController@{UserActivationController}!actionActivateUser@{actionActivateUser}}
 \index{actionActivateUser@{actionActivateUser}!UserActivationController@{UserActivationController}}
-\subsubsection[{actionActivateUser}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionActivateUser (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionActivateUser}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionActivateUser (\$ {\em data})}}
 \label{classUserActivationController_a7d2da0a8372cbc230a473e49a4bf8ed4}
 Activates a user based on a activation token. If the code matches with an existing pending user, this sets the active bit of the user to true and deletes the pending user entry.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Should contain a 'token', which is the confirmation code of the activation. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Should contain a 'token', which is the confirmation code of the activation. \end{DoxyParams}
 \hypertarget{classUserActivationController_a7f666fc7c3367c341971926eddf45761}{
 \index{UserActivationController@{UserActivationController}!actionResendActivationMail@{actionResendActivationMail}}
 \index{actionResendActivationMail@{actionResendActivationMail}!UserActivationController@{UserActivationController}}
-\subsubsection[{actionResendActivationMail}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionResendActivationMail (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionResendActivationMail}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionResendActivationMail (\$ {\em data})}}
 \label{classUserActivationController_a7f666fc7c3367c341971926eddf45761}
 Sends another activation mail in case a user did not receive or lost the initial one.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Should contain the 'username' of the user to whom to send a new e-\/mail. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Should contain the 'username' of the user to whom to send a new e-\/mail. \end{DoxyParams}
 \hypertarget{classUserActivationController_af4bb5616883b5350ba785d697446f92d}{
 \index{UserActivationController@{UserActivationController}!actionSetAutoAcceptance@{actionSetAutoAcceptance}}
 \index{actionSetAutoAcceptance@{actionSetAutoAcceptance}!UserActivationController@{UserActivationController}}
-\subsubsection[{actionSetAutoAcceptance}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionSetAutoAcceptance (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionSetAutoAcceptance}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionSetAutoAcceptance (\$ {\em data})}}
 \label{classUserActivationController_af4bb5616883b5350ba785d697446f92d}
 Turns automatic user acceptance on or off. When off, administrators will manually have to accept or decline registrations. If on, registrations are accepted automatically.
 
@@ -72,30 +68,20 @@ In both cases users will still require to click an activation link though.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Should contain a boolean 'auto-\/accept', which is true if the setting should be turned on and false if it should be turned off. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Should contain a boolean 'autoAccept', which is true if the setting should be turned on and false if it should be turned off. Additionally, if autoAccept is true, there should be a boolean 'acceptAllPending' that indicates whether all users currently waiting for activation should also be activated. \end{DoxyParams}
 \hypertarget{classUserActivationController_a6516a31d5f6c0f31f735dd75c5cb956b}{
 \index{UserActivationController@{UserActivationController}!actionSetUserAccepted@{actionSetUserAccepted}}
 \index{actionSetUserAccepted@{actionSetUserAccepted}!UserActivationController@{UserActivationController}}
-\subsubsection[{actionSetUserAccepted}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionSetUserAccepted (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionSetUserAccepted}]{\setlength{\rightskip}{0pt plus 5cm}UserActivationController::actionSetUserAccepted (\$ {\em data})}}
 \label{classUserActivationController_a6516a31d5f6c0f31f735dd75c5cb956b}
 Accept or decline a pending user. If either is succesfull, the user will be send an e-\/mail. If the user was accepted the e-\/mail will also contain a confirmation code.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Should have 'username' and 'accepted' entries; the latter indicated whether to accept or decline.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Should have 'username' and 'accepted' entries; the latter indicated whether to accept or decline.\end{DoxyParams}
 
 \begin{DoxyExceptions}{Exceptions}
-{\em \hyperlink{classUserActivationException}{UserActivationException}} & \\
-\hline
-\end{DoxyExceptions}
+\item[{\em \hyperlink{classUserActivationException}{UserActivationException}}]\end{DoxyExceptions}
 
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}

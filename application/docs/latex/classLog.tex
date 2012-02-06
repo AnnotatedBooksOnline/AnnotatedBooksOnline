@@ -2,10 +2,22 @@
 \section{Log Class Reference}
 \label{classLog}\index{Log@{Log}}
 }
-Inheritance diagram for Log:\begin{figure}[H]
+
+
+Inheritance diagram for Log:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classLog}
+\includegraphics[width=124pt]{classLog__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Log:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=124pt]{classLog__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -15,6 +27,8 @@ Inheritance diagram for Log:\begin{figure}[H]
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classLog_acc7be3022ea0ea09cc35eca4fd05ebb6}{trace} (\$format)
 \item 
 static \hyperlink{classLog_a9cbcd40831b44a7fc43494d32544ca45}{debug} (\$format)
 \item 
@@ -43,11 +57,7 @@ static \hyperlink{classLog_af469fce19eb78a62dce34d2925348d53}{\$instance}
 \hypertarget{classLog_ab413a80ef95f69c127319bbfc7cbb9e7}{
 \index{Log@{Log}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Log@{Log}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Log::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Log::\_\-\_\-construct ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classLog_ab413a80ef95f69c127319bbfc7cbb9e7}
 Constructs a log class instance. 
 
@@ -56,11 +66,7 @@ Reimplemented from \hyperlink{classSingleton}{Singleton}.
 \hypertarget{classLog_a8a98440f17cf6a9ce14597897e845abf}{
 \index{Log@{Log}!\_\-\_\-destruct@{\_\-\_\-destruct}}
 \index{\_\-\_\-destruct@{\_\-\_\-destruct}!Log@{Log}}
-\subsubsection[{\_\-\_\-destruct}]{\setlength{\rightskip}{0pt plus 5cm}Log::\_\-\_\-destruct (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-destruct}]{\setlength{\rightskip}{0pt plus 5cm}Log::\_\-\_\-destruct ()}}
 \label{classLog_a8a98440f17cf6a9ce14597897e845abf}
 Closes log file. 
 
@@ -68,75 +74,53 @@ Closes log file.
 \hypertarget{classLog_a9cbcd40831b44a7fc43494d32544ca45}{
 \index{Log@{Log}!debug@{debug}}
 \index{debug@{debug}!Log@{Log}}
-\subsubsection[{debug}]{\setlength{\rightskip}{0pt plus 5cm}static Log::debug (
-\begin{DoxyParamCaption}
-\item[{\$}]{format}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{debug}]{\setlength{\rightskip}{0pt plus 5cm}static Log::debug (\$ {\em format})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLog_a9cbcd40831b44a7fc43494d32544ca45}
 Adds a debug message.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$format} & The format of the message. \\
-\hline
-{\em ...} & The arguments of the format. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$format}]The format of the message. \item[{\em ...}]The arguments of the format. \end{DoxyParams}
 \hypertarget{classLog_ae64520f1abc38b59df669bd62174317e}{
 \index{Log@{Log}!error@{error}}
 \index{error@{error}!Log@{Log}}
-\subsubsection[{error}]{\setlength{\rightskip}{0pt plus 5cm}static Log::error (
-\begin{DoxyParamCaption}
-\item[{\$}]{format}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{error}]{\setlength{\rightskip}{0pt plus 5cm}static Log::error (\$ {\em format})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLog_ae64520f1abc38b59df669bd62174317e}
 Adds an error message.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$format} & The format of the message. \\
-\hline
-{\em ...} & The arguments of the format. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$format}]The format of the message. \item[{\em ...}]The arguments of the format. \end{DoxyParams}
 \hypertarget{classLog_aad760acd04b0f64236f8d90519a3bef8}{
 \index{Log@{Log}!info@{info}}
 \index{info@{info}!Log@{Log}}
-\subsubsection[{info}]{\setlength{\rightskip}{0pt plus 5cm}static Log::info (
-\begin{DoxyParamCaption}
-\item[{\$}]{format}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{info}]{\setlength{\rightskip}{0pt plus 5cm}static Log::info (\$ {\em format})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLog_aad760acd04b0f64236f8d90519a3bef8}
 Adds an info message.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$format} & The format of the message. \\
-\hline
-{\em ...} & The arguments of the format. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$format}]The format of the message. \item[{\em ...}]The arguments of the format. \end{DoxyParams}
+\hypertarget{classLog_acc7be3022ea0ea09cc35eca4fd05ebb6}{
+\index{Log@{Log}!trace@{trace}}
+\index{trace@{trace}!Log@{Log}}
+\subsubsection[{trace}]{\setlength{\rightskip}{0pt plus 5cm}static Log::trace (\$ {\em format})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classLog_acc7be3022ea0ea09cc35eca4fd05ebb6}
+Adds a trace message.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \$format}]The format of the message. \item[{\em ...}]The arguments of the format. \end{DoxyParams}
 \hypertarget{classLog_a3dae74a7d221b316861c88726d07c65a}{
 \index{Log@{Log}!warn@{warn}}
 \index{warn@{warn}!Log@{Log}}
-\subsubsection[{warn}]{\setlength{\rightskip}{0pt plus 5cm}static Log::warn (
-\begin{DoxyParamCaption}
-\item[{\$}]{format}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{warn}]{\setlength{\rightskip}{0pt plus 5cm}static Log::warn (\$ {\em format})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLog_a3dae74a7d221b316861c88726d07c65a}
 Adds a warning message.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$format} & The format of the message. \\
-\hline
-{\em ...} & The arguments of the format. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$format}]The format of the message. \item[{\em ...}]The arguments of the format. \end{DoxyParams}
 
 
 \subsection{Member Data Documentation}

@@ -1,0 +1,15 @@
+<map id="G" name="G">
+<area shape="rect" href="$classAnnotationController.html" title="{AnnotationController\n||+ actionLoad()\l+ actionSave()\l+ polygonEqual()\l+ textEqual()\l}" alt="" coords="5,461,144,589"/>
+<area shape="rect" href="$classAuthorController.html" title="{AuthorController\n||+ actionLoad()\l}" alt="" coords="168,485,283,565"/>
+<area shape="rect" href="$classBindingController.html" title="{BindingController\n||+ actionLoad()\l+ actionDelete()\l}" alt="" coords="307,477,427,573"/>
+<area shape="rect" href="$classBindingLanguageController.html" title="{BindingLanguageController\n||+ actionLoad()\l}" alt="" coords="451,485,627,565"/>
+<area shape="rect" href="$classBookController.html" title="{BookController\n||+ actionLoad()\l+ actionFirstLastPages()\l+ actionSearch()\l+ splitFulltextQuery()\l+ addFulltext()\l}" alt="" coords="651,453,813,597"/>
+<area shape="rect" href="$classBookLanguageController.html" title="{BookLanguageController\n||+ actionLoad()\l}" alt="" coords="837,485,1000,565"/>
+<area shape="rect" href="$classHelpController.html" title="{HelpController\n||+ actionLoad()\l+ setLeaves()\l}" alt="" coords="1024,477,1128,573"/>
+<area shape="rect" href="$classLanguageController.html" title="{LanguageController\n||+ actionLoad()\l}" alt="" coords="1152,485,1283,565"/>
+<area shape="rect" href="$classProvenanceController.html" title="{ProvenanceController\n||+ actionLoad()\l}" alt="" coords="1307,485,1451,565"/>
+<area shape="rect" href="$classScanController.html" title="{ScanController\n||+ actionLoad()\l+ actionReorder()\l}" alt="" coords="1475,477,1595,573"/>
+<area shape="rect" href="$classSettingController.html" title="{SettingController\n||+ actionGetSetting()\l}" alt="" coords="1619,485,1757,565"/>
+<area shape="rect" href="$classUserController.html" title="{UserController\n||+ actionLoad()\l+ actionSave()\l+ actionCreate()\l+ actionUsernameExists()\l+ actionEmailExists()\l+ actionDeleteUser()\l+ actionBanUser()\l+ actionUnBanUser()\l+ actionPasswordForgotten()\l+ actionChangeRole()\l+ actionChangeForgottenPassword()\l&#45; validEmailAddress()\l&#45; getAccessableColumns()\l}" alt="" coords="1781,389,2013,661"/>
+<area shape="rect" href="$classController.html" title="{Controller\n||+ handleRequest()\l+ createInstance()\l+ getString()\l+ getInteger()\l+ getDouble()\l+ getBoolean()\l+ getArray()\l&#45; handleSingleRequest()\l&#45; handleException()\l}" alt="" coords="917,5,1077,213"/>
+</map>

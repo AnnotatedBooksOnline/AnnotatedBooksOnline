@@ -1,0 +1,3 @@
+<map id="G" name="G">
+<area shape="rect" href="$classCacheEntry.html" title="{CacheEntry\n|# $filename\l# $content\l# $dependencyTimestamp\l|+ __construct()\l+ setDependencyFiles()\l+ setDependencyTimestamp()\l+ getDependencyTimestamp()\l+ getTimestamp()\l+ hasExpired()\l+ update()\l+ clear()\l+ getLength()\l+ getContent()\l+ setContent()\l+ output()\l}" alt="" coords="5,5,200,293"/>
+</map>

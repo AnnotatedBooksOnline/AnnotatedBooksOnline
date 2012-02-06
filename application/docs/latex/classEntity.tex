@@ -2,10 +2,13 @@
 \section{Entity Class Reference}
 \label{classEntity}\index{Entity@{Entity}}
 }
-Inheritance diagram for Entity:\begin{figure}[H]
+
+
+Inheritance diagram for Entity:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=12.000000cm]{classEntity}
+\includegraphics[width=400pt]{classEntity__inherit__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -28,6 +31,23 @@ Inheritance diagram for Entity:\begin{figure}[H]
 \hyperlink{classEntity_aec1be209327cfcf2dc528a3a565a7a5f}{getValues} (\$columns=null)
 \item 
 \hyperlink{classEntity_a659a3f3946feb4fd3301fe3f8f6d4851}{getPrimaryKeyValues} ()
+\item 
+\hyperlink{classEntity_abe1d992f6f319c4c2812163a8d2d1f66}{getMarkedAsDeleted} ()
+\item 
+\hypertarget{classEntity_a84588658abdfe8b253c807b3c3e8eb36}{
+{\bfseries setMarkedAsDeleted} (\$marked)}
+\label{classEntity_a84588658abdfe8b253c807b3c3e8eb36}
+
+\item 
+\hypertarget{classEntity_ac9cb9acce3628fd76e050ef1dff4ed43}{
+{\bfseries getMarkedAsUpdated} ()}
+\label{classEntity_ac9cb9acce3628fd76e050ef1dff4ed43}
+
+\item 
+\hypertarget{classEntity_a591fdd75bcec9b3e8561b378565c611b}{
+{\bfseries setMarkedAsUpdated} (\$marked)}
+\label{classEntity_a591fdd75bcec9b3e8561b378565c611b}
+
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
@@ -70,11 +90,7 @@ Abstract class for any database entity.
 \hypertarget{classEntity_abb502198e82d7770d9ac677152a5b958}{
 \index{Entity@{Entity}!arePrimaryKeysFilled@{arePrimaryKeysFilled}}
 \index{arePrimaryKeysFilled@{arePrimaryKeysFilled}!Entity@{Entity}}
-\subsubsection[{arePrimaryKeysFilled}]{\setlength{\rightskip}{0pt plus 5cm}Entity::arePrimaryKeysFilled (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{arePrimaryKeysFilled}]{\setlength{\rightskip}{0pt plus 5cm}Entity::arePrimaryKeysFilled ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classEntity_abb502198e82d7770d9ac677152a5b958}
 Checks if all primary keys are filled.
 
@@ -84,11 +100,7 @@ Whether the primary keys are filled.
 \hypertarget{classEntity_a59eae3c476f3996973400a024097c87e}{
 \index{Entity@{Entity}!delete@{delete}}
 \index{delete@{delete}!Entity@{Entity}}
-\subsubsection[{delete}]{\setlength{\rightskip}{0pt plus 5cm}Entity::delete (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{delete}]{\setlength{\rightskip}{0pt plus 5cm}Entity::delete ()}}
 \label{classEntity_a59eae3c476f3996973400a024097c87e}
 Deletes the entity from the database. 
 
@@ -97,12 +109,7 @@ Reimplemented in \hyperlink{classUpload_a5e10f0433b44a7e78f5c2232e3d71aa4}{Uploa
 \hypertarget{classEntity_a8ac249c9942d8c9d9886c3b08c2389e7}{
 \index{Entity@{Entity}!getAllValues@{getAllValues}}
 \index{getAllValues@{getAllValues}!Entity@{Entity}}
-\subsubsection[{getAllValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getAllValues (
-\begin{DoxyParamCaption}
-\item[{\$}]{keys = {\ttfamily true}, }
-\item[{\$}]{default = {\ttfamily true}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{getAllValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getAllValues (\$ {\em keys} = {\ttfamily true}, \/  \$ {\em default} = {\ttfamily true})\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classEntity_a8ac249c9942d8c9d9886c3b08c2389e7}
 Gets all values of this entity.
 
@@ -112,11 +119,7 @@ All values of this entity.
 \hypertarget{classEntity_a394717a08ffd54ec9a14d06727c86719}{
 \index{Entity@{Entity}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Entity@{Entity}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classEntity_a394717a08ffd54ec9a14d06727c86719}
 Gets all the columns.
 
@@ -125,16 +128,12 @@ Array of all columns, except primary keys.
 \end{DoxyReturn}
 
 
-Reimplemented in \hyperlink{classAnnotation_a9e9b41c456e409ae6223258c4ba1fb94}{Annotation}, \hyperlink{classAuthor_aa3e40fdf422c171a8e307725ca5ff05c}{Author}, \hyperlink{classBinding_a4caf9958cba0f34b8b08aae313afc9ec}{Binding}, \hyperlink{classBook_a26e48647691c869f9de967b1e5e2e49d}{Book}, \hyperlink{classHelpControlItem_a784f51455bced13687252d4aa28d6964}{HelpControlItem}, \hyperlink{classHelpPage_a56d2e02b9490b1834fadd39fdab3e312}{HelpPage}, \hyperlink{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}{BindingLanguage}, \hyperlink{classBookLanguage_afc7dd0ea15ff9f1e04006c4ccc0c8bb6}{BookLanguage}, \hyperlink{classLanguage_aca9b17402d92635b3092d255ca90e551}{Language}, \hyperlink{classLibrary_ab67ca6733ca346dccb066c7333ef3426}{Library}, \hyperlink{classNote_ab602c2348fab90e66d061b62c2eb0aac}{Note}, \hyperlink{classPermission_ac2a9a31fc731c58daa3b0b9385ec03fb}{Permission}, \hyperlink{classPerson_aeab90b54dcfecd955b00bd64ceec6eae}{Person}, \hyperlink{classProvenance_a244657b40cc6b72dd868d25a2cafbe57}{Provenance}, \hyperlink{classScan_a51a201a61df50b19fd6a7b96d7521ca5}{Scan}, \hyperlink{classSetting_ac1dc23d6b6f1fbd01ac0fd51e05cab3a}{Setting}, \hyperlink{classUpload_ac1fc86fdee048a39c23f706a5df4e4cc}{Upload}, \hyperlink{classPendingUser_a16417ee5731d54b92514e5af71fc715e}{PendingUser}, and \hyperlink{classUser_a3a4c51317d99ac96fb282cf2ca3c15c9}{User}.
+Reimplemented in \hyperlink{classAnnotation_a9e9b41c456e409ae6223258c4ba1fb94}{Annotation}, \hyperlink{classAuthor_aa3e40fdf422c171a8e307725ca5ff05c}{Author}, \hyperlink{classBinding_a4caf9958cba0f34b8b08aae313afc9ec}{Binding}, \hyperlink{classBook_a26e48647691c869f9de967b1e5e2e49d}{Book}, \hyperlink{classHelpPage_a56d2e02b9490b1834fadd39fdab3e312}{HelpPage}, \hyperlink{classHelpParagraph_ae136cb09440d889fe1dc2d552a4995ae}{HelpParagraph}, \hyperlink{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}{BindingLanguage}, \hyperlink{classBookLanguage_afc7dd0ea15ff9f1e04006c4ccc0c8bb6}{BookLanguage}, \hyperlink{classLanguage_aca9b17402d92635b3092d255ca90e551}{Language}, \hyperlink{classLibrary_ab67ca6733ca346dccb066c7333ef3426}{Library}, \hyperlink{classNote_ab602c2348fab90e66d061b62c2eb0aac}{Note}, \hyperlink{classPermission_ac2a9a31fc731c58daa3b0b9385ec03fb}{Permission}, \hyperlink{classPerson_aeab90b54dcfecd955b00bd64ceec6eae}{Person}, \hyperlink{classProvenance_a244657b40cc6b72dd868d25a2cafbe57}{Provenance}, \hyperlink{classScan_a51a201a61df50b19fd6a7b96d7521ca5}{Scan}, \hyperlink{classSetting_ac1dc23d6b6f1fbd01ac0fd51e05cab3a}{Setting}, \hyperlink{classUpload_ac1fc86fdee048a39c23f706a5df4e4cc}{Upload}, \hyperlink{classPendingUser_a16417ee5731d54b92514e5af71fc715e}{PendingUser}, and \hyperlink{classUser_a3a4c51317d99ac96fb282cf2ca3c15c9}{User}.
 
 \hypertarget{classEntity_ad69437219c10955803707fbf6ac458e7}{
 \index{Entity@{Entity}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Entity@{Entity}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classEntity_ad69437219c10955803707fbf6ac458e7}
 Gets all the column types, per column, including primary keys.
 
@@ -145,16 +144,12 @@ Array of all column types.
 \end{DoxyReturn}
 
 
-Reimplemented in \hyperlink{classAnnotation_a0081ac8f6cf11cce9ca0e6e4ed5d9ffc}{Annotation}, \hyperlink{classAuthor_a305006a9a8889149f9103b1c5d762aa9}{Author}, \hyperlink{classBinding_aded437d056ec24770d8bf4eebdeec36e}{Binding}, \hyperlink{classBook_afeabb3df0ca3af21d93d2c6d2be84fe6}{Book}, \hyperlink{classHelpControlItem_a7ebfd14031af7c9c7e1ba0f1faef2c70}{HelpControlItem}, \hyperlink{classHelpPage_abf83884baba4ef17e2d9f2510661f1dd}{HelpPage}, \hyperlink{classBindingLanguage_a2555fe5224b885813f810b249a0fbefb}{BindingLanguage}, \hyperlink{classBookLanguage_a3ec4af1722ff86f65464a563f7c21d12}{BookLanguage}, \hyperlink{classLanguage_a6e5cf86376e603ee4945b514fb6de7bd}{Language}, \hyperlink{classLibrary_aa18ef5cf611b855ccbe55283b41e93b6}{Library}, \hyperlink{classNote_afb67f78e11e21140b15735ce5a78d5ba}{Note}, \hyperlink{classPermission_a0040cda21f71bbcdf478c9e8f1996d6d}{Permission}, \hyperlink{classPerson_aed60680c05bbf313249396521da7df27}{Person}, \hyperlink{classProvenance_a3d14641b8cfcb3dbf226e82d684ab275}{Provenance}, \hyperlink{classScan_a9ae3218caa7bc866a8b914eab7b649a2}{Scan}, \hyperlink{classSetting_afde410fc459b142b11a50511414dc57d}{Setting}, \hyperlink{classUpload_a2de5133464c9577aff228f8bb543929e}{Upload}, \hyperlink{classPendingUser_ab157c3fddef5e3fc0e85f40a66033f78}{PendingUser}, and \hyperlink{classUser_a2b6212bf34a2be45394c9a0a1220855c}{User}.
+Reimplemented in \hyperlink{classAnnotation_a0081ac8f6cf11cce9ca0e6e4ed5d9ffc}{Annotation}, \hyperlink{classAuthor_a305006a9a8889149f9103b1c5d762aa9}{Author}, \hyperlink{classBinding_aded437d056ec24770d8bf4eebdeec36e}{Binding}, \hyperlink{classBook_afeabb3df0ca3af21d93d2c6d2be84fe6}{Book}, \hyperlink{classHelpPage_abf83884baba4ef17e2d9f2510661f1dd}{HelpPage}, \hyperlink{classHelpParagraph_ae270d97d244d3c71ec843e062af29f2c}{HelpParagraph}, \hyperlink{classBindingLanguage_a2555fe5224b885813f810b249a0fbefb}{BindingLanguage}, \hyperlink{classBookLanguage_a3ec4af1722ff86f65464a563f7c21d12}{BookLanguage}, \hyperlink{classLanguage_a6e5cf86376e603ee4945b514fb6de7bd}{Language}, \hyperlink{classLibrary_aa18ef5cf611b855ccbe55283b41e93b6}{Library}, \hyperlink{classNote_afb67f78e11e21140b15735ce5a78d5ba}{Note}, \hyperlink{classPermission_a0040cda21f71bbcdf478c9e8f1996d6d}{Permission}, \hyperlink{classPerson_aed60680c05bbf313249396521da7df27}{Person}, \hyperlink{classProvenance_a3d14641b8cfcb3dbf226e82d684ab275}{Provenance}, \hyperlink{classScan_a9ae3218caa7bc866a8b914eab7b649a2}{Scan}, \hyperlink{classSetting_afde410fc459b142b11a50511414dc57d}{Setting}, \hyperlink{classUpload_a2de5133464c9577aff228f8bb543929e}{Upload}, \hyperlink{classPendingUser_ab157c3fddef5e3fc0e85f40a66033f78}{PendingUser}, and \hyperlink{classUser_a2b6212bf34a2be45394c9a0a1220855c}{User}.
 
 \hypertarget{classEntity_a828b6c093a3ffeb5d1828fb539b4c001}{
 \index{Entity@{Entity}!getDefaultColumns@{getDefaultColumns}}
 \index{getDefaultColumns@{getDefaultColumns}!Entity@{Entity}}
-\subsubsection[{getDefaultColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getDefaultColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getDefaultColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getDefaultColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classEntity_a828b6c093a3ffeb5d1828fb539b4c001}
 Gets columns that are available in all entities.
 
@@ -164,11 +159,7 @@ Gets columns that are available in all entities.
 \hypertarget{classEntity_af257dd951ed9b221a1d1efd45ea51db3}{
 \index{Entity@{Entity}!getDefaultColumnTypes@{getDefaultColumnTypes}}
 \index{getDefaultColumnTypes@{getDefaultColumnTypes}!Entity@{Entity}}
-\subsubsection[{getDefaultColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getDefaultColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getDefaultColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getDefaultColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classEntity_af257dd951ed9b221a1d1efd45ea51db3}
 Gets all the default column types, per column.
 
@@ -178,11 +169,7 @@ Array of all default column types.
 \hypertarget{classEntity_a9ebe24129b06509e5dc66e75c3df5396}{
 \index{Entity@{Entity}!getDeleteQuery@{getDeleteQuery}}
 \index{getDeleteQuery@{getDeleteQuery}!Entity@{Entity}}
-\subsubsection[{getDeleteQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getDeleteQuery (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{getDeleteQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getDeleteQuery ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classEntity_a9ebe24129b06509e5dc66e75c3df5396}
 Returns the query needed to delete this entity from the database.
 
@@ -192,19 +179,13 @@ Returns the query needed to delete this entity from the database.
 \hypertarget{classEntity_a48b7255175241170f98b9f2601243b48}{
 \index{Entity@{Entity}!getInsertQuery@{getInsertQuery}}
 \index{getInsertQuery@{getInsertQuery}!Entity@{Entity}}
-\subsubsection[{getInsertQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getInsertQuery (
-\begin{DoxyParamCaption}
-\item[{\$}]{returning = {\ttfamily false}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{getInsertQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getInsertQuery (\$ {\em returning} = {\ttfamily false})\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classEntity_a48b7255175241170f98b9f2601243b48}
 Returns the query needed to insert this entity into the database.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$returning} & If true, a returning clause is added to the query which returns all primary keys.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$returning}]If true, a returning clause is added to the query which returns all primary keys.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 \hyperlink{classQuery}{Query} to insert this entity in the database. 
 \end{DoxyReturn}
@@ -212,14 +193,15 @@ Returns the query needed to insert this entity into the database.
 
 Reimplemented in \hyperlink{classAssociativeEntity_a52105f0a9a643c01e92d6acc4dfafef3}{AssociativeEntity}.
 
-\hypertarget{classEntity_a61bbfbb4058427174e002a09ddc77c41}{
+\hypertarget{classEntity_abe1d992f6f319c4c2812163a8d2d1f66}{
+\index{Entity@{Entity}!getMarkedAsDeleted@{getMarkedAsDeleted}}
+\index{getMarkedAsDeleted@{getMarkedAsDeleted}!Entity@{Entity}}
+\subsubsection[{getMarkedAsDeleted}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getMarkedAsDeleted ()}}
+\label{classEntity_abe1d992f6f319c4c2812163a8d2d1f66}
+Getters and setters. \hypertarget{classEntity_a61bbfbb4058427174e002a09ddc77c41}{
 \index{Entity@{Entity}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Entity@{Entity}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classEntity_a61bbfbb4058427174e002a09ddc77c41}
 Gets the primary keys.
 
@@ -228,16 +210,12 @@ Array of all primary keys.
 \end{DoxyReturn}
 
 
-Reimplemented in \hyperlink{classAnnotation_a8676c5ad1cf917a17cc70bb8c816437c}{Annotation}, \hyperlink{classAuthor_abeb5bf2d5739d0e46522c608c04db776}{Author}, \hyperlink{classBinding_ac7539d5770936644b98be102ed66a4e5}{Binding}, \hyperlink{classBook_ae2a08ea5916ed402169f59b6ad853d13}{Book}, \hyperlink{classHelpControlItem_aaa85eab8a114ae980e41ccc816e6f90b}{HelpControlItem}, \hyperlink{classHelpPage_aad190998d886f0c38ecbb056f32c2b96}{HelpPage}, \hyperlink{classBindingLanguage_aafc27da4c3edcd204cf51d2d2429e8eb}{BindingLanguage}, \hyperlink{classBookLanguage_a2efcb1546e54019661200ad14276c5b6}{BookLanguage}, \hyperlink{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}{Language}, \hyperlink{classLibrary_a026a18e3d13f83be2ee85221156f7864}{Library}, \hyperlink{classNote_a72d5489c580726d4fbb55359ae98db5a}{Note}, \hyperlink{classPermission_a378dfdccb2df0e6d2b7bb059cd918873}{Permission}, \hyperlink{classPerson_a127a92657a50a2a51c8892dd625af9ee}{Person}, \hyperlink{classProvenance_ad45c3e72c9462e73123e310a49da9154}{Provenance}, \hyperlink{classScan_a0e7fe3c9a64e4655114a82473fc78827}{Scan}, \hyperlink{classSetting_a20ab54f018e4987326d20a5464c7e615}{Setting}, \hyperlink{classUpload_af0e0a173941a75ed21e7d51d86c7d0c4}{Upload}, \hyperlink{classPendingUser_a305b86bf62019e4ca80b769ea75644cf}{PendingUser}, and \hyperlink{classUser_a14fab2319493a4940e1975b72386e80a}{User}.
+Reimplemented in \hyperlink{classAnnotation_a8676c5ad1cf917a17cc70bb8c816437c}{Annotation}, \hyperlink{classAuthor_abeb5bf2d5739d0e46522c608c04db776}{Author}, \hyperlink{classBinding_ac7539d5770936644b98be102ed66a4e5}{Binding}, \hyperlink{classBook_ae2a08ea5916ed402169f59b6ad853d13}{Book}, \hyperlink{classHelpPage_aad190998d886f0c38ecbb056f32c2b96}{HelpPage}, \hyperlink{classHelpParagraph_af092a2b620b5efda2dd5f6dc695b9295}{HelpParagraph}, \hyperlink{classBindingLanguage_aafc27da4c3edcd204cf51d2d2429e8eb}{BindingLanguage}, \hyperlink{classBookLanguage_a2efcb1546e54019661200ad14276c5b6}{BookLanguage}, \hyperlink{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}{Language}, \hyperlink{classLibrary_a026a18e3d13f83be2ee85221156f7864}{Library}, \hyperlink{classNote_a72d5489c580726d4fbb55359ae98db5a}{Note}, \hyperlink{classPermission_a378dfdccb2df0e6d2b7bb059cd918873}{Permission}, \hyperlink{classPerson_a127a92657a50a2a51c8892dd625af9ee}{Person}, \hyperlink{classProvenance_ad45c3e72c9462e73123e310a49da9154}{Provenance}, \hyperlink{classScan_a0e7fe3c9a64e4655114a82473fc78827}{Scan}, \hyperlink{classSetting_a20ab54f018e4987326d20a5464c7e615}{Setting}, \hyperlink{classUpload_af0e0a173941a75ed21e7d51d86c7d0c4}{Upload}, \hyperlink{classPendingUser_a305b86bf62019e4ca80b769ea75644cf}{PendingUser}, and \hyperlink{classUser_a14fab2319493a4940e1975b72386e80a}{User}.
 
 \hypertarget{classEntity_a659a3f3946feb4fd3301fe3f8f6d4851}{
 \index{Entity@{Entity}!getPrimaryKeyValues@{getPrimaryKeyValues}}
 \index{getPrimaryKeyValues@{getPrimaryKeyValues}!Entity@{Entity}}
-\subsubsection[{getPrimaryKeyValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getPrimaryKeyValues (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{getPrimaryKeyValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getPrimaryKeyValues ()}}
 \label{classEntity_a659a3f3946feb4fd3301fe3f8f6d4851}
 Gets all primary key values of this entity.
 
@@ -247,11 +225,7 @@ All primary key values of this entity.
 \hypertarget{classEntity_a6bca84b179145567662ee6441c27ac18}{
 \index{Entity@{Entity}!getSelectQuery@{getSelectQuery}}
 \index{getSelectQuery@{getSelectQuery}!Entity@{Entity}}
-\subsubsection[{getSelectQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getSelectQuery (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{getSelectQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getSelectQuery ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classEntity_a6bca84b179145567662ee6441c27ac18}
 Returns the query needed to select this entity from the database.
 
@@ -261,11 +235,7 @@ Returns the query needed to select this entity from the database.
 \hypertarget{classEntity_a8305fd94740ac62cbafb9de76567ce37}{
 \index{Entity@{Entity}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Entity@{Entity}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classEntity_a8305fd94740ac62cbafb9de76567ce37}
 Gets the table name.
 
@@ -274,16 +244,12 @@ The table name.
 \end{DoxyReturn}
 
 
-Reimplemented in \hyperlink{classAnnotation_a9bc4933ab99e52e31b622a9829edd4bb}{Annotation}, \hyperlink{classAuthor_a83c8f19c169bcfffb4e0df09fadafe26}{Author}, \hyperlink{classBinding_aee5dd30aab182b19046ab5164da4c649}{Binding}, \hyperlink{classBook_ae4b3d3747fad76af4e4724a4bcf749a3}{Book}, \hyperlink{classHelpControlItem_a1e32d01358482e6a2d8e58442d7cb54f}{HelpControlItem}, \hyperlink{classHelpPage_a28380b31bea21840c86ab69c49cad198}{HelpPage}, \hyperlink{classBindingLanguage_a0f5427a1846d14c04dee6c35c73a0781}{BindingLanguage}, \hyperlink{classBookLanguage_a755bc7ed42e5d959d88a387485279ebd}{BookLanguage}, \hyperlink{classLanguage_a262653445a1324d6c02099e01cab0dff}{Language}, \hyperlink{classLibrary_a0b5dbae3b3d7138ad86c7df6e6a433eb}{Library}, \hyperlink{classNote_a83deedb316c670baa4b31c8d512e6af6}{Note}, \hyperlink{classPermission_a9a6694ebca8793f08c3f3388c27e0645}{Permission}, \hyperlink{classPerson_ab68a8aed417028b7755fb8c6c6fb2b62}{Person}, \hyperlink{classProvenance_ae8dd5db6f4bdc8c131f625b7e1287827}{Provenance}, \hyperlink{classScan_ad9ada4df484a671439f131458e22d2e0}{Scan}, \hyperlink{classSetting_ada9934fb4f6bddcf5250494b63d81c5e}{Setting}, \hyperlink{classUpload_a9c147629f26a6d0c7b32136eba761869}{Upload}, \hyperlink{classPendingUser_a8daaf97b6d90a79598d1354c872ac65c}{PendingUser}, and \hyperlink{classUser_a3641dffbe0835b6cc56e875b21cba4b1}{User}.
+Reimplemented in \hyperlink{classAnnotation_a9bc4933ab99e52e31b622a9829edd4bb}{Annotation}, \hyperlink{classAuthor_a83c8f19c169bcfffb4e0df09fadafe26}{Author}, \hyperlink{classBinding_aee5dd30aab182b19046ab5164da4c649}{Binding}, \hyperlink{classBook_ae4b3d3747fad76af4e4724a4bcf749a3}{Book}, \hyperlink{classHelpPage_a28380b31bea21840c86ab69c49cad198}{HelpPage}, \hyperlink{classHelpParagraph_a646492a40dad4d4a5cad0cd93e4e7cdb}{HelpParagraph}, \hyperlink{classBindingLanguage_a0f5427a1846d14c04dee6c35c73a0781}{BindingLanguage}, \hyperlink{classBookLanguage_a755bc7ed42e5d959d88a387485279ebd}{BookLanguage}, \hyperlink{classLanguage_a262653445a1324d6c02099e01cab0dff}{Language}, \hyperlink{classLibrary_a0b5dbae3b3d7138ad86c7df6e6a433eb}{Library}, \hyperlink{classNote_a83deedb316c670baa4b31c8d512e6af6}{Note}, \hyperlink{classPermission_a9a6694ebca8793f08c3f3388c27e0645}{Permission}, \hyperlink{classPerson_ab68a8aed417028b7755fb8c6c6fb2b62}{Person}, \hyperlink{classProvenance_ae8dd5db6f4bdc8c131f625b7e1287827}{Provenance}, \hyperlink{classScan_ad9ada4df484a671439f131458e22d2e0}{Scan}, \hyperlink{classSetting_ada9934fb4f6bddcf5250494b63d81c5e}{Setting}, \hyperlink{classUpload_a9c147629f26a6d0c7b32136eba761869}{Upload}, \hyperlink{classPendingUser_a8daaf97b6d90a79598d1354c872ac65c}{PendingUser}, and \hyperlink{classUser_a3641dffbe0835b6cc56e875b21cba4b1}{User}.
 
 \hypertarget{classEntity_aa496a11969dfae2753cfa2a8b5c8e53e}{
 \index{Entity@{Entity}!getTypes@{getTypes}}
 \index{getTypes@{getTypes}!Entity@{Entity}}
-\subsubsection[{getTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getTypes (
-\begin{DoxyParamCaption}
-\item[{\$}]{default = {\ttfamily true}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Entity::getTypes (\$ {\em default} = {\ttfamily true})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classEntity_aa496a11969dfae2753cfa2a8b5c8e53e}
 Gets all types of this entity.
 
@@ -293,11 +259,7 @@ All types of this entity, by column name.
 \hypertarget{classEntity_ae66be26f01323911fbb59dc3a135dbf8}{
 \index{Entity@{Entity}!getUpdateQuery@{getUpdateQuery}}
 \index{getUpdateQuery@{getUpdateQuery}!Entity@{Entity}}
-\subsubsection[{getUpdateQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getUpdateQuery (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{getUpdateQuery}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getUpdateQuery ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classEntity_ae66be26f01323911fbb59dc3a135dbf8}
 Returns the query needed to update this entity in the database.
 
@@ -307,36 +269,26 @@ Returns the query needed to update this entity in the database.
 \hypertarget{classEntity_aec1be209327cfcf2dc528a3a565a7a5f}{
 \index{Entity@{Entity}!getValues@{getValues}}
 \index{getValues@{getValues}!Entity@{Entity}}
-\subsubsection[{getValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getValues (
-\begin{DoxyParamCaption}
-\item[{\$}]{columns = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{getValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::getValues (\$ {\em columns} = {\ttfamily null})}}
 \label{classEntity_aec1be209327cfcf2dc528a3a565a7a5f}
 Gets some values of this entity.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$values} & Array of names to fetch, or null if you want to fetch everything. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$values}]Array of names to fetch, or null if you want to fetch everything. \end{DoxyParams}
+
+
+Reimplemented in \hyperlink{classHelpPage_ac4e71d65d287b8e0c1a48a298ccbcd01}{HelpPage}, and \hyperlink{classHelpParagraph_ab86c3034d2e3c9178c83abbc3eca8ee3}{HelpParagraph}.
+
 \hypertarget{classEntity_af2decf2a7bc0aef76e5adcd46a192e05}{
 \index{Entity@{Entity}!load@{load}}
 \index{load@{load}!Entity@{Entity}}
-\subsubsection[{load}]{\setlength{\rightskip}{0pt plus 5cm}Entity::load (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{load}]{\setlength{\rightskip}{0pt plus 5cm}Entity::load ()}}
 \label{classEntity_af2decf2a7bc0aef76e5adcd46a192e05}
 Loads this entity. \hypertarget{classEntity_af4822c7e840cf775ca98c2fce2d8de49}{
 \index{Entity@{Entity}!save@{save}}
 \index{save@{save}!Entity@{Entity}}
-\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}Entity::save (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}Entity::save ()}}
 \label{classEntity_af4822c7e840cf775ca98c2fce2d8de49}
 Saves the entity to the database. A database row is inserted if the entity does not exist in the database yet. A database row is updated if the entity exists in the database. 
 
@@ -345,11 +297,7 @@ Reimplemented in \hyperlink{classAssociativeEntity_a6a68659dda2caa94f624ac856933
 \hypertarget{classEntity_a48cdc3830bf695078a69a56f23e1b874}{
 \index{Entity@{Entity}!saveDetails@{saveDetails}}
 \index{saveDetails@{saveDetails}!Entity@{Entity}}
-\subsubsection[{saveDetails}]{\setlength{\rightskip}{0pt plus 5cm}Entity::saveDetails (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{saveDetails}]{\setlength{\rightskip}{0pt plus 5cm}Entity::saveDetails ()}}
 \label{classEntity_a48cdc3830bf695078a69a56f23e1b874}
 Saves entity its relations. 
 
@@ -358,44 +306,28 @@ Reimplemented in \hyperlink{classBinding_a7fe288b95f637d4dee16918f985df0ff}{Bind
 \hypertarget{classEntity_ae8393dc2e8bc1fda9a5f47a145753b76}{
 \index{Entity@{Entity}!saveWithDetails@{saveWithDetails}}
 \index{saveWithDetails@{saveWithDetails}!Entity@{Entity}}
-\subsubsection[{saveWithDetails}]{\setlength{\rightskip}{0pt plus 5cm}Entity::saveWithDetails (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{saveWithDetails}]{\setlength{\rightskip}{0pt plus 5cm}Entity::saveWithDetails ()}}
 \label{classEntity_ae8393dc2e8bc1fda9a5f47a145753b76}
 Saves entity with its relations. \hypertarget{classEntity_a4e945653aab38681177186fdc4787248}{
 \index{Entity@{Entity}!setRawValues@{setRawValues}}
 \index{setRawValues@{setRawValues}!Entity@{Entity}}
-\subsubsection[{setRawValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::setRawValues (
-\begin{DoxyParamCaption}
-\item[{\$}]{values}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{setRawValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::setRawValues (\$ {\em values})}}
 \label{classEntity_a4e945653aab38681177186fdc4787248}
 Sets raw values of this entity. Only for use by entity list!
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$values} & Array of name-\/value pairs to set. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$values}]Array of name-\/value pairs to set. \end{DoxyParams}
 \hypertarget{classEntity_ad346277daf8194b3c572ebdc82e435f3}{
 \index{Entity@{Entity}!setValues@{setValues}}
 \index{setValues@{setValues}!Entity@{Entity}}
-\subsubsection[{setValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::setValues (
-\begin{DoxyParamCaption}
-\item[{\$}]{values}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{setValues}]{\setlength{\rightskip}{0pt plus 5cm}Entity::setValues (\$ {\em values})}}
 \label{classEntity_ad346277daf8194b3c572ebdc82e435f3}
 Sets some values of this entity.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$values} & Array of name-\/value pairs to set. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$values}]Array of name-\/value pairs to set. \end{DoxyParams}
 
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}

@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" href="$classCacheEntry.html" title="CacheEntry" alt="" coords="7,31,95,57"/>
+<area shape="rect" href="$classAPCCacheEntry.html" title="APCCacheEntry" alt="" coords="145,5,260,32"/>
+<area shape="rect" href="$classFileCacheEntry.html" title="FileCacheEntry" alt="" coords="148,56,257,83"/>
+</map>

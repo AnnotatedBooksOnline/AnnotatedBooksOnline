@@ -2,16 +2,37 @@
 \section{AnnotationController Class Reference}
 \label{classAnnotationController}\index{AnnotationController@{AnnotationController}}
 }
-Inheritance diagram for AnnotationController:\begin{figure}[H]
+
+
+Inheritance diagram for AnnotationController:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{classAnnotationController}
+\includegraphics[height=400pt]{classAnnotationController__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for AnnotationController:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classAnnotationController__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \hyperlink{classAnnotationController_a228bd6bdd25685e7f87732eb18acb746}{actionLoad} (\$data)
+\item 
+\hyperlink{classAnnotationController_a94966419fbc178f74f0e6570c62af1a2}{actionSave} (\$data)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classAnnotationController_aa01689fab994eafd254c12e1d3b7d168}{polygonEqual} (\$a, \$b)
+\item 
+static \hyperlink{classAnnotationController_a86c36225b9d315793d11c95d21664b31}{textEqual} (\$a, \$b)
 \end{DoxyCompactItemize}
 
 
@@ -22,13 +43,24 @@ Inheritance diagram for AnnotationController:\begin{figure}[H]
 \hypertarget{classAnnotationController_a228bd6bdd25685e7f87732eb18acb746}{
 \index{AnnotationController@{AnnotationController}!actionLoad@{actionLoad}}
 \index{actionLoad@{actionLoad}!AnnotationController@{AnnotationController}}
-\subsubsection[{actionLoad}]{\setlength{\rightskip}{0pt plus 5cm}AnnotationController::actionLoad (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionLoad}]{\setlength{\rightskip}{0pt plus 5cm}AnnotationController::actionLoad (\$ {\em data})}}
 \label{classAnnotationController_a228bd6bdd25685e7f87732eb18acb746}
-Loads annotations. 
+Loads annotations. \hypertarget{classAnnotationController_a94966419fbc178f74f0e6570c62af1a2}{
+\index{AnnotationController@{AnnotationController}!actionSave@{actionSave}}
+\index{actionSave@{actionSave}!AnnotationController@{AnnotationController}}
+\subsubsection[{actionSave}]{\setlength{\rightskip}{0pt plus 5cm}AnnotationController::actionSave (\$ {\em data})}}
+\label{classAnnotationController_a94966419fbc178f74f0e6570c62af1a2}
+Saves annotations. \hypertarget{classAnnotationController_aa01689fab994eafd254c12e1d3b7d168}{
+\index{AnnotationController@{AnnotationController}!polygonEqual@{polygonEqual}}
+\index{polygonEqual@{polygonEqual}!AnnotationController@{AnnotationController}}
+\subsubsection[{polygonEqual}]{\setlength{\rightskip}{0pt plus 5cm}static AnnotationController::polygonEqual (\$ {\em a}, \/  \$ {\em b})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classAnnotationController_aa01689fab994eafd254c12e1d3b7d168}
+Compares two polygons for equality with delta. \hypertarget{classAnnotationController_a86c36225b9d315793d11c95d21664b31}{
+\index{AnnotationController@{AnnotationController}!textEqual@{textEqual}}
+\index{textEqual@{textEqual}!AnnotationController@{AnnotationController}}
+\subsubsection[{textEqual}]{\setlength{\rightskip}{0pt plus 5cm}static AnnotationController::textEqual (\$ {\em a}, \/  \$ {\em b})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classAnnotationController_a86c36225b9d315793d11c95d21664b31}
+Compares two texts for equality, ignoring line ending differences and trailing/leading whitespace. 
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 

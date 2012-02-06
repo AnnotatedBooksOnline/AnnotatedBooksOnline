@@ -1,359 +1,462 @@
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/database.php:16: warning: Compound Database is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/usercontroller.php:12: warning: Compound RegistrationFailedException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:24: warning: Compound UserPendingException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/setting/setting.php:6: warning: Compound SettingException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:5: warning: Compound ResultSetException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/useractivationcontroller.php:10: warning: Compound UserActivationException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/usercontroller.php:13: warning: Compound PasswordIncorrectException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/authentication.php:11: warning: Compound NotLoggedOnException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/singleton.php:7: warning: Compound SingletonException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/database.php:12: warning: Compound QueryFormatException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/authentication.php:19: warning: Compound AccessDeniedException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:7: warning: Compound UploadException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/controller/controller.php:10: warning: Compound ControllerException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/mailer.php:11: warning: Compound MailerException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/bookcontroller.php:11: warning: Compound BookNotFoundException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/pdf.php:17: warning: Compound PdfException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:16: warning: Compound UserBannedException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/entity.php:7: warning: Compound EntityException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:32: warning: Compound UserShouldActivateException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/database.php:11: warning: Compound DatabaseException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/configuration.php:7: warning: Compound ConfigurationException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/bindinguploadcontroller.php:20: warning: Compound BindingStatusException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/configuration.php:8: warning: Compound SettingNotFoundException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:8: warning: Compound UserNotFoundException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/pdf.php:25: warning: Compound Pdf is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/exceptionbase.php:37: warning: Compound FormatException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/authentication.php:21: warning: Member __construct($actionname) (function) of class AccessDeniedException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:103: warning: Member getAnnotationId() (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:104: warning: Member setAnnotationId($id) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:106: warning: Member getScanId() (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:107: warning: Member setScanId($scanId) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:109: warning: Member getTranscriptionEng() (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:110: warning: Member setTranscriptionEng($text) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:112: warning: Member getTranscriptionOrig() (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:113: warning: Member setTranscriptionOrig($text) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:116: warning: Member getPolygon() (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:127: warning: Member setPolygon($vertices) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:135: warning: Member getUserId() (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:136: warning: Member setUserId($id) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:138: warning: Member getTimeCreated() (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:139: warning: Member setTimeCreated($time) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:38: warning: Member fromScan($scan) (function) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:15: warning: Member $scanId (variable) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:16: warning: Member $polygon (variable) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:17: warning: Member $transcriptionEng (variable) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:18: warning: Member $transcriptionOrig (variable) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:19: warning: Member $userId (variable) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/annotation/annotation.php:20: warning: Member $timeCreated (variable) of class Annotation is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/authenticationcontroller.php:13: warning: Member actionLogin($data) (function) of class AuthenticationController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/authenticationcontroller.php:25: warning: Member actionLogout($data) (function) of class AuthenticationController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/authenticationcontroller.php:31: warning: Member actionKeepAlive($data) (function) of class AuthenticationController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/authenticationcontroller.php:60: warning: Member actionHasPermissionTo($data) (function) of class AuthenticationController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/authenticationcontroller.php:67: warning: Member actionGetPermissionList() (function) of class AuthenticationController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/author/author.php:110: warning: Member getBookId() (function) of class Author is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/author/author.php:111: warning: Member setBookId($bookId) (function) of class Author is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/author/author.php:113: warning: Member getPersonId() (function) of class Author is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/author/author.php:114: warning: Member setPersonId($personId) (function) of class Author is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/author/author.php:46: warning: Member fromBook($book) (function) of class Author is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:137: warning: Member getBindingId() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:138: warning: Member setBindingId($bindingId) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:140: warning: Member getLibraryId() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:141: warning: Member setLibraryId($libraryId) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:143: warning: Member getSignature() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:144: warning: Member setSignature($signature) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:146: warning: Member getSummary() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:147: warning: Member setSummary($summary) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:149: warning: Member getStatus() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:150: warning: Member setStatus($status) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:152: warning: Member getBookList() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:153: warning: Member setBookList($bookList) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:155: warning: Member getScanList() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:156: warning: Member setScanList($scanList) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:158: warning: Member getProvenanceList() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:159: warning: Member setProvenanceList($provenanceList) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:161: warning: Member getBindingLanguageList() (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:162: warning: Member setBindingLanguageList($bindingLanguageList) (function) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:17: warning: Member STATUS_REORDERED (variable) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/binding/binding.php:18: warning: Member STATUS_SELECTED (variable) of class Binding is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/bindinglanguage.php:105: warning: Member getBindingId() (function) of class BindingLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/bindinglanguage.php:106: warning: Member setBindingId($bindingId) (function) of class BindingLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/bindinglanguage.php:108: warning: Member getLanguageId() (function) of class BindingLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/bindinglanguage.php:109: warning: Member setLanguageId($id) (function) of class BindingLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:198: warning: Member getBookId() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:199: warning: Member setBookId($bookId) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:201: warning: Member getTitle() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:202: warning: Member setTitle($title) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:204: warning: Member getBindingId() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:205: warning: Member setBindingId($bindingId) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:207: warning: Member getMinYear() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:208: warning: Member setMinYear($minYear) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:210: warning: Member getMaxYear() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:211: warning: Member setMaxYear($maxYear) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:213: warning: Member getPreciseDate() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:214: warning: Member setPreciseDate($preciseDate) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:216: warning: Member getPlacePublished() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:217: warning: Member setPlacePublished($placePublished) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:219: warning: Member getPublisher() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:220: warning: Member setPublisher($publisher) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:222: warning: Member getPrintVersion() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:223: warning: Member setPrintVersion($printVersion) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:225: warning: Member getFirstPage() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:226: warning: Member setFirstPage($page) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:228: warning: Member getLastPage() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:229: warning: Member setLastPage($page) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:231: warning: Member getAuthorList() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:232: warning: Member setAuthorList($authorList) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:234: warning: Member getBookLanguageList() (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:235: warning: Member setBookLanguageList($bookLanguageList) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:86: warning: Member fromBinding($binding) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:107: warning: Member fromBindingPage($binding, $range) (function) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:48: warning: Member $bookLanguageList (variable) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/book/book.php:50: warning: Member $authorList (variable) of class Book is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/bookcontroller.php:33: warning: Member actionFirstLastPages($data) (function) of class BookController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/booklanguage.php:105: warning: Member getBookId() (function) of class BookLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/booklanguage.php:106: warning: Member setBookId($bookId) (function) of class BookLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/booklanguage.php:108: warning: Member getLanguageId() (function) of class BookLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/booklanguage.php:109: warning: Member setLanguageId($id) (function) of class BookLanguage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/bookcontroller.php:13: warning: Member __construct($bookId) (function) of class BookNotFoundException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:28: warning: Member setDependencyFiles($files) (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:33: warning: Member setDependencyTimestamp($timestamp) (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:38: warning: Member getDependencyTimestamp() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:43: warning: Member getTimestamp() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:54: warning: Member hasExpired() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:59: warning: Member update() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:64: warning: Member clear() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:76: warning: Member getLength() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:81: warning: Member getContent() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:100: warning: Member setContent($content) (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:107: warning: Member output() (function) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:9: warning: Member $filename (variable) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:10: warning: Member $content (variable) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:11: warning: Member $dependencyTimestamp (variable) of class CacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/database.php:365: warning: Member escape($value) (function) of class Database is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/entity.php:165: warning: argument 'values' of command @param is not found in the argument list of Entity::getValues($columns=null)
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/entity.php:165: warning: The following parameters of Entity::getValues($columns=null) are not documented:
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/database.php:29: Warning: Compound Database is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/usercontroller.php:25: Warning: Compound RegistrationFailedException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:39: Warning: Compound UserPendingException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:19: Warning: Compound SettingException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:18: Warning: Compound ResultSetException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/useractivationcontroller.php:23: Warning: Compound UserActivationException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/usercontroller.php:26: Warning: Compound PasswordIncorrectException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/singleton.php:20: Warning: Compound SingletonException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/database.php:25: Warning: Compound QueryFormatException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/authentication.php:34: Warning: Compound AccessDeniedException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:20: Warning: Compound UploadException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/controller/controller.php:22: Warning: Compound ControllerException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/pdf.php:34: Warning: Compound PdfException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:31: Warning: Compound UserBannedException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php:22: Warning: Compound EntityException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:47: Warning: Compound UserShouldActivateException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/database.php:24: Warning: Compound DatabaseException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/configuration.php:20: Warning: Compound ConfigurationException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/configuration.php:21: Warning: Compound SettingNotFoundException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/exceptionbase.php:64: Warning: Compound FormatException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/authentication.php:36: Warning: Member __construct($actionname) (function) of class AccessDeniedException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:135: Warning: Member setAnnotationId($id) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:137: Warning: Member getScanId() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:138: Warning: Member setScanId($scanId) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:140: Warning: Member getTranscriptionEng() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:141: Warning: Member setTranscriptionEng($text) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:143: Warning: Member getTranscriptionOrig() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:144: Warning: Member setTranscriptionOrig($text) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:147: Warning: Member getPolygon() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:158: Warning: Member setPolygon($vertices) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:166: Warning: Member getCreatedUserId() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:167: Warning: Member setCreatedUserId($id) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:169: Warning: Member getTimeCreated() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:170: Warning: Member setTimeCreated($time) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:172: Warning: Member getOrder() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:173: Warning: Member setOrder($order) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:175: Warning: Member getChangedUserId() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:176: Warning: Member setChangedUserId($id) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:178: Warning: Member getTimeChanged() (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/annotation/annotation.php:179: Warning: Member setTimeChanged($time) (function) of class Annotation is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/authentication.php:259: Warning: argument 'string' of command @param is not found in the argument list of Authentication::assertPermissionTo($action)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/authentication.php:259: Warning: The following parameters of Authentication::assertPermissionTo($action) are not documented:
+  parameter 'action'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/authentication.php:197: Warning: argument 'string' of command @param is not found in the argument list of Authentication::hasPermissionTo($action)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/authentication.php:197: Warning: The following parameters of Authentication::hasPermissionTo($action) are not documented:
+  parameter 'action'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/author/author.php:119: Warning: Member setBookId($bookId) (function) of class Author is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/author/author.php:121: Warning: Member getPersonId() (function) of class Author is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/author/author.php:122: Warning: Member setPersonId($personId) (function) of class Author is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:175: Warning: Member setBindingId($bindingId) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:177: Warning: Member getLibraryId() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:178: Warning: Member setLibraryId($libraryId) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:180: Warning: Member getSignature() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:181: Warning: Member setSignature($signature) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:183: Warning: Member getSummary() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:184: Warning: Member setSummary($summary) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:186: Warning: Member getStatus() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:187: Warning: Member setStatus($status) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:189: Warning: Member getBookList() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:190: Warning: Member setBookList($bookList) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:192: Warning: Member getScanList() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:193: Warning: Member setScanList($scanList) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:195: Warning: Member getProvenanceList() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:196: Warning: Member setProvenanceList($provenanceList) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:198: Warning: Member getBindingLanguageList() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:199: Warning: Member setBindingLanguageList($bindingLanguageList) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:201: Warning: Member getUserId() (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:202: Warning: Member setUserId($userId) (function) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:30: Warning: Member STATUS_REORDERED (variable) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:31: Warning: Member STATUS_SELECTED (variable) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/binding/binding.php:32: Warning: Member STATUS_DELETED (variable) of class Binding is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/bindinglanguage.php:119: Warning: Member setBindingId($bindingId) (function) of class BindingLanguage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/bindinglanguage.php:121: Warning: Member getLanguageId() (function) of class BindingLanguage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/bindinglanguage.php:122: Warning: Member setLanguageId($id) (function) of class BindingLanguage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/bindinglanguage.php:58: Warning: argument 'Binding' of command @param is not found in the argument list of BindingLanguage::createOrGet($binding,$language)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/bindinglanguage.php:58: Warning: argument 'Language' of command @param is not found in the argument list of BindingLanguage::createOrGet($binding,$language)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/bindinglanguage.php:58: Warning: The following parameters of BindingLanguage::createOrGet($binding,$language) are not documented:
+  parameter 'binding'
+  parameter 'language'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:221: Warning: Member setBookId($bookId) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:223: Warning: Member getTitle() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:224: Warning: Member setTitle($title) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:226: Warning: Member getBindingId() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:227: Warning: Member setBindingId($bindingId) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:229: Warning: Member getMinYear() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:230: Warning: Member setMinYear($minYear) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:232: Warning: Member getMaxYear() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:233: Warning: Member setMaxYear($maxYear) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:235: Warning: Member getPreciseDate() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:236: Warning: Member setPreciseDate($preciseDate) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:238: Warning: Member getPlacePublished() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:239: Warning: Member setPlacePublished($placePublished) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:241: Warning: Member getPublisher() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:242: Warning: Member setPublisher($publisher) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:244: Warning: Member getPrintVersion() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:245: Warning: Member setPrintVersion($printVersion) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:247: Warning: Member getFirstPage() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:248: Warning: Member setFirstPage($page) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:250: Warning: Member getLastPage() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:251: Warning: Member setLastPage($page) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:253: Warning: Member getAuthorList() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:254: Warning: Member setAuthorList($authorList) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:256: Warning: Member getBookLanguageList() (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:257: Warning: Member setBookLanguageList($bookLanguageList) (function) of class Book is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:123: Warning: argument 'book' of command @param is not found in the argument list of Book::fromBindingPage($binding,$range)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/book/book.php:123: Warning: The following parameters of Book::fromBindingPage($binding,$range) are not documented:
+  parameter 'binding'
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'string' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'mixed' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'string' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'boolean' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'string' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'Query' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'array' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'int' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: argument 'string' of command @param is not found in the argument list of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:388: Warning: The following parameters of BookController::addFulltext($name,$columns,$value,$addheadline,$altvector, Query &$query, array &$binds,&$c,&$headline) are not documented:
+  parameter 'name'
   parameter 'columns'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/entitylist.php:12: warning: Member $entities (variable) of class EntityList is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/exceptionbase.php:14: warning: Member __construct($id) (function) of class ExceptionBase is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:122: warning: Member getContent() (function) of class FileCacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:134: warning: Member append($content) (function) of class FileCacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:141: warning: Member getLength() (function) of class FileCacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:146: warning: Member setContent($content) (function) of class FileCacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/cache.php:153: warning: Member output() (function) of class FileCacheEntry is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helpcontrolitem.php:65: warning: Member getControlItemName() (function) of class HelpControlItem is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helpcontrolitem.php:66: warning: Member setControlItemName($name) (function) of class HelpControlItem is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helpcontrolitem.php:68: warning: Member getHelpPageId() (function) of class HelpControlItem is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helpcontrolitem.php:69: warning: Member setHelpPageId($id) (function) of class HelpControlItem is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helpcontrolitem.php:71: warning: Member getMarker() (function) of class HelpControlItem is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helpcontrolitem.php:72: warning: Member setMarker($marker) (function) of class HelpControlItem is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:122: warning: Member getHelpPageId() (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:123: warning: Member setHelpPageId($id) (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:125: warning: Member getPageName() (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:126: warning: Member setPageName($name) (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:128: warning: Member getContent() (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:129: warning: Member setContent($con) (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:131: warning: Member getParentHelpPageId() (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/help/helppage.php:132: warning: Member setParentHelpPageId($id) (function) of class HelpPage is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:53: warning: Member ORD_LF (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:54: warning: Member ORD_SPACE (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:55: warning: Member ACTION_KEEP_A (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:56: warning: Member ACTION_DELETE_A (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:57: warning: Member ACTION_DELETE_A_B (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:59: warning: Member $a (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:60: warning: Member $b (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:61: warning: Member $input (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:62: warning: Member $inputIndex (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:63: warning: Member $inputLength (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:64: warning: Member $lookAhead (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:65: warning: Member $output (variable) of class JavascriptMinifier is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:97: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:98: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:252: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:253: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:69: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:70: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:355: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:356: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:410: warning: Found unknown command `\uses'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/jsmin.php:43: warning: Member __construct($msg) (function) of class JavascriptMinifierException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/language.php:73: warning: Member getLanguageId() (function) of class Language is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/language.php:74: warning: Member setLanguageId($id) (function) of class Language is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/language.php:76: warning: Member getLanguageName() (function) of class Language is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/language/language.php:77: warning: Member setLanguageName($name) (function) of class Language is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:91: warning: Member getLibraryId() (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:92: warning: Member setLibraryId($libraryId) (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:94: warning: Member getLibraryName() (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:95: warning: Member setLibraryName($libraryName) (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:97: warning: Member getLibraryAddress() (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:98: warning: Member setLibraryAddress($libraryAddress) (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:100: warning: Member getWebsite() (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:101: warning: Member setWebsite($website) (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:103: warning: Member getInfo() (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:104: warning: Member setInfo($info) (function) of class Library is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:26: warning: argument 'id' of command @param is not found in the argument list of Library::__construct($libraryId=null)
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/library/library.php:26: warning: The following parameters of Library::__construct($libraryId=null) are not documented:
+  parameter 'value'
+  parameter 'addheadline'
+  parameter 'altvector'
+  parameter 'query'
+  parameter 'binds'
+  parameter 'c'
+  parameter 'headline'
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:320: Warning: argument 'string' of command @param is not found in the argument list of BookController::splitFulltextQuery($query)
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:320: Warning: The following parameters of BookController::splitFulltextQuery($query) are not documented:
+  parameter 'query'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/booklanguage.php:119: Warning: Member setBookId($bookId) (function) of class BookLanguage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/booklanguage.php:121: Warning: Member getLanguageId() (function) of class BookLanguage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/booklanguage.php:122: Warning: Member setLanguageId($id) (function) of class BookLanguage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/booklanguage.php:58: Warning: argument 'Book' of command @param is not found in the argument list of BookLanguage::createOrGet($book,$language)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/booklanguage.php:58: Warning: argument 'Language' of command @param is not found in the argument list of BookLanguage::createOrGet($book,$language)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/booklanguage.php:58: Warning: The following parameters of BookLanguage::createOrGet($book,$language) are not documented:
+  parameter 'book'
+  parameter 'language'
+/home/bert/Documenten/SP/Git/application/application/www/backend/controllers/bookcontroller.php:28: Warning: Member __construct($bookId) (function) of class BookNotFoundException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:41: Warning: Member setDependencyFiles($files) (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:46: Warning: Member setDependencyTimestamp($timestamp) (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:51: Warning: Member getDependencyTimestamp() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:56: Warning: Member getTimestamp() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:67: Warning: Member hasExpired() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:72: Warning: Member update() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:77: Warning: Member clear() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:89: Warning: Member getLength() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:94: Warning: Member getContent() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:113: Warning: Member setContent($content) (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:120: Warning: Member output() (function) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:22: Warning: Member $filename (variable) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:23: Warning: Member $content (variable) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:24: Warning: Member $dependencyTimestamp (variable) of class CacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/database.php:400: Warning: Member escape($value) (function) of class Database is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php:514: Warning: Member setMarkedAsDeleted($marked) (function) of class Entity is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php:516: Warning: Member getMarkedAsUpdated() (function) of class Entity is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php:517: Warning: Member setMarkedAsUpdated($marked) (function) of class Entity is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php:190: Warning: argument 'values' of command @param is not found in the argument list of Entity::getValues($columns=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php:190: Warning: The following parameters of Entity::getValues($columns=null) are not documented:
+  parameter 'columns'
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entitylist.php:25: Warning: Member $entities (variable) of class EntityList is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/exceptionbase.php:26: Warning: Member __construct($id) (function) of class ExceptionBase is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:135: Warning: Member getContent() (function) of class FileCacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:147: Warning: Member append($content) (function) of class FileCacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:154: Warning: Member getLength() (function) of class FileCacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:159: Warning: Member setContent($content) (function) of class FileCacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/cache.php:166: Warning: Member output() (function) of class FileCacheEntry is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:171: Warning: Member setHelpPageId($id) (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:173: Warning: Member getPageName() (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:174: Warning: Member setPageName($name) (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:176: Warning: Member getContent() (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:177: Warning: Member setContent($con) (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:179: Warning: Member getParentHelpPageId() (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:180: Warning: Member setParentHelpPageId($id) (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:182: Warning: Member getHelpType() (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:183: Warning: Member setHelpType($type) (function) of class HelpPage is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:39: Warning: argument 'int' of command @param is not found in the argument list of HelpPage::__construct($id=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:39: Warning: The following parameters of HelpPage::__construct($id=null) are not documented:
+  parameter 'id'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:158: Warning: argument 'values' of command @param is not found in the argument list of HelpPage::getValues($columns=null) inherited from member getValues at line 190 in file /home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helppage.php:158: Warning: The following parameters of HelpPage::getValues($columns=null) are not documented:
+  parameter 'columns'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:172: Warning: Member setHelpParagraphId($id) (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:174: Warning: Member getHelpPageId() (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:175: Warning: Member setHelpPageId($id) (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:177: Warning: Member getParagraphParentId() (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:178: Warning: Member setParagraphParentId($id) (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:180: Warning: Member getActionName() (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:181: Warning: Member setActionName($name) (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:183: Warning: Member getTitle() (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:184: Warning: Member setTitle($title) (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:186: Warning: Member getSettingName() (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:187: Warning: Member setSettingName($name) (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:189: Warning: Member getHelpType() (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:190: Warning: Member setHelpType($type) (function) of class HelpParagraph is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:52: Warning: argument 'int' of command @param is not found in the argument list of HelpParagraph::__construct($id=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:52: Warning: The following parameters of HelpParagraph::__construct($id=null) are not documented:
+  parameter 'id'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:156: Warning: argument 'values' of command @param is not found in the argument list of HelpParagraph::getValues($columns=null) inherited from member getValues at line 190 in file /home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/entity.php
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/help/helpparagraph.php:156: Warning: The following parameters of HelpParagraph::getValues($columns=null) are not documented:
+  parameter 'columns'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:56: Warning: Member ORD_LF (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:57: Warning: Member ORD_SPACE (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:58: Warning: Member ACTION_KEEP_A (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:59: Warning: Member ACTION_DELETE_A (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:60: Warning: Member ACTION_DELETE_A_B (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:62: Warning: Member $a (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:63: Warning: Member $b (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:64: Warning: Member $input (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:65: Warning: Member $inputIndex (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:66: Warning: Member $inputLength (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:67: Warning: Member $lookAhead (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:68: Warning: Member $output (variable) of class JavascriptMinifier is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:84: Warning: argument 'string' of command @param is not found in the argument list of JavascriptMinifier::__construct($input)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:84: Warning: The following parameters of JavascriptMinifier::__construct($input) are not documented:
+  parameter 'input'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:100: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:101: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:95: Warning: argument 'int' of command @param is not found in the argument list of JavascriptMinifier::action($command)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:95: Warning: The following parameters of JavascriptMinifier::action($command) are not documented:
+  parameter 'command'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:255: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:256: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:72: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:73: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:70: Warning: argument 'string' of command @param is not found in the argument list of JavascriptMinifier::minify($js)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:70: Warning: The following parameters of JavascriptMinifier::minify($js) are not documented:
+  parameter 'js'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:358: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:359: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:413: Warning: Found unknown command `\uses'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/jsmin.php:46: Warning: Member __construct($msg) (function) of class JavascriptMinifierException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/language.php:87: Warning: Member setLanguageId($id) (function) of class Language is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/language.php:89: Warning: Member getLanguageName() (function) of class Language is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/language/language.php:90: Warning: Member setLanguageName($name) (function) of class Language is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:105: Warning: Member setLibraryId($libraryId) (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:107: Warning: Member getLibraryName() (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:108: Warning: Member setLibraryName($libraryName) (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:110: Warning: Member getLibraryAddress() (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:111: Warning: Member setLibraryAddress($libraryAddress) (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:113: Warning: Member getWebsite() (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:114: Warning: Member setWebsite($website) (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:116: Warning: Member getInfo() (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:117: Warning: Member setInfo($info) (function) of class Library is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:39: Warning: argument 'id' of command @param is not found in the argument list of Library::__construct($libraryId=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/library/library.php:39: Warning: The following parameters of Library::__construct($libraryId=null) are not documented:
   parameter 'libraryId'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/mailer.php:86: warning: Member sendUserDeclinedMail($puser) (function) of class Mailer is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/mailer.php:106: warning: Member sendPasswordRestorationMail($user) (function) of class Mailer is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/maincontroller.php:130: warning: Member actionTextPage($data) (function) of class MainController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/note/note.php:79: warning: Member getUserId() (function) of class Note is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/note/note.php:80: warning: Member setUserId($userId) (function) of class Note is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/note/note.php:82: warning: Member getText() (function) of class Note is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/note/note.php:83: warning: Member setText($text) (function) of class Note is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/notecontroller.php:14: warning: Member actionLoad($data) (function) of class NoteController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/notecontroller.php:40: warning: Member actionSave($data) (function) of class NoteController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:117: warning: Member getPendingUserId() (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:119: warning: Member getUserId() (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:120: warning: Member setUserId($id) (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:122: warning: Member getConfirmationCode() (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:123: warning: Member setConfirmationCode($code) (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:125: warning: Member getAccepted() (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:126: warning: Member setAccepted($accepted) (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:128: warning: Member getExpirationDate() (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/pendinguser.php:129: warning: Member setExpirationDate($date) (function) of class PendingUser is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/permission/permission.php:123: warning: Member getActionName() (function) of class Permission is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/permission/permission.php:124: warning: Member setActionName($name) (function) of class Permission is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/permission/permission.php:126: warning: Member getMinRank() (function) of class Permission is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/permission/permission.php:127: warning: Member setMinRank($rank) (function) of class Permission is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/person/person.php:79: warning: Member getPersonId() (function) of class Person is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/person/person.php:80: warning: Member setPersonId($personId) (function) of class Person is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/person/person.php:82: warning: Member getName() (function) of class Person is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/person/person.php:83: warning: Member setName($name) (function) of class Person is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/person/person.php:17: warning: argument 'id' of command @param is not found in the argument list of Person::__construct($personId=null)
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/person/person.php:17: warning: The following parameters of Person::__construct($personId=null) are not documented:
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:80: Warning: argument 'PendingUser' of command @param is not found in the argument list of Mailer::sendActivationMail($puser)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:80: Warning: The following parameters of Mailer::sendActivationMail($puser) are not documented:
+  parameter 'puser'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:33: Warning: argument 'string' of command @param is not found in the argument list of Mailer::sendMail($recipient,$subject,$message)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:33: Warning: argument 'string' of command @param is not found in the argument list of Mailer::sendMail($recipient,$subject,$message)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:33: Warning: argument 'string' of command @param is not found in the argument list of Mailer::sendMail($recipient,$subject,$message)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:33: Warning: The following parameters of Mailer::sendMail($recipient,$subject,$message) are not documented:
+  parameter 'recipient'
+  parameter 'subject'
+  parameter 'message'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:138: Warning: argument 'User' of command @param is not found in the argument list of Mailer::sendPasswordRestorationMail($user)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:138: Warning: The following parameters of Mailer::sendPasswordRestorationMail($user) are not documented:
+  parameter 'user'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:116: Warning: argument 'PendingUser' of command @param is not found in the argument list of Mailer::sendUserDeclinedMail($puser)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/mailer.php:116: Warning: The following parameters of Mailer::sendUserDeclinedMail($puser) are not documented:
+  parameter 'puser'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/note/note.php:93: Warning: Member setUserId($userId) (function) of class Note is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/note/note.php:95: Warning: Member getText() (function) of class Note is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/note/note.php:96: Warning: Member setText($text) (function) of class Note is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/pdf.php:105: Warning: argument 'Binding' of command @param is not found in the argument list of Pdf::__construct(Binding $binding, CacheEntry $cacheEntry,$range=null,$transcriptions=null,$annotations=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/pdf.php:105: Warning: argument 'CacheEntry' of command @param is not found in the argument list of Pdf::__construct(Binding $binding, CacheEntry $cacheEntry,$range=null,$transcriptions=null,$annotations=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/pdf.php:105: Warning: argument 'mixed' of command @param is not found in the argument list of Pdf::__construct(Binding $binding, CacheEntry $cacheEntry,$range=null,$transcriptions=null,$annotations=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/pdf.php:105: Warning: argument 'callback' of command @param is not found in the argument list of Pdf::__construct(Binding $binding, CacheEntry $cacheEntry,$range=null,$transcriptions=null,$annotations=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/pdf.php:105: Warning: argument 'boolean' of command @param is not found in the argument list of Pdf::__construct(Binding $binding, CacheEntry $cacheEntry,$range=null,$transcriptions=null,$annotations=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/pdf.php:105: Warning: The following parameters of Pdf::__construct(Binding $binding, CacheEntry $cacheEntry,$range=null,$transcriptions=null,$annotations=false) are not documented:
+  parameter 'binding'
+  parameter 'cacheEntry'
+  parameter 'range'
+  parameter 'transcriptions'
+  parameter 'annotations'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/pendinguser.php:125: Warning: Member getUserId() (function) of class PendingUser is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/pendinguser.php:126: Warning: Member setUserId($id) (function) of class PendingUser is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/pendinguser.php:128: Warning: Member getConfirmationCode() (function) of class PendingUser is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/pendinguser.php:129: Warning: Member setConfirmationCode($code) (function) of class PendingUser is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/pendinguser.php:131: Warning: Member getExpirationDate() (function) of class PendingUser is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/pendinguser.php:132: Warning: Member setExpirationDate($date) (function) of class PendingUser is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:137: Warning: Member setActionName($name) (function) of class Permission is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:139: Warning: Member getMinRank() (function) of class Permission is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:140: Warning: Member setMinRank($rank) (function) of class Permission is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:72: Warning: argument 'int' of command @param is not found in the argument list of Permission::getPermissionListForRank($rank)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:72: Warning: The following parameters of Permission::getPermissionListForRank($rank) are not documented:
+  parameter 'rank'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:45: Warning: argument 'string' of command @param is not found in the argument list of Permission::rankHasPermission($action,$rank)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:45: Warning: argument 'int' of command @param is not found in the argument list of Permission::rankHasPermission($action,$rank)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/permission/permission.php:45: Warning: The following parameters of Permission::rankHasPermission($action,$rank) are not documented:
+  parameter 'action'
+  parameter 'rank'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/person/person.php:93: Warning: Member setPersonId($personId) (function) of class Person is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/person/person.php:95: Warning: Member getName() (function) of class Person is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/person/person.php:96: Warning: Member setName($name) (function) of class Person is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/person/person.php:30: Warning: argument 'id' of command @param is not found in the argument list of Person::__construct($personId=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/person/person.php:30: Warning: The following parameters of Person::__construct($personId=null) are not documented:
   parameter 'personId'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/provenance/provenance.php:104: warning: Member getBindingId() (function) of class Provenance is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/provenance/provenance.php:105: warning: Member setBindingId($bindingId) (function) of class Provenance is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/provenance/provenance.php:107: warning: Member getPersonId() (function) of class Provenance is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/provenance/provenance.php:108: warning: Member setPersonId($personId) (function) of class Provenance is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/provenance/provenance.php:36: warning: Member fromBinding($binding) (function) of class Provenance is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:263: warning: Member columns() (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:278: warning: Member count($column= '*', $as= 'total') (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:285: warning: Member aggregate($function, $as= 'aggregate', $column= '*') (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:292: warning: Member headline($columns, $query, $as) (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:373: warning: Member join($table, $conditions= '', $type= '') (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:420: warning: Member whereOr() (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:427: warning: Member having() (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:434: warning: Member havingOr() (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:483: warning: Member limit($limit=null, $offset=0) (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:493: warning: Member groupBy() (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:505: warning: Member orderBy($column, $direction= 'asc') (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:530: warning: Member execute($arguments=array(), $types=null) (function) of class Query is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:45: warning: unable to resolve link to `QueryBuilder' for \link command
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:349: warning: argument 'string' of command @param is not found in the argument list of Query::from()
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:349: warning: argument 'array' of command @param is not found in the argument list of Query::from()
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:199: warning: argument 'vals' of command @param is not found in the argument list of Query::insert($table,$values)
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:199: warning: The following parameters of Query::insert($table,$values) are not documented:
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/provenance/provenance.php:108: Warning: Member setBindingId($bindingId) (function) of class Provenance is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/provenance/provenance.php:110: Warning: Member getPersonId() (function) of class Provenance is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/provenance/provenance.php:111: Warning: Member setPersonId($personId) (function) of class Provenance is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:244: Warning: Member columns() (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:259: Warning: Member count($column= '*', $as= 'total') (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:266: Warning: Member aggregate($function, $as= 'aggregate', $column= '*') (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:273: Warning: Member headline($columns, $query, $as) (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:346: Warning: Member join($table, $conditions= '', $type= '') (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:393: Warning: Member whereOr() (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:400: Warning: Member having() (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:407: Warning: Member havingOr() (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:471: Warning: Member limit($limit=null, $offset=0) (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:481: Warning: Member groupBy() (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:493: Warning: Member orderBy($column, $direction= 'asc') (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:525: Warning: Member execute($arguments=array(), $types=null) (function) of class Query is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:95: Warning: argument 'array' of command @param is not found in the argument list of Query::clear($fields=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:95: Warning: The following parameters of Query::clear($fields=null) are not documented:
+  parameter 'fields'
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:225: Warning: argument 'string' of command @param is not found in the argument list of Query::delete($table)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:225: Warning: The following parameters of Query::delete($table) are not documented:
+  parameter 'table'
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:322: Warning: argument 'string' of command @param is not found in the argument list of Query::from()
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:322: Warning: argument 'array' of command @param is not found in the argument list of Query::from()
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:180: Warning: argument 'string' of command @param is not found in the argument list of Query::insert($table,$values)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:180: Warning: argument 'array' of command @param is not found in the argument list of Query::insert($table,$values)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:180: Warning: The following parameters of Query::insert($table,$values) are not documented:
+  parameter 'table'
   parameter 'values'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:306: warning: argument 'string' of command @param is not found in the argument list of Query::returning()
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:221: warning: argument 'vals' of command @param is not found in the argument list of Query::update($table,$values)
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/query.php:221: warning: The following parameters of Query::update($table,$values) are not documented:
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:287: Warning: argument 'string' of command @param is not found in the argument list of Query::returning()
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:202: Warning: argument 'string' of command @param is not found in the argument list of Query::update($table,$values)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:202: Warning: argument 'array' of command @param is not found in the argument list of Query::update($table,$values)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/query.php:202: Warning: The following parameters of Query::update($table,$values) are not documented:
+  parameter 'table'
   parameter 'values'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:41: warning: Member getIterator() (function) of class ResultSet is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:46: warning: Member getAmount() (function) of class ResultSet is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:51: warning: Member tryGetFirstRow() (function) of class ResultSet is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:58: warning: Member getFirstRow() (function) of class ResultSet is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:70: warning: Member asArrays() (function) of class ResultSet is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:92: warning: Member __construct($rset, $stat) (function) of class ResultSetIterator is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:102: warning: Member next() (function) of class ResultSetIterator is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:113: warning: Member key() (function) of class ResultSetIterator is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:118: warning: Member current() (function) of class ResultSetIterator is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:123: warning: Member valid() (function) of class ResultSetIterator is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:128: warning: Member rewind() (function) of class ResultSetIterator is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/database/resultset.php:144: warning: Member __construct($row) (function) of class ResultSetRow is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:173: warning: Member getScanId() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:175: warning: Member getScanType() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:176: warning: Member setScanType($type) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:178: warning: Member getPage() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:179: warning: Member setPage($page) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:181: warning: Member getStatus() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:182: warning: Member setStatus($status) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:184: warning: Member getWidth() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:185: warning: Member getHeight() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:188: warning: Member setDimensions($width, $height) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:193: warning: Member getZoomLevel() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:194: warning: Member setZoomLevel($level) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:196: warning: Member getUploadId() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:197: warning: Member setUploadId($id) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:199: warning: Member getBindingId() (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:200: warning: Member setBindingId($id) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:72: warning: Member fromBinding($binding) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:92: warning: Member fromBindingPage($binding, $range) (function) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:15: warning: Member STATUS_PROCESSING (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:16: warning: Member STATUS_ERROR (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:17: warning: Member STATUS_DELETED (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:18: warning: Member STATUS_PROCESSED (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:22: warning: Member TYPE_TIFF (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:26: warning: Member $scanType (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:27: warning: Member $page (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:28: warning: Member $status (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:29: warning: Member $width (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:30: warning: Member $height (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:31: warning: Member $zoomLevel (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:32: warning: Member $filename (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:33: warning: Member $uploadId (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/scan/scan.php:34: warning: Member $bindingId (variable) of class Scan is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/controllers/scancontroller.php:34: warning: Member actionReorder($data) (function) of class ScanController is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/setting/setting.php:121: warning: Member getSettingName() (function) of class Setting is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/setting/setting.php:122: warning: Member setSettingName($name) (function) of class Setting is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/setting/setting.php:124: warning: Member getSettingValue() (function) of class Setting is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/setting/setting.php:125: warning: Member setSettingValue($value) (function) of class Setting is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/singleton.php:35: warning: Member __clone() (function) of class Singleton is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/framework/util/singleton.php:40: warning: Member __wakeup() (function) of class Singleton is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/util/cssmin.php:12: warning: The following parameters of StylesheetMinifier::minify($css,$location) are not documented:
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:38: Warning: argument 'PDOStamement' of command @param is not found in the argument list of ResultSet::__construct($statement)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:38: Warning: The following parameters of ResultSet::__construct($statement) are not documented:
+  parameter 'statement'
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:48: Warning: argument 'PDOStamement' of command @param is not found in the argument list of ResultSet::__destruct()
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:125: Warning: Member __construct($rset, $stat) (function) of class ResultSetIterator is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:201: Warning: argument 'string' of command @param is not found in the argument list of ResultSetRow::getValue($name,$type=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:201: Warning: argument 'array' of command @param is not found in the argument list of ResultSetRow::getValue($name,$type=null)
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/database/resultset.php:201: Warning: The following parameters of ResultSetRow::getValue($name,$type=null) are not documented:
+  parameter 'name'
+  parameter 'type'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:209: Warning: Member getScanType() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:210: Warning: Member setScanType($type) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:212: Warning: Member getPage() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:213: Warning: Member setPage($page) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:215: Warning: Member getScanName() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:216: Warning: Member setScanName($scanName) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:218: Warning: Member getStatus() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:219: Warning: Member setStatus($status) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:221: Warning: Member getWidth() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:222: Warning: Member getHeight() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:225: Warning: Member setDimensions($width, $height) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:230: Warning: Member getZoomLevel() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:231: Warning: Member setZoomLevel($level) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:233: Warning: Member getUploadId() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:234: Warning: Member setUploadId($id) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:236: Warning: Member getBindingId() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:237: Warning: Member setBindingId($id) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:239: Warning: Member getBookTitle() (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:240: Warning: Member setBookTitle($bookTitle) (function) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:27: Warning: Member STATUS_PROCESSING (variable) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:28: Warning: Member STATUS_ERROR (variable) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:29: Warning: Member STATUS_DELETED (variable) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:30: Warning: Member STATUS_PROCESSED (variable) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/scan/scan.php:34: Warning: Member TYPE_TIFF (variable) of class Scan is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:145: Warning: Member getSettingValue() (function) of class Setting is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:146: Warning: Member setSettingValue($value) (function) of class Setting is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:148: Warning: Member getVisible() (function) of class Setting is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:50: Warning: argument 'string' of command @param is not found in the argument list of Setting::getSetting($name,$default=null,$onlyVisible=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:50: Warning: argument 'string' of command @param is not found in the argument list of Setting::getSetting($name,$default=null,$onlyVisible=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:50: Warning: argument 'bool' of command @param is not found in the argument list of Setting::getSetting($name,$default=null,$onlyVisible=false)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:50: Warning: The following parameters of Setting::getSetting($name,$default=null,$onlyVisible=false) are not documented:
+  parameter 'name'
+  parameter 'default'
+  parameter 'onlyVisible'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:87: Warning: argument 'string' of command @param is not found in the argument list of Setting::setSetting($name,$value)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:87: Warning: argument 'string' of command @param is not found in the argument list of Setting::setSetting($name,$value)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/setting/setting.php:87: Warning: The following parameters of Setting::setSetting($name,$value) are not documented:
+  parameter 'name'
+  parameter 'value'
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/singleton.php:48: Warning: Member __clone() (function) of class Singleton is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/framework/util/singleton.php:53: Warning: Member __wakeup() (function) of class Singleton is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/cssmin.php:38: Warning: argument 'string' of command @param is not found in the argument list of StylesheetMinifier::__construct($input,$filename)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/cssmin.php:38: Warning: argument 'string' of command @param is not found in the argument list of StylesheetMinifier::__construct($input,$filename)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/cssmin.php:38: Warning: The following parameters of StylesheetMinifier::__construct($input,$filename) are not documented:
+  parameter 'input'
+  parameter 'filename'
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/cssmin.php:25: Warning: argument 'string' of command @param is not found in the argument list of StylesheetMinifier::minify($css,$location)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/cssmin.php:25: Warning: The following parameters of StylesheetMinifier::minify($css,$location) are not documented:
+  parameter 'css'
   parameter 'location'
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:205: warning: Member getUploadId() (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:207: warning: Member getUserId() (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:208: warning: Member setUserId($id) (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:210: warning: Member getToken() (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:212: warning: Member getFilename() (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:213: warning: Member setFilename($filename) (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:215: warning: Member getSize() (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:216: warning: Member setSize($size) (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:218: warning: Member getTimestamp() (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:219: warning: Member setTimestamp($timestamp) (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:221: warning: Member getStatus() (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:222: warning: Member setStatus($status) (function) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:16: warning: Member STATUS_ERROR (variable) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:20: warning: Member $userId (variable) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:21: warning: Member $token (variable) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:22: warning: Member $filename (variable) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:23: warning: Member $size (variable) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:24: warning: Member $timestamp (variable) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/upload/upload.php:25: warning: Member $status (variable) of class Upload is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:377: warning: Member getUserId() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:379: warning: Member setUsername($username) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:380: warning: Member getUsername() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:383: warning: Member setPassword($password) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:387: warning: Member getEmail() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:388: warning: Member setEmail($email) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:390: warning: Member setFirstName($firstName) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:391: warning: Member getFirstName() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:393: warning: Member setLastName($lastName) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:394: warning: Member getLastName() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:396: warning: Member setAffiliation($affiliation) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:397: warning: Member getAffiliation() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:399: warning: Member setOccupation($occupation) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:400: warning: Member getOccupation() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:402: warning: Member setWebsite($website) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:403: warning: Member getWebsite() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:405: warning: Member setHomeAddress($address) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:406: warning: Member getHomeAddress() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:408: warning: Member setActive($active) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:409: warning: Member getActive() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:410: warning: Member isActive() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:412: warning: Member setBanned($banned) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:413: warning: Member getBanned() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:414: warning: Member isBanned() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:416: warning: Member setRank($rank) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:417: warning: Member getRank() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:419: warning: Member getPasswordRestoreToken() (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:420: warning: Member setPasswordRestoreToken($token) (function) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:46: warning: Member RANK_DEFAULT (variable) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:47: warning: Member RANK_MODERATOR (variable) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:48: warning: Member RANK_ADMIN (variable) of class User is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:18: warning: Member __construct($username) (function) of class UserBannedException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:10: warning: Member __construct($username) (function) of class UserNotFoundException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:26: warning: Member __construct($username) (function) of class UserPendingException is not documented.
-/home/gerbenvv/Projects/Web/Collaboratory/application/application/www/backend/models/user/user.php:34: warning: Member __construct($username) (function) of class UserShouldActivateException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/tilepyramidbuilder.php:298: Warning: argument 'int' of command @param is not found in the argument list of TilePyramidBuilder::runBuilder($iterationPause=5)
+/home/bert/Documenten/SP/Git/application/application/www/backend/util/tilepyramidbuilder.php:298: Warning: The following parameters of TilePyramidBuilder::runBuilder($iterationPause=5) are not documented:
+  parameter 'iterationPause'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:220: Warning: Member getUserId() (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:221: Warning: Member setUserId($id) (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:223: Warning: Member getToken() (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:225: Warning: Member getFilename() (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:226: Warning: Member setFilename($filename) (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:228: Warning: Member getSize() (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:229: Warning: Member setSize($size) (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:231: Warning: Member getTimestamp() (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:232: Warning: Member setTimestamp($timestamp) (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:234: Warning: Member getStatus() (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:235: Warning: Member setStatus($status) (function) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:29: Warning: Member STATUS_ERROR (variable) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:33: Warning: Member $userId (variable) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:34: Warning: Member $token (variable) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:35: Warning: Member $filename (variable) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:36: Warning: Member $size (variable) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:37: Warning: Member $timestamp (variable) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/upload/upload.php:38: Warning: Member $status (variable) of class Upload is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:417: Warning: Member getUsername() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:418: Warning: Member setUsername($username) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:421: Warning: Member setPassword($password) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:425: Warning: Member getEmail() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:426: Warning: Member setEmail($email) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:428: Warning: Member getFirstName() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:429: Warning: Member setFirstName($firstName) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:431: Warning: Member getLastName() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:432: Warning: Member setLastName($lastName) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:434: Warning: Member getAffiliation() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:435: Warning: Member setAffiliation($affiliation) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:437: Warning: Member getOccupation() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:438: Warning: Member setOccupation($occupation) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:440: Warning: Member getWebsite() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:441: Warning: Member setWebsite($website) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:443: Warning: Member getHomeAddress() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:444: Warning: Member setHomeAddress($address) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:446: Warning: Member getBanned() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:447: Warning: Member setBanned($banned) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:448: Warning: Member isBanned() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:450: Warning: Member getRank() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:451: Warning: Member setRank($rank) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:453: Warning: Member getPasswordRestoreToken() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:454: Warning: Member setPasswordRestoreToken($token) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:456: Warning: Member getActivationStage() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:457: Warning: Member setActivationStage($stage) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:459: Warning: Member getRegistrationDate() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:460: Warning: Member setRegistrationDate($registrationDate) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:462: Warning: Member getLastActive() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:463: Warning: Member setLastActive($lastActive) (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:467: Warning: Member getActive() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:478: Warning: Member isActive() (function) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:61: Warning: Member RANK_DEFAULT (variable) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:62: Warning: Member RANK_MODERATOR (variable) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:63: Warning: Member RANK_ADMIN (variable) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:67: Warning: Member ACTIVE_STAGE_ACCEPTED (variable) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:68: Warning: Member ACTIVE_STAGE_DENIED (variable) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:69: Warning: Member ACTIVE_STAGE_ACTIVE (variable) of class User is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:202: Warning: argument 'string' of command @param is not found in the argument list of User::fromEmailAddress($email)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:202: Warning: The following parameters of User::fromEmailAddress($email) are not documented:
+  parameter 'email'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:228: Warning: argument 'string' of command @param is not found in the argument list of User::fromUsername($username)
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:228: Warning: The following parameters of User::fromUsername($username) are not documented:
+  parameter 'username'
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:33: Warning: Member __construct($username) (function) of class UserBannedException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:25: Warning: Member __construct($username) (function) of class UserNotFoundException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:41: Warning: Member __construct($username) (function) of class UserPendingException is not documented.
+/home/bert/Documenten/SP/Git/application/application/www/backend/models/user/user.php:49: Warning: Member __construct($username) (function) of class UserShouldActivateException is not documented.

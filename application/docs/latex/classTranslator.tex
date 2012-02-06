@@ -2,10 +2,22 @@
 \section{Translator Class Reference}
 \label{classTranslator}\index{Translator@{Translator}}
 }
-Inheritance diagram for Translator:\begin{figure}[H]
+
+
+Inheritance diagram for Translator:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classTranslator}
+\includegraphics[width=124pt]{classTranslator__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Translator:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=124pt]{classTranslator__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -32,11 +44,7 @@ static \hyperlink{classTranslator_a5003e4312c37dc1c83fde700e5ee1e9f}{\$instance}
 \hypertarget{classTranslator_a29af4c462256cc6919e8980dbd04049c}{
 \index{Translator@{Translator}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Translator@{Translator}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Translator::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Translator::\_\-\_\-construct ()\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classTranslator_a29af4c462256cc6919e8980dbd04049c}
 Constructs a configuration class instance. 
 
@@ -48,22 +56,13 @@ Reimplemented from \hyperlink{classSingleton}{Singleton}.
 \hypertarget{classTranslator_a889df34e7a06e9126b202cab6241dc10}{
 \index{Translator@{Translator}!getEntry@{getEntry}}
 \index{getEntry@{getEntry}!Translator@{Translator}}
-\subsubsection[{getEntry}]{\setlength{\rightskip}{0pt plus 5cm}Translator::getEntry (
-\begin{DoxyParamCaption}
-\item[{\$}]{id, }
-\item[{\$}]{args = {\ttfamily array()}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{getEntry}]{\setlength{\rightskip}{0pt plus 5cm}Translator::getEntry (\$ {\em id}, \/  \$ {\em args} = {\ttfamily array()})}}
 \label{classTranslator_a889df34e7a06e9126b202cab6241dc10}
 Gets a language entry.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & The id of the entry. \\
-\hline
-{\em \$args} & The arguments to apply to the entry. Format is that of printf.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]The id of the entry. \item[{\em \$args}]The arguments to apply to the entry. Format is that of printf.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The language entry. 
 \end{DoxyReturn}

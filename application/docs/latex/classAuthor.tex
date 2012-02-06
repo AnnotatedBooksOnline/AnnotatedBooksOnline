@@ -2,10 +2,22 @@
 \section{Author Class Reference}
 \label{classAuthor}\index{Author@{Author}}
 }
-Inheritance diagram for Author:\begin{figure}[H]
+
+
+Inheritance diagram for Author:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{classAuthor}
+\includegraphics[height=400pt]{classAuthor__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Author:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classAuthor__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for Author:\begin{figure}[H]
 \item 
 \hyperlink{classAuthor_ad0dc0fef1570b45b600c990053adeb36}{\_\-\_\-construct} (\$personId=null, \$bookId=null, \$createNew=false)
 \item 
-\hypertarget{classAuthor_a5f4d6e520feb52f072417b1ae445eabc}{
-{\bfseries getBookId} ()}
-\label{classAuthor_a5f4d6e520feb52f072417b1ae445eabc}
-
+\hyperlink{classAuthor_a5f4d6e520feb52f072417b1ae445eabc}{getBookId} ()
 \item 
 \hypertarget{classAuthor_af40db8767cf8f9ad7d30e9d5191e9f28}{
 {\bfseries setBookId} (\$bookId)}
@@ -36,10 +45,7 @@ Inheritance diagram for Author:\begin{figure}[H]
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classAuthor_a28e3a2452148b8099d0075d88bf21b66}{
-static {\bfseries fromBook} (\$book)}
-\label{classAuthor_a28e3a2452148b8099d0075d88bf21b66}
-
+static \hyperlink{classAuthor_a28e3a2452148b8099d0075d88bf21b66}{fromBook} (\$book)
 \item 
 static \hyperlink{classAuthor_a83c8f19c169bcfffb4e0df09fadafe26}{getTableName} ()
 \item 
@@ -65,36 +71,38 @@ Class representing a author entity. Associatieve between book and person.
 \hypertarget{classAuthor_ad0dc0fef1570b45b600c990053adeb36}{
 \index{Author@{Author}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Author@{Author}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Author::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{personId = {\ttfamily null}, }
-\item[{\$}]{bookId = {\ttfamily null}, }
-\item[{\$}]{createNew = {\ttfamily false}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Author::\_\-\_\-construct (\$ {\em personId} = {\ttfamily null}, \/  \$ {\em bookId} = {\ttfamily null}, \/  \$ {\em createNew} = {\ttfamily false})}}
 \label{classAuthor_ad0dc0fef1570b45b600c990053adeb36}
 Constructs an author entity by a person and book id.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$personId} & \\
-\hline
-{\em \$bookId} & \\
-\hline
-{\em \$createNew} & If true, a new author will be created if the specified one did not exist yet. If one already exists, it doesn't really matter whether this is true or false. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$personId}]\item[{\em \$bookId}]\item[{\em \$createNew}]If true, a new author will be created if the specified one did not exist yet. If one already exists, it doesn't really matter whether this is true or false. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classAuthor_aa3e40fdf422c171a8e307725ca5ff05c}{
+\hypertarget{classAuthor_a28e3a2452148b8099d0075d88bf21b66}{
+\index{Author@{Author}!fromBook@{fromBook}}
+\index{fromBook@{fromBook}!Author@{Author}}
+\subsubsection[{fromBook}]{\setlength{\rightskip}{0pt plus 5cm}static Author::fromBook (\$ {\em book})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classAuthor_a28e3a2452148b8099d0075d88bf21b66}
+Returns all the authors which belong to one book
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \$book}]The book model \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Array of author models 
+\end{DoxyReturn}
+\hypertarget{classAuthor_a5f4d6e520feb52f072417b1ae445eabc}{
+\index{Author@{Author}!getBookId@{getBookId}}
+\index{getBookId@{getBookId}!Author@{Author}}
+\subsubsection[{getBookId}]{\setlength{\rightskip}{0pt plus 5cm}Author::getBookId ()}}
+\label{classAuthor_a5f4d6e520feb52f072417b1ae445eabc}
+Getters and setters. \hypertarget{classAuthor_aa3e40fdf422c171a8e307725ca5ff05c}{
 \index{Author@{Author}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Author@{Author}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classAuthor_aa3e40fdf422c171a8e307725ca5ff05c}
 Gets all the columns.
 
@@ -108,11 +116,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classAuthor_a305006a9a8889149f9103b1c5d762aa9}{
 \index{Author@{Author}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Author@{Author}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classAuthor_a305006a9a8889149f9103b1c5d762aa9}
 Gets all the column types, per column, including primary keys.
 
@@ -126,11 +130,7 @@ Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Ent
 \hypertarget{classAuthor_abeb5bf2d5739d0e46522c608c04db776}{
 \index{Author@{Author}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Author@{Author}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classAuthor_abeb5bf2d5739d0e46522c608c04db776}
 Gets the primary keys.
 
@@ -144,11 +144,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classAuthor_a83c8f19c169bcfffb4e0df09fadafe26}{
 \index{Author@{Author}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Author@{Author}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Author::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classAuthor_a83c8f19c169bcfffb4e0df09fadafe26}
 Gets the table name.
 

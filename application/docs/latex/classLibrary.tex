@@ -2,10 +2,22 @@
 \section{Library Class Reference}
 \label{classLibrary}\index{Library@{Library}}
 }
-Inheritance diagram for Library:\begin{figure}[H]
+
+
+Inheritance diagram for Library:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classLibrary}
+\includegraphics[height=400pt]{classLibrary__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Library:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classLibrary__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for Library:\begin{figure}[H]
 \item 
 \hyperlink{classLibrary_a448367379e1917a080692b9f7d09b2af}{\_\-\_\-construct} (\$libraryId=null)
 \item 
-\hypertarget{classLibrary_a34d5adadf5e40827701eb60578f7a0f3}{
-{\bfseries getLibraryId} ()}
-\label{classLibrary_a34d5adadf5e40827701eb60578f7a0f3}
-
+\hyperlink{classLibrary_a34d5adadf5e40827701eb60578f7a0f3}{getLibraryId} ()
 \item 
 \hypertarget{classLibrary_a3c6fc6ea2264853d5b429b8efccc28f3}{
 {\bfseries setLibraryId} (\$libraryId)}
@@ -96,30 +105,20 @@ Class representing a library entity.
 \hypertarget{classLibrary_a448367379e1917a080692b9f7d09b2af}{
 \index{Library@{Library}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Library@{Library}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Library::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{libraryId = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Library::\_\-\_\-construct (\$ {\em libraryId} = {\ttfamily null})}}
 \label{classLibrary_a448367379e1917a080692b9f7d09b2af}
 Constructs a library by id.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the library. Default (null) will create a new library. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the library. Default (null) will create a new library. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classLibrary_ab67ca6733ca346dccb066c7333ef3426}{
 \index{Library@{Library}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Library@{Library}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLibrary_ab67ca6733ca346dccb066c7333ef3426}
 Gets all the columns.
 
@@ -133,11 +132,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classLibrary_aa18ef5cf611b855ccbe55283b41e93b6}{
 \index{Library@{Library}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Library@{Library}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLibrary_aa18ef5cf611b855ccbe55283b41e93b6}
 Gets all the column types, per column, including primary keys.
 
@@ -148,14 +143,15 @@ Array of all column types.
 
 Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
 
-\hypertarget{classLibrary_a026a18e3d13f83be2ee85221156f7864}{
+\hypertarget{classLibrary_a34d5adadf5e40827701eb60578f7a0f3}{
+\index{Library@{Library}!getLibraryId@{getLibraryId}}
+\index{getLibraryId@{getLibraryId}!Library@{Library}}
+\subsubsection[{getLibraryId}]{\setlength{\rightskip}{0pt plus 5cm}Library::getLibraryId ()}}
+\label{classLibrary_a34d5adadf5e40827701eb60578f7a0f3}
+Getters and setters. \hypertarget{classLibrary_a026a18e3d13f83be2ee85221156f7864}{
 \index{Library@{Library}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Library@{Library}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLibrary_a026a18e3d13f83be2ee85221156f7864}
 Gets the primary keys.
 
@@ -169,11 +165,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classLibrary_a0b5dbae3b3d7138ad86c7df6e6a433eb}{
 \index{Library@{Library}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Library@{Library}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Library::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLibrary_a0b5dbae3b3d7138ad86c7df6e6a433eb}
 Gets the table name.
 

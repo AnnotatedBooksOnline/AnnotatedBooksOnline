@@ -2,10 +2,22 @@
 \section{AssociativeEntity Class Reference}
 \label{classAssociativeEntity}\index{AssociativeEntity@{AssociativeEntity}}
 }
-Inheritance diagram for AssociativeEntity:\begin{figure}[H]
+
+
+Inheritance diagram for AssociativeEntity:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.847458cm]{classAssociativeEntity}
+\includegraphics[width=400pt]{classAssociativeEntity__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for AssociativeEntity:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classAssociativeEntity__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -29,19 +41,13 @@ A table is considered associative if and only if all its primary keys are also f
 \hypertarget{classAssociativeEntity_a52105f0a9a643c01e92d6acc4dfafef3}{
 \index{AssociativeEntity@{AssociativeEntity}!getInsertQuery@{getInsertQuery}}
 \index{getInsertQuery@{getInsertQuery}!AssociativeEntity@{AssociativeEntity}}
-\subsubsection[{getInsertQuery}]{\setlength{\rightskip}{0pt plus 5cm}AssociativeEntity::getInsertQuery (
-\begin{DoxyParamCaption}
-\item[{\$}]{returning = {\ttfamily false}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\subsubsection[{getInsertQuery}]{\setlength{\rightskip}{0pt plus 5cm}AssociativeEntity::getInsertQuery (\$ {\em returning} = {\ttfamily false})\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classAssociativeEntity_a52105f0a9a643c01e92d6acc4dfafef3}
 Returns the query needed to insert this entity into the database.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$returning} & If true, a returning clause is added to the query which returns all primary keys.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$returning}]If true, a returning clause is added to the query which returns all primary keys.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 \hyperlink{classQuery}{Query} to insert this entity in the database. 
 \end{DoxyReturn}
@@ -52,11 +58,7 @@ Reimplemented from \hyperlink{classEntity_a48b7255175241170f98b9f2601243b48}{Ent
 \hypertarget{classAssociativeEntity_a6a68659dda2caa94f624ac856933a90a}{
 \index{AssociativeEntity@{AssociativeEntity}!save@{save}}
 \index{save@{save}!AssociativeEntity@{AssociativeEntity}}
-\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}AssociativeEntity::save (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{save}]{\setlength{\rightskip}{0pt plus 5cm}AssociativeEntity::save ()}}
 \label{classAssociativeEntity_a6a68659dda2caa94f624ac856933a90a}
 Overloads \hyperlink{classAssociativeEntity_a6a68659dda2caa94f624ac856933a90a}{save()} in such a manner that primary keys should always be set and that a new entry will be created if it does not exist yet. 
 

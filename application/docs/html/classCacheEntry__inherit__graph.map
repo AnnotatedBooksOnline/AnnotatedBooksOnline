@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" href="$classAPCCacheEntry.html" title="{APCCacheEntry\n||}" alt="" coords="5,373,120,453"/>
+<area shape="rect" href="$classFileCacheEntry.html" title="{FileCacheEntry\n||+ getContent()\l+ append()\l+ getLength()\l+ setContent()\l+ output()\l}" alt="" coords="144,341,253,485"/>
+</map>

@@ -2,10 +2,22 @@
 \section{Scan Class Reference}
 \label{classScan}\index{Scan@{Scan}}
 }
-Inheritance diagram for Scan:\begin{figure}[H]
+
+
+Inheritance diagram for Scan:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classScan}
+\includegraphics[height=400pt]{classScan__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Scan:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classScan__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for Scan:\begin{figure}[H]
 \item 
 \hyperlink{classScan_ab363efba88dd615f165bc1466558b5ed}{\_\-\_\-construct} (\$id=null)
 \item 
-\hypertarget{classScan_a30ad0e456f9d0f3b3b0ef028e7e36d37}{
-{\bfseries getScanId} ()}
-\label{classScan_a30ad0e456f9d0f3b3b0ef028e7e36d37}
-
+\hyperlink{classScan_a30ad0e456f9d0f3b3b0ef028e7e36d37}{getScanId} ()
 \item 
 \hypertarget{classScan_a42dd7daac88813b9d6f56fe25200b091}{
 {\bfseries getScanType} ()}
@@ -36,6 +45,16 @@ Inheritance diagram for Scan:\begin{figure}[H]
 \hypertarget{classScan_a478d366c5f8260ff0137d6800f548174}{
 {\bfseries setPage} (\$page)}
 \label{classScan_a478d366c5f8260ff0137d6800f548174}
+
+\item 
+\hypertarget{classScan_a741711f2da30f700b912d332dd877805}{
+{\bfseries getScanName} ()}
+\label{classScan_a741711f2da30f700b912d332dd877805}
+
+\item 
+\hypertarget{classScan_a0851d58f59a4eb565e79433fa2bffbc5}{
+{\bfseries setScanName} (\$scanName)}
+\label{classScan_a0851d58f59a4eb565e79433fa2bffbc5}
 
 \item 
 \hypertarget{classScan_a8e73646b63b62868d2fdb5d7a786b37e}{
@@ -92,21 +111,25 @@ Inheritance diagram for Scan:\begin{figure}[H]
 {\bfseries setBindingId} (\$id)}
 \label{classScan_a1a8bc072e1803d13a6960f4aa3ff8d5b}
 
+\item 
+\hypertarget{classScan_a0d28f287b97973b756d7823b7e154481}{
+{\bfseries getBookTitle} ()}
+\label{classScan_a0d28f287b97973b756d7823b7e154481}
+
+\item 
+\hypertarget{classScan_ad2aaa44d05619bc5df9ef401956d1aa9}{
+{\bfseries setBookTitle} (\$bookTitle)}
+\label{classScan_ad2aaa44d05619bc5df9ef401956d1aa9}
+
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 static \hyperlink{classScan_a72b5430d02418d3172fce94f5dac3535}{createEmptyScan} (\$scanType)
 \item 
-\hypertarget{classScan_abc15811492a84be59c482e562a73cd22}{
-static {\bfseries fromBinding} (\$binding)}
-\label{classScan_abc15811492a84be59c482e562a73cd22}
-
+static \hyperlink{classScan_abc15811492a84be59c482e562a73cd22}{fromBinding} (\$binding)
 \item 
-\hypertarget{classScan_a6b5542f995d5f444adb53595972261fa}{
-static {\bfseries fromBindingPage} (\$binding, \$range)}
-\label{classScan_a6b5542f995d5f444adb53595972261fa}
-
+static \hyperlink{classScan_a6b5542f995d5f444adb53595972261fa}{fromBindingPage} (\$binding, \$range)
 \item 
 static \hyperlink{classScan_ad9ada4df484a671439f131458e22d2e0}{getTableName} ()
 \item 
@@ -132,7 +155,7 @@ const {\bfseries STATUS\_\-ERROR} = 3}
 
 \item 
 \hypertarget{classScan_a508096fc915de5d0761c08be5bd7baef}{
-const {\bfseries STATUS\_\-DELETED} = 4}
+const {\bfseries STATUS\_\-DELETED} = 6}
 \label{classScan_a508096fc915de5d0761c08be5bd7baef}
 
 \item 
@@ -153,50 +176,25 @@ const {\bfseries TYPE\_\-TIFF} = \char`\"{}tiff\char`\"{}}
 \item 
 \hyperlink{classScan_a4a0ff118e90fc192615f59bbb32e5a7e}{\$scanId}
 \item 
-\hypertarget{classScan_a16f9fddedd31312186eacf832862a140}{
-{\bfseries \$scanType}}
-\label{classScan_a16f9fddedd31312186eacf832862a140}
-
+\hyperlink{classScan_a16f9fddedd31312186eacf832862a140}{\$scanType}
 \item 
-\hypertarget{classScan_a5c7dcddddb9fbb8d6f97a1f0772753c7}{
-{\bfseries \$page}}
-\label{classScan_a5c7dcddddb9fbb8d6f97a1f0772753c7}
-
+\hyperlink{classScan_a5c7dcddddb9fbb8d6f97a1f0772753c7}{\$page}
 \item 
-\hypertarget{classScan_a792a6afa609cf3facf8162de86cb2299}{
-{\bfseries \$status}}
-\label{classScan_a792a6afa609cf3facf8162de86cb2299}
-
+\hyperlink{classScan_a792a6afa609cf3facf8162de86cb2299}{\$status}
 \item 
-\hypertarget{classScan_a9d74b1c9b56be79120ff60afea7260c6}{
-{\bfseries \$width}}
-\label{classScan_a9d74b1c9b56be79120ff60afea7260c6}
-
+\hyperlink{classScan_a9d74b1c9b56be79120ff60afea7260c6}{\$width}
 \item 
-\hypertarget{classScan_a4504208647e43fc37d30da80988c7ebb}{
-{\bfseries \$height}}
-\label{classScan_a4504208647e43fc37d30da80988c7ebb}
-
+\hyperlink{classScan_a4504208647e43fc37d30da80988c7ebb}{\$height}
 \item 
-\hypertarget{classScan_ade9d70de4af2677cd62ce8b9604cb3f2}{
-{\bfseries \$zoomLevel}}
-\label{classScan_ade9d70de4af2677cd62ce8b9604cb3f2}
-
+\hyperlink{classScan_ade9d70de4af2677cd62ce8b9604cb3f2}{\$zoomLevel}
 \item 
-\hypertarget{classScan_af02b3ddcf57bc8ff2805c591b81ddb31}{
-{\bfseries \$filename}}
-\label{classScan_af02b3ddcf57bc8ff2805c591b81ddb31}
-
+\hyperlink{classScan_a2762cebb2c691ca93dd6c5866a2d4fcd}{\$scanName}
 \item 
-\hypertarget{classScan_a018817763039daa0dcbc13b97badfa4a}{
-{\bfseries \$uploadId}}
-\label{classScan_a018817763039daa0dcbc13b97badfa4a}
-
+\hyperlink{classScan_a018817763039daa0dcbc13b97badfa4a}{\$uploadId}
 \item 
-\hypertarget{classScan_a966a05e2f36cbb45f71123414db8aafa}{
-{\bfseries \$bindingId}}
-\label{classScan_a966a05e2f36cbb45f71123414db8aafa}
-
+\hyperlink{classScan_a966a05e2f36cbb45f71123414db8aafa}{\$bindingId}
+\item 
+\hyperlink{classScan_a82f0e949f2e2d21402be3299719d04e9}{\$bookTitle}
 \end{DoxyCompactItemize}
 
 
@@ -207,49 +205,59 @@ Class representing a scan entity.
 \hypertarget{classScan_ab363efba88dd615f165bc1466558b5ed}{
 \index{Scan@{Scan}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Scan@{Scan}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{id = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\_\-\_\-construct (\$ {\em id} = {\ttfamily null})}}
 \label{classScan_ab363efba88dd615f165bc1466558b5ed}
 Constructs a scan entity.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the scan. Default (null) will create a new scan. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the scan. Default (null) will create a new scan. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classScan_a72b5430d02418d3172fce94f5dac3535}{
 \index{Scan@{Scan}!createEmptyScan@{createEmptyScan}}
 \index{createEmptyScan@{createEmptyScan}!Scan@{Scan}}
-\subsubsection[{createEmptyScan}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::createEmptyScan (
-\begin{DoxyParamCaption}
-\item[{\$}]{scanType}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{createEmptyScan}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::createEmptyScan (\$ {\em scanType})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classScan_a72b5430d02418d3172fce94f5dac3535}
 Creates a new empty scan with its status set to enqueued and saves it.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$scanType} & The image type of the input image, should be either \char`\"{}tiff\char`\"{} or \char`\"{}jpeg\char`\"{}.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$scanType}]The image type of the input image, should be either \char`\"{}tiff\char`\"{} or \char`\"{}jpeg\char`\"{}.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The entity of the newly created scan, which is saved and therefor has its primary key set. 
+\end{DoxyReturn}
+\hypertarget{classScan_abc15811492a84be59c482e562a73cd22}{
+\index{Scan@{Scan}!fromBinding@{fromBinding}}
+\index{fromBinding@{fromBinding}!Scan@{Scan}}
+\subsubsection[{fromBinding}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::fromBinding (\$ {\em binding})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classScan_abc15811492a84be59c482e562a73cd22}
+Returns all the books belonging to one binding
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \$binding}]The binding model \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Array of scan models 
+\end{DoxyReturn}
+\hypertarget{classScan_a6b5542f995d5f444adb53595972261fa}{
+\index{Scan@{Scan}!fromBindingPage@{fromBindingPage}}
+\index{fromBindingPage@{fromBindingPage}!Scan@{Scan}}
+\subsubsection[{fromBindingPage}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::fromBindingPage (\$ {\em binding}, \/  \$ {\em range})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classScan_a6b5542f995d5f444adb53595972261fa}
+Returns all the scans of a certain page range which belong to one binding
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \$binding}]The binding model \item[{\em \$range}]The page range \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Array of scan models 
 \end{DoxyReturn}
 \hypertarget{classScan_a51a201a61df50b19fd6a7b96d7521ca5}{
 \index{Scan@{Scan}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Scan@{Scan}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classScan_a51a201a61df50b19fd6a7b96d7521ca5}
 Gets all the columns that are not primary keys as an array. 
 
@@ -258,11 +266,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classScan_a9ae3218caa7bc866a8b914eab7b649a2}{
 \index{Scan@{Scan}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Scan@{Scan}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classScan_a9ae3218caa7bc866a8b914eab7b649a2}
 Gets all the column types, per column, including primary keys.
 
@@ -276,24 +280,21 @@ Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Ent
 \hypertarget{classScan_a0e7fe3c9a64e4655114a82473fc78827}{
 \index{Scan@{Scan}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Scan@{Scan}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classScan_a0e7fe3c9a64e4655114a82473fc78827}
 Get an array with the primary keys. 
 
 Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Entity}.
 
-\hypertarget{classScan_ad9ada4df484a671439f131458e22d2e0}{
+\hypertarget{classScan_a30ad0e456f9d0f3b3b0ef028e7e36d37}{
+\index{Scan@{Scan}!getScanId@{getScanId}}
+\index{getScanId@{getScanId}!Scan@{Scan}}
+\subsubsection[{getScanId}]{\setlength{\rightskip}{0pt plus 5cm}Scan::getScanId ()}}
+\label{classScan_a30ad0e456f9d0f3b3b0ef028e7e36d37}
+Getters and setters. \hypertarget{classScan_ad9ada4df484a671439f131458e22d2e0}{
 \index{Scan@{Scan}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Scan@{Scan}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Scan::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classScan_ad9ada4df484a671439f131458e22d2e0}
 Get the name of the corresponding table. 
 
@@ -302,12 +303,62 @@ Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Ent
 
 
 \subsection{Member Data Documentation}
-\hypertarget{classScan_a4a0ff118e90fc192615f59bbb32e5a7e}{
+\hypertarget{classScan_a966a05e2f36cbb45f71123414db8aafa}{
+\index{Scan@{Scan}!\$bindingId@{\$bindingId}}
+\index{\$bindingId@{\$bindingId}!Scan@{Scan}}
+\subsubsection[{\$bindingId}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$bindingId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a966a05e2f36cbb45f71123414db8aafa}
+The Id of the binding to which this scan belongs. \hypertarget{classScan_a82f0e949f2e2d21402be3299719d04e9}{
+\index{Scan@{Scan}!\$bookTitle@{\$bookTitle}}
+\index{\$bookTitle@{\$bookTitle}!Scan@{Scan}}
+\subsubsection[{\$bookTitle}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$bookTitle\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a82f0e949f2e2d21402be3299719d04e9}
+Joined attributes. \hypertarget{classScan_a4504208647e43fc37d30da80988c7ebb}{
+\index{Scan@{Scan}!\$height@{\$height}}
+\index{\$height@{\$height}!Scan@{Scan}}
+\subsubsection[{\$height}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$height\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a4504208647e43fc37d30da80988c7ebb}
+The height of this scan. \hypertarget{classScan_a5c7dcddddb9fbb8d6f97a1f0772753c7}{
+\index{Scan@{Scan}!\$page@{\$page}}
+\index{\$page@{\$page}!Scan@{Scan}}
+\subsubsection[{\$page}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$page\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a5c7dcddddb9fbb8d6f97a1f0772753c7}
+The page number of this scan. \hypertarget{classScan_a4a0ff118e90fc192615f59bbb32e5a7e}{
 \index{Scan@{Scan}!\$scanId@{\$scanId}}
 \index{\$scanId@{\$scanId}!Scan@{Scan}}
 \subsubsection[{\$scanId}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$scanId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classScan_a4a0ff118e90fc192615f59bbb32e5a7e}
-Table attributes. \hypertarget{classScan_a0a517a759400b21e5814247523d527de}{
+The Id of this scan. \hypertarget{classScan_a2762cebb2c691ca93dd6c5866a2d4fcd}{
+\index{Scan@{Scan}!\$scanName@{\$scanName}}
+\index{\$scanName@{\$scanName}!Scan@{Scan}}
+\subsubsection[{\$scanName}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$scanName\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a2762cebb2c691ca93dd6c5866a2d4fcd}
+The filename of this scan. \hypertarget{classScan_a16f9fddedd31312186eacf832862a140}{
+\index{Scan@{Scan}!\$scanType@{\$scanType}}
+\index{\$scanType@{\$scanType}!Scan@{Scan}}
+\subsubsection[{\$scanType}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$scanType\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a16f9fddedd31312186eacf832862a140}
+The type of this scan. \hypertarget{classScan_a792a6afa609cf3facf8162de86cb2299}{
+\index{Scan@{Scan}!\$status@{\$status}}
+\index{\$status@{\$status}!Scan@{Scan}}
+\subsubsection[{\$status}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$status\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a792a6afa609cf3facf8162de86cb2299}
+The status of this scan. \hypertarget{classScan_a018817763039daa0dcbc13b97badfa4a}{
+\index{Scan@{Scan}!\$uploadId@{\$uploadId}}
+\index{\$uploadId@{\$uploadId}!Scan@{Scan}}
+\subsubsection[{\$uploadId}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$uploadId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a018817763039daa0dcbc13b97badfa4a}
+The Id of the upload corresponding to this scan. \hypertarget{classScan_a9d74b1c9b56be79120ff60afea7260c6}{
+\index{Scan@{Scan}!\$width@{\$width}}
+\index{\$width@{\$width}!Scan@{Scan}}
+\subsubsection[{\$width}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$width\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_a9d74b1c9b56be79120ff60afea7260c6}
+The width of this scan. \hypertarget{classScan_ade9d70de4af2677cd62ce8b9604cb3f2}{
+\index{Scan@{Scan}!\$zoomLevel@{\$zoomLevel}}
+\index{\$zoomLevel@{\$zoomLevel}!Scan@{Scan}}
+\subsubsection[{\$zoomLevel}]{\setlength{\rightskip}{0pt plus 5cm}Scan::\$zoomLevel\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classScan_ade9d70de4af2677cd62ce8b9604cb3f2}
+The maximum zoom level of this scan. \hypertarget{classScan_a0a517a759400b21e5814247523d527de}{
 \index{Scan@{Scan}!STATUS\_\-PENDING@{STATUS\_\-PENDING}}
 \index{STATUS\_\-PENDING@{STATUS\_\-PENDING}!Scan@{Scan}}
 \subsubsection[{STATUS\_\-PENDING}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Scan::STATUS\_\-PENDING} = 1}}

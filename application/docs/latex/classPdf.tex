@@ -5,31 +5,29 @@
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classPdf_ac74bdb2bdc7db9efa49c694f8f6bfd04}{\_\-\_\-construct} (\$binding, \$cacheEntry, \$range=null, \$transcriptions=false, \$annotations=false)
+\hyperlink{classPdf_acb8895ccd91e9ee8ca483c719626e89a}{\_\-\_\-construct} (\hyperlink{classBinding}{Binding} \$binding, \hyperlink{classCacheEntry}{CacheEntry} \$cacheEntry, \$range=null, \$transcriptions=null, \$annotations=false)
 \end{DoxyCompactItemize}
 
 
+\subsection{Detailed Description}
+A PDF exporting class. Exports bindings or a subset thereof to the PDF format.
+
+This class has no public methods other than its constructor: it immediately exports to the given \hyperlink{classCacheEntry}{CacheEntry}.
+
+All dimensions are in points, equalling 1/72 inch, unless indicated otherwise. 
+
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classPdf_ac74bdb2bdc7db9efa49c694f8f6bfd04}{
+\hypertarget{classPdf_acb8895ccd91e9ee8ca483c719626e89a}{
 \index{Pdf@{Pdf}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Pdf@{Pdf}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Pdf::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{binding, }
-\item[{\$}]{cacheEntry, }
-\item[{\$}]{range = {\ttfamily null}, }
-\item[{\$}]{transcriptions = {\ttfamily false}, }
-\item[{\$}]{annotations = {\ttfamily false}}
-\end{DoxyParamCaption}
-)}}
-\label{classPdf_ac74bdb2bdc7db9efa49c694f8f6bfd04}
-Creates a new PDF based on the given scan. When possible, the resolution will be at least the configured dpi.
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Pdf::\_\-\_\-construct ({\bf Binding} \$ {\em binding}, \/  {\bf CacheEntry} \$ {\em cacheEntry}, \/  \$ {\em range} = {\ttfamily null}, \/  \$ {\em transcriptions} = {\ttfamily null}, \/  \$ {\em annotations} = {\ttfamily false})}}
+\label{classPdf_acb8895ccd91e9ee8ca483c719626e89a}
+Creates a new PDF based on the given scan.
 
-scan: the scan to turn into a PDF dimensions: the page dimensions
-\begin{DoxyItemize}
-\item width: the width in points (1/72 inch)
-\item height: the height in points (1/72 inch) print: whether to insert JavaScript to trigger printing on open 
-\end{DoxyItemize}
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \hyperlink{classBinding}{Binding}}]\$binding The \hyperlink{classBinding}{Binding} to export. \item[{\em \hyperlink{classCacheEntry}{CacheEntry}}]\$cacheEntry The \hyperlink{classCacheEntry}{CacheEntry} to export to. \item[{\em mixed}]\$range The range of pages to export. This may be null for all, a number for a single page and an array of two numbers for a range. \item[{\em callback}]\$transcriptions Function that extracts required transcription languages from Annotations. \item[{\em boolean}]\$annotations Whether to include annotations on the scans. Only valid on combination with transcriptions parameter set. \end{DoxyParams}
+
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 

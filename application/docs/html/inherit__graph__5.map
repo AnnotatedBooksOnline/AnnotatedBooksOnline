@@ -1,0 +1,29 @@
+<map id="G" name="G">
+<area shape="rect" href="$classExceptionBase.html" title="ExceptionBase" alt="" coords="5,613,115,640"/>
+<area shape="rect" href="$classAccessDeniedException.html" title="AccessDeniedException" alt="" coords="177,5,340,32"/>
+<area shape="rect" href="$classBindingStatusException.html" title="BindingStatusException" alt="" coords="179,56,339,83"/>
+<area shape="rect" href="$classBookNotFoundException.html" title="BookNotFoundException" alt="" coords="176,107,341,133"/>
+<area shape="rect" href="$classConfigurationException.html" title="ConfigurationException" alt="" coords="181,157,336,184"/>
+<area shape="rect" href="$classControllerException.html" title="ControllerException" alt="" coords="192,208,325,235"/>
+<area shape="rect" href="$classDatabaseException.html" title="DatabaseException" alt="" coords="192,259,325,285"/>
+<area shape="rect" href="$classEntityException.html" title="EntityException" alt="" coords="203,309,315,336"/>
+<area shape="rect" href="$classFormatException.html" title="FormatException" alt="" coords="199,360,319,387"/>
+<area shape="rect" href="$classJavascriptMinifierException.html" title="JavascriptMinifierException" alt="" coords="171,411,347,437"/>
+<area shape="rect" href="$classMailerException.html" title="MailerException" alt="" coords="201,461,316,488"/>
+<area shape="rect" href="$classNotLoggedOnException.html" title="NotLoggedOnException" alt="" coords="180,512,337,539"/>
+<area shape="rect" href="$classPasswordIncorrectException.html" title="PasswordIncorrectException" alt="" coords="165,563,352,589"/>
+<area shape="rect" href="$classPdfException.html" title="PdfException" alt="" coords="209,613,308,640"/>
+<area shape="rect" href="$classQueryFormatException.html" title="QueryFormatException" alt="" coords="181,664,336,691"/>
+<area shape="rect" href="$classRegistrationFailedException.html" title="RegistrationFailedException" alt="" coords="167,715,351,741"/>
+<area shape="rect" href="$classResultSetException.html" title="ResultSetException" alt="" coords="191,765,327,792"/>
+<area shape="rect" href="$classSettingException.html" title="SettingException" alt="" coords="199,816,319,843"/>
+<area shape="rect" href="$classSingletonException.html" title="SingletonException" alt="" coords="192,867,325,893"/>
+<area shape="rect" href="$classTilePyramidBuilderException.html" title="TilePyramidBuilderException" alt="" coords="165,917,352,944"/>
+<area shape="rect" href="$classUploadException.html" title="UploadException" alt="" coords="199,968,319,995"/>
+<area shape="rect" href="$classUserActivationException.html" title="UserActivationException" alt="" coords="177,1019,340,1045"/>
+<area shape="rect" href="$classUserBannedException.html" title="UserBannedException" alt="" coords="184,1069,333,1096"/>
+<area shape="rect" href="$classUserNotFoundException.html" title="UserNotFoundException" alt="" coords="177,1120,340,1147"/>
+<area shape="rect" href="$classUserPendingException.html" title="UserPendingException" alt="" coords="183,1171,335,1197"/>
+<area shape="rect" href="$classUserShouldActivateException.html" title="UserShouldActivateException" alt="" coords="163,1221,355,1248"/>
+<area shape="rect" href="$classSettingNotFoundException.html" title="SettingNotFoundException" alt="" coords="403,157,579,184"/>
+</map>

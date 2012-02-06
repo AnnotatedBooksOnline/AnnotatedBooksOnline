@@ -2,10 +2,22 @@
 \section{Upload Class Reference}
 \label{classUpload}\index{Upload@{Upload}}
 }
-Inheritance diagram for Upload:\begin{figure}[H]
+
+
+Inheritance diagram for Upload:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classUpload}
+\includegraphics[height=400pt]{classUpload__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Upload:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classUpload__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -23,10 +35,7 @@ Inheritance diagram for Upload:\begin{figure}[H]
 \item 
 \hyperlink{classUpload_aae7c62490598d9dafc488bb9551920b6}{getFileLocation} ()
 \item 
-\hypertarget{classUpload_aaf7fe1fb2d650ebd9e8a28354d1b23bc}{
-{\bfseries getUploadId} ()}
-\label{classUpload_aaf7fe1fb2d650ebd9e8a28354d1b23bc}
-
+\hyperlink{classUpload_aaf7fe1fb2d650ebd9e8a28354d1b23bc}{getUploadId} ()
 \item 
 \hypertarget{classUpload_aa88e400fdb6da130154a50a03ffcf4fd}{
 {\bfseries getUserId} ()}
@@ -152,55 +161,33 @@ Class representing an upload entity.
 \hypertarget{classUpload_afba84940efd09dcba276b0bceee05f4d}{
 \index{Upload@{Upload}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Upload@{Upload}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Upload::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{id = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Upload::\_\-\_\-construct (\$ {\em id} = {\ttfamily null})}}
 \label{classUpload_afba84940efd09dcba276b0bceee05f4d}
 Constructs an upload entity.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the upload. Default (null) will create a new upload. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the upload. Default (null) will create a new upload. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classUpload_a0d3a0940f5ba707968b9f1f132e05387}{
 \index{Upload@{Upload}!createEmptyUpload@{createEmptyUpload}}
 \index{createEmptyUpload@{createEmptyUpload}!Upload@{Upload}}
-\subsubsection[{createEmptyUpload}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::createEmptyUpload (
-\begin{DoxyParamCaption}
-\item[{\$}]{userId, }
-\item[{\$}]{filename, }
-\item[{\$}]{size}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{createEmptyUpload}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::createEmptyUpload (\$ {\em userId}, \/  \$ {\em filename}, \/  \$ {\em size})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classUpload_a0d3a0940f5ba707968b9f1f132e05387}
 Creates a new empty upload with default settings.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$userId} & \\
-\hline
-{\em \$filename} & \\
-\hline
-{\em \$size} & \\
-\hline
-\end{DoxyParams}
+\item[{\em \$userId}]\item[{\em \$filename}]\item[{\em \$size}]\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The entity of the newly created upload, with its primary key set. 
 \end{DoxyReturn}
 \hypertarget{classUpload_a5e10f0433b44a7e78f5c2232e3d71aa4}{
 \index{Upload@{Upload}!delete@{delete}}
 \index{delete@{delete}!Upload@{Upload}}
-\subsubsection[{delete}]{\setlength{\rightskip}{0pt plus 5cm}Upload::delete (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{delete}]{\setlength{\rightskip}{0pt plus 5cm}Upload::delete ()}}
 \label{classUpload_a5e10f0433b44a7e78f5c2232e3d71aa4}
 Deletes the entity from the database. 
 
@@ -209,44 +196,28 @@ Reimplemented from \hyperlink{classEntity_a59eae3c476f3996973400a024097c87e}{Ent
 \hypertarget{classUpload_a3b66cb1b19e01380f8fa156bd1857b65}{
 \index{Upload@{Upload}!fromToken@{fromToken}}
 \index{fromToken@{fromToken}!Upload@{Upload}}
-\subsubsection[{fromToken}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::fromToken (
-\begin{DoxyParamCaption}
-\item[{\$}]{token}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{fromToken}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::fromToken (\$ {\em token})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classUpload_a3b66cb1b19e01380f8fa156bd1857b65}
 Gets an upload by a token.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$token} & Token to lookup upload by.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$token}]Token to lookup upload by.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 \hyperlink{classUpload}{Upload} of that token or null.
 \end{DoxyReturn}
 
 \begin{DoxyExceptions}{Exceptions}
-{\em \hyperlink{classEntityException}{EntityException}} & If upload could not be found. \\
-\hline
-\end{DoxyExceptions}
+\item[{\em \hyperlink{classEntityException}{EntityException}}]If upload could not be found. \end{DoxyExceptions}
 \hypertarget{classUpload_aa3446f1e1b5e1153eec2f26f11bd484e}{
 \index{Upload@{Upload}!generateNewToken@{generateNewToken}}
 \index{generateNewToken@{generateNewToken}!Upload@{Upload}}
-\subsubsection[{generateNewToken}]{\setlength{\rightskip}{0pt plus 5cm}Upload::generateNewToken (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{generateNewToken}]{\setlength{\rightskip}{0pt plus 5cm}Upload::generateNewToken ()}}
 \label{classUpload_aa3446f1e1b5e1153eec2f26f11bd484e}
 Sets a newly generated token. \hypertarget{classUpload_ac1fc86fdee048a39c23f706a5df4e4cc}{
 \index{Upload@{Upload}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Upload@{Upload}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classUpload_ac1fc86fdee048a39c23f706a5df4e4cc}
 Gets all the columns that are not primary keys as an array. 
 
@@ -255,11 +226,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classUpload_a2de5133464c9577aff228f8bb543929e}{
 \index{Upload@{Upload}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Upload@{Upload}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classUpload_a2de5133464c9577aff228f8bb543929e}
 Gets all the column types, per column, including primary keys.
 
@@ -273,11 +240,7 @@ Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Ent
 \hypertarget{classUpload_a8e8a7b44008c246f9cb524d20848d6c1}{
 \index{Upload@{Upload}!getContent@{getContent}}
 \index{getContent@{getContent}!Upload@{Upload}}
-\subsubsection[{getContent}]{\setlength{\rightskip}{0pt plus 5cm}Upload::getContent (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{getContent}]{\setlength{\rightskip}{0pt plus 5cm}Upload::getContent ()}}
 \label{classUpload_a8e8a7b44008c246f9cb524d20848d6c1}
 Get the contents of the upload.
 
@@ -287,20 +250,12 @@ Get the contents of the upload.
 \hypertarget{classUpload_aae7c62490598d9dafc488bb9551920b6}{
 \index{Upload@{Upload}!getFileLocation@{getFileLocation}}
 \index{getFileLocation@{getFileLocation}!Upload@{Upload}}
-\subsubsection[{getFileLocation}]{\setlength{\rightskip}{0pt plus 5cm}Upload::getFileLocation (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{getFileLocation}]{\setlength{\rightskip}{0pt plus 5cm}Upload::getFileLocation ()}}
 \label{classUpload_aae7c62490598d9dafc488bb9551920b6}
 Get the file location of this upload. \hypertarget{classUpload_af0e0a173941a75ed21e7d51d86c7d0c4}{
 \index{Upload@{Upload}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Upload@{Upload}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classUpload_af0e0a173941a75ed21e7d51d86c7d0c4}
 Get an array with the primary keys. 
 
@@ -309,35 +264,27 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classUpload_a9c147629f26a6d0c7b32136eba761869}{
 \index{Upload@{Upload}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Upload@{Upload}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Upload::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classUpload_a9c147629f26a6d0c7b32136eba761869}
 Get the name of the corresponding table. 
 
 Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
 
-\hypertarget{classUpload_a4a6ec727bce54cbe5e60ad19963f4cb4}{
+\hypertarget{classUpload_aaf7fe1fb2d650ebd9e8a28354d1b23bc}{
+\index{Upload@{Upload}!getUploadId@{getUploadId}}
+\index{getUploadId@{getUploadId}!Upload@{Upload}}
+\subsubsection[{getUploadId}]{\setlength{\rightskip}{0pt plus 5cm}Upload::getUploadId ()}}
+\label{classUpload_aaf7fe1fb2d650ebd9e8a28354d1b23bc}
+Getters and setters. \hypertarget{classUpload_a4a6ec727bce54cbe5e60ad19963f4cb4}{
 \index{Upload@{Upload}!setContent@{setContent}}
 \index{setContent@{setContent}!Upload@{Upload}}
-\subsubsection[{setContent}]{\setlength{\rightskip}{0pt plus 5cm}Upload::setContent (
-\begin{DoxyParamCaption}
-\item[{\$}]{filename, }
-\item[{\$}]{move = {\ttfamily false}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{setContent}]{\setlength{\rightskip}{0pt plus 5cm}Upload::setContent (\$ {\em filename}, \/  \$ {\em move} = {\ttfamily false})}}
 \label{classUpload_a4a6ec727bce54cbe5e60ad19963f4cb4}
 Set the contents of the upload.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$filename} & Filename with new content. \\
-\hline
-{\em \$move} & Whether to move file. Otherwise a copy is assumed. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$filename}]Filename with new content. \item[{\em \$move}]Whether to move file. Otherwise a copy is assumed. \end{DoxyParams}
 
 
 \subsection{Member Data Documentation}

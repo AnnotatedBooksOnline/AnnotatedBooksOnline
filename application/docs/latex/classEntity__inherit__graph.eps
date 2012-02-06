@@ -1,0 +1,2816 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%Creator: Graphviz version 2.20.2 (Wed Sep 16 11:12:21 UTC 2009)
+%%For: (bert) Bert Massop,,,
+%%Title: G
+%%Pages: (atend)
+%%BoundingBox: (atend)
+%%EndComments
+save
+%%BeginProlog
+/DotDict 200 dict def
+DotDict begin
+
+/setupLatin1 {
+mark
+/EncodingVector 256 array def
+ EncodingVector 0
+
+ISOLatin1Encoding 0 255 getinterval putinterval
+EncodingVector 45 /hyphen put
+
+% Set up ISO Latin 1 character encoding
+/starnetISO {
+        dup dup findfont dup length dict begin
+        { 1 index /FID ne { def }{ pop pop } ifelse
+        } forall
+        /Encoding EncodingVector def
+        currentdict end definefont
+} def
+/Times-Roman starnetISO def
+/Times-Italic starnetISO def
+/Times-Bold starnetISO def
+/Times-BoldItalic starnetISO def
+/Helvetica starnetISO def
+/Helvetica-Oblique starnetISO def
+/Helvetica-Bold starnetISO def
+/Helvetica-BoldOblique starnetISO def
+/Courier starnetISO def
+/Courier-Oblique starnetISO def
+/Courier-Bold starnetISO def
+/Courier-BoldOblique starnetISO def
+cleartomark
+} bind def
+
+%%BeginResource: procset graphviz 0 0
+/coord-font-family /Times-Roman def
+/default-font-family /Times-Roman def
+/coordfont coord-font-family findfont 8 scalefont def
+
+/InvScaleFactor 1.0 def
+/set_scale {
+       dup 1 exch div /InvScaleFactor exch def
+       scale
+} bind def
+
+% styles
+/solid { [] 0 setdash } bind def
+/dashed { [9 InvScaleFactor mul dup ] 0 setdash } bind def
+/dotted { [1 InvScaleFactor mul 6 InvScaleFactor mul] 0 setdash } bind def
+/invis {/fill {newpath} def /stroke {newpath} def /show {pop newpath} def} bind def
+/bold { 2 setlinewidth } bind def
+/filled { } bind def
+/unfilled { } bind def
+/rounded { } bind def
+/diagonals { } bind def
+
+% hooks for setting color 
+/nodecolor { sethsbcolor } bind def
+/edgecolor { sethsbcolor } bind def
+/graphcolor { sethsbcolor } bind def
+/nopcolor {pop pop pop} bind def
+
+/beginpage {	% i j npages
+	/npages exch def
+	/j exch def
+	/i exch def
+	/str 10 string def
+	npages 1 gt {
+		gsave
+			coordfont setfont
+			0 0 moveto
+			(\() show i str cvs show (,) show j str cvs show (\)) show
+		grestore
+	} if
+} bind def
+
+/set_font {
+	findfont exch
+	scalefont setfont
+} def
+
+% draw text fitted to its expected width
+/alignedtext {			% width text
+	/text exch def
+	/width exch def
+	gsave
+		width 0 gt {
+			[] 0 setdash
+			text stringwidth pop width exch sub text length div 0 text ashow
+		} if
+	grestore
+} def
+
+/boxprim {				% xcorner ycorner xsize ysize
+		4 2 roll
+		moveto
+		2 copy
+		exch 0 rlineto
+		0 exch rlineto
+		pop neg 0 rlineto
+		closepath
+} bind def
+
+/ellipse_path {
+	/ry exch def
+	/rx exch def
+	/y exch def
+	/x exch def
+	matrix currentmatrix
+	newpath
+	x y translate
+	rx ry scale
+	0 0 1 0 360 arc
+	setmatrix
+} bind def
+
+/endpage { showpage } bind def
+/showpage { } def
+
+/layercolorseq
+	[	% layer color sequence - darkest to lightest
+		[0 0 0]
+		[.2 .8 .8]
+		[.4 .8 .8]
+		[.6 .8 .8]
+		[.8 .8 .8]
+	]
+def
+
+/layerlen layercolorseq length def
+
+/setlayer {/maxlayer exch def /curlayer exch def
+	layercolorseq curlayer 1 sub layerlen mod get
+	aload pop sethsbcolor
+	/nodecolor {nopcolor} def
+	/edgecolor {nopcolor} def
+	/graphcolor {nopcolor} def
+} bind def
+
+/onlayer { curlayer ne {invis} if } def
+
+/onlayers {
+	/myupper exch def
+	/mylower exch def
+	curlayer mylower lt
+	curlayer myupper gt
+	or
+	{invis} if
+} def
+
+/curlayer 0 def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+14 default-font-family set_font
+1 setmiterlimit
+% /arrowlength 10 def
+% /arrowwidth 5 def
+
+% make sure pdfmark is harmless for PS-interpreters other than Distiller
+/pdfmark where {pop} {userdict /pdfmark /cleartomark load put} ifelse
+% make '<<' and '>>' safe on PS Level 1 devices
+/languagelevel where {pop languagelevel}{1} ifelse
+2 lt {
+    userdict (<<) cvn ([) cvn load put
+    userdict (>>) cvn ([) cvn load put
+} if
+
+%%EndSetup
+setupLatin1
+%%Page: 1 1
+%%PageBoundingBox: 36 36 2223 1568
+%%PageOrientation: Portrait
+0 0 1 beginpage
+gsave
+36 36 2187 1532 boxprim clip newpath
+1 1 set_scale 0 rotate 40 40 translate
+% Node1
+gsave
+0.000 0.000 0.749 nodecolor
+newpath 1055 1104 moveto
+1055 1524 lineto
+1189 1524 lineto
+1189 1104 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1055 1104 moveto
+1055 1524 lineto
+1189 1524 lineto
+1189 1104 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1109 1511 moveto 26 (Entity) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1055 1504 moveto
+1189 1504 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1491 moveto 56 (- $createdOn) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1479 moveto 61 (- $changedOn) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1467 moveto 56 (- $createdBy) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1455 moveto 60 (- $changedBy) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1443 moveto 89 (- $markedAsDeleted) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1431 moveto 92 (- $markedAsUpdated) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1055 1424 moveto
+1189 1424 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1411 moveto 33 (+ load\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1399 moveto 35 (+ save\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1387 moveto 85 (+ saveWithDetails\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1375 moveto 65 (+ saveDetails\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1363 moveto 41 (+ delete\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1351 moveto 77 (+ setRawValues\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1339 moveto 58 (+ setValues\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1327 moveto 58 (+ getValues\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1315 moveto 109 (+ getPrimaryKeyValues\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1303 moveto 106 (+ getMarkedAsDeleted\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1291 moveto 106 (+ setMarkedAsDeleted\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1279 moveto 109 (+ getMarkedAsUpdated\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1267 moveto 109 (+ setMarkedAsUpdated\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1255 moveto 55 (+ getTypes\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1243 moveto 97 (+ getDefaultColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1231 moveto 118 (+ getDefaultColumnTypes\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1219 moveto 88 (+ getColumnTypes\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1207 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1195 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1183 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1171 moveto 68 (# getAllValues\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1159 moveto 107 (# arePrimaryKeysFilled\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1147 moveto 82 (# getSelectQuery\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1135 moveto 78 (# getInsertQuery\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1123 moveto 82 (# getDeleteQuery\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1063 1111 moveto 85 (# getUpdateQuery\(\)) alignedtext
+grestore
+% Node2
+gsave
+[ /Rect [ 113 408 231 876 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classAnnotation.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 113 408 moveto
+113 876 lineto
+231 876 lineto
+231 408 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 113 408 moveto
+113 876 lineto
+231 876 lineto
+231 408 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+148.5 863 moveto 47 (Annotation) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 113 856 moveto
+231 856 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 843 moveto 66 (# $annotationId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 831 moveto 42 (# $scanId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 819 moveto 47 (# $polygon) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 807 moveto 84 (# $transcriptionEng) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 795 moveto 85 (# $transcriptionOrig) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 783 moveto 74 (# $createdUserId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 771 moveto 66 (# $timeCreated) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 759 moveto 35 (# $order) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 747 moveto 78 (# $changedUserId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 735 moveto 71 (# $timeChanged) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 113 728 moveto
+231 728 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 715 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 703 moveto 83 (+ getAnnotationId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 691 moveto 83 (+ setAnnotationId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 679 moveto 59 (+ getScanId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 667 moveto 59 (+ setScanId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 655 moveto 101 (+ getTranscriptionEng\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 643 moveto 101 (+ setTranscriptionEng\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 631 moveto 102 (+ getTranscriptionOrig\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 619 moveto 102 (+ setTranscriptionOrig\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 607 moveto 64 (+ getPolygon\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 595 moveto 64 (+ setPolygon\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 583 moveto 90 (+ getCreatedUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 571 moveto 90 (+ setCreatedUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 559 moveto 83 (+ getTimeCreated\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 547 moveto 83 (+ setTimeCreated\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 535 moveto 53 (+ getOrder\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 523 moveto 53 (+ setOrder\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 511 moveto 95 (+ getChangedUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 499 moveto 95 (+ setChangedUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 487 moveto 88 (+ getTimeChanged\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 475 moveto 88 (+ setTimeChanged\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 463 moveto 56 (+ fromScan\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 451 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 439 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 427 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+121 415 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node2
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1045 1303 moveto
+850 1274 348 1189 240 1068 curveto
+194 1016 172 945 163 876 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1044.51 1306.47 moveto
+1055 1305 lineto
+1045.88 1299.61 lineto
+closepath stroke
+grestore
+% Node3
+gsave
+[ /Rect [ 249 606 343 678 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classAssociativeEntity.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 249 606 moveto
+249 678 lineto
+343 678 lineto
+343 606 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 249 606 moveto
+249 678 lineto
+343 678 lineto
+343 606 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+258.5 665 moveto 75 (AssociativeEntity) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 249 658 moveto
+343 658 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+294.5 645 moveto 3 ( ) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 249 638 moveto
+343 638 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+257 625 moveto 35 (+ save\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+257 613 moveto 78 (# getInsertQuery\(\)) alignedtext
+grestore
+% Node1->Node3
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1045 1300 moveto
+868 1266 442 1176 352 1068 curveto
+256 953 276 758 289 678 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1044.51 1303.47 moveto
+1055 1302 lineto
+1045.88 1296.61 lineto
+closepath stroke
+grestore
+% Node9
+gsave
+[ /Rect [ 361 378 495 906 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classBinding.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 361 378 moveto
+361 906 lineto
+496 906 lineto
+496 378 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 361 378 moveto
+361 906 lineto
+496 906 lineto
+496 378 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+412 893 moveto 32 (Binding) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 361 886 moveto
+496 886 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 873 moveto 104 (+ STATUS_UPLOADED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 861 moveto 112 (+ STATUS_REORDERED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 849 moveto 101 (+ STATUS_SELECTED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 837 moveto 95 (+ STATUS_DELETED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 825 moveto 52 (# $bindingId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 813 moveto 53 (# $signature) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 801 moveto 54 (# $summary) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 789 moveto 47 (# $libraryId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 777 moveto 41 (# $status) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 765 moveto 50 (# $bookList) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 753 moveto 40 (# $userId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 741 moveto 50 (# $scanList) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 729 moveto 78 (# $provenanceList) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 717 moveto 102 (# $bindingLanguageList) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 361 710 moveto
+496 710 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 697 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 685 moveto 63 (+ loadDetails\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 673 moveto 65 (+ saveDetails\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 661 moveto 68 (+ getBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 649 moveto 68 (+ setBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 637 moveto 65 (+ getLibraryId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 625 moveto 65 (+ setLibraryId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 613 moveto 70 (+ getSignature\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 601 moveto 70 (+ setSignature\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 589 moveto 71 (+ getSummary\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 577 moveto 71 (+ setSummary\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 565 moveto 57 (+ getStatus\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 553 moveto 57 (+ setStatus\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 541 moveto 67 (+ getBookList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 529 moveto 67 (+ setBookList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 517 moveto 67 (+ getScanList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 505 moveto 67 (+ setScanList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 493 moveto 95 (+ getProvenanceList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 481 moveto 95 (+ setProvenanceList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 469 moveto 119 (+ getBindingLanguageList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 457 moveto 119 (+ setBindingLanguageList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 445 moveto 56 (+ getUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 433 moveto 56 (+ setUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 421 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 409 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 397 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+368.5 385 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node9
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1045 1307 moveto
+912 1290 641 1237 504 1068 curveto
+467 1022 445 964 433 906 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1044.7 1310.49 moveto
+1055 1308 lineto
+1045.4 1303.52 lineto
+closepath stroke
+grestore
+% Node10
+gsave
+[ /Rect [ 513 336 637 948 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classBook.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 513 336 moveto
+513 948 lineto
+638 948 lineto
+638 336 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 513 336 moveto
+513 948 lineto
+638 948 lineto
+638 336 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+563.5 935 moveto 23 (Book) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 513 928 moveto
+638 928 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 915 moveto 42 (# $bookId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 903 moveto 29 (# $title) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 891 moveto 52 (# $bindingId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 879 moveto 49 (# $minYear) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 867 moveto 52 (# $maxYear) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 855 moveto 65 (# $preciseDate) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 843 moveto 80 (# $placePublished) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 831 moveto 53 (# $publisher) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 819 moveto 65 (# $printVersion) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 807 moveto 52 (# $firstPage) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 795 moveto 52 (# $lastPage) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 783 moveto 92 (# $bookLanguageList) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 771 moveto 56 (# $authorList) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 513 764 moveto
+638 764 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 751 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 739 moveto 63 (+ loadDetails\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 727 moveto 65 (+ saveDetails\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 715 moveto 59 (+ getBookId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 703 moveto 59 (+ setBookId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 691 moveto 47 (+ getTitle\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 679 moveto 47 (+ setTitle\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 667 moveto 68 (+ getBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 655 moveto 68 (+ setBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 643 moveto 64 (+ getMinYear\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 631 moveto 64 (+ setMinYear\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 619 moveto 67 (+ getMaxYear\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 607 moveto 67 (+ setMaxYear\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 595 moveto 82 (+ getPreciseDate\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 583 moveto 82 (+ setPreciseDate\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 571 moveto 96 (+ getPlacePublished\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 559 moveto 96 (+ setPlacePublished\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 547 moveto 69 (+ getPublisher\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 535 moveto 69 (+ setPublisher\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 523 moveto 82 (+ getPrintVersion\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 511 moveto 82 (+ setPrintVersion\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 499 moveto 71 (+ getFirstPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 487 moveto 71 (+ setFirstPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 475 moveto 70 (+ getLastPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 463 moveto 70 (+ setLastPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 451 moveto 73 (+ getAuthorList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 439 moveto 73 (+ setAuthorList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 427 moveto 109 (+ getBookLanguageList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 415 moveto 109 (+ setBookLanguageList\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 403 moveto 66 (+ fromBinding\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 391 moveto 89 (+ fromBindingPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 379 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 367 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 355 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+520.5 343 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node10
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1045 1297 moveto
+938 1269 744 1202 646 1068 curveto
+620 1032 602 991 590 948 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1044.42 1300.48 moveto
+1055 1300 lineto
+1046.43 1293.77 lineto
+closepath stroke
+grestore
+% Node11
+gsave
+[ /Rect [ 655 498 777 786 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classHelpPage.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 655 498 moveto
+655 786 lineto
+778 786 lineto
+778 498 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 655 498 moveto
+655 786 lineto
+778 786 lineto
+778 498 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+695 773 moveto 42 (HelpPage) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 655 766 moveto
+778 766 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 753 moveto 62 (# $helpPageId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 741 moveto 60 (# $pageName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 729 moveto 53 (# $helpType) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 717 moveto 51 (- $subItems) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 655 710 moveto
+778 710 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 697 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 685 moveto 64 (+ getChildren\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 673 moveto 58 (+ getValues\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 661 moveto 78 (+ getHelpPageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 649 moveto 78 (+ setHelpPageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 637 moveto 77 (+ getPageName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 625 moveto 77 (+ setPageName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 613 moveto 62 (+ getContent\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 601 moveto 62 (+ setContent\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 589 moveto 107 (+ getParentHelpPageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 577 moveto 107 (+ setParentHelpPageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 565 moveto 69 (+ getHelpType\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 553 moveto 69 (+ setHelpType\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 541 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 529 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 517 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+662.5 505 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node11
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1046 1279 moveto
+967 1240 848 1168 786 1068 curveto
+734 984 717 874 713 786 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1044.56 1282.2 moveto
+1055 1284 lineto
+1047.96 1276.08 lineto
+closepath stroke
+grestore
+% Node12
+gsave
+[ /Rect [ 795 450 919 834 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classHelpParagraph.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 795 450 moveto
+795 834 lineto
+920 834 lineto
+920 450 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 795 450 moveto
+795 834 lineto
+920 834 lineto
+920 450 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+825 821 moveto 64 (HelpParagraph) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 795 814 moveto
+920 814 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 801 moveto 83 (# $helpParagraphId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 789 moveto 62 (# $helpPageId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 777 moveto 92 (# $paragraphParentId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 765 moveto 65 (# $actionName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 753 moveto 29 (# $title) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 741 moveto 68 (# $settingName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 729 moveto 51 (- $subItems) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 795 722 moveto
+920 722 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 709 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 697 moveto 64 (+ getChildren\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 685 moveto 58 (+ getValues\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 673 moveto 100 (+ getHelpParagraphId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 661 moveto 100 (+ setHelpParagraphId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 649 moveto 78 (+ getHelpPageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 637 moveto 78 (+ setHelpPageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 625 moveto 109 (+ getParagraphParentId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 613 moveto 109 (+ setParagraphParentId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 601 moveto 82 (+ getActionName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 589 moveto 82 (+ setActionName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 577 moveto 47 (+ getTitle\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 565 moveto 47 (+ setTitle\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 553 moveto 85 (+ getSettingName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 541 moveto 85 (+ setSettingName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 529 moveto 69 (+ getHelpType\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 517 moveto 69 (+ setHelpType\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 505 moveto 62 (+ getContent\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 493 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 481 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 469 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+802.5 457 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node12
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1048 1241 moveto
+1006 1195 956 1132 928 1068 curveto
+896 995 878 909 868 834 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1045.45 1243.4 moveto
+1055 1248 lineto
+1050.4 1238.45 lineto
+closepath stroke
+grestore
+% Node13
+gsave
+[ /Rect [ 937 558 1049 726 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classLanguage.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 937 558 moveto
+937 726 lineto
+1049 726 lineto
+1049 558 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 937 558 moveto
+937 726 lineto
+1049 726 lineto
+1049 558 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+972 713 moveto 42 (Language) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 937 706 moveto
+1049 706 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 693 moveto 60 (# $languageId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 681 moveto 78 (# $languageName) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 937 674 moveto
+1049 674 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 661 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 649 moveto 78 (+ getLanguageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 637 moveto 78 (+ setLanguageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 625 moveto 96 (+ getLanguageName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 613 moveto 96 (+ setLanguageName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 601 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 589 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 577 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+945 565 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node13
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1064 1094 moveto
+1061 1085 1059 1077 1058 1068 curveto
+1034 950 1014 812 1003 726 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1060.61 1094.88 moveto
+1066 1104 lineto
+1067.47 1093.51 lineto
+closepath stroke
+grestore
+% Node14
+gsave
+[ /Rect [ 1067 504 1177 780 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classLibrary.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 1067 504 moveto
+1067 780 lineto
+1177 780 lineto
+1177 504 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1067 504 moveto
+1067 780 lineto
+1177 780 lineto
+1177 504 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1107.5 767 moveto 29 (Library) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1067 760 moveto
+1177 760 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 747 moveto 47 (# $libraryId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 735 moveto 65 (# $libraryName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 723 moveto 76 (# $libraryAddress) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 711 moveto 47 (# $website) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 699 moveto 29 (# $info) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1067 692 moveto
+1177 692 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 679 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 667 moveto 65 (+ getLibraryId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 655 moveto 65 (+ setLibraryId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 643 moveto 83 (+ getLibraryName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 631 moveto 83 (+ setLibraryName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 619 moveto 94 (+ getLibraryAddress\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 607 moveto 94 (+ setLibraryAddress\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 595 moveto 65 (+ getWebsite\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 583 moveto 65 (+ setWebsite\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 571 moveto 44 (+ getInfo\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 559 moveto 44 (+ setInfo\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 547 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 535 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 523 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1075 511 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node14
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1122 1094 moveto
+1122 990 1122 870 1122 780 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1118.5 1094 moveto
+1122 1104 lineto
+1125.5 1094 lineto
+closepath stroke
+grestore
+% Node15
+gsave
+[ /Rect [ 1195 522 1315 762 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classPendingUser.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 1195 522 moveto
+1195 762 lineto
+1316 762 lineto
+1316 522 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1195 522 moveto
+1195 762 lineto
+1316 762 lineto
+1316 522 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1227 749 moveto 56 (PendingUser) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1195 742 moveto
+1316 742 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 729 moveto 75 (# $pendingUserId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 717 moveto 40 (# $userId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 705 moveto 89 (# $confirmationCode) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 693 moveto 76 (# $expirationDate) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1195 686 moveto
+1316 686 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 673 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 661 moveto 92 (+ getPendingUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 649 moveto 56 (+ getUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 637 moveto 56 (+ setUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 625 moveto 105 (+ getConfirmationCode\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 613 moveto 105 (+ setConfirmationCode\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 601 moveto 92 (+ getExpirationDate\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 589 moveto 92 (+ setExpirationDate\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 577 moveto 54 (+ fromUser\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 565 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 553 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 541 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1202.5 529 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node15
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1180 1094 moveto
+1182 1085 1184 1077 1186 1068 curveto
+1207 965 1226 848 1238 762 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1176.53 1093.51 moveto
+1178 1104 lineto
+1183.39 1094.88 lineto
+closepath stroke
+grestore
+% Node16
+gsave
+[ /Rect [ 1333 546 1479 738 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classPermission.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 1333 546 moveto
+1333 738 lineto
+1479 738 lineto
+1479 546 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1333 546 moveto
+1333 738 lineto
+1479 738 lineto
+1479 546 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1381.5 725 moveto 49 (Permission) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1333 718 moveto
+1479 718 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 705 moveto 65 (# $actionName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 693 moveto 52 (# $minRank) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1333 686 moveto
+1479 686 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 673 moveto 82 (+ getActionName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 661 moveto 82 (+ setActionName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 649 moveto 67 (+ getMinRank\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 637 moveto 67 (+ setMinRank\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 625 moveto 100 (+ rankHasPermission\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 613 moveto 130 (+ getPermissionListForRank\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 601 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 589 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 577 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 565 moveto 88 (+ getColumnTypes\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1341 553 moveto 63 (- __construct\(\)) alignedtext
+grestore
+% Node1->Node16
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1196 1243 moveto
+1240 1197 1293 1134 1324 1068 curveto
+1373 962 1393 827 1401 738 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1193.6 1240.45 moveto
+1189 1250 lineto
+1198.55 1245.4 lineto
+closepath stroke
+grestore
+% Node17
+gsave
+[ /Rect [ 1497 558 1601 726 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classPerson.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 1497 558 moveto
+1497 726 lineto
+1601 726 lineto
+1601 558 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1497 558 moveto
+1497 726 lineto
+1601 726 lineto
+1601 558 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1533.5 713 moveto 31 (Person) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1497 706 moveto
+1601 706 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 693 moveto 50 (# $personId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 681 moveto 38 (# $name) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1497 674 moveto
+1601 674 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 661 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 649 moveto 67 (+ getPersonId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 637 moveto 67 (+ setPersonId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 625 moveto 54 (+ getName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 613 moveto 54 (+ setName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 601 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 589 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 577 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1505 565 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node17
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1198 1285 moveto
+1284 1248 1420 1176 1488 1068 curveto
+1553 964 1560 817 1556 726 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1196.72 1281.74 moveto
+1189 1289 lineto
+1199.56 1288.14 lineto
+closepath stroke
+grestore
+% Node18
+gsave
+[ /Rect [ 1619 348 1749 936 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classScan.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 1619 348 moveto
+1619 936 lineto
+1750 936 lineto
+1750 348 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1619 348 moveto
+1619 936 lineto
+1750 936 lineto
+1750 348 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1672.5 923 moveto 23 (Scan) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1619 916 moveto
+1750 916 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 903 moveto 94 (+ STATUS_PENDING) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 891 moveto 115 (+ STATUS_PROCESSING) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 879 moveto 85 (+ STATUS_ERROR) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 867 moveto 95 (+ STATUS_DELETED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 855 moveto 112 (+ STATUS_PROCESSED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 843 moveto 65 (+ TYPE_JPEG) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 831 moveto 59 (+ TYPE_TIFF) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 819 moveto 42 (# $scanId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 807 moveto 56 (# $scanType) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 795 moveto 35 (# $page) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 783 moveto 41 (# $status) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 771 moveto 36 (# $width) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 759 moveto 40 (# $height) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 747 moveto 59 (# $zoomLevel) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 735 moveto 60 (# $scanName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 723 moveto 50 (# $uploadId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 711 moveto 52 (# $bindingId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 699 moveto 53 (# $bookTitle) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1619 692 moveto
+1750 692 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 679 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 667 moveto 59 (+ getScanId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 655 moveto 72 (+ getScanType\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 643 moveto 72 (+ setScanType\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 631 moveto 51 (+ getPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 619 moveto 51 (+ setPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 607 moveto 77 (+ getScanName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 595 moveto 77 (+ setScanName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 583 moveto 57 (+ getStatus\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 571 moveto 57 (+ setStatus\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 559 moveto 54 (+ getWidth\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 547 moveto 56 (+ getHeight\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 535 moveto 80 (+ setDimensions\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 523 moveto 74 (+ getZoomLevel\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 511 moveto 74 (+ setZoomLevel\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 499 moveto 66 (+ getUploadId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 487 moveto 66 (+ setUploadId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 475 moveto 68 (+ getBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 463 moveto 68 (+ setBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 451 moveto 69 (+ getBookTitle\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 439 moveto 69 (+ setBookTitle\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 427 moveto 93 (+ createEmptyScan\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 415 moveto 66 (+ fromBinding\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 403 moveto 89 (+ fromBindingPage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 391 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 379 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 367 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1626.5 355 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node18
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1199 1298 moveto
+1309 1271 1508 1205 1610 1068 curveto
+1639 1029 1657 983 1670 936 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1198.12 1294.61 moveto
+1189 1300 lineto
+1199.49 1301.47 lineto
+closepath stroke
+grestore
+% Node19
+gsave
+[ /Rect [ 1767 540 1871 744 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classSetting.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 1767 540 moveto
+1767 744 lineto
+1871 744 lineto
+1871 540 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1767 540 moveto
+1767 744 lineto
+1871 744 lineto
+1871 540 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1803.5 731 moveto 31 (Setting) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1767 724 moveto
+1871 724 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 711 moveto 68 (# $settingName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 699 moveto 67 (# $settingValue) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 687 moveto 40 (# $visible) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1767 680 moveto
+1871 680 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 667 moveto 85 (+ getSettingName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 655 moveto 83 (+ getSettingValue\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 643 moveto 83 (+ setSettingValue\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 631 moveto 58 (+ getVisible\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 619 moveto 59 (+ getSetting\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 607 moveto 59 (+ setSetting\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 595 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 583 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 571 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 559 moveto 88 (+ getColumnTypes\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1775 547 moveto 63 (- __construct\(\)) alignedtext
+grestore
+% Node1->Node19
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1199 1308 moveto
+1336 1294 1618 1243 1758 1068 curveto
+1831 977 1837 838 1832 744 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1198.6 1304.52 moveto
+1189 1309 lineto
+1199.3 1311.49 lineto
+closepath stroke
+grestore
+% Node20
+gsave
+[ /Rect [ 1889 426 2007 858 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classUpload.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 1889 426 moveto
+1889 858 lineto
+2007 858 lineto
+2007 426 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1889 426 moveto
+1889 858 lineto
+2007 858 lineto
+2007 426 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1933 845 moveto 30 (Upload) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1889 838 moveto
+2007 838 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 825 moveto 102 (+ STATUS_AVAILABLE) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 813 moveto 85 (+ STATUS_ERROR) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 801 moveto 50 (# $uploadId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 789 moveto 40 (# $userId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 777 moveto 38 (# $token) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 765 moveto 50 (# $filename) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 753 moveto 32 (# $size) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 741 moveto 59 (# $timestamp) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 729 moveto 41 (# $status) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 1889 722 moveto
+2007 722 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 709 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 697 moveto 97 (+ generateNewToken\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 685 moveto 41 (+ delete\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 673 moveto 62 (+ getContent\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 661 moveto 62 (+ setContent\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 649 moveto 81 (+ getFileLocation\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 637 moveto 66 (+ getUploadId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 625 moveto 56 (+ getUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 613 moveto 56 (+ setUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 601 moveto 54 (+ getToken\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 589 moveto 68 (+ getFilename\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 577 moveto 68 (+ setFilename\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 565 moveto 48 (+ getSize\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 553 moveto 48 (+ setSize\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 541 moveto 77 (+ getTimestamp\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 529 moveto 77 (+ setTimestamp\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 517 moveto 57 (+ getStatus\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 505 moveto 57 (+ setStatus\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 493 moveto 101 (+ createEmptyUpload\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 481 moveto 59 (+ fromToken\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 469 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 457 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 445 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+1897 433 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node1->Node20
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1199 1299 moveto
+1373 1265 1789 1173 1880 1068 curveto
+1929 1010 1950 932 1957 858 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1198.12 1295.61 moveto
+1189 1301 lineto
+1199.49 1302.47 lineto
+closepath stroke
+grestore
+% Node21
+gsave
+[ /Rect [ 2025 216 2179 1068 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classUser.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 2025 216 moveto
+2025 1068 lineto
+2180 1068 lineto
+2180 216 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 2025 216 moveto
+2025 1068 lineto
+2180 1068 lineto
+2180 216 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2092 1055 moveto 20 (User) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 2025 1048 moveto
+2180 1048 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 1035 moveto 69 (+ RANK_NONE) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 1023 moveto 84 (+ RANK_DEFAULT) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 1011 moveto 103 (+ RANK_MODERATOR) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 999 moveto 72 (+ RANK_ADMIN) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 987 moveto 130 (+ ACTIVE_STAGE_PENDING) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 975 moveto 139 (+ ACTIVE_STAGE_ACCEPTED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 963 moveto 122 (+ ACTIVE_STAGE_DENIED) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 951 moveto 121 (+ ACTIVE_STAGE_ACTIVE) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 939 moveto 40 (# $userId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 927 moveto 56 (# $username) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 915 moveto 77 (# $passwordHash) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 903 moveto 37 (# $email) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 891 moveto 55 (# $firstName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 879 moveto 55 (# $lastName) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 867 moveto 51 (# $affiliation) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 855 moveto 61 (# $occupation) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 843 moveto 74 (# $homeAddress) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 831 moveto 47 (# $website) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 819 moveto 80 (# $activationStage) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 807 moveto 45 (# $banned) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 795 moveto 32 (# $rank) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 783 moveto 114 (# $passwordRestoreToken) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 771 moveto 82 (# $registrationDate) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 759 moveto 56 (# $lastActive) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 2025 752 moveto
+2180 752 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 739 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 727 moveto 41 (+ delete\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 715 moveto 56 (+ getUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 703 moveto 73 (+ getUsername\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 691 moveto 73 (+ setUsername\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 679 moveto 71 (+ setPassword\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 667 moveto 53 (+ getEmail\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 655 moveto 53 (+ setEmail\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 643 moveto 74 (+ getFirstName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 631 moveto 74 (+ setFirstName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 619 moveto 73 (+ getLastName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 607 moveto 73 (+ setLastName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 595 moveto 68 (+ getAffiliation\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 583 moveto 68 (+ setAffiliation\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 571 moveto 78 (+ getOccupation\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 559 moveto 78 (+ setOccupation\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 547 moveto 65 (+ getWebsite\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 535 moveto 65 (+ setWebsite\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 523 moveto 90 (+ getHomeAddress\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 511 moveto 90 (+ setHomeAddress\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 499 moveto 62 (+ getBanned\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 487 moveto 62 (+ setBanned\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 475 moveto 56 (+ isBanned\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 463 moveto 51 (+ getRank\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 451 moveto 51 (+ setRank\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 439 moveto 131 (+ getPasswordRestoreToken\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 427 moveto 131 (+ setPasswordRestoreToken\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 415 moveto 96 (+ getActivationStage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 403 moveto 96 (+ setActivationStage\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 391 moveto 101 (+ getRegistrationDate\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 379 moveto 101 (+ setRegistrationDate\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 367 moveto 74 (+ getLastActive\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 355 moveto 74 (+ setLastActive\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 343 moveto 55 (+ getActive\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 331 moveto 49 (+ isActive\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 319 moveto 138 (+ fromUsernameAndPassword\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 307 moveto 95 (+ fromEmailAddress\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 295 moveto 78 (+ fromUsername\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 283 moveto 84 (+ checkPassword\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 271 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 259 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 247 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 235 moveto 88 (+ getColumnTypes\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+2032.5 223 moveto 76 (- hashPassword\(\)) alignedtext
+grestore
+% Node1->Node21
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1199 1304 moveto
+1395 1274 1903 1189 2016 1068 curveto
+2019 1065 2022 1061 2025 1058 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 1198.6 1300.52 moveto
+1189 1305 lineto
+1199.3 1307.49 lineto
+closepath stroke
+grestore
+% Node4
+gsave
+[ /Rect [ 0 0 104 180 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classAuthor.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 0 0 moveto
+0 180 lineto
+104 180 lineto
+104 0 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 0 0 moveto
+0 180 lineto
+104 180 lineto
+104 0 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+37.5 167 moveto 29 (Author) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 0 160 moveto
+104 160 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 147 moveto 50 (# $personId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 135 moveto 42 (# $bookId) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 0 128 moveto
+104 128 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 115 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 103 moveto 59 (+ getBookId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 91 moveto 59 (+ setBookId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 79 moveto 67 (+ getPersonId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 67 moveto 67 (+ setPersonId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 55 moveto 56 (+ fromBook\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 43 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 31 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 19 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+8 7 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node3->Node4
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 305 596 moveto
+318 510 333 325 240 216 curveto
+201 171 161 214 113 180 curveto
+110 178 107 175 104 173 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 301.53 595.51 moveto
+303 606 lineto
+308.39 596.88 lineto
+closepath stroke
+grestore
+% Node5
+gsave
+[ /Rect [ 122 0 226 180 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classBindingLanguage.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 122 0 moveto
+122 180 lineto
+226 180 lineto
+226 0 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 122 0 moveto
+122 180 lineto
+226 180 lineto
+226 0 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+137 167 moveto 74 (BindingLanguage) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 122 160 moveto
+226 160 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 147 moveto 52 (# $bindingId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 135 moveto 60 (# $languageId) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 122 128 moveto
+226 128 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 115 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 103 moveto 68 (+ getBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 91 moveto 68 (+ setBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 79 moveto 78 (+ getLanguageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 67 moveto 78 (+ setLanguageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 55 moveto 68 (+ createOrGet\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 43 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 31 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 19 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+130 7 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node3->Node5
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 295 596 moveto
+292 516 282 349 240 216 curveto
+236 204 231 192 226 180 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 291.5 596 moveto
+295 606 lineto
+298.5 596 lineto
+closepath stroke
+grestore
+% Node6
+gsave
+[ /Rect [ 244 0 348 180 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classBookLanguage.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 244 0 moveto
+244 180 lineto
+348 180 lineto
+348 0 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 244 0 moveto
+244 180 lineto
+348 180 lineto
+348 0 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+263.5 167 moveto 65 (BookLanguage) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 244 160 moveto
+348 160 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 147 moveto 42 (# $bookId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 135 moveto 60 (# $languageId) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 244 128 moveto
+348 128 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 115 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 103 moveto 59 (+ getBookId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 91 moveto 59 (+ setBookId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 79 moveto 78 (+ getLanguageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 67 moveto 78 (+ setLanguageId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 55 moveto 68 (+ createOrGet\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 43 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 31 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 19 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+252 7 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node3->Node6
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 296 596 moveto
+296 504 296 299 296 180 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 292.5 596 moveto
+296 606 lineto
+299.5 596 lineto
+closepath stroke
+grestore
+% Node7
+gsave
+[ /Rect [ 366 6 470 174 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classNote.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 366 6 moveto
+366 174 lineto
+470 174 lineto
+470 6 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 366 6 moveto
+366 174 lineto
+470 174 lineto
+470 6 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+408 161 moveto 20 (Note) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 366 154 moveto
+470 154 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 141 moveto 40 (# $userId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 129 moveto 30 (# $text) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 366 122 moveto
+470 122 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 109 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 97 moveto 56 (+ getUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 85 moveto 56 (+ setUserId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 73 moveto 47 (+ getText\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 61 moveto 47 (+ setText\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 49 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 37 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 25 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+374 13 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node3->Node7
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 296 596 moveto
+299 516 310 349 352 216 curveto
+356 202 362 188 369 174 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 292.5 596 moveto
+296 606 lineto
+299.5 596 lineto
+closepath stroke
+grestore
+% Node8
+gsave
+[ /Rect [ 488 0 592 180 ]
+  /Border [ 0 0 0 ]
+  /Action << /Subtype /URI /URI ($classProvenance.html) >>
+  /Subtype /Link
+/ANN pdfmark
+0.000 0.000 1.000 nodecolor
+newpath 488 0 moveto
+488 180 lineto
+592 180 lineto
+592 0 lineto
+closepath fill
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 488 0 moveto
+488 180 lineto
+592 180 lineto
+592 0 lineto
+closepath stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+515 167 moveto 50 (Provenance) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 488 160 moveto
+592 160 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 147 moveto 52 (# $bindingId) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 135 moveto 50 (# $personId) alignedtext
+1 setlinewidth
+filled
+0.000 0.000 0.000 nodecolor
+newpath 488 128 moveto
+592 128 lineto
+stroke
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 115 moveto 66 (+ __construct\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 103 moveto 68 (+ getBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 91 moveto 68 (+ setBindingId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 79 moveto 67 (+ getPersonId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 67 moveto 67 (+ setPersonId\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 55 moveto 66 (+ fromBinding\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 43 moveto 77 (+ getTableName\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 31 moveto 85 (+ getPrimaryKeys\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 19 moveto 67 (+ getColumns\(\)) alignedtext
+0.000 0.000 0.000 nodecolor
+10 /Helvetica set_font
+496 7 moveto 88 (+ getColumnTypes\(\)) alignedtext
+grestore
+% Node3->Node8
+gsave
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 287 596 moveto
+274 510 258 325 352 216 curveto
+390 171 431 214 479 180 curveto
+482 178 485 175 488 173 curveto
+stroke
+1 setlinewidth
+solid
+0.667 0.776 0.439 edgecolor
+newpath 283.61 596.88 moveto
+289 606 lineto
+290.47 595.51 lineto
+closepath stroke
+grestore
+endpage
+showpage
+grestore
+%%PageTrailer
+%%EndPage: 1
+%%Trailer
+%%Pages: 1
+%%BoundingBox: 36 36 2223 1568
+end
+restore
+%%EOF

@@ -2,10 +2,22 @@
 \section{Language Class Reference}
 \label{classLanguage}\index{Language@{Language}}
 }
-Inheritance diagram for Language:\begin{figure}[H]
+
+
+Inheritance diagram for Language:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classLanguage}
+\includegraphics[height=400pt]{classLanguage__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Language:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classLanguage__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for Language:\begin{figure}[H]
 \item 
 \hyperlink{classLanguage_abc1d723ee7724d0b7a6b27914e8e6d55}{\_\-\_\-construct} (\$id=null)
 \item 
-\hypertarget{classLanguage_ae8b3c5092853212ca93c29c3af395326}{
-{\bfseries getLanguageId} ()}
-\label{classLanguage_ae8b3c5092853212ca93c29c3af395326}
-
+\hyperlink{classLanguage_ae8b3c5092853212ca93c29c3af395326}{getLanguageId} ()
 \item 
 \hypertarget{classLanguage_a367ceec7d9d2c011c15c5e296d8188a0}{
 {\bfseries setLanguageId} (\$id)}
@@ -60,30 +69,20 @@ Class representing a language.
 \hypertarget{classLanguage_abc1d723ee7724d0b7a6b27914e8e6d55}{
 \index{Language@{Language}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Language@{Language}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Language::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{id = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Language::\_\-\_\-construct (\$ {\em id} = {\ttfamily null})}}
 \label{classLanguage_abc1d723ee7724d0b7a6b27914e8e6d55}
 Constructs a language entity.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the language. Default (null) will create a new one. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the language. Default (null) will create a new one. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classLanguage_aca9b17402d92635b3092d255ca90e551}{
 \index{Language@{Language}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Language@{Language}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLanguage_aca9b17402d92635b3092d255ca90e551}
 Gets all the columns that are not primary keys as an array. 
 
@@ -92,11 +91,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classLanguage_a6e5cf86376e603ee4945b514fb6de7bd}{
 \index{Language@{Language}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Language@{Language}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLanguage_a6e5cf86376e603ee4945b514fb6de7bd}
 Gets all the column types, per column, including primary keys.
 
@@ -107,14 +102,15 @@ Array of all column types.
 
 Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
 
-\hypertarget{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}{
+\hypertarget{classLanguage_ae8b3c5092853212ca93c29c3af395326}{
+\index{Language@{Language}!getLanguageId@{getLanguageId}}
+\index{getLanguageId@{getLanguageId}!Language@{Language}}
+\subsubsection[{getLanguageId}]{\setlength{\rightskip}{0pt plus 5cm}Language::getLanguageId ()}}
+\label{classLanguage_ae8b3c5092853212ca93c29c3af395326}
+Getters and setters. \hypertarget{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}{
 \index{Language@{Language}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Language@{Language}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLanguage_ad85ca28f29f19ec96d0151d21a2485a6}
 Get an array with the primary keys. 
 
@@ -123,11 +119,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classLanguage_a262653445a1324d6c02099e01cab0dff}{
 \index{Language@{Language}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Language@{Language}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Language::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classLanguage_a262653445a1324d6c02099e01cab0dff}
 Get the name of the corresponding table. 
 

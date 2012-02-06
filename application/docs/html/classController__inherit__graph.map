@@ -1,0 +1,22 @@
+<map id="G" name="G">
+<area shape="rect" href="$classAuthenticationController.html" title="{AuthenticationController\n||+ actionLogin()\l+ actionLogout()\l+ actionKeepAlive()\l+ actionHasPermissionTo()\l+ actionGetPermissionList()\l+ actionGetGuestPermissionList()\l}" alt="" coords="437,325,656,485"/>
+<area shape="rect" href="$classBindingUploadController.html" title="{BindingUploadController\n||+ actionUpload()\l+ actionGetBindingStatus()\l+ actionUniqueLibrarySignature()\l+ uniqueLibrarySignature()\l+ actionDeleteUpload()\l&#45; createLibrary()\l&#45; createBooks()\l&#45; createScans()\l&#45; createBookLanguages()\l&#45; createBindingAnnotationLanguages()\l&#45; createAuthors()\l&#45; createProvenances()\l&#45; createPerson()\l&#45; identifyScan()\l}" alt="" coords="680,261,920,549"/>
+<area shape="rect" href="$classControllerBase.html" title="{ControllerBase\n||# handleLoad()\l}" alt="" coords="944,365,1051,445"/>
+<area shape="rect" href="$classMainController.html" title="{MainController\n||+ actionIndex()\l+ actionScript()\l+ actionStyle()\l&#45; getJavascriptFilenames()\l&#45; setMinifiedJavascriptCache()\l&#45; getStylesheetFilenames()\l&#45; setMinifiedStylesheetCache()\l&#45; getContent()\l&#45; sendCachingHeaders()\l&#45; handleModifiedSince()\l}" alt="" coords="1075,293,1272,517"/>
+<area shape="rect" href="$classNoteController.html" title="{NoteController\n||+ actionLoad()\l+ actionSave()\l}" alt="" coords="1296,357,1400,453"/>
+<area shape="rect" href="$classPdfController.html" title="{PdfController\n||+ actionGenerate()\l+ actionDownload()\l}" alt="" coords="1424,357,1555,453"/>
+<area shape="rect" href="$classUploadController.html" title="{UploadController\n||+ actionFetchToken()\l+ actionFetchUploads()\l+ actionDelete()\l+ actionUpload()\l}" alt="" coords="1579,341,1733,469"/>
+<area shape="rect" href="$classUserActivationController.html" title="{UserActivationController\n||+ actionSetUserAccepted()\l+ actionActivateUser()\l+ actionSetAutoAcceptance()\l+ actionResendActivationMail()\l}" alt="" coords="1757,341,1957,469"/>
+<area shape="rect" href="$classAnnotationController.html" title="{AnnotationController\n||+ actionLoad()\l+ actionSave()\l+ polygonEqual()\l+ textEqual()\l}" alt="" coords="5,669,144,797"/>
+<area shape="rect" href="$classAuthorController.html" title="{AuthorController\n||+ actionLoad()\l}" alt="" coords="168,693,283,773"/>
+<area shape="rect" href="$classBindingController.html" title="{BindingController\n||+ actionLoad()\l+ actionDelete()\l}" alt="" coords="307,685,427,781"/>
+<area shape="rect" href="$classBindingLanguageController.html" title="{BindingLanguageController\n||+ actionLoad()\l}" alt="" coords="451,693,627,773"/>
+<area shape="rect" href="$classBookController.html" title="{BookController\n||+ actionLoad()\l+ actionFirstLastPages()\l+ actionSearch()\l+ splitFulltextQuery()\l+ addFulltext()\l}" alt="" coords="651,661,813,805"/>
+<area shape="rect" href="$classBookLanguageController.html" title="{BookLanguageController\n||+ actionLoad()\l}" alt="" coords="837,693,1000,773"/>
+<area shape="rect" href="$classHelpController.html" title="{HelpController\n||+ actionLoad()\l+ setLeaves()\l}" alt="" coords="1024,685,1128,781"/>
+<area shape="rect" href="$classLanguageController.html" title="{LanguageController\n||+ actionLoad()\l}" alt="" coords="1152,693,1283,773"/>
+<area shape="rect" href="$classProvenanceController.html" title="{ProvenanceController\n||+ actionLoad()\l}" alt="" coords="1307,693,1451,773"/>
+<area shape="rect" href="$classScanController.html" title="{ScanController\n||+ actionLoad()\l+ actionReorder()\l}" alt="" coords="1475,685,1595,781"/>
+<area shape="rect" href="$classSettingController.html" title="{SettingController\n||+ actionGetSetting()\l}" alt="" coords="1619,693,1757,773"/>
+<area shape="rect" href="$classUserController.html" title="{UserController\n||+ actionLoad()\l+ actionSave()\l+ actionCreate()\l+ actionUsernameExists()\l+ actionEmailExists()\l+ actionDeleteUser()\l+ actionBanUser()\l+ actionUnBanUser()\l+ actionPasswordForgotten()\l+ actionChangeRole()\l+ actionChangeForgottenPassword()\l&#45; validEmailAddress()\l&#45; getAccessableColumns()\l}" alt="" coords="1781,597,2013,869"/>
+</map>

@@ -2,10 +2,22 @@
 \section{BindingLanguage Class Reference}
 \label{classBindingLanguage}\index{BindingLanguage@{BindingLanguage}}
 }
-Inheritance diagram for BindingLanguage:\begin{figure}[H]
+
+
+Inheritance diagram for BindingLanguage:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{classBindingLanguage}
+\includegraphics[height=400pt]{classBindingLanguage__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for BindingLanguage:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classBindingLanguage__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for BindingLanguage:\begin{figure}[H]
 \item 
 \hyperlink{classBindingLanguage_a82d72a86b098f9d6ee3d11412f566674}{\_\-\_\-construct} (\$bindingId=null, \$languageId=null, \$createNew=false)
 \item 
-\hypertarget{classBindingLanguage_a3ddbcd10fe8a242eeac058c4f37b2363}{
-{\bfseries getBindingId} ()}
-\label{classBindingLanguage_a3ddbcd10fe8a242eeac058c4f37b2363}
-
+\hyperlink{classBindingLanguage_a3ddbcd10fe8a242eeac058c4f37b2363}{getBindingId} ()
 \item 
 \hypertarget{classBindingLanguage_a1466d54d63341b0b1097e0a7d772de41}{
 {\bfseries setBindingId} (\$bindingId)}
@@ -62,57 +71,37 @@ Associative enity representing the language of a binding.
 \hypertarget{classBindingLanguage_a82d72a86b098f9d6ee3d11412f566674}{
 \index{BindingLanguage@{BindingLanguage}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!BindingLanguage@{BindingLanguage}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}BindingLanguage::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{bindingId = {\ttfamily null}, }
-\item[{\$}]{languageId = {\ttfamily null}, }
-\item[{\$}]{createNew = {\ttfamily false}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}BindingLanguage::\_\-\_\-construct (\$ {\em bindingId} = {\ttfamily null}, \/  \$ {\em languageId} = {\ttfamily null}, \/  \$ {\em createNew} = {\ttfamily false})}}
 \label{classBindingLanguage_a82d72a86b098f9d6ee3d11412f566674}
 Constructs a binding-\/language relation.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$bindingId} & \\
-\hline
-{\em \$languageId} & \\
-\hline
-{\em \$createNew} & If true, a new relation will be created if the specified one did not exist yet. If one already exists, it doesn't really matter whether this is true or false. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$bindingId}]\item[{\em \$languageId}]\item[{\em \$createNew}]If true, a new relation will be created if the specified one did not exist yet. If one already exists, it doesn't really matter whether this is true or false. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classBindingLanguage_a36d05494548bf935e2a19f7cf37237fc}{
 \index{BindingLanguage@{BindingLanguage}!createOrGet@{createOrGet}}
 \index{createOrGet@{createOrGet}!BindingLanguage@{BindingLanguage}}
-\subsubsection[{createOrGet}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::createOrGet (
-\begin{DoxyParamCaption}
-\item[{\$}]{binding, }
-\item[{\$}]{language}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{createOrGet}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::createOrGet (\$ {\em binding}, \/  \$ {\em language})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBindingLanguage_a36d05494548bf935e2a19f7cf37237fc}
 Creates a new relation between a binding and a language or retreives one if it already exists.
 
 The id's of the binding and the language should be set.
 
 
-\begin{DoxyParams}[1]{Parameters}
-\hyperlink{classBinding}{Binding} & {\em \$binding} & \\
-\hline
-\hyperlink{classLanguage}{Language} & {\em \$language} & \\
-\hline
-\end{DoxyParams}
-\hypertarget{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}{
+\begin{DoxyParams}{Parameters}
+\item[{\em \hyperlink{classBinding}{Binding}}]\$binding \item[{\em \hyperlink{classLanguage}{Language}}]\$language \end{DoxyParams}
+\hypertarget{classBindingLanguage_a3ddbcd10fe8a242eeac058c4f37b2363}{
+\index{BindingLanguage@{BindingLanguage}!getBindingId@{getBindingId}}
+\index{getBindingId@{getBindingId}!BindingLanguage@{BindingLanguage}}
+\subsubsection[{getBindingId}]{\setlength{\rightskip}{0pt plus 5cm}BindingLanguage::getBindingId ()}}
+\label{classBindingLanguage_a3ddbcd10fe8a242eeac058c4f37b2363}
+Getters and setters. \hypertarget{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}{
 \index{BindingLanguage@{BindingLanguage}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!BindingLanguage@{BindingLanguage}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBindingLanguage_a98dcffedcdfc0ebe0701353fd2d17d06}
 Gets all the columns.
 
@@ -126,11 +115,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classBindingLanguage_a2555fe5224b885813f810b249a0fbefb}{
 \index{BindingLanguage@{BindingLanguage}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!BindingLanguage@{BindingLanguage}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBindingLanguage_a2555fe5224b885813f810b249a0fbefb}
 Gets all the column types, per column, including primary keys.
 
@@ -144,11 +129,7 @@ Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Ent
 \hypertarget{classBindingLanguage_aafc27da4c3edcd204cf51d2d2429e8eb}{
 \index{BindingLanguage@{BindingLanguage}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!BindingLanguage@{BindingLanguage}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBindingLanguage_aafc27da4c3edcd204cf51d2d2429e8eb}
 Gets the primary keys.
 
@@ -162,11 +143,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classBindingLanguage_a0f5427a1846d14c04dee6c35c73a0781}{
 \index{BindingLanguage@{BindingLanguage}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!BindingLanguage@{BindingLanguage}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static BindingLanguage::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBindingLanguage_a0f5427a1846d14c04dee6c35c73a0781}
 Gets the table name.
 

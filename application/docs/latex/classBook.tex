@@ -2,10 +2,22 @@
 \section{Book Class Reference}
 \label{classBook}\index{Book@{Book}}
 }
-Inheritance diagram for Book:\begin{figure}[H]
+
+
+Inheritance diagram for Book:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classBook}
+\includegraphics[height=400pt]{classBook__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Book:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classBook__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,12 +25,11 @@ Inheritance diagram for Book:\begin{figure}[H]
 \item 
 \hyperlink{classBook_a6187e2b162dde2c970e8b33e0b8c57b8}{\_\-\_\-construct} (\$id=null)
 \item 
+\hyperlink{classBook_aa3c048838c2e1f68941d8074d517eb2e}{loadDetails} ()
+\item 
 \hyperlink{classBook_a746ae3bbd059bbc55d3ab6e578105ad8}{saveDetails} ()
 \item 
-\hypertarget{classBook_ac81f1151560d721510ddebc4b029cfcd}{
-{\bfseries getBookId} ()}
-\label{classBook_ac81f1151560d721510ddebc4b029cfcd}
-
+\hyperlink{classBook_ac81f1151560d721510ddebc4b029cfcd}{getBookId} ()
 \item 
 \hypertarget{classBook_a8ca43b92b94d72aec30c5ae5eb2e86d4}{
 {\bfseries setBookId} (\$bookId)}
@@ -148,15 +159,9 @@ Inheritance diagram for Book:\begin{figure}[H]
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{classBook_af0d410f2c2da5f56b57c8f3e59d799a6}{
-static {\bfseries fromBinding} (\$binding)}
-\label{classBook_af0d410f2c2da5f56b57c8f3e59d799a6}
-
+static \hyperlink{classBook_af0d410f2c2da5f56b57c8f3e59d799a6}{fromBinding} (\$binding)
 \item 
-\hypertarget{classBook_a4ec502681f3507edb7c64bb012463d33}{
-static {\bfseries fromBindingPage} (\$binding, \$range)}
-\label{classBook_a4ec502681f3507edb7c64bb012463d33}
-
+static \hyperlink{classBook_a4ec502681f3507edb7c64bb012463d33}{fromBindingPage} (\$binding, \$range)
 \item 
 static \hyperlink{classBook_ae4b3d3747fad76af4e4724a4bcf749a3}{getTableName} ()
 \item 
@@ -191,15 +196,9 @@ static \hyperlink{classBook_afeabb3df0ca3af21d93d2c6d2be84fe6}{getColumnTypes} (
 \item 
 \hyperlink{classBook_a459f6ea8d3000089d048fad6c4bba961}{\$lastPage}
 \item 
-\hypertarget{classBook_a2c4309c16fe7bbc190a11815044334fa}{
-{\bfseries \$bookLanguageList}}
-\label{classBook_a2c4309c16fe7bbc190a11815044334fa}
-
+\hyperlink{classBook_a2c4309c16fe7bbc190a11815044334fa}{\$bookLanguageList}
 \item 
-\hypertarget{classBook_a805fd463f7a6a7c370bd0d8aa87917e3}{
-{\bfseries \$authorList}}
-\label{classBook_a805fd463f7a6a7c370bd0d8aa87917e3}
-
+\hyperlink{classBook_a805fd463f7a6a7c370bd0d8aa87917e3}{\$authorList}
 \end{DoxyCompactItemize}
 
 
@@ -210,30 +209,51 @@ Class representing a book entity.
 \hypertarget{classBook_a6187e2b162dde2c970e8b33e0b8c57b8}{
 \index{Book@{Book}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!Book@{Book}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Book::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{id = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}Book::\_\-\_\-construct (\$ {\em id} = {\ttfamily null})}}
 \label{classBook_a6187e2b162dde2c970e8b33e0b8c57b8}
 Constructs a book by id.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the book. Default (null) will create a new book. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the book. Default (null) will create a new book. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classBook_a26e48647691c869f9de967b1e5e2e49d}{
+\hypertarget{classBook_af0d410f2c2da5f56b57c8f3e59d799a6}{
+\index{Book@{Book}!fromBinding@{fromBinding}}
+\index{fromBinding@{fromBinding}!Book@{Book}}
+\subsubsection[{fromBinding}]{\setlength{\rightskip}{0pt plus 5cm}static Book::fromBinding (\$ {\em binding})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBook_af0d410f2c2da5f56b57c8f3e59d799a6}
+Returns all the books from one binding
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \$binding}]The binding model \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Array of book models 
+\end{DoxyReturn}
+\hypertarget{classBook_a4ec502681f3507edb7c64bb012463d33}{
+\index{Book@{Book}!fromBindingPage@{fromBindingPage}}
+\index{fromBindingPage@{fromBindingPage}!Book@{Book}}
+\subsubsection[{fromBindingPage}]{\setlength{\rightskip}{0pt plus 5cm}static Book::fromBindingPage (\$ {\em binding}, \/  \$ {\em range})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBook_a4ec502681f3507edb7c64bb012463d33}
+Returns all the books from one binding in a certain page range
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \$book}]The book model \item[{\em \$range}]The page range \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Array of book models 
+\end{DoxyReturn}
+\hypertarget{classBook_ac81f1151560d721510ddebc4b029cfcd}{
+\index{Book@{Book}!getBookId@{getBookId}}
+\index{getBookId@{getBookId}!Book@{Book}}
+\subsubsection[{getBookId}]{\setlength{\rightskip}{0pt plus 5cm}Book::getBookId ()}}
+\label{classBook_ac81f1151560d721510ddebc4b029cfcd}
+Getters and setters. \hypertarget{classBook_a26e48647691c869f9de967b1e5e2e49d}{
 \index{Book@{Book}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!Book@{Book}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBook_a26e48647691c869f9de967b1e5e2e49d}
 Gets all the columns.
 
@@ -247,11 +267,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classBook_afeabb3df0ca3af21d93d2c6d2be84fe6}{
 \index{Book@{Book}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!Book@{Book}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBook_afeabb3df0ca3af21d93d2c6d2be84fe6}
 Gets all the column types, per column, including primary keys.
 
@@ -265,11 +281,7 @@ Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Ent
 \hypertarget{classBook_ae2a08ea5916ed402169f59b6ad853d13}{
 \index{Book@{Book}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!Book@{Book}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBook_ae2a08ea5916ed402169f59b6ad853d13}
 Gets the primary keys.
 
@@ -283,11 +295,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classBook_ae4b3d3747fad76af4e4724a4bcf749a3}{
 \index{Book@{Book}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!Book@{Book}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static Book::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBook_ae4b3d3747fad76af4e4724a4bcf749a3}
 Gets the table name.
 
@@ -298,23 +306,29 @@ The table name.
 
 Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
 
-\hypertarget{classBook_a746ae3bbd059bbc55d3ab6e578105ad8}{
+\hypertarget{classBook_aa3c048838c2e1f68941d8074d517eb2e}{
+\index{Book@{Book}!loadDetails@{loadDetails}}
+\index{loadDetails@{loadDetails}!Book@{Book}}
+\subsubsection[{loadDetails}]{\setlength{\rightskip}{0pt plus 5cm}Book::loadDetails ()}}
+\label{classBook_aa3c048838c2e1f68941d8074d517eb2e}
+Loads all the associated lists. \hypertarget{classBook_a746ae3bbd059bbc55d3ab6e578105ad8}{
 \index{Book@{Book}!saveDetails@{saveDetails}}
 \index{saveDetails@{saveDetails}!Book@{Book}}
-\subsubsection[{saveDetails}]{\setlength{\rightskip}{0pt plus 5cm}Book::saveDetails (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{saveDetails}]{\setlength{\rightskip}{0pt plus 5cm}Book::saveDetails ()}}
 \label{classBook_a746ae3bbd059bbc55d3ab6e578105ad8}
-Enter description here ... 
+Saves all the associated lists. 
 
 Reimplemented from \hyperlink{classEntity_a48cdc3830bf695078a69a56f23e1b874}{Entity}.
 
 
 
 \subsection{Member Data Documentation}
-\hypertarget{classBook_a87186d8e5f7671f3735032047c9ab5ef}{
+\hypertarget{classBook_a805fd463f7a6a7c370bd0d8aa87917e3}{
+\index{Book@{Book}!\$authorList@{\$authorList}}
+\index{\$authorList@{\$authorList}!Book@{Book}}
+\subsubsection[{\$authorList}]{\setlength{\rightskip}{0pt plus 5cm}Book::\$authorList\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classBook_a805fd463f7a6a7c370bd0d8aa87917e3}
+list containing all the authors of this book. \hypertarget{classBook_a87186d8e5f7671f3735032047c9ab5ef}{
 \index{Book@{Book}!\$bindingId@{\$bindingId}}
 \index{\$bindingId@{\$bindingId}!Book@{Book}}
 \subsubsection[{\$bindingId}]{\setlength{\rightskip}{0pt plus 5cm}Book::\$bindingId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
@@ -324,7 +338,12 @@ Reimplemented from \hyperlink{classEntity_a48cdc3830bf695078a69a56f23e1b874}{Ent
 \index{\$bookId@{\$bookId}!Book@{Book}}
 \subsubsection[{\$bookId}]{\setlength{\rightskip}{0pt plus 5cm}Book::\$bookId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classBook_a6ba400609a6bce5ffd6dd2cf4f52de89}
-Id of this book. \hypertarget{classBook_a387848127a960472ad77a28e965eb688}{
+Id of this book. \hypertarget{classBook_a2c4309c16fe7bbc190a11815044334fa}{
+\index{Book@{Book}!\$bookLanguageList@{\$bookLanguageList}}
+\index{\$bookLanguageList@{\$bookLanguageList}!Book@{Book}}
+\subsubsection[{\$bookLanguageList}]{\setlength{\rightskip}{0pt plus 5cm}Book::\$bookLanguageList\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classBook_a2c4309c16fe7bbc190a11815044334fa}
+list containing all the languages linked to this book. \hypertarget{classBook_a387848127a960472ad77a28e965eb688}{
 \index{Book@{Book}!\$firstPage@{\$firstPage}}
 \index{\$firstPage@{\$firstPage}!Book@{Book}}
 \subsubsection[{\$firstPage}]{\setlength{\rightskip}{0pt plus 5cm}Book::\$firstPage\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}

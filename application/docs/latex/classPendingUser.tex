@@ -2,10 +2,22 @@
 \section{PendingUser Class Reference}
 \label{classPendingUser}\index{PendingUser@{PendingUser}}
 }
-Inheritance diagram for PendingUser:\begin{figure}[H]
+
+
+Inheritance diagram for PendingUser:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classPendingUser}
+\includegraphics[height=400pt]{classPendingUser__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for PendingUser:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classPendingUser__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for PendingUser:\begin{figure}[H]
 \item 
 \hyperlink{classPendingUser_a8ca6afa50977bffebf9bd12a8f28fc64}{\_\-\_\-construct} (\$id=null)
 \item 
-\hypertarget{classPendingUser_a64da5190bd0b37f2b3905eb85c6c09fe}{
-{\bfseries getPendingUserId} ()}
-\label{classPendingUser_a64da5190bd0b37f2b3905eb85c6c09fe}
-
+\hyperlink{classPendingUser_a64da5190bd0b37f2b3905eb85c6c09fe}{getPendingUserId} ()
 \item 
 \hypertarget{classPendingUser_af59f8a6b01cc48da7dc18b90b83482e1}{
 {\bfseries getUserId} ()}
@@ -36,16 +45,6 @@ Inheritance diagram for PendingUser:\begin{figure}[H]
 \hypertarget{classPendingUser_a787a54d903b9143b2519661ecd9a249c}{
 {\bfseries setConfirmationCode} (\$code)}
 \label{classPendingUser_a787a54d903b9143b2519661ecd9a249c}
-
-\item 
-\hypertarget{classPendingUser_aedef81e599b7162549b74225fdec942d}{
-{\bfseries getAccepted} ()}
-\label{classPendingUser_aedef81e599b7162549b74225fdec942d}
-
-\item 
-\hypertarget{classPendingUser_af723ac6c9434e8faae6098ce9ead590b}{
-{\bfseries setAccepted} (\$accepted)}
-\label{classPendingUser_af723ac6c9434e8faae6098ce9ead590b}
 
 \item 
 \hypertarget{classPendingUser_ac8023573bdb69c330b0911d565de68f7}{
@@ -80,8 +79,6 @@ static \hyperlink{classPendingUser_ab157c3fddef5e3fc0e85f40a66033f78}{getColumnT
 \item 
 \hyperlink{classPendingUser_af0819189ce856cdde304084503839520}{\$confirmationCode}
 \item 
-\hyperlink{classPendingUser_a01579e15e9b634948455543a9f55a7c0}{\$accepted}
-\item 
 \hyperlink{classPendingUser_a0319c006a79b51b47ef224fba80bf7c7}{\$expirationDate}
 \end{DoxyCompactItemize}
 
@@ -93,30 +90,20 @@ Class representing a yet unactivated user entity.
 \hypertarget{classPendingUser_a8ca6afa50977bffebf9bd12a8f28fc64}{
 \index{PendingUser@{PendingUser}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!PendingUser@{PendingUser}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}PendingUser::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{id = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}PendingUser::\_\-\_\-construct (\$ {\em id} = {\ttfamily null})}}
 \label{classPendingUser_a8ca6afa50977bffebf9bd12a8f28fc64}
 Constructs a pending user.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$id} & Id of the pending user. Default (null) will create a new pending user. \\
-\hline
-\end{DoxyParams}
+\item[{\em \$id}]Id of the pending user. Default (null) will create a new pending user. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classPendingUser_af4505a2c00bcb3df5369ac041cfff375}{
 \index{PendingUser@{PendingUser}!fromUser@{fromUser}}
 \index{fromUser@{fromUser}!PendingUser@{PendingUser}}
-\subsubsection[{fromUser}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::fromUser (
-\begin{DoxyParamCaption}
-\item[{\$}]{user}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{fromUser}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::fromUser (\$ {\em user})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPendingUser_af4505a2c00bcb3df5369ac041cfff375}
 Constructs a new \hyperlink{classPendingUser}{PendingUser} based on an existing \hyperlink{classUser}{User}. This method will also generate a confirmation code and set a expiration date. Accepted will be set to NULL.
 
@@ -128,11 +115,7 @@ This new pending user can subsequently be saved to create a new database entry o
 \hypertarget{classPendingUser_a16417ee5731d54b92514e5af71fc715e}{
 \index{PendingUser@{PendingUser}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!PendingUser@{PendingUser}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPendingUser_a16417ee5731d54b92514e5af71fc715e}
 Gets all the columns that are not primary keys as an array. 
 
@@ -141,11 +124,7 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classPendingUser_ab157c3fddef5e3fc0e85f40a66033f78}{
 \index{PendingUser@{PendingUser}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!PendingUser@{PendingUser}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPendingUser_ab157c3fddef5e3fc0e85f40a66033f78}
 Gets all the column types, per column, including primary keys.
 
@@ -156,14 +135,15 @@ Array of all column types.
 
 Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
 
-\hypertarget{classPendingUser_a305b86bf62019e4ca80b769ea75644cf}{
+\hypertarget{classPendingUser_a64da5190bd0b37f2b3905eb85c6c09fe}{
+\index{PendingUser@{PendingUser}!getPendingUserId@{getPendingUserId}}
+\index{getPendingUserId@{getPendingUserId}!PendingUser@{PendingUser}}
+\subsubsection[{getPendingUserId}]{\setlength{\rightskip}{0pt plus 5cm}PendingUser::getPendingUserId ()}}
+\label{classPendingUser_a64da5190bd0b37f2b3905eb85c6c09fe}
+Getters and setters. \hypertarget{classPendingUser_a305b86bf62019e4ca80b769ea75644cf}{
 \index{PendingUser@{PendingUser}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!PendingUser@{PendingUser}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPendingUser_a305b86bf62019e4ca80b769ea75644cf}
 Get an array with the primary keys. 
 
@@ -172,11 +152,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classPendingUser_a8daaf97b6d90a79598d1354c872ac65c}{
 \index{PendingUser@{PendingUser}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!PendingUser@{PendingUser}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static PendingUser::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classPendingUser_a8daaf97b6d90a79598d1354c872ac65c}
 Get the name of the corresponding table. 
 
@@ -185,12 +161,7 @@ Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Ent
 
 
 \subsection{Member Data Documentation}
-\hypertarget{classPendingUser_a01579e15e9b634948455543a9f55a7c0}{
-\index{PendingUser@{PendingUser}!\$accepted@{\$accepted}}
-\index{\$accepted@{\$accepted}!PendingUser@{PendingUser}}
-\subsubsection[{\$accepted}]{\setlength{\rightskip}{0pt plus 5cm}PendingUser::\$accepted\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
-\label{classPendingUser_a01579e15e9b634948455543a9f55a7c0}
-Whether the pending user has been accepted or declined by an administator. Null if still waiting. \hypertarget{classPendingUser_af0819189ce856cdde304084503839520}{
+\hypertarget{classPendingUser_af0819189ce856cdde304084503839520}{
 \index{PendingUser@{PendingUser}!\$confirmationCode@{\$confirmationCode}}
 \index{\$confirmationCode@{\$confirmationCode}!PendingUser@{PendingUser}}
 \subsubsection[{\$confirmationCode}]{\setlength{\rightskip}{0pt plus 5cm}PendingUser::\$confirmationCode\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}

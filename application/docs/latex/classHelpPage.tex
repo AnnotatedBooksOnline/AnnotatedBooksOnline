@@ -2,10 +2,22 @@
 \section{HelpPage Class Reference}
 \label{classHelpPage}\index{HelpPage@{HelpPage}}
 }
-Inheritance diagram for HelpPage:\begin{figure}[H]
+
+
+Inheritance diagram for HelpPage:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2.000000cm]{classHelpPage}
+\includegraphics[height=400pt]{classHelpPage__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for HelpPage:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classHelpPage__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -15,10 +27,9 @@ Inheritance diagram for HelpPage:\begin{figure}[H]
 \item 
 \hyperlink{classHelpPage_a8c3a55add9c738d8cda1d7cf197fcb87}{getChildren} ()
 \item 
-\hypertarget{classHelpPage_a2550e4763c227585f61e019d693ffc68}{
-{\bfseries getHelpPageId} ()}
-\label{classHelpPage_a2550e4763c227585f61e019d693ffc68}
-
+\hyperlink{classHelpPage_ac4e71d65d287b8e0c1a48a298ccbcd01}{getValues} (\$columns=null)
+\item 
+\hyperlink{classHelpPage_a2550e4763c227585f61e019d693ffc68}{getHelpPageId} ()
 \item 
 \hypertarget{classHelpPage_a4df1fe50e1b81b27d9779917cdc51adc}{
 {\bfseries setHelpPageId} (\$id)}
@@ -54,6 +65,16 @@ Inheritance diagram for HelpPage:\begin{figure}[H]
 {\bfseries setParentHelpPageId} (\$id)}
 \label{classHelpPage_a18b643a638a283710d5eb9bc2cc4f3e7}
 
+\item 
+\hypertarget{classHelpPage_aefa9a91e16776417b74a5f7b52c0f6cd}{
+{\bfseries getHelpType} ()}
+\label{classHelpPage_aefa9a91e16776417b74a5f7b52c0f6cd}
+
+\item 
+\hypertarget{classHelpPage_a3a6404b1e1d1a544233160c78438aad9}{
+{\bfseries setHelpType} (\$type)}
+\label{classHelpPage_a3a6404b1e1d1a544233160c78438aad9}
+
 \end{DoxyCompactItemize}
 \subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
@@ -73,9 +94,7 @@ static \hyperlink{classHelpPage_abf83884baba4ef17e2d9f2510661f1dd}{getColumnType
 \item 
 \hyperlink{classHelpPage_ac4837216da4af2d7d266efd4767a147c}{\$pageName}
 \item 
-\hyperlink{classHelpPage_acd7494d138a50cf9ab8d1e705afd85fe}{\$content}
-\item 
-\hyperlink{classHelpPage_ad89f6f6fed9bd7514e226a9f79afabfc}{\$parentHelpPageId}
+\hyperlink{classHelpPage_a9c1a900e5bbdeaa7ee36e408fe5b82a3}{\$helpType}
 \end{DoxyCompactItemize}
 
 
@@ -86,49 +105,30 @@ static \hyperlink{classHelpPage_abf83884baba4ef17e2d9f2510661f1dd}{getColumnType
 \hypertarget{classHelpPage_a46a830bfff2f6eb43d2dfe6475eb47af}{
 \index{HelpPage@{HelpPage}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!HelpPage@{HelpPage}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{id = {\ttfamily null}}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::\_\-\_\-construct (\$ {\em id} = {\ttfamily null})}}
 \label{classHelpPage_a46a830bfff2f6eb43d2dfe6475eb47af}
 Constructs a \hyperlink{classHelpPage}{HelpPage} by id.
 
 
-\begin{DoxyParams}[1]{Parameters}
-int & {\em \$id} & Id of the page. Default (null) will create a new help page. \\
-\hline
-\end{DoxyParams}
+\begin{DoxyParams}{Parameters}
+\item[{\em int}]\$id Id of the page. Default (null) will create a new help page. \end{DoxyParams}
 
 
 \subsection{Member Function Documentation}
 \hypertarget{classHelpPage_a8c3a55add9c738d8cda1d7cf197fcb87}{
 \index{HelpPage@{HelpPage}!getChildren@{getChildren}}
 \index{getChildren@{getChildren}!HelpPage@{HelpPage}}
-\subsubsection[{getChildren}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::getChildren (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{getChildren}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::getChildren ()}}
 \label{classHelpPage_a8c3a55add9c738d8cda1d7cf197fcb87}
-Get and load all subpages and control items contained by this page.
+Returns all the children of a node based on the current permissions
 
 \begin{DoxyReturn}{Returns}
-array An array of loaded \hyperlink{classHelpPage}{HelpPage} and HelpContolItem entities.
+Array of help paragraphs. 
 \end{DoxyReturn}
-
-\begin{DoxyExceptions}{Exceptions}
-{\em \hyperlink{classEntityException}{EntityException}} & If the parentHelpPageId of this entity is not set. \\
-\hline
-\end{DoxyExceptions}
 \hypertarget{classHelpPage_a56d2e02b9490b1834fadd39fdab3e312}{
 \index{HelpPage@{HelpPage}!getColumns@{getColumns}}
 \index{getColumns@{getColumns}!HelpPage@{HelpPage}}
-\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getColumns (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumns}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getColumns ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classHelpPage_a56d2e02b9490b1834fadd39fdab3e312}
 Gets all the columns.
 
@@ -142,15 +142,9 @@ Reimplemented from \hyperlink{classEntity_a394717a08ffd54ec9a14d06727c86719}{Ent
 \hypertarget{classHelpPage_abf83884baba4ef17e2d9f2510661f1dd}{
 \index{HelpPage@{HelpPage}!getColumnTypes@{getColumnTypes}}
 \index{getColumnTypes@{getColumnTypes}!HelpPage@{HelpPage}}
-\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getColumnTypes (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getColumnTypes}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getColumnTypes ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classHelpPage_abf83884baba4ef17e2d9f2510661f1dd}
 Gets all the column types, per column, including primary keys.
-
-The istring type denotes a string that should be compared in a case insensitive manner.
 
 \begin{DoxyReturn}{Returns}
 Array of all column types. 
@@ -159,14 +153,15 @@ Array of all column types.
 
 Reimplemented from \hyperlink{classEntity_ad69437219c10955803707fbf6ac458e7}{Entity}.
 
-\hypertarget{classHelpPage_aad190998d886f0c38ecbb056f32c2b96}{
+\hypertarget{classHelpPage_a2550e4763c227585f61e019d693ffc68}{
+\index{HelpPage@{HelpPage}!getHelpPageId@{getHelpPageId}}
+\index{getHelpPageId@{getHelpPageId}!HelpPage@{HelpPage}}
+\subsubsection[{getHelpPageId}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::getHelpPageId ()}}
+\label{classHelpPage_a2550e4763c227585f61e019d693ffc68}
+Getters and setters. \hypertarget{classHelpPage_aad190998d886f0c38ecbb056f32c2b96}{
 \index{HelpPage@{HelpPage}!getPrimaryKeys@{getPrimaryKeys}}
 \index{getPrimaryKeys@{getPrimaryKeys}!HelpPage@{HelpPage}}
-\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getPrimaryKeys (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getPrimaryKeys}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getPrimaryKeys ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classHelpPage_aad190998d886f0c38ecbb056f32c2b96}
 Gets the primary keys.
 
@@ -180,11 +175,7 @@ Reimplemented from \hyperlink{classEntity_a61bbfbb4058427174e002a09ddc77c41}{Ent
 \hypertarget{classHelpPage_a28380b31bea21840c86ab69c49cad198}{
 \index{HelpPage@{HelpPage}!getTableName@{getTableName}}
 \index{getTableName@{getTableName}!HelpPage@{HelpPage}}
-\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getTableName (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{getTableName}]{\setlength{\rightskip}{0pt plus 5cm}static HelpPage::getTableName ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classHelpPage_a28380b31bea21840c86ab69c49cad198}
 Gets the table name.
 
@@ -195,30 +186,39 @@ The table name.
 
 Reimplemented from \hyperlink{classEntity_a8305fd94740ac62cbafb9de76567ce37}{Entity}.
 
+\hypertarget{classHelpPage_ac4e71d65d287b8e0c1a48a298ccbcd01}{
+\index{HelpPage@{HelpPage}!getValues@{getValues}}
+\index{getValues@{getValues}!HelpPage@{HelpPage}}
+\subsubsection[{getValues}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::getValues (\$ {\em columns} = {\ttfamily null})}}
+\label{classHelpPage_ac4e71d65d287b8e0c1a48a298ccbcd01}
+Gets some values of this entity.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em \$values}]Array of names to fetch, or null if you want to fetch everything. \end{DoxyParams}
+
+
+Reimplemented from \hyperlink{classEntity_aec1be209327cfcf2dc528a3a565a7a5f}{Entity}.
+
 
 
 \subsection{Member Data Documentation}
-\hypertarget{classHelpPage_acd7494d138a50cf9ab8d1e705afd85fe}{
-\index{HelpPage@{HelpPage}!\$content@{\$content}}
-\index{\$content@{\$content}!HelpPage@{HelpPage}}
-\subsubsection[{\$content}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::\$content\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
-\label{classHelpPage_acd7494d138a50cf9ab8d1e705afd85fe}
-The content of the page, in HTML. \hypertarget{classHelpPage_a888d439b8b0c556098a7819d8fa2c94c}{
+\hypertarget{classHelpPage_a888d439b8b0c556098a7819d8fa2c94c}{
 \index{HelpPage@{HelpPage}!\$helpPageId@{\$helpPageId}}
 \index{\$helpPageId@{\$helpPageId}!HelpPage@{HelpPage}}
 \subsubsection[{\$helpPageId}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::\$helpPageId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classHelpPage_a888d439b8b0c556098a7819d8fa2c94c}
-Identifier. \hypertarget{classHelpPage_ac4837216da4af2d7d266efd4767a147c}{
+Identifier. \hypertarget{classHelpPage_a9c1a900e5bbdeaa7ee36e408fe5b82a3}{
+\index{HelpPage@{HelpPage}!\$helpType@{\$helpType}}
+\index{\$helpType@{\$helpType}!HelpPage@{HelpPage}}
+\subsubsection[{\$helpType}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::\$helpType\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
+\label{classHelpPage_a9c1a900e5bbdeaa7ee36e408fe5b82a3}
+The type of the page. \hypertarget{classHelpPage_ac4837216da4af2d7d266efd4767a147c}{
 \index{HelpPage@{HelpPage}!\$pageName@{\$pageName}}
 \index{\$pageName@{\$pageName}!HelpPage@{HelpPage}}
 \subsubsection[{\$pageName}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::\$pageName\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
 \label{classHelpPage_ac4837216da4af2d7d266efd4767a147c}
-The name of the page. \hypertarget{classHelpPage_ad89f6f6fed9bd7514e226a9f79afabfc}{
-\index{HelpPage@{HelpPage}!\$parentHelpPageId@{\$parentHelpPageId}}
-\index{\$parentHelpPageId@{\$parentHelpPageId}!HelpPage@{HelpPage}}
-\subsubsection[{\$parentHelpPageId}]{\setlength{\rightskip}{0pt plus 5cm}HelpPage::\$parentHelpPageId\hspace{0.3cm}{\ttfamily  \mbox{[}protected\mbox{]}}}}
-\label{classHelpPage_ad89f6f6fed9bd7514e226a9f79afabfc}
-The parent page, if any. 
+The name of the page. 
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 

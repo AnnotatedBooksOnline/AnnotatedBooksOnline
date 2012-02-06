@@ -2,10 +2,13 @@
 \section{Controller Class Reference}
 \label{classController}\index{Controller@{Controller}}
 }
-Inheritance diagram for Controller:\begin{figure}[H]
+
+
+Inheritance diagram for Controller:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=9.000000cm]{classController}
+\includegraphics[width=400pt]{classController__inherit__graph}
 \end{center}
 \end{figure}
 \subsection*{Static Public Member Functions}
@@ -14,9 +17,6 @@ Inheritance diagram for Controller:\begin{figure}[H]
 static \hyperlink{classController_a772b295e218a0ae1b1614239a441baee}{handleRequest} ()
 \item 
 static \hyperlink{classController_aafbd169c4ea409841c28d01db9081c83}{createInstance} (\$type)
-\end{DoxyCompactItemize}
-\subsection*{Static Protected Member Functions}
-\begin{DoxyCompactItemize}
 \item 
 static \hyperlink{classController_afe45c54a315e0b5e17ac527df866550d}{getString} (\&\$data, \$key, \$default= '', \$trim=true, \$maxLength=-\/1)
 \item 
@@ -37,182 +37,85 @@ static \hyperlink{classController_ae226e2b1c593b5a0e1c406d9ae5b3c21}{getArray} (
 \hypertarget{classController_aafbd169c4ea409841c28d01db9081c83}{
 \index{Controller@{Controller}!createInstance@{createInstance}}
 \index{createInstance@{createInstance}!Controller@{Controller}}
-\subsubsection[{createInstance}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::createInstance (
-\begin{DoxyParamCaption}
-\item[{\$}]{type}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{createInstance}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::createInstance (\$ {\em type})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classController_aafbd169c4ea409841c28d01db9081c83}
 Creates a controller instance.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$type} & Type name of the controller instance.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$type}]Type name of the controller instance.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 An instance of the controller of the given type. 
 \end{DoxyReturn}
 \hypertarget{classController_ae226e2b1c593b5a0e1c406d9ae5b3c21}{
 \index{Controller@{Controller}!getArray@{getArray}}
 \index{getArray@{getArray}!Controller@{Controller}}
-\subsubsection[{getArray}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getArray (
-\begin{DoxyParamCaption}
-\item[{\&\$}]{data, }
-\item[{\$}]{key, }
-\item[{\$}]{default = {\ttfamily array()}, }
-\item[{\$}]{maxLength = {\ttfamily -\/1}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\subsubsection[{getArray}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getArray (\&\$ {\em data}, \/  \$ {\em key}, \/  \$ {\em default} = {\ttfamily array()}, \/  \$ {\em maxLength} = {\ttfamily -\/1})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classController_ae226e2b1c593b5a0e1c406d9ae5b3c21}
 Gets a string from data.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Data to fetch value from. \\
-\hline
-{\em \$key} & Key of the value. \\
-\hline
-{\em \$default} & Default value. \\
-\hline
-{\em \$maxLength} & Maximum length of the array.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Data to fetch value from. \item[{\em \$key}]Key of the value. \item[{\em \$default}]Default value. \item[{\em \$maxLength}]Maximum length of the array.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The sanitized array value. 
 \end{DoxyReturn}
 \hypertarget{classController_aecd39da8a4e4e01b423691e681056fd1}{
 \index{Controller@{Controller}!getBoolean@{getBoolean}}
 \index{getBoolean@{getBoolean}!Controller@{Controller}}
-\subsubsection[{getBoolean}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getBoolean (
-\begin{DoxyParamCaption}
-\item[{\&\$}]{data, }
-\item[{\$}]{key, }
-\item[{\$}]{default = {\ttfamily false}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\subsubsection[{getBoolean}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getBoolean (\&\$ {\em data}, \/  \$ {\em key}, \/  \$ {\em default} = {\ttfamily false})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classController_aecd39da8a4e4e01b423691e681056fd1}
 Gets a boolean from data.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Data to fetch value from. \\
-\hline
-{\em \$key} & Key of the value. \\
-\hline
-{\em \$default} & Default value.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Data to fetch value from. \item[{\em \$key}]Key of the value. \item[{\em \$default}]Default value.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The sanitized boolean value. 
 \end{DoxyReturn}
 \hypertarget{classController_a948395589a3d40710b24dd5e48cfe65c}{
 \index{Controller@{Controller}!getDouble@{getDouble}}
 \index{getDouble@{getDouble}!Controller@{Controller}}
-\subsubsection[{getDouble}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getDouble (
-\begin{DoxyParamCaption}
-\item[{\&\$}]{data, }
-\item[{\$}]{key, }
-\item[{\$}]{default = {\ttfamily 0}, }
-\item[{\$}]{positive = {\ttfamily false}, }
-\item[{\$}]{minValue = {\ttfamily null}, }
-\item[{\$}]{maxValue = {\ttfamily null}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\subsubsection[{getDouble}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getDouble (\&\$ {\em data}, \/  \$ {\em key}, \/  \$ {\em default} = {\ttfamily 0}, \/  \$ {\em positive} = {\ttfamily false}, \/  \$ {\em minValue} = {\ttfamily null}, \/  \$ {\em maxValue} = {\ttfamily null})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classController_a948395589a3d40710b24dd5e48cfe65c}
 Gets a double from data.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Data to fetch value from. \\
-\hline
-{\em \$key} & Key of the value. \\
-\hline
-{\em \$default} & Default value. \\
-\hline
-{\em \$positive} & Whether the value must be positive. \\
-\hline
-{\em \$minValue} & Minimum value. \\
-\hline
-{\em \$maxValue} & Maximum value.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Data to fetch value from. \item[{\em \$key}]Key of the value. \item[{\em \$default}]Default value. \item[{\em \$positive}]Whether the value must be positive. \item[{\em \$minValue}]Minimum value. \item[{\em \$maxValue}]Maximum value.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The sanitized double value. 
 \end{DoxyReturn}
 \hypertarget{classController_a54a271ee06846fdefff68d7127ff2988}{
 \index{Controller@{Controller}!getInteger@{getInteger}}
 \index{getInteger@{getInteger}!Controller@{Controller}}
-\subsubsection[{getInteger}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getInteger (
-\begin{DoxyParamCaption}
-\item[{\&\$}]{data, }
-\item[{\$}]{key, }
-\item[{\$}]{default = {\ttfamily 0}, }
-\item[{\$}]{positive = {\ttfamily false}, }
-\item[{\$}]{minValue = {\ttfamily null}, }
-\item[{\$}]{maxValue = {\ttfamily null}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\subsubsection[{getInteger}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getInteger (\&\$ {\em data}, \/  \$ {\em key}, \/  \$ {\em default} = {\ttfamily 0}, \/  \$ {\em positive} = {\ttfamily false}, \/  \$ {\em minValue} = {\ttfamily null}, \/  \$ {\em maxValue} = {\ttfamily null})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classController_a54a271ee06846fdefff68d7127ff2988}
 Gets an integer from data.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Data to fetch value from. \\
-\hline
-{\em \$key} & Key of the value. \\
-\hline
-{\em \$default} & Default value. \\
-\hline
-{\em \$positive} & Whether the value must be positive. \\
-\hline
-{\em \$minValue} & Minimum value. \\
-\hline
-{\em \$maxValue} & Maximum value.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Data to fetch value from. \item[{\em \$key}]Key of the value. \item[{\em \$default}]Default value. \item[{\em \$positive}]Whether the value must be positive. \item[{\em \$minValue}]Minimum value. \item[{\em \$maxValue}]Maximum value.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The sanitized integer value. 
 \end{DoxyReturn}
 \hypertarget{classController_afe45c54a315e0b5e17ac527df866550d}{
 \index{Controller@{Controller}!getString@{getString}}
 \index{getString@{getString}!Controller@{Controller}}
-\subsubsection[{getString}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getString (
-\begin{DoxyParamCaption}
-\item[{\&\$}]{data, }
-\item[{\$}]{key, }
-\item[{\$}]{default = {\ttfamily ''}, }
-\item[{\$}]{trim = {\ttfamily true}, }
-\item[{\$}]{maxLength = {\ttfamily -\/1}}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static, protected\mbox{]}}}}
+\subsubsection[{getString}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::getString (\&\$ {\em data}, \/  \$ {\em key}, \/  \$ {\em default} = {\ttfamily ''}, \/  \$ {\em trim} = {\ttfamily true}, \/  \$ {\em maxLength} = {\ttfamily -\/1})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classController_afe45c54a315e0b5e17ac527df866550d}
 Gets a string from data.
 
 
 \begin{DoxyParams}{Parameters}
-{\em \$data} & Data to fetch value from. \\
-\hline
-{\em \$key} & Key of the value. \\
-\hline
-{\em \$default} & Default value. \\
-\hline
-{\em \$trim} & Whether to trim spaces of value. \\
-\hline
-{\em \$maxLength} & Maximum length of value.\\
-\hline
-\end{DoxyParams}
+\item[{\em \$data}]Data to fetch value from. \item[{\em \$key}]Key of the value. \item[{\em \$default}]Default value. \item[{\em \$trim}]Whether to trim spaces of value. \item[{\em \$maxLength}]Maximum length of value.\end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The sanitized string value. 
 \end{DoxyReturn}
 \hypertarget{classController_a772b295e218a0ae1b1614239a441baee}{
 \index{Controller@{Controller}!handleRequest@{handleRequest}}
 \index{handleRequest@{handleRequest}!Controller@{Controller}}
-\subsubsection[{handleRequest}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::handleRequest (
-\begin{DoxyParamCaption}
-{}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{handleRequest}]{\setlength{\rightskip}{0pt plus 5cm}static Controller::handleRequest ()\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classController_a772b295e218a0ae1b1614239a441baee}
 Handles a request. 
 

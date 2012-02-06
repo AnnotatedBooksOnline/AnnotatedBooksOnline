@@ -7,30 +7,17 @@
 \item 
 \hyperlink{classResultSet_ac86b486df597ae5b9e54149da234914f}{\_\-\_\-construct} (\$statement)
 \item 
-\hypertarget{classResultSet_a8eb3574cf0f0176005f873c4f85d18d1}{
-{\bfseries getIterator} ()}
-\label{classResultSet_a8eb3574cf0f0176005f873c4f85d18d1}
-
+\hyperlink{classResultSet_a01538a6f9a53136f188d44b85b4835cd}{\_\-\_\-destruct} ()
 \item 
-\hypertarget{classResultSet_a5f84a517e8af2bdd202b663f7e63a943}{
-{\bfseries getAmount} ()}
-\label{classResultSet_a5f84a517e8af2bdd202b663f7e63a943}
-
+\hyperlink{classResultSet_a8eb3574cf0f0176005f873c4f85d18d1}{getIterator} ()
 \item 
-\hypertarget{classResultSet_ab677b0700c7706b6be5d01c9aa733140}{
-{\bfseries tryGetFirstRow} ()}
-\label{classResultSet_ab677b0700c7706b6be5d01c9aa733140}
-
+\hyperlink{classResultSet_a5f84a517e8af2bdd202b663f7e63a943}{getAmount} ()
 \item 
-\hypertarget{classResultSet_af7f034541c0d410bd2def9925074a993}{
-{\bfseries getFirstRow} ()}
-\label{classResultSet_af7f034541c0d410bd2def9925074a993}
-
+\hyperlink{classResultSet_ab677b0700c7706b6be5d01c9aa733140}{tryGetFirstRow} ()
 \item 
-\hypertarget{classResultSet_aedc1f5a1d07f1a027eeceb1ff4c02225}{
-{\bfseries asArrays} ()}
-\label{classResultSet_aedc1f5a1d07f1a027eeceb1ff4c02225}
-
+\hyperlink{classResultSet_af7f034541c0d410bd2def9925074a993}{getFirstRow} ()
+\item 
+\hyperlink{classResultSet_aedc1f5a1d07f1a027eeceb1ff4c02225}{asArrays} ()
 \end{DoxyCompactItemize}
 
 
@@ -52,20 +39,52 @@ Example: \begin{DoxyVerb}
 \hypertarget{classResultSet_ac86b486df597ae5b9e54149da234914f}{
 \index{ResultSet@{ResultSet}!\_\-\_\-construct@{\_\-\_\-construct}}
 \index{\_\-\_\-construct@{\_\-\_\-construct}!ResultSet@{ResultSet}}
-\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::\_\-\_\-construct (
-\begin{DoxyParamCaption}
-\item[{\$}]{statement}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{\_\-\_\-construct}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::\_\-\_\-construct (\$ {\em statement})}}
 \label{classResultSet_ac86b486df597ae5b9e54149da234914f}
 Constructs a \hyperlink{classResultSet}{ResultSet} from a prepared PDO statement.
 
 
-\begin{DoxyParams}[1]{Parameters}
-PDOStamement & {\em \$statement} & The PDO statement. Should already have been executed. \\
-\hline
-\end{DoxyParams}
+\begin{DoxyParams}{Parameters}
+\item[{\em PDOStamement}]\$statement The PDO statement. Should already have been executed. \end{DoxyParams}
+\hypertarget{classResultSet_a01538a6f9a53136f188d44b85b4835cd}{
+\index{ResultSet@{ResultSet}!\_\-\_\-destruct@{\_\-\_\-destruct}}
+\index{\_\-\_\-destruct@{\_\-\_\-destruct}!ResultSet@{ResultSet}}
+\subsubsection[{\_\-\_\-destruct}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::\_\-\_\-destruct ()}}
+\label{classResultSet_a01538a6f9a53136f188d44b85b4835cd}
+Destructs a \hyperlink{classResultSet}{ResultSet}.
 
+
+\begin{DoxyParams}{Parameters}
+\item[{\em PDOStamement}]\$statement The PDO statement. Should already have been executed. \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classResultSet_aedc1f5a1d07f1a027eeceb1ff4c02225}{
+\index{ResultSet@{ResultSet}!asArrays@{asArrays}}
+\index{asArrays@{asArrays}!ResultSet@{ResultSet}}
+\subsubsection[{asArrays}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::asArrays ()}}
+\label{classResultSet_aedc1f5a1d07f1a027eeceb1ff4c02225}
+Returns an array of the ResultSet's contents \hypertarget{classResultSet_a5f84a517e8af2bdd202b663f7e63a943}{
+\index{ResultSet@{ResultSet}!getAmount@{getAmount}}
+\index{getAmount@{getAmount}!ResultSet@{ResultSet}}
+\subsubsection[{getAmount}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::getAmount ()}}
+\label{classResultSet_a5f84a517e8af2bdd202b663f7e63a943}
+Returns the amount of rows in a \hyperlink{classResultSet}{ResultSet}. \hypertarget{classResultSet_af7f034541c0d410bd2def9925074a993}{
+\index{ResultSet@{ResultSet}!getFirstRow@{getFirstRow}}
+\index{getFirstRow@{getFirstRow}!ResultSet@{ResultSet}}
+\subsubsection[{getFirstRow}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::getFirstRow ()}}
+\label{classResultSet_af7f034541c0d410bd2def9925074a993}
+Returns first row of a \hyperlink{classResultSet}{ResultSet} or throws an exception. \hypertarget{classResultSet_a8eb3574cf0f0176005f873c4f85d18d1}{
+\index{ResultSet@{ResultSet}!getIterator@{getIterator}}
+\index{getIterator@{getIterator}!ResultSet@{ResultSet}}
+\subsubsection[{getIterator}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::getIterator ()}}
+\label{classResultSet_a8eb3574cf0f0176005f873c4f85d18d1}
+Returns an Iterator of a \hyperlink{classResultSet}{ResultSet}. \hypertarget{classResultSet_ab677b0700c7706b6be5d01c9aa733140}{
+\index{ResultSet@{ResultSet}!tryGetFirstRow@{tryGetFirstRow}}
+\index{tryGetFirstRow@{tryGetFirstRow}!ResultSet@{ResultSet}}
+\subsubsection[{tryGetFirstRow}]{\setlength{\rightskip}{0pt plus 5cm}ResultSet::tryGetFirstRow ()}}
+\label{classResultSet_ab677b0700c7706b6be5d01c9aa733140}
+Returns first row of a \hyperlink{classResultSet}{ResultSet} or returns null. 
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 

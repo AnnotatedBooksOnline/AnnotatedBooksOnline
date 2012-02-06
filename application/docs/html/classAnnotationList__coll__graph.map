@@ -1,0 +1,3 @@
+<map id="G" name="G">
+<area shape="rect" href="$classEntityList.html" title="{EntityList\n|# $entities\l|+ __construct()\l+ add()\l+ remove()\l+ removeAt()\l+ get()\l+ tryGet()\l+ getIterator()\l+ load()\l+ save()\l+ markAllAsDeleted()\l+ markAllAsUpdated()\l+ delete()\l+ setValue()\l+ setValues()\l+ getByKeyValue()\l+ getValue()\l+ getValues()\l+ getEntities()\l+ find()\l+ getTotal()\l+ getTypes()\l+ getTableName()\l+ getPrimaryKeys()\l+ getColumns()\l+ getType()\l# buildSelectionQuery()\l}" alt="" coords="5,5,160,485"/>
+</map>

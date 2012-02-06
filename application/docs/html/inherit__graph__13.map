@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" href="$classSingleton.html" title="Singleton" alt="" coords="7,157,81,184"/>
+<area shape="rect" href="$classAuthentication.html" title="Authentication" alt="" coords="144,5,248,32"/>
+<area shape="rect" href="$classConfiguration.html" title="Configuration" alt="" coords="148,56,244,83"/>
+<area shape="rect" href="$classDatabase.html" title="Database" alt="" coords="159,107,233,133"/>
+<area shape="rect" href="$classLog.html" title="Log" alt="" coords="175,157,217,184"/>
+<area shape="rect" href="$classSession.html" title="Session" alt="" coords="163,208,229,235"/>
+<area shape="rect" href="$classTilePyramidBuilder.html" title="TilePyramidBuilder" alt="" coords="132,259,260,285"/>
+<area shape="rect" href="$classTranslator.html" title="Translator" alt="" coords="157,309,235,336"/>
+</map>

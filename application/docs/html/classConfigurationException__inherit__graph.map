@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" href="$classSettingNotFoundException.html" title="{SettingNotFoundException\n||}" alt="" coords="5,309,181,389"/>
+<area shape="rect" href="$classExceptionBase.html" title="{ExceptionBase\n|&#45; $id\l&#45; $timestamp\l|+ __construct()\l+ getTimestamp()\l+ getIdentifier()\l}" alt="" coords="32,5,155,133"/>
+</map>

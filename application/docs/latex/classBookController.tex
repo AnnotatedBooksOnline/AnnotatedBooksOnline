@@ -2,10 +2,22 @@
 \section{BookController Class Reference}
 \label{classBookController}\index{BookController@{BookController}}
 }
-Inheritance diagram for BookController:\begin{figure}[H]
+
+
+Inheritance diagram for BookController:\nopagebreak
+\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{classBookController}
+\includegraphics[height=400pt]{classBookController__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for BookController:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=400pt]{classBookController__coll__graph}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
@@ -13,10 +25,7 @@ Inheritance diagram for BookController:\begin{figure}[H]
 \item 
 \hyperlink{classBookController_a6079dc1106ff410904978d50ca8d34a9}{actionLoad} (\$data)
 \item 
-\hypertarget{classBookController_a171e02784e1684da6151682bfd76d850}{
-{\bfseries actionFirstLastPages} (\$data)}
-\label{classBookController_a171e02784e1684da6151682bfd76d850}
-
+\hyperlink{classBookController_a171e02784e1684da6151682bfd76d850}{actionFirstLastPages} (\$data)
 \item 
 \hyperlink{classBookController_a4504f609c873130b89fe8849621ea65e}{actionSearch} (\$data)
 \end{DoxyCompactItemize}
@@ -24,6 +33,8 @@ Inheritance diagram for BookController:\begin{figure}[H]
 \begin{DoxyCompactItemize}
 \item 
 static \hyperlink{classBookController_adcf3d57be7a34444cb044754d5e11cb4}{splitFulltextQuery} (\$query)
+\item 
+static \hyperlink{classBookController_a633024b63ec6ba13730a6d7852fc2637}{addFulltext} (\$name, \$columns, \$value, \$addheadline, \$altvector, \hyperlink{classQuery}{Query} \&\$query, array \&\$binds, \&\$c, \&\$headline)
 \end{DoxyCompactItemize}
 
 
@@ -31,34 +42,52 @@ static \hyperlink{classBookController_adcf3d57be7a34444cb044754d5e11cb4}{splitFu
 \hyperlink{classBook}{Book} controller class. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classBookController_a6079dc1106ff410904978d50ca8d34a9}{
+\hypertarget{classBookController_a171e02784e1684da6151682bfd76d850}{
+\index{BookController@{BookController}!actionFirstLastPages@{actionFirstLastPages}}
+\index{actionFirstLastPages@{actionFirstLastPages}!BookController@{BookController}}
+\subsubsection[{actionFirstLastPages}]{\setlength{\rightskip}{0pt plus 5cm}BookController::actionFirstLastPages (\$ {\em data})}}
+\label{classBookController_a171e02784e1684da6151682bfd76d850}
+Sets the first and last pages of the books \hypertarget{classBookController_a6079dc1106ff410904978d50ca8d34a9}{
 \index{BookController@{BookController}!actionLoad@{actionLoad}}
 \index{actionLoad@{actionLoad}!BookController@{BookController}}
-\subsubsection[{actionLoad}]{\setlength{\rightskip}{0pt plus 5cm}BookController::actionLoad (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionLoad}]{\setlength{\rightskip}{0pt plus 5cm}BookController::actionLoad (\$ {\em data})}}
 \label{classBookController_a6079dc1106ff410904978d50ca8d34a9}
 Loads books. \hypertarget{classBookController_a4504f609c873130b89fe8849621ea65e}{
 \index{BookController@{BookController}!actionSearch@{actionSearch}}
 \index{actionSearch@{actionSearch}!BookController@{BookController}}
-\subsubsection[{actionSearch}]{\setlength{\rightskip}{0pt plus 5cm}BookController::actionSearch (
-\begin{DoxyParamCaption}
-\item[{\$}]{data}
-\end{DoxyParamCaption}
-)}}
+\subsubsection[{actionSearch}]{\setlength{\rightskip}{0pt plus 5cm}BookController::actionSearch (\$ {\em data})}}
 \label{classBookController_a4504f609c873130b89fe8849621ea65e}
-Searches for books. \hypertarget{classBookController_adcf3d57be7a34444cb044754d5e11cb4}{
+Searches for books. \hypertarget{classBookController_a633024b63ec6ba13730a6d7852fc2637}{
+\index{BookController@{BookController}!addFulltext@{addFulltext}}
+\index{addFulltext@{addFulltext}!BookController@{BookController}}
+\subsubsection[{addFulltext}]{\setlength{\rightskip}{0pt plus 5cm}static BookController::addFulltext (\$ {\em name}, \/  \$ {\em columns}, \/  \$ {\em value}, \/  \$ {\em addheadline}, \/  \$ {\em altvector}, \/  {\bf Query} \&\$ {\em query}, \/  array \&\$ {\em binds}, \/  \&\$ {\em c}, \/  \&\$ {\em headline})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classBookController_a633024b63ec6ba13730a6d7852fc2637}
+Adds a fulltext query to the given query.
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em string}]\$name The name of this fulltext query (for binding name). \item[{\em mixed}]\$columns The columns to search on. \item[{\em string}]\$value The user-\/supplied search string. \item[{\em boolean}]\$addheadline Whether to add this fulltext query to the headlines. \item[{\em string}]\$altvector A (indexed) vector for the given column, if available. Only valid for a single column. \item[{\em \hyperlink{classQuery}{Query}}]\$query The query to operate on. \item[{\em array}]\$binds The current array of bindings. \item[{\em int}]\$c The current binding counter. \item[{\em string}]\$headline The current headline query string. \end{DoxyParams}
+\hypertarget{classBookController_adcf3d57be7a34444cb044754d5e11cb4}{
 \index{BookController@{BookController}!splitFulltextQuery@{splitFulltextQuery}}
 \index{splitFulltextQuery@{splitFulltextQuery}!BookController@{BookController}}
-\subsubsection[{splitFulltextQuery}]{\setlength{\rightskip}{0pt plus 5cm}static BookController::splitFulltextQuery (
-\begin{DoxyParamCaption}
-\item[{\$}]{query}
-\end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\subsubsection[{splitFulltextQuery}]{\setlength{\rightskip}{0pt plus 5cm}static BookController::splitFulltextQuery (\$ {\em query})\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
 \label{classBookController_adcf3d57be7a34444cb044754d5e11cb4}
-Splits a fulltext user-\/input query into distinct queries. 
+Splits a fulltext user-\/input query into distinct queries.
+
+This method provides with:
+\begin{DoxyItemize}
+\item a list of exact (quoted) query parts in Postgres format,
+\item a fulltext Postgres query string for all other parts,
+\item a headline fulltext Postgres query string for this query.
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em string}]\$query The user specified query, using -\/ for NOT and double quotes for quoting.\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+array The split fulltext query. 
+\end{DoxyReturn}
+
 
 The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
 \item 

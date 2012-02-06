@@ -1,0 +1,4 @@
+<map id="G" name="G">
+<area shape="rect" href="$classControllerBase.html" title="{ControllerBase\n||# handleLoad()\l}" alt="" coords="68,261,175,341"/>
+<area shape="rect" href="$classController.html" title="{Controller\n||+ handleRequest()\l+ createInstance()\l+ getString()\l+ getInteger()\l+ getDouble()\l+ getBoolean()\l+ getArray()\l&#45; handleSingleRequest()\l&#45; handleException()\l}" alt="" coords="41,5,201,213"/>
+</map>
