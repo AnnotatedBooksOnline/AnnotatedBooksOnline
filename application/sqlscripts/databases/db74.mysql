@@ -2,7 +2,7 @@ SET NAMES 'utf8' COLLATE 'utf8_unicode_ci';
 SET storage_engine = INNODB;
 SET sql_mode = 'ANSI_QUOTES';
 
-CREATE DATABASE abo;
+CREATE DATABASE abo CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci';
 
 USE abo;
 
@@ -137,7 +137,7 @@ CREATE TABLE "HelpContents" (
     "changedBy" character varying(30),
     
     PRIMARY KEY ("helpContentId"),
-    UNIQUE ("helpParagraphId", "settingValue"(512)), -- Guarantees uniqueness on the first 512 characters
+    UNIQUE ("helpParagraphId", "settingValue"(255)), -- Guarantees uniqueness on the first 255 characters
     FOREIGN KEY ("helpParagraphId") REFERENCES "HelpParagraphs"("helpParagraphId")
 );
 
