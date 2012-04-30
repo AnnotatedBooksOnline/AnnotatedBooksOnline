@@ -150,7 +150,7 @@ class User extends Entity
         // Get user id from username and password.
         $query = Query::select('userId')->
                  from('Users')->
-                 where('username ILIKE :username', 'passwordHash = :hash');
+                 where('username = :username', 'passwordHash = :hash');
         
         $resultSet = $query->execute(array(
             'username' => $username,
@@ -211,7 +211,7 @@ class User extends Entity
     {
         $row = Query::select('userId')
              ->from('Users')
-             ->where(array('email ILIKE :email'))
+             ->where(array('email = :email'))
              ->execute(array('email' => $email))
              ->tryGetFirstRow();
         
@@ -335,12 +335,12 @@ class User extends Entity
     {
         // DEBUG: For now, so that development works.
         // TODO: Remove the following line.
-        return sha1('8!@(*#!HK*@&#*&91' . $password);
+        // return sha1('8!@(*#!HK*@&#*&91' . $password);
         
         
         // Generate a salt based on the password. This salt needs to be secure, as it is prefixed
         // to the password hash.
-        $salt = md5($config->getString('password-salt') . '_' . $password);
+        $salt = md5(Configuration::getInstance()->getString('password-salt') . '_' . substr(sha1($password), 0, 5));
         
         // Use Blowfish with 1024 passes to generate a sufficiently secure password.
         $algorithm = '$2a';

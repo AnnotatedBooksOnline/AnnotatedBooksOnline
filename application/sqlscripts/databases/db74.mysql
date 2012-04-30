@@ -25,7 +25,7 @@ CREATE TABLE "Settings" (
     "createdBy" character varying(30),
 
     "settingName" character varying(100) NOT NULL,
-    visible bit(1) DEFAULT 0 NOT NULL,
+    visible boolean DEFAULT 0 NOT NULL,
     "settingValue" text,
     
     PRIMARY KEY ("settingName")
@@ -102,7 +102,7 @@ CREATE TABLE "Users" (
     occupation character varying(50),
     website character varying(255),
     "homeAddress" character varying(255),
-    banned bit(1) DEFAULT 0 NOT NULL,
+    banned boolean DEFAULT 0 NOT NULL,
     rank smallint DEFAULT 10 NOT NULL,
     "passwordRestoreToken" character(32),
     "activationStage" smallint NOT NULL,
@@ -366,7 +366,7 @@ CREATE TABLE "Shelves" (
     "shelfId" integer NOT NULL AUTO_INCREMENT,
     "userId" integer NOT NULL,
     "shelfName" character varying(40) NOT NULL,
-    special bit(1) DEFAULT 0 NOT NULL,
+    special boolean DEFAULT 0 NOT NULL,
     "parentShelfId" integer,
     "position" integer DEFAULT 0,
     
@@ -1100,11 +1100,11 @@ INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy",
 INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (40, 'Turkish', NULL, NULL, NULL, NULL);
 INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (41, 'Urkainian', NULL, NULL, NULL, NULL);
 
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('activation-mail-subject', 'Activation of your account', NULL, NULL, NULL, NULL, B'0');
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('user-declined-mail-subject', 'Account activation has been declined', NULL, NULL, NULL, NULL, B'0');
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('deleted-user-id', '1', NULL, NULL, NULL, NULL, B'0');
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('forgotpass-mail-subject', 'Restoration of your password', NULL, NULL, NULL, NULL, B'0');
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('mail-from-address', 'no-reply@sp.urandom.nl', NULL, NULL, NULL, NULL, B'0');
+INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('activation-mail-subject', 'Activation of your account', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('user-declined-mail-subject', 'Account activation has been declined', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('deleted-user-id', '1', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('forgotpass-mail-subject', 'Restoration of your password', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('mail-from-address', 'no-reply@sp.urandom.nl', NULL, NULL, NULL, NULL, FALSE);
 INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('activation-mail-message', 'Dear Mr./Ms. [LASTNAME],
 
 Your registration for [PROJECTNAME] has been accepted. Your username is [USERNAME].
@@ -1117,7 +1117,7 @@ If clicking this link does not work, try to copy and paste it into the address b
 
 
 Regards,
-The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, B'0');
+The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, FALSE);
 INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('forgotpass-mail-message', 'Dear Mr./Ms. [LASTNAME],
 
 This e-mail has been send to you because you indicated you had forgotten your password for [PROJECTNAME]. If this is not the case, please ignore this message.
@@ -1133,15 +1133,15 @@ If clicking this link does not work, try to copy and paste it into the address b
 
 
 Regards,
-The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, B'0');
+The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, FALSE);
 INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('user-declined-mail-message', 'Dear Mr./Ms. [LASTNAME],
 
 Unfortunately your registration for [PROJECTNAME] has been declined. For more information, please contact the webmaster.
 
 Regards,
-The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, B'0');
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('auto-user-acceptance', '1', NULL, NULL, NULL, NULL, B'1');
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('project-title', 'Annotated Books Online', NULL, NULL, NULL, NULL, B'1');
+The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('auto-user-acceptance', '1', NULL, NULL, NULL, NULL, TRUE);
+INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('project-title', 'Annotated Books Online', NULL, NULL, NULL, NULL, TRUE);
 INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('welcome-page', '<h2>Welcome</h2>
 
 <p>Historical readers left many traces in the books they owned. Names, notes, marks, and underlining provide unique evidence of how generations of readers used their books. Annotated Books Online gives full access to these unique copies. Focusing on the first three centuries of print, it enables scholars and students interested in the history of reading to collect, view and study reading practices. User tools include extensive search, viewing and annotating options.</p>
@@ -1150,21 +1150,21 @@ INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy",
 <a href="http://www.english.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva.png" style="height: 60px"/></a>
 <a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton.png" style="height: 65px"/></a>
 <a href="http://www.ugent.be/en" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent.png" style="height: 100px"/></a>
-<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>', NULL, NULL, NULL, NULL, B'1');
+<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>', NULL, NULL, NULL, NULL, TRUE);
 INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('terms-of-use', '<h2>Terms of Use</h2>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
 <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
 
-<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>', NULL, NULL, NULL, NULL, B'1');
+<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>', NULL, NULL, NULL, NULL, TRUE);
 INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('upload-instructions', '<h2>About this collaboratory</h2>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
 <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
 
-<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>', NULL, NULL, NULL, NULL, B'1');
+<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>', NULL, NULL, NULL, NULL, TRUE);
 INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('info-page', '<h2>About the project</h2>
 
 <p>Annotated Books Online is a virtual research environment for scholars and students interested in historical reading practices. It is part of the research project "A Collaboratory for the Study of Reading and the Circulation of Ideas in Early Modern Europe" funded by the Dutch National Research Council (NWO). Generous additional funding was provided by Professor Anthony Grafton for the edition of Gabriel Harvey''s annotations to Livy (Mellon Foundation).</p>
@@ -1209,7 +1209,7 @@ INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy",
 
 <p>The project will create a transnational platform that enables scholars to (1) view, connect and study annotated books and readers'' notes, (2) offer training to students and young researchers in handling readers'' traces, and (3) make results freely accessible for teaching purposes, as well as for broader general interest by means of exhibitions, digital presentations and general publications. In order to expand this structural network, the principal partners in the collaboratory will prepare an application for a Marie Curie Initial Training Network.</p>
 
-<p>For more information, contact Arnoud Visser, <a href="mailto:a.s.q.visser@uu.nl">a.s.q.visser@uu.nl</a> </p>', NULL, NULL, NULL, NULL, B'1');
+<p>For more information, contact Arnoud Visser, <a href="mailto:a.s.q.visser@uu.nl">a.s.q.visser@uu.nl</a> </p>', NULL, NULL, NULL, NULL, TRUE);
 
-INSERT INTO "Users" ("userId", username, "passwordHash", email, "firstName", "lastName", affiliation, occupation, website, "homeAddress", banned, rank, "createdOn", "createdBy", "changedOn", "changedBy", "passwordRestoreToken", "activationStage", "registrationDate", "lastActive") VALUES (1, '<deleted user>', '', '', NULL, NULL, NULL, NULL, NULL, NULL, B'1', 0, NULL, NULL, NULL, NULL, NULL, 3, '2012-02-07', '2012-02-07 21:57:19.525202');
+INSERT INTO "Users" ("userId", username, "passwordHash", email, "firstName", "lastName", affiliation, occupation, website, "homeAddress", banned, rank, "createdOn", "createdBy", "changedOn", "changedBy", "passwordRestoreToken", "activationStage", "registrationDate", "lastActive") VALUES (1, '<deleted user>', '', '', NULL, NULL, NULL, NULL, NULL, NULL, TRUE, 0, NULL, NULL, NULL, NULL, NULL, 3, '2012-02-07', '2012-02-07 21:57:19.525202');
 

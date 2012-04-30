@@ -74,8 +74,8 @@ class Query
     /** String representing the limit and offset clauses. */
     private $limitClause;
     
-    /** Boolean representing whether to return the inserted Id. */
-    private $doReturnId;
+    /** String representing the returning clause. */
+    private $returningClause;
     
     /**
      * Constructs a new query. Acquires an instance of the the database, which 
@@ -109,7 +109,7 @@ class Query
             $this->groupByClause   = '';
             $this->orderByClause   = '';
             $this->limitClause     = '';
-            $this->doReturnId      = false;
+            $this->returningClause = '';
         }
         else
         {
@@ -142,8 +142,8 @@ class Query
                     case 'limit':
                         $this->limitClause = '';
                         break;
-                    case 'returnId':
-                        $this->doReturnId = false;
+                    case 'returning':
+                        $this->returningClause = '';
                         break;
                     default:
                         break;
@@ -285,12 +285,30 @@ class Query
     }
     
     /**
-     * Makes the query return the inserted Id.
+     * Specifies a column to be added to the returning clause.
+     * 
+     * Returning is a very useful PostgreSQL feature. See also the PostgreSQL documentation at
+     * http://www.postgresql.org/docs/9.1/static/sql-insert.html
+     * 
+     * @param string ... The names of the column of which the value should be added to the result
+     *                   set. 
      */
-    public function returnId()
+    public function returning()
     {
-        $this->assert($this->kind == 'INSERT', 'return-without-insert');
-        $this->doReturnId = true;
+        $columns = self::argsToArray(func_get_args());
+        
+        if ($this->returningClause == '')
+        {
+            // Set returning clause.
+            $this->returningClause .= "\nRETURNING ";
+        }
+        else
+        {
+            // Expanding an existing one.
+            $this->returningClause .= ', ';
+        }
+        
+        $this->returningClause .= implode(', ', array_map(array($this, 'escapeIdentifier'), $columns));
         
         return $this;
     }
@@ -359,8 +377,8 @@ class Query
      * contents will NOT be escaped or validated, so make sure they do not directly depend on user
      * input. Parameter markers should be used instead.
      * 
-     * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', '!=', '<>', 
-     * 'not is', 'not like', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
+     * The currently supported operators are '<','>','>=','<=', '=','==', 'is','like', 'ilike', '!=', '<>', 
+     * 'not is', 'not like', 'not ilike', 'overlaps', 'in' and 'not in'. Operators are case insensitive.
      * 
      * The arguments are separated by a logical AND's. Use whereOr to separate them with OR's.
      */
@@ -451,7 +469,7 @@ class Query
     
     public function limit($limit = null, $offset = 0)
     {
-        $limit  = ($limit === null) ? 999999999999 : max(intval($limit),  0);
+        $limit  = ($limit === null) ? 'ALL' : max(intval($limit),  0);
         $offset = max(intval($offset), 0);
         
         $this->limitClause = "\nLIMIT " . $limit . ($offset ? "\nOFFSET " . $offset : '');
@@ -505,11 +523,6 @@ class Query
     
     public function execute($arguments = array(), $types = null)
     {
-        if ($this->doReturnId)
-        {
-            Database::getInstance()->execute($this->build(), $arguments, $types);
-            return Database::getInstance()->execute('SELECT LAST_INSERT_ID() AS "id"');
-        }
         return Database::getInstance()->execute($this->build(), $arguments, $types);
     }
     
@@ -576,6 +589,7 @@ class Query
         $query .= $this->groupByClause;
         $query .= $this->orderByClause;
         $query .= $this->limitClause;
+        $query .= $this->returningClause;
         
         return $query;
     }
@@ -648,6 +662,8 @@ class Query
                 'is',
                 'not like',
                 'like',
+                'ilike',
+                'not ilike',
                 '!~[*]',
                 '~[*]'
             );
@@ -713,7 +729,7 @@ class Query
         
         // Escape all column names. 'DISTINCT' or 'NULL', when used as a keyword, should not be escaped.
         return preg_replace(
-            array('/(?<![:\w])(\w+)(?![\(\w])/', '/(?<!\.)"(as|distinct|null|collate|utf8_bin)"(?!\.)/i'),
+            array('/(?<![:\w])(\w+)(?![\(\w])/', '/(?<!\.)"(as|distinct|null)"(?!\.)/i'),
             array('"\1"', '\1'),
             $identifier
         );

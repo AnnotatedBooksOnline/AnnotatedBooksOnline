@@ -134,9 +134,9 @@ abstract class EntityList implements IteratorAggregate
         $whereValues = $whereTypes = $whereConds = array();
         foreach ($conditions as $column => $value)
         {
-            if (isset($types[$column]) && ($types[$column] == 'string'))
+            if (isset($types[$column]) && ($types[$column] == 'istring'))
             {
-                $whereConds[] = $tableName . '.' . $column . ' = :' . $column . ' COLLATE utf8_bin';
+                $whereConds[] = $tableName . '.' . $column . ' ILIKE :' . $column;
             }
             else
             {

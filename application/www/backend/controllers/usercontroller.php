@@ -243,7 +243,7 @@ class UserController extends ControllerBase
         
         $resultSet = Query::select()
                    ->from('Users')
-                   ->whereOr('username ILIKE :username', 'email ILIKE :username')
+                   ->whereOr('username = :username', 'email = :username')
                    ->execute(array('username' => $username));
                                      
         return (bool) $resultSet->getAmount();
@@ -265,7 +265,7 @@ class UserController extends ControllerBase
         $query = Query::select('userId')
             ->from('Users')
             ->where('userId != :userId')
-            ->whereOr('username ILIKE :email', 'email ILIKE :email');
+            ->whereOr('username = :email', 'email = :email');
         
         // Check if there are rows returned.
         return (bool) $query->execute(

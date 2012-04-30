@@ -47,11 +47,7 @@ class Database extends Singleton
         $this->pdo = new PDO($config->getString('database-dsn'),
                              $config->getString('database-username'),
                              $config->getString('database-password'),
-                             array(
-                                 PDO::ATTR_PERSISTENT => true,
-                                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci', sql_mode = 'ANSI_QUOTES';",
-                                 PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
-                             ));
+                             array(PDO::ATTR_PERSISTENT => true));
         
         $this->transactionLevel = 0;
         

@@ -177,7 +177,7 @@ class BookController extends ControllerBase
                         $addFulltext('library', 'libraries.libraryName', $value);
                         break;
                     case 'signature':
-                        $query = $query->where('bindings.signature ILIKE :signature'. $c);
+                        $query = $query->where('bindings.signature = :signature'. $c);
                         $binds['signature'. $c] = '%' . trim($value) . '%';
                         break;
                     case 'language':
