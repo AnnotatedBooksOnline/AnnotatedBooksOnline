@@ -1,0 +1,170 @@
+SET NAMES 'utf8' COLLATE 'utf8_unicode_ci';
+SET storage_engine = INNODB;
+SET sql_mode = 'ANSI_QUOTES';
+
+USE abo;
+
+CREATE TABLE "AnnotationsFT" (
+    "annotationId" integer NOT NULL,
+    "text" text NOT NULL,
+    
+    PRIMARY KEY ("annotationId"),
+    FULLTEXT ("text")
+) ENGINE=MyISAM;
+
+CREATE TABLE "BooksFT" (
+    "bookId" integer NOT NULL,
+    "text" text NOT NULL,
+    
+    PRIMARY KEY ("bookId"),
+    FULLTEXT ("text")
+) ENGINE=MyISAM;
+
+delimiter $$
+
+CREATE FUNCTION authornames(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
+        WHERE "Persons"."personId" IN
+        (
+            SELECT "Authors"."personId" FROM "Authors" WHERE "Authors"."bookId" = bookid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION bindinglanguagenames(bindingid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
+        WHERE "Languages"."languageId" IN
+        (
+            SELECT "BindingLanguages"."languageId" FROM "BindingLanguages" WHERE "BindingLanguages"."bindingId" = bindingid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION booklanguagenames(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
+        WHERE "Languages"."languageId" IN
+        (
+            SELECT "BookLanguages"."languageId" FROM "BookLanguages" WHERE "BookLanguages"."bindingId" = bookid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION provenancenames(bindingid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
+        WHERE "Persons"."personId" IN
+        (
+            SELECT "Provenances"."personId" FROM "Provenances" WHERE "Provenances"."bindingId" = bindingid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION annotationtext(annotationid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT CONCAT("transcriptionEng", ' ', "transcriptionOrig") INTO result FROM "Annotations"
+        WHERE "Annotations"."annotationId" = annotationid;
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION booktext(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT CONCAT_WS(' ',
+            "title",
+            authorNames("bookId"),
+            "publisher",
+            "placePublished",
+            bookLanguageNames("bookId"),
+            provenanceNames("bindingId"),
+            (SELECT "libraryName" FROM "Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId")),
+            (SELECT "signature" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId"),
+            bindingLanguageNames("bindingId")
+            -- , bookAnnotationText(NEW."bookId") -- TODO: include annotation text?
+        ) INTO result FROM "Books"
+        WHERE "bookId" = bookid;
+        RETURN COALESCE(result, '');
+    END $$
+
+-- Annotations
+
+CREATE TRIGGER "AnnotationsFulltextInsert" AFTER INSERT ON "Annotations"
+  FOR EACH ROW BEGIN
+    INSERT INTO "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId"), "annotationId" = NEW."annotationId";
+  END;
+$$
+
+CREATE TRIGGER "AnnotationsFulltextUpdate" AFTER UPDATE ON "Annotations"
+  FOR EACH ROW BEGIN
+    UPDATE "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId") WHERE "annotationId" = NEW."annotationId";
+  END;
+$$
+
+CREATE TRIGGER "AnnotationsFulltextDelete" AFTER DELETE ON "Annotations"
+  FOR EACH ROW BEGIN
+    DELETE FROM "AnnotationsFT" WHERE "annotationId" = OLD."annotationId";
+  END;
+$$
+
+
+-- Books
+
+CREATE TRIGGER "BooksFulltextInsert" AFTER INSERT ON "Books"
+  FOR EACH ROW BEGIN
+    INSERT INTO "BooksFT" SET "text" = booktext(NEW."bookId"), "bookId" = NEW."bookId";
+  END;
+$$
+
+CREATE TRIGGER "BooksFulltextUpdate" AFTER UPDATE ON "Books"
+  FOR EACH ROW BEGIN
+    UPDATE "BooksFT" SET "text" = booktext(NEW."bookId") WHERE "bookId" = NEW."bookId";
+  END;
+$$
+
+CREATE TRIGGER "BooksFulltextDelete" AFTER DELETE ON "Books"
+  FOR EACH ROW BEGIN
+    DELETE FROM "BooksFT" WHERE "bookId" = OLD."bookId";
+  END;
+$$
+
+-- Bindings
+
+CREATE TRIGGER "BindingsFulltextUpdate" AFTER UPDATE ON "Bindings"
+  FOR EACH ROW BEGIN
+    UPDATE "BooksFT" SET "text" = booktext("bookId") WHERE "bookId" IN (SELECT "bookId" FROM "Books" WHERE "bindingId" = NEW."bindingId");
+  END;
+$$
+
+delimiter ;
+
