@@ -7,80 +7,91 @@ CREATE DATABASE abo CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci';
 USE abo;
 
 CREATE TABLE "Permissions" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+    
     "actionName" character varying(50) NOT NULL,
     "minRank" smallint NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("actionName")
 );
 
 CREATE TABLE "Settings" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "settingName" character varying(100) NOT NULL,
     visible bit(1) DEFAULT 0 NOT NULL,
     "settingValue" text,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("settingName")
 );
 
 CREATE TABLE "Languages" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "languageId" integer NOT NULL AUTO_INCREMENT,
     "languageName" character varying(30) NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("languageId"),
     UNIQUE ("languageName")
 );
 
 CREATE TABLE "Libraries" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "libraryId" integer NOT NULL AUTO_INCREMENT,
     "libraryName" character varying(50) NOT NULL,
     "libraryAddress" character varying(255),
     website character varying(255),
     info text,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("libraryId"),
     UNIQUE ("libraryName")
 );
 
 CREATE TABLE "HelpPages" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "helpPageId" integer NOT NULL AUTO_INCREMENT,
     "pageName" character varying(30) NOT NULL,
     "helpType" character varying(30),
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("helpPageId"),
     UNIQUE ("pageName")
 );
 
 CREATE TABLE "Persons" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "personId" integer NOT NULL AUTO_INCREMENT,
     name character varying(60) NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("personId")
 );
 
 CREATE TABLE "Users" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "userId" integer NOT NULL AUTO_INCREMENT,
     username character varying(30) NOT NULL,
     "passwordHash" character varying(255) NOT NULL,
@@ -97,26 +108,23 @@ CREATE TABLE "Users" (
     "activationStage" smallint NOT NULL,
     "registrationDate" date NOT NULL,
     "lastActive" timestamp,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("userId"),
     UNIQUE (username)
 );
 
 CREATE TABLE "HelpParagraphs" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "helpParagraphId" integer NOT NULL AUTO_INCREMENT,
     "helpPageId" integer NOT NULL,
     "paragraphParentId" integer,
     "actionName" character varying(50),
     title character varying(50) NOT NULL,
     "settingName" character varying(100),
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("helpParagraphId"),
     UNIQUE ("helpPageId", "paragraphParentId", title),
@@ -127,14 +135,15 @@ CREATE TABLE "HelpParagraphs" (
 );
 
 CREATE TABLE "HelpContents" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "helpContentId" integer NOT NULL AUTO_INCREMENT,
     "helpParagraphId" integer NOT NULL,
     "settingValue" text,
     content text NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("helpContentId"),
     UNIQUE ("helpParagraphId", "settingValue"(255)), -- Guarantees uniqueness on the first 255 characters
@@ -142,6 +151,11 @@ CREATE TABLE "HelpContents" (
 );
 
 CREATE TABLE "Bindings" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "bindingId" integer NOT NULL AUTO_INCREMENT,
     "libraryId" integer NOT NULL,
     signature character varying(255) NOT NULL,
@@ -149,10 +163,6 @@ CREATE TABLE "Bindings" (
     title character varying(100),
     status smallint DEFAULT 0 NOT NULL,
     "userId" integer,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("bindingId"),
     UNIQUE (signature, "libraryId"),
@@ -161,6 +171,11 @@ CREATE TABLE "Bindings" (
 );
 
 CREATE TABLE "Books" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "bookId" integer NOT NULL AUTO_INCREMENT,
     "bindingId" integer NOT NULL,
     "minYear" smallint NOT NULL,
@@ -172,16 +187,17 @@ CREATE TABLE "Books" (
     title character varying(100) NOT NULL,
     "firstPage" integer,
     "lastPage" integer,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("bookId"),
     FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId")
 );
 
 CREATE TABLE "Uploads" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "uploadId" integer NOT NULL AUTO_INCREMENT,
     "userId" integer NOT NULL,
     token character varying(48) NOT NULL,
@@ -189,10 +205,6 @@ CREATE TABLE "Uploads" (
     size integer NOT NULL,
     "timestamp" timestamp NOT NULL,
     status smallint NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("uploadId"),
     UNIQUE (token),
@@ -200,6 +212,11 @@ CREATE TABLE "Uploads" (
 );
 
 CREATE TABLE "Scans" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "scanId" integer NOT NULL AUTO_INCREMENT,
     page integer,
     status smallint DEFAULT 1 NOT NULL,
@@ -210,10 +227,6 @@ CREATE TABLE "Scans" (
     "bindingId" integer,
     "uploadId" integer,
     "scanName" character varying(255),
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("scanId"),
     FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId"),
@@ -222,6 +235,11 @@ CREATE TABLE "Scans" (
 );
 
 CREATE TABLE "Annotations" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "annotationId" integer NOT NULL AUTO_INCREMENT,
     "transcriptionEng" text NOT NULL,
     "transcriptionOrig" text NOT NULL,
@@ -232,10 +250,6 @@ CREATE TABLE "Annotations" (
     polygon text NOT NULL,
     "changedUserId" integer NOT NULL,
     "timeChanged" timestamp NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("annotationId"),
     FOREIGN KEY ("changedUserId") REFERENCES "Users"("userId"),
@@ -244,12 +258,13 @@ CREATE TABLE "Annotations" (
 );
 
 CREATE TABLE "Authors" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "personId" integer NOT NULL,
     "bookId" integer NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("personId", "bookId"),
     FOREIGN KEY ("personId") REFERENCES "Persons"("personId"),
@@ -257,12 +272,13 @@ CREATE TABLE "Authors" (
 );
 
 CREATE TABLE "BindingLanguages" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "bindingId" integer NOT NULL,
     "languageId" integer NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("bindingId", "languageId"),
     FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId"),
@@ -270,12 +286,13 @@ CREATE TABLE "BindingLanguages" (
 );
 
 CREATE TABLE "BookLanguages" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "bookId" integer NOT NULL,
     "languageId" integer NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("bookId", "languageId"),
     FOREIGN KEY ("bookId") REFERENCES "Books"("bookId"),
@@ -283,12 +300,13 @@ CREATE TABLE "BookLanguages" (
 );
 
 CREATE TABLE "Bookmarks" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "userId" integer NOT NULL,
     "scanId" integer NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("userId", "scanId"),
     FOREIGN KEY ("scanId") REFERENCES "Scans"("scanId"),
@@ -296,26 +314,28 @@ CREATE TABLE "Bookmarks" (
 );
 
 CREATE TABLE "Notes" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "userId" integer NOT NULL,
     text text,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("userId"),
     FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE CASCADE
 );
 
 CREATE TABLE "PendingUsers" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "pendingUserId" integer NOT NULL AUTO_INCREMENT,
     "userId" integer NOT NULL,
     "confirmationCode" character(32) NOT NULL,
     "expirationDate" date NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("pendingUserId"),
     UNIQUE ("confirmationCode"),
@@ -324,12 +344,13 @@ CREATE TABLE "PendingUsers" (
 );
 
 CREATE TABLE "Provenances" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "bindingId" integer NOT NULL,
     "personId" integer NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("bindingId", "personId"),
     FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId"),
@@ -337,16 +358,17 @@ CREATE TABLE "Provenances" (
 );
 
 CREATE TABLE "Shelves" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "shelfId" integer NOT NULL AUTO_INCREMENT,
     "userId" integer NOT NULL,
     "shelfName" character varying(40) NOT NULL,
     special bit(1) DEFAULT 0 NOT NULL,
     "parentShelfId" integer,
     "position" integer DEFAULT 0,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("shelfId"),
     FOREIGN KEY ("parentShelfId") REFERENCES "Shelves"("shelfId"),
@@ -354,12 +376,13 @@ CREATE TABLE "Shelves" (
 );
 
 CREATE TABLE "ShelvedBooks" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "bookId" integer NOT NULL,
     "shelfId" integer NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("bookId", "shelfId"),
     FOREIGN KEY ("bookId") REFERENCES "Books"("bookId"),
@@ -367,15 +390,16 @@ CREATE TABLE "ShelvedBooks" (
 );
 
 CREATE TABLE "TEIFiles" (
+    "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "changedBy" character varying(30),
+    "createdOn" timestamp NOT NULL,
+    "createdBy" character varying(30),
+
     "teiFileId" integer NOT NULL AUTO_INCREMENT,
     "bookId" integer,
     "bindingId" integer,
     filename character varying(255) NOT NULL,
     contents text NOT NULL,
-    "createdOn" timestamp,
-    "createdBy" character varying(30),
-    "changedOn" timestamp,
-    "changedBy" character varying(30),
     
     PRIMARY KEY ("teiFileId"),
     UNIQUE ("bookId", "bindingId"),
