@@ -99,6 +99,7 @@ class BookController extends ControllerBase
         
         $query = Query::select('COUNT(books.bookId)')
             ->from('Books books')
+            ->join('BooksFT booksft', array('books.bookId = booksft.bookId'), 'LEFT')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
             ->join(
                 'Libraries libraries', 
@@ -119,20 +120,18 @@ class BookController extends ControllerBase
         
         // The bindings accumulator.
         $binds = array('bindingStatus' => Binding::STATUS_SELECTED, 'scanStatus' => Scan::STATUS_PROCESSED);
-        // The headline query string.
-        $headline = "";
         // The bindings counter.
         $c = 0;
         
         // Adds a fulltext search to the query.
         $addFulltext = function(
-            $name, $columns, $value, $addheadline = false, $altvector = null
+            $name, $column, $value, $headline = null, $fast = false
         ) 
-            use (&$query, &$binds, &$c, &$headline)
+            use (&$query, &$binds, &$c)
         {
             BookController::addFulltext(
-                $name, $columns, $value, $addheadline,
-                $altvector, $query, $binds, $c, $headline
+                $name, $column, $value, $headline,
+                $fast, $query, $binds, $c
             );
         };
         
@@ -165,7 +164,7 @@ class BookController extends ControllerBase
                         $addFulltext('provenance', 'provenanceNames(bindings.bindingId)', $value);
                         break;
                     case 'any':
-                        $addFulltext('any', 'books.fulltext', $value, true, 'books.fulltext_vector');
+                        $addFulltext('any', 'booksft.text', $value, 'headline', true);
                         break;
                     case 'place':
                         $addFulltext('place', 'books.placePublished', $value);
@@ -177,7 +176,7 @@ class BookController extends ControllerBase
                         $addFulltext('library', 'libraries.libraryName', $value);
                         break;
                     case 'signature':
-                        $query = $query->where('bindings.signature = :signature'. $c);
+                        $query = $query->where('bindings.signature LIKE :signature'. $c);
                         $binds['signature'. $c] = '%' . trim($value) . '%';
                         break;
                     case 'language':
@@ -235,7 +234,7 @@ class BookController extends ControllerBase
             'books.bookId', 'books.title', 'books.minYear',
             'books.maxYear', 'books.placePublished', 'books.publisher',
             'books.firstPage', 'bindings.bindingId', 'bindings.signature',
-            'libraries.libraryName', 'books.printVersion', 'books.fulltext'
+            'libraries.libraryName', 'books.printVersion', 'booksft.text'
             );
 
         $results = $query->execute($binds);
@@ -244,9 +243,9 @@ class BookController extends ControllerBase
             'books.bookId', 'books.title', 'books.minYear', 'books.maxYear',
             'books.placePublished', 'books.publisher', 'books.firstPage',
             'bindings.bindingId', 'bindings.signature', 'libraries.libraryName',
-            'authorNames(books.bookId)', 'provenanceNames(bindings.bindingId)',
-            'scans.scanId', 'bookLanguageNames(books.bookId)',
-            'bindingLanguageNames(bindings.bindingId)', 'books.printVersion'
+            'authorNames(books.bookId) AS authornames', 'provenanceNames(bindings.bindingId) AS provenancenames',
+            'scans.scanId', 'bookLanguageNames(books.bookId) AS booklanguagenames',
+            'bindingLanguageNames(bindings.bindingId) AS bindinglanguagenames', 'books.printVersion'
             )
             ->from('Books books')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
@@ -260,20 +259,20 @@ class BookController extends ControllerBase
                 'books.placePublished', 'books.publisher', 'books.firstPage',
                 'bindings.bindingId', 'bindings.signature', 'libraries.libraryName',
                 'authornames', 'provenancenames', 'scans.scanId', 'bindinglanguagenames',
-                'booklanguagenames', 'books.printVersion', 'books.fulltext'
+                'booklanguagenames', 'books.printVersion'
                 )
             ->where('books.bookId = :bookId');
         $binds = array();
         
         // Request a headline if necessary.
-        if ($headline != "")
+        /*if ($headline != "")
         {
             $query = $query->headline(
                 'books.fulltext',
                 ':headline',
                 'headline');
             $binds['headline'] = $headline;
-        }
+        }*/
         
         $records = array();
         foreach ($results as $result)
@@ -318,139 +317,39 @@ class BookController extends ControllerBase
     }
     
     /**
-     * Splits a fulltext user-input query into distinct queries.
-     *
-     * This method provides with:
-     * - a list of exact (quoted) query parts in Postgres format,
-     * - a fulltext Postgres query string for all other parts,
-     * - a headline fulltext Postgres query string for this query.
-     *
-     * @param string $query The user specified query, using - for NOT and double quotes for quoting.
-     *
-     * @return array The split fulltext query.
-     */
-    public static function splitFulltextQuery($query)
-    {
-        // Find the exact (quoted) values.
-        $exacts = array();
-        $num = preg_match_all('/([+-]?)"([^"]+)"/', $query, $exacts, PREG_PATTERN_ORDER);
-        $result = array();
-        $result['exact'] = array();
-        for ($i = 0; $i < $num; $i++)
-        {
-            $result['exact'][] = array(
-                'like' => $exacts[1][$i] == '-' ? ' !~* ' : ' ~* ',
-                'value' => '(^|[^[:alpha:]])' . 
-                    preg_replace('/[^\w\s]/', '.', trim($exacts[2][$i])) . '([^[:alpha:]]|$)',
-                'positive' => $exacts[1][$i] != '-'
-            );
-        }
-        
-        // Determine the other values.
-        $rest = 
-            explode(' ',
-            trim(
-            preg_replace('/\s+/', ' ',
-            preg_replace('/[^\w\s!-]/', ' ', 
-            preg_replace('/[-](?!\w)/', '',
-            preg_replace('/(?<!\w)[-](?=\w)/', '!',
-            preg_replace('/[!|&+]/', '',
-            preg_replace('/([+-]?)"([^"]+)"/', '',
-            $query
-        ))))))));
-        $result['rest'] = implode(' & ', $rest);
-        
-        // Create a headline query.
-        $headline = $rest;
-        if ($headline[0] == "")
-        {
-            $headline = array();
-        }
-        for ($i = 0; $i < $num; $i++)
-        {
-            if ($exacts[1][$i] != '-')
-            {
-                $headline[] = 
-                    implode(' & ',
-                    explode(' ',
-                    trim(
-                    preg_replace('/\s+/', ' ',
-                    preg_replace('/[^\w\s-]/', ' ', 
-                    $exacts[2][$i]
-                )))));
-            }
-        }
-        $result['headline'] = implode(' & ', $headline);
-        
-        return $result;
-    }
-    
-    /**
      * Adds a fulltext query to the given query.
      *
      * @param string  $name        The name of this fulltext query (for binding name).
-     * @param mixed   $columns     The columns to search on.
+     * @param column  $column      The text column to search on.
      * @param string  $value       The user-supplied search string.
-     * @param boolean $addheadline Whether to add this fulltext query to the headlines.
-     * @param string  $altvector   A (indexed) vector for the given column, if available. Only valid for a single column.
+     * @param string  $headline    The headline identifier for the given fulltext query, or null.
      * @param Query   $query       The query to operate on.
      * @param array   $binds       The current array of bindings.
      * @param int     $c           The current binding counter.
-     * @param string  $headline    The current headline query string.
      */
     public static function addFulltext(
-        $name, $columns, $value, $addheadline,
-        $altvector, Query &$query, array &$binds, &$c, &$headline)
+        $name, $column, $value, $headline = null,
+        $fast = false, Query &$query, array &$binds, &$c)
     {
-        // Decompose the textual query
-        $split = BookController::splitFulltextQuery($value);
-        
-        // Process the non-exact selectors.
-        if ($split['rest'] != '')
+        // Check if there are only negative queries: in such a case, we also want to find empty results.
+        $onlyNegative = true;
+        foreach (explode(' ', $value) as $v)
         {
-            $onlyNegative = true;
-            foreach (explode(' & ', $split['rest']) as $k => $v)
+            if (trim($v) != '' && $v[0] != '-')
             {
-                if (trim($v) != '' && $v[0] != '!')
-                {
-                    $onlyNegative = false;
-                    break;
-                }
-            }
-            if ($altvector === null)
-            {
-                $query = $query->whereFulltext($columns, ':' . $name . $c, $onlyNegative);
-            }
-            else
-            {
-                $query = $query->whereFulltext($altvector, ':' . $name . $c, $onlyNegative, true);
-            }
-            $binds[$name . $c] = $split['rest'];
-        }
-        
-        // Process the exact selectors.
-        if (!is_array($columns))
-        {
-            $e = $split['exact'];
-            for ($i = 0; $i < count($e); $i++)
-            {
-                if ($e[$i]['positive'])
-                {
-                    $query = $query->where($columns . $e[$i]['like'] . ':' .$name . $c . 'z' . $i);
-                }
-                else
-                {
-                    $query = $query->whereOr($columns . $e[$i]['like'] . ':' . $name . $c . 'z' . $i,
-                        $columns . ' IS NULL');
-                }
-                $binds[$name . $c . 'z' . $i] = $e[$i]['value'];
+                $onlyNegative = false;
+                break;
             }
         }
         
+        $query = $query->whereFulltext($column, ':' . $name . $c, null, $onlyNegative, $fast);
+        $binds[$name . $c] = $value;
+                
         // Process headlines.
-        if ($addheadline)
+        if ($headline !== null && false) // TODO: this is obviously incorrect.
         {
-            $headline = ($headline != '' ? ' & ' : '') . $split['headline'];
+            $query = $query->headline($column, ':' . $name . $c . 'hl', $headline);
+            $binds[$name . $c . 'hl'] = $value;
         }
     }
 }

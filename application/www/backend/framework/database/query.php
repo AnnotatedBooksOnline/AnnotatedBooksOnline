@@ -269,17 +269,12 @@ class Query
         return $this;
     }
     
-    public function headline($columns, $query, $as)
+    public function headline($column, $query, $as)
     {
-        $columns = self::argsToArray($columns);
-        $columns = implode(' || \' \' || ',
-            array_map(array($this, 'coalesceEmpty'),
-                array_map(array($this, 'escapeIdentifier'), $columns)));
-        
+        $column = $this->escapeIdentifier($column);
         $query = $this->escapeIdentifier($query);
         
-        $this->columns[] = 'ts_headline(\'english\', ' . $columns .
-            ', to_tsquery(\'english\', ' . $query . '), \'StartSel=<b>, StopSel=</b>, MaxWords=100, MinWords=25, ShortWord=3, HighlightAll=FALSE\') AS ' . $this->escapeIdentifier($as);
+        $this->columns[] = 'headline(' . $column . ', ' . $query . ', 40) AS ' . $this->escapeIdentifier($as);
             
         return $this;
     }
@@ -400,46 +395,39 @@ class Query
     /**
      * A specific where implementation for fulltext searches.
      */
-    public function whereFulltext($columns, $query, $orNull = false, $isVector = false)
+    public function whereFulltext($column, $query, $result = null, $orNull = false, $fast = false)
     {
-        $columns = self::argsToArray($columns);
-        if (count($columns) != 1 || !$isVector)
+        $column = $this->escapeIdentifier($column);        
+        $query = $this->escapeIdentifier($query);
+        
+        if ($fast)
         {
-            $isVector = false;
-            $columns = implode(' || \' \' || ',
-                array_map(array($this, 'coalesceEmpty'),
-                    array_map(array($this, 'escapeIdentifier'), $columns)));
+            $condition = 'MATCH (' . $column . ') AGAINST (' . $query . ' IN BOOLEAN MODE)';
         }
         else
         {
-            $columns = $this->escapeIdentifier($columns[0]);
+            $condition = 'fulltextsearch(' . $column . ', ' . $query . ')';
         }
         
-        $query = $this->escapeIdentifier($query);
+        if ($result !== null)
+        {
+            $result = $this->escapeIdentifier($result);
+            $this->tables[] = $condition . ' AS ' . $result;
+        }
         
-        $conditions = '(' . $columns .
-            ') @@ to_tsquery(\'english\', ' . $query . ')';
-            
         if ($orNull)
         {
-            if ($isVector)
-            {
-                $conditions = '(' . $conditions . ' OR length(' . $columns . ') = 0)';
-            }
-            else
-            {
-                $conditions = '(' . $conditions . ' OR ' . $columns . ' ~* \'^\s*$\')';
-            }
+            $condition = '(' . $condition . ' OR LENGTH(TRIM(' . $column . ')) <= 3)';
         }
         
         // Add clauses to where clause.
         if ($this->whereClause)
         {
-            $this->whereClause .= "\nAND " . $conditions;
+            $this->whereClause .= "\nAND " . $condition;
         }
         else
         {
-            $this->whereClause = "\nWHERE " . $conditions;
+            $this->whereClause = "\nWHERE " . $condition;
         }
         
         return $this;

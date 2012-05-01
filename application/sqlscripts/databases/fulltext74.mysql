@@ -62,7 +62,7 @@ CREATE FUNCTION booklanguagenames(bookid integer) RETURNS text
         SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
         WHERE "Languages"."languageId" IN
         (
-            SELECT "BookLanguages"."languageId" FROM "BookLanguages" WHERE "BookLanguages"."bindingId" = bookid
+            SELECT "BookLanguages"."languageId" FROM "BookLanguages" WHERE "BookLanguages"."bookId" = bookid
         );
         RETURN COALESCE(result, '');
     END $$
@@ -110,30 +110,77 @@ CREATE FUNCTION booktext(bookid integer) RETURNS text
             provenanceNames("bindingId"),
             (SELECT "libraryName" FROM "Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId")),
             (SELECT "signature" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId"),
-            bindingLanguageNames("bindingId")
-            -- , bookAnnotationText(NEW."bookId") -- TODO: include annotation text?
+            bindingLanguageNames("bindingId"),
+            bookAnnotationText("bookId")
         ) INTO result FROM "Books"
         WHERE "bookId" = bookid;
         RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION bookannotationtext(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT(annft.text SEPARATOR ' ') INTO result
+        FROM "Books" JOIN (SELECT * FROM "Scans" ORDER BY page ASC) scans
+            ON "Books"."bindingId" = scans."bindingId"
+            AND "page" >= "firstPage"
+            AND "page" <= "lastPage"
+        LEFT JOIN "Annotations" annotations
+            ON annotations."scanId" = scans."scanId"
+        LEFT JOIN "AnnotationsFT" annft
+            ON annft."annotationId" = annotations."annotationId"
+        WHERE "bookId" = bookid;
+        RETURN result;
     END $$
 
 -- Annotations
 
 CREATE TRIGGER "AnnotationsFulltextInsert" AFTER INSERT ON "Annotations"
   FOR EACH ROW BEGIN
+    DECLARE pagenr integer;
+    DECLARE binding integer;
     INSERT INTO "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId"), "annotationId" = NEW."annotationId";
+    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = NEW."scanId";
+    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = NEW."scanId";
+    UPDATE "Books"
+        SET "bookId" = "bookId"
+        WHERE "Books"."bindingId" = binding
+            AND pagenr >= "firstPage"
+            AND pagenr <= "lastPage";
   END;
 $$
 
 CREATE TRIGGER "AnnotationsFulltextUpdate" AFTER UPDATE ON "Annotations"
   FOR EACH ROW BEGIN
+    DECLARE pagenr integer;
+    DECLARE binding integer;
     UPDATE "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId") WHERE "annotationId" = NEW."annotationId";
+    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = NEW."scanId";
+    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = NEW."scanId";
+    UPDATE "Books"
+        SET "bookId" = "bookId"
+        WHERE "Books"."bindingId" = binding
+            AND pagenr >= "firstPage"
+            AND pagenr <= "lastPage";
   END;
 $$
 
 CREATE TRIGGER "AnnotationsFulltextDelete" AFTER DELETE ON "Annotations"
   FOR EACH ROW BEGIN
+    DECLARE pagenr integer;
+    DECLARE binding integer;
     DELETE FROM "AnnotationsFT" WHERE "annotationId" = OLD."annotationId";
+    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = OLD."scanId";
+    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = OLD."scanId";
+    UPDATE "Books"
+        SET "bookId" = "bookId"
+        WHERE "Books"."bindingId" = binding
+            AND pagenr >= "firstPage"
+            AND pagenr <= "lastPage";
   END;
 $$
 
