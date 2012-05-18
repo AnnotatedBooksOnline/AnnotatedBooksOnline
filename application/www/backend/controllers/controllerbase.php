@@ -23,9 +23,20 @@ abstract class ControllerBase extends Controller
 {
     /**
      * Generalizes a load query.
+     * 
+     * @param array  $data The data to load.
+     * @param string $type The type of entity to load. There should be an EntityList of this type.
+     * @param string $idColumn Which column contains the identifiers.
+     * @param array  $columns Which columns to load.
+     * @param array  $defaultSorters The sorters to use at the database level.
+     * @param array  $entitySorters  Sorters used after the query at PHP-level. For each entry in
+     *                                this array, EntityList::sortBy is called on the loaded entity
+     *                                list with the key as its first and the value as its second 
+     *                                argument.
      */
     protected function handleLoad($data, $type, $idColumn = null, $columns = null,
-                                    array $defaultSorters = array())
+                                    array $defaultSorters = array(),
+                                    array $entitySorters = array())
     {
         // Set entity list type.
         $entityListType = $type . 'List';
@@ -90,6 +101,12 @@ abstract class ControllerBase extends Controller
         // Find those entities.
         $total = 0;
         $entityList = $entityListType::find($conditions, $offset, $limit, $ordering, $total);
+        
+        // Apply entity sorters.
+        foreach($entitySorters as $column => $comparator)
+        {
+            $entityList->sortBy($column, $comparator);
+        }
         
         // Get values.
         $records = $entityList->getValues($columns);
