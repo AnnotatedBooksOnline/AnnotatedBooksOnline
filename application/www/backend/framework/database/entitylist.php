@@ -134,7 +134,7 @@ abstract class EntityList implements IteratorAggregate
                 }
             };
         }
-        Log::debug($column);
+        
         // Create a comparator that applies $comparator to the value of the $column. 
         $comp = function($a, $b) use($column, $comparator)
         {
