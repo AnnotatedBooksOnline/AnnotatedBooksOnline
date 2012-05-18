@@ -136,7 +136,7 @@ abstract class EntityList implements IteratorAggregate
         }
         
         // Create a comparator that applies $comparator to the value of the $column. 
-        $comp = function($a, $b)
+        $comp = function($a, $b) use($column)
         {
             $valA = $a->get{ucfirst($column)};
             $valB = $b->get{ucfirst($column)};
