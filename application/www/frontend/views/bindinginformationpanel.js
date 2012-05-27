@@ -160,13 +160,20 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     {
         if (Authentication.getInstance().hasPermissionTo('change-book-info'))
         {
+            // Only those who are allowed to change book info may delete bindings or modify those
+            // not uploaded by themselves.
             this.down("[name=modifybindingbutton]").setVisible(true);
             this.down("[name=deletebindingbutton]").setVisible(true);
         }
         else
         {
-            this.down("[name=modifybindingbutton]").setVisible(false);
             this.down("[name=deletebindingbutton]").setVisible(false);
+            
+            // If the current user owns this binding, display the 'modify binding' button.
+            var owner = this.bindingModel.get('userId');
+            var user = Authentication.getInstance().getUserId();
+            
+            this.down("[name=modifybindingbutton]").setVisible(owner == user);
         }
         
         // TODO : Make the layout correctly expand.

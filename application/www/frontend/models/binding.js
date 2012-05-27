@@ -5,7 +5,7 @@
 Ext.define('Ext.ux.BindingModel', {
     extend: 'Ext.ux.ModelBase',
     idProperty: 'bindingId',
-    fields: ['bindingId', 'library', 'signature', 'provenance', 'languagesOfAnnotations', 'status'],
+    fields: ['bindingId', 'library', 'signature', 'provenance', 'languagesOfAnnotations', 'status', 'userId'],
     
     hasMany: [{
         model: 'Ext.ux.BookModel',
