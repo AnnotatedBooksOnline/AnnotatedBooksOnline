@@ -39,7 +39,7 @@ class Log extends Singleton
         $this->file = fopen('../data/logs/log.txt', 'a');
         
         // Get log level.
-        $this->level = Configuration::getInstance()->getBoolean('logging-level', 2);
+        $this->level = Configuration::getInstance()->getInteger('logging-level', 2);
     }
     
     /**
@@ -61,7 +61,7 @@ class Log extends Singleton
         // Check whether to log it.
         $instance = self::getInstance();
         
-        if ((int) $instance->level < 5)
+        if ($instance->level < 5)
         {
             return;
         }
@@ -85,7 +85,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ((int) $instance->level < 4)
+        if ($instance->level < 4)
         {
             return;
         }
@@ -108,7 +108,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ((int) $instance->level < 3)
+        if ($instance->level < 3)
         {
             return;
         }
@@ -131,7 +131,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ((int) $instance->level < 2)
+        if ($instance->level < 2)
         {
             return;
         }
@@ -154,7 +154,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ((int) $instance->level < 1)
+        if ($instance->level < 1)
         {
             return;
         }
