@@ -387,7 +387,6 @@ class BindingUploadController extends Controller
      */
     private function createPerson($personName)
     {
-        Log::info("!!PersonNAME " . $personName);
         $existingPerson = PersonList::find(array('name' => $personName))->tryGet(0);
         
         if ($existingPerson !== null)

@@ -60,10 +60,12 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ($instance->level < 5)
+        
+        if ((int) $instance->level < 5)
         {
             return;
         }
+            
         
         // Get arguments of the function, minus the format
         $args = func_get_args();
@@ -83,7 +85,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ($instance->level < 4)
+        if ((int) $instance->level < 4)
         {
             return;
         }
@@ -106,7 +108,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ($instance->level < 3)
+        if ((int) $instance->level < 3)
         {
             return;
         }
@@ -129,7 +131,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ($instance->level < 2)
+        if ((int) $instance->level < 2)
         {
             return;
         }
@@ -152,7 +154,7 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
-        if ($instance->level < 1)
+        if ((int) $instance->level < 1)
         {
             return;
         }
