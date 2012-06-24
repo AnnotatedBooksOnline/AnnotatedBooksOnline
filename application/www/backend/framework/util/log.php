@@ -39,7 +39,7 @@ class Log extends Singleton
         $this->file = fopen('../data/logs/log.txt', 'a');
         
         // Get log level.
-        $this->level = Configuration::getInstance()->getBoolean('logging-level', 2);
+        $this->level = Configuration::getInstance()->getInteger('logging-level', 2);
     }
     
     /**
@@ -60,10 +60,12 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
+        
         if ($instance->level < 5)
         {
             return;
         }
+            
         
         // Get arguments of the function, minus the format
         $args = func_get_args();

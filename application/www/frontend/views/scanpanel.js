@@ -416,6 +416,18 @@ Ext.define('Ext.ux.ScanPanel', {
         
         // Create SWF upload instance.
         var _this = this;
+        
+        // Extensions of image files (jpeg and tiff) allowed for upload.
+        var extensions = ['jpg', 'tiff', 'jpeg', 'tif', 'jpe','jif','jfif', 'jfi'];
+        
+        // Prepend '*.' to extensions and also allow uppercase variants.
+        var exString = '';
+        for(var i = 0; i < extensions.length; ++i)
+        {
+            exString += '*.' + extensions[i] + '; ';
+        }
+        exString += exString.toUpperCase();
+        
         this.swfUpload = new SWFUpload({
             // Urls.
             upload_url: '?controller=Upload&action=upload', // Must be relative to swfupload.swf!
@@ -434,7 +446,7 @@ Ext.define('Ext.ux.ScanPanel', {
             
             // File description.
             file_post_name: 'file',
-            file_types: "*.jpg;*.jpeg;*.tif;*.tiff",
+            file_types: exString,
             file_types_description: 'Images',
             
             // Event handlers.
