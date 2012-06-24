@@ -558,7 +558,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             Application.getInstance().viewport.updateUploadButtonTitle();
             Ext.Msg.show({
                 title: 'Success',
-                msg: 'The data was succesfully added to the system.',
+                msg: 'The data was succesfully added to the system. It will now be processed. Once processing has succeeded, the binding should be searchable.',
                 buttons: Ext.Msg.OK
             }); 
             this.close();
