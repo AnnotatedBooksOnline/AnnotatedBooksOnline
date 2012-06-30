@@ -100,7 +100,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
         RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
             function(result)
             {
-                if (result['status'] === 0 && result['bindingId'] === this.bindingId && this.bindingId !== undefined)
+                if (result['status'] == 0 && result['bindingId'] == this.bindingId && this.bindingId !== undefined)
                 {
                     this.store.load();
                 }

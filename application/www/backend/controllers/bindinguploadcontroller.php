@@ -472,7 +472,7 @@ class BindingUploadController extends Controller
             return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
         }
         else
-        {
+       {
             throw new BindingStatusException('binding-status');
         }
     }
