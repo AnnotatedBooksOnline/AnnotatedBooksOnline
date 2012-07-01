@@ -147,23 +147,12 @@ class User extends Entity
      */
     public static function fromUsernameAndPassword($username, $password)
     {
-        // Get user id from username and password.
-        $query = Query::select('userId')->
-                 from('Users')->
-                 where('username = :username', 'passwordHash = :hash');
+        $user = User::fromUsername($username);
         
-        $resultSet = $query->execute(array(
-            'username' => $username,
-            'hash'     => self::hashPassword($password)
-        ));
-        
-        if ($resultSet->getAmount() != 1)
+        if (!$user->hasPassword($password))
         {
             throw new UserNotFoundException($username);
         }
-        
-        // Fetch user.
-        $user = new User($resultSet->getFirstRow()->getValue('userId', 'int'));
         
         // Check for if user is banned.
         if($user->isBanned())
@@ -262,27 +251,20 @@ class User extends Entity
      */
     public static function checkPassword($userId, $password)
     {
-        $query = Query::select('userId')->
-                 from('Users')->
-                 where('userId = :userId', 'passwordHash = :hash');
-        
-        $resultSet = $query->execute(array(
-            'userId' => $userId,
-            'hash'   => self::hashPassword($password)
-        ));
-        
-        if ($resultSet->getAmount() == 1)
+        try
         {
-            return true;
+            $user = new User($userId);
         }
-        else
+        catch (Exception $e)
         {
+            sleep(2);
             return false;
         }
+        return $user->hasPassword($userId);
     }
     
     /**
-     * Deletes this user. Rreferences to this user will be referred to by a dummy user.
+     * Deletes this user. References to this user will be referred to by a dummy user.
      * 
      * The user id of the entity should be set before calling this.
      */
@@ -331,22 +313,80 @@ class User extends Entity
      *
      * @return  A secure hash for the given password.
      */
-    private static function hashPassword($password)
+    private static function hashPassword($password, $extra)
     {
-        // DEBUG: For now, so that development works.
-        // TODO: Remove the following line.
-        // return sha1('8!@(*#!HK*@&#*&91' . $password);
+        // Generate a salt based on the password and extra information.
+        // First, we retrieve the system salt, which should be unique but does not have to
+        // be kept secure.
+        $plainsalt = Configuration::getInstance()->getString('password-salt');
+        // We use the system salt and the extra information to generate 
+        // Still, it would be nice if the salt would change if the user changes the
+        // password. It is bad practice to incorporate the password in the salt, since it
+        // is stored in plaintext. Therefore, we use two first hex characters of the SHA-1
+        // hash of the password as well.
+        // This does not really help the attacker: but we have to keep in mind that it
+        // reduces the bruteforce attack complexity by a constant factor 16, assuming
+        // the real hashing function is way harder to compute than SHA-1. On the other
+        // hand, it helps protecting the user by giving a 99.6% chance of a salt change
+        // after a password change, thereby offering some more protection against rainbow
+        // tables: for each tuple of system salt and extra information, there can be 256
+        // different salts.
+        $salt = md5($extra . '_' . $plainsalt . '_' . 
+            substr(sha1($plainsalt . $password . $extra), 0, 2));
         
+        // Use Blowfish with 1024 passes to generate a sufficiently secure password.
+        // This function is so hard to compute that the factor 256 bruteforce time
+        // reduction (assuming the attacker knows the salt!) does not make it feasible to
+        // perform an actual bruteforce attack.
+        $algorithm = '$2a';
+        $passes    = '$10';
+        // Only the first 22 salt characters are used by Blowfish.
+        $config    = $algorithm . $passes . '$' . substr($salt, 0, 22);
+        $hash = crypt($password, $config);
         
-        // Generate a salt based on the password. This salt needs to be secure, as it is prefixed
-        // to the password hash.
-        $salt = md5(Configuration::getInstance()->getString('password-salt') . '_' . substr(sha1($password), 0, 5));
+        // We now have a hash, but it contains the salt we used as well as the exact
+        // hashing parameters. It would be nice if we could keep this secret.
+        // This does not add real cryptographic security (assuming Kerckhoffs' principle),
+        // but why not make attacks without access to the filesystem a little harder?
+        $hash = substr($hash, strlen($config));
+        
+        // The string 'p1_' is prepended to the hash, so we will be able to lookup which
+        // algorithm was used in the future.
+        return 'p1_' . $hash;
+    }
+    
+    /**
+     * DEPRECATED. Calculates a not so secure hash for the given password.
+     *
+     * This hash function helps the bruteforce attacker too much by giving away too much
+     * password information in the salt.
+     *
+     * @return  A secure hash for the given password.
+     */
+    private static function old_hashPassword($password)
+    {
+        // Generate a salt based on the password. This salt needs to be secure, as it is
+        // prefixed to the password hash.
+        $plainsalt = Configuration::getInstance()->getString('password-salt');
+        $salt = md5($plainsalt . '_' . substr(sha1($password), 0, 5));
         
         // Use Blowfish with 1024 passes to generate a sufficiently secure password.
         $algorithm = '$2a';
         $passes    = '$10';
         
         return crypt($password, $algorithm . $passes . '$' . $salt);
+    }
+    
+    /**
+     * Returns the version of the hashing algorithm used to compute the given hash.
+     */
+    private static function getHashVersion($hash)
+    {
+        if (substr($hash, 0, 3) === 'p1_')
+        {
+            return 1;
+        }
+        return 0;
     }
     
     /**
@@ -419,7 +459,33 @@ class User extends Entity
     
     public function setPassword($password)
     {
-        $this->passwordHash = self::hashPassword($password);
+        $this->passwordHash = self::hashPassword($password, $this->userId);
+    }
+    
+    public function hasPassword($password)
+    {
+        $version = self::getHashVersion($this->passwordHash);
+        if ($version === 1)
+        {
+            return $this->passwordHash === self::hashPassword($password, $this->userId);
+        }
+        
+        $ok = false;
+        switch($version)
+        {
+            case 0:
+                $ok = ($this->passwordHash === self::old_hashPassword($password));
+                break;
+        }
+        
+        if ($ok === true)
+        {
+            $this->setPassword($password);
+            return true;
+        }
+        
+        sleep(2);
+        return false;
     }
     
     public function getEmail()       { return $this->email;   }
@@ -477,3 +543,4 @@ class User extends Entity
     
     public function isActive() { return $this->getActive(); }
 }
+
