@@ -87,3 +87,4 @@ CREATE FUNCTION fulltextsearch(document text, query text)
     END $$
 
 delimiter ;
+

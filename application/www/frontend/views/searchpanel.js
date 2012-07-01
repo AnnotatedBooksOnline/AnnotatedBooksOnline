@@ -234,7 +234,7 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                 name: '- Select -'
             },{
                 abbreviation: 'any',
-                name: 'Any'
+                name: 'Any (including transcriptions)'
             }].concat(bookProperties)
         });
         
@@ -1155,3 +1155,4 @@ Ext.define('Ext.ux.SearchPanel', {
         }
     }
 });
+

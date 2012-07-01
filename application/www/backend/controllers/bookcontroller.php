@@ -123,6 +123,8 @@ class BookController extends ControllerBase
         // The bindings counter.
         $c = 0;
         
+        $headline = '';
+        
         // Adds a fulltext search to the query.
         $addFulltext = function(
             $name, $column, $value, $headline = null, $fast = false
@@ -165,6 +167,7 @@ class BookController extends ControllerBase
                         break;
                     case 'any':
                         $addFulltext('any', 'booksft.text', $value, 'headline', true);
+                        $headline .= ' ' . $value;
                         break;
                     case 'place':
                         $addFulltext('place', 'books.placePublished', $value);
@@ -265,14 +268,12 @@ class BookController extends ControllerBase
         $binds = array();
         
         // Request a headline if necessary.
-        /*if ($headline != "")
+        if ($headline != "")
         {
-            $query = $query->headline(
-                'books.fulltext',
-                ':headline',
-                'headline');
+            $query->join('BooksFT booksft', array('books.bookId = booksft.bookId'), 'LEFT');
+            $query = $query->headline('booksft.text', ':' . 'headline', 'headline');
             $binds['headline'] = $headline;
-        }*/
+        }
         
         $records = array();
         foreach ($results as $result)
@@ -328,7 +329,7 @@ class BookController extends ControllerBase
      * @param int     $c           The current binding counter.
      */
     public static function addFulltext(
-        $name, $column, $value, $headline = null,
+        $name, $column, $value, $headline = null /* TODO: to be removed*/,
         $fast = false, Query &$query, array &$binds, &$c)
     {
         // Check if there are only negative queries: in such a case, we also want to find empty results.
@@ -344,13 +345,6 @@ class BookController extends ControllerBase
         
         $query = $query->whereFulltext($column, ':' . $name . $c, null, $onlyNegative, $fast);
         $binds[$name . $c] = $value;
-                
-        // Process headlines.
-        if ($headline !== null && false) // TODO: this is obviously incorrect.
-        {
-            $query = $query->headline($column, ':' . $name . $c . 'hl', $headline);
-            $binds[$name . $c . 'hl'] = $value;
-        }
     }
 }
 
