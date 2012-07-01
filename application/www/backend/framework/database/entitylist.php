@@ -105,6 +105,49 @@ abstract class EntityList implements IteratorAggregate
         return new ArrayIterator($this->entities);
     }
     
+    /**
+     * Sort the entities in the list by the values of a certain column.
+     * 
+     * @param string   $column The name of the column to sort by.
+     * @param callback $comparator Optional. A comparator that takes two values and returns an int
+     *                              indicating the ordening (< 0: smaller than, == 0: equal, > 0: 
+     *                              greater than). By default regular comparison is used.
+     */
+    public function sortBy($column, $comparator = null)
+    {
+        // If $comparator is null, use the standard comnparison operators.
+        if($comparator === null)
+        {
+            $comparator = function($a, $b)
+            {
+                if($a < $b)
+                {
+                    return -1;
+                }
+                else if($a > $b)
+                {
+                    return 1;
+                }
+                else
+              {
+                    return 0;
+                }
+            };
+        }
+        
+        // Create a comparator that applies $comparator to the value of the $column. 
+        $comp = function($a, $b) use($column, $comparator)
+        {
+            $valA = $a->{'get' . ucfirst($column)}();
+            $valB = $b->{'get' . ucfirst($column)}();
+            
+            return call_user_func($comparator, $valA, $valB);
+        };
+        
+        // Sort the entities with this comparator.
+        usort($this->entities, $comp);
+    }
+    
     /*
      * Manipulating and fetching from database.
      */

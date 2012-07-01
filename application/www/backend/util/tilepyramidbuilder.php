@@ -57,11 +57,12 @@ class TilePyramidBuilder extends Singleton
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
         
-        $scantype = $scan->getScanType();
-        $imgfile = $upload->getFileLocation();
+        // Determine arguments to builder command. Make sure bash injection is not possible.
+        $scantype = escapeshellarg($scan->getScanType());
+        $imgfile = escapeshellarg($upload->getFileLocation());
         $output = array();
         $rval = 0;
-        $outpath = '../data/tiles/' . $scan->getScanId();
+        $outpath = '../data/tiles/' . ((int) $scan->getScanId());
         $quality = $conf->getInteger('tile-quality', 60);
         $builderpath = $conf->getString('builder-path'); 
         $tileformat = 'tile_%z_%x_%y.%e';
@@ -303,7 +304,7 @@ class TilePyramidBuilder extends Singleton
      * 
      * @param int $iterationPause The timeout in seconds after each iteration.
      */
-    public function runBuilder($iterationPause = 5)
+/*    public function runBuilder($iterationPause = 5)
     {
         $round = 0;
         
@@ -340,6 +341,7 @@ class TilePyramidBuilder extends Singleton
                 Log::warn('Builder sleep() was interrupted.');
             }
         }
-    }
+
+    }*/
 }
 

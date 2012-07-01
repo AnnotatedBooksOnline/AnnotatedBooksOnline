@@ -30,16 +30,71 @@ class Log extends Singleton
     /** Logging level. */
     private $level;
     
+    
+    /**
+     * Returns the handle to the log file to be used.
+     */
+    private static function openLogFile()
+    {
+        // The directory in which to find the log files.
+        $logPath = '../data/logs';
+        
+        // Get the rotation period.
+        $rotPeriod = Configuration::getInstance()->getInteger('log-rotation-period', 0);
+        
+        if($rotPeriod == 0)
+        {
+            // If zero, simply use log.txt.
+            return fopen("$logPath/log.txt", 'a'); 
+        }
+        else
+        {
+            // Otherwise, retreive the log file through the current.log symlink.
+            $logLink = "$logPath/current.log";
+            $file = is_link($logLink) && readlink($logLink);
+            
+            // Retreive the date from this filename as a timestamp.
+            $fileDate = $file !== false && strtotime(basename($file));
+            
+            // The number of seconds in a day.
+            $dayLength = 86400;
+            
+            // Use this file if this date falls within the rotation period.
+            if($fileDate !== false && $fileDate - time() > $dayLength * $rotPeriod)
+            {
+                return fopen($file, 'a');
+            }
+            else
+            {
+                // Create a new log file for today. 
+                // Its filename is the date (plus extension) and should be readable with strtotime.
+                $newFile = "$logPath/" . date('d-m-y') . '.log';
+                $result = fopen($newFile, 'a');
+                
+                // Unlink the previous current.log.
+                if(is_link($logLink))
+                {
+                    unlink($logLink);
+                }
+                
+                // Let current.log point to this file.
+                symlink(getcwd() . '/' . $newFile, $logLink);
+                
+                return $result;
+            }
+        }
+    }
+    
     /**
      * Constructs a log class instance.
      */
     protected function __construct()
     {
         // Open log file.
-        $this->file = fopen('../data/logs/log.txt', 'a');
+        $this->file = self::openLogFile();
         
         // Get log level.
-        $this->level = Configuration::getInstance()->getBoolean('logging-level', 2);
+        $this->level = Configuration::getInstance()->getInteger('logging-level', 2);
     }
     
     /**
@@ -60,10 +115,12 @@ class Log extends Singleton
     {
         // Check whether to log it.
         $instance = self::getInstance();
+        
         if ($instance->level < 5)
         {
             return;
         }
+            
         
         // Get arguments of the function, minus the format
         $args = func_get_args();

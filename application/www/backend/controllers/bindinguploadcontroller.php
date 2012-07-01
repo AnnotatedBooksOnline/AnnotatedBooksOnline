@@ -75,12 +75,18 @@ class BindingUploadController extends Controller
         }
         else 
         {
-            // Assert the user has permission to modify bindings.
-            Authentication::assertPermissionTo('change-book-info');
-            
             // Load the existing binding with all its attribute entities.
             $binding = new Binding($inputBindingId);
             $binding->loadDetails();
+            
+            
+            // Check whether binding was uploaded by the current user themself.
+            $user = Authentication::getInstance()->getUser();
+            if($binding->getUserId() !== $user)
+            {
+                // This is not the case, so assert this user has permission to modify other's bindings.
+                Authentication::assertPermissionTo('change-book-info');
+            }
         }
         
         // Determine if the specified signature exists in the database already, this is not allowed.
@@ -381,7 +387,6 @@ class BindingUploadController extends Controller
      */
     private function createPerson($personName)
     {
-        Log::info("!!PersonNAME " . $personName);
         $existingPerson = PersonList::find(array('name' => $personName))->tryGet(0);
         
         if ($existingPerson !== null)
@@ -467,7 +472,7 @@ class BindingUploadController extends Controller
             return (array('status' => Binding::STATUS_SELECTED, 'bindingId' => -1));
         }
         else
-        {
+       {
             throw new BindingStatusException('binding-status');
         }
     }

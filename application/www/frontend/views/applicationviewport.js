@@ -162,11 +162,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
                         function(result)
                         {
-                            if (result['status'] === 0)
+                    		if (result['status'] == 0)
                             {
-                                Application.getInstance().gotoTabUnique('reorderscan', [result['bindingId']], true);
+                    			Application.getInstance().gotoTabUnique('reorderscan', [result['bindingId']], true);
                             }
-                            else if (result['status'] === 1)
+                            else if (result['status'] == 1)
                             {
                                 Application.getInstance().gotoTabUnique('selectbook', [result['bindingId']], true);
                             }

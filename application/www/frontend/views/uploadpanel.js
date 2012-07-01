@@ -593,7 +593,7 @@ Ext.define('Ext.ux.UploadForm', {
         RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
             function(result)
             {
-                if (result['status'] === 2)
+                if (result['status'] == 2)
                 {
                     // Determine if the user is adding a new binding. If this is the case determine if the
                     // there is no existing pending binding for the user.

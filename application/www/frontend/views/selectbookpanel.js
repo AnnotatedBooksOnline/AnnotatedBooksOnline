@@ -281,7 +281,7 @@ Ext.define('Ext.ux.SelectBookForm', {
         RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
             function(result)
             {
-                if (result['status'] === 1 && result['bindingId'] === this.bindingId && this.bindingId !== undefined)
+                if (result['status'] == 1 && result['bindingId'] == this.bindingId && this.bindingId !== undefined)
                 {
                     this.scanstore.load();
                     this.bookstore.load();
@@ -558,7 +558,7 @@ Ext.define('Ext.ux.SelectBookForm', {
             Application.getInstance().viewport.updateUploadButtonTitle();
             Ext.Msg.show({
                 title: 'Success',
-                msg: 'The data was succesfully added to the system.',
+                msg: 'The data was succesfully added to the system. It will now be processed. Once processing has succeeded, the binding should be searchable.',
                 buttons: Ext.Msg.OK
             }); 
             this.close();
