@@ -30,15 +30,11 @@ class ScanController extends ControllerBase
      */
     public function actionLoad($data)
     {
-        // By default, sort the scans by name using case-insensitive natural ordening.
-        $sorter = array('scanName' => 'strnatcasecmp');
-        
         // Handle load.
-        /*$defaultSorters = array(
+        $defaultSorters = array(
             array('column' => 'page', 'direction' => 'ASC')
-        );*/
-        
-        $result = $this->handleLoad($data, 'Scan', 'scanId', array(
+        );
+        return $this->handleLoad($data, 'Scan', 'scanId', array(
             'scanId',
             'bindingId',
             'page',
@@ -48,9 +44,8 @@ class ScanController extends ControllerBase
             'zoomLevel',
             'scanName',
             'bookTitle'
-        ), array(), $sorter);
+        ), $defaultSorters);
         
-        return $result;
     }
     
     /**
