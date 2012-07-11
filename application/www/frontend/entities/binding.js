@@ -21,8 +21,6 @@ function Binding()
 Binding.prototype.model;
 Binding.prototype.bindingId;
 
-Binding.prototype.documents;
-
 // Constructor.
 Binding.prototype.constructor = function(model)
 {
@@ -58,13 +56,7 @@ Binding.createFromId = function(bindingId, obj, onSuccess, onError)
 
 Binding.prototype.getDocument = function(index)
 {
-    // Create document if it does not exist yet.
-    if (this.documents[index] === undefined)
-    {
-        this.documents[index] = Binding.documentFromScan(this.scans[index]);
-    }
-    
-    return this.documents[index];
+    return Binding.documentFromScan(this.scans[index]);
 }
 
 Binding.prototype.getScan = function(index)
@@ -99,8 +91,6 @@ Binding.prototype.getModel = function()
 Binding.prototype.initialize = function()
 {
     this.scans = this.model.scans().data.items;
-    
-    this.documents = new Array(this.scans.length);
 }
 
 Binding.documentFromScan = function(scan)
@@ -120,12 +110,6 @@ Binding.documentFromScan = function(scan)
 
 Binding.prototype.destroy = function()
 {
-    // Destroy documents.
-    for (var i = this.scans.length - 1; i >= 0; --i)
-    {
-        if (this.documents[i] !== undefined)
-        {
-            this.documents[i].destroy();
-        }
-    }
+    // Destroy logic can be placed here.
 }
+
