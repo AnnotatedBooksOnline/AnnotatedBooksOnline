@@ -7,6 +7,7 @@
     cursor: pointer;
     float: left;
     margin: 10px;
+    background-color: #EEEEEE;
 }
 
 .thumbnail-inner
@@ -19,3 +20,4 @@
     position: absolute;
     border: 2px solid red;
 }
+

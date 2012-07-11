@@ -17,19 +17,19 @@ Ext.define('Ext.ux.ThumbnailView', {
         {
             var scan = this.binding.getScans()[i];
             
-            var thumbnail = 'data/thumbnails/' + scan.get('scanId') + '.jpg';
-            
             fields[i] = [
                 scan.get('scanId'),
-                thumbnail,
-                i
+                i,
+                scan.get('page'),
+                scan.get('width'),
+                scan.get('height')
             ];
         }
         
         // Create store.
         var store = Ext.create('Ext.data.ArrayStore', {
-            id: 'testStore',
-            fields: ['id', 'thumbnail', 'index'],
+            name: 'thumbnailStore',
+            fields: ['id', 'index', 'page', 'width', 'height'],
             pageSize: 10,
             data: fields
         });
@@ -40,9 +40,9 @@ Ext.define('Ext.ux.ThumbnailView', {
             tpl: [
                 '<tpl for=".">',
                     '<div class="thumbnail">',
-                        '<div class="thumbnail-inner">',
-                            '<img src="{thumbnail}" alt="" />',
-                            '<div class="thumbnail-rect" style="display: none;"></div>',
+                        '<div class="thumbnail-inner" style="width: {width}px; height: {height}px; visibility: hidden">',
+                            '<img src="" alt="" title="Page {page}" width="{width}" height="{height}"/>',
+                            '<div class="thumbnail-rect" style="display: none;" title="Page {page}"></div>',
                         '</div>',
                     '</div>',
                 '</tpl>',
@@ -84,8 +84,55 @@ Ext.define('Ext.ux.ThumbnailView', {
         this.on('viewready',
             function()
             {
-                setTimeout(function() { _this.onPageChange(); }, 100);
+                setTimeout(function()
+                {
+                    _this.onPageChange();
+                }, 100);
             });
+        
+        this.getEl().addListener("scroll", function()
+        {
+            this.onScroll();
+        }, this);
+    },
+    
+    onScroll: function()
+    {
+        if (this.scrollTimer !== undefined)
+        {
+            return;
+        }
+        
+        var _this = this;
+        
+        this.scrollTimer = setTimeout(function()
+        {
+            _this.scrollTimer = undefined;
+            
+            var top = _this.getEl().getScroll().top;
+            var bottom = top + _this.getSize(true).height;
+            var nodes = _this.getNodes();
+            var records = _this.getRecords(nodes);
+            for (var i = 0; i < nodes.length; i++)
+            {
+                var el = $(nodes[i]).find('.thumbnail-inner').get(0);
+                if (el.offsetTop < bottom &&
+                    el.offsetHeight + el.offsetTop > top
+                   )
+                {
+                    if (el.style.visibility != 'visible')
+                    {
+                        el.firstChild.src = 'data/tiles/' + records[i].get('id') + '/tile_0_0_0.jpg';
+                        el.style.visibility = 'visible';
+                    }
+                }
+                else if (el.style.visibility == 'visible')
+                {
+                    el.style.visibility = 'hidden';
+                    el.firstChild.src = 'about:blank';
+                }
+            }
+        }, 100);
     },
     
     onPageChange: function()
@@ -93,7 +140,7 @@ Ext.define('Ext.ux.ThumbnailView', {
         // Fetch some shortcuts.
         var pageNumber = this.viewer.getPage();
         var node       = this.getNode(pageNumber);
-        var image      = $(node).find('img');
+        var container  = $(node).find('.thumbnail-inner');
         
         // Set current rectangle.
         this.rectangle = $(node).find('.thumbnail-rect').get(0);
@@ -102,7 +149,7 @@ Ext.define('Ext.ux.ThumbnailView', {
         var documentDimensions = this.viewport.getDocument().getDimensions();
         
         // Get image dimensions.
-        this.imageDimensions = {width: image.width() || 0, height: image.height() || 0};
+        this.imageDimensions = {width: container.width() || 0, height: container.height() || 0};
         
         // Calculate factors.
         this.widthFactor  = this.imageDimensions.width  / documentDimensions.width;
@@ -125,6 +172,8 @@ Ext.define('Ext.ux.ThumbnailView', {
                 rectangle.hide();
             }
         }
+        
+        this.getEl().scrollTo('top', Math.max(0, container.get(0).offsetTop - 20), true);
         
         // Trigger viewport change.
         this.onViewportChange();
@@ -164,6 +213,8 @@ Ext.define('Ext.ux.ThumbnailView', {
                 _this.rectangle.style.top    = topLeft.y + "px";
                 _this.rectangle.style.width  = (bottomRight.x - topLeft.x) + "px";
                 _this.rectangle.style.height = (bottomRight.y - topLeft.y) + "px";
+                
+                _this.onScroll();
             },
             10
         );
@@ -176,13 +227,23 @@ Ext.define('Ext.ux.NavigationPanel', {
 
     initComponent: function()
     {
+        var _this = this;
+        
         var defConfig = {
             border: false,
             title: 'Navigation',
             items: [{
                 xtype: 'thumbnailview',
                 viewer: this.viewer
-            }]
+            }],
+            listeners: {
+                expand: function()
+                {
+                    // Fix layout
+                    _this.ownerCt.doLayout();
+                    _this.getComponent(0).onScroll();
+                }
+            }
         };
         
         Ext.apply(this, defConfig);
@@ -190,3 +251,4 @@ Ext.define('Ext.ux.NavigationPanel', {
         this.callParent();
     }
 });
+
