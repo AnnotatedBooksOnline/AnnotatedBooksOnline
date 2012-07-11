@@ -116,8 +116,8 @@ Ext.define('Ext.ux.ThumbnailView', {
             for (var i = 0; i < nodes.length; i++)
             {
                 var el = $(nodes[i]).find('.thumbnail-inner').get(0);
-                if (el.offsetTop < bottom &&
-                    el.offsetHeight + el.offsetTop > top
+                if (el.offsetTop < bottom + 300 &&
+                    el.offsetHeight + el.offsetTop > top - 300
                    )
                 {
                     if (el.style.visibility != 'visible')
@@ -173,7 +173,8 @@ Ext.define('Ext.ux.ThumbnailView', {
             }
         }
         
-        this.getEl().scrollTo('top', Math.max(0, container.get(0).offsetTop - 20), true);
+        var center = (this.getHeight() - container.get(0).offsetHeight) / 2;
+        this.getEl().scrollTo('top', Math.max(0, container.get(0).offsetTop - center), true);
         
         // Trigger viewport change.
         this.onViewportChange();
