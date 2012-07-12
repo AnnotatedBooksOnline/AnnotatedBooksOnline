@@ -724,7 +724,8 @@ Ext.define('Ext.ux.UploadForm', {
             }
             else if (scans[i].status == 'error')
             {
-                // Stop loading.
+                alert(i);
+            	// Stop loading.
                 this.setLoading(false);
                 
                 Ext.Msg.alert('An error occurred.',
