@@ -29,6 +29,11 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             
             // Find the first and last pages of the current book.
             var rec = viewer.getBinding().getModel().books().findRecord('firstPage', firstPage);
+            if (rec === null)
+            {
+                return '<span style="white-space: normal;">Unknown book</span>';
+            }
+            
             var lastPage = rec.get('lastPage');
             
             // Get the current page.
@@ -124,6 +129,10 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                     flex: 1, 
                     summaryType: function(records)
                     {
+                        if (records[0].get('firstPage') === null)
+                        {
+                            return '<span>Page unknown</span>';
+                        }
                         return '<span style="color: (255,0,0);"> Page '
                                + records[0].get('firstPage') + '</span>';
                     }
@@ -240,3 +249,4 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         });
     }
 });
+
