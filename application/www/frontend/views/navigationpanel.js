@@ -108,31 +108,91 @@ Ext.define('Ext.ux.ThumbnailView', {
         this.scrollTimer = setTimeout(function()
         {
             _this.scrollTimer = undefined;
-            
-            var top = _this.getEl().getScroll().top;
-            var bottom = top + _this.getSize(true).height;
-            var nodes = _this.getNodes();
-            var records = _this.getRecords(nodes);
-            for (var i = 0; i < nodes.length; i++)
+
+            // Initialize lazy thumbnail loading data.
+            if (_this.visibleScans === undefined)
             {
-                var el = $(nodes[i]).find('.thumbnail-inner').get(0);
-                if (el.offsetTop < bottom + 300 &&
-                    el.offsetHeight + el.offsetTop > top - 300
-                   )
+                _this.visibleScans = [];
+                _this.nodes = _this.getNodes();
+                var records = _this.getStore().getRange();
+                
+                if (_this.nodes.length > 0)
                 {
+                    var nodeElems = $(_this.nodes[0]).parent().children('.thumbnail');
+                    _this.nodes[0] = {
+                        el: nodeElems.get(0),
+                        top: nodeElems.get(0).offsetTop,
+                        bottom: nodeElems.get(0).offsetTop + records[0].get('height'),
+                        id: records[0].get('id')
+                    };
+                    
+                    var node0 = $(_this.nodes[0].el);
+                    var margin = node0.outerHeight(true) - node0.outerHeight();
+                    var top = _this.nodes[0].bottom;
+                    for (var i = 1; i < _this.nodes.length; i++)
+                    {
+                        var height = records[i].get('height');
+                        top += margin;
+                        _this.nodes[i] = {
+                            el: nodeElems.get(i),
+                            top: top,
+                            bottom: top + height,
+                            id: records[i].get('id')
+                        };
+                        top += height;
+                    }
+                }
+            }
+            
+            // Update visible thumbnails.
+            if (_this.nodes.length > 0)
+            {   
+                var oldVisible = _this.visibleScans;
+                _this.visibleScans = [];
+                
+                var top = _this.getEl().getScroll().top;
+                var bottom = top + _this.getSize(true).height;
+                
+                var inRange = function(node)
+                {
+                    return node.top < bottom + 300 && node.bottom > top - 300;
+                };
+                
+                // Find thumbnails to be displayed.
+                for (var i = 0; i < _this.nodes.length; i++)
+                {
+                    var node = _this.nodes[i];
+                    if (inRange(node))
+                    {
+                        _this.visibleScans.push(node);
+                    }
+                }
+                
+                // Add newly visible thumbnails.
+                for (var i = 0; i < _this.visibleScans.length; i++)
+                {
+                    var node = _this.visibleScans[i];
+                    var el = node.el.firstChild;
                     if (el.style.visibility != 'visible')
                     {
-                        el.firstChild.src = 'data/tiles/' + records[i].get('id') + '/tile_0_0_0.jpg';
+                        el.firstChild.src = 'data/tiles/' + node.id + '/tile_0_0_0.jpg';
                         el.style.visibility = 'visible';
                     }
                 }
-                else if (el.style.visibility == 'visible')
+                
+                // Remove invisible thumbnails.
+                for (var i = 0; i < oldVisible.length; i++)
                 {
-                    el.style.visibility = 'hidden';
-                    el.firstChild.src = 'about:blank';
+                    var node = oldVisible[i];
+                    var el = node.el.firstChild;
+                    if (!inRange(node))
+                    {
+                        el.style.visibility = 'hidden';
+                        el.firstChild.src = 'about:blank';
+                    }
                 }
             }
-        }, 100);
+        }, 200);
     },
     
     onPageChange: function()
