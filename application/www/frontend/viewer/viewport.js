@@ -31,7 +31,7 @@ Viewport.prototype.ctrlDown = false;
 
 Viewport.prototype.draggingDisabled = false;
 Viewport.prototype.zoomingDisabled  = false;
-Viewport.prototype.rotationDisabled = false;
+Viewport.prototype.rotationDisabled = true;
 
 Viewport.prototype.document;
 Viewport.prototype.documentDimensions;
@@ -961,3 +961,4 @@ Viewport.prototype.onKeyUp = function(event)
             break;
     }
 }
+
