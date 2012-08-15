@@ -421,7 +421,8 @@ class BindingUploadController extends Controller
         {
             $scan->setScanType(Scan::TYPE_JPEG);
         } 
-        else if ($scanUploadImageIdentification[2] == IMAGETYPE_TIFF_II) 
+        else if ($scanUploadImageIdentification[2] == IMAGETYPE_TIFF_II
+             ||  $scanUploadImageIdentification[2] == IMAGETYPE_TIFF_MM) 
         {
             $scan->setScanType(Scan::TYPE_TIFF);
         } 
@@ -541,3 +542,4 @@ class BindingUploadController extends Controller
         }
     }
 }
+

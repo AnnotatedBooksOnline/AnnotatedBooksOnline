@@ -86,7 +86,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         }
                     },{
                         xtype: 'button',
-                        text: 'Reset',
+                        text: 'Revert',
                         width: 135,
                         iconCls: 'cancel-icon',
                         name: 'reset-changes',
@@ -173,7 +173,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         this.viewMode         = this.down('[name=view-mode]');
         
         // Set language.
-        this.setLanguage('transcriptionEng');
+        this.setLanguage('transcriptionOrig');
         
         // Handle current authentication state.
         this.onAuthenticationChange();
@@ -196,9 +196,12 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         eventDispatcher.bind('change', this,
             function(event, annotations)
             {
-                // Enable save and reset buttons.
-                this.saveChangesBtn.setDisabled(false);
-                this.resetChangesBtn.setDisabled(false);
+                // Make sure there have been real changes.
+                if (this.annotationsAreDirty())
+                {
+                    // Enable save and reset buttons.
+                    this.markDirty();
+                }
                 
                 // Reset active model.
                 this.setActiveAnnotation(this.activeModel);
@@ -345,97 +348,203 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         this.annotationHist.body.update(history);
     },
     
+    // Marks the current view dirty by enabling the Save and Revert button.
     markDirty: function()
     {
         this.saveChangesBtn.setDisabled(false);
+        this.resetChangesBtn.setDisabled(false);
+    },
+    
+    // Checks whether annotations have changed.
+    annotationsAreDirty: function()
+    {
+        return (this.annotations.hasChanges() && this.getChangeInfo() != '');
+    },
+    
+    // Returns information on the number of changes made.
+    getChangeInfo: function()
+    {
+        if (!this.annotations || !this.annotations.getStore())
+            return '';
+
+        var store = this.annotations.getStore();
+        changeInfo = [];
+        if (store.getNewRecords().length > 0)
+        {
+            changeInfo.push(store.getNewRecords().length + ' new');
+        }
+        if (store.getRemovedRecords().length > 0)
+        {
+            changeInfo.push(store.getRemovedRecords().length + ' removed');
+        }
+        if (store.getUpdatedRecords().length > 0)
+        {
+            changeInfo.push(store.getUpdatedRecords().length + ' updated');
+        }
+        return changeInfo.join(', ');
     },
     
     // Sets mode. Mode can be 'edit' or 'view'.
     setMode: function(mode, force)
     {
-        this.mode = mode;
+        var _this = this;
+        
+        var updateGrid = function()
+        {       
+            // Reset active model.
+            _this.setActiveAnnotation(this.activeModel);
+            
+            // Set mode of grid.
+            _this.grid.setMode(mode);
+        };
         
         if (mode === 'edit')
         {
+            // Switch to view mode.
+            this.mode = mode;
+            
             this.editMode.hide();
             this.viewMode.show();
             this.saveChangesBtn.setDisabled(true);
             this.resetChangesBtn.setDisabled(true);
             
             this.viewer.showTools();
+            
+            updateGrid();
         }
         else
         {
-            this.editMode.show();
-            this.viewMode.hide();
-            this.saveChangesBtn.setDisabled(true);
-            this.resetChangesBtn.setDisabled(true);
-            
-            this.viewer.hideTools();
+            // Switch to edit mode.
+            var setViewMode = function()
+            {
+                _this.mode = mode;
+                                
+                _this.editMode.show();
+                _this.viewMode.hide();
+                _this.saveChangesBtn.setDisabled(true);
+                _this.resetChangesBtn.setDisabled(true);
+                
+                _this.viewer.hideTools();
+                
+                updateGrid();
+            };
             
             // Handle unsaved changes.
-            if (this.annotations.hasChanges())
+            var changeInfo = this.getChangeInfo();
+            if (this.annotationsAreDirty())
             {
                 if (force)
                 {
                     // Reset changes.
                     this.resetChanges();
+                    setViewMode();
                 }
                 else
                 {
                     // Ask user whether to save changes.
-                    var _this = this;
-                    Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
-                        function(button)
+                    Ext.Msg.show({
+                        buttons: Ext.Msg.YESNOCANCEL,
+                        closable: false,
+                        icon: Ext.Msg.QUESTION,
+                        title: 'Save changes?',
+                        msg: 'There are unsaved changes (' + changeInfo + ').<br/>' +
+                        ' Do you want to save these changes? Select Yes to make your ' +
+                        'changes visible to all visitors, select No to revert all ' +
+                        'changes you made since the last save. Select Cancel to ' +
+                        'continue editing.', 
+                        fn: function(button)
                         {
                             if (button === 'yes')
                             {
                                 // Save changes.
-                                _this.saveChanges();
+                                _this.saveChanges(true);
+                                setViewMode();
+                            }
+                            else if (button === 'no')
+                            {
+                                // Reset changes.
+                                _this.resetChanges(true);
+                                setViewMode();
                             }
                             else
                             {
-                                // Reset changes.
-                                _this.resetChanges();
+                                // Do nothing, stay in edit mode.
+                                toViewMode = false;
                             }
                         }
-                    );
+                    });
                 }
             }
+            else
+            {
+                setViewMode();
+            }
         }
-        
-        // Reset active model.
-        this.setActiveAnnotation(this.activeModel);
-        
-        // Set mode of grid.
-        this.grid.setMode(mode);
     },
     
-    saveChanges: function()
+    askSaveChanges: function()
     {
         // Ask user whether to save changes.
         var _this = this;
-        Ext.Msg.confirm('Save changes?', 'Do you want to save changes?', 
+        Ext.Msg.confirm('Save changes?', 'Do you want to save changes (' +
+            this.getChangeInfo() + ')?<br/>This will make your changes visible to all ' +
+            'visitors.', 
             function(button)
             {
                 if (button === 'yes')
                 {
-                    // Save changes.
-                    _this.annotations.save();
-                    _this.annotations.load();
-                    _this.updateHistory(this.activeModel);
+                    _this.saveChanges(true);
                 }
             }
         );
     },
     
-    resetChanges: function()
+    saveChanges: function(force)
     {
-        // Unset active annotation.
-        this.setActiveAnnotation(undefined);
-        
-        // Reset annotations.
-        this.annotations.reset();
+        if (force === true)
+        {
+            // Save changes.
+            this.annotations.save();
+            this.annotations.load();
+            this.updateHistory(this.activeModel);
+        }
+        else
+        {
+            this.askSaveChanges();
+        }
+    },
+    
+    askResetChanges: function()
+    {
+        // Ask user whether to save changes.
+        var _this = this;
+        Ext.Msg.confirm('Revert changes?', 'Do you want to revert changes (' +
+            this.getChangeInfo() + ')?<br/>This will revert all changes you made since' +
+            ' the last save.', 
+            function(button)
+            {
+                if (button === 'yes')
+                {
+                    _this.resetChanges(true);
+                }
+            }
+        );
+    },
+    
+    resetChanges: function(force)
+    {
+        if (force === true)
+        {
+            // Unset active annotation.
+            this.setActiveAnnotation(undefined);
+            
+            // Reset annotations.
+            this.annotations.reset();
+        }
+        else
+        {
+            this.askResetChanges();
+        }
     },
     
     onAuthenticationChange: function()
@@ -727,3 +836,4 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         }
     }
 });
+
