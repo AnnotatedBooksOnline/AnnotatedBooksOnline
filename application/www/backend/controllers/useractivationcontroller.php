@@ -53,7 +53,7 @@ class UserActivationController extends Controller
         {
             //Find corresponding user.
             $user = User::fromUsername($username);
-            if ($user === null)
+            if($user === null)
             {
                 throw new UserActivationException('user-does-not-exist', $username);
             }

@@ -149,6 +149,11 @@ class User extends Entity
     {
         $user = User::fromUsername($username);
         
+        if($user === null)
+        {
+            throw new UserNotFoundException($username);
+        }
+        
         if (!$user->hasPassword($password))
         {
             throw new UserNotFoundException($username);
@@ -219,9 +224,7 @@ class User extends Entity
      * 
      * @param string $username The name of the user to load.
      * 
-     * @return User A fully loaded user entity of the user with this name.
-     * 
-     * @throws EntityException If the user does not exist.
+     * @return User A fully loaded user entity of the user with this name, or null if this user does not exist.
      */
     public static function fromUsername($username)
     {
