@@ -17,6 +17,10 @@
 // Set backend as current working directory and include path.
 $backendPath = dirname(__FILE__) . '/backend/';
 
+// The directory containing the configuration file lies one above www.
+global $configPath;
+$configPath = dirname(__FILE__) . '/../config/';
+
 chdir($backendPath);
 set_include_path($backendPath);
 
