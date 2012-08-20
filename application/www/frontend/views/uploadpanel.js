@@ -56,7 +56,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         anchor: '100%',
                         labelAlign: 'top',
                         allowBlank: false,
-                        validator: function(signature)
+                        /*validator: function(signature)
                         {
                             var libraryField = _this.down('[name=library]');
                             if (libraryField != null)
@@ -89,7 +89,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                             
                             libraryField.clearInvalid();
                             return true;
-                        }
+                        }*/
                     },{
                         xtype: 'combobox', 
                         fieldLabel: 'Languages of annotations',
