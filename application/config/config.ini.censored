@@ -1,24 +1,24 @@
 ;
-; Configuration.
+; Copy of configuration file to be included in Git repository for reference. Does not include sensitive information.
 ;
 
 [Database]
 ; Database data source name.
-database-dsn="mysql:host=localhost;dbname=abo"
+; database-dsn=...
 
 ; Database username.
-database-username="abo"
+; database-username=...
 
 ; Database password.
-database-password="abo"
+; database-password=...
 
 [User]
-; Password salt, make sure it is unique.
-password-salt="8!@(*#!HK*@&#*&91"
+; Global password salt to be used alongside user-specific salts. Should be random.
+; password-salt=...
 
 [Session]
 ; Session prefix, make sure it is unique.
-session-prefix="B820*a531Zw2x61+44bJ689"
+; session-prefix=
 
 [Logging]
 ; Whether working in debug mode: determines whether to send a stack trace to the client.

@@ -89,12 +89,6 @@ class BindingUploadController extends Controller
             }
         }
         
-        // Determine if the specified signature exists in the database already, this is not allowed.
-        if (!$this->uniqueLibrarySignature($libraryName, $signature, $inputBindingId))
-        {
-            throw new ControllerException('duplicate-binding');
-        }
-        
         // Fill the binding attributes.
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
@@ -480,6 +474,8 @@ class BindingUploadController extends Controller
     
     /**
      * Returns whether the combination of library and signature in the sent data is unique.
+     *
+     * Note: this is no longer intended to be used and therefore DEPRECATED.
      */
     public function actionUniqueLibrarySignature($data)
     {

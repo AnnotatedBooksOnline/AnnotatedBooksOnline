@@ -53,7 +53,7 @@ class UserActivationController extends Controller
         {
             //Find corresponding user.
             $user = User::fromUsername($username);
-            if ($user === null)
+            if($user === null)
             {
                 throw new UserActivationException('user-does-not-exist', $username);
             }
@@ -223,7 +223,13 @@ class UserActivationController extends Controller
     public function actionResendActivationMail($data)
     {
         // Determine user.
-        $user = User::fromUsername(self::getString($data, 'username'));
+        $username = self::getString($data, 'username');
+        $user = User::fromUsername($username);
+        
+        if($user === null)
+        {
+            throw new UserActivationException('user-does-not-exist', $username);
+        }
         
         // Make sure user is accepted.
         if($user->getActivationStage() != User::ACTIVE_STAGE_ACCEPTED)

@@ -172,7 +172,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                             }
                             else
                             {
-                                Application.getInstance().gotoTabUnique('uploadinfo', [result['bindingId']], true);
+                                Application.getInstance().gotoTabUnique('upload', [], true);
                             }
                         }
                     );

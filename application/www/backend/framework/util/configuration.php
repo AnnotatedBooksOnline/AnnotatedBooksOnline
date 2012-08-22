@@ -39,8 +39,12 @@ class Configuration extends Singleton
         $this->settings = array();
         
         // Load framework its default settings and custom settings.
-        $this->addSettings('framework/config/default.ini');
-        $this->addSettings('config/config.ini');
+        //$this->addSettings('framework/config/default.ini');
+        //$this->addSettings('config/config.ini');
+        
+        // Read settings from the file in the configPath.
+        global $configPath;
+        $this->addSettings("$configPath/config.ini");
     }
     
     /**

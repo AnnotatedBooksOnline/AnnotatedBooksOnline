@@ -56,7 +56,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         anchor: '100%',
                         labelAlign: 'top',
                         allowBlank: false,
-                        validator: function(signature)
+                        /*validator: function(signature)
                         {
                             var libraryField = _this.down('[name=library]');
                             if (libraryField != null)
@@ -89,7 +89,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                             
                             libraryField.clearInvalid();
                             return true;
-                        }
+                        }*/
                     },{
                         xtype: 'combobox', 
                         fieldLabel: 'Languages of annotations',
@@ -724,7 +724,7 @@ Ext.define('Ext.ux.UploadForm', {
             }
             else if (scans[i].status == 'error')
             {
-                // Stop loading.
+            	// Stop loading.
                 this.setLoading(false);
                 
                 Ext.Msg.alert('An error occurred.',
@@ -790,11 +790,23 @@ Ext.define('Ext.ux.UploadForm', {
                 
                 this.up('[name=upload]').close();
             },
-            function()
+            function(errorType)
             {
                 this.setLoading(false);
                 
-                return true;
+                if(errorType == 'unsupported-file-type')
+                {
+                    // Specific error message for an unsupported file type.
+                    Ext.Msg.show({
+                        title: 'Invalid or corrupt file',
+                        msg: 'One of the uploaded files is not a valid JPEG or TIFF image (despite '
+                              + 'its file name giving the impression it is). It may be corrupted.',
+                        icon: Ext.Msg.ERROR,
+                        buttons: Ext.Msg.OK
+                    });
+                }
+                
+                return false;
             });
     },
     

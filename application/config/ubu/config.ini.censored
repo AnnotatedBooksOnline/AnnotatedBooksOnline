@@ -1,0 +1,54 @@
+;
+; Copy of configuration file to be included in Git repository for reference. Does not include sensitive information.
+;
+
+[Database]
+; Database data source name.
+; database-dsn=...
+
+; Database username.
+; database-username=...
+
+; Database password.
+; database-password=...
+
+[User]
+; Global password salt to be used alongside user-specific salts. Should be random.
+; password-salt=...
+
+[Session]
+; Session prefix, make sure it is unique.
+; session-prefix=
+
+[Logging]
+; Whether working in debug mode: determines whether to send a stack trace to the client.
+;debug-mode=off
+debug-mode=on
+
+; Logging level: 0=off, 1=error, 2=warn, 3=info, 4=debug, 5=trace.
+;logging-level=2
+logging-level=4
+
+; The amount of days after which to continue with a new log file. 
+; If 0 or not specified. Only log.txt is used and no rotation is done.
+log-rotation-period=7
+
+[Frontend]
+; Whether to minify stylesheets and Javascript.
+;minify-resources=on
+minify-resources=off
+
+; Whether to force an SSL connection.
+;force-ssl=on
+force-ssl=off
+
+[Pyramid builder]
+; Path of the pyramid builder executable, relative to the backend directory.
+builder-path="../../../tilepyramidbuilder/bin/builder"
+
+; Value between 0 and 100 indicating the JPEG quality of the output files.
+tile-quality=80
+
+; Dimensions of thumbnails.
+thumbnail-width=165
+thumbnail-height=300
