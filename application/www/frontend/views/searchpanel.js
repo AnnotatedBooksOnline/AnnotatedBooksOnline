@@ -257,7 +257,12 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                     switch (combo.getValue())
                     {
                         case 'year':
-                            this.ownerCt.insert(1, [{xtype: 'yearbetweenfield', name: 'value', flex: 5, height: 27}]);
+                            this.ownerCt.insert(1, [{
+                                xtype: 'yearbetweenfield',
+                                name: 'value',
+                                flex: 5,
+                                height: 27
+                            }]);
                             break;
                             
                         case 'select':
@@ -269,7 +274,13 @@ Ext.define('Ext.ux.SearchComboBoxField', {
                             break;
                             
                         default:
-                            this.ownerCt.insert(1, [{xtype: 'textfield', name: 'value', value: value, flex: 5}]);
+                            this.ownerCt.insert(1, [{
+                                xtype: 'textfield',
+                                name: 'value',
+                                value: value,
+                                flex: 5,
+                                emptyText: 'Enter your search here...'
+                            }]);
                             break;
                     }
                     
@@ -913,6 +924,7 @@ Ext.define('Ext.ux.SearchPanel', {
                 align: 'stretch'
             },
             collapsible: true,
+            collapsed: true,
             title: 'Advanced options',
             width: 200,
             items: [{
