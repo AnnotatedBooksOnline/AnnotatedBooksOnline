@@ -48,6 +48,18 @@
     margin-bottom: 7px;
 }
 
+/* IE hack */
+.header .menu-button table
+{
+    width: 100%;
+    height: 100%;
+}
+
+.header .menu-button td
+{
+    padding-left: 1px !important;
+}
+
 /* Style main tab panel. */
 .main-tabpanel > div.x-panel-body
 {
@@ -235,3 +247,4 @@ a:hover
     width: 16px;
     cursor: pointer;
 }
+
