@@ -42,7 +42,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 layout: 'border',
                 split: false,
                 border: false,
-                height: 200,
+                flex: 3,
                 resizable: { handles: 's' },
                 items: [{
                     html: 'Please select an annotation below.',
@@ -65,6 +65,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             },{
                 xtype: 'annotationsgrid',
                 name: 'grid',
+                flex: 2,
                 region: 'center',
                 viewer: this.viewer
             },{
