@@ -39,24 +39,28 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             layout: 'border',
             items: [{
                 region: 'north',
-                layout: 'anchor',
-                bodyPadding: 5,
+                layout: 'border',
+                split: false,
                 border: false,
                 height: 200,
                 resizable: { handles: 's' },
                 items: [{
                     html: 'Please select an annotation below.',
-                    anchor: '0, -70',
-                    autoScroll: true,
-                    name: 'active-annotation'
+                    region: 'center',
+                    name: 'active-annotation',
+                    border: false,
+                    bodyPadding: 5,
+                    autoScroll: true
                 },{
                     xtype: 'panel',
-                    height: 65,
+                    region: 'south',
                     name: 'annotation-history',
-                    style: 'margin-top: 5px;',
-                    autoScroll: true,
+                    style: 'margin-top: 3px;',
+                    height: 65,
                     html: '',
-                    cls: 'annoHistory'
+                    cls: 'annoHistory',
+                    border: false,
+                    bodyPadding: 5
                 }]
             },{
                 xtype: 'annotationsgrid',
