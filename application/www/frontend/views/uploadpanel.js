@@ -55,7 +55,7 @@ Ext.define('Ext.ux.BindingFieldSet', {
                         name: 'signature',
                         anchor: '100%',
                         labelAlign: 'top',
-                        allowBlank: false,
+                        allowBlank: false
                         /*validator: function(signature)
                         {
                             var libraryField = _this.down('[name=library]');
@@ -724,7 +724,7 @@ Ext.define('Ext.ux.UploadForm', {
             }
             else if (scans[i].status == 'error')
             {
-            	// Stop loading.
+                // Stop loading.
                 this.setLoading(false);
                 
                 Ext.Msg.alert('An error occurred.',
@@ -881,3 +881,4 @@ Ext.define('Ext.ux.UploadForm', {
         this.down('booksfieldset').reset();
     }
 });
+
