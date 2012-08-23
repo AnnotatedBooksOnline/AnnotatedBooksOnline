@@ -158,6 +158,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                     iconCls: 'rotate-left-icon',
                     tooltip: 'Rotate left',
                     overflowText: 'Rotate left',
+                    name: 'rotate-left',
                     listeners: {
                         click: function()
                         {
@@ -168,6 +169,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                     iconCls: 'rotate-right-icon',
                     tooltip: 'Rotate right',
                     overflowText: 'Rotate right',
+                    name: 'rotate-right',
                     listeners: {
                         click: function()
                         {
@@ -483,15 +485,15 @@ Ext.define('Ext.ux.ViewerPanel', {
             }
         }
         
-        //Remove these tools when using an older version of Internet Explorer
-        //as we haven't been able to get these to work correctly.
-        //This can be removed when these tools work properly in these browsers.
+        // Disable these tools when using an older version of Internet Explorer
+        // as we haven't been able to get these to work correctly.
+        // This can be removed when these tools work properly in these browsers.
         if($.browser.msie && ($.browser.version < 9))
         {
-            this.down('[name=rectangle-tool]').hide();
-            this.down('[name=vertex-tool]').hide();
-            this.down('[name=addvertex-tool]').hide();
-            this.down('[name=erasevertex-tool]').hide();
+            this.down('[name=rectangle-tool]').setDisabledNoMask(true);
+            this.down('[name=vertex-tool]').setDisabledNoMask(true);
+            this.down('[name=addvertex-tool]').setDisabledNoMask(true);
+            this.down('[name=erasevertex-tool]').setDisabledNoMask(true);
         }
         
         // Set view tool if tools are not visible.
@@ -606,7 +608,8 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.pageNumber = number;
         
         // Set viewport document.
-        this.viewport.setDocument(this.binding.getDocument(number));
+        var document = this.binding.getDocument(number);
+        this.viewport.setDocument(document);
         
         // Update menu.
         var isFirst = (number === 0);
@@ -617,6 +620,10 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.viewportPanel.down('[name=page-number]').setValue(number + 1);
         this.viewportPanel.down('[name=next-page]').setDisabled(isLast);
         this.viewportPanel.down('[name=last-page]').setDisabled(isLast);
+        
+        var noRotate = !document.supportsRotation();
+        this.viewportPanel.down('[name=rotate-left]').setDisabledNoMask(noRotate);
+        this.viewportPanel.down('[name=rotate-right]').setDisabledNoMask(noRotate);
         
         // Trigger event.
         this.eventDispatcher.trigger('pagechange', this, number);

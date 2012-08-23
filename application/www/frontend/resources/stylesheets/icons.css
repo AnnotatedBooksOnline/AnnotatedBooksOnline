@@ -88,6 +88,11 @@
     background-image: url(../icons/rectangle.png);
 }
 
+.x-item-disabled .rectangle-icon
+{
+    background-image: url(../icons/rectangle_disabled.png) !important;
+}
+
 .polygon-icon
 {
     background-image: url(../icons/polygon.png);
@@ -113,6 +118,21 @@
     background-image: url(../icons/erasevertex.png);
 }
 
+.x-item-disabled .vertex-icon
+{
+    background-image: url(../icons/vertex_disabled.png) !important;
+}
+
+.x-item-disabled .add-vertex-icon
+{
+    background-image: url(../icons/addvertex_disabled.png) !important;
+}
+
+.x-item-disabled .erase-vertex-icon
+{
+    background-image: url(../icons/erasevertex_disabled.png) !important;
+}
+
 /* Viewer icons. */
 
 .rotate-left-icon
@@ -120,9 +140,19 @@
     background-image: url(../icons/rotateleft.png);
 }
 
+.x-item-disabled .rotate-left-icon
+{
+    background-image: url(../icons/rotateleft_disabled.png) !important;
+}
+
 .rotate-right-icon
 {
     background-image: url(../icons/rotateright.png);
+}
+
+.x-item-disabled .rotate-right-icon
+{
+    background-image: url(../icons/rotateright_disabled.png) !important;
 }
 
 /* Other icons. */

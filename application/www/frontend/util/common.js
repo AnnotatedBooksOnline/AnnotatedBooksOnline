@@ -289,3 +289,17 @@ try
     document.namespaces = document.namespaces || {};
 }
 catch(e) { }
+
+/*
+ * Add pretty disabled buttons.
+ */
+Ext.override(Ext.button.Button, {
+    setDisabledNoMask: function(disabled)
+    {
+        this.setDisabled(disabled);
+        if (disabled)
+        {
+            this.removeClsWithUI('disabled');
+        }
+    }
+});
