@@ -196,12 +196,8 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         eventDispatcher.bind('change', this,
             function(event, annotations)
             {
-                // Make sure there have been real changes.
-                if (this.annotationsAreDirty())
-                {
-                    // Enable save and reset buttons.
-                    this.markDirty();
-                }
+                // Enable/disable save and reset buttons.
+                this.updateButtons();
                 
                 // Reset active model.
                 this.setActiveAnnotation(this.activeModel);
@@ -349,10 +345,18 @@ Ext.define('Ext.ux.AnnotationsPanel', {
     },
     
     // Marks the current view dirty by enabling the Save and Revert button.
-    markDirty: function()
+    updateButtons: function()
     {
-        this.saveChangesBtn.setDisabled(false);
-        this.resetChangesBtn.setDisabled(false);
+        if (this.annotationsAreDirty())
+        {
+            this.saveChangesBtn.setDisabled(false);
+            this.resetChangesBtn.setDisabled(false);
+        }
+        else
+        {
+            this.saveChangesBtn.setDisabled(true);
+            this.resetChangesBtn.setDisabled(true);
+        }
     },
     
     // Checks whether annotations have changed.

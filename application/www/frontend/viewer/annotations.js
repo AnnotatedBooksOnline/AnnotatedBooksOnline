@@ -628,6 +628,7 @@ Annotations.prototype.onStoreLoad = function(models, success)
     
     // Reset dirty marker.
     this.dirty = false;
+    this.getStore().removed = [];
     
     // Show overlay again.
     this.viewport.addOverlay(this.overlay);
@@ -699,3 +700,4 @@ Annotations.prototype.destroy = function()
     // Destroy overlay.
     this.overlay.destroy();
 }
+
