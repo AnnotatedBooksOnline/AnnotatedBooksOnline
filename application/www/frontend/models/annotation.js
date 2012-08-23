@@ -10,8 +10,20 @@ Ext.define('Ext.ux.VertexModel', {
 Ext.define('Ext.ux.AnnotationModel', {
     extend: 'Ext.data.Model',
     idProperty: 'annotationId',
-    fields: ['annotationId', 'scanId', 'transcriptionEng', 'transcriptionOrig', 'order', 'createdName',
-            'changedName',{"name":"timeCreated", "type":"date"},{"name":"timeChanged","type":"date"}],
+    fields: ['annotationId',
+             'scanId',
+             'transcriptionEng',
+             'transcriptionOrig',
+             'order',
+             'createdName',
+             'changedName',
+             {  name: 'timeCreated',
+                type: 'date',
+                dateFormat: 'Y-m-d'},
+             {  name: 'timeChanged',
+                type: 'date',
+                dateFormat: 'Y-m-d'}
+            ],
     
     hasMany: {
         model: 'Ext.ux.VertexModel',
