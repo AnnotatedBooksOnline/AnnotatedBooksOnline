@@ -1,4 +1,88 @@
 /*
+ * Binding administration form class.
+ */
+Ext.define('Ext.ux.BindingAdminPanel', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.bindingadminpanel',
+    
+    initComponent: function()
+    {
+        var _this = this;
+        var defConfig = {
+            border: false,
+            bodyPadding: 5,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            items: [{
+                xtype: 'button',
+                text: 'Modify binding',
+                name: 'modifybindingbutton',
+                handler: function()
+                {
+                    Application.getInstance().gotoTab(
+                        'upload', 
+                        [_this.getCurrentBindingModel().get('bindingId')], 
+                        true);
+                    this.up('viewerpanel').close();
+                }
+            },{
+                xtype: 'button',
+                text: 'Delete binding',
+                name: 'deletebindingbutton',
+                handler: function()
+                {
+                    // Shows a window to doublecheck if this is what the user wanted.
+                    // Deletes the binding afterwards.
+                    Ext.Msg.show({
+                        title: 'Are you sure?',
+                        msg: 'You are about to delete this binding, this cannot be undone. Are you sure?',
+                        buttons: Ext.Msg.YESNO,
+                        icon: Ext.Msg.QUESTION,
+                        callback: function(button)
+                        {
+                            if (button == 'yes')
+                            {
+                                // Ban the user.
+                                RequestManager.getInstance().request(
+                                    'Binding',
+                                    'delete',
+                                    {bindingId: _this.getCurrentBindingModel().get('bindingId')},
+                                    _this,
+                                    function()
+                                    {
+                                        Application.getInstance().viewport.closeTab();
+                                    }
+                                );
+                            }
+                        }
+                    });  
+                }
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        this.callParent();
+    },
+    
+    showDelete: function(enabled)
+    {
+        this.down("[name=deletebindingbutton]").setVisible(enabled);
+    },
+    
+    showModify: function(enabled)
+    {
+        this.down("[name=modifybindingbutton]").setVisible(enabled);
+    },
+    
+    getCurrentBindingModel: function()
+    {
+        return this.viewer.getBinding().getModel();
+    }
+});
+
+/*
  * Export form class.
  */
 
@@ -468,7 +552,9 @@ Ext.define('Ext.ux.WorkspacePanel', {
     
     onAuthenticationChange: function()
     {
-        var notesPermission = Authentication.getInstance().hasPermissionTo('manage-notebook');
+        var auth = Authentication.getInstance();
+        
+        var notesPermission = auth.hasPermissionTo('manage-notebook');
         if (notesPermission && !this.down('notespanel'))
         {
             this.insert(1, {
@@ -481,6 +567,40 @@ Ext.define('Ext.ux.WorkspacePanel', {
         else if (!notesPermission && this.down('notespanel'))
         {
             this.remove(this.down('notespanel'));
+        }
+        
+        var bindingUser = this.viewer.getBinding().getModel().get('userId');
+        var currentUser = Authentication.getInstance().getUserId();
+
+        // Only those who are allowed to change book info may delete bindings or modify those
+        // not uploaded by themselves.
+        var deletePermission = auth.hasPermissionTo('change-book-info')
+        // Own books can always be modified.
+        var modifyPermission = deletePermission || (bindingUser === currentUser);
+        
+        if (modifyPermission && !this.down('bindingadminpanel'))
+        {
+            this.add({
+                title: 'Administration',
+                xtype: 'bindingadminpanel',
+                viewer: this.viewer,
+                iconCls: 'notes-icon' // TODO
+            });
+        }
+        else if (!modifyPermission && this.down('bindingadminpanel'))
+        {
+            this.remove(this.down('bindingadminpanel'));
+        }
+        
+        if (deletePermission)
+        {
+            this.down('bindingadminpanel').showDelete(true);
+            this.down('bindingadminpanel').showModify(true);
+        }
+        else if (modifyPermission)
+        {
+            this.down('bindingadminpanel').showDelete(false);
+            this.down('bindingadminpanel').showModify(true);
         }
     }
 });

@@ -66,4 +66,5 @@ DomNode.prototype.getDom = function()
 DomNode.prototype.destroy = function()
 {
     this.dom.remove();
+    delete this.dom;
 }

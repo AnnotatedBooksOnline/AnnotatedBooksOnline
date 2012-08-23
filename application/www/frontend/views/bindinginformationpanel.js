@@ -59,51 +59,6 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
-            buttons: [{
-                xtype: 'button',
-                text: 'Modify binding',
-                name: 'modifybindingbutton',
-                handler: function()
-                {
-                    Application.getInstance().gotoTab(
-                        'upload', 
-                        [this.up('bindinginformationpanel').bindingModel.get('bindingId')], 
-                        true);
-                    this.up('viewerpanel').close();
-                }
-            },{
-                xtype: 'button',
-                text: 'Delete binding',
-                name: 'deletebindingbutton',
-                handler: function()
-                {
-                    // Shows a window to doublecheck if this is what the user wanted.
-                    // Deletes the binding afterwards.
-                    Ext.Msg.show({
-                        title: 'Are you sure?',
-                        msg: 'You are about to delete this binding, this can not be undone. Are you sure?',
-                        buttons: Ext.Msg.YESNO,
-                        icon: Ext.Msg.QUESTION,
-                        callback: function(button)
-                        {
-                            if (button == 'yes')
-                            {
-                                // Ban the user.
-                                RequestManager.getInstance().request(
-                                    'Binding',
-                                    'delete',
-                                    {bindingId: _this.bindingModel.get('bindingId')},
-                                    _this,
-                                    function()
-                                    {
-                                        Application.getInstance().viewport.closeTab();
-                                    }
-                                );
-                            }
-                        }
-                    });  
-                }
-            }],
             items: [{
                 xtype: 'grid',
                 name: 'grid',
@@ -149,45 +104,6 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         Ext.apply(this, defConfig);
         
         this.callParent();
-        
-        // Handle authentication changes.
-        Authentication.getInstance().getEventDispatcher().bind('modelchange', this, this.onAuthenticationChange);
-        
-        // Update the panel according to the current authentication.
-        this.onAuthenticationChange();
-    },
-    
-    destroy: function()
-    {
-        // Unsubscribe from authentication changes.
-        Authentication.getInstance().getEventDispatcher().unbind('modelchange', this, this.onAuthenticationChange);
-        
-        this.callParent();
-    },
-    
-    onAuthenticationChange: function()
-    {
-        if (Authentication.getInstance().hasPermissionTo('change-book-info'))
-        {
-            // Only those who are allowed to change book info may delete bindings or modify those
-            // not uploaded by themselves.
-            this.down("[name=modifybindingbutton]").setVisible(true);
-            this.down("[name=deletebindingbutton]").setVisible(true);
-        }
-        else
-        {
-            this.down("[name=deletebindingbutton]").setVisible(false);
-            
-            // If the current user owns this binding, display the 'modify binding' button.
-            var owner = this.bindingModel.get('userId');
-            var user = Authentication.getInstance().getUserId();
-            
-            this.down("[name=modifybindingbutton]").setVisible(owner == user);
-        }
-        
-        // TODO : Make the layout correctly expand.
-        
-        //this.up('[name=informationpanel]').doLayout();
     },
     
     afterRender: function()

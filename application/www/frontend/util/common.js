@@ -303,3 +303,11 @@ Ext.override(Ext.button.Button, {
         }
     }
 });
+
+/*
+ * Disable panel collapse animations by default.
+ */
+Ext.override(Ext.panel.Panel, {
+    animCollapse: false
+});
+
