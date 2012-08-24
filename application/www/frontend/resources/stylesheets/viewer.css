@@ -21,3 +21,13 @@
     border: 2px solid red;
 }
 
+.annotations-grid-selected .x-grid-cell-inner
+{
+    font-weight: bold;
+}
+
+.annotations-grid-over .x-grid-cell
+{
+    background-color: #FFFFFF !important;
+}
+

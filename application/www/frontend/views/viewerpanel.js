@@ -176,6 +176,19 @@ Ext.define('Ext.ux.ViewerPanel', {
                             _this.rotateRight();
                         }
                     }
+                }, '-', {
+                    iconCls: 'annotation-colors-icon',
+                    tooltip: 'Show annotation colors',
+                    overflowText: 'Show annotation colors',
+                    name: 'annotation-colors',
+                    enableToggle: true,
+                    pressed: true,
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.updateAnnotationColors();
+                        }
+                    }
                 }, '->', {
                     iconCls: 'drag-icon',
                     tooltip: 'Drag',
@@ -368,6 +381,16 @@ Ext.define('Ext.ux.ViewerPanel', {
         // Change tab title on page change.
         this.getEventDispatcher().bind('pagechange', this, this.changeTabTitle);
         
+        var store = this.annotations.getStore();
+        store.on('load', function()
+        {
+            this.updateAnnotationColors();
+        }, this);
+        store.on('add', function()
+        {
+            this.updateAnnotationColors();
+        }, this);
+        
         // Finally, we can go to the indicated page.
         this.gotoPage(this.pageNumber);
     },
@@ -463,6 +486,16 @@ Ext.define('Ext.ux.ViewerPanel', {
         if (!visible && (this.tool !== 'view'))
         {
             this.setTool('view');
+        }
+    },
+    
+    updateAnnotationColors: function()
+    {
+        var show = this.down('[name=annotation-colors]').pressed;
+        var overlays = this.viewport.overlays;
+        for (var i = 0; i < overlays.length; i++)
+        {
+            overlays[i].setInvertHighlight(show);
         }
     },
     
