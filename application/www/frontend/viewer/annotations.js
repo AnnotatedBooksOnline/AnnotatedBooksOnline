@@ -389,23 +389,23 @@ Annotations.prototype.getStore = function()
 Annotations.prototype.initialize = function()
 {
     // Set available colors.
-    this.allColors = [
-        '#DD0000', // Red.
-        '#00DD00', // Green.
-        '#0000DD', // Blue.
-        '#00DDDD', // Cyan.
-        '#DD00DD', // Magenta.
-        '#EEEE00', // Yellow.
-        '#000000', // Black.
-        '#FF8C00', // Orange.
-        '#8B0000', // Dark red.
-        '#8A2BE2', // Purple.
-        '#8B4513', // Brown.
-        '#FF4500'  // Red orange.
-    ];
-    
-    // Shuffle array.
-    this.allColors.sort(function() { return 0.5 - Math.random(); });
+    var brightColors = [
+        '#FF0000',
+        '#00FF00',
+        '#0000FF',
+        '#FFFF00',
+        '#00FFFF',
+        '#FF00FF'
+    ].sort(function() { return 0.5 - Math.random(); });
+    var darkColors = [
+        '#550000',
+        '#005500',
+        '#000055',
+        '#555500',
+        '#005555',
+        '#550055'
+    ].sort(function() { return 0.5 - Math.random(); });
+    this.allColors = ['#777777'].concat(darkColors, brightColors);
     
     // Copy colors.
     this.availableColors = this.allColors.slice();
