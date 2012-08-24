@@ -55,7 +55,10 @@ DomNode.prototype.remove = function()
 {
     var element = this.dom.get(0);
     
-    element.parentNode.removeChild(element);
+    if (element.parentNode !== undefined)
+    {
+        element.parentNode.removeChild(element);
+    }
 }
 
 DomNode.prototype.getDom = function()
@@ -66,5 +69,4 @@ DomNode.prototype.getDom = function()
 DomNode.prototype.destroy = function()
 {
     this.dom.remove();
-    delete this.dom;
 }

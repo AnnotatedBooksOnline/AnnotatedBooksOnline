@@ -240,6 +240,54 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         
         // Handle authentication model changes.
         Authentication.getInstance().getEventDispatcher().bind('modelchange', this, this.onAuthenticationChange);
+        
+        // Prevent this viewer panel from being closed when there are dirty annotations.
+        this.up('viewerpanel').on('beforeclose', function()
+        {
+                        // Handle unsaved changes.
+            if (this.annotationsAreDirty() && this.forceClose !== true)
+            {
+                var _this = this;
+                var changeInfo = this.getChangeInfo();
+                // Ask user whether to save changes.
+                Ext.Msg.show({
+                    buttons: Ext.Msg.YESNOCANCEL,
+                    closable: false,
+                    icon: Ext.Msg.QUESTION,
+                    title: 'Save changes?',
+                    msg: 'There are unsaved changes (' + changeInfo + ').<br/>' +
+                    ' Do you want to save these changes? Select Yes to make your ' +
+                    'changes visible to all visitors, select No to close this ' +
+                    'tab without saving. Select Cancel to ' +
+                    'continue editing.', 
+                    fn: function(button)
+                    {
+                        if (button === 'yes')
+                        {
+                            // Save changes, then close the tab.
+                            _this.saveChanges(true);
+                            _this.forceClose = true;
+                            setTimeout(function()
+                            {
+                                _this.up('viewerpanel').close();
+                            }, 100);
+                        }
+                        else if (button === 'no')
+                        {
+                            // Just close the tab.
+                            _this.forceClose = true;
+                            _this.up('viewerpanel').close();
+                        }
+                        else
+                        {
+                            // Do nothing, stay in edit mode.
+                        }
+                    }
+                });
+                return false;
+            }
+            return true;
+        }, this);
     },
     
     destroy: function()
@@ -439,7 +487,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             };
             
             // Handle unsaved changes.
-            var changeInfo = this.getChangeInfo();
             if (this.annotationsAreDirty())
             {
                 if (force)
@@ -450,6 +497,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 }
                 else
                 {
+                    var changeInfo = this.getChangeInfo();
                     // Ask user whether to save changes.
                     Ext.Msg.show({
                         buttons: Ext.Msg.YESNOCANCEL,
@@ -478,7 +526,6 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                             else
                             {
                                 // Do nothing, stay in edit mode.
-                                toViewMode = false;
                             }
                         }
                     });
