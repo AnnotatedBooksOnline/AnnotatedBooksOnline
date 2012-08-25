@@ -21,6 +21,7 @@ require_once 'framework/util/log.php';
 require_once 'framework/database/database.php';
 require_once 'models/scan/scan.php';
 require_once 'models/upload/upload.php';
+require_once 'util/mailer.php';
 
 /**
  * An exception thrown when the tile pyramid builder fails for some reason.
@@ -216,7 +217,7 @@ class TilePyramidBuilder extends Singleton
                 ->where('status = :status')
                 ->execute(array('status' => Scan::STATUS_PROCESSING));
     }
-    
+        
     /**
      * First checks whether the queue is empty and, if so, fills it with new scans.
      * 
@@ -284,6 +285,33 @@ class TilePyramidBuilder extends Singleton
                 $upload->delete();
                 
                 Log::info('Succesfully processed scan with id %d.', $scanid);
+                
+                // Now check whether this was the last scan that has been processed.
+                $resultSet = Query::select('scanId')->from('Scans')
+                                                    ->where('status <> :status')
+                                                    ->execute(array('status' => Scan::STATUS_PROCESSED),
+                                                              array('status' => 'int'));
+                
+                // If that resultset is empty, it means no more scans from the same binding still
+                // need processing.
+                if($resultSet->getAmount() == 0)
+                {
+                    // The binding is done! 
+                    $binding = new Binding($scan->getBindingId());
+                    Log::info('Fully processed binding with ID %d.', $binding->getBindingId());
+                    
+                    // The uploader can now be informed by e-mail.
+                    try
+                    {
+                        Mailer::sendUploadProcessedMail($binding, true);
+                    }
+                    catch(MailerException $ex)
+                    {
+                        // Unfortunately we can't mail and inform the uploader.
+                        Log::error('Failed mailing the uploader of binding %d.', $binding->getBindingId());
+                    }
+                }
+                
             }
             catch (Exception $e)
             {
@@ -291,57 +319,23 @@ class TilePyramidBuilder extends Singleton
                 $scan->setStatus(Scan::STATUS_ERROR);
                 $scan->save();
                 
+                Log::error('Failed processing a the scan with ID %d.', $scan->getScanId());
+                
+                // Send an e-mail informing the uploader.
+                try
+                {
+                    Mailer::sendUploadProcessedMail(new Binding($scan->getBindingId()), false);
+                }
+                catch(MailerException $ex)
+                {
+                    // Unfortunately we can't mail and inform the uploader.
+                    Log::error('Failed mailing the uploader of binding %d.', $scan->getBindingId());
+                }
+                
                 throw $e;
             }
         }
     }
     
-    /**
-     * Continuously keep running the pyramid builder.
-     * 
-     * NOTE: This method resolves inconsistencies every 20 rounds, so make sure only a single 
-     * thread is executing this method at a time.
-     * 
-     * @param int $iterationPause The timeout in seconds after each iteration.
-     */
-/*    public function runBuilder($iterationPause = 5)
-    {
-        $round = 0;
-        
-        while (true)
-        {
-            // Resolve inconsistencies every 200 rounds.
-            if ($round >= 200)
-            {
-                $this->resolveInconsistencies();
-                $round = 0;
-            }
-            
-            try
-            {
-                // Do a single iteration.
-                $this->doIteration();
-            }
-            catch (TilePyramidBuilderException $e)
-            {
-                // Log builder error. Probably a mistake on the part of the user.
-                Log::warn("Pyramid builder error:\n%s", $e->getMessage());
-            }
-            catch (Exception $e)
-            {
-                // Log other exceptions.
-                Log::error("Miscelanous error while processing scans:\n%s", $e);
-            }
-            
-            ++$round;
-            
-            // Timeout.
-            if (sleep($iterationPause) === false)
-            {
-                Log::warn('Builder sleep() was interrupted.');
-            }
-        }
-
-    }*/
 }
 

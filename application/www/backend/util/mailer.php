@@ -69,11 +69,18 @@ class Mailer
      */
     private static function insertInfo($message, $user, $link = null)
     {
-        $projectname = Setting::getSetting('project-title');
-        return str_replace(
-                    array('[PROJECTNAME]', '[USERNAME]', '[FIRSTNAME]', '[LASTNAME]', '[LINK]'),
-                    array($projectname, $user->getUsername(), $user->getFirstName(), $user->getLastName(), $link),
-                    $message);
+        // Fetch settings to fill in.
+        $replacements = array(
+                          '[PROJECTNAME]' => Setting::getSetting('project-title'),
+                          '[CONTACT]'     => Setting::getSetting('contact-mail-address'),
+                          '[USERNAME]'    => $user->getUsername(),
+                          '[FIRSTNAME]'   => $user->getFirstName(),
+                          '[LASTNAME]'    => $user->getLastName(), 
+                          '[LINK]'        => $link
+                        );
+                            
+        // Do the replacements.
+        return str_replace(array_keys($replacements), array_values($replacements), $message);
     }
     
     
@@ -171,6 +178,56 @@ class Mailer
         // Now send the e-mail.
         Log::info("Sending activation code to %s. (password forgotten)\nContents: %s.", $user->getEmail(), $message);
         self::sendMail($recipient, $subject, $message);
-    }    
+    }
+
+    /**
+     * Sends an e-mail to an uploader that his or her binding has been processed by the tile builder 
+     * and is now searchable (or not, in case something went wrong). 
+     * 
+     * @param Binding $bindingId The binding that has been processed. Should be loaded.
+     * @param bool    $success   Whether processing was succesfull. 
+     * 
+     * @throws MailerException When something goes wrong, like the e-mail not being accepted for
+     *                          delivery. 
+     */
+    public static function sendUploadProcessedMail($binding, $success)
+    {
+        // Get the user that uploaded this binding.
+        $user = new User($binding->getUserId());
+        
+        // Fetch the recipient e-mail.
+        $userMail = $user->getEmail();
+        
+        // Determine subject, message and link.
+        $subject;
+        $message;
+        $link;
+        if($success)
+        {
+            // Success mail.
+            $subject = Setting::getSetting('upload-ok-mail-subject');
+            $message = Setting::getSetting('upload-ok-mail');
+            
+            // Format the link to this binding.
+            $link = Configuration::getBaseURL() . '#binding-' . ((int) $binding->getBindingId());
+        }
+        else
+       {
+            // Failure mail.
+           $subject = Setting::getSetting('upload-ok-mail-subject');
+           $message = Setting::getSetting('upload-ok-mail');
+           
+           // No link needs to be included.
+           $link = null;
+           
+           // TODO: also notify the administrator when this happens?
+        }
+        
+        // Replace the tags in the mail message.
+        $message = self::insertInfo($message, $user, $link);
+        
+        // Send the mail.
+        self::sendMail($recipient, $subject, $message);
+    }
 }
 
