@@ -8,6 +8,25 @@
  * Helper functions.
  */
 
+// Brightens (to white) a 6-digit hex formatted color by the given factor <= 1.
+function brighten(color, factor)
+{
+    var result = '#';
+    var chans = /^#?(\w{2})(\w{2})(\w{2})$/.exec(color);
+    for (var i = 1; i <= 3; i++)
+    {
+        var c = parseInt(chans[i], 16);
+        c = Math.round((1 - factor) * c + factor * 255);
+        c = c.toString(16);
+        if (c.length == 1)
+        {
+            c = '0' + c;
+        }
+        result += c;
+    }
+    return result;
+};
+
 // Creates a point.
 function createPoint(x, y)
 {

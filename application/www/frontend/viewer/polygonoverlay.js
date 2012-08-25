@@ -207,6 +207,14 @@ PolygonOverlay.prototype.getMode = function()
     return this.mode;
 }
 
+PolygonOverlay.prototype.setInvertHighlight = function(invert)
+{
+    for (var i = 0; i < this.polygons.length; i++)
+    {
+        this.polygons[i].setInvertHighlight(invert);
+    }
+}
+
 /*
  * Protected methods.
  */

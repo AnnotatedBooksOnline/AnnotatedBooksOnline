@@ -27,6 +27,7 @@ Polygon.prototype.cornersVisible;
 
 Polygon.prototype.highlightColor;
 Polygon.prototype.highlighted;
+Polygon.prototype.invertHighlight;
 
 Polygon.prototype.content;
 Polygon.prototype.lines;
@@ -58,8 +59,9 @@ Polygon.prototype.constructor = function(overlay, vertices)
     this.contentVisible = true;
     this.cornersVisible = false;
     
-    this.highlightColor = '#0000FF';
-    this.highlighted    = 0;
+    this.highlightColor  = '#0000FF';
+    this.highlighted     = 0;
+    this.invertHighlight = false;
     
     // Initialize.
     this.initialize();
@@ -334,7 +336,13 @@ Polygon.prototype.setHighlightColor = function(color)
 {
     this.highlightColor = color;
     
-    this.content.setAttributes({fill: color});
+    this.content.setAttributes({fill: brighten(color, 0.6)});
+}
+
+Polygon.prototype.setInvertHighlight = function(invert)
+{
+    this.invertHighlight = invert;
+    this.updateHighlight();
 }
 
 Polygon.prototype.highlight = function()
@@ -342,13 +350,7 @@ Polygon.prototype.highlight = function()
     // Stack highlightings.
     ++this.highlighted;
     
-    if (this.highlighted === 1)
-    {
-        // Highlight.
-        this.content.setAttributes({
-            opacity: .2
-        }, true);
-    }
+    this.updateHighlight();
 }
 
 Polygon.prototype.unhighlight = function()
@@ -356,14 +358,26 @@ Polygon.prototype.unhighlight = function()
     // Stack highlightings.
     --this.highlighted;
     
+    this.updateHighlight();
+}
+
+Polygon.prototype.updateHighlight = function()
+{
     if (this.highlighted <= 0)
     {
         // Unhighlight.
         this.content.setAttributes({
-            opacity: 0
+            opacity: this.invertHighlight ? 0.5 : 0
         }, true);
         
         this.highlighted = 0;
+    }
+    else if (this.highlighted === 1)
+    {
+        // Highlight.
+        this.content.setAttributes({
+            opacity: this.invertHighlight ? 0 : 0.5
+        }, true);
     }
 }
 

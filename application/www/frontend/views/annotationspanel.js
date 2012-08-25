@@ -672,7 +672,9 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                         
                         _this.annotations.unhighlightAnnotation(annotation);
                     }
-                }
+                },
+                overItemCls: 'annotations-grid-over',
+                selectedItemCls: 'annotations-grid-selected'
             },
             hideHeaders: true,
             store: store,
@@ -722,13 +724,13 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         eventDispatcher.bind('hover', this,
             function(event, annotations, annotation)
             {
-                this.getView().addRowCls(annotation.getModel(), 'x-grid-row-over');
+                this.getView().addRowCls(annotation.getModel(), this.getView().overItemCls);
             });
         
         eventDispatcher.bind('unhover', this,
             function(event, annotations, annotation)
             {
-                this.getView().removeRowCls(annotation.getModel(), 'x-grid-row-over');
+                this.getView().removeRowCls(annotation.getModel(), this.getView().overItemCls);
             });
         
         var _this = this;
@@ -748,20 +750,45 @@ Ext.define('Ext.ux.AnnotationsGrid', {
     {
         // Set color column.
         var _this = this;
-        var colorColumn = {
-            dataIndex: 'color',
-            renderer: function(color, metadata, model)
+        
+        // Adds a CSS class if it does not yet exist, otherwise does nothing.
+        var addCSSclass = function(className, classRule)
+        {
+            var rules = document.styleSheets[0].cssRules || document.styleSheets[0].rules;
+            for (var i = 0; i < rules.length; i++)
             {
-                return _this.renderColor(color, metadata, model);
-            },
-            width: 10
+                if (rules[i].selectorText == '.' + className)
+                {
+                    return;
+                }
+            }
+            if (document.all)
+            {
+                document.styleSheets[0].addRule("." + className, classRule)
+            }
+            else if (document.getElementById)
+            {
+                document.styleSheets[0].insertRule("." + className + " { " + classRule + " }", 0);
+            }
         };
+        
+        var colorClass = function(model) // TODO: optimize by means of caching.
+        {
+            var color = _this.annotations.getAnnotationColor(
+                _this.annotations.getAnnotationByModel(model)
+            );
+            var cls = 'color-' + color.substr(1) + '-bg';
+            color = brighten(color, 0.8);
+            addCSSclass(cls, 'background-color: ' + color + ' !important;');
+            return cls;
+        }
         
         // Set language column.
         var languageColumn = {
             dataIndex: this.language,
-            renderer: function(text, metadata)
+            renderer: function(text, metadata, model)
             {
+                metadata.tdCls = colorClass(model);
                 return _this.renderLanguage(text, metadata);
             },
             flex: 1
@@ -770,10 +797,12 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         var editButtonColumn = {
             dataIndex: 'annotationId',
             align: 'right',
-            renderer: function(annotationId, metaData, model)
+            renderer: function(annotationId, metadata, model)
             {
                 // Get component id.
                 var id = 'button_' + Ext.id();
+                
+                metadata.tdCls = colorClass(model);
                 
                 // Render button delayed.
                 var _this = this;
@@ -812,24 +841,12 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         
         if (this.mode === 'edit')
         {
-            return [colorColumn, languageColumn, editButtonColumn];
+            return [languageColumn, editButtonColumn];
         }
         else
         {
-            return [colorColumn, languageColumn];
+            return [languageColumn];
         }
-    },
-    
-    renderColor: function(color, metadata, model)
-    {
-        var color = this.annotations.getAnnotationColor(
-            this.annotations.getAnnotationByModel(model)
-        );
-        
-        metadata.style = 'background-color: ' + color;
-        metadata.tdCls = 'grid-valign-middle';
-        
-        return '';
     },
     
     renderLanguage: function(text, metadata)
