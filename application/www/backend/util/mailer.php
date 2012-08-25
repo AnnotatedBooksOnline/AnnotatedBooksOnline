@@ -209,13 +209,13 @@ class Mailer
             $message = Setting::getSetting('upload-ok-mail');
             
             // Format the link to this binding.
-            $link = Configuration::getBaseURL() . '#binding-' . ((int) $binding->getBindingId());
+            $link = null; //TODO: Configuration::getBaseURL() . '#binding-' . ((int) $binding->getBindingId());
         }
         else
        {
             // Failure mail.
-           $subject = Setting::getSetting('upload-ok-mail-subject');
-           $message = Setting::getSetting('upload-ok-mail');
+           $subject = Setting::getSetting('upload-fail-mail-subject');
+           $message = Setting::getSetting('upload-fail-mail');
            
            // No link needs to be included.
            $link = null;
@@ -227,7 +227,7 @@ class Mailer
         $message = self::insertInfo($message, $user, $link);
         
         // Send the mail.
-        self::sendMail($recipient, $subject, $message);
+        self::sendMail($userMail, $subject, $message);
     }
 }
 

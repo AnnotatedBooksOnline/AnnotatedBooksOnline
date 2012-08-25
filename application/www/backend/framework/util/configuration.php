@@ -42,9 +42,9 @@ class Configuration extends Singleton
         //$this->addSettings('framework/config/default.ini');
         //$this->addSettings('config/config.ini');
         
-        // Read settings from the file in the configPath.
+        // Read settings from the file at configPath.
         global $configPath;
-        $this->addSettings("$configPath/config.ini");
+        $this->addSettings($configPath);
     }
     
     /**

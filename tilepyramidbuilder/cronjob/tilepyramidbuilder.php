@@ -20,6 +20,10 @@ $backendPath = $argv[1];
 chdir($backendPath);
 set_include_path($backendPath);
 
+// Set the path of the configuration file, this is relative to the backend/working directory.
+global $configPath;
+$configPath = "../../config/config.ini";
+
 date_default_timezone_set('UTC');
 
 // Include tile pyramid builder.

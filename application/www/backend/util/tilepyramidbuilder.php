@@ -20,6 +20,7 @@ require_once 'framework/util/configuration.php';
 require_once 'framework/util/log.php';
 require_once 'framework/database/database.php';
 require_once 'models/scan/scan.php';
+require_once 'models/binding/binding.php';
 require_once 'models/upload/upload.php';
 require_once 'util/mailer.php';
 
@@ -281,16 +282,16 @@ class TilePyramidBuilder extends Singleton
                 $scan->setUploadId(null);
                 $scan->save();
                 
-                // Delete the upload associated with the scan.
-                $upload->delete();
-                
                 Log::info('Succesfully processed scan with id %d.', $scanid);
                 
                 // Now check whether this was the last scan that has been processed.
                 $resultSet = Query::select('scanId')->from('Scans')
+                                                    ->where('bindingId = :bindingId')
                                                     ->where('status <> :status')
-                                                    ->execute(array('status' => Scan::STATUS_PROCESSED),
-                                                              array('status' => 'int'));
+                                                    ->execute(array('status' => Scan::STATUS_PROCESSED,
+                                                                     'bindingId' => $scan->getBindingId()),
+                                                              array('status' => 'int',
+                                                                    'bindingId' => 'int'));
                 
                 // If that resultset is empty, it means no more scans from the same binding still
                 // need processing.
@@ -312,6 +313,8 @@ class TilePyramidBuilder extends Singleton
                     }
                 }
                 
+                // The upload associated with the scan can now be deleted.
+                $upload->delete();
             }
             catch (Exception $e)
             {

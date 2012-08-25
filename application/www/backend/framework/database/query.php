@@ -625,6 +625,7 @@ class Query
         {
             // The operators, note that order is important for the regular expression to match.
             $operators = array(
+                '<>',
                 '>=',
                 '<=',
                 '!=',

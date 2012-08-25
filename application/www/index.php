@@ -19,7 +19,7 @@ $backendPath = dirname(__FILE__) . '/backend/';
 
 // The directory containing the configuration file lies one above www.
 global $configPath;
-$configPath = dirname(__FILE__) . '/../config/';
+$configPath = dirname(__FILE__) . '/../config/config.ini';
 
 chdir($backendPath);
 set_include_path($backendPath);
