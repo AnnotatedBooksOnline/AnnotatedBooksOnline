@@ -162,9 +162,9 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     RequestManager.getInstance().request('BindingUpload', 'getBindingStatus', [], this,
                         function(result)
                         {
-                    		if (result['status'] == 0)
+                            if (result['status'] == 0)
                             {
-                    			Application.getInstance().gotoTabUnique('reorderscan', [result['bindingId']], true);
+                                Application.getInstance().gotoTabUnique('reorderscan', [result['bindingId']], true);
                             }
                             else if (result['status'] == 1)
                             {
@@ -192,10 +192,13 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     Application.getInstance().gotoTab('info', [], true);
                 }
             },
-            name: 'info'
+            name: 'info',
+            // Depend visiblity of info button on setting.
+            hidden: getCachedSetting('info-button') == "0"
         },{
             xtype: 'tbseparator',
-            cls: 'menu-separator'
+            cls: 'menu-separator',
+            hidden: getCachedSetting('info-button') == "0"
         },{
             text: 'Users',
             iconCls: 'users-icon',
@@ -321,7 +324,18 @@ Ext.define('Ext.ux.ApplicationViewport', {
             this.updateUploadButtonTitle();
         }
         
-        this.openTab('welcome', [], true);
+        // Determine whether to start with the welcome tab or the search tab. 
+        var firstTab;
+        if(getCachedSetting('show-welcome-page') == '1')
+        {
+            firstTab = 'welcome';
+        }
+        else
+        {
+            firstTab = 'search';
+        }
+        
+        this.openTab(firstTab, [], true);
     },
     
     correctVmlSupport: function()
