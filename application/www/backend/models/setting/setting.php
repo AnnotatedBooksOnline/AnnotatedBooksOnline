@@ -98,6 +98,41 @@ class Setting extends Entity
     }
     
     /**
+     * Returns an associative array of all settings and their values. 
+     * 
+     * @param bool $onlyVisible Whether only visible settings should be included in the result.
+     * 
+     * @return array Mapping of setting names to their values.
+     */
+    public static function getSettings($onlyVisible = false)
+    {
+        // Build query.
+        $query = Query::select('settingName', 'settingValue')->from('Settings');
+        $params = array();
+        $types = array();
+        
+        // Restrict to visible ones if neccessary.
+        if($onlyVisible)
+        {
+            $query->where('visible = :visible');
+            $params['visible'] = 1;
+            $types['visible'] = 'int';
+        }
+        
+        // Iterate over the resultset and gather settings.
+        $settings = array();
+        $resultSet = $query->execute($params, $types);
+        
+        foreach($resultSet as $row)
+        {
+            $settings[$row->getValue('settingName')] = $row->getValue('settingValue');
+        }
+        
+        // Return the settings.
+        return $settings;
+    }
+    
+    /**
      * Get the name of the corresponding table.
      */
     public static function getTableName()

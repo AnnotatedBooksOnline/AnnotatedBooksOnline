@@ -20,23 +20,18 @@ Ext.define('Ext.ux.Welcome', {
         
         this.callParent();
         
-        RequestManager.getInstance().request('Setting', 'getSetting', {setting: 'welcome-page'}, this,
-            function(textPage)
-            {
-                var text = {
-                    xtype: 'container',
-                    items: {
-                        xtype: 'panel',
-                        border: false,
-                        flex: 1,
-                        width: 750,
-                        cls: 'plaintext',
-                        html: textPage
-                    }
-                };
-                
-                this.insert(this.items.length, [text]);
-            }
-        );
+        var text = {
+                xtype: 'container',
+                items: {
+                    xtype: 'panel',    
+                    border: false,
+                    flex: 1,
+                    width: 750,
+                    cls: 'plaintext',
+                    html: getCachedSetting('welcome-page')
+                }
+            };
+            
+        this.insert(this.items.length, [text]);
     }
 });

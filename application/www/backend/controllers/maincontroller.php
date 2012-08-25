@@ -29,7 +29,7 @@ class MainController extends Controller
      * Loads index page.
      */
     public function actionIndex($data)
-    {
+    {        
         // Get modification date
         $modified = filemtime('../frontend/main.html');
         
@@ -65,6 +65,10 @@ class MainController extends Controller
         // Insert title.
         $content = str_replace('[TITLE]', Setting::getSetting('project-title'), $content);
         
+        // Insert current public settings.
+        $settings = json_encode(Setting::getSettings(true));
+        $content = str_replace('[SETTINGS]', $settings, $content);
+        
         // Send headers.
         $this->sendCachingHeaders(strlen($content), 'text/html', $modified);
         
@@ -75,7 +79,7 @@ class MainController extends Controller
      * Loads Javascript.
      */
     public function actionScript($data)
-    {
+    {        
         // Fetch Javascript files.
         $files = $this->getJavascriptFilenames();
         
