@@ -249,19 +249,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 items: [{
                     xtype: 'container',
                     height: 87,
-                    html: '<h1>' + escape(document.title) + '</h1><div class="version">#COLLABVERSION#</div>'
-                        + '<div style="right: 0px; top: 20px; position: absolute;">' 
-                        + '<a href="http://www.uu.nl/en" target="_blank" title="Go to the website of Utrecht University">'
-                        + '<img src="frontend/resources/images/uu-small.png"/></a> '
-                        + '<a href="http://www.english.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam">'
-                        + '<img src="frontend/resources/images/uva-small.png"/></a> '
-                        + '<a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University">'
-                        + '<img src="frontend/resources/images/princeton-small.png"/></a> '
-                        + '<a href="http://www.ugent.be/en" target="_blank" title="Go to the website of Ghent University">'
-                        + '<img src="frontend/resources/images/ugent-small.png"/></a> '
-                        + '<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL">'
-                        + '<img src="frontend/resources/images/cell-small.png"/></a>'
-                        + '</div>'
+                    html: '<h1>' + escape(document.title)
+                          + '</h1><div class="version">#COLLABVERSION#</div>'
                 },{
                     xtype: 'container',
                     defaults: {
@@ -898,3 +887,4 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }
     }
 });
+
