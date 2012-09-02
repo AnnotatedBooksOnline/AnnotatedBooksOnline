@@ -17,6 +17,7 @@
 require_once 'controllers/controllerbase.php';
 require_once 'util/authentication.php';
 require_once 'models/annotation/annotationlist.php';
+require_once 'models/annotation/revisedannotation.php';
 
 /**
  * Annotation controller class.
@@ -65,7 +66,7 @@ class AnnotationController extends ControllerBase
         // Fetch annotations.
         $annotations = self::getArray($data, 'annotations');
         
-        // Do transation.
+        // Do transaction.
         return Database::getInstance()->doTransaction(
             function() use ($scanId, $userId, $annotations)
             {
@@ -120,6 +121,13 @@ class AnnotationController extends ControllerBase
                                 (!AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) ||
                                 (!AnnotationController::polygonEqual($values['polygon'], $polygon));
                         }
+                        
+                        if($setChanged)
+                        {
+                            // If a change has been made, store the current revision which is about
+                            // to be overwritten.
+                            RevisedAnnotation::addRevised($ann);
+                        }
                     }
                     else
                     {
@@ -131,6 +139,7 @@ class AnnotationController extends ControllerBase
                         $setChanged = true;
                     }
                     
+                                        
                     // Set its values.
                     $ann->setValues(
                         array(
