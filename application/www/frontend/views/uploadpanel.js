@@ -818,7 +818,7 @@ Ext.define('Ext.ux.UploadForm', {
         
         Ext.Msg.show({
             title: 'Are you sure?',
-            msg: "Modifying a binding will make the binding invisible" +
+            msg: "Modifying a binding will make the binding invisible " +
                 "for other users until you have completed the 'Modify Binding' wizard. " +
                 "You can at any time resume this wizard by pressing the 'Complete binding'" +
                 " button in the application menu. Are you sure you want to continue?",
