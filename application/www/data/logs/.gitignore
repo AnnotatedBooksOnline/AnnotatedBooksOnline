@@ -1,0 +1,3 @@
+# Prevents log files from being included in repository.
+
+*.log
