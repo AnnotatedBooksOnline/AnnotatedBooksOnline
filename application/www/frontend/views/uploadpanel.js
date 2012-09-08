@@ -848,7 +848,7 @@ Ext.define('Ext.ux.UploadForm', {
                 
                 Ext.Msg.show({
                     title: 'Are you sure?',
-                    msg: "Are you sure you want to add new scans to this binding",
+                    msg: "Are you sure you want to add new scans to this binding?",
                     buttons: Ext.Msg.YESNO,
                     icon: Ext.Msg.QUESTION,
                     callback: function(button)
