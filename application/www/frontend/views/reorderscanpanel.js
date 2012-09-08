@@ -91,145 +91,184 @@ Ext.define('Ext.ux.ReorderScanForm', {
     
     initComponent: function() 
     {       
-        // Default sorter for scans. It naturally orders scans by name in a case-insensitive manner. 
-        var scanSorter = {
-            sorterFn: function(scan1, scan2)
+        // Default comparator for new scans. It naturally orders scans by name in a case-insensitive manner. 
+        function scanCompareNatural(scan1, scan2)
+        {
+            // Get names.
+            var a = scan1.get('scanName');
+            var b = scan2.get('scanName');
+            
+            // Gives the alphabet position of characters between A and Z. Returns 0 for others.
+            function letterVal(x)
             {
-                // Get names.
-                var a = scan1.get('scanName');
-                var b = scan2.get('scanName');
-                
-                // Gives the alphabet position of characters between A and Z. Returns 0 for others.
-                function letterVal(x)
+                if(x >= 'A' && x <= 'Z')
                 {
-                    if(x >= 'A' && x <= 'Z')
+                    return x.charCodeAt(0) - 64;
+                }
+                else if(x >= 'a' && x <= 'z')
+                {
+                    return x.charCodeAt(0) - 96;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            
+            // Tests if a character is a digit.
+            function isDigit(x)
+            {
+                return x >= '0' && x <= '9';
+            }
+            
+            /*
+             * Iterate through the strings and compare characters in the following matter:
+             * 
+             * - Compare lower and upper case letters from the Latin alphabet on their position in that alphabet.
+             * - Digits go before letters. When encountering a digit in both strings, keep iterating until 
+             *   encounter the end or a non-digit and compare the resulting integers.
+             * - Bytes that do not represent ASCII digits or alphabetical characters go before those two and are
+             *   compared by value. This implies UTF8 sequences outside of ASCII are compared lexicographically.
+             */
+            var i = 0, j = 0;
+            for(; i < a.length && j < b.length; ++i, ++j)
+            {
+                var c1 = a[i];
+                var c2 = b[i];
+                
+                // If c1 == c2, they're considered equal either way.
+                if(c1 == c2)
+                {
+                    continue;
+                }
+                
+                var l1 = letterVal(c1);
+                var l2 = letterVal(c2);
+                
+                if(l1 != 0)
+                {
+                    if(l2 == 0)
                     {
-                        return x.charCodeAt(0) - 64;
-                    }
-                    else if(x >= 'a' && x <= 'z')
-                    {
-                        return x.charCodeAt(0) - 96;
+                        // Non-letters go before letters. Therefore a is considered higher.
+                        return 1;
                     }
                     else
                     {
-                        return 0;
+                        if(l1 != l2)
+                        {
+                            return l1 - l2;
+                        }
                     }
                 }
-                
-                // Tests if a character is a digit.
-                function isDigit(x)
+                else if(l2 != 0)
                 {
-                    return x >= '0' && x <= '9';
+                    return -1;
                 }
                 
-                /*
-                 * Iterate through the strings and compare characters in the following matter:
-                 * 
-                 * - Compare lower and upper case letters from the Latin alphabet on their position in that alphabet.
-                 * - Digits go before letters. When encountering a digit in both strings, keep iterating until 
-                 *   encounter the end or a non-digit and compare the resulting integers.
-                 * - Bytes that do not represent ASCII digits or alphabetical characters go before those two and are
-                 *   compared by value. This implies UTF8 sequences outside of ASCII are compared lexicographically.
-                 */
-                var i = 0, j = 0;
-                for(; i < a.length && j < b.length; ++i, ++j)
+                var d1 = isDigit(c1);
+                var d2 = isDigit(c2);
+                if(d1)
                 {
-                    var c1 = a[i];
-                    var c2 = b[i];
-                    
-                    // If c1 == c2, they're considered equal either way.
-                    if(c1 == c2)
+                    if(d2)
                     {
-                        continue;
-                    }
-                    
-                    var l1 = letterVal(c1);
-                    var l2 = letterVal(c2);
-                    
-                    if(l1 != 0)
-                    {
-                        if(l2 == 0)
+                        // Two digits, start comparing the whole integer.
+                        var n1 = c1;
+                        for(; i < a.length; ++i)
                         {
-                            // Non-letters go before letters. Therefore a is considered higher.
-                            return 1;
-                        }
-                        else
-                        {
-                            if(l1 != l2)
+                            if(isDigit(a[i]))
                             {
-                                return l1 - l2;
+                                n1 += a[i];
+                            }
+                            else
+                            {
+                                break;
                             }
                         }
-                    }
-                    else if(l2 != 0)
-                    {
-                        return -1;
-                    }
-                    
-                    var d1 = isDigit(c1);
-                    var d2 = isDigit(c2);
-                    if(d1)
-                    {
-                        if(d2)
+                        var n2 = c2;
+                        for(; j < b.length; ++j)
                         {
-                            // Two digits, start comparing the whole integer.
-                            var n1 = c1;
-                            for(; i < a.length; ++i)
+                            if(isDigit(b[j]))
                             {
-                                if(isDigit(a[i]))
-                                {
-                                    n1 += a[i];
-                                }
-                                else
-                                {
-                                    break;
-                                }
+                                n2 += b[j];
                             }
-                            var n2 = c2;
-                            for(; j < b.length; ++j)
+                            else
                             {
-                                if(isDigit(b[j]))
-                                {
-                                    n2 += b[j];
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            
-                            n1 = parseInt(n1);
-                            n2 = parseInt(n2);
-                            if(n1 != n2)
-                            {
-                                return n1 - n2;
+                                break;
                             }
                         }
-                        else
+                        
+                        n1 = parseInt(n1);
+                        n2 = parseInt(n2);
+                        if(n1 != n2)
                         {
-                            // The second character is no digit, so it should go first. Therefore a is higher.
-                            return 1;
+                            return n1 - n2;
                         }
                     }
-                    else if(d2)
+                    else
                     {
-                        return -1;
+                        // The second character is no digit, so it should go first. Therefore a is higher.
+                        return 1;
                     }
-                    
-                    // Neither are digit nor alphabetic, compare byte values (equality has already been tested).
-                    return c1 - c2;
+                }
+                else if(d2)
+                {
+                    return -1;
                 }
                 
-                // When reaching the end of either string, compare their lengths.
-                return a.length - b.length;
+                // Neither are digit nor alphabetic, compare byte values (equality has already been tested).
+                return c1 - c2;
+            }
+            
+            // When reaching the end of either string, compare their lengths.
+            return a.length - b.length;
+        }
+        
+        // This comparator orderns scans by page number.
+        function scanComparePage(scan1, scan2)
+        {
+            //if(scan1.get('page') <= 2) alert("" + scan1.get('scanName') + ": " + scan1.get('status'));
+            return scan1.get('page') - scan2.get('page');
+        }
+        
+        // This function precedes newly added scans before existing ones.
+        // New scans are ordened naturally; old scans are ordered on page number.
+        function scanCompareEditMode(scan1, scan2)
+        {
+            // See which scans are new.
+            var s1new = scan1.get('status') < 5;
+            var s2new = scan2.get('status') < 5;
+            
+            if(s1new && s2new)
+            {
+                return scanCompareNatural(scan1, scan2);
+            }
+            else if(!s1new && !s2new)
+            {
+                return scanComparePage(scan1, scan2);
+            }
+            else if(s1new)
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
             }
         }
         
         // Automatically sort the scans when editing a newly uploaded binding.
-        // Don't do this when editing an existing one.
-        var storeSorters = this.isExistingBinding ? [] : [scanSorter];
+        // When editing an existing binding, sort by page.
+        var storeSorter;
+        if(this.isExistingBinding)
+        {
+            storeSorter = [{sorterFn: scanCompareEditMode}];
+        }
+        else
+        {
+            storeSorter = [{sorterFn: scanCompareNatural}];
+        }
         
-        this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel', sorters: storeSorters});
+        this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel', sorters: storeSorter});
         this.store.filter('bindingId', this.bindingId);
         
         //this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
