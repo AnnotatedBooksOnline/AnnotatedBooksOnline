@@ -19,6 +19,7 @@ require_once 'models/scan/scanlist.php';
 require_once 'models/upload/upload.php';
 require_once 'models/binding/binding.php';
 require_once 'util/authentication.php';
+require_once 'models/scan/scan.php';
 
 /**
  * Scan controller class.
@@ -34,7 +35,7 @@ class ScanController extends ControllerBase
         $defaultSorters = array(
             array('column' => 'page', 'direction' => 'ASC')
         );
-        return $this->handleLoad($data, 'Scan', 'scanId', array(
+        $result = $this->handleLoad($data, 'Scan', 'scanId', array(
             'scanId',
             'bindingId',
             'page',
@@ -45,7 +46,11 @@ class ScanController extends ControllerBase
             'scanName',
             'bookTitle'
         ), $defaultSorters);
-        
+        foreach ($result['records'] as $id => $scan)
+        {
+            $result['records'][$id]['location'] = Scan::getLocation($scan['scanId']);
+        }
+        return $result;
     }
     
     /**

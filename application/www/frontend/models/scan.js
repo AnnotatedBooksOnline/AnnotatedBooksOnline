@@ -5,7 +5,7 @@
 Ext.define('Ext.ux.ScanModel', {
     extend: 'Ext.ux.ModelBase',
     idProperty: 'scanId',
-    fields: ['scanId', 'bindingId', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'scanName', 'bookTitle'],
+    fields: ['scanId', 'bindingId', 'page', 'status', 'width', 'height', 'zoomLevel', 'uploadId', 'scanName', 'bookTitle', 'location'],
     
     /*
     hasMany: {

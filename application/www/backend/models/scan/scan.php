@@ -200,6 +200,12 @@ class Scan extends Entity
         );
     }
     
+    public static function getLocation($scanId)
+    {
+        // TODO: find scan in path.
+        return '';
+    }
+    
     /**
      * Getters and setters.
      */

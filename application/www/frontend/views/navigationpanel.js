@@ -22,14 +22,15 @@ Ext.define('Ext.ux.ThumbnailView', {
                 i,
                 scan.get('page'),
                 scan.get('width'),
-                scan.get('height')
+                scan.get('height'),
+                scan.get('location'),
             ];
         }
         
         // Create store.
         var store = Ext.create('Ext.data.ArrayStore', {
             name: 'thumbnailStore',
-            fields: ['id', 'index', 'page', 'width', 'height'],
+            fields: ['id', 'index', 'page', 'width', 'height', 'location'],
             pageSize: 10,
             data: fields
         });
@@ -123,7 +124,8 @@ Ext.define('Ext.ux.ThumbnailView', {
                         el: nodeElems.get(0),
                         top: nodeElems.get(0).offsetTop,
                         bottom: nodeElems.get(0).offsetTop + records[0].get('height'),
-                        id: records[0].get('id')
+                        id: records[0].get('id'),
+                        location: records[0].get('location')
                     };
                     
                     var node0 = $(_this.nodes[0].el);
@@ -137,7 +139,8 @@ Ext.define('Ext.ux.ThumbnailView', {
                             el: nodeElems.get(i),
                             top: top,
                             bottom: top + height,
-                            id: records[i].get('id')
+                            id: records[i].get('id'),
+                            location: records[i].get('location')
                         };
                         top += height;
                     }
@@ -175,7 +178,7 @@ Ext.define('Ext.ux.ThumbnailView', {
                     var el = node.el.firstChild;
                     if (el.style.visibility != 'visible')
                     {
-                        el.firstChild.src = 'data/tiles/' + node.id + '/tile_0_0_0.jpg';
+                        el.firstChild.src = 'data/tiles/' + node.location + node.id + '/tile_0_0_0.jpg';
                         el.style.visibility = 'visible';
                     }
                 }
