@@ -554,13 +554,26 @@ Ext.define('Ext.ux.SelectBookForm', {
         // Send the changes to the database.
         var onSuccess = function(data)
         {
-        
+            // The success message depends on whether modifying an existing, or adding a new binding.
+            var message;
+            if(this.isExistingBinding)
+            {
+                message = 'The binding has been successfully modified. If you have uploaded any '
+                        + 'new scans, these will now be processed and an e-mail will be send to '
+                        + 'they are done. If not, the changed binding should be available '
+                        + 'immediately';
+            }
+            else
+            {
+                message = 'The data was succesfully added to the system. It will now be processed. An '
+                        + 'e-mail will be send to you when processing has finished and the binding has '
+                        + 'become available.';
+            }
+            
             Application.getInstance().viewport.updateUploadButtonTitle();
             Ext.Msg.show({
                 title: 'Success',
-                msg: 'The data was succesfully added to the system. It will now be processed. An '
-                   + 'e-mail will be send to you when processing has finished and the binding has '
-                   + 'become available.',
+                msg: message,
                 buttons: Ext.Msg.OK
             }); 
             this.close();
