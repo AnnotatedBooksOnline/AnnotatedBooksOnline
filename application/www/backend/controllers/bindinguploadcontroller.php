@@ -60,7 +60,8 @@ class BindingUploadController extends Controller
         // Retrieve contents of record.
         $inputScans     = self::getArray($data, 'scans');
         $inputBinding   = self::getArray($data, 'binding');
-        $inputBooks     = self::getArray($data,'books');
+        $inputBooks     = self::getArray($data, 'books');
+        $safe           = self::getBoolean($data, 'safe');
         $inputBindingId = self::getInteger($inputBinding, 'bindingId');
         
         // Find the name of the library the binding belongs to.
@@ -69,9 +70,10 @@ class BindingUploadController extends Controller
         
         // Load an existing binding or create a new binding if no existing binding is provided.
         $binding;
-        if ($inputBindingId == -1)
+        if ($inputBindingId == -1 && !$safe)
         {
             $binding = new Binding();
+            $binding->setUserId(Authentication::getInstance()->getUserId());
         }
         else 
         {
@@ -92,17 +94,25 @@ class BindingUploadController extends Controller
         // Fill the binding attributes.
         $binding->setSummary(self::getString($inputBinding, 'summary'));
         $binding->setSignature($signature);
-        $binding->setStatus(Binding::STATUS_UPLOADED);
-        $binding->setUserId(Authentication::getInstance()->getUserId());
         
         // Save the books.
         $this->createLibrary($libraryName, $binding);
 
-        // Save the books.
-        $this->createBooks($inputBooks, $binding);
-
-        // Save the scans.
-        $this->createScans($inputScans, $binding);
+        if (!$safe)
+        {
+            // Save the books.
+            $this->createBooks($inputBooks, $binding, false);
+        
+            // Save the scans.
+            $this->createScans($inputScans, $binding);
+            
+            $binding->setStatus(Binding::STATUS_UPLOADED);
+        }
+        else
+        {
+            // Update the books.
+            $this->createBooks($inputBooks, $binding, true);
+        }
 
         // Save the provenances.
         $this->createProvenances($inputBinding, $binding);
@@ -148,17 +158,20 @@ class BindingUploadController extends Controller
     /**
      * Creates all the binding's books.
      */
-    private function createBooks($inputBooks, $binding)
+    private function createBooks($inputBooks, $binding, $safe = false)
     {
-        // Mark all books for deletion temporarily. This flag will be restored for some books later.
-        $binding->getBookList()->markAllAsDeleted(true);
+        if (!$safe)
+        {
+            // Mark all books for deletion temporarily. This flag will be restored for some books later.
+            $binding->getBookList()->markAllAsDeleted(true);
+        }
         
         // Iterate over all books in the input.
         foreach ($inputBooks as $inputBook)
         {
             // Load an existing book or create a new book if no existing binding is provided.
             $inputBookId = self::getInteger($inputBook, 'bookId');
-            if ($inputBookId == -1) 
+            if ($inputBookId == -1 && !$safe) 
             {
                 $book = new Book();
             }
@@ -171,6 +184,8 @@ class BindingUploadController extends Controller
                     throw new ControllerException('invalid-book-id-provided');
                 }
             }
+            
+            $book->loadDetails();
             
             // Fill the book attributes with information from the request.
             $book->setTitle(self::getString($inputBook, 'title'));
@@ -187,12 +202,15 @@ class BindingUploadController extends Controller
             // Create the book languages.
             $this->createBookLanguages($inputBook, $book);
             
-            // Markt the book as updated so it will be updated or inserted into the database.
+            // Marks the book as updated so it will be updated or inserted into the database.
             $book->setMarkedAsUpdated(true);
-            $book->setMarkedAsDeleted(false);
-            
-            // Add the book to the binding.
-            $binding->getBookList()->add($book);
+            if (!$safe)
+            {
+                $book->setMarkedAsDeleted(false);
+                
+                // Add the book to the binding.
+                $binding->getBookList()->add($book);
+            }
         }
     }
     

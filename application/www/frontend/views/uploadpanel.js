@@ -400,6 +400,7 @@ Ext.define('Ext.ux.BookFieldset', {
                     disabled: true,
                     width: 140,
                     margin: '5 0 10 0',
+                    hidden: this.fixedBook === true,
                     handler: function()
                     {
                         _this.up('booksfieldset').checkBooks(true);
@@ -487,6 +488,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
                 text: 'Add book',
                 name: 'addbook',
                 iconCls: 'add-book-icon',
+                hidden: this.fixedBooks === true,
                 width: 140,
                 margin: '0 0 10 0',
                 handler: function()
@@ -505,7 +507,7 @@ Ext.define('Ext.ux.BooksFieldSet', {
         if (this.hasExistingBinding === false) 
         {
             // Insert a blank set of books fields when a new book is being uploaded.
-            this.insert(this.items.length - 1, [{xtype: 'bookfieldset'}]);
+            this.insert(this.items.length - 1, [{xtype: 'bookfieldset', fixedBook: this.fixedBooks}]);
         }
     },
     
@@ -519,7 +521,8 @@ Ext.define('Ext.ux.BooksFieldSet', {
             _this.insert(_this.items.length - 1, 
             [{
                 xtype: 'bookfieldset',
-                existingBook: book
+                existingBook: book,
+                fixedBook: _this.fixedBooks
             }]);
             
             // Update the state of the 'delete' buttons.
@@ -575,6 +578,120 @@ Ext.define('Ext.ux.BooksFieldSet', {
             
             this.checkBooks(false);
         }
+    }
+});
+
+/*
+ * Binding edit form class.
+ */
+Ext.define('Ext.ux.BindingEdit', {
+    extend: 'Ext.form.Panel',
+    alias: 'widget.bindingedit',
+    
+    initComponent: function()
+    {
+    
+        var _this = this;
+    
+        _this.setLoading('Loading binding information...');   
+
+        // Fetch binding.
+        Binding.createFromId(this.bindingId, this,
+            function(binding)
+            {                    
+                _this.down('[name=bindingfields]').fillFromExistingBinding(binding);
+                _this.down('[name=bookfields]').fillFromExistingBinding(binding);
+                _this.numberOfScans = binding.getScanAmount();
+                
+                _this.oldBinding = _this.down('bindingfieldset').getBinding();
+                _this.oldBooks = _this.down('booksfieldset').getBooks();
+                
+                _this.setLoading(false);
+
+            },
+            function()
+            {
+                // TODO: handle error case correctly.
+                _this.setLoading(false);
+            }
+        );
+        
+        var defConfig = {
+            name: 'bindingedit',
+            bodyPadding: 5,
+            items: [{
+                xtype: 'panel',
+                border: false,
+                items: [{
+                    xtype: 'bindingfieldset',
+                    name: 'bindingfields',
+                    collapsible: false
+                },{
+                    xtype: 'booksfieldset',
+                    name: 'bookfields',
+                    hasExistingBinding: true,
+                    collapsible: false,
+                    fixedBooks: true
+                },{
+                    xtype: 'panel',
+                    border: false,
+                    buttons: [{
+                        xtype: 'button',
+                        text: 'Cancel',
+                        iconCls: 'cancel-icon',
+                        width: 140,
+                        handler: _this.onCancel ? _this.onCancel : undefined
+                    },{
+                        xtype: 'button',
+                        formBind: true,
+                        disabled: true,
+                        text: 'Save',
+                        iconCls: 'accept-icon',
+                        width: 140,
+                        handler: function()
+                        {
+                            _this.submit();
+                        }
+                    }]
+                }]
+            }],
+            selectFirstField: false
+        };
+        
+        Ext.apply(this, defConfig);
+        
+        this.callParent();
+    },
+    
+    submit: function()
+    {
+        // Check scan amount.
+        var binding = this.down('bindingfieldset').getBinding();
+        var books = this.down('booksfieldset').getBooks();
+        var data = {binding: binding, books: books, safe: true};
+        
+        // Save binding.
+        this.setLoading('Saving...');
+        
+        RequestManager.getInstance().request('BindingUpload', 'upload', data, this,
+            function()
+            {
+                // All went fine.
+                this.setLoading(false);
+                if (this.afterSubmit)
+                {
+                    this.afterSubmit();
+                }
+            },
+            function()
+            {
+                // Something went wrong.
+                this.setLoading(false);
+                if (this.onCancel)
+                {
+                    this.onCancel();
+                }
+            });
     }
 });
 
@@ -669,8 +786,7 @@ Ext.define('Ext.ux.UploadForm', {
                         {
                             Ext.Msg.show({
                                 title: 'Are you sure?',
-                                msg: 'You are about to reset the complete form. Data will be lost and ' +
-                                     'this action can\'t be undone. Are you sure?',
+                                msg: 'You are about to reset the complete form. This will revert all changes you have made since you started editing, including newly added scans. Are you sure you want to continue?',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 callback: function(button)
@@ -818,10 +934,10 @@ Ext.define('Ext.ux.UploadForm', {
         
         Ext.Msg.show({
             title: 'Are you sure?',
-            msg: "Modifying a binding will make the binding invisible" +
-                "for other users until you have completed the 'Modify Binding' wizard. " +
-                "You can at any time resume this wizard by pressing the 'Complete binding'" +
-                " button in the application menu. Are you sure you want to continue?",
+            msg: "Modifying a binding will make it invisible " +
+                "for all users until you have completed the 'Modify Binding' wizard.<br/>" +
+                "Tip: You can resume this wizard at any time by pressing the 'Complete binding'" +
+                " button in the application menu.<br/><br/>Are you sure you want to continue?",
             buttons: Ext.Msg.YESNO,
             icon: Ext.Msg.QUESTION,
             callback: function(button)

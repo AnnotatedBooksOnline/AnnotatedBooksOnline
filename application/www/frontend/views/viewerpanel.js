@@ -681,6 +681,15 @@ Ext.define('Ext.ux.ViewerPanel', {
         this.setToolsVisibility();
     },
     
+    reload: function()
+    {
+        Application.getInstance().openTab(
+            'binding', 
+            [this.binding.getModel().get('bindingId'), this.pageNumber + 1], 
+            true);
+        this.close();
+    },
+    
     statics: {
         showSettingsWindow: function()
         {

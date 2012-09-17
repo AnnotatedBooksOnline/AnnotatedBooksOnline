@@ -10,15 +10,60 @@ Ext.define('Ext.ux.BindingAdminPanel', {
         var _this = this;
         var defConfig = {
             border: false,
-            bodyPadding: 5,
             layout: {
-                type: 'vbox',
-                align: 'stretch'
+                type: 'table',
+                columns: 2
+            },
+            defaults: {
+                bodyPadding: 5,
+                style: 'margin-right: 5px'
             },
             items: [{
+                xtype: 'panel',
+                border: false,
+                name: 'modifybindingtext',
+                html: 'Modify binding and book information, such as title, author and provenance.'
+            },{
                 xtype: 'button',
-                text: 'Modify binding',
+                text: 'General info',
                 name: 'modifybindingbutton',
+                width: 110,
+                iconCls: 'binding-edit-icon',
+                handler: function()
+                {
+                    Ext.create('Ext.window.Window', {
+                        title: 'Modify binding',
+                        modal: true,
+                        constrain: true,
+                        closable: false,
+                        layout: 'fit',
+                        items: {
+                            xtype: 'bindingedit',
+                            border: false,
+                            bindingId: _this.getCurrentBindingModel().get('bindingId'),
+                            onCancel: function()
+                            {
+                                this.up('window').close();
+                            },
+                            afterSubmit: function()
+                            {
+                                this.up('window').close();
+                                _this.up('viewerpanel').reload();
+                            }
+                        }
+                    }).show();
+                }
+            },{
+                xtype: 'panel',
+                border: false,
+                name: 'modifyscanstext',
+                html: 'Add or remove scans and books, change the page order.'
+            },{
+                xtype: 'button',
+                text: 'Scans &amp; books',
+                name: 'modifyscansbutton',
+                width: 110,
+                iconCls: 'scan-modify-icon',
                 handler: function()
                 {
                     Application.getInstance().gotoTab(
@@ -28,23 +73,32 @@ Ext.define('Ext.ux.BindingAdminPanel', {
                     this.up('viewerpanel').close();
                 }
             },{
+                xtype: 'panel',
+                border: false,
+                name: 'deletebindingtext',
+                html: 'Delete this entire binding, use with care.',
+                style: 'margin-top: 50px'
+            },{
                 xtype: 'button',
                 text: 'Delete binding',
                 name: 'deletebindingbutton',
+                width: 110,
+                iconCls: 'remove-icon',
+                style: 'margin-top: 50px',
                 handler: function()
                 {
                     // Shows a window to doublecheck if this is what the user wanted.
                     // Deletes the binding afterwards.
                     Ext.Msg.show({
-                        title: 'Are you sure?',
-                        msg: 'You are about to delete this binding, this cannot be undone. Are you sure?',
+                        title: 'Deleting binding',
+                        msg: 'You are about to delete this binding. <b>This cannot be undone.</b><br/>Are you sure you want to proceed?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
                         {
                             if (button == 'yes')
                             {
-                                // Ban the user.
+                                // Delete the binding.
                                 RequestManager.getInstance().request(
                                     'Binding',
                                     'delete',
@@ -69,11 +123,15 @@ Ext.define('Ext.ux.BindingAdminPanel', {
     showDelete: function(enabled)
     {
         this.down("[name=deletebindingbutton]").setVisible(enabled);
+        this.down("[name=deletebindingtext]").setVisible(enabled);
     },
     
     showModify: function(enabled)
     {
         this.down("[name=modifybindingbutton]").setVisible(enabled);
+        this.down("[name=modifybindingtext]").setVisible(enabled);
+        this.down("[name=modifyscansbutton]").setVisible(enabled);
+        this.down("[name=modifyscanstext]").setVisible(enabled);
     },
     
     getCurrentBindingModel: function()

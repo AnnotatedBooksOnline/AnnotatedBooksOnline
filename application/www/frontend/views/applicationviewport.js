@@ -236,40 +236,41 @@ Ext.define('Ext.ux.ApplicationViewport', {
             items: [{ 
                 // Header logo.
                 xtype: 'container',
-                width: 120,
+                width: 256,
                 cls: 'header-logo'
             },{ 
                 // Title, with menu below.
-                xtype: 'container',
-                layout: {
-                    type: 'vbox',
-                    align: 'stretch'
-                },
+                layout: 'border',
+                border: false,
                 flex: 1,
                 items: [{
-                    xtype: 'container',
-                    height: 87,
+                    region: 'center',
+                    border: false,
                     html: '<h1>' + escape(document.title)
                           + '</h1><div class="version">#COLLABVERSION#</div>'
                 },{
-                    xtype: 'container',
+                    height: 34,
+                    bodyPadding: 2,
+                    region: 'south',
+                    border: false,
                     defaults: {
                         xtype: 'button',
                         cls: 'menu-button'
                     },
                     layout: 'hbox',
                     items: menuButtons
+                },{ 
+                    // User items.
+                    border: false,
+                    bodyPadding: 10,
+                    width: 220,
+                    region: 'east',
+                    layout: {
+                        type: 'table',
+                        columns: 2
+                    },
+                    items: userItems
                 }]
-            },{ 
-                // User items.
-                border: false,
-                bodyPadding: 10,
-                width: 220,
-                layout: {
-                    type: 'table',
-                    columns: 2
-                },
-                items: userItems
             }]
         };
         

@@ -58,6 +58,7 @@ class Pdf
     private $lineSpread = 2;
     private $productLogo = 'util/logo.jpg';
     private $productName;
+    private $productShowName = false;
     private $productUrl;
     
     private $pageWidth;
@@ -338,10 +339,14 @@ class Pdf
             $this->drawText('Pages ' . $scans[0]->getPage() . ' – ' . $scans[count($scans)-1]->getPage());
         }
         
-        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.5, 0.5);
-        $this->x = $x + 15;
-        $this->y = $y;
-        $this->drawText($this->productName);
+        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.25, 0.25);
+        
+        if ($this->productShowName)
+        {
+            $this->x = $x + 15;
+            $this->y = $y;
+            $this->drawText($this->productName);
+        }
         
         $this->writePage();
         

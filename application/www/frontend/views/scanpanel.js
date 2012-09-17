@@ -356,7 +356,7 @@ Ext.define('Ext.ux.ScanPanel', {
                 items: [{
                     columnWidth: this.showExistingBindingMessage ? .6 : 0,
                     xtype: 'label',
-                    text: this.showExistingBindingMessage ? 'Existing scans for this binding are not shown' : ' '
+                    html: this.showExistingBindingMessage ? '<b>Existing scans for this binding are not shown.</b>' : ' '
                 },{
                     xtype: 'container',
                     columnWidth: this.showExistingBindingMessage ? .4 : 1,
