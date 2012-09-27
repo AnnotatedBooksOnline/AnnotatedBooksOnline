@@ -172,8 +172,7 @@ function verifyPassword_p1($password, $hash, $userId)
 /**
  * DEPRECATED. Calculates a not so secure hash for the given password.
  *
- * This hash function helps the bruteforce attacker too much by giving away too much
- * password information in the salt.
+ * This hash only uses a system-wide salt, and is therefore not secure.
  *
  * @return  A secure hash for the given password.
  */
@@ -182,13 +181,7 @@ function hashPassword_p0($password)
     // Generate a salt based on the password. This salt needs to be secure, as it is
     // prefixed to the password hash.
     $plainsalt = Configuration::getInstance()->getString('password-salt');
-    $salt = md5($plainsalt . '_' . substr(sha1($password), 0, 5));
-    
-    // Use Blowfish with 1024 passes to generate a sufficiently secure password.
-    $algorithm = '$2a';
-    $passes    = '$10';
-    
-    return crypt($password, $algorithm . $passes . '$' . $salt);
+    return sha1($plainsalt . $password);
 }
 
 function verifyPassword_p0($password, $hash)
