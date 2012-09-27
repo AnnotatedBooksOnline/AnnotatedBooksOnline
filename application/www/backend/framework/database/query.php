@@ -269,16 +269,6 @@ class Query
         return $this;
     }
     
-    public function headline($column, $query, $as)
-    {
-        $column = $this->escapeIdentifier($column);
-        $query = $this->escapeIdentifier($query);
-        
-        $this->columns[] = 'headline(' . $column . ', ' . $query . ', 40) AS ' . $this->escapeIdentifier($as);
-            
-        return $this;
-    }
-    
     /**
      * Makes the query return the inserted Id.
      */

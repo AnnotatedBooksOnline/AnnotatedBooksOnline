@@ -248,7 +248,8 @@ class BookController extends ControllerBase
             'bindings.bindingId', 'bindings.signature', 'libraries.libraryName',
             'authorNames(books.bookId) AS authornames', 'provenanceNames(bindings.bindingId) AS provenancenames',
             'scans.scanId', 'bookLanguageNames(books.bookId) AS booklanguagenames',
-            'bindingLanguageNames(bindings.bindingId) AS bindinglanguagenames', 'books.printVersion'
+            'bindingLanguageNames(bindings.bindingId) AS bindinglanguagenames', 'books.printVersion',
+            'booksft.text'
             )
             ->from('Books books')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
@@ -257,6 +258,7 @@ class BookController extends ControllerBase
                 array('bindings.bindingId = scans.bindingId', 'books.firstPage = scans.page'),
                 'LEFT INNER'
                 )
+            ->join('BooksFT booksft', array('books.bookId = booksft.bookId'), 'LEFT')
             ->groupBy(
                 'books.bookId', 'books.title', 'books.minYear', 'books.maxYear',
                 'books.placePublished', 'books.publisher', 'books.firstPage',
@@ -266,14 +268,6 @@ class BookController extends ControllerBase
                 )
             ->where('books.bookId = :bookId');
         $binds = array();
-        
-        // Request a headline if necessary.
-        if ($headline != "")
-        {
-            $query->join('BooksFT booksft', array('books.bookId = booksft.bookId'), 'LEFT');
-            $query = $query->headline('booksft.text', ':' . 'headline', 'headline');
-            $binds['headline'] = $headline;
-        }
         
         $records = array();
         foreach ($results as $result)
@@ -298,7 +292,7 @@ class BookController extends ControllerBase
                 'library'       => $book->getValue('libraryName'),
                 'signature'     => $book->getValue('signature'),
                 'provenance'    => $book->getValue('provenancenames'),
-                'headline'      => $book->getValue('headline'),
+                'headline'      => $headline != "" ? BookController::headline($book->getValue('text'), $headline) : NULL,
                 'thumbnail'     => 'data/thumbnails/' . $book->getValue('scanId') . '.jpg',
                 'id'            => $book->getValue('bookId'),
                 'bindingId'     => $book->getValue('bindingId'),
@@ -346,5 +340,56 @@ class BookController extends ControllerBase
         $query = $query->whereFulltext($column, ':' . $name . $c, null, $onlyNegative, $fast);
         $binds[$name . $c] = $value;
     }
+    
+    public static function headline($text, $query, $num = 40)
+    {
+        $query = array_flip(mb_split('\s+', mb_strtolower(mb_ereg_replace('[^[:alnum:][:space:]]', '', $query))));
+        $text = mb_split('\s+', $text);
+
+        $val = 0;
+        $pos = 0;
+        $maxval = 0;
+        $maxpos = 0;
+        
+        for ( ; $pos < count($text); $pos++)
+        {
+            $text[$pos] = htmlspecialchars($text[$pos]);
+            $stripped = mb_strtolower(mb_ereg_replace('[^[:alnum:]]', '', $text[$pos]));
+            if ($stripped == "")
+            {
+                if ($val > 0)
+                {
+                    $val--;
+                }
+                continue;
+            }
+            if (array_key_exists($stripped, $query))
+            {
+                $val += $num;
+                $text[$pos] = '<b>' . $text[$pos] . '</b>';
+            }
+            if ($val > $maxval)
+            {
+                $maxval = $val;
+                $maxpos = $pos;
+            }
+            else if ($val > 0)
+            {
+                $val--;
+            }
+        }
+        
+        if ($maxpos < $num)
+        {
+            $maxpos = 0;
+        }
+        else
+        {
+            $maxpos = $maxpos - $num + 1;
+        }
+        
+        return implode(' ', array_slice($text, $maxpos, $num));
+    }
+    
 }
 
