@@ -17,7 +17,7 @@
 require_once 'controllers/controllerbase.php';
 require_once 'util/authentication.php';
 require_once 'models/annotation/annotationlist.php';
-require_once 'models/annotation/revisedannotation.php';
+require_once 'models/annotation/revisedannotationlist.php';
 
 /**
  * Annotation controller class.
@@ -218,6 +218,132 @@ class AnnotationController extends ControllerBase
         }
         
         return true;
+    }
+    
+    /**
+     * Obtain the contents and properties of all previous revisions of a certain annotation.
+     * 
+     * @param int           $annotationId The id of the annotation of which to obtain revisions.
+     * @param array(string) $columns      An array of columns from RevisedAnnotations that should 
+     *                                    be included in the result. Null for all columns. 
+     * @param string        $ordering     Revisions are sorted by their chronological revision 
+     *                                    numbers. Set this to 'asc' in order to sort them from old
+     *                                    to new or to 'desc' in order to sort them from new to 
+     *                                    old.
+     * 
+     * @return array(array(string => string)) The data of the revisions.
+     */
+    public static function getAnnotationRevisions($annotationId, $columns = null, $ordering = 'asc')
+    {
+        // Do a transaction.
+        return Database::getInstance()->doTransaction(function() use ($annotationId, $columns, $ordering)
+        {
+            // Determine ordering argument to pass to find. 
+            $orderArr = array('revisionNumber' => $ordering);
+            
+            // Query and construct a RevisedAnnotationList. 
+            $list = RevisedAnnotationList::find(array('annotationId' => $annotationId),
+                                                0,
+                                                null,
+                                                $orderArr);
+            
+            // Precompute array with requested column names as keys.
+            $columnsFlipped = $columns === null ? null : array_flip($columns);
+            
+            // Build result.
+            $result = array();
+            foreach($list as $revision)
+            {
+                // Get column-value pairs of this revision.
+                $values = $revision->getValues();
+                
+                // Filter the requested columns and add those.
+                if($columns === null)
+                {
+                    $result[] = $values;
+                }
+                else
+                {
+                    $result[] = array_intersect_key($values, $columnsFlipped);
+                }
+            }
+            
+            // Return it.
+            return $result;
+        });
+    }
+    
+    /**
+     * Get the annotion revisions for each annotation on a scan. 
+     * 
+     * See also getAnnotationRevisions(...).
+     * 
+     * @param $data['scanId'] The id of the scan.
+     * 
+     * @return An array of associative arrays containing annotation info 
+     *             (id, transcriptionEng transcriptionOrig, changedUserId) 
+     *             and revisions (see getAnnotationRevisions(...)).
+     */
+    public function actionGetScanRevisions($data)
+    {
+        // Check permission to view this.
+        Authentication::assertPermissionTo('view-history');
+        
+        // Fetch the scan id.
+        $scanId = $data['scanId'];
+        
+        // Do a transaction.
+        return Database::getInstance()->doTransaction(function() use ($scanId)
+        {            
+            // Query the annotations belonging to this scan.
+            $resultSet = Query::select('annotationId', 'transcriptionEng',
+                                       'transcriptionOrig', 'changedUserId')
+                               ->from('Annotations')
+                               ->where('scanId = :scanId')
+                               ->execute(array('scanId' => $scanId),
+                                         array('scanId' => 'int'));
+            
+            // Obtain the revisions of each annotation in the scan.
+            $result = array();
+            foreach($resultSet as $row)
+            {
+                // Add annotation info.
+                $values = $row->getValues();
+                
+                // Add revisions.
+                $values['revisions'] = AnnotationController::getAnnotationRevisions($row->getValue('annotationId'));
+                
+                $result[] = $values;
+            }
+            
+            return $result;
+        });
+    }
+    
+    /**
+     * Restore a previous revision of an annotation.
+     * 
+     * NOTE: the current version of the annotation, along with more recent revisions, are deleted. 
+     * 
+     * @param $data Should contain a revisedAnnotationId referring to the revision to restore.
+     */
+    public function actionRestoreRevision($data)
+    {
+        // Check permission.
+        Authentication::assertPermissionTo('revert-changes');
+        
+        // Fetch the revision id.
+        $revisionId = $data['revisedAnnotationId'];
+        
+        // Start a transaction.
+        Database::getInstance()->doTransaction(function() use($revisionId)
+        {
+            // Fetch the RevisedAnnotation.
+            $revision = new RevisedAnnotation($revisionId);
+            
+            // Restore it.
+            $revision->restoreRevision();
+        });
     }
     
     /**

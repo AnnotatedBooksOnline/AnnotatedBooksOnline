@@ -450,7 +450,7 @@ class Query
     }
     
     public function orderBy($column, $direction = 'asc')
-    {
+    {        
         if (is_array($column))
         {
             foreach ($column as $name => $direction)

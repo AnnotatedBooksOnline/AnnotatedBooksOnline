@@ -117,44 +117,83 @@ class RevisedAnnotation extends Entity
      */
     public static function addRevised($annotation)
     {
-        $result = new RevisedAnnotation();
-        
-        // Get the annotation id.
-        $aid = $annotation->getAnnotationId();
-        
-        // Query for revision number of the latest other revisions of this annotation. 
-        $lastRev = Query::select('MAX(revisionNumber) AS revisionNumber')
-                                                       ->from('RevisedAnnotations')
-                                                       ->where('annotationId = :aid')
-                                                       ->execute(array('aid' => $aid),
-                                                                 array('aid' => 'int'))
-                                                       ->tryGetFirstRow();
-        
-        if($lastRev === null)
+        // Do a transaction.
+        return Database::getInstance()->doTransaction(function() use ($annotation)
         {
-            // This is the first revision of this annotation. 
-            // Give it revisionNumber 0.
-            $result->revisionNumber = 0;
-        }
-        else
+        
+            $result = new RevisedAnnotation();
+            
+            // Get the annotation id.
+            $aid = $annotation->getAnnotationId();
+            
+            // Query for revision number of the latest other revisions of this annotation. 
+            $lastRev = Query::select('MAX(revisionNumber) AS revisionNumber')
+                                                           ->from('RevisedAnnotations')
+                                                           ->where('annotationId = :aid')
+                                                           ->execute(array('aid' => $aid),
+                                                                     array('aid' => 'int'))
+                                                           ->tryGetFirstRow();
+            
+            if($lastRev === null)
+            {
+                // This is the first revision of this annotation. 
+                // Give it revisionNumber 0.
+                $result->revisionNumber = 0;
+            }
+            else
+            {
+                // Set the incremented the revision number.
+                $result->revisionNumber = $lastRev->getValue('revisionNumber') + 1;
+            }
+            
+            // Set the revision creation time to the current moment.
+            $result->revisionCreateTime = time();
+            
+            // Copy other properties from the Annotation.
+            $result->annotationId = $aid;
+            $result->setPolygon($annotation->getPolygon());
+            $result->transcriptionEng = $annotation->getTranscriptionEng();
+            $result->transcriptionOrig = $annotation->getTranscriptionOrig();
+            $result->changedUserId = $annotation->getChangedUserId();
+            
+            // Store and return the result.
+            $result->save();
+            return $result;
+        });
+    }
+    
+    /**
+     * Takes this revision and restores it as the current one of this annotation. 
+     * Make sure this RevisedAnnotation is fully loaded before calling this.
+     * 
+     * All future revisions are deleted. 
+     */
+    public function restoreRevision()
+    {
+        $_this = $this;
+        
+        // Do a transaction.
+        return Database::getInstance()->doTransaction(function() use ($_this)
         {
-            // Set the incremented the revision number.
-            $result->revisionNumber = $lastRev->getValue('revisionNumber') + 1;
-        }
-        
-        // Set the revision creation time to the current moment.
-        $result->revisionCreateTime = time();
-        
-        // Copy other properties from the Annotation.
-        $result->annotationId = $aid;
-        $result->setPolygon($annotation->getPolygon());
-        $result->transcriptionEng = $annotation->getTranscriptionEng();
-        $result->transcriptionOrig = $annotation->getTranscriptionOrig();
-        $result->changedUserId = $annotation->getChangedUserId();
-        
-        // Store and return the result.
-        $result->save();
-        return $result;
+            // Get the corresponding Annotation.
+            $annotation = new Annotation($_this->annotationId);
+            
+            // Write revision fields to that annotation.
+            $annotation->setPolygon($_this->getPolygon());
+            $annotation->setTranscriptionEng($_this->transcriptionEng);
+            $annotation->setTranscriptionOrig($_this->transcriptionOrig);
+            $annotation->setChangedUserId($_this->changedUserId);
+            $annotation->setTimeChanged($_this->revisionCreateTime);
+            
+            // Delete this revision and all that come after it.
+            Query::delete('RevisedAnnotations')
+                 ->where('revisionNumber >= :number')
+                 ->execute(array('number' => $_this->revisionNumber),
+                           array('number' => 'int'));
+            
+            // Store the updated annotation.
+            $annotation->save();
+        });
     }
     
     
