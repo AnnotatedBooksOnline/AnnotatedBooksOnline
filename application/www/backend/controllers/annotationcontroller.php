@@ -311,7 +311,7 @@ class AnnotationController extends ControllerBase
                 $values = $row->getValues();
                 
                 // Add revisions.
-                $values['revisions'] = AnnotationController::getAnnotationRevisions($row->getValue('annotationId'));
+                $values['revisions'] = AnnotationController::getAnnotationRevisions($row->getValue('annotationId'), null, 'desc');
                 
                 $result[] = $values;
             }

@@ -138,23 +138,23 @@ class RevisedAnnotation extends Entity
             {
                 // This is the first revision of this annotation. 
                 // Give it revisionNumber 0.
-                $result->revisionNumber = 0;
+                $result->setRevisionNumber(0);
             }
             else
             {
                 // Set the incremented the revision number.
-                $result->revisionNumber = $lastRev->getValue('revisionNumber') + 1;
+                $result->setRevisionNumber($lastRev->getValue('revisionNumber') + 1);
             }
             
             // Set the revision creation time to the current moment.
-            $result->revisionCreateTime = time();
+            $result->setRevisionCreateTime(time());
             
             // Copy other properties from the Annotation.
-            $result->annotationId = $aid;
+            $result->setAnnotationId($aid);
             $result->setPolygon($annotation->getPolygon());
-            $result->transcriptionEng = $annotation->getTranscriptionEng();
-            $result->transcriptionOrig = $annotation->getTranscriptionOrig();
-            $result->changedUserId = $annotation->getChangedUserId();
+            $result->setTranscriptionEng($annotation->getTranscriptionEng());
+            $result->setTranscriptionOrig($annotation->getTranscriptionOrig());
+            $result->setChangedUserId($annotation->getChangedUserId());
             
             // Store and return the result.
             $result->save();
@@ -176,20 +176,23 @@ class RevisedAnnotation extends Entity
         return Database::getInstance()->doTransaction(function() use ($_this)
         {
             // Get the corresponding Annotation.
-            $annotation = new Annotation($_this->annotationId);
+            $annotation = new Annotation($_this->getAnnotationId());
             
             // Write revision fields to that annotation.
             $annotation->setPolygon($_this->getPolygon());
-            $annotation->setTranscriptionEng($_this->transcriptionEng);
-            $annotation->setTranscriptionOrig($_this->transcriptionOrig);
-            $annotation->setChangedUserId($_this->changedUserId);
-            $annotation->setTimeChanged($_this->revisionCreateTime);
+            $annotation->setTranscriptionEng($_this->getTranscriptionEng());
+            $annotation->setTranscriptionOrig($_this->getTranscriptionOrig());
+            $annotation->setChangedUserId($_this->getChangedUserId());
+            $annotation->setTimeChanged(strtotime($_this->getRevisionCreateTime()));
             
             // Delete this revision and all that come after it.
             Query::delete('RevisedAnnotations')
+                 ->where('annotationId = :annotationId')
                  ->where('revisionNumber >= :number')
-                 ->execute(array('number' => $_this->revisionNumber),
-                           array('number' => 'int'));
+                 ->execute(array('annotationId' => $_this->getAnnotationId(),
+                                 'number' => $_this->getRevisionNumber()),
+                           array('number' => 'int',
+                                 'annotationId' => 'int'));
             
             // Store the updated annotation.
             $annotation->save();
@@ -242,5 +245,5 @@ class RevisedAnnotation extends Entity
     public function setRevisionCreateTime($time) { $this->revisionCreateTime = $time; }
     
     public function getRevisionNumber()     { return $this->revisionNumber; }
-    public function setRevisionNumber($num) { $this->revisionNumber = num;  }
+    public function setRevisionNumber($num) { $this->revisionNumber = $num;  }
 }

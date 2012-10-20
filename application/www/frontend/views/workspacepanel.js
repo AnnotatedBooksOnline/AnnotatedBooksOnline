@@ -75,8 +75,45 @@ Ext.define('Ext.ux.BindingAdminPanel', {
             },{
                 xtype: 'panel',
                 border: false,
+                name: 'annotationrevisions',
+                html: 'View previous versions of transcriptions or restore them.'
+            },{
+                xtype: 'button',
+                text: 'Revisions',
+                name: 'annotationrevisionsbutton',
+                width: 110,
+                iconCls: 'revise-annotations-icon',
+                handler: function()
+                {
+                     var scanId = this.up('viewerpanel').getScanId();
+                    
+                     var window = Ext.create('Ext.window.Window', {
+                        title: 'Revisions',
+                        modal: true,
+                        constrain: true,
+                        closable: true,
+                        autoScroll: true,
+                        width: 800,
+                        height: 600,
+                        items: [{
+                            xtype: 'label',
+                            border: 3,
+                            padding: 3,
+                            margin: 5,
+                            layout:{ align: 'middle' },
+                            text: 'Double-click a revision in order to restore it.'
+                        },{
+                            xtype: 'revisionspanel',
+                            border: false,
+                            scanId: scanId
+                        }]
+                    }).show();
+                }
+            },{
+                xtype: 'panel',
+                border: false,
                 name: 'deletebindingtext',
-                html: 'Delete this entire binding, use with care.',
+                html: 'Delete this entire binding; use with care.',
                 style: 'margin-top: 50px'
             },{
                 xtype: 'button',
