@@ -306,7 +306,7 @@ class TilePyramidBuilder extends Singleton
                     {
                         Mailer::sendUploadProcessedMail($binding, true);
                     }
-                    catch(MailerException $ex)
+                    catch(Exception $ex)
                     {
                         // Unfortunately we can't mail and inform the uploader.
                         Log::error('Failed mailing the uploader of binding %d.', $binding->getBindingId());
@@ -329,7 +329,7 @@ class TilePyramidBuilder extends Singleton
                 {
                     Mailer::sendUploadProcessedMail(new Binding($scan->getBindingId()), false);
                 }
-                catch(MailerException $ex)
+                catch(Exception $ex)
                 {
                     // Unfortunately we can't mail and inform the uploader.
                     Log::error('Failed mailing the uploader of binding %d.', $scan->getBindingId());
