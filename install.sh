@@ -45,6 +45,8 @@ then
     echo "Error while setting permissions."
     exit 1
 fi
+mkdir application/www/data/cache
+chmod 0755 application/www/data/cache
 
 # Install first database version.
 echo "Installing database..."
