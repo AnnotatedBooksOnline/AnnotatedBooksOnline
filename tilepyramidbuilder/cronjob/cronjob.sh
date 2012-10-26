@@ -7,6 +7,6 @@
 
 while true
 do
-    php tilepyramidbuilder.php "$1" 2>&1 > "$1"/../data/logs/builderoutput.txt
+    php tilepyramidbuilder.php "$1" 2>&1 >> "$1"/../data/logs/builderoutput.txt
     sleep 5
 done
