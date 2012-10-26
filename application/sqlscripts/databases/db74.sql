@@ -1213,3 +1213,324 @@ INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy",
 
 INSERT INTO "Users" ("userId", username, "passwordHash", email, "firstName", "lastName", affiliation, occupation, website, "homeAddress", banned, rank, "createdOn", "createdBy", "changedOn", "changedBy", "passwordRestoreToken", "activationStage", "registrationDate", "lastActive") VALUES (1, '<deleted user>', '', '', NULL, NULL, NULL, NULL, NULL, NULL, TRUE, 0, NULL, NULL, NULL, NULL, NULL, 3, '2012-02-07', '2012-02-07 21:57:19.525202');
 
+CREATE TABLE "AnnotationsFT" (
+    "annotationId" integer NOT NULL,
+    "text" text NOT NULL,
+    
+    PRIMARY KEY ("annotationId"),
+    FULLTEXT ("text")
+) ENGINE=MyISAM;
+
+CREATE TABLE "BooksFT" (
+    "bookId" integer NOT NULL,
+    "text" text NOT NULL,
+    
+    PRIMARY KEY ("bookId"),
+    FULLTEXT ("text")
+) ENGINE=MyISAM;
+
+delimiter $$
+
+CREATE FUNCTION authornames(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
+        WHERE "Persons"."personId" IN
+        (
+            SELECT "Authors"."personId" FROM "Authors" WHERE "Authors"."bookId" = bookid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION bindinglanguagenames(bindingid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
+        WHERE "Languages"."languageId" IN
+        (
+            SELECT "BindingLanguages"."languageId" FROM "BindingLanguages" WHERE "BindingLanguages"."bindingId" = bindingid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION booklanguagenames(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
+        WHERE "Languages"."languageId" IN
+        (
+            SELECT "BookLanguages"."languageId" FROM "BookLanguages" WHERE "BookLanguages"."bookId" = bookid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION provenancenames(bindingid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
+        WHERE "Persons"."personId" IN
+        (
+            SELECT "Provenances"."personId" FROM "Provenances" WHERE "Provenances"."bindingId" = bindingid
+        );
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION annotationtext(annotationid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT CONCAT("transcriptionEng", ' ', "transcriptionOrig") INTO result FROM "Annotations"
+        WHERE "Annotations"."annotationId" = annotationid;
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION booktext(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT CONCAT_WS(' ',
+            "title",
+            authorNames("bookId"),
+            "publisher",
+            "placePublished",
+            bookLanguageNames("bookId"),
+            provenanceNames("bindingId"),
+            (SELECT "libraryName" FROM "Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId")),
+            (SELECT "signature" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId"),
+            bindingLanguageNames("bindingId"),
+            bookAnnotationText("bookId")
+        ) INTO result FROM "Books"
+        WHERE "bookId" = bookid;
+        RETURN COALESCE(result, '');
+    END $$
+
+CREATE FUNCTION bookannotationtext(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT GROUP_CONCAT(annft.text SEPARATOR ' ') INTO result
+        FROM "Books" JOIN (SELECT * FROM "Scans" ORDER BY page ASC) scans
+            ON "Books"."bindingId" = scans."bindingId"
+            AND "page" >= "firstPage"
+            AND "page" <= "lastPage"
+        LEFT JOIN "Annotations" annotations
+            ON annotations."scanId" = scans."scanId"
+        LEFT JOIN "AnnotationsFT" annft
+            ON annft."annotationId" = annotations."annotationId"
+        WHERE "bookId" = bookid;
+        RETURN result;
+    END $$
+
+-- Annotations
+
+CREATE TRIGGER "AnnotationsFulltextInsert" AFTER INSERT ON "Annotations"
+  FOR EACH ROW BEGIN
+    DECLARE pagenr integer;
+    DECLARE binding integer;
+    INSERT INTO "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId"), "annotationId" = NEW."annotationId";
+    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = NEW."scanId";
+    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = NEW."scanId";
+    UPDATE "Books"
+        SET "bookId" = "bookId"
+        WHERE "Books"."bindingId" = binding
+            AND pagenr >= "firstPage"
+            AND pagenr <= "lastPage";
+  END;
+$$
+
+CREATE TRIGGER "AnnotationsFulltextUpdate" AFTER UPDATE ON "Annotations"
+  FOR EACH ROW BEGIN
+    DECLARE pagenr integer;
+    DECLARE binding integer;
+    UPDATE "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId") WHERE "annotationId" = NEW."annotationId";
+    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = NEW."scanId";
+    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = NEW."scanId";
+    UPDATE "Books"
+        SET "bookId" = "bookId"
+        WHERE "Books"."bindingId" = binding
+            AND pagenr >= "firstPage"
+            AND pagenr <= "lastPage";
+  END;
+$$
+
+CREATE TRIGGER "AnnotationsFulltextDelete" AFTER DELETE ON "Annotations"
+  FOR EACH ROW BEGIN
+    DECLARE pagenr integer;
+    DECLARE binding integer;
+    DELETE FROM "AnnotationsFT" WHERE "annotationId" = OLD."annotationId";
+    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = OLD."scanId";
+    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = OLD."scanId";
+    UPDATE "Books"
+        SET "bookId" = "bookId"
+        WHERE "Books"."bindingId" = binding
+            AND pagenr >= "firstPage"
+            AND pagenr <= "lastPage";
+  END;
+$$
+
+
+-- Books
+
+CREATE TRIGGER "BooksFulltextInsert" AFTER INSERT ON "Books"
+  FOR EACH ROW BEGIN
+    INSERT INTO "BooksFT" SET "text" = booktext(NEW."bookId"), "bookId" = NEW."bookId";
+  END;
+$$
+
+CREATE TRIGGER "BooksFulltextUpdate" AFTER UPDATE ON "Books"
+  FOR EACH ROW BEGIN
+    UPDATE "BooksFT" SET "text" = booktext(NEW."bookId") WHERE "bookId" = NEW."bookId";
+  END;
+$$
+
+CREATE TRIGGER "BooksFulltextDelete" AFTER DELETE ON "Books"
+  FOR EACH ROW BEGIN
+    DELETE FROM "BooksFT" WHERE "bookId" = OLD."bookId";
+  END;
+$$
+
+-- Bindings
+
+CREATE TRIGGER "BindingsFulltextUpdate" AFTER UPDATE ON "Bindings"
+  FOR EACH ROW BEGIN
+    UPDATE "BooksFT" SET "text" = booktext("bookId") WHERE "bookId" IN (SELECT "bookId" FROM "Books" WHERE "bindingId" = NEW."bindingId");
+  END;
+$$
+
+delimiter ;
+
+DROP FUNCTION booktext;
+
+DELIMITER $$
+
+CREATE FUNCTION booktext(bookid integer) RETURNS text
+    LANGUAGE SQL
+    DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    BEGIN
+        DECLARE result text;
+        SELECT CONCAT_WS(' ',
+            "title",
+            authorNames("bookId"),
+            "publisher",
+            "placePublished",
+            bookLanguageNames("bookId"),
+            provenanceNames("bindingId"),
+            (SELECT "libraryName" FROM "Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId" AND "Books"."bookId" = bookid)),
+            (SELECT "signature" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId" AND "Books"."bookId" = bookid),
+            bindingLanguageNames("bindingId"),
+            bookAnnotationText("bookId")
+        ) INTO result FROM "Books"
+        WHERE "Books"."bookId" = bookid;
+        RETURN COALESCE(result, '');
+    END $$
+
+DELIMITER ;
+
+delimiter $$
+
+CREATE FUNCTION splitspaces(document text, pos integer)
+    RETURNS text
+    DETERMINISTIC
+    BEGIN
+        IF pos > LENGTH(document) - LENGTH(REPLACE(document, ' ', '')) + 1
+            THEN RETURN NULL;
+            ELSE RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(document, ' ', pos), LENGTH(SUBSTRING_INDEX(document, ' ', pos - 1)) + 1), ' ', '');
+        END IF;
+    END $$
+
+CREATE FUNCTION headline(document text, query text, num integer)
+    RETURNS text
+    DETERMINISTIC
+    BEGIN
+        DECLARE x integer;
+        DECLARE word text;
+        DECLARE y integer;
+        DECLARE simplequery text;
+        DECLARE maxpos integer;
+        DECLARE maxval float;
+        DECLARE val float;
+        DECLARE tmp float;
+        DECLARE result text;
+        
+        SET simplequery = REPLACE(query, '+', '');
+        CREATE TEMPORARY TABLE fts_tmp_table (
+            pos integer,
+            txt text,
+            score float DEFAULT 0,
+            PRIMARY KEY (pos)
+        ) ENGINE=MyISAM;
+        SET x = 0;
+        REPEAT
+            SET x = x + 1;
+            SET word = splitspaces(document, x);
+            IF word IS NOT NULL
+                THEN INSERT INTO fts_tmp_table SET pos = x, txt = word;
+            END IF;
+        UNTIL word IS NULL
+        END REPEAT;
+        UPDATE fts_tmp_table SET score = MATCH(txt) AGAINST (simplequery IN BOOLEAN MODE);
+        SET y = 1;
+        SET val = 0;
+        SET maxval = 0;
+        SET maxpos = 0;
+        REPEAT
+            SELECT score FROM fts_tmp_table WHERE pos = y INTO tmp;
+            SET val = val + tmp * num;
+            IF val > maxval
+                THEN SET maxval = val, maxpos = y;
+            ELSEIF val >= 1
+                THEN SET val = val - 1;
+            END IF;
+            SET y = y + 1;
+        UNTIL y >= x
+        END REPEAT;
+        IF maxpos <= num
+            THEN SET maxpos = 1;
+            ELSE SET maxpos = maxpos - num + 1;
+        END IF;
+        UPDATE fts_tmp_table SET txt = CONCAT('<b>', txt, '</b>') WHERE score > 0;
+        SELECT GROUP_CONCAT(txt SEPARATOR ' ') FROM fts_tmp_table WHERE pos >= maxpos AND pos < maxpos + num INTO result;
+        DROP TEMPORARY TABLE fts_tmp_table;
+        RETURN result;
+    END $$
+
+CREATE FUNCTION fulltextsearch(document text, query text)
+    RETURNS float
+    DETERMINISTIC
+    BEGIN
+        DECLARE result float;
+        CREATE TEMPORARY TABLE fulltext_tmp_table ENGINE=MyISAM AS (SELECT document AS doc);
+        SELECT MATCH (doc) AGAINST (query IN BOOLEAN MODE) FROM fulltext_tmp_table INTO result;
+        DROP TEMPORARY TABLE fulltext_tmp_table;
+        RETURN result;
+    END $$
+
+delimiter ;
+
