@@ -7,6 +7,6 @@ USE abo;
 START TRANSACTION;
 
 -- Add Latin to Languages table.
-INSERT INTO "Languages" ("languageName") VALUES ('Latin2');
+INSERT INTO "Languages" ("languageName") VALUES ('Latin');
 
 COMMIT;
