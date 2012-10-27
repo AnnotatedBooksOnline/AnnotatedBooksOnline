@@ -246,8 +246,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 items: [{
                     region: 'center',
                     border: false,
-                    html: '<h1>' + escape(document.title)
-                          + '</h1><div class="version">#COLLABVERSION#</div>'
+                    html: ''
                 },{
                     height: 34,
                     bodyPadding: 2,
