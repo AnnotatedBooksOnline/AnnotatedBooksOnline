@@ -31,11 +31,11 @@ var bookProperties = [{
     name: 'Library'
 },{
     abbreviation: 'signature',
-    name: 'Shelfmark',
-    defaultOn: true
+    name: 'Shelfmark'
 },{
     abbreviation: 'provenance',
-    name: 'Readers'
+    name: 'Readers',
+    defaultOn: true
 },{
     abbreviation: 'annotlanguage',
     name: 'Language of annotations'

@@ -67,7 +67,14 @@ class PdfController extends Controller
                     }
                     else
                     {
-                        $trans[$name] = 'This transcription is not available in ' . $name . '.';
+                        if ($name == "Original")
+                        {
+                            $trans[$name] = 'This transcription is not available in the original language.';
+                        }
+                        else
+                        {
+                            $trans[$name] = 'This transcription is not available in ' . $name . '.';
+                        }
                     }
                 }
                 return $trans;

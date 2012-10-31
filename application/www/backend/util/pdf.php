@@ -289,22 +289,35 @@ class Pdf
             $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
             
             $this->setFontSize(14);
-            $this->drawText($this->getAuthorNames($books[0]) . ', ' . $year);
+            $this->drawText($this->getAuthorNames($books[0]));
             $this->y -= 40;
             
             $this->setFontSize(12);
+            
+            $publish = "";
             if ($books[0]->getPlacePublished() != null)
             {
-                $this->drawText($books[0]->getPlacePublished());
+                $publish = $books[0]->getPlacePublished();
             }
             if ($books[0]->getPublisher() != null)
             {
-                $this->drawText($books[0]->getPublisher());
+                if ($publish != "")
+                {
+                    $publish .= ": ";
+                }
+                $publish .= $books[0]->getPublisher();
             }
+            if ($publish != "")
+            {
+                $publish .= ", ";
+            }
+            $publish .= $year;
             if ($books[0]->getPrintVersion() != null)
             {
-                $this->drawText('Edition ' . $books[0]->getPrintVersion());
+                $publish .= ", edition " . $books[0]->getPrintVersion();
             }
+            $this->drawText($publish);
+            
             $langs = $this->getLanguageNames($books[0]);
             if ($langs != '')
             {
@@ -326,7 +339,7 @@ class Pdf
         $this->drawText($library->getLibraryName() . ', ' . $binding->getSignature());
         $this->y -= 20;
         
-        $this->drawText('Generated on ' . date('l, d M Y H:i:s T'));
+        $this->drawText('From ' . $this->productName . ', ' . date('l, d M Y H:i:s T'));
         $this->addLink($this->drawText($this->permanentLink), $this->permanentLink);
         
         $this->y -= 20;
@@ -373,19 +386,31 @@ class Pdf
                 $this->textMarginL += 18;
                 $this->x = $this->textMarginL;
                 $this->drawText($this->getAuthorNames($book));
-                $this->drawText($year);
+                
+                $publish = "";
                 if ($book->getPlacePublished() != null)
                 {
-                    $this->drawText($book->getPlacePublished());
+                    $publish = $book->getPlacePublished();
                 }
                 if ($book->getPublisher() != null)
                 {
-                    $this->drawText($book->getPublisher());
+                    if ($publish != "")
+                    {
+                        $publish .= ": ";
+                    }
+                    $publish .= $book->getPublisher();
                 }
+                if ($publish != "")
+                {
+                    $publish .= ", ";
+                }
+                $publish .= $year;
                 if ($book->getPrintVersion() != null)
                 {
-                    $this->drawText('Edition ' . $book->getPrintVersion());
+                    $publish .= ", edition " . $book->getPrintVersion();
                 }
+                $this->drawText($publish);
+
                 $langs = $this->getLanguageNames($book);
                 if ($langs != '')
                 {
@@ -546,37 +571,53 @@ class Pdf
         
         // Draw the header.
         $library = new Library($binding->getLibraryId());
-        $title = $this->productName;
-        $fields = array();
+        $title = "";
         if ($book !== null)
         {
+            $title .= "\n" . $this->getAuthorNames($book) . ", " . $book->getTitle();
             $minYear = $book->getMinYear();
             $maxYear = $book->getMaxYear();
             $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
-            $fields[] = $this->getAuthorNames($book);
-            $fields[] = $book->getTitle();
-            $fields[] = $year;
+            $publish = "";
             if ($book->getPlacePublished() != null)
             {
-                $fields[] = $book->getPlacePublished();
+                $publish = $book->getPlacePublished();
             }
             if ($book->getPublisher() != null)
             {
-                $fields[] = $book->getPublisher();
+                if ($publish != "")
+                {
+                    $publish .= ": ";
+                }
+                $publish .= $book->getPublisher();
             }
+            if ($publish != "")
+            {
+                $publish .= ", ";
+            }
+            $publish .= $year;
+            if ($book->getPrintVersion() != null)
+            {
+                $publish .= ", edition " . $book->getPrintVersion();
+            }
+            $title .= "\n" . $publish;
         }
-        $fields[] = $library->getLibraryName();
-        $fields[] = $binding->getSignature();
-        $title .= "\n" . implode(', ', $fields);
-        $title .= "\nPage number: " . $scan->getPage();
+        if ($title != "")
+        {
+            $title .= "\n";
+        }
+        $title .= $library->getLibraryName() . ", " . $binding->getSignature();
+        $title .= "\nPage " . $scan->getPage();
         $this->drawText($title);
         
         // Draw the scan, with annotations if required.
+        $footerHeight = 2 * $this->fontSize;
+        $scanMargin = 28;
         $scanWidth = $this->pageWidth - $this->textMarginL - $this->textMarginR;
-        $scanHeight = $this->y - $this->textMarginB - 2 * 28;
+        $scanHeight = $this->y - $this->textMarginB - 2 * $scanMargin - $footerHeight;
 
         $this->pushState();
-            $this->translate($this->textMarginL, $this->textMarginB + $this->fontSize + 28);        
+            $this->translate($this->textMarginL, $this->textMarginB + $this->fontSize + $scanMargin + $footerHeight);
             $this->drawScan($scan, $scanWidth, $scanHeight);
             if ($transcriptions !== null && $annotations !== false)
             {
@@ -588,11 +629,9 @@ class Pdf
         $this->popState();
         
         // Draw the footer.
-        $this->y -= $scanHeight + 2 * 28;
-        $this->setFontSize(10);
+        $this->y -= $scanHeight + 2 * $scanMargin;
+        $this->drawText('From ' . $this->productName . ', ' . date('l, d M Y H:i:s T'));
         $this->addLink($this->drawText($this->permanentLink, false, true), $this->permanentLink);
-        $this->drawText(' — ' . date('l, d M Y H:i:s T'));
-        $this->setFontSize(12);
         
         $this->writePage();
         
