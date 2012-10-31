@@ -49,7 +49,7 @@ class Database extends Singleton
                              $config->getString('database-password'),
                              array(
                                  PDO::ATTR_PERSISTENT => true,
-                                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci', sql_mode = 'ANSI_QUOTES';",
+                                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8' COLLATE 'utf8_unicode_ci', sql_mode = 'ANSI_QUOTES', SESSION group_concat_max_len = 4294967295;",
                                  PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
                              ));
         
