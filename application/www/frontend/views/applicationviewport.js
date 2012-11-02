@@ -240,30 +240,39 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 cls: 'header-logo'
             },{ 
                 // Title, with menu below.
-                layout: 'border',
+                layout: 'hbox',
+                layoutConfig: {
+                    align : 'stretch',
+                    pack  : 'start'
+                },
                 border: false,
                 flex: 1,
                 items: [{
-                    region: 'center',
+                    layout: 'border',
+                    flex: 1,
                     border: false,
-                    html: ''
-                },{
-                    height: 34,
-                    bodyPadding: 2,
-                    region: 'south',
-                    border: false,
-                    defaults: {
-                        xtype: 'button',
-                        cls: 'menu-button'
-                    },
-                    layout: 'hbox',
-                    items: menuButtons
+                    height: 120,
+                    items: [{
+                        flex: 1,
+                        border: false,
+                        region: 'center'
+                    },{
+                        height: 34,
+                        bodyPadding: 2,
+                        border: false,
+                        defaults: {
+                            xtype: 'button',
+                            cls: 'menu-button'
+                        },
+                        layout: 'hbox',
+                        items: menuButtons,
+                        region: 'south'
+                    }]
                 },{ 
                     // User items.
                     border: false,
                     bodyPadding: 10,
                     width: 220,
-                    region: 'east',
                     layout: {
                         type: 'table',
                         columns: 2
