@@ -97,7 +97,7 @@ class BookController extends ControllerBase
     {
         Database::getInstance()->startTransaction();
         
-        $query = Query::select('COUNT(books.bookId)')
+        $query = Query::select('COUNT(books.bookId) AS count')
             ->from('Books books')
             ->join('BooksFT booksft', array('books.bookId = booksft.bookId'), 'LEFT')
             ->join('Bindings bindings', array('books.bindingId = bindings.bindingId'), 'LEFT')
