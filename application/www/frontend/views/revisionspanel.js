@@ -149,7 +149,7 @@ Ext.define('Ext.ux.RevisionsPanel', {
                         }
                     }
                 }
-            }],                
+            }]
         };
         
         Ext.apply(this, defConfig);
@@ -159,3 +159,4 @@ Ext.define('Ext.ux.RevisionsPanel', {
     }
             
 });
+
