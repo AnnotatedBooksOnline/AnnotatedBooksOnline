@@ -143,7 +143,7 @@ class UploadController extends Controller
         
         // Set file as content.
         $location = self::getString($file, 'tmp_name');
-        convertUpload($location);
+        $this->convertUpload($location);
         $upload->setContent($location, true);
         
         // Set values on file.
@@ -166,47 +166,57 @@ class UploadController extends Controller
      */
     private function convertUpload($location)
     {
-        $uploadIdent = getimagesize($location);
-        if (!$uploadIdent)
+        try
         {
-            // Not an image.
-            return;
+            $uploadIdent = getimagesize($location);
+            if (!$uploadIdent)
+            {
+                // Not an image.
+                Log::debug("Not an image, not converting.");
+                return;
+            }
+            
+            // Determine image type.
+            if ($uploadIdent[2] == IMAGETYPE_JPEG) 
+            {
+                // JPEG is fine, continue.
+                Log::debug("JPEG image, not converting.");
+                return;
+            } 
+            else if ($uploadIdent[2] == IMAGETYPE_TIFF_II || $uploadIdent[2] == IMAGETYPE_TIFF_MM) 
+            {
+                Log::debug('Converting upload: %s', $location);
+            }
+            else
+            {
+                // Unknown image: will fail later.
+                Log::debug("Unknown image type, not converting.");
+                return;
+            }
+            
+            $tmp = tempnam(sys_get_temp_dir(), 'convertUpload');
+            $command = getcwd() . "/../../../../../tilepyramidbuilder/bin/tiff2jpeg '" . $location . "' '" . $tmp . "'";
+            
+            // Execute converter.
+            Log::debug('Executing: %s', $command);
+            exec($command, $output, $rval);
+            
+            // Check return value to see whether operation succeeded.
+            if ($rval != 0)
+            {
+                // Something went wrong - don't convert now.
+                Log::error('Conversion of %s failed.', $location);
+                return;
+            }
+            
+            rename($tmp, $location);
+            
+            Log::debug('Done converting to JPG.');
         }
-        
-        // Determine image type.
-        if ($uploadIdent[2] == IMAGETYPE_JPEG) 
+        catch(Exception $e)
         {
-            // JPEG is fine, continue.
-            return;
-        } 
-        else if ($uploadIdent[2] == IMAGETYPE_TIFF_II || $uploadIdent[2] == IMAGETYPE_TIFF_MM) 
-        {
-            Log::debug('Converting upload: %s', $location);
+            Log::error("Error while converting to JPG: %s", e->getMessage());
         }
-        else
-        {
-            // Unknown image: will fail later.
-            return;
-        }
-        
-        $tmp = tempnam();
-        $command = getcwd() . "/../../../../../tilepyramidbuilder/bin/tiff2jpeg '" . $location . "' '" . $tmp . "'";
-        
-        // Execute converter.
-        Log::debug('Executing: %s', $command);
-        exec($command, $output, $rval);
-        
-        // Check return value to see whether operation succeeded.
-        if ($rval != 0)
-        {
-            // Something went wrong - don't convert now.
-            Log::error('Conversion of %s failed.', $location);
-            return;
-        }
-        
-        rename($tmp, $location);
-        
-        Log::debug('Done converting to JPG.');
     }
 }
 
