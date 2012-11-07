@@ -11,6 +11,10 @@ using namespace std;
 TIFFReader::TIFFReader()
 {
     file = NULL;
+    width = 0;
+    height = 0;
+    config = 0;
+    scanline = 0;
 }
 
 TIFFReader::~TIFFReader()
