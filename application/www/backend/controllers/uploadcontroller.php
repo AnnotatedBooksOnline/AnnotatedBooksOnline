@@ -195,7 +195,7 @@ class UploadController extends Controller
             }
             
             $tmp = tempnam(sys_get_temp_dir(), 'convertUpload');
-            $command = getcwd() . "/../../../../../tilepyramidbuilder/bin/tiff2jpeg '" . $location . "' '" . $tmp . "' 2>&1";
+            $command = getcwd() . "/../../../tilepyramidbuilder/bin/tiff2jpeg '" . $location . "' '" . $tmp . "' 2>&1";
             
             // Execute converter.
             Log::debug('Executing: %s', $command);
@@ -205,7 +205,7 @@ class UploadController extends Controller
             if ($rval != 0)
             {
                 // Something went wrong - don't convert now.
-                Log::error('Conversion of %s failed.', $location);
+                Log::error('Conversion of %s failed: %s', $location, print_r($output, true));
                 return;
             }
             
