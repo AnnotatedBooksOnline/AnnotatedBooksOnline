@@ -215,7 +215,7 @@ class UploadController extends Controller
         }
         catch(Exception $e)
         {
-            Log::error("Error while converting to JPG: %s", e->getMessage());
+            Log::error("Error while converting to JPG: %s", $e->getMessage());
         }
     }
 }
