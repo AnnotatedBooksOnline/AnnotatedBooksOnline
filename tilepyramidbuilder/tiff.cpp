@@ -70,7 +70,7 @@ void TIFFReader::readScanlines(image_t buf, uint lines)
     }
     else if (config == PLANARCONFIG_SEPARATE)
     {
-        throw runtime_error("Sorry, separate planar config not yet tested!"); //TODO
+        throw runtime_error("Separate planar config is not supported."); //TODO: test and remove.
         
         for (uint row = scanline; row < scanline + lines; row++)
         {

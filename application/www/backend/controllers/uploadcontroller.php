@@ -143,6 +143,7 @@ class UploadController extends Controller
         
         // Set file as content.
         $location = self::getString($file, 'tmp_name');
+        convertUpload($location);
         $upload->setContent($location, true);
         
         // Set values on file.
@@ -159,4 +160,53 @@ class UploadController extends Controller
         // Upload succeeded.
         return 'success';
     }
+    
+    /*
+     *  Convert a TIFF image upload to JPG.
+     */
+    private function convertUpload($location)
+    {
+        $uploadIdent = getimagesize($location);
+        if (!$uploadIdent)
+        {
+            // Not an image.
+            return;
+        }
+        
+        // Determine image type.
+        if ($uploadIdent[2] == IMAGETYPE_JPEG) 
+        {
+            // JPEG is fine, continue.
+            return;
+        } 
+        else if ($uploadIdent[2] == IMAGETYPE_TIFF_II || $uploadIdent[2] == IMAGETYPE_TIFF_MM) 
+        {
+            Log::debug('Converting upload: %s', $location);
+        }
+        else
+        {
+            // Unknown image: will fail later.
+            return;
+        }
+        
+        $tmp = tempnam();
+        $command = getcwd() . "/../../../../../tilepyramidbuilder/bin/tiff2jpeg '" . $location . "' '" . $tmp . "'";
+        
+        // Execute converter.
+        Log::debug('Executing: %s', $command);
+        exec($command, $output, $rval);
+        
+        // Check return value to see whether operation succeeded.
+        if ($rval != 0)
+        {
+            // Something went wrong - don't convert now.
+            Log::error('Conversion of %s failed.', $location);
+            return;
+        }
+        
+        rename($tmp, $location);
+        
+        Log::debug('Done converting to JPG.');
+    }
 }
+

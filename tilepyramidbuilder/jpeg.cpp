@@ -149,7 +149,7 @@ void JPEGWriter::writeScanlines(const image_t buf, uint lines)
     assert(file);
 
     uint l = 0;
-    while(cinfo.next_scanline < cinfo.image_height)
+    while(cinfo.next_scanline < cinfo.image_height && l < lines)
     {
         l += jpeg_write_scanlines(&cinfo, (JSAMPARRAY) &buf[l], lines - l);
     }
