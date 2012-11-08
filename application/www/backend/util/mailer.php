@@ -209,7 +209,7 @@ class Mailer
             $message = Setting::getSetting('upload-ok-mail');
             
             // Format the link to this binding.
-            $link = null; //TODO: Configuration::getBaseURL() . '#binding-' . ((int) $binding->getBindingId());
+            $link = Configuration::getBaseURL() . '#binding-' . ((int) $binding->getBindingId());
         }
         else
        {
