@@ -54,7 +54,7 @@ class TilePyramidBuilder extends Singleton
      * @throws TilePyramidBuilderException When the builder returns with a nonzero error code, meaning
      *                                 an error has occured.
      */
-    private function run($scan, $upload)
+    public function run($scan, $upload)
     {
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
@@ -105,7 +105,7 @@ class TilePyramidBuilder extends Singleton
      * 
      * @param int $scanId The id the processed scan to create a thumbnail from.
      */
-    private function createThumbnail($scanId)
+    public function createThumbnail($scanId)
     {
         Log::debug('Creating thumbnail for scan with id %d.', $scanId);
         
@@ -232,113 +232,119 @@ class TilePyramidBuilder extends Singleton
      */
     public function doIteration()
     {
-        // Check whether there is an image in the queue.
-        if ($this->queue->isEmpty())
-        {
-            Log::debug('Looking for new scans.');
-            
-            // Queue should be updated by all scans in the database with a pending status.
-            $result = Query::select('scanId', 'scanType')
-                            ->from('Scans')
-                            ->where('status = :status')
-                            ->execute(array('status' => Scan::STATUS_PENDING));
-            
-            foreach ($result as $row)
-            {
-                $this->queue->enqueue($row->getValue('scanId'));
-                
-                Log::info('Enqueued scan with id %d.', $row->getValue('scanId'));
-            }
-        }
+        $queue = $this->queue;
+        $_this = $this;
         
-        // Now process contents of the queue, if any.
-        while (!$this->queue->isEmpty())
+        // Do a transaction.
+        Database::doTransaction(function() use($queue, $_this)
         {
-            // Now dequeue an image for processing.
-            $scanid = $this->queue->dequeue();
-            
-            // Load the corresponding scan entity.
-            $scan = new Scan($scanid);
-            
-            Log::debug('Processing %d.', $scanid);
-            
-            try
+            // Check whether there is an image in the queue.
+            if ($queue->isEmpty())
             {
-                // Set status to PROCESSING and save.
-                $scan->setStatus(Scan::STATUS_PROCESSING);
-                $scan->save();
+                Log::debug('Looking for new scans.');
                 
-                // Retrieve the upload associated with the scan.
-                $upload = new Upload($scan->getUploadId());
+                // Queue should be updated by all scans in the database with a pending status.
+                $result = Query::select('scanId', 'scanType')
+                                ->from('Scans')
+                                ->where('status = :status')
+                                ->execute(array('status' => Scan::STATUS_PENDING));
                 
-                // Process the image.
-                $this->run($scan, $upload);
-                
-                // Create a thumbnail.
-                $this->createThumbnail($scanid);
-                
-                // No exception, therefore success!
-                $scan->setStatus(Scan::STATUS_PROCESSED);
-                $scan->setUploadId(null);
-                $scan->save();
-                
-                Log::info('Succesfully processed scan with id %d.', $scanid);
-                
-                // Now check whether this was the last scan that has been processed.
-                $resultSet = Query::select('scanId')->from('Scans')
-                                                    ->where('bindingId = :bindingId')
-                                                    ->where('status <> :status')
-                                                    ->execute(array('status' => Scan::STATUS_PROCESSED,
-                                                                     'bindingId' => $scan->getBindingId()),
-                                                              array('status' => 'int',
-                                                                    'bindingId' => 'int'));
-                
-                // If that resultset is empty, it means no more scans from the same binding still
-                // need processing.
-                if($resultSet->getAmount() == 0)
+                foreach ($result as $row)
                 {
-                    // The binding is done! 
-                    $binding = new Binding($scan->getBindingId());
-                    Log::info('Fully processed binding with ID %d.', $binding->getBindingId());
+                    $queue->enqueue($row->getValue('scanId'));
                     
-                    // The uploader can now be informed by e-mail.
+                    Log::info('Enqueued scan with id %d.', $row->getValue('scanId'));
+                }
+            }
+            
+            // Now process contents of the queue, if any.
+            while (!$queue->isEmpty())
+            {
+                // Now dequeue an image for processing.
+                $scanid = $queue->dequeue();
+                
+                // Load the corresponding scan entity.
+                $scan = new Scan($scanid);
+                
+                Log::debug('Processing %d.', $scanid);
+                
+                try
+                {
+                    // Set status to PROCESSING and save.
+                    $scan->setStatus(Scan::STATUS_PROCESSING);
+                    $scan->save();
+                    
+                    // Retrieve the upload associated with the scan.
+                    $upload = new Upload($scan->getUploadId());
+                    
+                    // Process the image.
+                    $_this->run($scan, $upload);
+                    
+                    // Create a thumbnail.
+                    $_this->createThumbnail($scanid);
+                    
+                    // No exception, therefore success!
+                    $scan->setStatus(Scan::STATUS_PROCESSED);
+                    $scan->setUploadId(null);
+                    $scan->save();
+                    
+                    Log::info('Succesfully processed scan with id %d.', $scanid);
+                    
+                    // Now check whether this was the last scan that has been processed.
+                    $resultSet = Query::select('scanId')->from('Scans')
+                                                        ->where('bindingId = :bindingId')
+                                                        ->where('status <> :status')
+                                                        ->execute(array('status' => Scan::STATUS_PROCESSED,
+                                                                         'bindingId' => $scan->getBindingId()),
+                                                                  array('status' => 'int',
+                                                                        'bindingId' => 'int'));
+                    
+                    // If that resultset is empty, it means no more scans from the same binding still
+                    // need processing.
+                    if($resultSet->getAmount() == 0)
+                    {
+                        // The binding is done! 
+                        $binding = new Binding($scan->getBindingId());
+                        Log::info('Fully processed binding with ID %d.', $binding->getBindingId());
+                        
+                        // The uploader can now be informed by e-mail.
+                        try
+                        {
+                            Mailer::sendUploadProcessedMail($binding, true);
+                        }
+                        catch(Exception $ex)
+                        {
+                            // Unfortunately we can't mail and inform the uploader.
+                            Log::error('Failed mailing the uploader of binding %d.', $binding->getBindingId());
+                        }
+                    }
+                    
+                    // The upload associated with the scan can now be deleted.
+                    $upload->delete();
+                }
+                catch (Exception $e)
+                {
+                    // Something went wrong. Set the error status.
+                    $scan->setStatus(Scan::STATUS_ERROR);
+                    $scan->save();
+                    
+                    Log::error('Failed processing a the scan with ID %d.', $scan->getScanId());
+                    
+                    // Send an e-mail informing the uploader.
                     try
                     {
-                        Mailer::sendUploadProcessedMail($binding, true);
+                        Mailer::sendUploadProcessedMail(new Binding($scan->getBindingId()), false);
                     }
                     catch(Exception $ex)
                     {
                         // Unfortunately we can't mail and inform the uploader.
-                        Log::error('Failed mailing the uploader of binding %d.', $binding->getBindingId());
+                        Log::error('Failed mailing the uploader of binding %d.', $scan->getBindingId());
                     }
+                    
+                    throw $e;
                 }
-                
-                // The upload associated with the scan can now be deleted.
-                $upload->delete();
             }
-            catch (Exception $e)
-            {
-                // Something went wrong. Set the error status.
-                $scan->setStatus(Scan::STATUS_ERROR);
-                $scan->save();
-                
-                Log::error('Failed processing a the scan with ID %d.', $scan->getScanId());
-                
-                // Send an e-mail informing the uploader.
-                try
-                {
-                    Mailer::sendUploadProcessedMail(new Binding($scan->getBindingId()), false);
-                }
-                catch(Exception $ex)
-                {
-                    // Unfortunately we can't mail and inform the uploader.
-                    Log::error('Failed mailing the uploader of binding %d.', $scan->getBindingId());
-                }
-                
-                throw $e;
-            }
-        }
+        });
     }
-    
 }
 
