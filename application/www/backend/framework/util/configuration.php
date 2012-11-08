@@ -168,24 +168,6 @@ class Configuration extends Singleton
      */
     public static function getBaseURL()
     {
-        //return $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
-        
-        $url = 'http';
-        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off")
-        {
-            $url .= "s";
-        }
-        $url .= "://";
-        $url .= $_SERVER["SERVER_NAME"];
-        if ($_SERVER["SERVER_PORT"] != "80")
-        {
-            $url .= ":".$_SERVER["SERVER_PORT"];
-        }
-        $url .= $_SERVER["REQUEST_URI"];
-        $url = parse_url($url);
-        unset($url['query']);
-        unset($url['fragment']);
-        $url = $url['scheme'] . '://' . $url['host'] . $url['path'];
-        return $url;
+        return Configuration::getInstance()->getString('base-url');
     }
 }

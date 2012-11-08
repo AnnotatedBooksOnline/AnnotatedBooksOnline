@@ -114,7 +114,7 @@ class Pdf
      */
     public function __construct(Binding $binding, CacheEntry $cacheEntry, $range = null, $transcriptions = null, $annotations = false)
     {
-        $this->productUrl = $this->pageUrl();
+        $this->productUrl = Configuration::getBaseURL();
         $this->productName = Setting::getSetting('project-title');
         $this->identifier = uniqid('pdf', true);
         $this->outputEntry = $cacheEntry;
@@ -170,30 +170,6 @@ class Pdf
                 throw new PdfException('pdf-no-scans');
             }
         }
-    }
-    
-    /**
-     * Determines the requested URL without query and fragment information.
-     */
-    private function pageUrl()
-    {
-        $url = 'http';
-        if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off")
-        {
-            $url .= "s";
-        }
-        $url .= "://";
-        $url .= $_SERVER["SERVER_NAME"];
-        if ($_SERVER["SERVER_PORT"] != "80")
-        {
-            $url .= ":".$_SERVER["SERVER_PORT"];
-        }
-        $url .= $_SERVER["REQUEST_URI"];
-        $url = parse_url($url);
-        unset($url['query']);
-        unset($url['fragment']);
-        $url = $url['scheme'] . '://' . $url['host'] . $url['path'];
-        return $url;
     }
     
     /**
