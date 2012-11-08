@@ -236,7 +236,7 @@ class TilePyramidBuilder extends Singleton
         $_this = $this;
         
         // Do a transaction.
-        Database::doTransaction(function() use($queue, $_this)
+        Database::getInstance()->doTransaction(function() use($queue, $_this)
         {
             // Check whether there is an image in the queue.
             if ($queue->isEmpty())
