@@ -565,9 +565,9 @@ Ext.define('Ext.ux.SelectBookForm', {
             }
             else
             {
-                message = 'The data was succesfully added to the system. It will now be processed. An '
-                        + 'e-mail will be send to you when processing has finished and the binding has '
-                        + 'become available.';
+                message = 'The data was succesfully added to the system. This binding will become '
+                        + 'searchable once it has been processed, at which moment you will '
+                        + 'receive an e-mail.';
             }
             
             Application.getInstance().viewport.updateUploadButtonTitle();
