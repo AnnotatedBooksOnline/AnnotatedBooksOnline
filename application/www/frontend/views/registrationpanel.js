@@ -72,7 +72,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                 }
             },
 
-            /*
+            /* [DISABLED]
              * Terms of use acceptance checkbox. Two things are special about this checkbox:
              *
              * 1. The boxLabel contains a HTML link to the terms of use page; a special click listener opens this
@@ -82,7 +82,7 @@ Ext.define('Ext.ux.RegistrationForm', {
              *    checked the box. Ext does not have this type of validation built in for checkboxes, so we have
              *    added this check to the submit button.
              */
-            {
+           /*{
                 xtype: 'checkboxfield',
                 name: 'acceptTerms',
                 fieldLabel: 'Terms of use',
@@ -99,7 +99,7 @@ Ext.define('Ext.ux.RegistrationForm', {
                         fn: function(e) { _this.showTerms(e); }
                     }
                 }
-            }],
+            }*/],
             
             submitButtonText: 'Register',
             
@@ -166,7 +166,8 @@ Ext.define('Ext.ux.RegistrationForm', {
     
     submit: function()
     {
-        if (!this.down('[name=acceptTerms]').getValue())
+        // Terms of use are disabled..
+        /*if (!this.down('[name=acceptTerms]').getValue())
         {
             Ext.Msg.show({
                 title: 'Error',
@@ -176,7 +177,7 @@ Ext.define('Ext.ux.RegistrationForm', {
             });
             
             return;
-        }
+        }*/
         
         var form = this.getForm();
         if (form.isValid())
