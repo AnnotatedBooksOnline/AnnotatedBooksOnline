@@ -21,6 +21,8 @@ require_once 'models/binding/binding.php';
 require_once 'util/authentication.php';
 require_once 'models/scan/scan.php';
 
+class CommentUpdateException extends ExceptionBase {}
+
 /**
  * Scan controller class.
  */
@@ -125,6 +127,127 @@ class ScanController extends ControllerBase
         // Update the binding status/
         $binding->setStatus(Binding::STATUS_REORDERED);
         $binding->saveWithDetails();
+    }
+        
+    /**
+     * Fetch the scan comments of a certain page.
+     * 
+     * @param array $data Should contain a scanId.
+     * 
+     * @return The scan comments.
+     */
+    public function actionGetScanComments($data)
+    {
+        // No authentication step, since this information is public.
+        
+        // Get scanId.
+        $scanId = $data['scanId'];
+        
+        // Fetch current comments.
+        $resultRow = Query::select('comments')
+                            ->from('ScanComments')
+                            ->aggregate('MAX', 'maxNum', 'versionNumber')
+                            ->where('scanId = :scanId')
+                            ->where('versionNumber = maxNum')
+                            ->execute(array('scanId' => $scanId),
+                                    array('scanId' => 'int'))
+                                    ->tryGetFirstRow();
+        
+        if($resultRow === null)
+        {
+            // No comments yet. Return an empty string.
+            return '';
+        }
+        else
+        {
+            return $resultRow->getValue('comments');
+        }
+    }
+    
+    /**
+     * Updates the comments related to a single scan. 
+     * 
+     * A user uploads both his or her edited version of the comments (let's call that n) and what 
+     * the comments looked like to that user before editing (p). If p is equal to the comments as 
+     * currently present in the database, then that is overwritten with n. Otherwise, a conflict 
+     * between two simultanious edits has occured and the user gets a chance to merge the two edits.
+     * 
+     * Since conflicts can be assumed to be quite rare, no automatic merging is done; instead, the 
+     * user submitting a conflict will get a message telling them their addition has failed and are
+     * requested to do it again.
+     * 
+     * Comments can not be longer than 5000 bytes (UTF-8).
+     * 
+     * $data array should contain scanId, userId, previousComments and newComments.
+     * 
+     * @return string null on success, or the conflicting comments in case someone else was editing
+     *                     at the same time. 
+     * 
+     */
+    public function actionUpdateScanComments($data)
+    {
+        Authentication::assertPermissionTo('edit-scan-comments');
+        
+        // Fetch data.
+        $scanId = $data['scanId'];
+        $userId = $data['userId'];
+        $prev = $data['prevComments'];
+        $new = $data['newComments'];
+        
+        // Assert new comments aren't too long.
+        if(strlen($new) > 5000)
+        {
+            throw new CommentUpdateException('comments-too-long');
+        }
+        
+        // Handle update in transaction.
+        return Database::getInstance()->doTransaction(function() use ($scanId, $userId, $prev, $new)
+        {
+            // Fetch current comments.
+            $resultRow = Query::select('userId', 'comments', 'versionNumber')
+                               ->from('ScanComments')
+                               ->aggregate('MAX', 'maxNum', 'versionNumber')
+                               ->where('scanId = :scanId')
+                               ->where('versionNumber = maxNum')
+                               ->execute(array('scanId' => $scanId),
+                                         array('scanId' => 'int'))
+                               ->tryGetFirstRow();
+            
+            if($resultRow === null)
+            {
+                // No comments yet. Let these be the first.
+                Query::insert('ScanComments', array(
+                                        'userId'        => $userId,
+                                        'scanId'        => $scanId, 
+                                        'comments'      => $new, 
+                                        'versionNumber' => 1));
+                
+                return null;
+            }
+            else
+            {
+                $current = $resultRow->getValue('comments');
+                $version = $resultRow->getValue('versionNumber');
+                
+                // Compare current comments to previous ones of this user.
+                if($current == $prev)
+                {
+                    // They are identical, meaning the new one can be inserted with no problem.
+                    Query::insert('ScanComments', array(
+                            'userId'        => $userId,
+                            'scanId'        => $scanId,
+                            'comments'      => $new,
+                            'versionNumber' => $version + 1));
+                    
+                    return null;
+                }
+                else
+                {
+                    // A conflict occured. Return the current comments and let the user try again.
+                    return $current;
+                }
+            }
+        });
     }
 }
 
