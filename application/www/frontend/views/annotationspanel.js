@@ -16,15 +16,19 @@ Ext.override(Ext.view.AbstractView, {
     }
 });
 
+var annotationInfoCategories = getAnnotationInfoCategories();
+var langStoreData = [];
+for(var i = 0; i < annotationInfoCategories.length; ++i)
+{
+	langStoreData.push({
+		lang: i,
+		name: annotationInfoCategories[i]
+	});
+}
+
 var langStore = Ext.create('Ext.data.Store', {
     fields: ['lang', 'name'],
-    data: [{
-        lang: "transcriptionEng",
-        name:"English"
-    },{
-        lang: "transcriptionOrig",
-        name: "Original language"
-    }]
+    data: langStoreData
 });
 
 Ext.define('Ext.ux.AnnotationsPanel', {
@@ -144,7 +148,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         listeners: {
                             select: function()
                             {
-                                _this.setLanguage(this.getValue());
+                            	_this.setLanguage(this.getValue());
                             }
                         }
                     }]
@@ -177,8 +181,8 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         this.editMode         = this.down('[name=edit-mode]');
         this.viewMode         = this.down('[name=view-mode]');
         
-        // Set language.
-        this.setLanguage('transcriptionOrig');
+        // Set language to the first one.
+        this.setLanguage(0);
         
         // Handle current authentication state.
         this.onAuthenticationChange();
@@ -334,7 +338,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         var text = '';
         if (model !== undefined)
         {
-            text = model.get(this.language);
+            text = model.get('annotationInfo')[this.language];
         }
         
         // Show contents of new model.
@@ -678,7 +682,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             },
             hideHeaders: true,
             store: store,
-            columns: this.getColumns('transcriptionEng'),
+            columns: this.getColumns('annotationInfo'),
             forceFit: true,
             autoScroll: true,
             border: false
@@ -851,7 +855,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
     
     renderLanguage: function(text, metadata)
     {
-        // Retain whitespace.
+    	// Retain whitespace.
         metadata.style = 'white-space: normal;';
         
         // Check for null or undefined.

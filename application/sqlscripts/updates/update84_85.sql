@@ -21,8 +21,9 @@ ALTER TABLE "RevisedAnnotations" ADD COLUMN "annotationInfo" text;
 -- as a comma-seperated lists. The length of this list denotes the number of categories.
 -- In ABO, the available catagories will contain transcriptions, translations and comments. The 
 -- latter is a new feature.
+-- The first category in this list is the one displayed at first.
 INSERT INTO "Settings" ("settingName", "settingValue") 
-    VALUES ('annotationInfoCategories', 'English,Original Language,Comments');
+    VALUES ('annotationInfoCategories', 'Original Language,English,Comments');
     
 
 -- Copy the contents of the transcriptionEng and transcriptionOrig columns into annotationInfo. 

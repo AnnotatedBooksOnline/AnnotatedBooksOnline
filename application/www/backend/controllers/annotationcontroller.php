@@ -78,8 +78,7 @@ class AnnotationController extends ControllerBase
                 {
                     // Fetch values.
                     $annId     = Controller::getInteger($annotation, 'annotationId');
-                    $transEng  = Controller::getString($annotation, 'transcriptionEng');
-                    $transOrig = Controller::getString($annotation, 'transcriptionOrig');
+                    $info      = Controller::getString($annotation, 'annotationInfo');
                     $polygon   = Controller::getArray($annotation, 'polygon');
                     
                     // Check polygon.
@@ -102,11 +101,10 @@ class AnnotationController extends ControllerBase
                         if (!$setChanged)
                         {
                             $values = $ann->getValues(
-                                array('transcriptionEng', 'transcriptionOrig', 'polygon', 'order'));
+                                array('annotationInfo', 'polygon', 'order'));
                             
-                            if (($values['order'] === $i)                                                   &&
-                                (AnnotationController::textEqual($values['transcriptionEng'], $transEng))   &&
-                                (AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) &&
+                            if (($values['order'] === $i)                                                 &&
+                                (AnnotationController::textArrayEqual($values['annotationInfo'], $info))  &&
                                 (AnnotationController::polygonEqual($values['polygon'], $polygon)))
                             {
                                 $annotationIds[] = $annId;
@@ -115,11 +113,12 @@ class AnnotationController extends ControllerBase
                                 continue;
                             }
                             
-                            // Check whether the transcription or the polygon itself changed
-                            $setChanged =
-                                (!AnnotationController::textEqual($values['transcriptionEng'], $transEng))   ||
-                                (!AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) ||
-                                (!AnnotationController::polygonEqual($values['polygon'], $polygon));
+                            // Check whether the info or the polygon itself changed.
+                            $setChanged = !AnnotationController::polygonEqual($values['polygon'], $polygon);
+                            for($j = 0; !$setChanged && $j < size($info); ++$j)
+                            {
+                                $setChanged |= !AnnotationController::textEqual($values['annotationInfo'][$j], $info[$j]);
+                            }
                         }
                         
                         if($setChanged)
@@ -143,11 +142,10 @@ class AnnotationController extends ControllerBase
                     // Set its values.
                     $ann->setValues(
                         array(
-                            'transcriptionEng'  => $transEng,
-                            'transcriptionOrig' => $transOrig,
-                            'polygon'           => $polygon,
-                            'order'             => $i,
-                            'scanId'            => $scanId
+                            'annotationInfo' => $info,
+                            'polygon'        => $polygon,
+                            'order'          => $i,
+                            'scanId'         => $scanId
                         )
                     );
                     
@@ -280,8 +278,8 @@ class AnnotationController extends ControllerBase
      * 
      * @param $data['scanId'] The id of the scan.
      * 
-     * @return An array of associative arrays containing annotation info 
-     *             (id, transcriptionEng transcriptionOrig, changedUserId) 
+     * @return An array of associative arrays containing annotation data 
+     *             (id, annotationInfo, changedUserId) 
      *             and revisions (see getAnnotationRevisions(...)).
      */
     public function actionGetScanRevisions($data)
@@ -296,8 +294,7 @@ class AnnotationController extends ControllerBase
         return Database::getInstance()->doTransaction(function() use ($scanId)
         {            
             // Query the annotations belonging to this scan.
-            $resultSet = Query::select('annotationId', 'transcriptionEng',
-                                       'transcriptionOrig', 'changedUserId')
+            $resultSet = Query::select('annotationId', 'annotationInfo', 'changedUserId')
                                ->from('Annotations')
                                ->where('scanId = :scanId')
                                ->execute(array('scanId' => $scanId),
@@ -307,8 +304,11 @@ class AnnotationController extends ControllerBase
             $result = array();
             foreach($resultSet as $row)
             {
-                // Add annotation info.
-                $values = $row->getValues();
+                // Add annotation data, converting annotationInfo from 'comma-list' to array,
+                $values = array();
+                $values['annotationId']  = $resultSet->getValue('annotationId');
+                $values['changedUserId'] = $resultSet->getValue('changedUserId');
+                $values['annotationInfo'] = Annotation::fromCommaList($resultSet->getValue('annotationInfo'));
                 
                 // Add revisions.
                 $values['revisions'] = AnnotationController::getAnnotationRevisions($row->getValue('annotationId'), null, 'desc');
@@ -355,5 +355,28 @@ class AnnotationController extends ControllerBase
         $safeB = str_replace("\r\n", "\n", rtrim($b));
         
         return $safeA === $safeB;
+    }
+    
+    /**
+     * Applies textEqual to strings at the same index in both arrays.
+     * 
+     * @return bool True if and only if $a has the same size as $b and when for each index $i 
+     *               textEqual($a[i], $b[i]) returns true.
+     */
+    public static function textArrayEqual($a, $b)
+    {
+        if(size($a) !== size($b))
+        {
+            return false;
+        }
+        for($i = 0; $i < size($a); ++$i)
+        {
+            if(!self::textEqual($a[$i], $b[$i]))
+            {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }

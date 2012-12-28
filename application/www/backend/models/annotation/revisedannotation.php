@@ -29,12 +29,9 @@ class RevisedAnnotation extends Entity
 
     /** The polygon of this annotation. */
     protected $polygon;
-
-    /** The English translation of the transcribed text. */
-    protected $transcriptionEng;
-
-    /** The transcribed text. */
-    protected $transcriptionOrig;
+    
+    /** The annotation information. */ 
+    protected $annotationInfo;
 
 
     /** The Id of the user who made this revision. */
@@ -82,8 +79,8 @@ class RevisedAnnotation extends Entity
      */
     public static function getColumns()
     {
-        return array('polygon', 'transcriptionEng', 'transcriptionOrig','changedUserId', 
-                     'revisionCreateTime', 'revisionNumber', 'annotationId'); 
+        return array('polygon', 'annotationInfo', 
+                       'changedUserId', 'revisionCreateTime', 'revisionNumber', 'annotationId'); 
     }
     
     /**
@@ -97,8 +94,7 @@ class RevisedAnnotation extends Entity
                 'revisedAnnotationId' => 'int',
                 'annotationId'        => 'int',
                 'polygon'             => 'base64',
-                'transcriptionEng'    => 'string',
-                'transcriptionOrig'   => 'string',
+                'annotationInfo'      => 'string',
                 'changedUserId'       => 'int',
                 'revisionCreateTime'  => 'timestamp',
                 'revisionNumber'      => 'int'
@@ -152,8 +148,7 @@ class RevisedAnnotation extends Entity
             // Copy other properties from the Annotation.
             $result->setAnnotationId($aid);
             $result->setPolygon($annotation->getPolygon());
-            $result->setTranscriptionEng($annotation->getTranscriptionEng());
-            $result->setTranscriptionOrig($annotation->getTranscriptionOrig());
+            $result->setAnnotationInfo($annotation->getAnnotationInfo());
             $result->setChangedUserId($annotation->getChangedUserId());
             
             // Store and return the result.
@@ -180,8 +175,7 @@ class RevisedAnnotation extends Entity
             
             // Write revision fields to that annotation.
             $annotation->setPolygon($_this->getPolygon());
-            $annotation->setTranscriptionEng($_this->getTranscriptionEng());
-            $annotation->setTranscriptionOrig($_this->getTranscriptionOrig());
+            $annotation->setAnnotationInfo($_this->getAnnotationInfo());
             $annotation->setChangedUserId($_this->getChangedUserId());
             $annotation->setTimeChanged(strtotime($_this->getRevisionCreateTime()));
             
@@ -207,12 +201,6 @@ class RevisedAnnotation extends Entity
 
     public function getAnnotationId()    { return $this->annotationId; }
     public function setAnnotationId($id) { $this->annotationId = $id;  }
-    
-    public function getTranscriptionEng()      { return $this->transcriptionEng;  }
-    public function setTranscriptionEng($text) { $this->transcriptionEng = $text; }
-    
-    public function getTranscriptionOrig()      { return $this->transcriptionOrig;  }
-    public function setTranscriptionOrig($text) { $this->transcriptionOrig = $text; }
     
     public function getPolygon()
     {
@@ -246,4 +234,14 @@ class RevisedAnnotation extends Entity
     
     public function getRevisionNumber()     { return $this->revisionNumber; }
     public function setRevisionNumber($num) { $this->revisionNumber = $num;  }
+    
+    // Returns annotation info as indexed array.
+    public function getAnnotationInfo()
+    {
+        return self::fromCommaList($this->annotationInfo);
+    }
+    public function setAnnotationInfo($info)
+    {
+        $this->annotationInfo = self::toCommaList($info);
+    }
 }

@@ -320,8 +320,7 @@ Annotations.prototype.save = function()
             // Add annotation.
             annotations.push({
                 annotationId: model.get('annotationId'),
-                transcriptionEng: model.get('transcriptionEng'),
-                transcriptionOrig: model.get('transcriptionOrig'),
+                annotationInfo: model.get('annotationInfo'),
                 polygon: polygon
             });
         });

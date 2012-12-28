@@ -33,12 +33,6 @@ class Annotation extends Entity
     /** The polygon of this annotation. */
     protected $polygon;
     
-    /** The English translation of the transcribed text. */
-    protected $transcriptionEng;
-    
-    /** The transcribed text. */
-    protected $transcriptionOrig;
-    
     /** The Id of the user who created this annotation. */
     protected $createdUserId;
     
@@ -53,6 +47,15 @@ class Annotation extends Entity
     
     /** the time and date on which this annotation was last modified. */
     protected $timeChanged;
+    
+    /**
+     *  Contains user-supplied information about the annotation, such as transcriptions, 
+     *  descriptions, translations and comments. 
+     *  
+     *  Formatted as a comma-seperated list that can be converted to an array through 
+     *  fromCommaList.
+     */
+    protected $annotationInfo;
     
     /**
      * Constructs an annotation entity.
@@ -102,7 +105,7 @@ class Annotation extends Entity
      */
     public static function getColumns()
     {
-        return array('scanId', 'polygon', 'transcriptionEng', 'transcriptionOrig', 'createdUserId',
+        return array('scanId', 'polygon', 'annotationInfo', 'createdUserId',
             'timeCreated', 'order', 'changedUserId', 'timeChanged');
     }
     
@@ -117,14 +120,76 @@ class Annotation extends Entity
             'annotationId'      => 'int',
             'scanId'            => 'int',
             'polygon'           => 'base64',
-            'transcriptionEng'  => 'string',
-            'transcriptionOrig' => 'string',
+            'annotationInfo'    => 'string',
             'createdUserId'     => 'int',
             'timeCreated'       => 'timestamp',
             'order'             => 'int',
             'changedUserId'     => 'int',
             'timeChanged'       => 'timestamp',
         );
+    }
+    
+    /**
+     * Takes a string seperated by comma's and creates an array of substrings delimited by these
+     * comma's. Comma's escaped as '\,' are unescaped and not seen as delimiters. Backslashes 
+     * escaped as '\\' are also unescaped.
+     * 
+     * @param string $commaList An UTF-8 string containing the comma-seperated list.
+     * 
+     * @return array(string) The array substrings of the string, splitted on comma's.
+     */
+    public static function fromCommaList($commaList)
+    {
+        // Ensure the input string is UTF-8, to prevent freaky errors.
+        mb_check_encoding($commaList, 'UTF-8');
+        
+        $result = array();
+        $last = '';
+        for($i = 0; $i < strlen($commaList); ++$i)
+        {
+            $c = $commaList[$i];
+            if($c == ',')
+            {
+                // Add last element to resulting array.
+                $result[] = $last;
+                $last = '';
+            }
+            else if($c == "\\")
+            {
+                // Escaped character.
+                ++$i;
+                $last .= $commaList[$i];
+            }
+            else
+            {
+                // Other bytes.
+                $last .= $c;
+            }
+        }
+        
+        $result[] = $last;
+        
+        return $result;
+    }
+    
+    /**
+     * Inverse of fromCommaList. Produces a comma-seperated string containing the elements from
+     * the array. Comma's and backslashes are escaped.
+     * 
+     * @param array(string) $arr An array of strings to convert into a comma list.
+     * 
+     * @return string A string containing the array elements seperated by comma's.
+     */
+    public static function toCommaList($arr)
+    {
+        // Escape function.
+        $doEscape = function($str)
+        {
+            return str_replace(',', '\\,', str_replace('\\', '\\\\', $str));
+        };
+        
+        // Glue the list together,
+        return implode(',', array_map($doEscape, $arr));
     }
     
     /**
@@ -136,12 +201,6 @@ class Annotation extends Entity
     
     public function getScanId()        { return $this->scanId;    }
     public function setScanId($scanId) { $this->scanId = $scanId; }
-    
-    public function getTranscriptionEng()      { return $this->transcriptionEng;  }
-    public function setTranscriptionEng($text) { $this->transcriptionEng = $text; }
-    
-    public function getTranscriptionOrig()      { return $this->transcriptionOrig;  }
-    public function setTranscriptionOrig($text) { $this->transcriptionOrig = $text; }
     
     public function getPolygon()
     {
@@ -177,4 +236,44 @@ class Annotation extends Entity
     
     public function getTimeChanged()      { return date('Y-m-d',$this->timeChanged);  }
     public function setTimeChanged($time) { $this->timeChanged = $time; }
+    
+    
+    // Returns annotation info as indexed array.
+    public function getAnnotationInfo()
+    {
+        return self::fromCommaList($this->annotationInfo);
+    }
+    public function setAnnotationInfo($info)
+    {
+        $this->annotationInfo = self::toCommaList($info);
+    }
+    
+    
+    // For compatibility. About to be deprecated.
+    public function getTranscriptionEng()      
+    {
+        $info = $this->getAnnotationInfo();
+        Log::debug('!!!!!' . print_r($info, true));
+        return $info[0];
+    }
+    public function getTranscriptionOrig() 
+    {
+        $info = $this->getAnnotationInfo();
+        Log::debug('!!!!!' . print_r($info, true));
+        return $info[1];
+    }
+    
+    public function setTranscriptionEng($text)
+    {
+        $info = $this->getAnnotationInfo();
+        $info[0] = $text;
+        $this->setAnnotationInfo($info);
+    }
+    
+    public function setTranscriptionOrig($text)
+    {
+        $info = $this->getAnnotationInfo();
+        $info[1] = $text;
+        $this->setAnnotationInfo($info);
+    }
 }
