@@ -214,7 +214,7 @@ abstract class Controller
     }
     
     /**
-     * Gets a string from data.
+     * Gets a text string from data.
      *
      * @param  $data       Data to fetch value from.
      * @param  $key        Key of the value.

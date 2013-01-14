@@ -172,7 +172,7 @@ class Query
         
         $columns = self::argsToArray(func_get_args());
         
-        $query->columns = array_map(array($query, 'escapeIdentifier'), $columns);
+        $query->columns = array_map(array($query, 'quoteIdentifiers'), $columns);
         
         return $query;
     }
@@ -188,12 +188,12 @@ class Query
     {
         $query = new Query('INSERT');
         
-        $query->tables  = array($query->escapeIdentifier($table));
+        $query->tables  = array($query->quoteIdentifiers($table));
         
         $query->columns = array();
         foreach ($values as $column => $value)
         {
-            $query->columns[$query->escapeIdentifier($column)] = $query->escapeValue($value);
+            $query->columns[$query->quoteIdentifiers($column)] = $query->escapeValue($value);
         }
         
         return $query;
@@ -211,12 +211,12 @@ class Query
     {
         $query = new Query('UPDATE');
         
-        $query->tables  = array($query->escapeIdentifier($table));
+        $query->tables  = array($query->quoteIdentifiers($table));
         
         $query->columns = array();
         foreach ($values as $column => $value)
         {
-            $query->columns[$query->escapeIdentifier($column)] = $query->escapeValue($value);
+            $query->columns[$query->quoteIdentifiers($column)] = $query->escapeValue($value);
         }
         
         return $query;
@@ -231,7 +231,7 @@ class Query
     {
         $query = new Query('DELETE');
         
-        $query->tables = array($query->escapeIdentifier($table));
+        $query->tables = array($query->quoteIdentifiers($table));
         
         return $query;
     }
@@ -250,7 +250,7 @@ class Query
         
         $this->kind    = 'SELECT';
         $this->columns = array_merge($this->columns,
-            array_map(array($this, 'escapeIdentifier'), $columns));
+            array_map(array($this, 'quoteIdentifiers'), $columns));
         
         return $this;
     }
@@ -304,7 +304,7 @@ class Query
         }
         
         $this->tables = array_merge($this->tables,
-            array_map(array($this, 'escapeIdentifier'), $tables));
+            array_map(array($this, 'quoteIdentifiers'), $tables));
         
         return $this;
     }
@@ -323,7 +323,7 @@ class Query
         }
         
         // Add join
-        $this->joinClause .= "\n" . $type . 'JOIN ' . $this->escapeIdentifier($table);
+        $this->joinClause .= "\n" . $type . 'JOIN ' . $this->quoteIdentifiers($table);
         
         // Add conditions.
         if ($conditions)
@@ -387,8 +387,9 @@ class Query
      */
     public function whereFulltext($column, $query, $result = null, $orNull = false, $fast = false)
     {
-        $column = $this->escapeIdentifier($column);        
-        $query = $this->escapeIdentifier($query);
+        // TODO .......
+        $column = $this->quoteIdentifiers($column);        
+        $query = $this->quoteIdentifiers($query);
         
         if ($fast)
         {
@@ -401,7 +402,7 @@ class Query
         
         if ($result !== null)
         {
-            $result = $this->escapeIdentifier($result);
+            $result = $this->quoteIdentifiers($result);
             $this->tables[] = $condition . ' AS ' . $result;
         }
         
@@ -441,7 +442,7 @@ class Query
     {
         // Get columns.
         $columns = self::argsToArray(func_get_args());
-        $columns = implode(', ', array_map(array($this, 'escapeIdentifier'), $columns));
+        $columns = implode(', ', array_map(array($this, 'quoteIdentifiers'), $columns));
         
         // Add group by clause.
         $this->groupByClause .= "\nGROUP BY " . $columns;
@@ -466,11 +467,11 @@ class Query
             // Add order by clause.
             if ($this->orderByClause != '')
             {
-                $this->orderByClause .= ", " . $this->escapeIdentifier($column) . ' ' . $direction;
+                $this->orderByClause .= ", " . $this->quoteIdentifiers($column) . ' ' . $direction;
             }
             else
             {
-                $this->orderByClause .= "\nORDER BY " . $this->escapeIdentifier($column) . ' ' . $direction;
+                $this->orderByClause .= "\nORDER BY " . $this->quoteIdentifiers($column) . ' ' . $direction;
             }
         }
         
@@ -560,8 +561,8 @@ class Query
     
     private function handleAggregate($function, $column, $as)
     {
-        return strtoupper($function) . '(' . $this->escapeIdentifier($column) . ') AS ' .
-            $this->escapeIdentifier($as);
+        return strtoupper($function) . '(' . $this->quoteIdentifiers($column) . ') AS ' .
+            $this->quoteIdentifiers($as);
     }
     
     private function handleHaving($conditions, $joinWithAnd = true)
@@ -635,9 +636,9 @@ class Query
             if (preg_match('/^([a-z][\w\.]*)\s*(' . implode('|', $operators) . ')\s*(.*?)$/i',
                 $condition, $matches))
             {
-                $identifier = $this->escapeIdentifier($matches[1]);
+                $identifier = $this->quoteIdentifiers($matches[1]);
                 $operator   = $matches[2];
-                $value      = $this->escapeIdentifier($matches[3]);
+                $value      = $this->quoteIdentifiers($matches[3]);
                 
                 $clauses[] = $identifier . ' ' . $operator . ' ' . $value;
             }
@@ -682,20 +683,28 @@ class Query
         }
     }
     
-    // Escapes an identifier.
-    private function escapeIdentifier($identifier)
-    {
-        if ($identifier == '*')
+    // Takes a part of a SQL query (that is hard-coded and does NOT depend on user input) and surrounds SQL 
+    // identifiers (such as column and table names) with double quotes.
+    //
+    // Examples:
+    //    userId                                   -> "userId"
+    //    books.printVersion                       -> "books"."printVersion" 
+    //    authorNames(books.bookId) AS authornames -> authorNames("books"."bookId") AS "authornames"
+    private function quoteIdentifiers($sql)
+    {        
+        if ($sql == '*')
         {
-            return $identifier;
+            return $sql;
         }
         
-        // Escape all column names. 'DISTINCT' or 'NULL', when used as a keyword, should not be escaped.
-        return preg_replace(
+        // Quote all identifiers that are not operators. 
+        $result = preg_replace(
             array('/(?<![:\w])(\w+)(?![\(\w])/', '/(?<!\.)"(as|distinct|null|collate|max|min|utf8_bin)"(?!\.)/i'),
             array('"\1"', '\1'),
-            $identifier
+            $sql
         );
+        
+        return $result;
     }
     
     // Flattens arguments to an array.
