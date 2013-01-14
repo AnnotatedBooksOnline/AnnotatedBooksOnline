@@ -38,9 +38,9 @@ class Configuration extends Singleton
     {
         $this->settings = array();
                 
-        // Read settings from the file at configPath.
-        global $configPath;
-        $this->addSettings($configPath);
+        // Read settings from the config file.
+        global $applicationPath;
+        $this->addSettings("$applicationPath/config/config.ini");
     }
     
     /**
