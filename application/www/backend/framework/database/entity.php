@@ -225,6 +225,22 @@ abstract class Entity
     }
     
     /**
+     * Gets all default (administrative) values of this entity.
+     */
+    public function getDefaultValues()
+    {
+        $columns = static::getDefaultColumns();
+        
+        $values = array();
+        foreach ($columns as $key)
+        {
+            $values[$key] = $this->{$key};
+        }
+        
+        return $values;
+    }
+    
+    /**
      * Gets all values of this entity.
      *
      * @return  All values of this entity.
