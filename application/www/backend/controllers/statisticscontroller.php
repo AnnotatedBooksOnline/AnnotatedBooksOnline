@@ -206,7 +206,7 @@ class StatisticsController extends ControllerBase
             return array(
                 "name" => $user['firstName'] . " " . $user['lastName'],
                 "affiliation" => $user['affiliation'],
-                "registrationDate" => $this->formatDate($user['registrationDate'])
+                "registrationDate" => StatisticsController::formatDate($user['registrationDate'])
             );
         });
         $page .= "<h3>Last active users</h3>";
@@ -219,7 +219,7 @@ class StatisticsController extends ControllerBase
             return array(
                 "name"        => $user['firstName'] . " " . $user['lastName'],
                 "affiliation" => $user['affiliation'],
-                "lastActive"  => $this->formatDate($user['lastActive'])
+                "lastActive"  => StatisticsController::formatDate($user['lastActive'])
             );
         });
         
@@ -236,7 +236,7 @@ class StatisticsController extends ControllerBase
             return array(
                 "shelfmark" => $binding['shelfmark'],
                 "name"      => $binding['firstName'] . " " . $binding['lastName'],
-                "createdOn" => $this->formatDate($binding['createdOn']),
+                "createdOn" => StatisticsController::formatDate($binding['createdOn']),
                 "status"    => $binding['status']
             );
         });
@@ -257,8 +257,8 @@ class StatisticsController extends ControllerBase
                 "book" => $ann['book'],
                 "page" => $ann['page'],
                 "name"      => $ann['firstName'] . " " . $ann['lastName'],
-                "timeCreated" => $this->formatDate($ann['timeCreated']),
-                "timeChanged" => $this->formatDate($ann['timeChanged']),
+                "timeCreated" => StatisticsController::formatDate($ann['timeCreated']),
+                "timeChanged" => StatisticsController::formatDate($ann['timeChanged']),
                 "mutation" => $ann['mutation']
             );
         });
@@ -267,7 +267,7 @@ class StatisticsController extends ControllerBase
         return $page;
     }
     
-    private function formatDate($stamp)
+    public static function formatDate($stamp)
     {
         return date('F d, Y', $stamp);
     }
