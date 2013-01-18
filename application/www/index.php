@@ -17,9 +17,10 @@
 // Set backend as current working directory and include path.
 $backendPath = dirname(__FILE__) . '/backend/';
 
-// The directory containing the configuration file lies one above www.
-global $configPath;
-$configPath = dirname(__FILE__) . '/../config/config.ini';
+// Define the 'application path' as the directory that lies one above the webroot.
+// In here, configuration, log and cache files are stored.
+global $applicationPath;
+$applicationPath = dirname(__FILE__) . '/../';
 
 chdir($backendPath);
 set_include_path($backendPath);

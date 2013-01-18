@@ -59,18 +59,20 @@ class TilePyramidBuilder extends Singleton
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
         
+        $outputPath = '../data/tiles/' . ((int) $scan->getScanId());
+        
         // Determine arguments to builder command. Make sure bash injection is not possible.
         $scantype = escapeshellarg($scan->getScanType());
         $imgfile = escapeshellarg($upload->getFileLocation());
         $output = array();
         $rval = 0;
-        $outpath = '../data/tiles/' . ((int) $scan->getScanId());
-        $quality = $conf->getInteger('tile-quality', 60);
-        $builderpath = $conf->getString('builder-path'); 
+        $outpath = escapeshellarg($outputPath);
+        $quality = escapeshellarg($conf->getInteger('tile-quality', 60));
+        $builderpath = escapeshellarg($conf->getString('builder-path')); 
         $tileformat = 'tile_%z_%x_%y.%e';
         
         // Create tile output directory.
-        if (!is_dir($outpath) && !mkdir($outpath))
+        if (!is_dir($outputPath) && !mkdir($outputPath))
         {
             throw new TilePyramidBuilderException('makedir-failed');
         }
@@ -78,6 +80,7 @@ class TilePyramidBuilder extends Singleton
         // Set builder command.
         Log::debug('Running builder.');
         
+        // Form command. All variables in string have been escaped.
         $command = "$builderpath -q $quality -i $scantype -p $outpath -f $tileformat $imgfile";
         
         // Check for a relative path, and make it absolute.

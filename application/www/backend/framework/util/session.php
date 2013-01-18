@@ -37,7 +37,15 @@ class Session extends Singleton
         $sessionName = session_name();
         if (isset($_POST[$sessionName]))
         {
-            session_id($_POST[$sessionName]);
+            // Assert the session identifier is valid base64.
+            $sessionId = $_POST[$sessionName];
+            if(base64_decode($sessionId) === false)
+            {
+                throw new Exception('Illegal session identifier.');
+            }
+            
+            // Set the session id.
+            session_id($sessionId);
         }
         
         // Start the session.
