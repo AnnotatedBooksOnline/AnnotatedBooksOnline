@@ -15,6 +15,7 @@
  */
 
 require_once 'framework/database/entity.php';
+require_once 'models/setting/setting.php';
 
 /**
  * Exceptions.
@@ -280,7 +281,7 @@ class User extends Entity
         $newId = Setting::getSetting('deleted-user-id');
         
         // Make sure its not the dummy user itself that is being deleted.
-        if($newId === $this->getUserId())
+        if($newId == $this->getUserId())
         {
             throw new EntityException();
         }
@@ -446,5 +447,13 @@ class User extends Entity
     }
     
     public function isActive() { return $this->getActive(); }
+    
+    public function isDeletedUser()
+    {
+        // Get the user id of the deleted dummy user.
+        $deletedId = Setting::getSetting('deleted-user-id');
+
+        return $deletedId == $this->getUserId();
+    }
 }
 
