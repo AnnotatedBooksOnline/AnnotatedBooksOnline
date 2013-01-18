@@ -52,3 +52,8 @@ tile-quality=80
 ; Dimensions of thumbnails.
 thumbnail-width=165
 thumbnail-height=300
+
+[Server]
+; Base URL for the website, i.e. http://abo.annotatedbooksonline.com/
+; base-url=
+
