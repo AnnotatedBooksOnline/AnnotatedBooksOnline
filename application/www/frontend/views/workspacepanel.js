@@ -487,7 +487,7 @@ Ext.define('Ext.ux.ExportForm', {
                 
                 info += '<tr><td>Title</td><td>' + escape(books[0].get('title')) + '</td></tr>'
                       + '<tr><td>Author</td><td>' + escape(authors) + '</td></tr>'
-                      + '<tr><td>Year</td><td>' + escape("" + year) + '</td></tr>'
+                      + '<tr><td>Year</td><td>' + escape(year) + '</td></tr>'
                       + '<tr><td>Location</td><td>' + escape(toString(books[0].get('placePublished'))) + '</td></tr>'
                       + '<tr><td>Publisher</td><td>' + escape(toString(books[0].get('publisher'))) + '</td></tr>';
             }
