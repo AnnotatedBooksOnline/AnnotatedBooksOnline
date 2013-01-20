@@ -20,9 +20,10 @@ $backendPath = $argv[1];
 chdir($backendPath);
 set_include_path($backendPath);
 
-// Set the path of the configuration file, this is relative to the backend/working directory.
-global $configPath;
-$configPath = "../../config/config.ini";
+// Define the 'application path' as the directory that lies two above the backend path.
+// In here, configuration, log and cache files are stored.
+global $applicationPath;
+$applicationPath = "$backendPath/../../";
 
 date_default_timezone_set('UTC');
 
