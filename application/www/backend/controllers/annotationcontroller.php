@@ -56,10 +56,6 @@ class AnnotationController extends ControllerBase
         // Fetch scan id.
         $scanId = self::getInteger($data, 'scanId');
         
-        // Create scan to test whether scan exists.
-        // (Foreign key contraint should also do this.)
-        $scan = new Scan($scanId);
-        
         // Fetch user id.
         $userId = Authentication::getInstance()->getUserId();
         
@@ -70,6 +66,10 @@ class AnnotationController extends ControllerBase
         return Database::getInstance()->doTransaction(
             function() use ($scanId, $userId, $annotations)
             {
+                // Create scan to test whether scan exists.
+                // (Foreign key contraint should also do this.)
+                $scan = new Scan($scanId);
+                
                 // Insert every annotation.
                 $i = 0;
                 $annotationIds = array();

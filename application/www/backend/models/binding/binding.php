@@ -87,10 +87,17 @@ class Binding extends Entity
      */
     public function loadDetails()
     {
-        $this->bookList = BookList::find(array('bindingId' => $this->bindingId));
-        $this->scanList = ScanList::find(array('bindingId' => $this->bindingId));
-        $this->provenanceList = ProvenanceList::find(array('bindingId' => $this->bindingId));
-        $this->bindingLanguageList = BindingLanguageList::find(array('bindingId' => $this->bindingId));
+        $bindingId = $this->bindingId;
+        list($this->bookList, $this->scanList, $this->provenanceList, $this->bindingLanguageList) 
+            = Database::getInstance()->doTransaction(function() use ($bindingId)
+        {
+            $bookList = BookList::find(array('bindingId' => $bindingId));
+            $scanList = ScanList::find(array('bindingId' => $bindingId));
+            $provenanceList = ProvenanceList::find(array('bindingId' => $bindingId));
+            $bindingLanguageList = BindingLanguageList::find(array('bindingId' => $bindingId));
+            
+            return array($bookList, $scanList, $provenanceList, $bindingLanguageList);
+        });
     }
     
     /**
@@ -98,27 +105,36 @@ class Binding extends Entity
      */
     public function saveDetails() 
     {
-        // Save the book list.
-        $this->bookList->setValue('bindingId', $this->bindingId);
-        $this->bookList->save();
-        
-        // Load all book details.
-        foreach($this->bookList as $book)
+        $bindingId = $this->bindingId;
+        $bookList = $this->bookList;
+        $scanList = $this->scanList;
+        $provenanceList = $this->provenanceList;
+        $bindingLanguageList = $this->bindingLanguageList;
+        return Database::getInstance()->doTransaction(function() use ($bindingId, $bookList, $scanList, 
+                                                                         $provenanceList, $bindingLanguageList)
         {
-            $book->loadDetails();    
-        }
-        
-        // Save the scan list.
-        $this->scanList->setValue('bindingId', $this->bindingId);
-        $this->scanList->save();
-        
-        // Save the provenance list.
-        $this->provenanceList->setValue('bindingId', $this->bindingId);
-        $this->provenanceList->save();
-        
-        // Save the language list.
-        $this->bindingLanguageList->setValue('bindingId', $this->bindingId);
-        $this->bindingLanguageList->save();
+            // Save the book list.
+            $bookList->setValue('bindingId', $bindingId);
+            $bookList->save();
+            
+            // Load all book details.
+            foreach($bookList as $book)
+            {
+                $book->loadDetails();    
+            }
+            
+            // Save the scan list.
+            $scanList->setValue('bindingId', $bindingId);
+            $scanList->save();
+            
+            // Save the provenance list.
+            $provenanceList->setValue('bindingId', $bindingId);
+            $provenanceList->save();
+            
+            // Save the language list.
+            $bindingLanguageList->setValue('bindingId', $bindingId);
+            $bindingLanguageList->save();
+        });
     }
     
     /**

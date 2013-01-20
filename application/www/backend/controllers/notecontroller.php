@@ -28,7 +28,6 @@ class NoteController extends Controller
      */
     public function actionLoad($data)
     {
-        //Authentication::assertLoggedOn();
         Authentication::assertPermissionTo('manage-notebook');
         
         // Retrieve the user id of the user.

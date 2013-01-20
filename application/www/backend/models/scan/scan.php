@@ -125,33 +125,36 @@ class Scan extends Entity
     public static function fromBindingPage($binding, $range)
     {
        if (is_array($range))
-              {
-                  $from = $range[0];
-                  $to   = $range[1];
-              }
-              else
-              {
-                  $from = $range;
-                  $to   = $range;
-              }
-              
-              $result = Query::select('scanId')
-                  ->from('Scans')
-                  ->where('bindingId = :binding', 'page >= :from', 'page <= :to')
-                  ->orderBy('page', 'ASC')
-                  ->execute(array(
-                      'binding' => $binding->getBindingId(),
-                      'from'    => $from,
-                      'to'      => $to
-                  ));
-          
-       $scans = array();
-       foreach ($result as $scan)
        {
-           $scans[] = new Scan($scan->getValue('scanId'));
+           $from = $range[0];
+           $to   = $range[1];
        }
-       
-       return $scans;
+       else
+       {
+           $from = $range;
+           $to   = $range;
+       }
+      
+       return Database::getInstance()->doTransaction(function() use ($binding, $from, $to)
+       {
+           $result = Query::select('scanId')
+              ->from('Scans')
+              ->where('bindingId = :binding', 'page >= :from', 'page <= :to')
+              ->orderBy('page', 'ASC')
+              ->execute(array(
+                  'binding' => $binding->getBindingId(),
+                  'from'    => $from,
+                  'to'      => $to
+              ));
+              
+           $scans = array();
+           foreach ($result as $scan)
+           {
+               $scans[] = new Scan($scan->getValue('scanId'));
+           }
+           
+           return $scans;
+       });
     }
     
     /**

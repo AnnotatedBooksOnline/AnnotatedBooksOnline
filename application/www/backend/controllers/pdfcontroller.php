@@ -28,7 +28,7 @@ class PdfController extends Controller
      * Generates the PDF and stores it in a cache file.
      */
     public function actionGenerate($data)
-    {
+    {        
         $scanId = self::getInteger($data, 'scanId');
         $transcriptions = null;
         $annotations = false;
@@ -150,7 +150,7 @@ class PdfController extends Controller
      * Outputs the PDF as a file for downloading. Also sets the correct headers for file download.
      */
     public function actionDownload($data)
-    {
+    {        
         $id = $data['id'];
         $title = $data['title'];
         

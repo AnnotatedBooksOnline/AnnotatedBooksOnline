@@ -76,41 +76,44 @@ class StatisticsController extends ControllerBase
      */
     public function actionBinding($data)
     {
-        $bindings = BindingList::find(array(), 0, 20, array("createdOn" => "DESC"))->getEntities();
-        
-        $result = array();
-        foreach($bindings as $binding)
+        return Database::getInstance()->doTransaction(function() use ($data)
         {
-            $binding = array_merge($binding->getValues(), $binding->getDefaultValues());
-            $user = new User($binding['userId']);
-            switch($binding['status'])
+            $bindings = BindingList::find(array(), 0, 20, array("createdOn" => "DESC"))->getEntities();
+            
+            $result = array();
+            foreach($bindings as $binding)
             {
-                case 0:
-                    $status = "Waiting (reorder)";
-                    break;
-                case 1:
-                    $status = "Waiting (select)";
-                    break;
-                case 2:
-                    $status = "Finished";
-                    break;
-                case 3:
-                    $status = "Deleted";
-                    break;
-                default:
-                    $status = $binding['status'];
+                $binding = array_merge($binding->getValues(), $binding->getDefaultValues());
+                $user = new User($binding['userId']);
+                switch($binding['status'])
+                {
+                    case 0:
+                        $status = "Waiting (reorder)";
+                        break;
+                    case 1:
+                        $status = "Waiting (select)";
+                        break;
+                    case 2:
+                        $status = "Finished";
+                        break;
+                    case 3:
+                        $status = "Deleted";
+                        break;
+                    default:
+                        $status = $binding['status'];
+                }
+                $result[] = array(
+                    "bindingId"   => $binding['bindingId'],
+                    "shelfmark"   => $binding['signature'],
+                    "createdOn"   => $binding['createdOn'],
+                    "status"      => $status,
+                    "username"    => $user->getUsername(),
+                    "firstName"   => $user->getFirstName(),
+                    "lastName"    => $user->getLastName()
+                );
             }
-            $result[] = array(
-                "bindingId"   => $binding['bindingId'],
-                "shelfmark"   => $binding['signature'],
-                "createdOn"   => $binding['createdOn'],
-                "status"      => $status,
-                "username"    => $user->getUsername(),
-                "firstName"   => $user->getFirstName(),
-                "lastName"    => $user->getLastName()
-            );
-        }
-        return $result;
+            return $result;
+        });
     }
     
     /**
@@ -118,51 +121,54 @@ class StatisticsController extends ControllerBase
      */
     public function actionAnnotation($data)
     {
-        $query = Query::select(array(
-            'annotations.annotationId',
-            'annotations.timeChanged',
-            'annotations.timeCreated',
-            'annotations.changedUserId',
-            'bindings.bindingId',
-            'scans.page'
-            ))
-            ->from('Annotations annotations')
-            ->join('Scans scans', array('annotations.scanId = scans.scanId'), 'LEFT')
-            ->join('Bindings bindings', array('scans.bindingId = bindings.bindingId'), 'LEFT')
-            ->orderBy('annotations.timeChanged', 'DESC')
-            ->limit(20, 0);
-        $rows = $query->execute();
-        
-        $results = array();
-        foreach($rows as $row)
+        return Database::getInstance()->doTransaction(function() use ($data)
         {
-            $user = new User($row->getValue('changedUserId'));
-            $binding = new Binding($row->getValue('bindingId'));
-            $book = Book::fromBindingPage($binding, $row->getValue('page'));
-            if ($book != null && count($book) > 0)
+            $query = Query::select(array(
+                'annotations.annotationId',
+                'annotations.timeChanged',
+                'annotations.timeCreated',
+                'annotations.changedUserId',
+                'bindings.bindingId',
+                'scans.page'
+                ))
+                ->from('Annotations annotations')
+                ->join('Scans scans', array('annotations.scanId = scans.scanId'), 'LEFT')
+                ->join('Bindings bindings', array('scans.bindingId = bindings.bindingId'), 'LEFT')
+                ->orderBy('annotations.timeChanged', 'DESC')
+                ->limit(20, 0);
+            $rows = $query->execute();
+            
+            $results = array();
+            foreach($rows as $row)
             {
-                $book = $book[0]->getTitle();
+                $user = new User($row->getValue('changedUserId'));
+                $binding = new Binding($row->getValue('bindingId'));
+                $book = Book::fromBindingPage($binding, $row->getValue('page'));
+                if ($book != null && count($book) > 0)
+                {
+                    $book = $book[0]->getTitle();
+                }
+                else
+                {
+                    $book = "None (" . $binding->getShelfmark() . ")";
+                }
+                $results[] = array(
+                    "annotationId" => $row->getValue('annotationId'),
+                    "timeChanged"  => strtotime($row->getValue('timeChanged')),
+                    "timeCreated"  => strtotime($row->getValue('timeCreated')),
+                    "bindingId"    => $row->getValue('bindingId'),
+                    "page"         => $row->getValue('page'),
+                    "firstName"    => $user->getFirstName(),
+                    "lastName"     => $user->getLastName(),
+                    "username"     => $user->getUsername(),
+                    "book"         => $book,
+                    "mutation"     => $row->getValue('timeChanged') === $row->getValue('timeCreated') ?
+                                        "Added" : "Edited"
+                );
             }
-            else
-            {
-                $book = "None (" . $binding->getShelfmark() . ")";
-            }
-            $results[] = array(
-                "annotationId" => $row->getValue('annotationId'),
-                "timeChanged"  => strtotime($row->getValue('timeChanged')),
-                "timeCreated"  => strtotime($row->getValue('timeCreated')),
-                "bindingId"    => $row->getValue('bindingId'),
-                "page"         => $row->getValue('page'),
-                "firstName"    => $user->getFirstName(),
-                "lastName"     => $user->getLastName(),
-                "username"     => $user->getUsername(),
-                "book"         => $book,
-                "mutation"     => $row->getValue('timeChanged') === $row->getValue('timeCreated') ?
-                                    "Added" : "Edited"
-            );
-        }
-
-        return $results;
+    
+            return $results;
+        });
     }
     
     /**

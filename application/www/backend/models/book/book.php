@@ -140,23 +140,26 @@ class Book extends Entity
             $to = $range;
         }
         
-        $result = Query::select('bookId')
-            ->from('Books')
-            ->where('bindingId = :binding', 'lastPage >= :from', 'firstPage <= :to')
-            ->orderBy('firstPage', 'ASC')
-            ->execute(array(
-                'binding' => $binding->getBindingId(),
-                'from'    => $from,
-                'to'      => $to
-            ));
-        
-        $books = array();
-        foreach ($result as $book)
+        return Database::getInstance()->doTransaction(function() use ($binding, $from, $to)
         {
-            $books[] = new Book($book->getValue('bookId'));
-        }
-        
-        return $books;
+            $result = Query::select('bookId')
+                ->from('Books')
+                ->where('bindingId = :binding', 'lastPage >= :from', 'firstPage <= :to')
+                ->orderBy('firstPage', 'ASC')
+                ->execute(array(
+                    'binding' => $binding->getBindingId(),
+                    'from'    => $from,
+                    'to'      => $to
+                ));
+            
+            $books = array();
+            foreach ($result as $book)
+            {
+                $books[] = new Book($book->getValue('bookId'));
+            }
+            
+            return $books;
+        });
     }
     
     /**
