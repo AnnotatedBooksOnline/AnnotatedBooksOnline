@@ -137,7 +137,9 @@ function boundingBoxesIntersect(first, second)
            (first.topLeft.y < second.bottomRight.y) && (first.bottomRight.y >= second.topLeft.y);
 }
 
-// Escapes a string for displaying.
+// Escapes a string for displaying. 
+// The escaped string can be safely inserted in HTML element content but should not be used in HTML
+// attributes and such.
 function escape(str)
 {
     if (str === null)
@@ -145,11 +147,13 @@ function escape(str)
         return '';
     }
     
-    return String(str).replace(/&/g, '&amp;').
-               	        replace(/"/g, '&quot;').
-                        replace(/</g, '&lt;').
-                        replace(/>/g, '&gt;').
-                        replace(/\n/g, '<br />');
+    return String(str).replace(/&/g,    '&amp;').
+                        replace(/"/g,    '&quot;').
+                        replace(/</g,    '&lt;').
+                        replace(/>/g,    '&gt;').
+                        replace('/\//g', '&#x2F').
+                        replace(/'/g,    '&#x27').
+                        replace(/\r?\n/g,'<br />');
 }
 
 // Gets all cookies.
