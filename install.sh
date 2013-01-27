@@ -3,7 +3,7 @@
 . common.sh
 
 # Check if g++, libtiff and libjpeg are installed.
-if ! g++ -ljpeg -ltiff 2>&1 | grep -q _start
+if ! g++ -ljpeg -ltiff -o /dev/null 2>&1 | grep -q _start
 then
     echo "Unmet dependencies. g++, libjpeg and libtiff are required."
     exit 1

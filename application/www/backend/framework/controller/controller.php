@@ -54,9 +54,10 @@ abstract class Controller
         
         // Check whether we want to use the post method.
         $postMethod = ($_SERVER['REQUEST_METHOD'] == 'POST') && empty($_FILES);
+        $format = self::getString($_GET, 'format', '');
         
         // Set the appropriate content type for a JSON response.
-        if ($postMethod)
+        if ($postMethod || $format === "json")
         {
             header('Content-Type: application/json');
         }
@@ -109,13 +110,18 @@ abstract class Controller
             }
             
             // Handle output.
-            if ($postMethod)
+            if ($postMethod || $format === 'json')
             {
                 // Show output as JSON.
                 echo json_encode($output);
             }
             else if ($success)
             {
+                if ($format === "plain" || !is_string($output))
+                {
+                    header('Content-Type: text/plain');
+                }
+                
                 // Just show output.
                 if (is_string($output))
                 {
@@ -214,7 +220,7 @@ abstract class Controller
     }
     
     /**
-     * Gets a string from data.
+     * Gets a text string from data.
      *
      * @param  $data       Data to fetch value from.
      * @param  $key        Key of the value.

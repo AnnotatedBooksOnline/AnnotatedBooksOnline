@@ -9,7 +9,7 @@ cd "$(dirname $MY_DIR)"
 
 while true
 do
-    echo -n "." >> "$1"/../data/logs/builderoutput.txt
-    php tilepyramidbuilder.php "$1" >> "$1"/../data/logs/builderoutput.txt 2>&1
+    echo -n "." >> "$1"/../../logs/builderoutput.txt
+    php tilepyramidbuilder.php "$1" >> "$1"/../../logs/builderoutput.txt 2>&1
     sleep 5
 done

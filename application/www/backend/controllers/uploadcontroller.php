@@ -195,7 +195,7 @@ class UploadController extends Controller
             }
             
             $tmp = tempnam(sys_get_temp_dir(), 'convertUpload');
-            $command = getcwd() . "/../../../tilepyramidbuilder/bin/tiff2jpeg '" . $location . "' '" . $tmp . "' 2>&1";
+            $command = escapeshellarg(getcwd() . "/../../../tilepyramidbuilder/bin/tiff2jpeg") . ' ' . escapeshellarg($location) . ' ' . escapeshellarg($tmp) . " 2>&1";
             
             // Execute converter.
             Log::debug('Executing: %s', $command);

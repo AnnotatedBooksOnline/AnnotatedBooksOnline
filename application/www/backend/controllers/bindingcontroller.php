@@ -55,9 +55,11 @@ class BindingController extends ControllerBase
         Authentication::assertPermissionTo('change-book-info');
         
         // Load the binding to be modified from the database.
-        $binding = new Binding($inputBindingId);
-        $binding->setStatus(Binding::STATUS_DELETED);
-        $binding->save();
-        
+        Database::getInstance()->doTransaction(function() use ($inputBindingId)
+        {
+            $binding = new Binding($inputBindingId);
+            $binding->setStatus(Binding::STATUS_DELETED);
+            $binding->save();
+        });
     }
 }

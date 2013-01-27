@@ -37,14 +37,10 @@ class Configuration extends Singleton
     protected function __construct()
     {
         $this->settings = array();
-        
-        // Load framework its default settings and custom settings.
-        //$this->addSettings('framework/config/default.ini');
-        //$this->addSettings('config/config.ini');
-        
-        // Read settings from the file at configPath.
-        global $configPath;
-        $this->addSettings($configPath);
+                
+        // Read settings from the config file.
+        global $applicationPath;
+        $this->addSettings("$applicationPath/config/config.ini");
     }
     
     /**

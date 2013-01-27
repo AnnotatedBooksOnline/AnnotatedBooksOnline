@@ -31,7 +31,7 @@ var bookProperties = [{
     name: 'Library'
 },{
     abbreviation: 'signature',
-    name: 'Shelfmark'
+    name: _('shelfmark')
 },{
     abbreviation: 'provenance',
     name: 'Readers',

@@ -37,7 +37,8 @@ class Log extends Singleton
     private static function openLogFile()
     {
         // The directory in which to find the log files.
-        $logPath = '../data/logs';
+        global $applicationPath;
+        $logPath = "$applicationPath/logs";
         
         // Get the rotation period.
         $rotPeriod = Configuration::getInstance()->getInteger('log-rotation-period', 0);
@@ -78,7 +79,7 @@ class Log extends Singleton
                 }
                 
                 // Let current.log point to this file.
-                symlink(getcwd() . '/' . $newFile, $logLink);
+                symlink($newFile, $logLink);
                 
                 return $result;
             }

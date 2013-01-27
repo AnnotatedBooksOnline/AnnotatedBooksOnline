@@ -54,6 +54,9 @@ class BindingUploadController extends Controller
     {
         Database::getInstance()->startTransaction();
         
+        $binding;
+        try
+        {
         // Assert that the user is authenticated.
         Authentication::assertPermissionTo('upload-bindings');
         
@@ -69,7 +72,6 @@ class BindingUploadController extends Controller
         $signature   = self::getString($inputBinding, 'signature');
         
         // Load an existing binding or create a new binding if no existing binding is provided.
-        $binding;
         if ($inputBindingId == -1 && !$safe)
         {
             $binding = new Binding();
@@ -122,10 +124,18 @@ class BindingUploadController extends Controller
         
         // Save the binding and all its attribute entities.
         $binding->saveWithDetails();
+        }
+        catch(Exception $ex)
+        {
+            // Rollback and rethrow in the event of an exception.
+            Database::getInstance()->rollback();
+            throw $ex;
+        }
         
+        // Commit.
         Database::getInstance()->commit();
-        
         return (array('bindingId' => $binding->getBindingId()));
+        
     }
     
     /**
@@ -133,26 +143,29 @@ class BindingUploadController extends Controller
      */
     private function createLibrary($libraryName, $binding)
     {
-        // Find the specified library in the database.
-        $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
-        
-        // Determine if the library exists in the database. If this is the case the new binding should link to it. If not
-        // the library needs to be created.
-        if ($existingLibrary !== null)
+        return Database::getInstance()->doTransaction(function() use ($libraryName, $binding)
         {
-            // Make the new binding link to the existing library.
-            $binding->setLibraryId($existingLibrary->getLibraryId());
-        }
-        else
-        {
-            // Create a new library and save it.
-            $library = new Library();
-            $library->setLibraryName($libraryName);
-            $library->save();
-        
-            // Link the binding to the newly created library.
-            $binding->setLibraryId($library->getLibraryId());
-        }
+            // Find the specified library in the database.
+            $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
+            
+            // Determine if the library exists in the database. If this is the case the new binding should link to it. If not
+            // the library needs to be created.
+            if ($existingLibrary !== null)
+            {
+                // Make the new binding link to the existing library.
+                $binding->setLibraryId($existingLibrary->getLibraryId());
+            }
+            else
+            {
+                // Create a new library and save it.
+                $library = new Library();
+                $library->setLibraryName($libraryName);
+                $library->save();
+            
+                // Link the binding to the newly created library.
+                $binding->setLibraryId($library->getLibraryId());
+            }
+        });
     }
     
     /**
@@ -399,21 +412,24 @@ class BindingUploadController extends Controller
      */
     private function createPerson($personName)
     {
-        $existingPerson = PersonList::find(array('name' => $personName))->tryGet(0);
-        
-        if ($existingPerson !== null)
+        return Database::getInstance()->doTransaction(function() use ($personName)
         {
-            return new Person($existingPerson->getPersonId());
-        }
-        else
-        {
-            // Create a new person and save it in the database
-            $person = new Person();
-            $person->setName($personName);
-            $person->save();
+            $existingPerson = PersonList::find(array('name' => $personName))->tryGet(0);
             
-            return $person;
-        }
+            if ($existingPerson !== null)
+            {
+                return new Person($existingPerson->getPersonId());
+            }
+            else
+            {
+                // Create a new person and save it in the database
+                $person = new Person();
+                $person->setName($personName);
+                $person->save();
+                
+                return $person;
+            }
+        });
     }
     
     /**
@@ -509,30 +525,33 @@ class BindingUploadController extends Controller
      */
     public function uniqueLibrarySignature($libraryName, $signature, $bindingId)
     {
-        // Find the library.
-        $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
-        
-        // Determine if this is a new library, if this is the case the signature is valid.
-        if ($existingLibrary === null)
+        return Database::getInstance()->doTransaction(function() use ($libraryName, $signature, $bindingId)
         {
-            return true;
-        }
-        
-        // Find an existing binding for the library and the specified signature
-        $binding = BindingList::find(array(
-                    'libraryId' => $existingLibrary->getLibraryId(),
-                    'signature' => $signature))->tryGet(0);
-                    
-        // Determine if there is an existing binding and if this is not the binding currently being
-        // modified.
-        if ($binding !== null && $binding->getBindingId() != $bindingId)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+            // Find the library.
+            $existingLibrary = LibraryList::find(array('libraryName' => $libraryName))->tryGet(0);
+            
+            // Determine if this is a new library, if this is the case the signature is valid.
+            if ($existingLibrary === null)
+            {
+                return true;
+            }
+            
+            // Find an existing binding for the library and the specified signature
+            $binding = BindingList::find(array(
+                        'libraryId' => $existingLibrary->getLibraryId(),
+                        'signature' => $signature))->tryGet(0);
+                        
+            // Determine if there is an existing binding and if this is not the binding currently being
+            // modified.
+            if ($binding !== null && $binding->getBindingId() != $bindingId)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        });
     }
     
     

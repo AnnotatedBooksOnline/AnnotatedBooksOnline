@@ -113,7 +113,11 @@ class Pdf
      * @param boolean    $annotations    Whether to include annotations on the scans. Only valid on combination with transcriptions parameter set.
      */
     public function __construct(Binding $binding, CacheEntry $cacheEntry, $range = null, $transcriptions = null, $annotations = false)
-    {
+    {              
+        // Start a transaction. We don't really need to worry about rolling back in case of an exception or 
+        // such since only reads are being done on the DB.
+        Database::getInstance()->startTransaction();
+        
         $this->productUrl = Configuration::getBaseURL();
         $this->productName = Setting::getSetting('project-title');
         $this->identifier = uniqid('pdf', true);
@@ -170,6 +174,9 @@ class Pdf
                 throw new PdfException('pdf-no-scans');
             }
         }
+        
+        // Commit.
+        Database::getInstance()->commit();
     }
     
     /**
