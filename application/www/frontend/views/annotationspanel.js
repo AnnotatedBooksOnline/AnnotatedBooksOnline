@@ -20,10 +20,10 @@ var annotationInfoCategories = getAnnotationInfoCategories();
 var langStoreData = [];
 for(var i = 0; i < annotationInfoCategories.length; ++i)
 {
-	langStoreData.push({
-		lang: i,
-		name: annotationInfoCategories[i]
-	});
+    langStoreData.push({
+        lang: i,
+        name: annotationInfoCategories[i]
+    });
 }
 
 var langStore = Ext.create('Ext.data.Store', {
@@ -148,7 +148,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                         listeners: {
                             select: function()
                             {
-                            	_this.setLanguage(this.getValue());
+                                _this.setLanguage(this.getValue());
                             }
                         }
                     }]
@@ -790,9 +790,10 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         // Set language column.
         var languageColumn = {
             dataIndex: this.language,
-            renderer: function(text, metadata, model)
+            renderer: function(data, metadata, model)
             {
                 metadata.tdCls = colorClass(model);
+                var text = model.get('annotationInfo')[_this.language];
                 return _this.renderLanguage(text, metadata);
             },
             flex: 1
@@ -855,7 +856,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
     
     renderLanguage: function(text, metadata)
     {
-    	// Retain whitespace.
+        // Retain whitespace.
         metadata.style = 'white-space: normal;';
         
         // Check for null or undefined.
