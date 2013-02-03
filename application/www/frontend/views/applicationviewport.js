@@ -237,7 +237,50 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Header logo.
                 xtype: 'container',
                 width: 256,
-                cls: 'header-logo'
+                cls: 'header-logo',
+                listeners: {
+                    click: {
+                        element: 'el', //bind to the underlying el property on the panel
+                        fn: getCachedSetting('homepage-url') == "" ? function() {} : function()
+                        {
+                            var returnToHomepage = function()
+                            {
+                                window.location.assign(getCachedSetting('homepage-url'));
+                            };
+                            
+                            if (Authentication.getInstance().isLoggedOn())
+                            {
+                                Ext.Msg.show({
+                                    buttons: Ext.Msg.YESNO,
+                                    closable: false,
+                                    icon: Ext.Msg.QUESTION,
+                                    title: 'Leaving ABO',
+                                    msg: 'You are about to leave ABO and return to the '
+                                       + 'homepage. Your unsaved changes, if any, will '
+                                       + 'be lost.<br/><br/>Are you sure?', 
+                                    fn: function(button)
+                                    {
+                                        if (button === 'yes')
+                                        {
+                                            returnToHomepage();
+                                        }
+                                        else if (button === 'no')
+                                        {
+                                            // Do nothing.
+                                        }
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                returnToHomepage();
+                            }
+                        }
+                    }
+                },
+                style: {
+                    cursor: getCachedSetting('homepage-url') == "" ? "default" : "pointer"
+                }
             },{ 
                 // Title, with menu below.
                 layout: 'hbox',
