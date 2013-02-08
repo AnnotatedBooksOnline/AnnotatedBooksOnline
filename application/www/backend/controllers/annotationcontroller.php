@@ -121,13 +121,6 @@ class AnnotationController extends ControllerBase
                                 (!AnnotationController::textEqual($values['transcriptionOrig'], $transOrig)) ||
                                 (!AnnotationController::polygonEqual($values['polygon'], $polygon));
                         }
-                        
-                        if($setChanged)
-                        {
-                            // If a change has been made, store the current revision which is about
-                            // to be overwritten.
-                            RevisedAnnotation::addRevised($ann);
-                        }
                     }
                     else
                     {
@@ -161,6 +154,12 @@ class AnnotationController extends ControllerBase
                     // Save it.
                     $ann->save();
                     
+                    if ($setChanged)
+                    {
+                        // Add RevisedAnnotation to keep track of this revision.
+                        RevisedAnnotation::addRevised($ann);
+                    }
+                    
                     // Add id to list of annotations ids.
                     $annId = $ann->getAnnotationId();
                     $annotationIds[] = $annId;
@@ -168,25 +167,20 @@ class AnnotationController extends ControllerBase
                     ++$i;
                 }
                 
-                // Set all ids that need not be removed as parameters.
-                $whereConds = $whereArgs = $whereTypes = array();
-                foreach ($annotationIds as $annId)
+                // Remove all Annotations that were not in the list.
+                $scanAnnotations = AnnotationList::find(array('scanId' => $scanId))->getEntities();
+                foreach ($scanAnnotations as $ann)
                 {
-                    $whereConds[] = 'annotationId != :param' . $annId;
-                    
-                    $whereArgs['param' . $annId]  = $annId;
-                    $whereTypes['param' . $annId] = 'int';
+                    if (!in_array($ann->getAnnotationId(), $annotationIds))
+                    {
+                        $ann->setChangedUserId($userId);
+                        $ann->setTimeChanged($time);
+                        
+                        RevisedAnnotation::addDeletedRevision($ann);
+                        $ann->delete();
+                    }
                 }
-                
-                // Add scan id.
-                $whereConds[] = 'scanId = :scanId';
-                
-                $whereArgs['scanId']  = $scanId;
-                $whereTypes['scanId'] = 'int';
-                
-                // Remove all annotations that were not just added.
-                Query::delete('Annotations')->where($whereConds)->execute($whereArgs, $whereTypes);
-                
+                                
                 return $annotationIds;
             }
         );
@@ -221,68 +215,11 @@ class AnnotationController extends ControllerBase
     }
     
     /**
-     * Obtain the contents and properties of all previous revisions of a certain annotation.
-     * 
-     * @param int           $annotationId The id of the annotation of which to obtain revisions.
-     * @param array(string) $columns      An array of columns from RevisedAnnotations that should 
-     *                                    be included in the result. Null for all columns. 
-     * @param string        $ordering     Revisions are sorted by their chronological revision 
-     *                                    numbers. Set this to 'asc' in order to sort them from old
-     *                                    to new or to 'desc' in order to sort them from new to 
-     *                                    old.
-     * 
-     * @return array(array(string => string)) The data of the revisions.
-     */
-    public static function getAnnotationRevisions($annotationId, $columns = null, $ordering = 'asc')
-    {
-        // Do a transaction.
-        return Database::getInstance()->doTransaction(function() use ($annotationId, $columns, $ordering)
-        {
-            // Determine ordering argument to pass to find. 
-            $orderArr = array('revisionNumber' => $ordering);
-            
-            // Query and construct a RevisedAnnotationList. 
-            $list = RevisedAnnotationList::find(array('annotationId' => $annotationId),
-                                                0,
-                                                null,
-                                                $orderArr);
-            
-            // Precompute array with requested column names as keys.
-            $columnsFlipped = $columns === null ? null : array_flip($columns);
-            
-            // Build result.
-            $result = array();
-            foreach($list as $revision)
-            {
-                // Get column-value pairs of this revision.
-                $values = $revision->getValues();
-                
-                // Filter the requested columns and add those.
-                if($columns === null)
-                {
-                    $result[] = $values;
-                }
-                else
-                {
-                    $result[] = array_intersect_key($values, $columnsFlipped);
-                }
-            }
-            
-            // Return it.
-            return $result;
-        });
-    }
-    
-    /**
      * Get the annotion revisions for each annotation on a scan. 
-     * 
-     * See also getAnnotationRevisions(...).
      * 
      * @param $data['scanId'] The id of the scan.
      * 
-     * @return An array of associative arrays containing annotation info 
-     *             (id, transcriptionEng transcriptionOrig, changedUserId) 
-     *             and revisions (see getAnnotationRevisions(...)).
+     * @return An array of associative arrays containing revisions, grouped by Annotation.
      */
     public function actionGetScanRevisions($data)
     {
@@ -290,30 +227,35 @@ class AnnotationController extends ControllerBase
         Authentication::assertPermissionTo('view-history');
         
         // Fetch the scan id.
-        $scanId = $data['scanId'];
+        $scanId = self::getInteger($data, 'scanId');
         
         // Do a transaction.
         return Database::getInstance()->doTransaction(function() use ($scanId)
         {            
-            // Query the annotations belonging to this scan.
-            $resultSet = Query::select('annotationId', 'transcriptionEng',
-                                       'transcriptionOrig', 'changedUserId')
-                               ->from('Annotations')
-                               ->where('scanId = :scanId')
-                               ->execute(array('scanId' => $scanId),
-                                         array('scanId' => 'int'));
+            // Query the RevisedAnnotations belonging to this scan.
+            $orderArr = array('annotationId' => 'ASC', 'revisionNumber' => 'DESC');
+            $list = RevisedAnnotationList::find(array('scanId' => $scanId),
+                                                0,
+                                                null,
+                                                $orderArr)->getEntities();
             
-            // Obtain the revisions of each annotation in the scan.
+            // Obtain the revisions of Annotations of this scan, including
+            // those previously deleted, and group them by Annotation.
             $result = array();
-            foreach($resultSet as $row)
+            $count = -1;
+            $last = null;
+            foreach($list as $ann)
             {
-                // Add annotation info.
-                $values = $row->getValues();
-                
-                // Add revisions.
-                $values['revisions'] = AnnotationController::getAnnotationRevisions($row->getValue('annotationId'), null, 'desc');
-                
-                $result[] = $values;
+                if ($ann->getAnnotationId() !== null)
+                {
+                    if ($ann->getAnnotationId() !== $last)
+                    {
+                        $result[] = array();
+                        $count++;
+                        $last = $ann->getAnnotationId();
+                    }
+                    $result[$count][] = $ann->getValues();
+                }
             }
             
             return $result;
@@ -333,7 +275,7 @@ class AnnotationController extends ControllerBase
         Authentication::assertPermissionTo('revert-changes');
         
         // Fetch the revision id.
-        $revisionId = $data['revisedAnnotationId'];
+        $revisionId = self::getInteger($data, 'revisedAnnotationId');
         
         // Start a transaction.
         Database::getInstance()->doTransaction(function() use($revisionId)

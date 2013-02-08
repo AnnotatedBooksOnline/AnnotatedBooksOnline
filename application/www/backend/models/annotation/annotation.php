@@ -166,7 +166,7 @@ class Annotation extends Entity
     public function getCreatedUserId()    { return $this->createdUserId; }
     public function setCreatedUserId($id) { $this->createdUserId = $id;  }
     
-    public function getTimeCreated()      { return date('Y-m-d',$this->timeCreated);  }
+    public function getTimeCreated()      { return $this->timeCreated;  }
     public function setTimeCreated($time) { $this->timeCreated = $time; }
     
     public function getOrder()       { return $this->order;   }
@@ -175,6 +175,6 @@ class Annotation extends Entity
     public function getChangedUserId()    { return $this->changedUserId; }
     public function setChangedUserId($id) { $this->changedUserId = $id;  }
     
-    public function getTimeChanged()      { return date('Y-m-d',$this->timeChanged);  }
+    public function getTimeChanged()      { return $this->timeChanged;  }
     public function setTimeChanged($time) { $this->timeChanged = $time; }
 }

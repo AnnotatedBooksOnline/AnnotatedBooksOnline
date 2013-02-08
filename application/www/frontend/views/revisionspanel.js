@@ -3,7 +3,8 @@ Ext.define('Ext.ux.RevisionsPanel', {
     alias: 'widget.revisionspanel',
     
     theStore: Ext.create('Ext.data.ArrayStore', {
-        fields: ['annotation', 'revision', 'date','english','original'],
+        fields: ['groupname', 'revision', 'disabled',
+                 'mutation', 'date', 'english', 'original', 'id'],
         data: []
     }),
     
@@ -12,6 +13,36 @@ Ext.define('Ext.ux.RevisionsPanel', {
         this.theStore.removeAll();
         
         var _this = this;
+        
+        var renderMutation = function(mutation)
+        {
+            switch(mutation)
+            {
+                case 1: return "Created";
+                case 2: return "Modified";
+                case 3: return "Deleted";
+                case 4: return "Restored";
+                default: return "";
+            }
+        };
+        
+        var renderAnnotationName = function(num, mutation, revisions)
+        {
+            var result = "Annotation " + num;
+            if (mutation == 3)
+            {
+                result += " (" + revisions + " revisions, deleted)";
+            }
+            else if (mutation == 1)
+            {
+                result += " (1 revision)";
+            }
+            else
+            {
+                result += " (" + revisions + " revisions)";
+            }
+            return result;
+        };
         
         RequestManager.getInstance().request(
             'Annotation',
@@ -22,32 +53,30 @@ Ext.define('Ext.ux.RevisionsPanel', {
             {
                 var data = [];
                 
-                _this.revisionIds = new Array(result.length);
                 for(var i = 0; i < result.length; ++i)
                 {                       
-                    var transEng = result[i].transcriptionEng;
-                    var transOrig = result[i].transcriptionOrig;
-                    var revisions = result[i].revisions;
+                    var revisions = result[i];
                     var annotationNum = i + 1;
+                    var annotationGroupName = renderAnnotationName(
+                            annotationNum, revisions[0].mutation, revisions.length);
                     
-                    data.push([annotationNum, 'Current', '', transEng, transOrig]);
-                    
-                    _this.revisionIds[annotationNum] = new Array(result.length);
                     for(var j = 0; j < revisions.length; ++j)
                     {
                         var revisionNum = revisions.length - j;
                         
-                        data.push([annotationNum, 
+                        data.push([annotationGroupName,
                                    revisionNum, 
-                                   revisions[j].revisionCreateTime, 
+                                   (j == 0 || revisions[j].mutation == 3),
+                                   renderMutation(revisions[j].mutation),
+                                   Ext.Date.format(new Date(revisions[j].revisionCreateTime * 1000), 'F j, Y'), 
                                    revisions[j].transcriptionEng, 
-                                   revisions[j].transcriptionOrig]);
-                        
-                        _this.revisionIds[annotationNum][revisionNum] = revisions[j].revisedAnnotationId;
+                                   revisions[j].transcriptionOrig,
+                                   revisions[j].revisedAnnotationId]);
                     }
                 }
                 
                 this.theStore.add(data);
+                this.theStore.group('groupname');
             },
             function()
             {
@@ -56,12 +85,8 @@ Ext.define('Ext.ux.RevisionsPanel', {
         );
     },
     
-    revisionIds: [],
-    
-    restoreRevision: function(annotation, revision)
+    restoreRevision: function(id)
     {
-        var id = this.revisionIds[annotation][revision];
-        
         RequestManager.getInstance().request(
             'Annotation',
             'restoreRevision',
@@ -86,25 +111,31 @@ Ext.define('Ext.ux.RevisionsPanel', {
     {
         var _this = this;
         
-        var defConfig = {  
+        var defConfig = {
+            layout: 'fit',
             items: [{
                 xtype: 'grid',
                 name: 'revisionsgrid',
                 border: false,
+                features: [{
+                    ftype:'grouping',
+                    groupHeaderTpl: '{name}',
+                    startCollapsed: true
+                }],
                 columns: [{
-                    text:      'Annotation number',
-                    flex:      1,
-                    dataIndex: 'annotation',
-                    renderer:  'htmlEncode'
-                },{
                     text:      'Revision',
                     flex:      1,
                     dataIndex: 'revision',
                     renderer:  'htmlEncode'
                 },{
                     text:      'Date',
-                    flex:      1,
+                    flex:      2,
                     dataIndex: 'date',
+                    renderer:  'htmlEncode'
+                },{
+                    text:      'Action',
+                    flex:      1,
+                    dataIndex: 'mutation',
                     renderer:  'htmlEncode'
                 },{
                     text:      'English',
@@ -118,31 +149,32 @@ Ext.define('Ext.ux.RevisionsPanel', {
                     renderer:  'htmlEncode'
                 }],
                 
+                viewConfig: {
+                    getRowClass: function(rec, rowIdx, params, store)
+                    {
+                        return rec.get('disabled') ? 'grid-row-disabled grid-row-light' : '';
+                    }
+                },
+                
                 store: _this.theStore,
                 
                 listeners: {
                     itemdblclick: function(view, record)
                     {
                         var revision = record.get('revision');
-                        if(revision == 'Current')
-                        {
-                            Ext.MessageBox.alert('Current revision', 'This already is the current'
-                                               + ' version of the transcriptions for this annotation.');
-                        }
-                        else
+                        if(!record.get('disabled'))
                         {
                             Ext.Msg.show({
-                                title: 'Restoring annotation.',
+                                title: 'Restoring annotation',
                                 msg: 'Are you sure you want to restore the transcription to this' 
-                                   + ' previous version? All later revisions will be DELETED and' 
-                                   + ' can not be retrieved.',
+                                   + ' previous version?',
                                 buttons: Ext.Msg.YESNO,
                                 icon: Ext.Msg.QUESTION,
                                 callback: function(button)
                                 {
                                     if (button == 'yes')
                                     {
-                                        _this.restoreRevision(record.get('annotation'), revision);
+                                        _this.restoreRevision(record.get('id'));
                                     }
                                 }
                             });

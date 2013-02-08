@@ -19,10 +19,10 @@ Ext.define('Ext.ux.AnnotationModel', {
              'changedName',
              {  name: 'timeCreated',
                 type: 'date',
-                dateFormat: 'Y-m-d'},
+                dateFormat: 'timestamp'},
              {  name: 'timeChanged',
                 type: 'date',
-                dateFormat: 'Y-m-d'}
+                dateFormat: 'timestamp'}
             ],
     
     hasMany: {

@@ -95,14 +95,17 @@ Ext.define('Ext.ux.BindingAdminPanel', {
                         autoScroll: true,
                         width: 800,
                         height: 600,
+                        layout: 'border',
                         items: [{
                             xtype: 'label',
+                            region: 'north',
                             border: 3,
                             padding: 3,
                             margin: 5,
                             layout:{ align: 'middle' },
                             text: 'Double-click a revision in order to restore it.'
                         },{
+                            region: 'center',
                             xtype: 'revisionspanel',
                             border: false,
                             scanId: scanId
