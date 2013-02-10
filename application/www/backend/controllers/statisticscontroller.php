@@ -17,6 +17,8 @@
 require_once 'controllers/controllerbase.php';
 require_once 'models/user/userlist.php';
 require_once 'models/binding/bindinglist.php';
+require_once 'models/scan/scanlist.php';
+require_once 'util/authentication.php';
 
 /**
  * Statistics controller class.
@@ -26,10 +28,16 @@ class StatisticsController extends ControllerBase
     /**
      * Get user statistics.
      */
-    public function actionUser($data)
+    public function actionNewestUsers($data)
     {
-        // Find 10 newest users.
-        $newUsers = UserList::find(array(), 0, 10, array("registrationDate" => "DESC"));
+        // Check permission to view this.
+        Authentication::assertPermissionTo('view-history');
+        Authentication::assertPermissionTo('view-users-part');
+        
+        $limit = 50;
+        
+        // Find newest users.
+        $newUsers = UserList::find(array(), 0, $limit, array("registrationDate" => "DESC"));
         $newUsers = array_filter($newUsers->getEntities(), function($user)
         {
             return !$user->isDeletedUser();
@@ -38,16 +46,28 @@ class StatisticsController extends ControllerBase
         foreach($newUsers as $user)
         {
             $newest[] = array(
+                "userId"           => $user->getUserId(),
                 "username"         => $user->getUsername(),
-                "firstName"   => $user->getFirstName(),
-                "lastName"    => $user->getLastName(),
+                "firstName"        => $user->getFirstName(),
+                "lastName"         => $user->getLastName(),
                 "affiliation"      => $user->getAffiliation(),
                 "registrationDate" => $user->getRegistrationDate()
             );
         }
+
+        return $newest;
+    }
+    
+    public function actionActiveUsers($data)
+    {
+        // Check permission to view this.
+        Authentication::assertPermissionTo('view-history');
+        Authentication::assertPermissionTo('view-users-part');
         
-        // Find 10 last online users.
-        $activeUsers = UserList::find(array(), 0, 10, array("lastActive" => "DESC"));
+        $limit = 50;
+        
+        // Find last online users.
+        $activeUsers = UserList::find(array(), 0, $limit, array("lastActive" => "DESC"));
         $activeUsers = array_filter($activeUsers->getEntities(), function($user)
         {
             return !$user->isDeletedUser();
@@ -56,6 +76,7 @@ class StatisticsController extends ControllerBase
         foreach($activeUsers as $user)
         {
             $active[] = array(
+                "userId"      => $user->getUserId(),
                 "username"    => $user->getUsername(),
                 "firstName"   => $user->getFirstName(),
                 "lastName"    => $user->getLastName(),
@@ -64,21 +85,21 @@ class StatisticsController extends ControllerBase
             );
         }        
         
-        return array(
-            "total"  => UserList::getTotal() - 1, // Ignore the <deleted user>.
-            "newest" => $newest,
-            "active" => $active
-        );
+        return $active;
     }
     
     /**
      * Get binding statistics.
      */
-    public function actionBinding($data)
+    public function actionNewestBindings($data)
     {
+        // Check permission to view this.
+        Authentication::assertPermissionTo('view-history');
+        
         return Database::getInstance()->doTransaction(function() use ($data)
         {
-            $bindings = BindingList::find(array(), 0, 20, array("createdOn" => "DESC"))->getEntities();
+            $limit = 50;
+            $bindings = BindingList::find(array(), 0, $limit, array("createdOn" => "DESC"))->getEntities();
             
             $result = array();
             foreach($bindings as $binding)
@@ -102,6 +123,29 @@ class StatisticsController extends ControllerBase
                     default:
                         $status = $binding['status'];
                 }
+                
+                // Find progress of scan conversion for this binding.
+                $numScans = 0;
+                $numProcessed = 0;
+                $numDeleted = 0;
+                $numError = 0;
+                ScanList::find(array("bindingId" => $binding['bindingId']), 0, 0, array(), $numScans);
+                ScanList::find(array("bindingId" => $binding['bindingId'], "status" => 5), 0, 0, array(), $numProcessed);
+                ScanList::find(array("bindingId" => $binding['bindingId'], "status" => 6), 0, 0, array(), $numDeleted);
+                ScanList::find(array("bindingId" => $binding['bindingId'], "status" => 3), 0, 0, array(), $numError);
+                $numScans -= $numDeleted;
+                if ($numScans > 0)
+                {
+                    $progress = ($numProcessed / $numScans * 100) . "% processed";
+                    if ($numError > 0)
+                    {
+                        $progress = "Failed (" . $progress . ")";
+                    }
+                }
+                else
+                {
+                    $progress = "Deleted";
+                }
                 $result[] = array(
                     "bindingId"   => $binding['bindingId'],
                     "shelfmark"   => $binding['signature'],
@@ -109,34 +153,136 @@ class StatisticsController extends ControllerBase
                     "status"      => $status,
                     "username"    => $user->getUsername(),
                     "firstName"   => $user->getFirstName(),
-                    "lastName"    => $user->getLastName()
+                    "lastName"    => $user->getLastName(),
+                    "progress"    => $progress
                 );
             }
             return $result;
         });
     }
     
-    /**
-     * Get most recent annotations.
-     */
-    public function actionAnnotation($data)
+    public function actionBinding($data)
     {
+        // Check permission to view this.
+        Authentication::assertPermissionTo('view-history');
+        
         return Database::getInstance()->doTransaction(function() use ($data)
         {
+            $limit = 50;
+            
+            $bindingId = self::getInteger($data, 'bindingId');
+            $binding = new Binding($bindingId);
+            
             $query = Query::select(array(
-                'annotations.annotationId',
-                'annotations.timeChanged',
-                'annotations.timeCreated',
+                'annotations.mutation',
+                'MIN(annotations.revisionCreateTime) revisionCreateTime',
+                'scans.page',
+                'COUNT(*) numMutations',
+                'COUNT(DISTINCT annotations.changedUserId) numEditors',
+                ))
+                ->from('RevisedAnnotations annotations')
+                ->join('Scans scans', array('annotations.scanId = scans.scanId'))
+                ->where('scans.bindingId = :bid')
+                ->orderBy('annotations.revisionCreateTime', 'DESC')
+                ->groupBy('scans.page', 'DATE(revisionCreateTime)', 'mutation')
+                ->limit($limit, 0);
+            $rows = $query->execute(array("bid" => $bindingId));
+            
+            $result = array();
+            foreach($rows as $row)
+            {
+                $book = Book::fromBindingPage($binding, $row->getValue('page'));
+                if ($book != null && count($book) > 0)
+                {
+                    $book = $book[0]->getTitle();
+                }
+                else
+                {
+                    $book = "";
+                }
+                $mutation = $row->getValue('numMutations') . " annotation";
+                if ($row->getValue('numMutations') > 1)
+                {
+                    $mutation .= "s";
+                }
+                switch($row->getValue('mutation'))
+                {
+                    case 1: $mutation .= " added"; break;
+                    case 2: $mutation .= " modified"; break;
+                    case 3: $mutation .= " deleted"; break;
+                    case 4: $mutation .= " restored"; break;
+                }
+                $mutation .= " (" . $row->getValue('numEditors') . " editors)";
+                $result[] = array(
+                    "book"         => $book,
+                    "page"         => $row->getValue('page'),
+                    "date"         => Database::valueFromType($row->getValue('revisionCreateTime'), 'timestamp'),
+                    "mutation"     => $mutation
+                );
+            }
+            
+            if (count($result) < $limit)
+            {
+                // Add binding creation event.
+                $defaults = $binding->getDefaultValues();
+                $result[] = array(
+                    "book"         => "",
+                    "page"         => NULL,
+                    "date"         => $defaults['createdOn'],
+                    "mutation"     => "Binding created"
+                );
+            }
+            
+            return $result;
+        });
+    }
+    
+    /**
+     * Get most recently changed annotations.
+     *
+     * @param $data['userId'] User ID to limit the statistics to.
+     */
+    public function actionLatestAnnotations($data)
+    {
+        // Check permission to view this.
+        Authentication::assertPermissionTo('view-history');
+        
+        return Database::getInstance()->doTransaction(function() use ($data)
+        {
+            $limit = 100;
+            
+            $userId = null;
+            try
+            {
+                $userId = self::getInteger($data, 'userId');
+                $user = new User($userId);
+            }
+            catch(EntityException $e)
+            {
+                $userId = null;
+            }
+            
+            $query = Query::select(array(
+                'annotations.revisionCreateTime',
                 'annotations.changedUserId',
+                'annotations.mutation',
                 'bindings.bindingId',
                 'scans.page'
                 ))
-                ->from('Annotations annotations')
+                ->from('RevisedAnnotations annotations')
                 ->join('Scans scans', array('annotations.scanId = scans.scanId'), 'LEFT')
                 ->join('Bindings bindings', array('scans.bindingId = bindings.bindingId'), 'LEFT')
-                ->orderBy('annotations.timeChanged', 'DESC')
-                ->limit(20, 0);
-            $rows = $query->execute();
+                ->orderBy('annotations.revisionCreateTime', 'DESC')
+                ->limit($limit, 0);
+            if ($userId !== null)
+            {
+                $rows = $query->where('annotations.changedUserId = :uid')
+                              ->execute(array('uid' => $userId));
+            }
+            else
+            {
+                $rows = $query->execute();
+            }
             
             $results = array();
             foreach($rows as $row)
@@ -152,18 +298,25 @@ class StatisticsController extends ControllerBase
                 {
                     $book = "None (" . $binding->getShelfmark() . ")";
                 }
+                switch($row->getValue('mutation'))
+                {
+                    case 1: $mutation = "Added"; break;
+                    case 2: $mutation = "Modified"; break;
+                    case 3: $mutation = "Deleted"; break;
+                    case 4: $mutation = "Restored"; break;
+                    default: $mutation = "";
+                }
                 $results[] = array(
                     "annotationId" => $row->getValue('annotationId'),
-                    "timeChanged"  => strtotime($row->getValue('timeChanged')),
-                    "timeCreated"  => strtotime($row->getValue('timeCreated')),
+                    "timeChanged"  => Database::valueFromType($row->getValue('revisionCreateTime'), 'timestamp'),
                     "bindingId"    => $row->getValue('bindingId'),
                     "page"         => $row->getValue('page'),
+                    "shelfmark"    => $binding->getSignature(),
                     "firstName"    => $user->getFirstName(),
                     "lastName"     => $user->getLastName(),
                     "username"     => $user->getUsername(),
                     "book"         => $book,
-                    "mutation"     => $row->getValue('timeChanged') === $row->getValue('timeCreated') ?
-                                        "Added" : "Edited"
+                    "mutation"     => $mutation
                 );
             }
     
@@ -193,7 +346,7 @@ class StatisticsController extends ControllerBase
      * Show statistics on a simple HTML page for debug purposes.
      * This function is obsolete by design!
      */
-    public function actionShow($data)
+    /*public function actionShow($data)
     {
         $page = "";
         $page .= "<html><body>";
@@ -271,14 +424,14 @@ class StatisticsController extends ControllerBase
         
         $page .= "</body></html>";
         return $page;
-    }
+    }*/
     
     public static function formatDate($stamp)
     {
         return date('F d, Y', $stamp);
     }
     
-    private function formatTable($rows, $rowNames, $callback)
+/*    private function formatTable($rows, $rowNames, $callback)
     {
         $table = "";
         $table .= "<table><tr>";
@@ -299,6 +452,6 @@ class StatisticsController extends ControllerBase
         }
         $table .= "</table>";
         return $table;
-    }
+    }*/
 }
 

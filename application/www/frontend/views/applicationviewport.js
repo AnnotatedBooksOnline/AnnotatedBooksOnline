@@ -222,6 +222,20 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 }
             },
             name: 'help'
+        },{
+            xtype: 'tbseparator',
+            cls: 'menu-separator'
+        },{
+            text: 'Recent changes',
+            iconCls: 'info-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTabUnique('statistics', [], true);
+                }
+            },
+            name: 'statistics',
+            hidden: true
         }];
         
         var topRegion = {
@@ -759,6 +773,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 break;
             
+            case 'statistics':
+                // Add an upload instructions tab.
+                Ext.apply(tabConfig, {
+                    title: 'Recent changes',
+                    xtype: 'statisticssummary',
+                    iconCls: 'info-icon'
+                });
+                
+                break;
+            
             default:
                 throw new Error('Unknown tab type: \'' + type + '\'.');
         }
@@ -927,6 +951,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
         else
         {
             this.down('[name=users]').hide();
+        }
+        
+        if (Authentication.getInstance().hasPermissionTo('view-users-part')
+            && Authentication.getInstance().hasPermissionTo('view-history'))
+        {
+            this.down('[name=statistics]').show();
+        }
+        else
+        {
+            this.down('[name=statistics]').hide();
         }
         
         if (Authentication.getInstance().hasPermissionTo('upload-bindings'))

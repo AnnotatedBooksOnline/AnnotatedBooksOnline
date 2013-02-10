@@ -246,8 +246,11 @@ Application.prototype.registerActions = function()
             switch (action)
             {
                 case 'login':
-                    Authentication.showLoginWindow();
-                    break
+                    if (!this.authentication.isLoggedOn())
+                    {
+                        Authentication.showLoginWindow();
+                    }
+                    break;
                     
                 case 'editprofile':
                     Authentication.showEditProfileWindow();
@@ -268,6 +271,7 @@ Application.prototype.registerActions = function()
                 case 'activation':
                 case 'restorepass':
                 case 'uploadinfo':
+                case 'statistics':
                     // These are tab actions, so close the windows.
                     Ext.WindowManager.each(
                         function(window)

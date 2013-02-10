@@ -241,9 +241,9 @@ class RevisedAnnotation extends Entity
      * Takes this revision and restores it as the current one of this annotation. 
      * Make sure this RevisedAnnotation is fully loaded before calling this.
      * 
-     * All future revisions are deleted.
+     * @param $user  The User restoring this revision.
      */
-    public function restoreRevision()
+    public function restoreRevision($user)
     {
         // Do not restore a deletion.
         if ($this->getMutation() == RevisedAnnotation::DELETE)
@@ -252,9 +252,10 @@ class RevisedAnnotation extends Entity
         }
         
         $_this = $this;
+        $userId = $user->getUserId();
         
         // Do a transaction.
-        return Database::getInstance()->doTransaction(function() use ($_this)
+        return Database::getInstance()->doTransaction(function() use ($_this, $userId)
         {
             // Query for revision number of the latest other revision of this annotation. 
             $lastRev = Query::select('MAX(revisionNumber) AS revisionNumber')
@@ -306,13 +307,16 @@ class RevisedAnnotation extends Entity
                                        ->getValue("order");
                 $annotation->setOrder($lastOrder + 1);
             }
-                
+            
+            $time = time();
+            
             // Write revision fields to that annotation.
             $annotation->setPolygon($_this->getPolygon());
             $annotation->setTranscriptionEng($_this->getTranscriptionEng());
             $annotation->setTranscriptionOrig($_this->getTranscriptionOrig());
-            $annotation->setChangedUserId($_this->getChangedUserId());
-            $annotation->setTimeChanged($_this->getRevisionCreateTime());
+            // The restoring user has last updated this annotation, not the editor of the restored revision!
+            $annotation->setChangedUserId($userId);
+            $annotation->setTimeChanged($time);
             
             // Store the updated annotation.
             $annotation->save();
@@ -322,6 +326,8 @@ class RevisedAnnotation extends Entity
             $rev->setValues($_this->getValues(RevisedAnnotation::getColumns()));
             $rev->setMutation(RevisedAnnotation::RESTORE);
             $rev->setRevisionNumber($lastRev + 1);
+            $rev->setRevisionCreateTime($time);
+            $rec->setChangedUserId($userId);
             $rev->save();
         });
     }
