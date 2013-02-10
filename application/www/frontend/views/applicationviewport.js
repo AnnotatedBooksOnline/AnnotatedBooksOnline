@@ -200,6 +200,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
             cls: 'menu-separator',
             hidden: getCachedSetting('info-button') == "0"
         },{
+            text: 'Recent changes',
+            iconCls: 'info-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTabUnique('statistics', [], true);
+                }
+            },
+            name: 'statistics',
+            hidden: true
+        },{
             text: 'Users',
             iconCls: 'users-icon',
             listeners: {
@@ -225,17 +236,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
         },{
             xtype: 'tbseparator',
             cls: 'menu-separator'
-        },{
-            text: 'Recent changes',
-            iconCls: 'info-icon',
-            listeners: {
-                click: function()
-                {
-                    Application.getInstance().gotoTabUnique('statistics', [], true);
-                }
-            },
-            name: 'statistics',
-            hidden: true
         }];
         
         var topRegion = {
