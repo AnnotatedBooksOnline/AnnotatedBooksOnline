@@ -261,20 +261,19 @@ class RevisedAnnotation extends Entity
             $lastRev = Query::select('MAX(revisionNumber) AS revisionNumber')
                                                            ->from('RevisedAnnotations')
                                                            ->where('annotationId = :aid')
-                                                           ->execute(array('aid' => $this->getAnnotationId()),
+                                                           ->execute(array('aid' => $_this->getAnnotationId()),
                                                                      array('aid' => 'int'))
                                                            ->getFirstRow()
                                                            ->getValue("revisionNumber");
             
             // Do not restore the most recent revision.
-            if ($this->getRevisionNumber() == $lastRev)
+            if ($_this->getRevisionNumber() == $lastRev)
             {
                 // This is not an error (even though it should not happen).
                 // Just pretend we did restore the latest version (which we essentially
                 // did by just doing nothing).
                 return;
             }
-            
             
             try
             {
@@ -297,7 +296,7 @@ class RevisedAnnotation extends Entity
                 $annotation->setTimeCreated(Database::valueFromType($createInfo->getValue('revisionCreateTime'), 'timestamp'));
                 $annotation->setCreatedUserId($createInfo->getValue('changedUserId'));
                 
-                            // Query for revision number of the latest other revision of this annotation. 
+                // Query for revision number of the latest other revision of this annotation. 
                 $lastOrder = Query::select('MAX(order) AS order')
                                        ->from('Annotations')
                                        ->where('scanId = :sid')
@@ -327,8 +326,17 @@ class RevisedAnnotation extends Entity
             $rev->setMutation(RevisedAnnotation::RESTORE);
             $rev->setRevisionNumber($lastRev + 1);
             $rev->setRevisionCreateTime($time);
-            $rec->setChangedUserId($userId);
+            $rev->setChangedUserId($userId);
             $rev->save();
+            
+            if ($annotation->getAnnotationId() != $_this->getAnnotationId())
+            {
+                // A new Annotation has been created, because the Annotation was found to be deleted.
+                // We now have to update the relevant revisions to use the new annotationId.
+                Query::update('RevisedAnnotations', array('annotationId' => $annotation->getAnnotationId()))
+                        ->where('annotationId = :aid')
+                        ->execute(array('aid' => $_this->getAnnotationId()));
+            }
         });
     }
     

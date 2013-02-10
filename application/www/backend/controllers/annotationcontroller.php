@@ -284,7 +284,7 @@ class AnnotationController extends ControllerBase
             $revision = new RevisedAnnotation($revisionId);
             
             // Restore it.
-            $revision->restoreRevision();
+            $revision->restoreRevision(Authentication::getInstance()->getUser());
         });
     }
     
