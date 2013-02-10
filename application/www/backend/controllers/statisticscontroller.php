@@ -295,7 +295,7 @@ class StatisticsController extends ControllerBase
                 }
                 else
                 {
-                    $book = "None (" . $binding->getShelfmark() . ")";
+                    $book = "None (" . $binding->getSignature() . ")";
                 }
                 switch($row->getValue('mutation'))
                 {
