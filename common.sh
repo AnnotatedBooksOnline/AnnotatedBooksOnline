@@ -2,13 +2,13 @@ CONFFILE=application/config/config.ini
 
 function sql
 {
-    echo "$1" | mysql -u $DBUSER --password=$DBPASS -B --skip-column-names "$DBNAME"
+    echo "$1" | mysql -u "$DBUSER" --password="$DBPASS" -B --skip-column-names "$DBNAME"
 }
 
 # Execute a SQL file, replacing USE directives with the proper database name.
 function sqlfile
 {
-    cat $1 | sed "s/^ *USE  *[^; ]\+/USE $DBNAME/;s/^ *CREATE  *DATABASE  *[^; ]\+/CREATE DATABASE $DBNAME/" | mysql -u $DBUSER --password=$DBPASS
+    cat $1 | sed "s/^ *USE  *[^; ]\+/USE $DBNAME/;s/^ *CREATE  *DATABASE  *[^; ]\+/CREATE DATABASE $DBNAME/" | mysql -u "$DBUSER" --password="$DBPASS"
 }
 
 # Get a setting from the database.
@@ -21,6 +21,14 @@ function getSetting
 function setSetting
 {
     sql "REPLACE Settings (settingName, settingValue) VALUE ('$1', '$2');"
+}
+
+function backupDB
+{
+    mkdir -p dbbackup
+    local FILE=$(date +dbbackup/%Y-%m-%d_%H-%M-%S.sql)
+    echo "Writing database backup to $FILE"
+    mysqldump -u "$DBUSER" --password="$DBPASS" -R -B "$DBNAME" > $FILE
 }
 
 # Read a configuration option.

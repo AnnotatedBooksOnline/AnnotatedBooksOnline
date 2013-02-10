@@ -30,6 +30,10 @@ function upgrade
 
     if [ $CURRENTVERSION -lt $NEWVERSION ]
     then
+    
+        echo "Creating database backup before upgrade."
+        backupDB
+    
         echo "Performing database upgrade."
         for i in $(seq $(($CURRENTVERSION + 1)) $NEWVERSION)
         do
