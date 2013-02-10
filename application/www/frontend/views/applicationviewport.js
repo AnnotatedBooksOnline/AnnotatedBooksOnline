@@ -233,9 +233,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 }
             },
             name: 'help'
-        },{
-            xtype: 'tbseparator',
-            cls: 'menu-separator'
         }];
         
         var topRegion = {
