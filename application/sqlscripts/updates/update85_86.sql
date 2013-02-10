@@ -39,10 +39,7 @@ INSERT INTO "RevisedAnnotations" ("annotationId", "scanId", "revisionNumber", "p
 INSERT INTO "RevisedAnnotations" ("annotationId", "scanId", "revisionNumber", "polygon", "transcriptionOrig", "transcriptionEng", "changedUserId", "revisionCreateTime", "mutation")
     SELECT "annotationId", "scanId", 1, "polygon", "transcriptionOrig", "transcriptionEng", "createdUserId", "timeCreated", 1
     FROM "Annotations"
-    WHERE "Annotations"."annotationId" NOT IN
-    (
-        SELECT "annotationId" FROM "RevisedAnnotations"
-    );
+    WHERE NOT EXISTS (SELECT * FROM "RevisedAnnotations" WHERE "Annotations"."annotationId" = "RevisedAnnotations"."annotationId");
 
 -- DROP the foreign key to Annotations, since we want to keep track after deletion.
 ALTER TABLE "RevisedAnnotations" DROP FOREIGN KEY "RevisedAnnotations_ibfk_2";
