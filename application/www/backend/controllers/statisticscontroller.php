@@ -165,12 +165,12 @@ class StatisticsController extends ControllerBase
     {
         // Check permission to view this.
         Authentication::assertPermissionTo('view-history');
+        $bindingId = self::getInteger($data, 'bindingId');
         
-        return Database::getInstance()->doTransaction(function() use ($data)
+        return Database::getInstance()->doTransaction(function() use ($bindingId)
         {
             $limit = 50;
             
-            $bindingId = self::getInteger($data, 'bindingId');
             $binding = new Binding($bindingId);
             
             $query = Query::select(array(
@@ -246,15 +246,14 @@ class StatisticsController extends ControllerBase
     {
         // Check permission to view this.
         Authentication::assertPermissionTo('view-history');
+        $userId = self::getInteger($data, 'userId');
         
-        return Database::getInstance()->doTransaction(function() use ($data)
+        return Database::getInstance()->doTransaction(function() use ($userId)
         {
             $limit = 100;
             
-            $userId = null;
             try
             {
-                $userId = self::getInteger($data, 'userId');
                 $user = new User($userId);
             }
             catch(EntityException $e)
