@@ -432,7 +432,6 @@ abstract class Entity
         $keys      = static::getPrimaryKeys();
         $columns   = array_merge(static::getColumns(), static::getDefaultColumns());
         $tableName = static::getTableName();
-        $types     = static::getTypes();
         
         // Set the contents of the query.
         $callback = function($value)

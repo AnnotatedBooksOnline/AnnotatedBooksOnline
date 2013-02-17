@@ -248,3 +248,16 @@ a:hover
     cursor: pointer;
 }
 
+.grid-row-light
+{
+    color: #777777;
+}
+
+.grid-row-disabled.x-grid-row-over .x-grid-cell,
+.grid-row-disabled.x-grid-row-selected .x-grid-cell,
+.grid-row-disabled.x-grid-row-focused .x-grid-cell
+{
+    background-color: #FFFFFF !important;
+    border-color: #FAFAFA #EDEDED #EDEDED;
+    border-style: solid;
+}

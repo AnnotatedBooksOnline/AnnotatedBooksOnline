@@ -295,7 +295,7 @@ class Database extends Singleton
      * Helper methods for converting specific kinds of data.
      */
     
-    private static function valueFromType($value, $type)
+    public static function valueFromType($value, $type)
     {
         if ($value === null)
         {
@@ -330,7 +330,7 @@ class Database extends Singleton
         }
     }
     
-    private static function valueToType($value, $type)
+    public static function valueToType($value, $type)
     {
         if ($value === null)
         {

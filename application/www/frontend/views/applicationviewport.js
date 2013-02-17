@@ -200,6 +200,17 @@ Ext.define('Ext.ux.ApplicationViewport', {
             cls: 'menu-separator',
             hidden: getCachedSetting('info-button') == "0"
         },{
+            text: 'Recent changes',
+            iconCls: 'info-icon',
+            listeners: {
+                click: function()
+                {
+                    Application.getInstance().gotoTabUnique('statistics', [], true);
+                }
+            },
+            name: 'statistics',
+            hidden: true
+        },{
             text: 'Users',
             iconCls: 'users-icon',
             listeners: {
@@ -237,7 +248,50 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 // Header logo.
                 xtype: 'container',
                 width: 256,
-                cls: 'header-logo'
+                cls: 'header-logo',
+                listeners: {
+                    click: {
+                        element: 'el', //bind to the underlying el property on the panel
+                        fn: getCachedSetting('homepage-url') == "" ? function() {} : function()
+                        {
+                            var returnToHomepage = function()
+                            {
+                                window.location.assign(getCachedSetting('homepage-url'));
+                            };
+                            
+                            if (Authentication.getInstance().isLoggedOn())
+                            {
+                                Ext.Msg.show({
+                                    buttons: Ext.Msg.YESNO,
+                                    closable: false,
+                                    icon: Ext.Msg.QUESTION,
+                                    title: 'Leaving ABO',
+                                    msg: 'You are about to leave ABO and return to the '
+                                       + 'homepage. Your unsaved changes, if any, will '
+                                       + 'be lost.<br/><br/>Are you sure?', 
+                                    fn: function(button)
+                                    {
+                                        if (button === 'yes')
+                                        {
+                                            returnToHomepage();
+                                        }
+                                        else if (button === 'no')
+                                        {
+                                            // Do nothing.
+                                        }
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                returnToHomepage();
+                            }
+                        }
+                    }
+                },
+                style: {
+                    cursor: getCachedSetting('homepage-url') == "" ? "default" : "pointer"
+                }
             },{ 
                 // Title, with menu below.
                 layout: 'hbox',
@@ -716,6 +770,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 
                 break;
             
+            case 'statistics':
+                // Add an upload instructions tab.
+                Ext.apply(tabConfig, {
+                    title: 'Recent changes',
+                    xtype: 'statisticssummary',
+                    iconCls: 'info-icon'
+                });
+                
+                break;
+            
             default:
                 throw new Error('Unknown tab type: \'' + type + '\'.');
         }
@@ -884,6 +948,16 @@ Ext.define('Ext.ux.ApplicationViewport', {
         else
         {
             this.down('[name=users]').hide();
+        }
+        
+        if (Authentication.getInstance().hasPermissionTo('view-users-part')
+            && Authentication.getInstance().hasPermissionTo('view-history'))
+        {
+            this.down('[name=statistics]').show();
+        }
+        else
+        {
+            this.down('[name=statistics]').hide();
         }
         
         if (Authentication.getInstance().hasPermissionTo('upload-bindings'))
