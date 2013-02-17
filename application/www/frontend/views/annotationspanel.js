@@ -338,7 +338,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         var text = '';
         if (model !== undefined)
         {
-            text = model.get('annotationInfo')[this.language];
+            text = model.get('annotationInfo')[this.language] || '';
         }
         
         // Show contents of new model.
@@ -793,7 +793,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             renderer: function(data, metadata, model)
             {
                 metadata.tdCls = colorClass(model);
-                var text = model.get('annotationInfo')[_this.language];
+                var text = model.get('annotationInfo')[_this.language] || '';
                 return _this.renderLanguage(text, metadata);
             },
             flex: 1

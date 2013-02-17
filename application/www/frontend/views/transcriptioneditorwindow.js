@@ -10,28 +10,32 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
     {
         var _this = this;
         
+        // Create a text area for each info category and place them next to each other.
+        // TODO? When there are a lot (e.g. more than three) of categories, use a different display method.
+        
+        var categories = getAnnotationInfoCategories();
+        var textAreas = [];
+        
+        for(var i = 0; i < categories.length; ++i)
+        {
+        	textAreas.push({
+                xtype: 'textarea',
+                fieldLabel: categories[i],
+                labelAlign: 'top',
+                name: 'annotationInfoField' + i,
+                value: _this.model.get('annotationInfo')[i],
+                style: 'margin-right: 5px;',
+                flex: 1,
+                allowBlank: true
+        	});
+        }
+        
         var defConfig = {
             layout:{
                 type: 'hbox',
                 align: 'stretch'
             },
-            items: [{
-                xtype: 'textarea',
-                fieldLabel: 'Original language',
-                labelAlign: 'top',
-                name: 'transcriptionOrig',
-                style: 'margin-right: 5px;',
-                flex: 1,
-                allowBlank: true
-            },{
-                xtype: 'textarea',
-                fieldLabel: 'English',
-                labelAlign: 'top',
-                name: 'transcriptionEng',
-                style: 'margin-left: 5px;',
-                flex: 1,
-                allowBlank: true
-            }],
+            items: textAreas,
             buttons: [{
                 xtype: 'button',
                 text: 'Cancel',
@@ -62,7 +66,15 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
     
     submit: function()
     {
-        this.updateModel();
+        var annotationInfo = this.model.get('annotationInfo');
+        var categories = getAnnotationInfoCategories();
+        var data = this.getValues();
+        for(var i = 0; i < categories.length; ++i)
+        {
+        	annotationInfo[i] = data['annotationInfoField' + i];
+        }
+        
+        this.model.set('annotationInfo', annotationInfo);        
         
         this.up('transcriptioneditorwindow').close();
     }

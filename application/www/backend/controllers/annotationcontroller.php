@@ -78,7 +78,7 @@ class AnnotationController extends ControllerBase
                 {
                     // Fetch values.
                     $annId     = Controller::getInteger($annotation, 'annotationId');
-                    $info      = Controller::getString($annotation, 'annotationInfo');
+                    $info      = Controller::getArray($annotation, 'annotationInfo');
                     $polygon   = Controller::getArray($annotation, 'polygon');
                     
                     // Check polygon.
@@ -115,10 +115,7 @@ class AnnotationController extends ControllerBase
                             
                             // Check whether the info or the polygon itself changed.
                             $setChanged = !AnnotationController::polygonEqual($values['polygon'], $polygon);
-                            for($j = 0; !$setChanged && $j < size($info); ++$j)
-                            {
-                                $setChanged |= !AnnotationController::textEqual($values['annotationInfo'][$j], $info[$j]);
-                            }
+                            $setChanged |= !AnnotationController::textArrayEqual($values['annotationInfo'], $info);
                         }
                         
                         if($setChanged)
@@ -312,11 +309,11 @@ class AnnotationController extends ControllerBase
      */
     public static function textArrayEqual($a, $b)
     {
-        if(size($a) !== size($b))
+        if(count($a) != count($b))
         {
             return false;
         }
-        for($i = 0; $i < size($a); ++$i)
+        for($i = 0; $i < count($a); ++$i)
         {
             if(!self::textEqual($a[$i], $b[$i]))
             {

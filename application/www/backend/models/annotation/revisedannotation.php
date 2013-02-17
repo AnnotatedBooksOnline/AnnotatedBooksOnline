@@ -214,8 +214,7 @@ class RevisedAnnotation extends Entity
             
             $result->setMutation(RevisedAnnotation::DELETE);
             $result->setPolygon(array());
-            $result->setTranscriptionEng("");
-            $result->setTranscriptionOrig("");
+            $result->setAnnotationInfo(array());
             
             // Set the revision creation time to the current moment.
             $result->setRevisionCreateTime(time());
