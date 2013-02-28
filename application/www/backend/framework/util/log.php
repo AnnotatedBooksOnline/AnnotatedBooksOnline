@@ -40,6 +40,9 @@ class Log extends Singleton
         global $applicationPath;
         $logPath = "$applicationPath/logs";
         
+        // Clear the file stat cache.
+        clearstatcache();
+        
         // Get the rotation period.
         $rotPeriod = Configuration::getInstance()->getInteger('log-rotation-period', 0);
         
@@ -52,36 +55,63 @@ class Log extends Singleton
         {
             // Otherwise, retreive the log file through the current.log symlink.
             $logLink = "$logPath/current.log";
-            $file = is_link($logLink) && readlink($logLink);
+			
+			// Set success to false whenever an error occurs.
+			$success = true;
+			$success &= is_link($logLink);
+			
+            $file = false;
+            if(is_link($logLink))
+            {
+                $file = readlink($logLink);
+            }
+			$success &= $file !== false;
             
-            // Retreive the date from this filename as a timestamp.
-            $fileDate = $file !== false && strtotime(basename($file));
+            // Retreive the date from this filename as a timestamp. C
+            $fileDate = strtotime(basename($file));
+			$success &= $fileDate !== false;
             
             // The number of seconds in a day.
             $dayLength = 86400;
+
+			// When an error occurred while trying to open current.log, or when the rotation period 
+			// is over, try creating/opening a new log file for the current day.
+			if(!$success || time() - $fileDate > $dayLength * $rotPeriod)
+			{
+				// Create a new log file for today. 
+                // Its filename is the date (plus extension) and should be readable with strtotime.
+                $newFile = "$logPath/" . date('d-m-y') . '.log';
+                
+                try
+				{
+					// Unlink the previous current.log.
+					if(is_link($logLink))
+					{
+						unlink($logLink);
+					}
+					
+					// Let current.log point to this file.
+					if(symlink($newFile, $logLink))
+					{
+					    // Use the new log file.
+					    $file = $newFile;
+					}
+                }
+				catch(Exception $ex)
+				{
+					// Keep using the old log on rotation failure.
+				}
+			}
             
-            // Use this file if this date falls within the rotation period.
-            if($fileDate !== false && $fileDate - time() > $dayLength * $rotPeriod)
+            // Open/create the file for appending.
+            if($file !== false)
             {
                 return fopen($file, 'a');
             }
             else
             {
-                // Create a new log file for today. 
-                // Its filename is the date (plus extension) and should be readable with strtotime.
-                $newFile = "$logPath/" . date('d-m-y') . '.log';
-                $result = fopen($newFile, 'a');
-                
-                // Unlink the previous current.log.
-                if(is_link($logLink))
-                {
-                    unlink($logLink);
-                }
-                
-                // Let current.log point to this file.
-                symlink($newFile, $logLink);
-                
-                return $result;
+                // Can not open a log at all.
+                throw new Exception('Failed opening log file.');
             }
         }
     }
@@ -91,8 +121,8 @@ class Log extends Singleton
      */
     protected function __construct()
     {
-        // Open log file.
-        $this->file = self::openLogFile();
+        // Set file to null. It will be opened when it is used for the first time.
+        $this->file = null;
         
         // Get log level.
         $this->level = Configuration::getInstance()->getInteger('logging-level', 2);
@@ -103,7 +133,10 @@ class Log extends Singleton
      */
     public function __destruct()
     {
-        fclose($this->file);
+        if($this->file !== null)
+		{
+			fclose($this->file);
+		}
     }
     
     /**
@@ -226,7 +259,13 @@ class Log extends Singleton
     // Appends a line to the log file.
     private function appendLine($type, $line)
     {
-        // Append line to file.
+        // Open log file, if neccessary.
+		if($this->file === null)
+		{
+			$this->file = self::openLogFile();
+		}
+		
+		// Append line to file.
         fwrite($this->file, gmdate("Y/m/d H:i:s") . ' - ' . $type . ': ' . trim($line) . "\n");
     }
 }
