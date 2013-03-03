@@ -370,8 +370,8 @@ abstract class Controller
         
         // Get exception info.
         $message    = $e->getMessage();
-        $timestamp  = ($e instanceof ExceptionBase) ? $e->getTimestamp() : "";
-        $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
+        $timestamp  = ($e instanceof ExceptionBase) ? $e->getTimestamp() : gmdate('Y/m/d H:i:s', time());
+        $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'system-error';
         
         // Set result.
         $result = array('message' => $message, 'code' => $code, 'timestamp' => $timestamp);
