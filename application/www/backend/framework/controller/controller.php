@@ -346,11 +346,32 @@ abstract class Controller
     // Shows an exception.
     private static function handleException($e)
     {
+        // Since a stack trace may contain plaintext passwords (which we don't want in our logs),
+        // we censor function arguments from the stack trace.
+        $traceArray = $e->getTrace();
+        $stackTrace = '';
+        $i = 0;
+        foreach($traceArray as $element)
+        {
+            $fileName = isset($element['file']) ? $element['file'] : '?';
+            $lineNum = isset($element['line']) ? $element['line'] : '?';
+            $funcName = isset($element['function']) ? $element['function'] : '?';
+            
+            $stackTrace .= "#$i ";
+            $stackTrace .= $fileName;
+            $stackTrace .= "($lineNum) ";
+            $stackTrace .= $funcName;
+            
+            // Do not include arguments, since these may be confidential.
+            $stackTrace .= "(...)\n";
+             
+            ++$i;
+        }
+        
         // Get exception info.
-        $stackTrace = $e->getTraceAsString();
         $message    = $e->getMessage();
-        $timestamp  = ($e instanceof ExceptionBase) ? $e->getTimestamp() : "";
-        $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
+        $timestamp  = ($e instanceof ExceptionBase) ? $e->getTimestamp() : gmdate('Y/m/d H:i:s', time());
+        $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'system-error';
         
         // Set result.
         $result = array('message' => $message, 'code' => $code, 'timestamp' => $timestamp);
