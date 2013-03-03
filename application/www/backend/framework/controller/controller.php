@@ -356,22 +356,75 @@ abstract class Controller
             $fileName = isset($element['file']) ? $element['file'] : '?';
             $lineNum = isset($element['line']) ? $element['line'] : '?';
             $funcName = isset($element['function']) ? $element['function'] : '?';
+            $args = isset($element['args']) ? $element['args'] : array();
             
             $stackTrace .= "#$i ";
             $stackTrace .= $fileName;
             $stackTrace .= "($lineNum) ";
-            $stackTrace .= $funcName;
             
-            // Do not include arguments, since these may be confidential.
-            $stackTrace .= "(...)\n";
+            if(isset($element['class']))
+            {
+                $stackTrace .= $element['class'] . '::';
+            }
+            
+            $stackTrace .= "$funcName(";
+            
+            // Do not include arguments of functions with 'password' or 'login' in the title, since
+            // these contain plaintext passwords.
+            if(preg_match('/.*(password|login).*/i', $funcName))
+            { 
+                $stackTrace .= '...';
+            }
+            else if(count($args) > 0)
+            {
+                // Print arguments.
+                for($j = 0; $j < count($args); ++$j)
+                {                    
+                    $arg = $args[$j];
+                    
+                    if(is_string($arg))
+                    {
+                        // Put quotes around string arguments and add slashes within them.
+                        $printedArg = "'" . addslashes($arg) . "'";
+                    }
+                    else if(is_object($arg))
+                    {
+                        // Print object type name.
+                        $printedArg = get_class($arg);
+                    }
+                    else if(is_bool($arg))
+                    {
+                        // Print boolean as 'true'  or 'false'.
+                        $printedArg = $arg ? 'true' : 'false';
+                    }
+                    else if($arg === null)
+                    {
+                        // Handle null's.
+                        $printedArg = 'null';
+                    }
+                    else
+                    {
+                        // Use default stringifier for other types.
+                        $printedArg = (string) $arg;
+                    }
+                    
+                    if($j > 0)
+                    {
+                        $stackTrace .= ', ';
+                    }
+                    $stackTrace .= $printedArg;
+                }
+            }
+            
+            $stackTrace .= ")\n";
              
             ++$i;
         }
         
         // Get exception info.
         $message    = $e->getMessage();
-        $timestamp  = ($e instanceof ExceptionBase) ? $e->getTimestamp() : "";
-        $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'error';
+        $timestamp  = ($e instanceof ExceptionBase) ? $e->getTimestamp() : gmdate('Y/m/d H:i:s', time());
+        $code       = ($e instanceof ExceptionBase) ? $e->getIdentifier() : 'system-error';
         
         // Set result.
         $result = array('message' => $message, 'code' => $code, 'timestamp' => $timestamp);
