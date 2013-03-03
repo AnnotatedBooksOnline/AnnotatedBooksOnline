@@ -353,10 +353,14 @@ abstract class Controller
         $i = 0;
         foreach($traceArray as $element)
         {
+            $fileName = isset($element['file']) ? $element['file'] : '?';
+            $lineNum = isset($element['line']) ? $element['line'] : '?';
+            $funcName = isset($element['function']) ? $element['function'] : '?';
+            
             $stackTrace .= "#$i ";
-            $stackTrace .= $element['file'];
-            $stackTrace .= '(' . $element['line'] . '): ';
-            $stackTrace .= $element['function'];
+            $stackTrace .= $fileName;
+            $stackTrace .= "($lineNum) ";
+            $stackTrace .= $funcName;
             
             // Do not include arguments, since these may be confidential.
             $stackTrace .= "(...)\n";
