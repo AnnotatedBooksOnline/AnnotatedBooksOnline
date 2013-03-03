@@ -35,7 +35,7 @@ function getCachedSetting(settingName)
 function getAnnotationInfoCategories()
 {    
     // Get the setting as a 'comma-list'.
-    var commaList = getCachedSetting('annotationInfoCategories');
+    var commaList = getCachedSetting('annotation-info-categories');
     
     var result = [];
     var last = '';

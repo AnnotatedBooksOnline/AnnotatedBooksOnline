@@ -23,7 +23,7 @@ ALTER TABLE "RevisedAnnotations" ADD COLUMN "annotationInfo" text;
 -- latter is a new feature.
 -- The first category in this list is the one displayed at first.
 INSERT INTO "Settings" ("settingName", "settingValue", "visible") 
-    VALUES ('annotationInfoCategories', 'Original Language,English,Comments', 1);
+    VALUES ('annotation-info-categories', 'Original Language,English,Comments', 1);
     
 
 -- Copy the contents of the transcriptionEng and transcriptionOrig columns into annotationInfo. 
