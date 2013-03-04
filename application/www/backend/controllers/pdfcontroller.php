@@ -36,44 +36,28 @@ class PdfController extends Controller
         
         if (isset($data['transcriptions']) && $data['transcriptions'] == 'on')
         {
-            $languages = array('English' => 'Eng');
+            $fields = array_flip(Annotation::fromCommaList(Setting::getSetting('annotationInfoCategories')));
             if (isset($data['language']))
             {
                 switch ($data['language'])
                 {
-                    case 'eng':
-                        $languages = array('English' => 'eng');
-                        break;
-                    case 'orig':
-                        $languages = array('Original' => 'orig');
-                        break;
-                    case 'both':
-                        $languages = array('Original' => 'orig', 'English' => 'eng');
-                        break;
+                    // At this moment, we do not allow any choices in the UI.
                     default:
                         break;
                 }
             }
-            $transcriptions = function(Annotation $annotation) use ($languages)
+            $transcriptions = function(Annotation $annotation) use ($fields)
             {
                 $trans = array();
-                foreach ($languages as $name => $getter)
+                foreach ($fields as $name => $index)
                 {
-                    $getter = 'getTranscription' . ucfirst($getter);
-                    $text = $annotation->{$getter}();
-                    if (trim($text) != '')
+                    if (strpos($name, '_') !== 0)
                     {
-                        $trans[$name] = $text;
-                    }
-                    else
-                    {
-                        if ($name == "Original")
+                        $annotationInfo = $annotation->getAnnotationInfo();
+                        $text = $annotationInfo[$index];
+                        if (trim($text) != '')
                         {
-                            $trans[$name] = 'This transcription is not available in the original language.';
-                        }
-                        else
-                        {
-                            $trans[$name] = 'This transcription is not available in ' . $name . '.';
+                            $trans[$name] = $text;
                         }
                     }
                 }
@@ -143,7 +127,7 @@ class PdfController extends Controller
         {
             $textRange = ' ' . $range;
         }
-        return array('id' => $id, 'title' => $binding->getSignature() . $textRange);
+        return array('id' => $id, 'title' => 'export' . $textRange);
     }
     
     /**
