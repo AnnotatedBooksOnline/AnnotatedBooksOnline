@@ -632,6 +632,12 @@ Ext.define('Ext.ux.AnnotationsPanel', {
             this.editMode.setDisabled(true);
             this.viewMode.setDisabled(true);
         }
+    },
+    
+    reloadAnnotations: function()
+    {
+        this.annotations.reset(true);
+        this.updateHistory(this.activeModel);
     }
 });
 

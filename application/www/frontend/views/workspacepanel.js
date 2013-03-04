@@ -85,7 +85,18 @@ Ext.define('Ext.ux.BindingAdminPanel', {
                 iconCls: 'revise-annotations-icon',
                 handler: function()
                 {
+                     if (this.up('workspacepanel').down('annotationspanel').annotationsAreDirty())
+                     {
+                        var changeInfo = this.up('workspacepanel').down('annotationspanel').getChangeInfo();
+                        Ext.Msg.alert('Unsaved changes', 'You have unsaved annotation changes ('
+                            + changeInfo + '). Please save or revert your changes before '
+                            + 'restoring older revisions.');
+                        return;
+                     }
+                     
                      var scanId = this.up('viewerpanel').getScanId();
+                    
+                     var _this = this;
                     
                      var window = Ext.create('Ext.window.Window', {
                         title: 'Revisions',
@@ -109,7 +120,15 @@ Ext.define('Ext.ux.BindingAdminPanel', {
                             xtype: 'revisionspanel',
                             border: false,
                             scanId: scanId
-                        }]
+                        }],
+                        listeners: {
+                            close: function()
+                            {
+                                // Reload the page on close.
+                                var ann = _this.up('workspacepanel').down('annotationspanel');
+                                ann.reloadAnnotations();
+                            }
+                        }
                     }).show();
                 }
             },{
