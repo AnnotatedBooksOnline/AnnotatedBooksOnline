@@ -75,6 +75,7 @@ Annotation.prototype.setVertices = function(vertices)
     {
         this.model.polygon().add({x: vertices[i].x, y: vertices[i].y});
     }
+    this.model.setDirty();
 }
 
 Annotation.prototype.getId = function()

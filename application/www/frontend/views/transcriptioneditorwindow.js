@@ -67,14 +67,23 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
     submit: function()
     {
         var annotationInfo = this.model.get('annotationInfo');
+        var newAnnotationInfo = new Array(annotationInfo.length);
         var categories = getAnnotationInfoCategories();
         var data = this.getValues();
+        var updated = false;
         for(var i = 0; i < categories.length; ++i)
         {
-        	annotationInfo[i] = data['annotationInfoField' + i];
+        	newAnnotationInfo[i] = data['annotationInfoField' + i];
+        	if (newAnnotationInfo[i] !== annotationInfo[i])
+        	{
+        	    updated = true;
+        	}
         }
         
-        this.model.set('annotationInfo', annotationInfo);        
+        if (updated)
+        {
+            this.model.set('annotationInfo', newAnnotationInfo);
+        }
         
         this.up('transcriptioneditorwindow').close();
     }
