@@ -20,10 +20,13 @@ var annotationInfoCategories = getAnnotationInfoCategories();
 var langStoreData = [];
 for(var i = 0; i < annotationInfoCategories.length; ++i)
 {
-    langStoreData.push({
-        lang: i,
-        name: annotationInfoCategories[i]
-    });
+    if (annotationInfoCategories[i][0] != '_')
+    {
+        langStoreData.push({
+            lang: i,
+            name: annotationInfoCategories[i]
+        });
+    }
 }
 
 var langStore = Ext.create('Ext.data.Store', {
@@ -826,7 +829,8 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                                 handler: function()
                                 {
                                     var window = new Ext.ux.TranscriptionEditorWindow({
-                                        annotation: model
+                                        annotation: model,
+                                        annotations: _this.annotations
                                     });
                                     
                                     window.show();

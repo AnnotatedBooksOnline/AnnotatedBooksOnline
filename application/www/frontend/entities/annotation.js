@@ -53,9 +53,22 @@ Annotation.createFromId = function(annotationId, obj, onSuccess, onError)
 
 Annotation.createFromVertices = function(vertices)
 {
+    var annotationInfo = [];
+    for(var i = 0; i < annotationInfoCategories.length; ++i)
+    {
+        if (annotationInfoCategories[i][0] != '_')
+        {
+            annotationInfo.push('');
+        }
+        else
+        {
+            annotationInfo.push(0);
+        }
+    }
+    
     // Create annotation model.
     var model = Ext.create('Ext.ux.AnnotationModel', {
-        annotationInfo: []
+        annotationInfo: annotationInfo
     });
     
     // Add vertices.
@@ -81,6 +94,17 @@ Annotation.prototype.setVertices = function(vertices)
 Annotation.prototype.getId = function()
 {
     return this.model.get('annotationId');
+}
+
+Annotation.prototype.getColorNumber = function()
+{
+    for(var i = 0; i < annotationInfoCategories.length; ++i)
+    {
+        if (annotationInfoCategories[i] == '_Color')
+        {
+            return this.getModel().get('annotationInfo')[i] || 0;
+        }
+    }
 }
 
 Annotation.prototype.getVertices = function()

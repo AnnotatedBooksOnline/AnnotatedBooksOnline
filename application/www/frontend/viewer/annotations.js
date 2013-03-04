@@ -110,6 +110,25 @@ Annotations.prototype.getAnnotationByModel = function(model)
     return (index >= 0) ? this.annotations[index] : null;
 }
 
+Annotations.prototype.getColor = function(annotation)
+{
+    if (annotation && annotation.getColorNumber)
+    {
+        var color = annotation.getColorNumber();
+        if (color >= this.availableColors.length || color < 0)
+        {
+            return this.availableColors[0];
+        }
+        return this.availableColors[color];
+    }
+    return this.availableColors[0];
+}
+
+Annotations.prototype.getAvailableColors = function()
+{
+    return this.availableColors.slice();
+}
+
 Annotations.prototype.highlightAnnotation = function(annotation)
 {
     this.overlay.highlightAnnotation(annotation);
@@ -141,7 +160,7 @@ Annotations.prototype.addAnnotation = function(annotation)
     this.annotations.push(annotation);
     
     // Add it to overlay.
-    var color = this.popColor();
+    var color = this.getColor(annotation);
     this.overlay.addAnnotation(annotation, false, color);
     
     // Add to store, but skip event.
@@ -160,12 +179,6 @@ Annotations.prototype.removeAnnotation = function(annotation)
     {
         // Trigger remove.
         this.eventDispatcher.trigger('remove', this, annotation);
-        
-        // Get annotation color.
-        var color = this.overlay.getAnnotationColor(annotation);
-        
-        // Color is available again.
-        this.pushColor(color);
         
         // Remove annotation.
         this.annotations.splice(index, 1);
@@ -395,7 +408,7 @@ Annotations.prototype.initialize = function()
         '#FFFF00',
         '#00FFFF',
         '#FF00FF'
-    ].sort(function() { return 0.5 - Math.random(); });
+    ];
     var darkColors = [
         '#550000',
         '#005500',
@@ -403,8 +416,8 @@ Annotations.prototype.initialize = function()
         '#555500',
         '#005555',
         '#550055'
-    ].sort(function() { return 0.5 - Math.random(); });
-    this.allColors = ['#777777'].concat(darkColors, brightColors);
+    ];
+    this.allColors = ['#AAAAAA'].concat(darkColors, brightColors);
     
     // Copy colors.
     this.availableColors = this.allColors.slice();
@@ -490,32 +503,10 @@ Annotations.prototype.initialize = function()
     this.load();
 }
 
-// Fetches a unique color from stack.
-Annotations.prototype.popColor = function()
-{
-    if (this.availableColors.length > 0)
-    {
-        return this.availableColors.pop();
-    }
-    else
-    {
-        // Return random color. Man, I like oneliners.
-        // Read 'The Art of Computer Programming' volume 4 fascicle 1 to become a master at
-        // bitwise oneliners.
-        return '#' + ('00000' + (~~(Math.random() * (1 << 24))).toString(16)).substr(-6);
-    }
-}
-
-// Inicates that given color is not used anymore.
-Annotations.prototype.pushColor = function(color)
-{
-    this.availableColors.push(color);
-}
-
 Annotations.prototype.onOverlayCreate = function(annotation)
 {
     // Set its color
-    var color = this.popColor();
+    var color = this.getColor(annotation);
     this.overlay.setAnnotationColor(annotation, color);
     
     // Add it.
@@ -537,13 +528,7 @@ Annotations.prototype.onOverlayErase = function(annotation)
     {
         // Trigger remove.
         this.eventDispatcher.trigger('remove', this, annotation);
-        
-        // Get annotation color.
-        var color = this.overlay.getAnnotationColor(annotation);
-        
-        // Color is available again.
-        this.pushColor(color);
-        
+                
         // Remove annotation.
         this.annotations.splice(index, 1);
         
@@ -563,7 +548,6 @@ Annotations.prototype.onOverlayChange = function(annotation)
 {
     // Set us dirty.
     this.dirty = true;
-    
     // Trigger change.
     this.eventDispatcher.trigger('change', this);
 }
@@ -614,6 +598,14 @@ Annotations.prototype.onStoreDataChanged = function(models)
     {
         // Set us dirty.
         this.dirty = true;
+        // Update annotation colors.
+        for (var i = 0; i < models.length; i++)
+        {
+            var model = models[i];
+            var annotation = this.getAnnotationByModel(model);
+            var color = this.getColor(annotation);
+            this.overlay.setAnnotationColor(annotation, color);
+        }
         
         // Trigger change.
         this.eventDispatcher.trigger('change', this);
@@ -654,7 +646,7 @@ Annotations.prototype.onStoreAdd = function(models)
         var annotation = new Annotation(models[i]);
         
         // Add it to overlay.
-        var color = this.popColor();
+        var color = this.getColor(annotation);
         this.overlay.addAnnotation(annotation, false, color);
         
         // Add it.
@@ -681,12 +673,6 @@ Annotations.prototype.onStoreRemove = function(model)
         // Trigger remove.
         var annotation = this.annotations[index];
         this.eventDispatcher.trigger('remove', this, annotation);
-        
-        // Get annotation color.
-        var color = this.overlay.getAnnotationColor(annotation);
-        
-        // Color is available again.
-        this.pushColor(color);
         
         // Remove annotation.
         this.annotations.splice(index, 1);

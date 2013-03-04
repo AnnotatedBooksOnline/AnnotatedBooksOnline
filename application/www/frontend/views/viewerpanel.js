@@ -633,13 +633,11 @@ Ext.define('Ext.ux.ViewerPanel', {
         var book = this.getBook();
         
         // Set default tab title (binding uniqueness constraint)
-        var tabTitle = 'Binding: '
-                     + escape(bindingModel.get('signature')) + ', '
-                     + escape(bindingModel.get('library').libraryName); 
+        var tabTitle = ''
         
         if (book !== undefined)
         {
-            tabTitle = 'Book: ' + escape(book.get('title'));
+            tabTitle = escape(book.get('title'));
         }
         
         // Update tab title, but not too long.

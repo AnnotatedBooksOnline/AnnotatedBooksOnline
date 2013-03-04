@@ -480,7 +480,8 @@ Polygon.prototype.initialize = function()
             'mousemove': function(s, event) { return _this.onMouseOver(event); },
             'mousedown': function(s, event) { return _this.onMouseDown(event); },
             'click':     function(s, event) { return _this.onClick(event);     }
-        }
+        },
+        zIndex: -Math.round(this.area)
     });
     
     // Add polygon class. Polygon must be shown to add a class.
@@ -501,7 +502,8 @@ Polygon.prototype.initialize = function()
             'mousemove': function(s, event) { return _this.onMouseOver(event); },
             'mousedown': function(s, event) { return _this.onMouseDown(event); },
             'click':     function(s, event) { return _this.onClick(event);     }
-        }
+        },
+        zIndex: -Math.round(this.area)
     });
     
     // Create corners.

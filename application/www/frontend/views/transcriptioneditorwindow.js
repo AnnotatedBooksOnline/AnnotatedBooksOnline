@@ -10,7 +10,8 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
     {
         var _this = this;
         
-        // Create a text area for each info category and place them next to each other.
+        // Create a text area for each info category and place them under each other.
+        // For _Color, make a nice color picker.
         // TODO? When there are a lot (e.g. more than three) of categories, use a different display method.
         
         var categories = getAnnotationInfoCategories();
@@ -18,21 +19,61 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
         
         for(var i = 0; i < categories.length; ++i)
         {
-        	textAreas.push({
-                xtype: 'textarea',
-                fieldLabel: categories[i],
-                labelAlign: 'top',
-                name: 'annotationInfoField' + i,
-                value: _this.model.get('annotationInfo')[i],
-                style: 'margin-right: 5px;',
-                flex: 1,
-                allowBlank: true
-        	});
+            var fieldValue = _this.model.get('annotationInfo')[i];
+            if (categories[i] != '_Color')
+            {
+            	textAreas.push({
+                    xtype: 'textarea',
+                    fieldLabel: categories[i],
+                    labelAlign: 'top',
+                    name: 'annotationInfoField' + i,
+                    value: fieldValue,
+                    style: 'margin-right: 5px;',
+                    flex: 1,
+                    allowBlank: true
+            	});
+        	}
+        	else
+        	{
+        	    var colorRadioBoxes = [];
+        	    var colors = this.annotations.getAvailableColors();
+        	    for (var j = 0; j < colors.length; j++)
+        	    {
+        	        var color = brighten(colors[j], 0.8);
+        	        colorRadioBoxes.push({
+                        name: 'annotationInfoField' + i,
+                        boxLabel: '<div style="background-color: ' + color
+                            + '; display:inline-block; width: 30px; height: 20px; '
+                            + (j < colors.length / 2 ? '' : 'margin-top: 10px; ')
+                            + 'margin-bottom: -7px; border: 1px solid black"/>',
+                        inputValue: j,
+                        checked: fieldValue == j
+                    });
+                }
+        	    textAreas.push({
+                    xtype: 'fieldcontainer',
+                    fieldLabel: 'Color',
+                    labelAlign: 'top',
+                    value: fieldValue,
+                    style: 'margin-right: 5px;',
+                    flex: 1,
+                    defaultType: 'radiofield',
+                    defaults: {
+                        flex: 1,
+                        style: 'margin-right: 10px;'
+                    },
+                    layout: {
+                        type: 'table',
+                        columns: Math.ceil(colors.length / 2)
+                    },
+                    items: colorRadioBoxes
+            	});
+        	}
         }
         
         var defConfig = {
             layout:{
-                type: 'hbox',
+                type: 'vbox',
                 align: 'stretch'
             },
             items: textAreas,
@@ -106,7 +147,8 @@ Ext.define('Ext.ux.TranscriptionEditorWindow', {
             height: 400,
             items: [{
                 xtype: 'transcriptioneditorform',
-                model: this.annotation
+                model: this.annotation,
+                annotations: this.annotations
             }]
         };
         

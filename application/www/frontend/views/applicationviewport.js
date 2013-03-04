@@ -140,16 +140,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
         }];
         
         var menuButtons = [{
-            text: 'Search',
-            iconCls: 'search-icon',
-            listeners: {
-                click: function()
-                {
-                    Application.getInstance().openTab('search', [], true);
-                }
-            },
-            name: 'search'
-        },{
             text: 'Upload',
             iconCls: 'upload-icon',
             listeners: {
@@ -247,7 +237,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
             items: [{ 
                 // Header logo.
                 xtype: 'container',
-                width: 256,
+                width: 130,
                 cls: 'header-logo',
                 listeners: {
                     click: {
@@ -265,10 +255,11 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                     buttons: Ext.Msg.YESNO,
                                     closable: false,
                                     icon: Ext.Msg.QUESTION,
-                                    title: 'Leaving ABO',
-                                    msg: 'You are about to leave ABO and return to the '
-                                       + 'homepage. Your unsaved changes, if any, will '
-                                       + 'be lost.<br/><br/>Are you sure?', 
+                                    title: 'Leaving ' + document.title,
+                                    msg: 'You are about to leave ' + document.title
+                                       + ' and return to the homepage. Your unsaved '
+                                       + 'changes, if any, will be lost.<br/><br/>'
+                                       + 'Are you sure?', 
                                     fn: function(button)
                                     {
                                         if (button === 'yes')
@@ -309,7 +300,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     items: [{
                         flex: 1,
                         border: false,
-                        region: 'center'
+                        region: 'center',
+                        html: '<h1>' + document.title + '</h1>'
                     },{
                         height: 34,
                         bodyPadding: 2,
@@ -378,13 +370,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         // Determine whether to start with the welcome tab or the search tab. 
         var firstTab;
+        var args;
         if(getCachedSetting('show-welcome-page') == '1')
         {
             firstTab = 'welcome';
         }
         else
         {
-            firstTab = 'search';
+            // Directly open the only relevant view.
+            firstTab = 'view';
         }
         
         this.openTab(firstTab, [], true);
@@ -445,21 +439,15 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         switch (type)
         {
-            case 'binding':
-                // Data is supposed to be a binding id here.
-                var bindingId = data[0];
-                if (!bindingId)
-                {
-                    // Loading is finished.
-                    this.down('tabpanel').setLoading(false);
-                    return;
-                }
+            case 'view':
+                // The binding to view.
+                var bindingId = getCachedSetting('default-binding');
                 
                 // If given, go to the right page immediately.
                 var pageNumber = 0;
-                if (data.length > 1)
+                if (data.length > 0)
                 {
-                    pageNumber = parseInt(data[1] - 1);
+                    pageNumber = parseInt(data[0] - 1);
                 }
                 
                 // Fetch binding.
@@ -491,7 +479,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 xtype: 'viewerpanel',
                                 binding: binding,
                                 pageNumber: pageNumber,
-                                iconCls: 'viewer-icon'
+                                iconCls: 'viewer-icon',
+                                closable: false
                             });
                             
                             // Add tab.
@@ -550,16 +539,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     xtype: 'helppanel',
                     iconCls: 'help-icon',
                     helpType: data[0]
-                });
-                
-                break;
-                
-            case 'search':
-                // Add a search tab.
-                Ext.apply(tabConfig, {
-                    title: 'Search',
-                    xtype: 'searchpanel',
-                    iconCls: 'search-icon'
                 });
                 
                 break;

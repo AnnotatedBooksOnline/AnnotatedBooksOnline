@@ -28,49 +28,17 @@ Ext.define('Ext.ux.ReferencesPanel', {
         //Calculate url prefix.
         this.urlPrefix = location.protocol + '//'
                        + location.hostname + location.pathname
-                       +'#binding-' + this.bindingModel.get('bindingId');
+                       +'#view';
         
         var _this = this;
         var defConfig = {
             border: false,
-            bodyPadding: 10,
+            bodyPadding: 5,
             layout: 'anchor',
             items: [{
                 xtype: 'textfield',
-                name: 'binding-link',
-                labelAlign: 'top',
-                readOnly: true,
-                fieldLabel: '...',
-                labelStyle: 'white-space: nowrap',
-                size: 50,
-                anchor: '100%',
-                listeners:
-                    {
-                        focus: function()
-                        {
-                            this.selectText();
-                        }
-                    }
-                },{
-                xtype: 'textfield',
-                name: 'book-link',
-                labelAlign: 'top',
-                readOnly: true,
-                fieldLabel: '...',
-                labelStyle: 'white-space: nowrap',
-                size: 50,
-                anchor: '100%',
-                listeners:
-                    {
-                        focus: function()
-                        {
-                            this.selectText();
-                        }
-                    }
-            },{
-                xtype: 'textfield',
                 name: 'page-link',
-                fieldLabel: 'Link to this page',
+//                fieldLabel: 'Link to this page',
                 labelAlign: 'top',
                 readOnly: true,
                 labelStyle: 'white-space: nowrap',
@@ -102,39 +70,7 @@ Ext.define('Ext.ux.ReferencesPanel', {
     
     setValues: function()
     {
-        // Get binding model from viewer.
-        var bindingModel = this.viewer.getBinding().getModel();
-        
-        // Calculate url prefix.
-        var urlPrefix = location.protocol + '//'
-                      + location.hostname + location.pathname
-                      +'#binding-' + bindingModel.get('bindingId');
-        
-        // Set binding field label and value.
-        var bindingLinkLabel = 'Link to this binding<br />(' +
-            escape(bindingModel.get('library').libraryName) + ', ' +
-            escape(bindingModel.get('signature')) + ')';
-        
-        this.down('[name=binding-link]').setFieldLabel(bindingLinkLabel);
-        this.down('[name=binding-link]').setValue(this.urlPrefix);
-        
-        // Set book field label and value.
-        var book = this.viewer.getBook();
-        
-        if (book === undefined)
-        {
-            this.down('[name=book-link]').setValue('Not a book.');
-            this.down('[name=book-link]').setFieldLabel('Link to this book<br />(None)');
-        }
-        else
-        {
-            this.down('[name=book-link]').setValue(urlPrefix + '-' +
-                book.get('firstPage'));
-            this.down('[name=book-link]').setFieldLabel('Link to this book<br />(' +
-                book.get('title') + ')');
-        }
-        
         // Set page field link.
-        this.down('[name=page-link]').setValue(urlPrefix + '-' + (this.viewer.getPage() + 1));
+        this.down('[name=page-link]').setValue(this.urlPrefix + '-' + (this.viewer.getPage() + 1));
     }
 });

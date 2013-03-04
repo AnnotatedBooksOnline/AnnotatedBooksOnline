@@ -256,7 +256,10 @@ Application.prototype.registerActions = function()
                     Authentication.showEditProfileWindow();
                     break;
                     
-                case 'binding':
+                case 'view':
+                    this.gotoTabUnique(action, data, false);
+                    break;
+                    
                 case 'search':
                 case 'users':
                 case 'viewprofile':
@@ -316,7 +319,7 @@ Application.prototype.tabNeedsAuthentication = function(type)
     // Specify a whitelist here.
     switch (type)
     {
-        case 'binding':
+        case 'view':
         case 'search':
         case 'register':
         case 'welcome':

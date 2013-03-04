@@ -22,7 +22,7 @@ Ext.define('Ext.ux.BindingAdminPanel', {
                 xtype: 'panel',
                 border: false,
                 name: 'modifybindingtext',
-                html: 'Modify binding and book information, such as title, author and provenance.'
+                html: 'Modify binding information, such as title and author'
             },{
                 xtype: 'button',
                 text: 'General info',
@@ -76,7 +76,7 @@ Ext.define('Ext.ux.BindingAdminPanel', {
                 xtype: 'panel',
                 border: false,
                 name: 'annotationrevisions',
-                html: 'View previous versions of transcriptions or restore them.'
+                html: 'View previous versions of annotations or restore them.'
             },{
                 xtype: 'button',
                 text: 'Revisions',
@@ -199,16 +199,16 @@ Ext.define('Ext.ux.ExportForm', {
                 vertical: true,
                 labelAlign: 'top',
                 items: [{
-                    boxLabel: 'Export current scan',
+                    boxLabel: 'Export current page',
                     name: 'page',
                     inputValue: 'scan',
                     checked: true
                 },{ 
-                    boxLabel: 'Export binding',
+                    boxLabel: 'Export all pages',
                     name: 'page',
                     inputValue: 'binding'
                 },{
-                    boxLabel: 'Export range of scans',
+                    boxLabel: 'Export range of pages',
                     name: 'page',
                     inputValue: 'range'
                 },{
@@ -295,12 +295,12 @@ Ext.define('Ext.ux.ExportForm', {
                 vertical: true,
                 labelAlign: 'top',
                 items: [{
-                    boxLabel: 'Without transcriptions',
+                    boxLabel: 'Without annotations',
                     name: 'transcriptions',
                     inputValue: 'off',
                     checked: true
                 },{ 
-                    boxLabel: 'With transcriptions',
+                    boxLabel: 'With annotations',
                     name: 'transcriptions',
                     inputValue: 'on'
                 },{
@@ -313,14 +313,8 @@ Ext.define('Ext.ux.ExportForm', {
                         store: Ext.create('Ext.data.Store', {
                             fields: ['lang', 'text'],
                             data: [{
-                                lang: 'orig',
-                                text: 'Original'
-                            },{
-                                lang: 'eng',
-                                text: 'English'
-                            },{
-                                lang: 'both',
-                                text: 'Both'
+                                lang: 'all',
+                                text: 'All fields'
                             }]
                         }),
                         queryMode: 'local',
@@ -330,18 +324,19 @@ Ext.define('Ext.ux.ExportForm', {
                         editable: false,
                         fieldLabel: 'Language',
                         disabled: true,
+                        hidden: true, // TODO: make visible again, enabling a real choice.
                         name: 'language',
                         listeners: {
                             afterrender: function()
                             {
-                                this.select('orig');
+                                this.select('all');
                             }
                         }
                     },{
                         xtype: 'checkbox',
                         name: 'polygons',
-                        checked: false,
-                        boxLabel: 'Display polygons on scan',
+                        checked: true,
+                        boxLabel: 'Show annotations on scan',
                         disabled: true
                     }]
                 }],
@@ -445,70 +440,9 @@ Ext.define('Ext.ux.ExportForm', {
             if (hours > 0)   { timestr += hours   + 'h '; }
             if (minutes > 0) { timestr += minutes + 'm '; }
             if (seconds > 0) { timestr += seconds + 's '; }
-            
-            var binding = viewer.getBinding().getModel();
-            var books = [];
-            
-            binding.books().each(
-                function(book)
-                {
-                    if (book.get('lastPage') >= firstExportPage && book.get('firstPage') <= lastExportPage)
-                    {
-                        books.push(book);
-                    }
-                }
-            );
-            
-            var toString = function(s)
-            {
-                if (s)
-                {
-                    return s;
-                }
-                return '';
-            };
-            
-            var info = '<p><table style="width: 100%; margin-left: 10px; margin-right: 10px">';
-            
-            if (books.length == 1)
-            {
-                var authors = '';
-                books[0].authors().each(
-                function(author)
-                {
-                    if (authors.length != 0)
-                    {
-                        authors += ', ';
-                    }
-                    authors += author.get('name');
-                });
-                var year = books[0].get('minYear');
-                if (year != books[0].get('maxYear'))
-                {
-                    year = year + ' - ' + books[0].get('maxYear');
-                }
-                
-                info += '<tr><td>Title</td><td>' + escape(books[0].get('title')) + '</td></tr>'
-                      + '<tr><td>Author</td><td>' + escape(authors) + '</td></tr>'
-                      + '<tr><td>Year</td><td>' + escape(year) + '</td></tr>'
-                      + '<tr><td>Location</td><td>' + escape(toString(books[0].get('placePublished'))) + '</td></tr>'
-                      + '<tr><td>Publisher</td><td>' + escape(toString(books[0].get('publisher'))) + '</td></tr>';
-            }
-            else if (books.length != 0)
-            {
-                info += '<tr style="vertical-align: top"><td>Titles</td><td>';
-                for (var i = 0; i < books.length; i++)
-                {
-                    info += escape(books[i].get('title')) + '<br/>';
-                }
-                info += '</td></tr>';
-            }
-            
-            info += '<tr><td>Library</td><td>' + escape(binding.get('library').libraryName) + '</td></tr>'
-                  + '<tr><td style="width: 30%">Shelfmark</td><td>' + escape(binding.get('signature')) + '</td></tr>'
-                  + '</table></p>';
-            
-            info = '<p>You are about to export ' + pages + ' scans. '
+                        
+            var info;
+            info = '<p>You are about to export ' + pages + ' pages. '
                  + 'This may take some time and the resulting file may be large.</p>'
                  + info
                  + '<p>Estimated processing time: ' + timestr + '<br/>'
@@ -682,7 +616,7 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 title: 'Administration',
                 xtype: 'bindingadminpanel',
                 viewer: this.viewer,
-                iconCls: 'notes-icon' // TODO
+                iconCls: 'settings-icon'
             });
         }
         else if (!modifyPermission && this.down('bindingadminpanel'))

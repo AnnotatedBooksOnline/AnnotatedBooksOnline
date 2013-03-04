@@ -15,30 +15,19 @@ Ext.define('Ext.ux.InformationPanel', {
                 type: 'vbox',
                 align: 'stretch'
             },
-            defaults: {
-                collapsible: true,
-                collapsed: true
-            },
             autoScroll: true,
             items: [{
-                xtype: 'bindinginformationpanel',
-                title: 'Binding details',
-                viewer: this.viewer,
-                minHeight: 200,
-                flex: 1
-            },{
                 xtype: 'navigationpanel',
-                collapsible: true,
-                collapsed: false,
                 autoScroll: true,
                 viewer: this.viewer,
-                flex: 3
+                flex: 5
              },{
                 xtype: 'referencespanel',
                 title: 'Link to this page',
                 autoScroll: true,
-                viewer: this.viewer,
-                flex: 1
+                collapsed: false,
+                collapsible: true,
+                viewer: this.viewer
             }]
         };
         
