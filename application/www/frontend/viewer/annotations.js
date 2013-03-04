@@ -279,10 +279,10 @@ Annotations.prototype.load = function(force)
 }
 
 // Resets annotations.
-Annotations.prototype.reset = function()
+Annotations.prototype.reset = function(force)
 {
     // Check for changes.
-    if (!this.dirty)
+    if (!this.dirty && !force)
     {
         return;
     }
