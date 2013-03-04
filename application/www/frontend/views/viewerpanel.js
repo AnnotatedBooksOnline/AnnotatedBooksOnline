@@ -633,7 +633,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         var book = this.getBook();
         
         // Set default tab title (binding uniqueness constraint)
-        var tabTitle = ''
+        var tabTitle = 'Viewer'
         
         if (book !== undefined)
         {

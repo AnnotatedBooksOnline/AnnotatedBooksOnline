@@ -257,7 +257,7 @@ Application.prototype.registerActions = function()
                     break;
                     
                 case 'view':
-                    this.gotoTabUnique(action, data, false);
+                    this.gotoTabUnique('view', data, true);
                     break;
                     
                 case 'search':

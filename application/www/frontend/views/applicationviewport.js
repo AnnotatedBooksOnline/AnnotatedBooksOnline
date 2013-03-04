@@ -370,7 +370,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
         
         // Determine whether to start with the welcome tab or the search tab. 
         var firstTab;
-        var args;
         if(getCachedSetting('show-welcome-page') == '1')
         {
             firstTab = 'welcome';
@@ -381,7 +380,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
             firstTab = 'view';
         }
         
-        this.openTab(firstTab, [], true);
+        // Open the first tab if the user did not request a more specific
+        // version of the exact same tab.
+        var token = Ext.History.getToken() || '';
+        if (token.substr(0, firstTab.length) !== firstTab
+            || token.substr(firstTab.length, 1) !== '-')
+        {
+            this.gotoTabUnique(firstTab, [], true);
+        }
     },
     
     correctVmlSupport: function()
@@ -480,7 +486,14 @@ Ext.define('Ext.ux.ApplicationViewport', {
                                 binding: binding,
                                 pageNumber: pageNumber,
                                 iconCls: 'viewer-icon',
-                                closable: false
+                                closable: false,
+                                updateTab: function(data)
+                                {
+                                    if (data.length > 0)
+                                    {
+                                        this.gotoPage(parseInt(data[0] - 1));
+                                    }
+                                }
                             });
                             
                             // Add tab.
@@ -496,9 +509,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                         {
                             Ext.Msg.show({
                                 title:'Error',
-                                msg: 'The ' +
-                                    (data.length == 1 ? 'binding' : 'book') +
-                                    ' you are trying to view is not (yet) available.',
+                                msg: 'The content you are trying to view is not (yet) available.',
                                 icon: Ext.Msg.ERROR,
                                 buttons: Ext.Msg.OK
                             });
