@@ -125,7 +125,7 @@ class Pdf
         $this->outputEntry->clear();
         
         // Use a safe maximal buffer size, knowing that the Cache will double the memory usage.
-        $this->maxBufferSize = $this->iniToBytes('memory_limit') / 4;
+        $this->maxBufferSize = $this->iniToBytes('memory_limit') / 8;
         
         $this->autoPrint = false;
         $this->setPageSize(595, 842);
@@ -138,7 +138,7 @@ class Pdf
         {
             $scan = Scan::fromBindingPage($binding, $range);
             $book = Book::fromBindingPage($binding, $range);
-            $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scan[0]->getPage();
+            $this->permanentLink = $this->productUrl . '#view-' . $scan[0]->getPage();
             if (count($scan) > 0)
             {
                 $this->createSingleScan($scan[0], isset($book[0]) ? $book[0] : null, $binding, $transcriptions, $annotations);
@@ -154,7 +154,7 @@ class Pdf
             {
                 $scans = Scan::fromBinding($binding);
                 $books = Book::fromBinding($binding);
-                $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId();
+                $this->permanentLink = $this->productUrl . '#view';
             }
             else
             {
@@ -162,7 +162,7 @@ class Pdf
                 $books = Book::fromBindingPage($binding, $range);
                 if (count($scans) > 0)
                 {
-                    $this->permanentLink = $this->productUrl . '#binding-' . $binding->getBindingId() . '-' . $scans[0]->getPage();
+                    $this->permanentLink = $this->productUrl . '#view-' . $scans[0]->getPage();
                 }
             }
             if (count($scans) > 0)
@@ -261,81 +261,30 @@ class Pdf
     private function createMultiple(array $scans, array $books, Binding $binding, $transcriptions = null, $annotations = false, $subset = false)
     {
         // Make title page.
-        if (count($books) == 1)
+
+        $this->setFontSize(18);
+        foreach ($books as $book)
         {
-            $this->setFontSize(18);
-            $this->drawText($books[0]->getTitle());
-            $this->y -= 20;
-            
-            $minYear = $books[0]->getMinYear();
-            $maxYear = $books[0]->getMaxYear();
-            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
-            
-            $this->setFontSize(14);
-            $this->drawText($this->getAuthorNames($books[0]));
-            $this->y -= 40;
-            
-            $this->setFontSize(12);
-            
-            $publish = "";
-            if ($books[0]->getPlacePublished() != null)
-            {
-                $publish = $books[0]->getPlacePublished();
-            }
-            if ($books[0]->getPublisher() != null)
-            {
-                if ($publish != "")
-                {
-                    $publish .= ": ";
-                }
-                $publish .= $books[0]->getPublisher();
-            }
-            if ($publish != "")
-            {
-                $publish .= ", ";
-            }
-            $publish .= $year;
-            if ($books[0]->getPrintVersion() != null)
-            {
-                $publish .= ", edition " . $books[0]->getPrintVersion();
-            }
-            $this->drawText($publish);
-            
-            $langs = $this->getLanguageNames($books[0]);
-            if ($langs != '')
-            {
-                $this->drawText($langs);
-            }
+            $this->drawText($book->getTitle());
+            $this->y -= 10;
         }
-        else
-        {
-            $this->setFontSize(18);
-            foreach ($books as $book)
-            {
-                $this->drawText($book->getTitle());
-                $this->y -= 10;
-            }
-            $this->setFontSize(12);
-            $this->y -= 40;
-        }
-        $library = new Library($binding->getLibraryId());
-        $this->drawText($library->getLibraryName() . ', ' . $binding->getSignature());
-        $this->y -= 20;
-        
+        $this->setFontSize(12);
+        $this->y -= 40;
+                
         $this->drawText('From ' . $this->productName . ', ' . date('l, d M Y H:i:s T'));
         $this->addLink($this->drawText($this->permanentLink), $this->permanentLink);
         
         $this->y -= 20;
         if ($transcriptions !== null)
         {
-            $this->drawText('With transcriptions');
+            $this->drawText('With annotations');
         }
         if ($subset !== false)
         {
             $this->drawText('Pages ' . $scans[0]->getPage() . ' – ' . $scans[count($scans)-1]->getPage());
         }
         
-        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.25, 0.25);
+        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.5, 0.5);
         
         if ($this->productShowName)
         {
@@ -553,44 +502,7 @@ class Pdf
         $this->setPageMargin(36); // 1,25 cm
         
         // Draw the header.
-        $library = new Library($binding->getLibraryId());
-        $title = "";
-        if ($book !== null)
-        {
-            $title .= "\n" . $this->getAuthorNames($book) . ", " . $book->getTitle();
-            $minYear = $book->getMinYear();
-            $maxYear = $book->getMaxYear();
-            $year = $minYear == $maxYear ? $minYear : ($minYear . ' – ' . $maxYear);
-            $publish = "";
-            if ($book->getPlacePublished() != null)
-            {
-                $publish = $book->getPlacePublished();
-            }
-            if ($book->getPublisher() != null)
-            {
-                if ($publish != "")
-                {
-                    $publish .= ": ";
-                }
-                $publish .= $book->getPublisher();
-            }
-            if ($publish != "")
-            {
-                $publish .= ", ";
-            }
-            $publish .= $year;
-            if ($book->getPrintVersion() != null)
-            {
-                $publish .= ", edition " . $book->getPrintVersion();
-            }
-            $title .= "\n" . $publish;
-        }
-        if ($title != "")
-        {
-            $title .= "\n";
-        }
-        $title .= $library->getLibraryName() . ", " . $binding->getSignature();
-        $title .= "\nPage " . $scan->getPage();
+        $title = "\nPage " . $scan->getPage();
         $this->drawText($title);
         
         // Draw the scan, with annotations if required.
@@ -770,14 +682,17 @@ class Pdf
             return;
         }
         
-        $this->setHeaderText('Transcriptions for page ' . $scan->getPage());
+        $this->setHeaderText('Annotations for page ' . $scan->getPage());
         for ($i = 1; $i <= count($annotations); $i++)
         {
+            $this->setFontSize(16);
+            $this->drawText('Annotation ' . $i);
+            $this->y -= 7;
             foreach ($transcriptions($annotations[$i-1]) as $name => $text)
             {
                 $this->setFontSize(14);
                 $numPages = count($this->pages);
-                $this->drawText('Transcription ' . $i . ' (' . $name . ')');
+                $this->drawText($name);
                 if ($numPages == count($this->pages))
                 {
                     $this->y -= 7;
@@ -1268,8 +1183,7 @@ class Pdf
         
         // Fill the document information catalog.
         $infoId = $this->newObject("<<\n" .
-            ($book !== null ? ("/Title " . $this->fromUTF8($book->getTitle()) . "\n" .
-            "/Author " . $this->fromUTF8($this->getAuthorNames($book)) . "\n") : '') . 
+            ($book !== null ? ("/Title " . $this->fromUTF8($book->getTitle()) . "\n") : '') .
             "/Creator " . $this->fromUTF8($this->productName) . "\n" .
             "/CreationDate " . date("(\D:YmdHis)") . "\n" .
             ">>");
