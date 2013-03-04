@@ -307,11 +307,14 @@ Ext.define('Ext.ux.BindingStatisticsPanel', {
     gridListeners: {
         itemdblclick: function(view, record)
         {
-            Application.getInstance().gotoTab('binding',
-                [this.requestData.bindingId, record.get('page')],
-                true
-            );
-            this.closeStack();
+            if (this.requestData.bindingId == getCachedSetting('default-binding'))
+            {
+                Application.getInstance().gotoTabUnique('view',
+                    [record.get('page')],
+                    true
+                );
+                this.closeStack();
+            }
         }
     },
     headerText: 'Double-click a row to navigate to the corresponding page.'

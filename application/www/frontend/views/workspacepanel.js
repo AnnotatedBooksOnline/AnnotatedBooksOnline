@@ -610,7 +610,9 @@ Ext.define('Ext.ux.WorkspacePanel', {
         // Own books can always be modified.
         var modifyPermission = deletePermission || (bindingUser === currentUser);
         
-        if (modifyPermission && !this.down('bindingadminpanel'))
+        var showAdminPanel = modifyPermission || auth.hasPermissionTo('revert-changes');
+        
+        if (showAdminPanel && !this.down('bindingadminpanel'))
         {
             this.add({
                 title: 'Administration',
@@ -619,20 +621,16 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 iconCls: 'settings-icon'
             });
         }
-        else if (!modifyPermission && this.down('bindingadminpanel'))
+        else if (!showAdminPanel && this.down('bindingadminpanel'))
         {
             this.remove(this.down('bindingadminpanel'));
         }
         
-        if (deletePermission)
+        if (this.down('bindingadminpanel'))
         {
-            this.down('bindingadminpanel').showDelete(true);
-            this.down('bindingadminpanel').showModify(true);
-        }
-        else if (modifyPermission)
-        {
-            this.down('bindingadminpanel').showDelete(false);
-            this.down('bindingadminpanel').showModify(true);
+            this.down('bindingadminpanel').showDelete(deletePermission);
+            this.down('bindingadminpanel').showModify(modifyPermission);
         }
     }
 });
+

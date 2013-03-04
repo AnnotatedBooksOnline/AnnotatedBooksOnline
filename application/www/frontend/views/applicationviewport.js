@@ -171,9 +171,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
             name: 'upload',
             hidden: true
         },{
-            xtype: 'tbseparator',
-            cls: 'menu-separator'
-        },{
             text: 'Info',
             iconCls: 'info-icon',
             listeners: {
@@ -184,10 +181,6 @@ Ext.define('Ext.ux.ApplicationViewport', {
             },
             name: 'info',
             // Depend visiblity of info button on setting.
-            hidden: getCachedSetting('info-button') == "0"
-        },{
-            xtype: 'tbseparator',
-            cls: 'menu-separator',
             hidden: getCachedSetting('info-button') == "0"
         },{
             text: 'Recent changes',
@@ -384,7 +377,8 @@ Ext.define('Ext.ux.ApplicationViewport', {
         // version of the exact same tab.
         var token = Ext.History.getToken() || '';
         if (token.substr(0, firstTab.length) !== firstTab
-            || token.substr(firstTab.length, 1) !== '-')
+            || (token.length !== firstTab.length
+                && token.substr(firstTab.length, 1) !== '-'))
         {
             this.gotoTabUnique(firstTab, [], true);
         }
