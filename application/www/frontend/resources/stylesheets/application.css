@@ -261,3 +261,9 @@ a:hover
     border-color: #FAFAFA #EDEDED #EDEDED;
     border-style: solid;
 }
+
+.wrap .x-grid-cell-inner
+{
+    white-space: normal;
+}
+

@@ -4,7 +4,7 @@ Ext.define('Ext.ux.RevisionsPanel', {
     
     theStore: Ext.create('Ext.data.ArrayStore', {
         fields: ['groupname', 'revision', 'disabled',
-                 'mutation', 'date', 'english', 'original', 'id'],
+                 'mutation', 'date', 'annotationInfo', 'id'],
         data: []
     }),
     
@@ -69,8 +69,7 @@ Ext.define('Ext.ux.RevisionsPanel', {
                                    (j == 0 || revisions[j].mutation == 3),
                                    renderMutation(revisions[j].mutation),
                                    Ext.Date.format(new Date(revisions[j].revisionCreateTime * 1000), 'F j, Y'), 
-                                   revisions[j].transcriptionEng, 
-                                   revisions[j].transcriptionOrig,
+                                   revisions[j].annotationInfo, 
                                    revisions[j].revisedAnnotationId]);
                     }
                 }
@@ -111,6 +110,46 @@ Ext.define('Ext.ux.RevisionsPanel', {
     {
         var _this = this;
         
+        var columns = [{
+            text:      'Revision',
+            width:     60,
+            dataIndex: 'revision',
+            renderer:  'htmlEncode'
+        },{
+            text:      'Date',
+            width:      100,
+            dataIndex: 'date',
+            renderer:  'htmlEncode'
+        },{
+            text:      'Action',
+            width:     60,
+            dataIndex: 'mutation',
+            renderer:  'htmlEncode'
+        }];
+        
+        var makeRenderer = function(i)
+        {
+            return function(info)
+            {
+                return Ext.String.htmlEncode(info[i] || '');
+            }
+        };
+        
+        for (var i = 0; i < annotationInfoCategories.length; i++)
+        {
+            if (annotationInfoCategories[i][0] != '_')
+            {   
+                columns.push({
+                    text: annotationInfoCategories[i],
+                    flex: 4,
+                    annotationInfoIndex: i,
+                    dataIndex: 'annotationInfo',
+                    renderer: makeRenderer(i),
+                    tdCls: 'wrap'
+                });
+            }
+        }
+        
         var defConfig = {
             layout: 'fit',
             items: [{
@@ -122,32 +161,7 @@ Ext.define('Ext.ux.RevisionsPanel', {
                     groupHeaderTpl: '{name}',
                     startCollapsed: true
                 }],
-                columns: [{
-                    text:      'Revision',
-                    flex:      1,
-                    dataIndex: 'revision',
-                    renderer:  'htmlEncode'
-                },{
-                    text:      'Date',
-                    flex:      2,
-                    dataIndex: 'date',
-                    renderer:  'htmlEncode'
-                },{
-                    text:      'Action',
-                    flex:      1,
-                    dataIndex: 'mutation',
-                    renderer:  'htmlEncode'
-                },{
-                    text:      'English',
-                    flex:      5,
-                    dataIndex: 'english',
-                    renderer:  'htmlEncode'
-                },{
-                    text:      'Original',
-                    flex:      5,
-                    dataIndex: 'original',
-                    renderer:  'htmlEncode'
-                }],
+                columns: columns,
                 
                 viewConfig: {
                     getRowClass: function(rec, rowIdx, params, store)
