@@ -397,6 +397,10 @@ abstract class Controller
                         // Print boolean as 'true'  or 'false'.
                         $printedArg = $arg ? 'true' : 'false';
                     }
+                    else if(is_array($arg))
+                    {
+                        $printedArg = 'Array(' + count($arg) + ')';
+                    }
                     else if($arg === null)
                     {
                         // Handle null's.
@@ -404,8 +408,15 @@ abstract class Controller
                     }
                     else
                     {
-                        // Use default stringifier for other types.
-                        $printedArg = (string) $arg;
+                        try
+                        {
+                            // Use default stringifier for other types.
+                            $printedArg = (string) $arg;
+                        }
+                        catch (Exception $e)
+                        {
+                            $printedArg = '<non-printable argument>';
+                        }
                     }
                     
                     if($j > 0)
