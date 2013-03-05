@@ -99,10 +99,10 @@ Ext.define('Ext.ux.ViewProfilePanel', {
                     email: 'Email',
                     firstName: 'First name',
                     lastName: 'Last name',
-                    affiliation: 'Affiliation',
+                    /*affiliation: 'Affiliation',
                     occupation: 'Occupation',
                     website: 'Website',
-                    homeAddress: 'Address',
+                    homeAddress: 'Address',*/
                     activationStage: 'Status',
                     banned: 'Banned',
                     rank: 'Rank',

@@ -185,7 +185,7 @@ Ext.define('Ext.ux.UserListPanel', {
             return date.toDateString() + " " + ((h < 10) ? "0" : "") + h + ":" + ((m < 10) ? "0" : "") + m;
         }
         
-                var defConfig = {
+        var defConfig = {
             border: false,
             items: [{ 
                 xtype: 'grid',
@@ -212,7 +212,7 @@ Ext.define('Ext.ux.UserListPanel', {
                     flex:      2,
                     dataIndex: 'lastName',
                     renderer:  'htmlEncode'
-                },{
+                }/*,{
                     text:      'Affiliation',
                     flex:      1,
                     dataIndex: 'affiliation',
@@ -240,7 +240,7 @@ Ext.define('Ext.ux.UserListPanel', {
                     renderer:  'htmlEncode',
                     hidden:    true,
                     hideable:  false
-                },{
+                }*/,{
                     text:      'Role',
                     flex:      2,
                     dataIndex: 'rank',
