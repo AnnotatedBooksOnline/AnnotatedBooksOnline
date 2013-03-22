@@ -31,23 +31,27 @@ Ext.define('Ext.ux.EditProfileForm', {
                 name: 'affiliation',
                 fieldLabel: 'Affiliation',
                 allowBlank: true,
-                maxLength: 50
+                maxLength: 50,
+                hidden: true
             },{
                 name: 'occupation',
                 fieldLabel: 'Occupation',
                 allowBlank: true,
-                maxLength: 50
+                maxLength: 50,
+                hidden: true
             },{
                 name: 'website',
                 fieldLabel: 'Website',
                 allowBlank: true,
                 vtype: 'checkURL',
-                maxLength: 256
+                maxLength: 256,
+                hidden: true
             },{
                 name: 'homeAddress',
                 fieldLabel: 'Address',
                 allowBlank: true,
-                maxLength: 256
+                maxLength: 256,
+                hidden: true
             },{
                 name: 'password',
                 fieldLabel: 'Current password',
