@@ -272,3 +272,15 @@ a:hover
     white-space: normal;
 }
 
+/* Annotation display */
+.annotation-text p
+{
+    margin-bottom: 1em;
+}
+
+.annotation-text h3
+{
+    margin-bottom: .25em;
+    border-bottom: 1px solid #E9E8F6;
+    font-size: 105%;
+}
