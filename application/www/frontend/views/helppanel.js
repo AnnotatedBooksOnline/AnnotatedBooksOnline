@@ -132,6 +132,7 @@ Ext.define('Ext.ux.HelpPanel', {
             
             //Scroll to the paragraph
             var content = Ext.get(record.get('pageName'));
+            content.addCls('help-current');
             var height = content.getOffsetsTo(Ext.get('helpmain-body'));
             _this.down('[name=helptext]').body.scroll('b', height[1], false);
         });

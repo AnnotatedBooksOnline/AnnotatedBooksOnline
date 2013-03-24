@@ -188,6 +188,11 @@ a:hover
     margin-bottom: 0.5em;
 }
 
+.help .help-current
+{
+    background-color: #E9E8F6;
+}
+
 .annoHistory  p
 {
     padding: 0.1em;
