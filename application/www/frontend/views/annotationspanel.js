@@ -50,7 +50,8 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                     name: 'active-annotation',
                     border: false,
                     bodyPadding: 5,
-                    autoScroll: true
+                    autoScroll: true,
+                    cls: 'annotation-text'
                 },{
                     xtype: 'panel',
                     region: 'south',
@@ -334,11 +335,21 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         var text = '';
         if (model !== undefined)
         {
-            text = model.get(this.language);
+            var langStoreData = langStore.getRange();
+            for (var i = 0; i < langStoreData.length; i++)
+            {
+                var lang = langStoreData[i];
+                var data = model.get(lang.get('lang'));
+                if (data)
+                {
+                    text += '<h3>' + lang.get('name') + '</h3>';
+                    text += '<p>' + escape(data) + '</p>';
+                }
+            }
         }
         
         // Show contents of new model.
-        this.activeAnnotation.body.update(escape(text));
+        this.activeAnnotation.body.update(text);
         
         // Fetch annotation history
         this.updateHistory(model);
