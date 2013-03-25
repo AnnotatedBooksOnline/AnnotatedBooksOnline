@@ -53,7 +53,7 @@ abstract class Controller
         }
         
         // Check whether we want to use the post method.
-        $postMethod = ($_SERVER['REQUEST_METHOD'] == 'POST') && empty($_FILES);
+        $postMethod = isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST' && empty($_FILES);
         $format = self::getString($_GET, 'format', '');
         
         // Set the appropriate content type for a JSON response.
