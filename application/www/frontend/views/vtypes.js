@@ -10,8 +10,6 @@ Ext.apply(Ext.form.VTypes, {
     
         if (!usernameRegExp.test(value))
         {
-            field.markInvalid('Not a valid username. An username may only contain numbers, ' +
-                'letters (lowercase and uppercase), spaces, and symbols of this list: _.\'@');
             return false;
         }
         
@@ -32,7 +30,9 @@ Ext.apply(Ext.form.VTypes, {
         );
         
         return true;
-    }
+    },
+    checkUsernameText: 'Not a valid username. An username may only contain numbers, ' +
+                       'letters (lowercase and uppercase), spaces, and symbols of this list: _.\'@'
 });
 
 /*
@@ -43,11 +43,10 @@ Ext.apply(Ext.form.VTypes, {
     checkEmail: function(value, field)
     {
         // Check if the email is a correct email address.
-        var emailRegExp = /^([\w]+)(.[\w]+)*@([\w-]+\.){1,5}([A-Za-z]){2,4}$/;
+        var emailRegExp = /^([\w]+)(.[\w]+)*@(students\.)?uu\.nl$/;
     
         if (!emailRegExp.test(value))
         {
-            field.markInvalid('Not a valid email address. The format should be \'me@email.com\'.');
             return false;
         }
         
@@ -74,7 +73,8 @@ Ext.apply(Ext.form.VTypes, {
         );
         
         return true;
-    }
+    },
+    checkEmailText: 'Not a valid email address. The format should be \'me@uu.nl\' or \'me@students.uu.nl\'.'
 });
 
 /*
@@ -91,12 +91,11 @@ Ext.apply(Ext.form.VTypes, {
         
         if (!urlRegExp.test(value))
         {
-            field.markInvalid('Not a valid url. The format should be like ' +
-                '\'http://www.example.com\' or \'www.example.com/path/index.html\'.');
-            
             return false;
         }
         
         return true;
-    }
+    },
+    checkURLText: 'Not a valid url. The format should be like ' +
+                  '\'http://www.example.com\' or \'www.example.com/path/index.html\'.'
 });
