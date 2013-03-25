@@ -46,7 +46,7 @@ class MainController extends Controller
         if ($minify)
         {
             // Remove Javascript and stylesheet references.
-            $regexp = '#<script.*?src="([^"]+)".*?></\s*script>|<link.*?href="([^"]+)".*?/>#i';
+            $regexp = '#<script[^>]*src="([^"]+)"[^>]*></\s*script>|<link[^>]*href="([^"]+)"[^>]*/>#i';
             $content = preg_replace(
                 $regexp,
                 '',
