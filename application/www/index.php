@@ -22,6 +22,8 @@ $backendPath = dirname(__FILE__) . '/backend/';
 global $applicationPath;
 $applicationPath = dirname(__FILE__) . '/../';
 
+ini_set('session.save_path', $applicationPath . 'session');
+
 chdir($backendPath);
 set_include_path($backendPath);
 

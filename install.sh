@@ -48,7 +48,7 @@ function set_permissions
 {
     # Set permissions.
     echo "Setting permissions..."
-    if ! chmod -R 0777 application/www/data/ application/logs application/cache
+    if ! chmod -R 0777 application/www/data/ application/logs application/cache application/session
     then
         echo "Error while setting permissions."
         exit 1
