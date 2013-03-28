@@ -433,6 +433,11 @@ Ext.define('Ext.ux.ScanPanel', {
             upload_url: '?controller=Upload&action=upload', // Must be relative to swfupload.swf!
             flash_url: 'frontend/external/swfupload.swf',
             
+            use_chunk: true,
+            chunk_size: "1 MB",
+            use_multipart: true,
+            http_success: [200],
+            
             // Post parameters.
             post_params: postParams,
             
@@ -522,6 +527,7 @@ Ext.define('Ext.ux.ScanPanel', {
     onFileUploadError: function(id, code, message)
     {
         this.grid.setStatus(id, 'error');
+        this.grid.setProgress(id, 0);
     },
     
     onUploadAdded: function(event, grid, id, token)
@@ -531,7 +537,6 @@ Ext.define('Ext.ux.ScanPanel', {
         {
             return;
         }
-        
         this.swfUpload.addFileParam(id, 'token', token);
         this.swfUpload.startUpload(id);
     },

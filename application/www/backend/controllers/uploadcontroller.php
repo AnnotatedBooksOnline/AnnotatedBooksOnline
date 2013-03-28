@@ -68,7 +68,7 @@ class UploadController extends Controller
             $values = $row->getValues();
             
             $values['status'] = 
-                ($values['status'] === Upload::STATUS_AVAILABLE) ? 'success' : 'error';
+                ($values['status'] != Upload::STATUS_ERROR) ? 'success' : 'error';
             
             $result[] = $values;
         }
@@ -124,7 +124,7 @@ class UploadController extends Controller
         }
         
         // Show some debug info.
-        Log::debug("Uploading a file:\n%s", print_r($file, true));
+        Log::debug("Uploading a file chunk:\n%s", print_r($file, true));
         Log::debug("Uploading an upload:\n%s", print_r($upload->getValues(), true));
         
         // Check error.
@@ -143,13 +143,26 @@ class UploadController extends Controller
         
         // Set file as content.
         $location = self::getString($file, 'tmp_name');
-        $this->convertUpload($location);
-        $upload->setContent($location, true);
+        $upload->appendContent($location, true);
+        
+        // Check if there are still any missing chunks.
+        if ($upload->getCurrentSize() < $upload->getSize())
+        {
+            return "chunk-received-" . $upload->getCurrentSize();
+        }
+        
+        // Check if we did receive the correct amount of data.
+        if ($upload->getCurrentSize() !== $upload->getSize())
+        {
+            throw new UploadException('upload-wrong-filesize');
+        }
+        
+        $this->convertUpload($upload->getFileLocation());
         
         // Set values on file.
         $upload->setValues(array(
             'filename'  => self::getString($file, 'name'),
-            'size'      => self::getInteger($file, 'size'),
+            'size'      => $upload->getSize(),
             'status'    => Upload::STATUS_AVAILABLE,
             'timestamp' => time()
         ));
