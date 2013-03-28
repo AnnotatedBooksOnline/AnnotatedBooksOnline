@@ -162,6 +162,52 @@ class Upload extends Entity
     }
     
     /**
+     * Appends the contents of the given file to the current uploaded data.
+     *
+     * @param $filename  Filename with new content.
+     * @param $unlink    Whether to unlink the newly added file.
+     */
+    public function appendContent($filename, $unlink = false)
+    {
+        // Since setting content is simply a move/copy operation it is more
+        // memory efficient. This way, when no chunking is used, we do
+        // not have to load the entire file in memory again.
+        if (!file_exists($this->getFileLocation()))
+        {
+            $this->setContent($filename, $unlink);
+            return;
+        }
+        
+        // Append a chunk to the upload.
+        try
+        {
+            $output = fopen($this->getFileLocation(), 'ab');
+            fwrite($output, file_get_contents($filename)) !== false;
+            fclose($output);
+            if ($unlink)
+            {
+                unlink($filename);
+            }
+        }
+        catch (Exception $e)
+        {
+            throw new UploadException('upload-set-content-failed');
+        }
+    }
+    
+    /**
+     * Gets the current size of the uploaded data so far.
+     */
+    public function getCurrentSize()
+    {
+        if (file_exists($this->getFileLocation()))
+        {
+            return filesize($this->getFileLocation());
+        }
+        return 0;
+    }
+    
+    /**
      * Get the file location of this upload.
      */
     public function getFileLocation()

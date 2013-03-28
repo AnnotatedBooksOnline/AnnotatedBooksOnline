@@ -117,7 +117,7 @@ abstract class Controller
             }
             else if ($success)
             {
-                if ($format === "plain" || !is_string($output))
+                if ($format === "plain" || !is_string($output) && !headers_sent())
                 {
                     header('Content-Type: text/plain');
                 }
