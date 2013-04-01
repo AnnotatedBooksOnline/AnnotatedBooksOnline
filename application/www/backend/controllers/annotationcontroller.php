@@ -291,6 +291,134 @@ class AnnotationController extends ControllerBase
     }
     
     /**
+     * Searches annotations matching a boolean AND of the query terms.
+     *
+     * @param $data Should contain a 'query' separated by spaces, and 'bindingId'
+     *              specifying the binding to search in.
+     */
+    public function actionSearch($data)
+    {
+        $terms = preg_replace('/\s+/', ' ', Controller::getString($data, 'query'));
+        if (trim($terms) != '')
+        {
+            $terms = explode(' ', $terms);
+        }
+        else
+        {
+            $terms = array();
+        }
+        
+        $query = Query::select('annotations.annotationId', 'annotations.annotationInfo', 'annotations.scanId', 'scans.page')
+                      ->from('Annotations annotations')
+                      ->join('Scans scans', array('annotations.scanId = scans.scanId'), 'LEFT')
+                      ->where('scans.bindingId = :binding');
+        $binds = array('binding' => Controller::getInteger($data, 'bindingId'));
+        $i = 0;
+        foreach($terms as $term)
+        {
+            $query = $query->where('annotationInfo LIKE :ann' . $i);
+            $binds['ann' . $i] = '%' . $term . '%';
+            $i++;
+        }
+        $results = $query->execute($binds);
+        
+        $categories = Annotation::fromCommaList(Setting::getSetting('annotationInfoCategories'));
+
+        $limit = -1; // Don't limit for now.
+        $anns = array();        
+        foreach($results as $result)
+        {
+            if ($limit == 0)
+            {
+                break;
+            }
+            
+            $text = array();
+            $info = Annotation::fromCommaList($result->getValue('annotationInfo'));
+            foreach($categories as $i => $cat)
+            {
+                if ($cat[0] != '_' && isset($info[$i]) && trim($info[$i]) != '')
+                {
+                    $text[] = $info[$i];
+                }
+            }
+            $text = implode(' ', $text);
+            $allin = true;
+            foreach($terms as $term)
+            {
+                if (!preg_match('/(^|[^a-zA-Z])' . preg_quote($term) . '([^a-zA-Z]|$)/i', $text))
+                {
+                    $allin = false;
+                    break;
+                }
+            }
+            if ($allin)
+            {
+                $anns[] = array(
+                    'annotationId' => (int) $result->getValue('annotationId'),
+                    'scanId'       => (int) $result->getValue('scanId'),
+                    'page'         => (int) $result->getValue('page'),
+                    'headline'     => self::headline($terms, $text)
+                );
+            }
+            
+            $limit--;
+        }
+        
+        return $anns;
+    }
+    
+    public static function headline($terms, $text, $num = 20)
+    {
+        $query = array_flip($terms);
+        $text = mb_split('\s+', $text);
+
+        $val = 0;
+        $pos = 0;
+        $maxval = 0;
+        $maxpos = 0;
+        
+        for ( ; $pos < count($text); $pos++)
+        {
+            $text[$pos] = htmlspecialchars($text[$pos]);
+            $stripped = mb_strtolower(mb_ereg_replace('[^[:alnum:]]', '', $text[$pos]));
+            if ($stripped == "")
+            {
+                if ($val > 0)
+                {
+                    $val--;
+                }
+                continue;
+            }
+            if (array_key_exists($stripped, $query))
+            {
+                $val += $num;
+                $text[$pos] = '<b>' . $text[$pos] . '</b>';
+            }
+            if ($val > $maxval)
+            {
+                $maxval = $val;
+                $maxpos = $pos;
+            }
+            else if ($val > 0)
+            {
+                $val--;
+            }
+        }
+        
+        if ($maxpos < $num)
+        {
+            $maxpos = 0;
+        }
+        else
+        {
+            $maxpos = $maxpos - $num + 1;
+        }
+        
+        return implode(' ', array_slice($text, $maxpos, $num));
+    }
+    
+    /**
      * Compares two texts for equality, ignoring line ending differences and trailing/leading whitespace.
      */
     public static function textEqual($a, $b)

@@ -110,6 +110,19 @@ Annotations.prototype.getAnnotationByModel = function(model)
     return (index >= 0) ? this.annotations[index] : null;
 }
 
+Annotations.prototype.getAnnotationById = function(annotationId)
+{
+    for (var i = this.annotations.length - 1; i >= 0; --i)
+    {
+        if (this.annotations[i].getModel().get('annotationId') === annotationId)
+        {
+            return this.annotations[i];
+        }
+    }
+    
+    return null;
+}
+
 Annotations.prototype.getColor = function(annotation)
 {
     if (annotation && annotation.getColorNumber)
