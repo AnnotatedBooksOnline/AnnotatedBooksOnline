@@ -82,37 +82,64 @@ Ext.define('Ext.ux.ViewerPanel', {
                     }
                 }, '-', 'Page', {
                     xtype: 'textfield',
-                    width: 40,
-                    value: '1',
-                    maskReg: /\d+/,
+                    width: 60,
+                    value: '',
+                    maskReg: /\d*/,
                     stripCharsRe: /[^\d]+/,
                     allowNegative: false,
                     allowDecimals: false,
                     autoStripChars: true,
                     name: 'page-number',
+                    emptyCls: '',
                     validator: function(value)
                     {
                         if ((value <= _this.getPageAmount()) && (value >= 1))
                         {
                             return true;
                         }
-                        
+                        if (value === '')
+                        {
+                            return true;
+                        }
                         return 'Enter a page between 1 and ' + _this.getPageAmount() + ' inclusive.';
+                    },
+                    handlePageInput: function()
+                    {
+                        var value = this.getValue();
+                        if (value !== '' && (value <= _this.getPageAmount()) && (value >= 1))
+                        {
+                            _this.gotoPage(value - 1);
+                            this.clearEmptyText();
+                            this.ownerCt.focus();
+                        }
+                    },
+                    clearEmptyText: function()
+                    {
+                        this.originalEmptyText = this.emptyText;
+                        this.emptyText = ' '; // Leave a space here, otherwise it gets ignored.
+                        this.applyEmptyText();
+                    },
+                    restoreEmptyText: function()
+                    {
+                        this.emptyText = this.originalEmptyText;
+                        this.applyEmptyText();
+                        this.setRawValue('');
                     },
                     listeners: {
                         blur: function()
                         {
-                            var value = this.getValue();
-                            if ((value <= _this.getPageAmount()) && (value >= 1))
-                            {
-                                _this.gotoPage(value - 1);
-                            }
+                            this.restoreEmptyText();
+                        },
+                        focus: function()
+                        {
+                            this.setRawValue(_this.getPage() + 1);
+                            this.clearEmptyText();
                         },
                         specialkey: function(field, event)
                         {
                             if (event.getKey() == event.ENTER)
                             {
-                                field.fireEvent('blur');
+                                this.handlePageInput();
                             }
                         }
                     }
@@ -611,9 +638,12 @@ Ext.define('Ext.ux.ViewerPanel', {
         var isFirst = (number === 0);
         var isLast  = (number === (this.binding.getScanAmount() - 1));
         
+        var scan = this.binding.getScan(number);
+        
         this.viewportPanel.down('[name=first-page]').setDisabled(isFirst);
         this.viewportPanel.down('[name=previous-page]').setDisabled(isFirst);
-        this.viewportPanel.down('[name=page-number]').setValue(number + 1);
+        this.viewportPanel.down('[name=page-number]').emptyText = (number + 1) + ' (' + escape(scan.get('scanName')) + ')';
+        this.viewportPanel.down('[name=page-number]').applyEmptyText();
         this.viewportPanel.down('[name=next-page]').setDisabled(isLast);
         this.viewportPanel.down('[name=last-page]').setDisabled(isLast);
         

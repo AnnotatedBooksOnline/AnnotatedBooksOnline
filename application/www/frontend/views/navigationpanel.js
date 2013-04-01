@@ -24,13 +24,14 @@ Ext.define('Ext.ux.ThumbnailView', {
                 scan.get('width'),
                 scan.get('height'),
                 scan.get('location'),
+                escape(scan.get('scanName'))
             ];
         }
         
         // Create store.
         var store = Ext.create('Ext.data.ArrayStore', {
             name: 'thumbnailStore',
-            fields: ['id', 'index', 'page', 'width', 'height', 'location'],
+            fields: ['id', 'index', 'page', 'width', 'height', 'location', 'scanName'],
             pageSize: 10,
             data: fields
         });
@@ -42,8 +43,8 @@ Ext.define('Ext.ux.ThumbnailView', {
                 '<tpl for=".">',
                     '<div class="thumbnail">',
                         '<div class="thumbnail-inner" style="width: {width}px; height: {height}px; visibility: hidden">',
-                            '<img src="" alt="" title="Page {page}" width="{width}" height="{height}"/>',
-                            '<div class="thumbnail-rect" style="display: none;" title="Page {page}"></div>',
+                            '<img src="" alt="" title="{scanName}" width="{width}" height="{height}"/>',
+                            '<div class="thumbnail-rect" style="display: none;" title="{scanName}"></div>',
                         '</div>',
                     '</div>',
                 '</tpl>',
