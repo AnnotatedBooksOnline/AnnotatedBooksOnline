@@ -615,6 +615,155 @@ Ext.define('Ext.ux.ExportConfirmWindow', {
     }
 });
 
+Ext.define('Ext.ux.AnnotationSearchPanel', {
+    extend: 'Ext.panel.Panel',
+    alias: 'widget.annotationsearchpanel',
+    
+    initComponent: function()
+    {
+        var _this = this;
+        
+        var resultStore = Ext.create('Ext.data.ArrayStore', {
+            fields: ['annotationId', 'scanId', 'page', 'headline'],
+            data: []
+        });
+        
+        var defConfig = {
+            layout: 'border',
+            border: false,
+            items: [{
+                xtype: 'panel',
+                region: 'north',
+                border: false,
+                name: 'search-query',
+                layout: 'hbox',
+                bodyPadding: 5,
+                bodyCls: 'x-toolbar-default',
+                items: [{
+                    xtype: 'textfield',
+                    flex: 1,
+                    style: 'margin-right: 5px',
+                    name: 'search-box',
+                    emptyText: 'Enter your search query...',
+                    submitEmptyText: false,
+                    listeners: {
+                        specialkey: function(field, event)
+                        {
+                            if (event.getKey() == event.ENTER)
+                            {
+                                _this.search();
+                            }
+                        }
+                    }
+                },{
+                    xtype: 'button',
+                    text: 'Search',
+                    iconCls: 'search-icon',
+                    handler: function()
+                    {
+                        _this.search();
+                    }
+                }]
+            },{
+                xtype: 'grid',
+                name: 'search-results',
+                region: 'center',
+                border: false,
+                columns: [{
+                    text: 'Result (fragment)',
+                    dataIndex: 'headline',
+                    tdCls: 'wrap',
+                    flex: 5
+                },{
+                    text: 'Page',
+                    dataIndex: 'page',
+                    flex: 1
+                }],
+                store: resultStore,
+                listeners: {
+                    itemclick: function(view, record)
+                    {
+                        var selectAnnotation = function()
+                        {
+                            setTimeout(function()
+                            {
+                                var annotations = _this.viewer.annotations;
+                                var annotation = annotations.getAnnotationById(record.get('annotationId'));
+                                annotations.getEventDispatcher().trigger('select', annotations, annotation);
+                                var workspace = _this.up('workspacepanel');
+                                workspace.setActiveTab(workspace.down('annotationspanel'));
+                                _this.setLoading(false);
+                                var i = 3;
+                                var interval = 200;
+                                var off;
+                                var on = function()
+                                {
+                                    annotations.highlightAnnotation(annotation);
+                                    setTimeout(off, interval);
+                                }
+                                off = function()
+                                {
+                                    i--;
+                                    annotations.unhighlightAnnotation(annotation);
+                                    if (i > 0)
+                                    {
+                                        setTimeout(on, interval);
+                                    }
+                                }
+                                setTimeout(on, interval);
+                            }, 1);
+                        };
+                        
+                        if (_this.viewer.getPage() === record.get('page') - 1)
+                        {
+                            selectAnnotation();
+                        }
+                        else
+                        {
+                            _this.setLoading();
+                            var viewer = _this.viewer.annotations.viewer;      
+                            var store = _this.viewer.annotations.getStore();
+                            var afterPageChange = function()
+                            {
+                                store.un('load', afterPageChange, this);
+                                selectAnnotation();
+                            };
+                            store.on('load', afterPageChange, this);
+                            _this.viewer.gotoPage(record.get('page') - 1);
+                        }
+                    }
+                }
+            }]
+        };
+        
+        Ext.apply(this, defConfig);
+        this.callParent();
+    },
+    
+    search: function()
+    {
+        var _this = this;
+        RequestManager.getInstance().request(
+            'Annotation',
+            'search',
+            {
+                bindingId: this.up('viewerpanel').getBinding().getModel().get('bindingId'),
+                query: this.down('textfield').getValue()
+            },
+            this,
+            function(data)
+            {
+                var store = this.down('[name=search-results]').getStore();
+                store.loadData(data);
+            },
+            function()
+            {
+                return true;
+            }
+        );
+    }
+});
+
 /*
  * Workspace panel class.
  */
@@ -635,6 +784,11 @@ Ext.define('Ext.ux.WorkspacePanel', {
                 title: 'Annotations',
                 viewer: this.viewer,
                 iconCls: 'annotations-icon'
+            },{
+                title: 'Search',
+                xtype: 'annotationsearchpanel',
+                viewer: this.viewer,
+                iconCls: 'search-icon'
             },{
                 title: 'Export',
                 xtype: 'exportform',

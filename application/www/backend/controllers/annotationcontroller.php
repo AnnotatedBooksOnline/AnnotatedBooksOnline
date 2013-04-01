@@ -18,6 +18,7 @@ require_once 'controllers/controllerbase.php';
 require_once 'util/authentication.php';
 require_once 'models/annotation/annotationlist.php';
 require_once 'models/annotation/revisedannotationlist.php';
+require_once 'controllers/bookcontroller.php';
 
 /**
  * Annotation controller class.
@@ -291,6 +292,50 @@ class AnnotationController extends ControllerBase
             // Restore it.
             $revision->restoreRevision(Authentication::getInstance()->getUser());
         });
+    }
+    
+    /**
+     * Searches annotations matching a boolean AND of the query terms.
+     *
+     * @param $data Should contain a 'query' separated by spaces, and 'bindingId'
+     *              specifying the binding to search in.
+     */
+    public function actionSearch($data)
+    {
+        $terms = Controller::getString($data, 'query');
+        
+        $query = Query::select('annotations.annotationId', 'text.text', 'annotations.scanId', 'scans.page')
+                      ->from('Annotations annotations')
+                      ->join('Scans scans', array('annotations.scanId = scans.scanId'), 'LEFT')
+                      ->join('AnnotationsFT text', array('annotations.annotationId = text.annotationId'), 'LEFT')
+                      ->where('scans.bindingId = :binding');
+        $binds = array('binding' => Controller::getInteger($data, 'bindingId'));
+        $i = 0;
+
+        BookController::addFullText('fulltext', 'text.text', $terms, null, true, $query, $binds, $i);
+        $results = $query->execute($binds);
+
+        $limit = -1; // Don't limit for now.
+        $anns = array();        
+        foreach($results as $result)
+        {
+            if ($limit == 0)
+            {
+                break;
+            }
+            
+            $text = $result->getValue('text');
+            $anns[] = array(
+                'annotationId' => (int) $result->getValue('annotationId'),
+                'scanId'       => (int) $result->getValue('scanId'),
+                'page'         => (int) $result->getValue('page'),
+                'headline'     => BookController::headline($text, $terms, 20)
+            );
+            
+            $limit--;
+        }
+        
+        return $anns;
     }
     
     /**
