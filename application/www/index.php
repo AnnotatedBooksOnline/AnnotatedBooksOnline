@@ -22,7 +22,12 @@ $backendPath = dirname(__FILE__) . '/backend/';
 global $applicationPath;
 $applicationPath = dirname(__FILE__) . '/../';
 
+// Store sessions in our own path.
 ini_set('session.save_path', $applicationPath . 'session');
+
+// Create all new files with 0666 "world-writable" permissions to avoid administration
+// issues.
+umask(0111);
 
 chdir($backendPath);
 set_include_path($backendPath);

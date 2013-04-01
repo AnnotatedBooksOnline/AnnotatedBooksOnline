@@ -27,6 +27,8 @@ $applicationPath = "$backendPath/../../";
 
 date_default_timezone_set('UTC');
 
+umask(0111);
+
 // Include tile pyramid builder.
 require 'util/tilepyramidbuilder.php';
 
