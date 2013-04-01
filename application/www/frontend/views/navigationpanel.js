@@ -21,8 +21,8 @@ Ext.define('Ext.ux.ThumbnailView', {
                 scan.get('scanId'),
                 i,
                 scan.get('page'),
-                scan.get('width'),
-                scan.get('height'),
+                165,
+                Math.floor(scan.get('height') * 165 / scan.get('width')),
                 scan.get('location'),
             ];
         }
@@ -40,7 +40,7 @@ Ext.define('Ext.ux.ThumbnailView', {
             store: store,
             tpl: [
                 '<tpl for=".">',
-                    '<div class="thumbnail">',
+                    '<div class="thumbnail" style="clear: both">',
                         '<div class="thumbnail-inner" style="width: {width}px; height: {height}px; visibility: hidden">',
                             '<img src="" alt="" title="Page {page}" width="{width}" height="{height}"/>',
                             '<div class="thumbnail-rect" style="display: none;" title="Page {page}"></div>',
