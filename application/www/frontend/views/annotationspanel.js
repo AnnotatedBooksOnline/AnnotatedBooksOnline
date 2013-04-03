@@ -20,7 +20,7 @@ var annotationInfoCategories = getAnnotationInfoCategories();
 var langStoreData = [];
 for(var i = 0; i < annotationInfoCategories.length; ++i)
 {
-    if (annotationInfoCategories[i][0] != '_')
+    if (annotationInfoCategories[i].charAt(0) != '_')
     {
         langStoreData.push({
             lang: i,

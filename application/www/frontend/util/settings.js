@@ -41,7 +41,7 @@ function getAnnotationInfoCategories()
     var last = '';
     for(var i = 0; i < commaList.length; ++i)
     {
-        var c = commaList[i];
+        var c = commaList.charAt(i);
         if(c == ',')
         {
             // Add last element to resulting array.
@@ -52,7 +52,7 @@ function getAnnotationInfoCategories()
         {
             // Escaped character.
             ++i;
-            last += commaList[i];
+            last += commaList.charAt(i);
         }
         else
         {
