@@ -35,26 +35,26 @@ Ext.define('Ext.ux.RegistrationForm', {
                 fieldLabel: 'Affiliation',
                 allowBlank: true,
                 maxLength: 50,
-                hidden: true,
+                hidden: true
             },{
                 name: 'occupation',
                 fieldLabel: 'Occupation',
                 allowBlank: true,
                 maxLength: 50,
-                hidden: true,
+                hidden: true
             },{
                 name: 'website',
                 fieldLabel: 'Website',
                 allowBlank: true,
                 vtype: 'checkURL',
                 maxLength: 255,
-                hidden: true,
+                hidden: true
             },{
                 name: 'homeAddress',
                 fieldLabel: 'Address',
                 allowBlank: true,
                 maxLength: 555,
-                hidden: true,
+                hidden: true
             },{
                 name: 'password',
                 fieldLabel: 'Password *',
