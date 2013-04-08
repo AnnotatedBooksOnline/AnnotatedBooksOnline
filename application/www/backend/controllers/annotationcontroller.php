@@ -60,11 +60,12 @@ class AnnotationController extends ControllerBase
         $userId = Authentication::getInstance()->getUserId();
         
         // Fetch annotations.
-        $annotations = self::getArray($data, 'annotations');
+        $updated = self::getArray($data, 'updated');
+        $removed = self::getArray($data, 'removed');
         
         // Do transaction.
         return Database::getInstance()->doTransaction(
-            function() use ($scanId, $userId, $annotations)
+            function() use ($scanId, $userId, $updated, $removed)
             {
                 // Create scan to test whether scan exists.
                 // (Foreign key contraint should also do this.)
@@ -74,7 +75,7 @@ class AnnotationController extends ControllerBase
                 $i = 0;
                 $annotationIds = array();
                 $time = time();
-                foreach ($annotations as $annotation)
+                foreach ($updated as $annotation)
                 {
                     // Fetch values.
                     $annId     = Controller::getInteger($annotation, 'annotationId');
@@ -166,12 +167,16 @@ class AnnotationController extends ControllerBase
                     
                     ++$i;
                 }
-                
-                // Remove all Annotations that were not in the list.
+                                
+                // Remove all Annotations that were marked removed.
+                $removed = array_map(function($a)
+                {
+                    return $a['annotationId'];
+                }, $removed);
                 $scanAnnotations = AnnotationList::find(array('scanId' => $scanId))->getEntities();
                 foreach ($scanAnnotations as $ann)
                 {
-                    if (!in_array($ann->getAnnotationId(), $annotationIds))
+                    if (in_array($ann->getAnnotationId(), $removed))
                     {
                         $ann->setChangedUserId($userId);
                         $ann->setTimeChanged($time);
