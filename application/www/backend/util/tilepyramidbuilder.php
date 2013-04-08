@@ -259,15 +259,24 @@ class TilePyramidBuilder extends Singleton
                     Log::info('Enqueued scan with id %d.', $row->getValue('scanId'));
                 }
             }
+        });
             
-            // Now process contents of the queue, if any.
-            while (!$queue->isEmpty())
+        // Now process contents of the queue, if any.
+        while (!$queue->isEmpty())
+        {
+            // Now dequeue an image for processing.
+            $scanid = $queue->dequeue();
+            
+            Database::getInstance()->doTransaction(function() use($scanid, $_this)
             {
-                // Now dequeue an image for processing.
-                $scanid = $queue->dequeue();
-                
                 // Load the corresponding scan entity.
                 $scan = new Scan($scanid);
+                
+                // Check if the scan has already been processed while it was in the queue.
+                if ($scan->getStatus() != Scan::STATUS_PENDING)
+                {
+                    return;
+                }
                 
                 Log::debug('Processing %d.', $scanid);
                 
@@ -346,8 +355,8 @@ class TilePyramidBuilder extends Singleton
                     
                     throw $e;
                 }
-            }
-        });
+            });
+        }
     }
 }
 

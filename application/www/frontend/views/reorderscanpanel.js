@@ -380,8 +380,17 @@ Ext.define('Ext.ux.ReorderScanForm', {
         var onSuccess = function(data)
         {
             Application.getInstance().gotoTab('selectbook', [this.bindingId, this.isExistingBinding], true);
+            this.setLoading(false);
             this.close();
         };
+        
+        var onFailure = function()
+        {
+            this.setLoading(false);
+            return false;
+        };
+        
+        this.setLoading('Saving...');
         
         RequestManager.getInstance().request(
             'Scan',
@@ -393,7 +402,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 deletedScans: []
             },
             this,
-            onSuccess
+            onSuccess,
+            onFailure
         );
     },
     deleteBinding: function()
