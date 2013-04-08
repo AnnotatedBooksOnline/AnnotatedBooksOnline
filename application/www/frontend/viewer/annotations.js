@@ -351,10 +351,19 @@ Annotations.prototype.save = function()
             });
         });
     
+    // Get removed annotations.
+    var removedAnnotations = this.store.getRemovedRecords().map(function(model)
+    {
+        return {
+            annotationId: model.get('annotationId')
+        };
+    });
+    
     // Set data.
     var data = {
         scanId: this.scanId,
-        annotations: annotations
+        updated: annotations,
+        removed: removedAnnotations
     };
     
     // Set us saving.
