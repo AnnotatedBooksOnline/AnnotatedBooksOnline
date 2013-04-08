@@ -387,7 +387,7 @@ Ext.define('Ext.ux.ReorderScanForm', {
         var onFailure = function()
         {
             this.setLoading(false);
-            return false;
+            return true;
         };
         
         this.setLoading('Saving...');
