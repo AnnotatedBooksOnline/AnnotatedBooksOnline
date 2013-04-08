@@ -67,7 +67,7 @@ class TilePyramidBuilder extends Singleton
         $output = array();
         $rval = 0;
         $outpath = escapeshellarg($outputPath);
-        $quality = escapeshellarg($conf->getInteger('tile-quality', 60));
+        $quality = escapeshellarg($conf->getInteger('tile-quality', 80));
         $builderpath = escapeshellarg($conf->getString('builder-path')); 
         $tileformat = 'tile_%z_%x_%y.%e';
         
