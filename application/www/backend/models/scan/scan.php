@@ -191,7 +191,7 @@ class Scan extends Entity
     {
         return array(
             'scanId'    => 'int',
-            'scanType'  => 'string',
+            'scanType'  => 'istring',
             'page'      => 'int',
             'status'    => 'int',
             'width'     => 'int',
@@ -199,7 +199,7 @@ class Scan extends Entity
             'zoomLevel' => 'int',
             'uploadId'  => 'int',
             'bindingId' => 'int',
-            'scanName'  => 'string'
+            'scanName'  => 'istring'
         );
     }
     

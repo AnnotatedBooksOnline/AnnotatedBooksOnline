@@ -249,8 +249,8 @@ class Upload extends Entity
         return array(
             'uploadId'  => 'int',
             'userId'    => 'int',
-            'token'     => 'string',
-            'filename'  => 'string',
+            'token'     => 'istring',
+            'filename'  => 'istring',
             'size'      => 'int',
             'timestamp' => 'timestamp',
             'status'    => 'int',

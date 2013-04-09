@@ -81,7 +81,7 @@ class Person extends Entity
     {
         return array(
             'personId' => 'int',
-            'name'     => 'string'
+            'name'     => 'istring'
         );
     }
     

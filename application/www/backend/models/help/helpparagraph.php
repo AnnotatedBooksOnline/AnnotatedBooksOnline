@@ -105,9 +105,9 @@ class HelpParagraph extends Entity
             'helpParagraphId'       => 'int',
             'helpPageId'            => 'int',
             'paragraphParentId'     => 'int',
-            'actionName'            => 'string',
-            'title'                 => 'string',
-            'settingName'           => 'string'
+            'actionName'            => 'istring',
+            'title'                 => 'istring',
+            'settingName'           => 'istring'
         );
     }
     

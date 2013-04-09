@@ -90,8 +90,8 @@ class HelpPage extends Entity
     {
         return array(
             'helpPageId'       => 'int',
-            'pageName'         => 'string',
-            'helpType'         => 'string'
+            'pageName'         => 'istring',
+            'helpType'         => 'istring'
         );
     }
     

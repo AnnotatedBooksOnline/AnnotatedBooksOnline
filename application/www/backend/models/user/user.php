@@ -354,15 +354,15 @@ class User extends Entity
     {
         return array(
             'userId'               => 'int',
-            'username'             => 'istring', // Usernames should be compared case-insensitively.
-            'passwordHash'         => 'string',
+            'username'             => 'istring',
+            'passwordHash'         => 'string', // Passwords should NOT be compared case-insensitively.
             'email'                => 'istring',
-            'firstName'            => 'string',
-            'lastName'             => 'string',
-            'affiliation'          => 'string',
-            'occupation'           => 'string',
-            'website'              => 'string',
-            'homeAddress'          => 'string',
+            'firstName'            => 'istring',
+            'lastName'             => 'istring',
+            'affiliation'          => 'istring',
+            'occupation'           => 'istring',
+            'website'              => 'istring',
+            'homeAddress'          => 'istring',
             'activationStage'      => 'int',
             'banned'               => 'boolean',
             'rank'                 => 'int',

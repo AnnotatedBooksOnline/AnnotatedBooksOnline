@@ -177,8 +177,8 @@ class Binding extends Entity
         return array(
             'bindingId' => 'int',
             'libraryId' => 'int',
-            'signature' => 'string',
-            'summary'   => 'string',
+            'signature' => 'istring',
+            'summary'   => 'istring',
             'status'    => 'int',
         );
     }

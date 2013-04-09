@@ -75,7 +75,7 @@ class Language extends Entity
     {
         return array(
             'languageId'   => 'int',
-            'languageName' => 'string'
+            'languageName' => 'istring'
         );
     }
     

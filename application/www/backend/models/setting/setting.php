@@ -165,8 +165,8 @@ class Setting extends Entity
     {
         
         return array(
-            'settingName'  => 'string',
-            'settingValue' => 'string',
+            'settingName'  => 'istring',
+            'settingValue' => 'istring',
             'visible'      => 'bool'
         );
     }

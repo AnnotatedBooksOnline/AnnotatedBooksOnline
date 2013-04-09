@@ -90,10 +90,10 @@ class Library extends Entity
     {
         return array(
             'libraryId'      => 'int',
-            'libraryName'    => 'string',
-            'libraryAddress' => 'string',
-            'website'        => 'string',
-            'info'           => 'string',
+            'libraryName'    => 'istring',
+            'libraryAddress' => 'istring',
+            'website'        => 'istring',
+            'info'           => 'istring',
         );
     }
     

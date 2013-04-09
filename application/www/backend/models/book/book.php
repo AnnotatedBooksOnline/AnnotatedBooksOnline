@@ -203,14 +203,14 @@ class Book extends Entity
     {
         return array(
             'bookId'         => 'int',
-            'title'          => 'string',
+            'title'          => 'istring',
             'bindingId'      => 'int',
             'minYear'        => 'int',
             'maxYear'        => 'int',
             'preciseDate'    => 'date',
-            'placePublished' => 'string',
-            'publisher'      => 'string',
-            'printVersion'   => 'string',
+            'placePublished' => 'istring',
+            'publisher'      => 'istring',
+            'printVersion'   => 'istring',
             'firstPage'      => 'int',
             'lastPage'       => 'int'
         );

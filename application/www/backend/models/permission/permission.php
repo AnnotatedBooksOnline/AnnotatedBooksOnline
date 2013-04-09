@@ -124,7 +124,7 @@ class Permission extends Entity
     public static function getColumnTypes()
     {
         return array(
-            'actionName' => 'string',
+            'actionName' => 'istring',
             'minRank'    => 'int',
         );
     }
