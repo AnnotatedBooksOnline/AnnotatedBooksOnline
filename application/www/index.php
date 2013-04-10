@@ -26,8 +26,8 @@ $applicationPath = dirname(__FILE__) . '/../';
 ini_set('session.save_path', $applicationPath . 'session');
 
 // Create all new files with 0666 "world-writable" permissions to avoid administration
-// issues.
-umask(0111);
+// issues; directories with 0777.
+umask(0000);
 
 chdir($backendPath);
 set_include_path($backendPath);
