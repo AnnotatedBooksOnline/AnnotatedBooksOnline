@@ -922,16 +922,6 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         {
             _this.reconfigure(null, _this.getColumns());
         }, 1);
-        
-        // Set dragdrop
-        if (mode === 'edit')
-        {
-            this.dragdrop.enable();
-        }
-        else
-        {
-            this.dragdrop.disable();
-        }
     }
 });
 

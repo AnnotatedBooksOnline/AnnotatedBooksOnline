@@ -297,7 +297,7 @@ Annotations.prototype.load = function(force)
         
         // Load store. Filter will trigger a load.
         _this.store.filters.clear();
-        _this.store.sort('order', 'ASC', 'append', false);
+        _this.store.sort('annotationId', 'ASC', 'append', false);
         _this.store.filter('scanId', _this.loadScanId);
     };
     
@@ -330,26 +330,27 @@ Annotations.prototype.save = function()
     }
     
     // Get all annotations.
+    var pushAnnotation = function(model)
+    {
+        // Determine polygon.
+        var polygon = [];
+        model.polygon().data.each(
+            function(vertex)
+            {
+                polygon.push({x: vertex.get('x'), y: vertex.get('y')});
+            });
+        
+        // Add annotation.
+        annotations.push({
+            annotationId: model.get('annotationId'),
+            annotationInfo: model.get('annotationInfo'),
+            polygon: polygon
+        });
+    };
     var annotations = [];
     
-    this.store.data.each(
-        function(model)
-        {
-            // Determine polygon.
-            var polygon = [];
-            model.polygon().data.each(
-                function(vertex)
-                {
-                    polygon.push({x: vertex.get('x'), y: vertex.get('y')});
-                });
-            
-            // Add annotation.
-            annotations.push({
-                annotationId: model.get('annotationId'),
-                annotationInfo: model.get('annotationInfo'),
-                polygon: polygon
-            });
-        });
+    Ext.Array.each(this.store.getUpdatedRecords(), pushAnnotation);
+    Ext.Array.each(this.store.getNewRecords(), pushAnnotation);
     
     // Get removed annotations.
     var removedAnnotations = this.store.getRemovedRecords().map(function(model)
