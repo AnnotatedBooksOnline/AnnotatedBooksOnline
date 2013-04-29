@@ -738,12 +738,23 @@ Ext.define('Ext.ux.UploadForm', {
                         );
                     }
                 }
+                else if (result['status'] == 0 && this.existingBindingId !== undefined && this.existingBindingId !== result['bindingId'])
+                {
+                    Ext.Msg.show({
+                        title: 'Information',
+                        msg: 'You are currently uploading or modifying another binding. You cannot modify this binding until you have completed your other binding.',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                    this.up('[name=upload]').close();
+                }
                 else
                 {
                     Ext.Msg.show({
                         title: 'Error',
-                        msg: 'This step of the uploading process is currently unavailable for this binding.',
-                        buttons: Ext.Msg.OK
+                        msg: 'This binding cannot be modified at this moment.',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
                     });
                     this.up('[name=upload]').close();
                 }
@@ -753,7 +764,8 @@ Ext.define('Ext.ux.UploadForm', {
                  Ext.Msg.show({
                     title: 'Error',
                     msg: 'There is a problem with the server. Please try again later.',
-                    buttons: Ext.Msg.OK
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
                 });
                 this.close();
             }

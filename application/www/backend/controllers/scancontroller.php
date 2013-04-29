@@ -33,7 +33,8 @@ class ScanController extends ControllerBase
     {
         // Handle load.
         $defaultSorters = array(
-            array('column' => 'page', 'direction' => 'ASC')
+            array('column' => 'page', 'direction' => 'ASC'),
+            array('column' => 'scanId', 'direction' => 'ASC')
         );
         $result = $this->handleLoad($data, 'Scan', 'scanId', array(
             'scanId',

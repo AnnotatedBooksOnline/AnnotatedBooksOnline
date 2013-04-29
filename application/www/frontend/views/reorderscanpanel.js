@@ -60,7 +60,8 @@ Ext.define('Ext.ux.ReorderScanFieldset', {
                 handler: function()
                 {
                     // Reload the store from server.
-                    this.up('[name=reorderscanform]').store.load();
+                    var form = this.up('[name=reorderscanform]');
+                    form.store.sort(form.storeSorter);
                     
                     // Reset deleted scans.
                     //this.up('[name=reorderscanform]').deletedScanStore.removeAll(false);
@@ -98,135 +99,12 @@ Ext.define('Ext.ux.ReorderScanForm', {
             var a = scan1.get('scanName');
             var b = scan2.get('scanName');
             
-            // Gives the alphabet position of characters between A and Z. Returns 0 for others.
-            function letterVal(x)
-            {
-                if(x >= 'A' && x <= 'Z')
-                {
-                    return x.charCodeAt(0) - 64;
-                }
-                else if(x >= 'a' && x <= 'z')
-                {
-                    return x.charCodeAt(0) - 96;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-            
-            // Tests if a character is a digit.
-            function isDigit(x)
-            {
-                return x >= '0' && x <= '9';
-            }
-            
-            /*
-             * Iterate through the strings and compare characters in the following matter:
-             * 
-             * - Compare lower and upper case letters from the Latin alphabet on their position in that alphabet.
-             * - Digits go before letters. When encountering a digit in both strings, keep iterating until 
-             *   encounter the end or a non-digit and compare the resulting integers.
-             * - Bytes that do not represent ASCII digits or alphabetical characters go before those two and are
-             *   compared by value. This implies UTF8 sequences outside of ASCII are compared lexicographically.
-             */
-            var i = 0, j = 0;
-            for(; i < a.length && j < b.length; ++i, ++j)
-            {
-                var c1 = a[i];
-                var c2 = b[i];
-                
-                // If c1 == c2, they're considered equal either way.
-                if(c1 == c2)
-                {
-                    continue;
-                }
-                
-                var l1 = letterVal(c1);
-                var l2 = letterVal(c2);
-                
-                if(l1 != 0)
-                {
-                    if(l2 == 0)
-                    {
-                        // Non-letters go before letters. Therefore a is considered higher.
-                        return 1;
-                    }
-                    else
-                    {
-                        if(l1 != l2)
-                        {
-                            return l1 - l2;
-                        }
-                    }
-                }
-                else if(l2 != 0)
-                {
-                    return -1;
-                }
-                
-                var d1 = isDigit(c1);
-                var d2 = isDigit(c2);
-                if(d1)
-                {
-                    if(d2)
-                    {
-                        // Two digits, start comparing the whole integer.
-                        var n1 = c1;
-                        for(; i < a.length; ++i)
-                        {
-                            if(isDigit(a[i]))
-                            {
-                                n1 += a[i];
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        var n2 = c2;
-                        for(; j < b.length; ++j)
-                        {
-                            if(isDigit(b[j]))
-                            {
-                                n2 += b[j];
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                        
-                        n1 = parseInt(n1);
-                        n2 = parseInt(n2);
-                        if(n1 != n2)
-                        {
-                            return n1 - n2;
-                        }
-                    }
-                    else
-                    {
-                        // The second character is no digit, so it should go first. Therefore a is higher.
-                        return 1;
-                    }
-                }
-                else if(d2)
-                {
-                    return -1;
-                }
-                
-                // Neither are digit nor alphabetic, compare byte values (equality has already been tested).
-                return c1 - c2;
-            }
-            
-            // When reaching the end of either string, compare their lengths.
-            return a.length - b.length;
+            return naturalSort(a, b);
         }
         
         // This comparator orderns scans by page number.
         function scanComparePage(scan1, scan2)
         {
-            //if(scan1.get('page') <= 2) alert("" + scan1.get('scanName') + ": " + scan1.get('status'));
             return scan1.get('page') - scan2.get('page');
         }
         
@@ -258,17 +136,16 @@ Ext.define('Ext.ux.ReorderScanForm', {
         
         // Automatically sort the scans when editing a newly uploaded binding.
         // When editing an existing binding, sort by page.
-        var storeSorter;
         if(this.isExistingBinding)
         {
-            storeSorter = [{sorterFn: scanCompareEditMode}];
+            this.storeSorter = scanCompareEditMode;
         }
         else
         {
-            storeSorter = [{sorterFn: scanCompareNatural}];
+            this.storeSorter = scanCompareNatural;
         }
         
-        this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel', sorters: storeSorter});
+        this.store = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
         this.store.filter('bindingId', this.bindingId);
         
         //this.deletedScanStore = Ext.create('Ext.data.Store', {model: 'Ext.ux.ScanModel'});
@@ -280,13 +157,25 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 if (result['status'] == 0 && result['bindingId'] == this.bindingId && this.bindingId !== undefined)
                 {
                     this.store.load();
+                    this.store.sort([{sorterFn: this.storeSorter}]);
+                }
+                else if (result['status'] == 0 && this.bindingId !== undefined)
+                {
+                    Ext.Msg.show({
+                        title: 'Information',
+                        msg: 'You are currently uploading or modifying another binding. You cannot modify this binding until you have completed your other binding.',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                    this.close();
                 }
                 else
                 {
                     Ext.Msg.show({
                         title: 'Error',
-                        msg: 'This step of the uploading process is currently unavailable for this binding.',
-                        buttons: Ext.Msg.OK
+                        msg: 'The scans in this binding cannot be reordered at this moment.',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
                     });
                     this.close();
                 }
@@ -296,7 +185,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
                  Ext.Msg.show({
                     title: 'Error',
                     msg: 'There is a problem with the server. Please try again later.',
-                    buttons: Ext.Msg.OK
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
                 });
                 this.close();
             }
@@ -320,14 +210,14 @@ Ext.define('Ext.ux.ReorderScanForm', {
                 xtype: 'button',
                 name: 'delete',
                 iconCls: 'cancel-icon',
-                text: 'Delete',
+                text: 'Delete binding',
                 hidden: this.isExistingBinding,
                 width: 140,
                 handler: function()
                 {
                     Ext.Msg.show({
                         title: 'Are you sure?',
-                        msg: ' This binding will be deleted. Are you sure?',
+                        msg: 'This binding will be deleted. Are you sure?',
                         buttons: Ext.Msg.YESNO,
                         icon: Ext.Msg.QUESTION,
                         callback: function(button)
@@ -414,7 +304,8 @@ Ext.define('Ext.ux.ReorderScanForm', {
             Ext.Msg.show({
                 title: 'Success',
                 msg: 'The binding was successfully deleted.',
-                buttons: Ext.Msg.OK
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.INFO
             }); 
             
             this.close();
