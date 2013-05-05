@@ -164,6 +164,19 @@ Viewport.prototype.removeOverlays = function(overlay)
     this.overlays = [];
 }
 
+// Hides or shows the overlays.
+Viewport.prototype.setOverlayHidden = function(hidden)
+{
+    if (hidden === true)
+    {
+        this.dom.children(".overlay").hide();
+    }
+    else
+    {
+        this.dom.children(".overlay").show();
+    }
+}
+
 // Sets dimensions of viewer.
 Viewport.prototype.setDimensions = function(viewerWidth, viewerHeight)
 {

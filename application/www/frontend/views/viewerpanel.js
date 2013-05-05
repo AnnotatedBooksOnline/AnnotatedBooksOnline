@@ -216,6 +216,19 @@ Ext.define('Ext.ux.ViewerPanel', {
                             _this.updateAnnotationColors();
                         }
                     }
+                }, {
+                    iconCls: 'annotations-icon',
+                    tooltip: 'Show annotations',
+                    overflowText: 'Show annotations',
+                    name: 'annotations-visible',
+                    enableToggle: true,
+                    pressed: true,
+                    listeners: {
+                        toggle: function()
+                        {
+                            _this.updateAnnotationVisibility();
+                        }
+                    }
                 }, '->', {
                     iconCls: 'drag-icon',
                     tooltip: 'Drag',
@@ -412,6 +425,7 @@ Ext.define('Ext.ux.ViewerPanel', {
         store.on('load', function()
         {
             this.updateAnnotationColors();
+            this.updateAnnotationVisibility();
         }, this);
         store.on('add', function()
         {
@@ -524,6 +538,12 @@ Ext.define('Ext.ux.ViewerPanel', {
         {
             overlays[i].setInvertHighlight(show);
         }
+    },
+    
+    updateAnnotationVisibility: function()
+    {
+        var hidden = !this.down('[name=annotations-visible]').pressed;
+        this.viewport.setOverlayHidden(hidden);
     },
     
     /*
