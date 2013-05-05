@@ -33,9 +33,6 @@ class MainController extends Controller
         // Get modification date
         $modified = filemtime('../frontend/main.html');
         
-        // Handle modified since header.
-        $this->handleModifiedSince($modified);
-        
         // Check whether minification is wanted.
         $minify = Configuration::getInstance()->getBoolean('minify-resources', false);
         
