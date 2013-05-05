@@ -47,7 +47,7 @@ abstract class Entity
     /**
      * Loads this entity.
      */
-    public function load()
+    public function load($forUpdate = null)
     {
         // By default an entity is not marked for deletion or updating.
         $markedAsDeleted = false;
@@ -60,7 +60,7 @@ abstract class Entity
         }
         
         // Create the SQL statement to retrieve this entity and execute it prepared.
-        $resultSet = $this->getSelectQuery()->execute($this->getPrimaryKeyValues());
+        $resultSet = $this->getSelectQuery($forUpdate)->execute($this->getPrimaryKeyValues());
         
         // Determine if the entity was found in the database.
         if ($resultSet->getAmount() != 1)
@@ -321,7 +321,7 @@ abstract class Entity
      *
      * @return  Query to select an entity from the database.
      */
-    protected function getSelectQuery()
+    protected function getSelectQuery($forUpdate = null)
     {
         // Get keys and table name.
         $keys      = static::getPrimaryKeys();
@@ -345,7 +345,8 @@ abstract class Entity
         $conditions = array_map($callback, $keys);
         
         // Create query.
-        return Query::select()->from($tableName)->where($conditions);
+        $query = $forUpdate === true ? Query::selectForUpdate() : Query::select();
+        return $query->from($tableName)->where($conditions);
     }
     
     /**

@@ -86,10 +86,18 @@ class Book extends Entity
     /**
      * Loads all the associated lists.
      */
-    public function loadDetails()
+    public function loadDetails($forUpdate = null)
     {
-        $this->authorList = AuthorList::find(array('bookId' => $this->bookId));
-        $this->bookLanguageList = BookLanguageList::find(array('bookId' => $this->bookId));
+        if ($forUpdate === true)
+        {
+            $this->authorList = AuthorList::findForUpdate(array('bookId' => $this->bookId));
+            $this->bookLanguageList = BookLanguageList::findForUpdate(array('bookId' => $this->bookId));
+        }
+        else
+        {
+            $this->authorList = AuthorList::find(array('bookId' => $this->bookId));
+            $this->bookLanguageList = BookLanguageList::find(array('bookId' => $this->bookId));
+        }
     }
     
     /**

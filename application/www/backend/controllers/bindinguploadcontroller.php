@@ -81,7 +81,8 @@ class BindingUploadController extends Controller
         {
             // Load the existing binding with all its attribute entities.
             $binding = new Binding($inputBindingId);
-            $binding->loadDetails();
+            $binding->load(true);
+            $binding->loadDetails(true);
             
             
             // Check whether binding was uploaded by the current user themself.
@@ -197,8 +198,7 @@ class BindingUploadController extends Controller
                     throw new ControllerException('invalid-book-id-provided');
                 }
             }
-            
-            $book->loadDetails();
+            $book->loadDetails(true);
             
             // Fill the book attributes with information from the request.
             $book->setTitle(self::getString($inputBook, 'title'));

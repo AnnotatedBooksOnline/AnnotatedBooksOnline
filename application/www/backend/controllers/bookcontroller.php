@@ -63,7 +63,7 @@ class BookController extends ControllerBase
         
         // Load the binding to be modified from the database.
         $binding = new Binding($inputBindingId);
-        $binding->loadDetails();
+        $binding->loadDetails(true);
         
         // Iterate over all selected books and store their values in the database.
         foreach ($inputSelectedBooks as $inputSelectedBook) 

@@ -71,7 +71,8 @@ class ScanController extends ControllerBase
             
             // Load the binding to be modified from the database.
             $binding = new Binding($inputBindingId);
-            $binding->loadDetails();
+            $binding->load(true);
+            $binding->loadDetails(true);
             
             $page = 0;
             $deleteBookPageNumbers = false;
@@ -108,6 +109,7 @@ class ScanController extends ControllerBase
                 if ($scan->getUploadId() !== null) 
                 {
                     $upload = new Upload($scan->getUploadId());
+                    $upload->load(true);
                     $upload->delete();
                 }
             }

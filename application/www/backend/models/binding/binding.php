@@ -85,16 +85,26 @@ class Binding extends Entity
     /**
      * Loads all associtated entity lists.
      */
-    public function loadDetails()
+    public function loadDetails($forUpdate = null)
     {
         $bindingId = $this->bindingId;
         list($this->bookList, $this->scanList, $this->provenanceList, $this->bindingLanguageList) 
-            = Database::getInstance()->doTransaction(function() use ($bindingId)
+            = Database::getInstance()->doTransaction(function() use ($bindingId, $forUpdate)
         {
-            $bookList = BookList::find(array('bindingId' => $bindingId));
-            $scanList = ScanList::find(array('bindingId' => $bindingId));
-            $provenanceList = ProvenanceList::find(array('bindingId' => $bindingId));
-            $bindingLanguageList = BindingLanguageList::find(array('bindingId' => $bindingId));
+            if ($forUpdate === true)
+            {
+                $bookList = BookList::findForUpdate(array('bindingId' => $bindingId));
+                $scanList = ScanList::findForUpdate(array('bindingId' => $bindingId));
+                $provenanceList = ProvenanceList::findForUpdate(array('bindingId' => $bindingId));
+                $bindingLanguageList = BindingLanguageList::findForUpdate(array('bindingId' => $bindingId));
+            }
+            else
+            {
+                $bookList = BookList::find(array('bindingId' => $bindingId));
+                $scanList = ScanList::find(array('bindingId' => $bindingId));
+                $provenanceList = ProvenanceList::find(array('bindingId' => $bindingId));
+                $bindingLanguageList = BindingLanguageList::find(array('bindingId' => $bindingId));
+            }
             
             return array($bookList, $scanList, $provenanceList, $bindingLanguageList);
         });

@@ -273,6 +273,8 @@ class TilePyramidBuilder extends Singleton
                 {
                     // Load the corresponding scan entity.
                     $scan = new Scan($scanid);
+                    // Reload it for update.
+                    $scan->load(true);
                     
                     // Check if the scan has already been processed while it was in the queue.
                     if ($scan->getStatus() != Scan::STATUS_PENDING)
@@ -290,6 +292,7 @@ class TilePyramidBuilder extends Singleton
                         
                         // Retrieve the upload associated with the scan.
                         $upload = new Upload($scan->getUploadId());
+                        $upload->load(true);
                         
                         // Process the image.
                         $_this->run($scan, $upload);
@@ -369,6 +372,7 @@ class TilePyramidBuilder extends Singleton
             {
                 // Store the error status of the scan.
                 $scan = new Scan($scanid);
+                $scan->load(true);
                 $scan->setStatus(Scan::STATUS_ERROR);
                 $scan->save();
             }

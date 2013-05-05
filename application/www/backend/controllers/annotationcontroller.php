@@ -173,7 +173,7 @@ class AnnotationController extends ControllerBase
                 {
                     return $a['annotationId'];
                 }, $removed);
-                $scanAnnotations = AnnotationList::find(array('scanId' => $scanId))->getEntities();
+                $scanAnnotations = AnnotationList::findForUpdate(array('scanId' => $scanId))->getEntities();
                 foreach ($scanAnnotations as $ann)
                 {
                     if (in_array($ann->getAnnotationId(), $removed))

@@ -123,7 +123,7 @@ abstract class EntityList implements IteratorAggregate
      * @return  Entity list with entities that pass the given criteria.
      */
     public static function find($conditions = array(), $offset = 0, $limit = null, $ordering = array(),
-        &$total = null)
+        &$total = null, $forUpdate = null)
     {
         // Get some values.
         $keys      = self::getPrimaryKeys();
@@ -160,7 +160,7 @@ abstract class EntityList implements IteratorAggregate
         }
         
         // Build select clause.
-        $query = static::buildSelectionQuery()->
+        $query = static::buildSelectionQuery($forUpdate)->
             where($whereConds)->
             orderBy($ordering)->
             limit($limit, $offset);
@@ -195,11 +195,21 @@ abstract class EntityList implements IteratorAggregate
     }
     
     /**
+     * Convenience alias for find() with $forUpdate = true.
+     */
+    public static function findForUpdate($conditions = array(), $offset = 0, $limit = null, $ordering = array(),
+        &$total = null)
+    {
+        return self::find($conditions, $offset, $limit, $ordering, $total, true);
+    }
+    
+    /**
      * Returns the query to select fields of this entity type.
      */
-    protected static function buildSelectionQuery() 
+    protected static function buildSelectionQuery($forUpdate) 
     {
-        return Query::select()->
+        $query = $forUpdate === true ? Query::selectForUpdate() : Query::select();
+        return $query->
             from(self::getTableName());
     }
     

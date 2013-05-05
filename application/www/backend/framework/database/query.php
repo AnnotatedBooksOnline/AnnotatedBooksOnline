@@ -77,6 +77,9 @@ class Query
     /** Boolean representing whether to return the inserted Id. */
     private $doReturnId;
     
+    /** Boolean representing whether this selection is FOR UPDATE. */
+    private $isForUpdate = false;
+    
     /**
      * Constructs a new query. Acquires an instance of the the database, which 
      * will now be initialized if it wasn't before.
@@ -85,6 +88,11 @@ class Query
     {
         $this->clear();
         
+        if ($kind == "SELECT FOR UPDATE")
+        {
+            $kind = "SELECT";
+            $this->isForUpdate = true;
+        }
         $this->kind = $kind;
     }    
     
@@ -169,6 +177,28 @@ class Query
     public static function select( /* $arg0, $arg1, ... $argn */ )
     {
         $query = new Query('SELECT');
+        
+        $columns = self::argsToArray(func_get_args());
+        
+        $query->columns = array_map(array($query, 'quoteIdentifiers'), $columns);
+        
+        return $query;
+    }
+
+    /**
+
+     * Determines the query should be a SELECT-statement, if not yet the case, and specifies which 
+     * columns should be selected. If already called on the same object before, it will extend the 
+
+     * columns to be selected. If a single select with no argument or an empty array has been made,
+     * all columns will be selected.
+     * 
+
+     * @param ... SQL Identifiers representing columns to limit the result of the selection to.
+     */
+    public static function selectForUpdate( /* $arg0, $arg1, ... $argn */ )
+    {
+        $query = new Query('SELECT FOR UPDATE');
         
         $columns = self::argsToArray(func_get_args());
         
@@ -555,6 +585,11 @@ class Query
         $query .= $this->groupByClause;
         $query .= $this->orderByClause;
         $query .= $this->limitClause;
+        
+        if ($this->isForUpdate && $this->kind == "SELECT")
+        {
+            $query .= "\nFOR UPDATE";
+        }
         
         return $query;
     }
