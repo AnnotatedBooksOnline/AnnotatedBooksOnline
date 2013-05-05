@@ -135,6 +135,7 @@ Ext.define('Ext.ux.RevisionsPanel', {
             }
         };
         
+        var annotationInfoCategories = getAnnotationInfoCategories();
         for (var i = 0; i < annotationInfoCategories.length; i++)
         {
             if (annotationInfoCategories[i][0] != '_')

@@ -71,12 +71,23 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
         	}
         }
         
+        var orderedTextAreas = [];
+        var order = getAnnotationInfoOrder();
+        for (var i = 0; i < order.length; i++)
+        {
+            var ix = parseInt(order[i]);
+            if (!isNaN(ix))
+            {
+                orderedTextAreas[ix] = textAreas[i];
+            }
+        }
+        
         var defConfig = {
             layout:{
                 type: 'vbox',
                 align: 'stretch'
             },
-            items: textAreas,
+            items: orderedTextAreas,
             buttons: [{
                 xtype: 'button',
                 text: 'Cancel',
@@ -114,7 +125,7 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
         var updated = false;
         for(var i = 0; i < categories.length; ++i)
         {
-        	newAnnotationInfo[i] = data['annotationInfoField' + i];
+        	newAnnotationInfo[i] = data['annotationInfoField' + i] || "";
         	if (newAnnotationInfo[i] !== annotationInfo[i])
         	{
         	    updated = true;
@@ -144,7 +155,7 @@ Ext.define('Ext.ux.TranscriptionEditorWindow', {
             title: 'Transcription editor',
             layout: 'fit',
             width: 600,
-            height: 400,
+            height: 550,
             items: [{
                 xtype: 'transcriptioneditorform',
                 model: this.annotation,
@@ -157,3 +168,4 @@ Ext.define('Ext.ux.TranscriptionEditorWindow', {
         this.callParent();
     }
 });
+

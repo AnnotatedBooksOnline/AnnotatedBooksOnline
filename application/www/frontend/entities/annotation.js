@@ -53,6 +53,7 @@ Annotation.createFromId = function(annotationId, obj, onSuccess, onError)
 
 Annotation.createFromVertices = function(vertices)
 {
+    var annotationInfoCategories = getAnnotationInfoCategories();
     var annotationInfo = [];
     for(var i = 0; i < annotationInfoCategories.length; ++i)
     {
@@ -98,6 +99,7 @@ Annotation.prototype.getId = function()
 
 Annotation.prototype.getColorNumber = function()
 {
+    var annotationInfoCategories = getAnnotationInfoCategories();
     for(var i = 0; i < annotationInfoCategories.length; ++i)
     {
         if (annotationInfoCategories[i] == '_Color')

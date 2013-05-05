@@ -16,18 +16,24 @@ Ext.override(Ext.view.AbstractView, {
     }
 });
 
-var annotationInfoCategories = getAnnotationInfoCategories();
-var langStoreData = [];
-for(var i = 0; i < annotationInfoCategories.length; ++i)
+var langStoreData = (function()
 {
-    if (annotationInfoCategories[i].charAt(0) != '_')
+    var result = [];
+    var categories = reorderByAnnotationInfoOrder(getAnnotationInfoCategories());
+    var index = reorderByAnnotationInfoOrder(getDefaultAnnotationInfoOrder());
+    for(var i = 0; i < categories.length; ++i)
     {
-        langStoreData.push({
-            lang: i,
-            name: annotationInfoCategories[i]
-        });
+        if (categories[i].charAt(0) != '_')
+        {
+            result.push({
+                lang: index[i],
+                name: categories[i]
+            });
+        }
     }
-}
+    return result;
+    //reorderByAnnotationInfoOrder(langStoreData)
+})();
 
 var langStore = Ext.create('Ext.data.Store', {
     fields: ['lang', 'name'],

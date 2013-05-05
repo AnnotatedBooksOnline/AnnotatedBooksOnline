@@ -26,17 +26,14 @@ function getCachedSetting(settingName)
 }
 
 /**
- * Fetches the cached setting 'annotationInfoCategories' and converts the result to an array.
+ * Parses a comma-separated list and converts the result to an array.
  * 
  * See also the back-end function Annotation::fromCommaList.
  * 
- * @return array The category names of annotation info, as an array. 
+ * @return array The information in the comma-separated list, as an array. 
  */
-function getAnnotationInfoCategories()
-{    
-    // Get the setting as a 'comma-list'.
-    var commaList = getCachedSetting('annotationInfoCategories');
-    
+function fromCommaList(commaList)
+{
     var result = [];
     var last = '';
     for(var i = 0; i < commaList.length; ++i)
@@ -64,7 +61,79 @@ function getAnnotationInfoCategories()
     // Add final element.
     result.push(last);
     
+    return result;
+}
+
+/**
+ * Fetches the cached setting 'annotationInfoCategories' and converts the result to an array.
+ * 
+ * @return array The category names of annotation info, as an array. 
+ */
+function getAnnotationInfoCategories()
+{    
+    // Get the setting as a 'comma-list'.
+    var commaList = getCachedSetting('annotationInfoCategories');
+    
+    var result = fromCommaList(commaList);
+    
     // Return resulting array.
+    return result;
+}
+
+/**
+ * Fetches the cached setting 'annotationInfoOrder' and converts the result to an array.
+ * If no such setting exists, it returns a simple sequence [0, ...] matching the
+ * length of annotationInfoCategories.
+ * 
+ * @return array The category ordering of annotation info, as an array. 
+ */
+function getAnnotationInfoOrder()
+{    
+    // Get the setting as a 'comma-list'.
+    var commaList = getCachedSetting('annotationInfoOrder');
+    
+    if (!commaList)
+    {
+        return getDefaultAnnotationInfoOrder();
+    }
+    
+    var result = fromCommaList(commaList);
+    
+    // Return resulting array.
+    return result;
+}
+
+/**
+ * Gets a default annotation info ordering, the simple sequence [0, ...] matching the
+ * length of annotationInfoCategories.
+ */
+function getDefaultAnnotationInfoOrder()
+{
+    var categories = getAnnotationInfoCategories();
+    var result = [];
+    for (var i = 0; i < categories.length; i++)
+    {
+        result.push(i);
+    }
+    
+    return result;
+}
+
+/**
+ * Reorders an array based on the indices given by annotationInfoOrder.
+ */
+function reorderByAnnotationInfoOrder(arr)
+{
+    var result = [];
+    var order = getAnnotationInfoOrder();
+    for (var i = 0; i < order.length; i++)
+    {
+        var ix = parseInt(order[i]);
+        if (!isNaN(ix))
+        {
+            result[ix] = arr[i];
+        }
+    }
     return result;
 }
 
