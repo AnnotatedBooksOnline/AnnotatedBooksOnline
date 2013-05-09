@@ -117,6 +117,9 @@ class User extends Entity
     
     /** Timestamp this user has last logged in. */
     protected $lastActive;
+
+    /** When the user is in the process of modifying or uploading an a binding. This will hold that binding's ID. */
+    protected $currentBindingId;
     
     /**
      * Constructs a user by id.
@@ -342,7 +345,8 @@ class User extends Entity
     {
         return array('username', 'passwordHash', 'email', 'firstName', 'lastName',
                      'affiliation', 'occupation', 'website', 'homeAddress', 'activationStage',
-                     'banned', 'rank', 'passwordRestoreToken', 'registrationDate', 'lastActive');
+                     'banned', 'rank', 'passwordRestoreToken', 'registrationDate', 'lastActive',
+                     'currentBindingId');
     }
     
     /**
@@ -368,7 +372,8 @@ class User extends Entity
             'rank'                 => 'int',
             'passwordRestoreToken' => 'string',
             'registrationDate'     => 'date',
-            'lastActive'           => 'timestamp'
+            'lastActive'           => 'timestamp',
+            'currentBindingId'     => 'int'
         );
     }
     
@@ -455,5 +460,8 @@ class User extends Entity
 
         return $deletedId == $this->getUserId();
     }
+
+    public function getCurrentBindingId()    { return $this->currentBindingId; }
+    public function setCurrentBindingId($id) { $this->currentBindingId = $id;  }
 }
 

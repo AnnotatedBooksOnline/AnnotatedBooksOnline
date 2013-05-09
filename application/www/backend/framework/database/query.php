@@ -15,32 +15,30 @@
  */
 
 /**
-    EXAMPLES:
-    
-    
-    Complex example:
-    
-        $query = Query::select('u.userId')->
-                 from('Users u')->
-                 count('id', 'grantTotal')->
-                 aggregate('MAX', 'maximum')->
-                 where('username = :username', 'passwordHash = :hash')->
-                 whereOr('username = :username', 'passwordHash = :hash')->
-                 join('OtherTable o', array('o.id = u.id', 'o.name = u.name'), 'LEFT')->
-                 limit(0, 1)->
-                 orderBy('u.username', 'desc')->
-                 groupBy('u.name');
-        
-        $rowSet = $query->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
-    
-    
-    Simple example:
-    
-        Query::delete('Users')->where('userId = :id')->execute(array('id' => $userId);
-    
-    
-    See also the User model.
-    
+  *  EXAMPLES:  
+  *
+  *    Complex example:
+  *
+  *        $query = Query::select('u.userId')->
+  *                 from('Users u')->
+  *                 count('id', 'grantTotal')->
+  *                 aggregate('MAX', 'maximum')->
+  *                 where('username = :username', 'passwordHash = :hash')->
+  *                 whereOr('username = :username', 'passwordHash = :hash')->
+  *                 join('OtherTable o', array('o.id = u.id', 'o.name = u.name'), 'LEFT')->
+  *                 limit(0, 1)->
+  *                 orderBy('u.username', 'desc')->
+  *                 groupBy('u.name');
+  *
+  *        $rowSet = $query->execute(array(':username' => $username, ':hash' => self::secureHash($password)));
+  *
+  *
+  *    Simple example:
+  *
+  *        Query::delete('Users')->where('userId = :id')->execute(array('id' => $userId);
+  *
+  *    
+  *    See also the User model.
 */
 class Query
 {
@@ -186,14 +184,11 @@ class Query
     }
 
     /**
-
      * Determines the query should be a SELECT-statement, if not yet the case, and specifies which 
      * columns should be selected. If already called on the same object before, it will extend the 
-
      * columns to be selected. If a single select with no argument or an empty array has been made,
      * all columns will be selected.
      * 
-
      * @param ... SQL Identifiers representing columns to limit the result of the selection to.
      */
     public static function selectForUpdate( /* $arg0, $arg1, ... $argn */ )

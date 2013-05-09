@@ -29,6 +29,7 @@ require_once 'models/provenance/provenance.php';
 require_once 'models/scan/scan.php';
 require_once 'models/language/bindinglanguage.php';
 require_once 'models/language/booklanguage.php';
+require_once 'models/user/user.php';
 
 /** Minimum scan width */
 define("MIN_SCAN_SIZE_X", 256);
@@ -57,74 +58,80 @@ class BindingUploadController extends Controller
         $binding;
         try
         {
-        // Assert that the user is authenticated.
-        Authentication::assertPermissionTo('upload-bindings');
-        
-        // Retrieve contents of record.
-        $inputScans     = self::getArray($data, 'scans');
-        $inputBinding   = self::getArray($data, 'binding');
-        $inputBooks     = self::getArray($data, 'books');
-        $safe           = self::getBoolean($data, 'safe');
-        $inputBindingId = self::getInteger($inputBinding, 'bindingId');
-        
-        // Find the name of the library the binding belongs to.
-        $libraryName = $inputBinding['library'];
-        $signature   = self::getString($inputBinding, 'signature');
-        
-        // Load an existing binding or create a new binding if no existing binding is provided.
-        if ($inputBindingId == -1 && !$safe)
-        {
-            $binding = new Binding();
-            $binding->setUserId(Authentication::getInstance()->getUserId());
-        }
-        else 
-        {
-            // Load the existing binding with all its attribute entities.
-            $binding = new Binding($inputBindingId);
-            $binding->load(true);
-            $binding->loadDetails(true);
+            // Assert that the user is authenticated.
+            Authentication::assertPermissionTo('upload-bindings');
             
+            // Retrieve contents of record.
+            $inputScans     = self::getArray($data, 'scans');
+            $inputBinding   = self::getArray($data, 'binding');
+            $inputBooks     = self::getArray($data, 'books');
+            $safe           = self::getBoolean($data, 'safe');
+            $inputBindingId = self::getInteger($inputBinding, 'bindingId');
+
+            // Fetch the current user.
+            $currentUser = Authentication::getInstance()->getUser();
             
-            // Check whether binding was uploaded by the current user themself.
-            $user = Authentication::getInstance()->getUser();
-            if($binding->getUserId() !== $user)
+            // Find the name of the library the binding belongs to.
+            $libraryName = $inputBinding['library'];
+            $signature   = self::getString($inputBinding, 'signature');
+            
+            // Load an existing binding or create a new binding if no existing binding is provided.
+            if ($inputBindingId == -1 && !$safe)
             {
-                // This is not the case, so assert this user has permission to modify other's bindings.
-                Authentication::assertPermissionTo('change-book-info');
+                $binding = new Binding();
+                $binding->setUserId(Authentication::getInstance()->getUserId());
             }
-        }
-        
-        // Fill the binding attributes.
-        $binding->setSummary(self::getString($inputBinding, 'summary'));
-        $binding->setSignature($signature);
-        
-        // Save the books.
-        $this->createLibrary($libraryName, $binding);
-
-        if (!$safe)
-        {
-            // Save the books.
-            $this->createBooks($inputBooks, $binding, false);
-        
-            // Save the scans.
-            $this->createScans($inputScans, $binding);
+            else 
+            {
+                // Load the existing binding with all its attribute entities.
+                $binding = new Binding($inputBindingId);
+                $binding->load(true);
+                $binding->loadDetails(true);
+                
+                
+                // Check whether binding was uploaded by the current user themself.
+                if($binding->getUserId() !== $currentUser->getUserId())
+                {
+                    // This is not the case, so assert this user has permission to modify the bindings of others.
+                    Authentication::assertPermissionTo('change-book-info');
+                }
+            }
             
-            $binding->setStatus(Binding::STATUS_UPLOADED);
-        }
-        else
-        {
-            // Update the books.
-            $this->createBooks($inputBooks, $binding, true);
-        }
+            // Fill the binding attributes.
+            $binding->setSummary(self::getString($inputBinding, 'summary'));
+            $binding->setSignature($signature);
+            
+            // Save the books.
+            $this->createLibrary($libraryName, $binding);
 
-        // Save the provenances.
-        $this->createProvenances($inputBinding, $binding);
-        
-        // Create the binding languages.
-        $this->createBindingAnnotationLanguages($inputBinding, $binding);
-        
-        // Save the binding and all its attribute entities.
-        $binding->saveWithDetails();
+            if (!$safe)
+            {
+                // Save the books.
+                $this->createBooks($inputBooks, $binding, false);
+            
+                // Save the scans.
+                $this->createScans($inputScans, $binding);
+                
+                $binding->setStatus(Binding::STATUS_UPLOADED);
+            }
+            else
+            {
+                // Update the books.
+                $this->createBooks($inputBooks, $binding, true);
+            }
+
+            // Save the provenances.
+            $this->createProvenances($inputBinding, $binding);
+            
+            // Create the binding languages.
+            $this->createBindingAnnotationLanguages($inputBinding, $binding);
+            
+            // Save the binding and all its attribute entities.
+            $binding->saveWithDetails();
+
+            // Indicate that the current user will be editing this binding.
+            $currentUser->setCurrentBindingId($binding->getBindingId());
+            $currentUser->save();
         }
         catch(Exception $ex)
         {
@@ -479,14 +486,17 @@ class BindingUploadController extends Controller
     }
     
     /**
-     * Returns the binding and it's status which the user is currently uploading/modifying
+     * Returns the binding which the user is currently uploading/modifying along with its status.
      */
     public function actionGetBindingStatus($data)
     {
         $userId = Authentication::getInstance()->getUserId();
+
+        // Look for an already existing binding this user is currently modifying.
         $binding = Query::select('bindingId','status')
             ->from ('Bindings')
-            ->where('status <= :reorderedStatus', 'userId = :userId')
+            ->where('status <= :reorderedStatus')
+            ->join ('Users', array('Users.currentBindingId = Bindings.bindingId', 'Users.userId = :userId'))
             ->execute(array('userId' => $userId, 'reorderedStatus' => Binding::STATUS_REORDERED ));
         
         if ($binding->getAmount() === 1)

@@ -18,6 +18,7 @@ require_once 'controllers/controllerbase.php';
 require_once 'util/authentication.php';
 require_once 'models/book/booklist.php';
 require_once 'models/binding/binding.php';
+require_once 'util/authentication.php';
 
 /**
  * Exceptions.
@@ -55,39 +56,43 @@ class BookController extends ControllerBase
         // Assert the user has permission to upload bindings.
         Authentication::assertPermissionTo('upload-bindings');
         
-        Database::getInstance()->startTransaction();
-        
-        // Collect the binding id and selected book pages from the request.
-        $inputBindingId     = self::getInteger($data, 'bindingId');
-        $inputSelectedBooks = self::getArray($data, 'selectedBooks');
-        
-        // Load the binding to be modified from the database.
-        $binding = new Binding($inputBindingId);
-        $binding->loadDetails(true);
-        
-        // Iterate over all selected books and store their values in the database.
-        foreach ($inputSelectedBooks as $inputSelectedBook) 
+        Database::getInstance()->doTransaction(function() use ($data)
         {
-            $firstPage = self::getInteger($inputSelectedBook, 'firstPage');
-            $lastPage = self::getInteger($inputSelectedBook, 'lastPage');
+            // Collect the binding id and selected book pages from the request.
+            $inputBindingId     = BookController::getInteger($data, 'bindingId');
+            $inputSelectedBooks = BookController::getArray($data, 'selectedBooks');
             
-            if ($firstPage > $lastPage)
+            // Load the binding to be modified from the database.
+            $binding = new Binding($inputBindingId);
+            $binding->loadDetails(true);
+            
+            // Iterate over all selected books and store their values in the database.
+            foreach ($inputSelectedBooks as $inputSelectedBook) 
             {
-                throw new ControllerException('faulty-page-order');
+                $firstPage = BookController::getInteger($inputSelectedBook, 'firstPage');
+                $lastPage = BookController::getInteger($inputSelectedBook, 'lastPage');
+                
+                if ($firstPage > $lastPage)
+                {
+                    throw new ControllerException('faulty-page-order');
+                }
+                
+                $book = $binding->getBookList()->getByKeyValue('bookId', BookController::getInteger($inputSelectedBook, 'bookId'));
+                $book->setFirstPage($firstPage);
+                $book->setLastPage($lastPage);
+                
+                $book->setMarkedAsUpdated(true);
             }
             
-            $book = $binding->getBookList()->getByKeyValue('bookId', self::getInteger($inputSelectedBook, 'bookId'));
-            $book->setFirstPage($firstPage);
-            $book->setLastPage($lastPage);
-            
-            $book->setMarkedAsUpdated(true);
-        }
-        
-        // Update the binding status.
-        $binding->setStatus(Binding::STATUS_SELECTED);
-        $binding->saveWithDetails();
-                    
-        Database::getInstance()->commit();
+            // Update the binding status.
+            $binding->setStatus(Binding::STATUS_SELECTED);
+            $binding->saveWithDetails();
+
+            // Since this user are now done with the binding, set their currentBindingId to NULL.
+            $user = Authentication::getInstance()->getUser();
+            $user->setCurrentBindingId(null);
+            $user->save();
+        });
     }
     
     /**
