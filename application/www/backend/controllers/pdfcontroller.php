@@ -49,11 +49,11 @@ class PdfController extends Controller
             $transcriptions = function(Annotation $annotation) use ($fields)
             {
                 $trans = array();
+                $annotationInfo = $annotation->getAnnotationInfo();
                 foreach ($fields as $name => $index)
                 {
-                    if (strpos($name, '_') !== 0)
+                    if (strpos($name, '_') !== 0 && array_key_exists($index, $annotationInfo))
                     {
-                        $annotationInfo = $annotation->getAnnotationInfo();
                         $text = $annotationInfo[$index];
                         if (trim($text) != '')
                         {

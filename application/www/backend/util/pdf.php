@@ -1632,6 +1632,12 @@ class Pdf
                 }
                 if ($x >= $this->pageWidth - $this->textMarginR || $endOfString)
                 {
+                    $forcedBreak = ($widthSinceSpace > $this->pageWidth - $this->textMarginR - $this->x);
+                    if ($forcedBreak)
+                    {
+                        $lastSpace = $i;
+                        $widthSinceSpace = 0;
+                    }
                     $minY = min($this->y, $minY);
                     if ($endOfString)
                     {
@@ -1665,7 +1671,7 @@ class Pdf
                         $tempX = $this->x;
                     }
                     $x = $this->x + $widthSinceSpace;
-                    $prevEnd = $lastSpace + 1;
+                    $prevEnd = $lastSpace + ($forcedBreak ? 0 : 1);
                 }
                 else
                 {
