@@ -234,7 +234,7 @@ class BookController extends ControllerBase
                 $query->orderBy($sortField, $sortDirection);
             }
         }
-        $query->orderBy('books.bookId', 'ASC');
+        $query->orderBy('books.bookId', 'DESC');
         $limit = self::getInteger($data, 'limit', 5, true);
         $offset = $limit * (self::getInteger($data, 'page', 0, true) - 1);
         $query->limit($limit, $offset);
