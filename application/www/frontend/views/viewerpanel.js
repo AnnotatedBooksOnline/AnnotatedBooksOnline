@@ -23,6 +23,14 @@ Ext.define('Ext.ux.ViewerPanel', {
     {
         var _this = this;
         
+        // Determine the name of the first book within the binding.
+        var firstBook = this.binding.getModel().books().findRecord('firstPage', 1);
+        var title = firstBook !== null ? firstBook.get('title') : '???';
+
+        // View binding analytics.
+        ga('send', 'event', 'Bindings', 'Open binding', 
+               '#' + this.binding.bindingId + ' (' + title + ')');
+
         var centerRegion = {
             region: 'center',
             xtype: 'viewportpanel',
@@ -600,6 +608,13 @@ Ext.define('Ext.ux.ViewerPanel', {
         // Constrain page number.
         number = Math.max(0, Math.min(this.binding.getScanAmount(), number));
         
+        if(number != this.pageNumber)
+        {
+            // Analytics.
+            ga('send', 'event', 'Bindings', 'View page', 
+               'Binding #' + this.binding.bindingId + '; page ' + number);
+        }
+
         // Set new page number.
         this.pageNumber = number;
         
