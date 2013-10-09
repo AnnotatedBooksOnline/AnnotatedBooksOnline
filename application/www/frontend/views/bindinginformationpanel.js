@@ -89,7 +89,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
                             return '<span>Page unknown</span>';
                         }
                         return '<span style="color: (255,0,0);"> Page '
-                               + records[0].get('firstPage') + '</span>';
+                               + escape(records[0].get('firstPage')) + '</span>';
                     }
                 }]
             },{
