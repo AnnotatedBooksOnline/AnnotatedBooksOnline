@@ -903,6 +903,39 @@ Ext.define('Ext.ux.SearchPanel', {
                     }
                     
                     var me = this.up('panel');
+
+                    // Update the query string within the URL to contain this search query.
+                    var queryStr = '?';
+                    for(var i = 0; i < fields.length; ++i)
+                    {
+                        var valueStr;
+                        if(fields[i].type == 'year')
+                        {
+                            valueStr = fields[i].value.from + '-' + fields[i].value.to;
+                        }
+                        else
+                        {
+                            valueStr = fields[i].value;
+                        }
+
+                        if(i > 0)
+                        {
+                            queryStr += '&';
+                        }
+
+                        queryStr += encodeURIComponent(fields[i].type) + '='
+                                 +  encodeURIComponent(valueStr);
+                    }
+                    
+                    if(window.history)
+                    {
+                        var newUrl = window.location.pathname + queryStr + window.location.hash;
+                        window.history.replaceState('','', newUrl);
+                    }
+                    else
+                    {
+                        window.location.search = queryStr;
+                    }
                     
                     me.down('searchresultspanel').search(fields);
                 }
