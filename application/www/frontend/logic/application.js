@@ -25,6 +25,9 @@ Application.prototype.currentToken = 'welcome';
 // Singleton instance.
 Application.instance;
 
+// Application loaded listeners.
+Application.loadListeners = [];
+
 // Constructor.
 Application.prototype.constructor = function()
 {
@@ -47,6 +50,11 @@ Application.getInstance = function()
     }
     
     return Application.instance;
+}
+
+Application.onLoaded = function(f)
+{
+    Application.loadListeners.push(f);
 }
 
 // Gets event dispatcher.
@@ -214,6 +222,8 @@ Application.prototype.initialize = function()
         };
     Ext.History.on('change', historyChangeEventHandler);
     
+    var requestToken = false;
+    
     // Fetch initial token.
     if (window.location.hash)
     {
@@ -221,6 +231,8 @@ Application.prototype.initialize = function()
         var token = window.location.hash.substr(1);
         
         historyChangeEventHandler(token);
+        
+        requestToken = token;
     }
     
     // Handle authentication changes.
@@ -235,6 +247,11 @@ Application.prototype.initialize = function()
     if (oldBrowser)
     {
         MessageBar.show('For an optimal book viewing experience, please upgrade your browser.', 10000);
+    }
+    
+    for (var i = 0; i < Application.loadListeners.length; i++)
+    {
+        Application.loadListeners[i](requestToken);
     }
 }
 
