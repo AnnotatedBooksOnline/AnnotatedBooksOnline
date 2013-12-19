@@ -1,4 +1,38 @@
-#bookInfo .x-grid-cell-inner, #bookInfo .x-grid-hd-inner 
+.booklist li li
 {
-    white-space: normal;
+    margin-left: 15px;
+}
+
+ul.booklist > li
+{
+    border-right: 5px solid rgb(240, 240, 240);
+    padding-right: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+ul.booklist > li:hover
+{
+    background-color: rgb(231, 236, 243); /*rgb(203, 221, 243);*/
+    border-right: 5px solid rgb(153, 188, 232);
+}
+
+ul.booklist > li.currentbook
+{
+    border-right: 5px solid rgb(153, 188, 232);
+}
+
+.booklist .pageinfo
+{
+    color: rgb(120, 120, 120);
+}
+
+div.bookinfo
+{
+    margin-bottom: 10px;
+}
+
+.bindinginfo p
+{
+    margin-top: 5px;
 }
