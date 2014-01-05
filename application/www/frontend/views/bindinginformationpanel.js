@@ -12,93 +12,123 @@ Ext.define('Ext.ux.BindingInformationPanel', {
         
         this.bindingModel = this.viewer.getBinding().getModel();
         
-        this.infoPanelStore = Ext.create('Ext.data.ArrayStore', {
-            fields: [
-                {name: 'firstPage'},
-                {name: 'property'}
-            ],
-            groupField: 'firstPage'
-        });
-        
-        // Renders grouping header.
-        Ext.util.Format.bookName = function(firstPage, parent) 
+        var genText = function(tag, text)
         {
-            // Get the viewer.
-            var view = Ext.getCmp(parent.rows[0].viewId);
-            var viewer = view.up('bindinginformationpanel').viewer;
-            
-            // Find the first and last pages of the current book.
-            var rec = viewer.getBinding().getModel().books().findRecord('firstPage', firstPage);
-            if (rec === null)
-            {
-                return '<span style="white-space: normal;">Unknown book</span>';
-            }
-            
-            var lastPage = rec.get('lastPage');
-            
-            // Get the current page.
-            var currentPage = viewer.getPage()+1;
-            
-            // Mark the currently selected book.
-            if (currentPage >= firstPage && currentPage <= lastPage)
-            {
-                return '<span style="white-space: normal;color: #000000;">' + escape(rec.get('title')) + '</span>';
-            }
-            else
-            {
-                return '<span style="white-space: normal;">' + escape(rec.get('title')) + '</span>';
-            }
+            var el = $('<' + tag + '/>');
+            el.text(text); // text() escapes input.
+            return el;
         }
         
+        // Library info.
+        var libraryName = this.bindingModel.get('library').libraryName;
+        var shelfmark = this.bindingModel.get('signature');
+        
+        // Provenance info.
+        var owners = [];
+        this.bindingModel.provenances().each(function(owner)
+        {
+            owners.push(owner.get('name'));
+        });
+        
+        // Generate DOM for all books.
+        var books = [];
+        this.bindingModel.books().each(function(book)
+        {
+            // Page info.
+            var firstPage = book.get('firstPage');
+            var lastPage = book.get('lastPage');
+            
+            // Author info.
+            var authors = [];
+            book.authors().each(function(author)
+            {
+                authors.push(author.get('name'));
+            });
+            
+            // Publisher info.
+            var placePublished = book.get('placePublished');
+            var publisher = book.get('publisher');
+            var version = book.get('printVersion');
+            var pubInfo = [];
+            if (placePublished)
+            {
+                pubInfo.push('in ' + placePublished);
+            }
+            if (publisher)
+            {
+                pubInfo.push('by ' + publisher);
+            }
+            pubInfo.push('in ' + book.getTimePeriod());
+            if (version)
+            {
+                pubInfo.push('edition ' + version);
+            }
+                        
+            // Generate book DOM.
+            var el = $('<li/>');
+            el.append(genText('h2', book.get('title')));
+            var props = $('<ul/>');
+            if (authors.length > 0)
+            {
+                props.append(genText('li', authors.join(', ')).addClass('authorinfo'));
+            }
+            if (pubInfo.length > 0)
+            {
+                props.append(genText('li', 'Published ' + pubInfo.join(' ')).addClass('pubinfo'));
+            }
+            props.append(genText('li', 'Pages ' + firstPage + ' to ' + lastPage).addClass('pageinfo'));
+            el.append(props);
+            
+            // Go to page on click.
+            el.click(function()
+            {
+                _this.viewer.gotoPage(firstPage - 1);
+            });
+            el.prop('title', 'Go to page ' + firstPage);
+            
+            books.push({
+                el: el,
+                firstPage: firstPage,
+                lastPage: lastPage,
+                isCurrentBook: function(currentPage)
+                {
+                    return currentPage >= firstPage && currentPage <= lastPage;
+                }
+            });
+        });
+        this.books = books;
+        var bookList = $('<ul/>');
+        bookList.addClass('booklist');
+        for (var i = 0; i < books.length; i++)
+        {
+            books[i].el.appendTo(bookList);
+        }
+        this.bookList = $('<div/>').append(bookList).addClass('bookinfo');
+        
+        // Generate DOM for binding info.
+        var bindingInfo = $('<div/>');
+        var provenanceInfo = $('<p/>');
+        if (owners.length > 0)
+        {
+            provenanceInfo.text('Owned by ' + owners.join(', '));
+        }
+        else
+        {
+            provenanceInfo.text('Provenance unknown');
+        }
+        provenanceInfo.addClass('provenanceinfo');
+        bindingInfo.append(provenanceInfo);
+        var libraryInfo = $('<p/>');
+        libraryInfo.text(libraryName + ', ' + shelfmark);
+        libraryInfo.addClass('libraryinfo');
+        bindingInfo.append(libraryInfo);
+        bindingInfo.addClass('bindinginfo');
+        this.bindingInfo = bindingInfo;
+
         var defConfig = {
-            layout: 'fit',
             border: false,
             flex: 1,
-            autoHeight: true,
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
-            items: [{
-                xtype: 'grid',
-                name: 'grid',
-                scroll: false,
-                viewConfig: {
-                    style: {
-                        overflow: 'auto',
-                        overflowX: 'hidden'
-                    }
-                },
-                flex: 1,
-                border: false,
-                store: this.infoPanelStore,
-                hideHeaders: true,
-                
-                features: [{
-                    ftype: 'groupingsummary',
-                    groupHeaderTpl: '{name:bookName(parent)}',
-                    startCollapsed: true
-                }],
-                columns: [{
-                    dataIndex: 'property',
-                    flex: 1, 
-                    summaryType: function(records)
-                    {
-                        if (records[0].get('firstPage') === null)
-                        {
-                            return '<span>Page unknown</span>';
-                        }
-                        return '<span style="color: (255,0,0);"> Page '
-                               + escape(records[0].get('firstPage')) + '</span>';
-                    }
-                }]
-            },{
-                xtype: 'label',
-                border: false,
-                html: escape(this.bindingModel.get('library').libraryName) + ', ' +
-                        escape(this.bindingModel.get('signature')),
-                style: 'margin: 5px'
-            }]
+            bodyPadding: 5
         };
         
         Ext.apply(this, defConfig);
@@ -109,60 +139,27 @@ Ext.define('Ext.ux.BindingInformationPanel', {
     afterRender: function()
     {
         this.callParent();
-        var myData = [];
-        this.bindingModel.books().each(function(book)
+        
+        $('#' + this.body.id).append(this.bookList);
+        $('#' + this.body.id).append(this.bindingInfo);
+        this.viewer.getEventDispatcher().bind('pagechange', this, this.updateCurrentBook);
+        this.updateCurrentBook();
+    },
+    
+    updateCurrentBook: function()
+    {
+        var page = this.viewer.getPage() + 1;
+        for (var i = 0; i < this.books.length; i++)
         {
-            // Fetch all book data.
-            var firstPage = book.get('firstPage');
-            
-            var authors = '';
-            book.authors().each(function(author)
+            if (this.books[i].isCurrentBook(page))
             {
-                authors += (', '+author.get('name'));
-            });
-            
-            var version = book.get('printVersion');
-            
-            var bookLanguages = '';
-            book.bookLanguages().each(function(bookLanguage)
-            {
-                bookLanguages += (', ' + bookLanguage.get('languageName'));
-            });
-            
-            var placePublished = book.get('placePublished');
-            
-            if (authors === '')
-            {
-                authors = ' Unknown author(s)';
+                this.books[i].el.addClass('currentbook');
             }
-            
-            if (version === '')
+            else
             {
-                version = 'Unknown version';
+                this.books[i].el.removeClass('currentbook');
             }
-            
-            if (placePublished==='')
-            {
-                placePublished = 'Unknown publication place';
-            }
-            
-            // Add the book to the grouping grid.
-            myData.push([firstPage, authors.substring(1)]);
-            myData.push([firstPage, version]);
-            myData.push([firstPage, placePublished]);
-            myData.push([firstPage, book.getTimePeriod()]);
-            myData.push([firstPage, bookLanguages.substring(1)]);
-        });
-        
-        this.infoPanelStore.loadData(myData);
-        
-        var viewer = this.viewer;
-        
-        // Update grid when page changes.
-        this.viewer.getEventDispatcher().bind('pagechange', this, function()
-        {
-            this.down('grid').getView().refresh();
-        });
+        }
     }
 });
 
