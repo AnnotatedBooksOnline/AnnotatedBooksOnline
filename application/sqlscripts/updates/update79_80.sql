@@ -12,7 +12,7 @@ START TRANSACTION;
 --
 -- The column annotationId refers to the Annotation of which this is a previous version.
 -- Revised annotations can be chronologically ordened by the column revisionNumber.
-CREATE TABLE "RevisedAnnotations"
+CREATE TABLE "##PREFIX##RevisedAnnotations"
 (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
@@ -30,9 +30,9 @@ CREATE TABLE "RevisedAnnotations"
     
     PRIMARY KEY ("revisedAnnotationId"),
     FOREIGN KEY ("changedUserId") 
-        REFERENCES "Users" ("userId"),
+        REFERENCES "##PREFIX##Users" ("userId"),
     FOREIGN KEY ("annotationId")
-        REFERENCES "Annotations" ("annotationId")
+        REFERENCES "##PREFIX##Annotations" ("annotationId")
         ON DELETE SET NULL
 );
 

@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 
 -- Change register help a little bit.
 
-UPDATE "HelpParagraphs" SET "content" = '<p>
+UPDATE "##PREFIX##HelpParagraphs" SET "content" = '<p>
     After pressing the ''Register'' button, you will see a list of fields to fill out. All fields with a * after the description are mandatory. Some notes:
 </p>
 
@@ -14,6 +14,6 @@ UPDATE "HelpParagraphs" SET "content" = '<p>
 
 <p>
     After reading and accepting the ''<a href="#termsofuse" title="Open terms of use">terms of use</a>'', please check the checkbox and press the ''Register'' button at the bottom of the page.
-</p>' WHERE "title" = 'Introduction' AND "helpPageId" = (SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Register');
+</p>' WHERE "title" = 'Introduction' AND "helpPageId" = (SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Register');
 
 COMMIT;

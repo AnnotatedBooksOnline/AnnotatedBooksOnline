@@ -3,7 +3,7 @@ BEGIN TRANSACTION;
 -- Redesigns HelpParagraphs, allowing content to depend on a setting.
 
 -- Create HelpContents table.
-CREATE TABLE "HelpContents"
+CREATE TABLE "##PREFIX##HelpContents"
 (
     "helpContentId" serial NOT NULL,
     "helpParagraphId" integer NOT NULL,
@@ -17,19 +17,19 @@ CREATE TABLE "HelpContents"
 
     PRIMARY KEY ("helpContentId"),
     FOREIGN KEY ("helpParagraphId")
-      REFERENCES "HelpParagraphs",
+      REFERENCES "##PREFIX##HelpParagraphs",
     
     UNIQUE ("helpParagraphId", "settingValue")
 );
 
 -- Move contents from HelpParagraphs to new table.
-INSERT INTO "HelpContents" ("helpParagraphId", "content") 
-  (SELECT "helpParagraphId", "content" FROM "HelpParagraphs");
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", "content") 
+  (SELECT "helpParagraphId", "content" FROM "##PREFIX##HelpParagraphs");
 
 -- Remove content column from HelpParagraphs and add settingName.
-ALTER TABLE "HelpParagraphs" DROP COLUMN "content";
-ALTER TABLE "HelpParagraphs" ADD COLUMN "settingName" varchar(100);
-ALTER TABLE "HelpParagraphs" ADD FOREIGN KEY ("settingName")
-                                   REFERENCES "Settings";
+ALTER TABLE "##PREFIX##HelpParagraphs" DROP COLUMN "content";
+ALTER TABLE "##PREFIX##HelpParagraphs" ADD COLUMN "settingName" varchar(100);
+ALTER TABLE "##PREFIX##HelpParagraphs" ADD FOREIGN KEY ("settingName")
+                                   REFERENCES "##PREFIX##Settings";
 
 COMMIT;

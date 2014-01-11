@@ -1,9 +1,9 @@
 BEGIN TRANSACTION;
 
-ALTER TABLE "Scans" ADD COLUMN "scanName" varchar(255);
+ALTER TABLE "##PREFIX##Scans" ADD COLUMN "scanName" varchar(255);
 
-UPDATE "Scans" SET "scanName"="Uploads"."filename"
-FROM "Uploads"
-WHERE "Uploads"."uploadId"="Scans"."uploadId";
+UPDATE "##PREFIX##Scans" SET "scanName"="##PREFIX##Uploads"."filename"
+FROM "##PREFIX##Uploads"
+WHERE "##PREFIX##Uploads"."uploadId"="##PREFIX##Scans"."uploadId";
 
 COMMIT;

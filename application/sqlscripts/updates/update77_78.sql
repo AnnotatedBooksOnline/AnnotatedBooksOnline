@@ -7,7 +7,7 @@ USE abo;
 START TRANSACTION;
 
 -- New settings from previous transaction should have been visible.
-UPDATE "Settings" SET "visible" = 1 WHERE "settingName" = 'show-welcome-page'
+UPDATE "##PREFIX##Settings" SET "visible" = 1 WHERE "settingName" = 'show-welcome-page'
                                        OR "settingName" = 'info-button';
 
 COMMIT;

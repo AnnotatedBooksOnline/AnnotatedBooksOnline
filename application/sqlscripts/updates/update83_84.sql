@@ -7,7 +7,7 @@ USE abo;
 START TRANSACTION;
 
 -- Correct the upload confirmation mail.
-UPDATE "Settings" SET "settingValue" = 
+UPDATE "##PREFIX##Settings" SET "settingValue" = 
 'Dear Mr./Ms. [LASTNAME],
 
 The binding you uploaded has been succesfully processed. Once you have completed the upload process, it should become available on Annotated Books Online.

@@ -1,12 +1,12 @@
 BEGIN TRANSACTION;
 
 -- Change two inconsistent column names.
-ALTER TABLE "Annotations" RENAME "annotationID"  TO "annotationId";
-ALTER TABLE "Annotations" RENAME "bookID"  TO "bookId";
+ALTER TABLE "##PREFIX##Annotations" RENAME "annotationID"  TO "annotationId";
+ALTER TABLE "##PREFIX##Annotations" RENAME "bookID"  TO "bookId";
 
 
 -- Adds shelves and bookmarks to the database.
-CREATE TABLE "Shelves"
+CREATE TABLE "##PREFIX##Shelves"
 (
     "shelfId" serial NOT NULL,
     "userId" integer NOT NULL,
@@ -20,10 +20,10 @@ CREATE TABLE "Shelves"
     
     PRIMARY KEY ("shelfId"),
     FOREIGN KEY ("userId") 
-        REFERENCES "Users"
+        REFERENCES "##PREFIX##Users"
 );
 
-CREATE TABLE "ShelvedBooks"
+CREATE TABLE "##PREFIX##ShelvedBooks"
 (
     "bookId" integer NOT NULL,
     "shelfId" integer NOT NULL,
@@ -35,12 +35,12 @@ CREATE TABLE "ShelvedBooks"
     
     PRIMARY KEY ("bookId", "shelfId"),
     FOREIGN KEY ("bookId")
-        REFERENCES "Books",
+        REFERENCES "##PREFIX##Books",
     FOREIGN KEY ("shelfId")
-        REFERENCES "Shelves"
+        REFERENCES "##PREFIX##Shelves"
 );
 
-CREATE TABLE "Bookmarks"
+CREATE TABLE "##PREFIX##Bookmarks"
 (
     "userId" integer NOT NULL,
     "scanId" integer NOT NULL,
@@ -52,9 +52,9 @@ CREATE TABLE "Bookmarks"
     
     PRIMARY KEY ("userId", "scanId"),
     FOREIGN KEY ("userId")
-        REFERENCES "Users",
+        REFERENCES "##PREFIX##Users",
     FOREIGN KEY ("scanId")
-        REFERENCES "Scans"
+        REFERENCES "##PREFIX##Scans"
 );
 
 COMMIT;

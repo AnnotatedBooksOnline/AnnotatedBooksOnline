@@ -1,6 +1,6 @@
 ﻿START TRANSACTION;
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     You can search for books by selecting what you want to limit your search to (''Author'', ''Title'', etc. or simply ''Any'') and then simply entering the search query in the textfield.
 </p>
 
@@ -20,16 +20,16 @@ UPDATE "HelpContents" SET "content" = '<p>
     For more advanced search options, please see the list of **Advanced search query notations||Search/Advanced search query notations**.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Searching for books' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Search'));
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     To sort the list of results, there is a set of dropdown boxes in the Advanced options sidebar on the left side of the screen. To sort the list by one attribute, simply select it in the first dropdown box, and the list should be automatically sorted. If further sorting within this already sorted list is required, select another attribute in the second dropdown box. If necessary, a third can also be added.
 </p>
 
@@ -37,16 +37,16 @@ UPDATE "HelpContents" SET "content" = '<p>
     If you want to invert the sorting, for instance from Z to A or 999 to 1, simply check the checkbox to the right of the sorting you want to invert. The other sorting criteria will be unaffected.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Sorting options' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Search'));
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     To change what attributes of the books in the list of search results are shown, go to the ''Result options'' in the Advanced options sidebar on the left side of the screen, below the ''**Sorting options||Search/Sorting options**''. To show or hide the attributes, simply check or uncheck the checkbox in front of the corresponding attribute name.
 </p>
 
@@ -54,26 +54,26 @@ UPDATE "HelpContents" SET "content" = '<p>
     In this menu you can also change how many results are shown per page: simply select the preferred amount in the dropdown box.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Result options' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Search'));
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     As is to be expected, adding material to this website requires you to understand and agree with the terms and conditions. In particular, it is not allowed to upload scans if you do not have the permission to do so. Also, it is required that the scans have a high enough quality. The rules and specifics of uploading are detailed on the page that is shown when you press the ''Upload'' button at the top of the screen.
 
     After you have read the rules and agree with them, press ''Continue'' to progress to the actual uploading screen.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'About uploading' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Upload'));
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     Uploading books is done by selecting the scans of the books, entering the **information of the binding**, and finally entering the **information of any books** that might be contained within the binding.
 
     Uploading scans is done by pressing the ''Select scans'' button and selecting all the scan files (.tiff and .jpg are supported). The scans will automatically start uploading, and will be processed for viewing while you fill out the rest of the form below. If you need to add more scans, simply press the ''Select scans'' button again. Any scans you select will be added to the list of scans already uploading.
@@ -85,14 +85,14 @@ UPDATE "HelpContents" SET "content" = '<p>
     Finally, once everything is done, press ''Continue'' to finalize the uploading process.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Uploading books' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Upload'));
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     As the scans are uploading and being processed by the system, you can fill out the binding information. The binding is the encompassing whole around any books that might be contained within, be it one or multiple. This part of the form contains the following fields:
 <ul>
     <li><b>Library:</b> the library in which the binding that is the source of the scans can be found. This is a mandatory field.</li>
@@ -102,13 +102,13 @@ UPDATE "HelpContents" SET "content" = '<p>
 </ul>
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Binding information' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Upload'));
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     If a binding contains one book, simply fill out the form as described below. If it contains multiple works bound together in a single binding, press the ''Add book'' button at the bottom until there are enough forms for every book. Press ''Delete book'' below the form you want to remove if you added too many. Make sure you do not remove the valid ones, or you will have to fill out the form again. If you are not sure, looking at the lines around the forms may help as a guideline to find out what button belongs with what form.
 
     The following fields are shown for every book:
@@ -123,13 +123,13 @@ UPDATE "HelpContents" SET "content" = '<p>
 </ul>
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Book information' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Upload'));
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     The viewer is used to view scans, read and add transcriptions and download the books for study offline.
 </p>
 
@@ -146,14 +146,14 @@ UPDATE "HelpContents" SET "content" = '<p>
     <li>**Add and edit transcriptions||Viewer/Add and edit transcriptions**</li>
 </ul>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Introduction' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
-UPDATE "HelpContents" SET "content" = '<p>What do you want to do?</p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>What do you want to do?</p>
 <ul>
     <li>**Zoom in||Viewer/Basic viewer functionalities/Zoom in**</li>
     <li>**Zoom out||Viewer/Basic viewer functionalities/Zoom out**</li>
@@ -162,15 +162,15 @@ UPDATE "HelpContents" SET "content" = '<p>What do you want to do?</p>
     <li>**Reset the view||Viewer/Basic viewer functionalities/Reset the view**</li>
 </ul>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Basic viewer functionalities' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     When the page is first displayed in the viewer, it will be in a standard zoom: the whole page is visible on the screen. To get a better view of the page and details you are interested in, you can zoom in.
 </p>
 <p>
@@ -209,15 +209,15 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Tip:</b> You can also change the zoom by clicking on the bar of the zoom slider. The slider will be moved to that point and the zoom adjusted accordingly.</p>
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Zoom in' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     There are three ways of zooming out:
 </p>
 <ul>
@@ -246,16 +246,16 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Tip:</b> You can also reset the zoom and rotation with the **reset the view** function.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Zoom out' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     There are two ways to move the view of a page:
 </p>
 <ul>
@@ -278,15 +278,15 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Tip:</b> The navigation box displays a red square on the page thumbnail of the current page, showing where you are.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Move across page' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     There are two types of rotation. The crude rotation with buttons, from the buttons bar, and the more refined mouse rotation, which allows for very precise rotating.
 </p>
 <ul>
@@ -312,15 +312,15 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Tip:</b> When you want to set the page straight again, you can use the **reset the view||Viewer/Reset the view** function to easely undo the rotation and zooming.</li>
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Rotate' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     Reset the view is used to undo zooming and rotating. It restores the page to the view it was first presented in.
 </p>
 <p>
@@ -331,13 +331,13 @@ UPDATE "HelpContents" SET "content" = '<p>
     <li>Press the home key on your keyboard.</li>
 </ul>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Reset the view' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     Where in the binding do you want to go?
 </p>
 <ul>
@@ -349,14 +349,14 @@ UPDATE "HelpContents" SET "content" = '<p>
     <li>**Select a page||Viewer/Go to another page/Select a page**</li>
 </ul>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Go to another page' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     To go to the previous page:
 </p>
 <ul>
@@ -366,15 +366,15 @@ UPDATE "HelpContents" SET "content" = '<p>
     The button is to the left of the textfield displaying the current page number. This function is only available if there is a previous page to go to.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Previous page' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     To go to the next page:
 </p>
 <ul>
@@ -384,15 +384,15 @@ UPDATE "HelpContents" SET "content" = '<p>
     The button is to the right of the textfield displaying the current page number. This function is only available if there is a next page.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Next page' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     With an easy press of a button, you can go straight to the first page in the binding.
 </p>
 <ul>
@@ -402,16 +402,16 @@ UPDATE "HelpContents" SET "content" = '<p>
     The first page button is on the buttons bar, to the left of the next page button. This function is unavailable if the first page is already being displayed in the viewer.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'First page' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
  
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     You can skip straight to the end of the binding.
 </p>
 <ul>
@@ -421,13 +421,13 @@ UPDATE "HelpContents" SET "content" = '<p>
     The last page button is on the buttons bar, to the right of the next page button. This function is unavaileble if the last page is already being displayed.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Last page' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     To directly go to a certain page:
 </p>
 <ol>
@@ -444,16 +444,16 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Tip:</b>  You can also **select a page||Viewer/Select a page** in the book navigation box. 
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Certain page number' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     To quickly find an interesting looking page, you can use the navigation box in the information sidebar.
 </p>
 <ol>
@@ -465,16 +465,16 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Tip:</b> Also note that the currently being viewed page has a red border marking the part of the page visible in the viewer.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Select a page' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     Details about the binding and its contents can be found in the book information box in the information sidebar to the left.
 </p>
 <p>
@@ -491,17 +491,17 @@ UPDATE "HelpContents" SET "content" = '<p>
     The list can be closed by clicking the open title again.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'View information about a binding' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     For referring to a certain page, book or binding, there is the reference box in the information sidebar, which supplies links to each of these.
 </p>
 
@@ -526,17 +526,17 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Tip:</b> The pages and transcriptions online can change over time. If you want a secure copy of the page and transcriptions, you should **export to pdf**.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Link to a page, book or binding' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     It is possible to make copies of the virtual books for self-use. This can be done from the export tab in the working area on the right. The pages and transcriptions that are in the export, can be controlled.
 </p>
 <p>
@@ -566,14 +566,14 @@ UPDATE "HelpContents" SET "content" = '<p>
     <b>Note:</b> If the scan is wider than it is high, it is turned 90 degrees in the export, to make a better fit on the A4. An instance where this could happen, is when a single scan displays two pages.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Export to pdf' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Viewer'));
 
 
-UPDATE "HelpContents" SET "content" = '<ul>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<ul>
     <li>All main functionality on this website is accessed through the buttons at the top of the page.</li>
     <li>The buttons will open new tabs, which will show up below the buttons. Click on them to open the page, or press the small ''x'' in the corner of a tab to close that tab.</li>
     <li>As a guest, you will see only a few buttons. Registered users will have more permissions, and once logged in will be able to see and click on more buttons to access additional functions. It is therefore recommended to start out by **registering||Register**, although registration is not needed for simply viewing the books.</li>
@@ -581,16 +581,16 @@ UPDATE "HelpContents" SET "content" = '<ul>
     <li>Many pages have sidebars: these contain extra functionalities and information concerning the current page. Pressing the arrow button at the top right of these sidebars will fold them away, or show them again. On some screens, you can change the width of the sidebars by left-clicking on the edge and dragging it left or right.</li>
 </ul>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Introduction' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Welcome'));
 
 
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     The following is a short explanation of all the buttons. Some of these are only available and visible to logged in users. Click on the links for further details.
 </p>
 
@@ -606,25 +606,25 @@ UPDATE "HelpContents" SET "content" = '<p>
     <li><b>**Edit profile||Edit profile**:</b> To change personal information or your password.</li>
 </ul>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Buttons' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Welcome'));
 
-UPDATE "HelpContents" SET "content" = '<<ul>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<<ul>
     <li><b>Login:</b> To log in, first you need to **Register||register**. Once you have finished your registration, you can login using the ''Login'' button.</li>
     <li><b>Logout:</b> To log out, press the ''Logout'' button.</li>
 </ul>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Login / Logout' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Welcome'));
 
 
-UPDATE "HelpContents" SET "content" = '<p>
+UPDATE "##PREFIX##HelpContents" SET "content" = '<p>
     In case you ever want to change your password or the personal information you entered during **Register||registering**, simply press the ''Edit profile'' button while logged in. It will open a popup window in which you can edit your email address, first and last name, affiliation, occupation, website and password.
 </p>
 
@@ -632,10 +632,10 @@ UPDATE "HelpContents" SET "content" = '<p>
     In case you wish to change your password, make sure to fill in the ''Current password'' field as well as ''New password'' (and repeating the new password in the ''Repeat password'' field). This is an extra security check.
 </p>' 
 WHERE "helpParagraphId" = (
-    SELECT "helpParagraphId" FROM "HelpParagraphs" 
+    SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" 
     WHERE "title" = 'Edit profile' 
     AND "helpPageId" =(
-        SELECT "helpPageId" FROM "HelpPages" 
+        SELECT "helpPageId" FROM "##PREFIX##HelpPages" 
         WHERE "pageName" = 'Welcome'));
 
 COMMIT;

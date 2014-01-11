@@ -166,4 +166,13 @@ class Configuration extends Singleton
     {
         return Configuration::getInstance()->getString('base-url');
     }
+    
+    /**
+     * Returns the database table prefix.
+     */
+    public static function getDatabasePrefix()
+    {
+        return Configuration::getInstance()->getString('database-prefix', '');
+    }
 }
+

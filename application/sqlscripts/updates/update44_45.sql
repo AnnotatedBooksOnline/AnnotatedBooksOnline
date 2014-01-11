@@ -1,12 +1,12 @@
 BEGIN TRANSACTION;
 
 -- Change help tables.
-DROP TABLE "HelpControlItems";
-ALTER TABLE "HelpPages" DROP COLUMN "content";
-ALTER TABLE "HelpPages" DROP COLUMN "parentHelpPageId";
+DROP TABLE "##PREFIX##HelpControlItems";
+ALTER TABLE "##PREFIX##HelpPages" DROP COLUMN "content";
+ALTER TABLE "##PREFIX##HelpPages" DROP COLUMN "parentHelpPageId";
 
 -- HelpControlItems will be replaced by HelpParagraphs
-CREATE TABLE "HelpParagraphs"
+CREATE TABLE "##PREFIX##HelpParagraphs"
 (
     "helpParagraphId" serial NOT NULL,
     "helpPageId" integer NOT NULL,
@@ -22,11 +22,11 @@ CREATE TABLE "HelpParagraphs"
 
     PRIMARY KEY ("helpParagraphId"),
     FOREIGN KEY ("helpPageId")
-      REFERENCES "HelpPages",
+      REFERENCES "##PREFIX##HelpPages",
     FOREIGN KEY ("paragraphParentId")
-      REFERENCES "HelpParagraphs",
+      REFERENCES "##PREFIX##HelpParagraphs",
     FOREIGN KEY ("actionName")
-      REFERENCES "Permissions"
+      REFERENCES "##PREFIX##Permissions"
 );
 
 COMMIT;

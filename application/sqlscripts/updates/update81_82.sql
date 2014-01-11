@@ -8,90 +8,90 @@ BEGIN;
 
 delimiter $$
 
-DROP FUNCTION headline;
-DROP FUNCTION splitspaces;
+DROP FUNCTION ##PREFIX##headline;
+DROP FUNCTION ##PREFIX##splitspaces;
 
-DROP FUNCTION authornames;
-DROP FUNCTION bindinglanguagenames;
-DROP FUNCTION booklanguagenames;
-DROP FUNCTION provenancenames;
-DROP FUNCTION annotationtext;
-DROP FUNCTION booktext;
-DROP FUNCTION bookannotationtext;
+DROP FUNCTION ##PREFIX##authornames;
+DROP FUNCTION ##PREFIX##bindinglanguagenames;
+DROP FUNCTION ##PREFIX##booklanguagenames;
+DROP FUNCTION ##PREFIX##provenancenames;
+DROP FUNCTION ##PREFIX##annotationtext;
+DROP FUNCTION ##PREFIX##booktext;
+DROP FUNCTION ##PREFIX##bookannotationtext;
 
-CREATE FUNCTION authornames(bookidparam integer) RETURNS text
+CREATE FUNCTION ##PREFIX##authornames(bookidparam integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
-        WHERE "Persons"."personId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Persons"."name" SEPARATOR ', ') INTO result FROM "##PREFIX##Persons"
+        WHERE "##PREFIX##Persons"."personId" IN
         (
-            SELECT "Authors"."personId" FROM "Authors" WHERE "Authors"."bookId" = bookidparam
+            SELECT "##PREFIX##Authors"."personId" FROM "##PREFIX##Authors" WHERE "##PREFIX##Authors"."bookId" = bookidparam
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION bindinglanguagenames(bindingidparam integer) RETURNS text
+CREATE FUNCTION ##PREFIX##bindinglanguagenames(bindingidparam integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
-        WHERE "Languages"."languageId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Languages"."languageName" SEPARATOR ', ') INTO result FROM "##PREFIX##Languages"
+        WHERE "##PREFIX##Languages"."languageId" IN
         (
-            SELECT "BindingLanguages"."languageId" FROM "BindingLanguages" WHERE "BindingLanguages"."bindingId" = bindingidparam
+            SELECT "##PREFIX##BindingLanguages"."languageId" FROM "##PREFIX##BindingLanguages" WHERE "##PREFIX##BindingLanguages"."bindingId" = bindingidparam
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION booklanguagenames(bookidparam integer) RETURNS text
+CREATE FUNCTION ##PREFIX##booklanguagenames(bookidparam integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
-        WHERE "Languages"."languageId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Languages"."languageName" SEPARATOR ', ') INTO result FROM "##PREFIX##Languages"
+        WHERE "##PREFIX##Languages"."languageId" IN
         (
-            SELECT "BookLanguages"."languageId" FROM "BookLanguages" WHERE "BookLanguages"."bookId" = bookidparam
+            SELECT "##PREFIX##BookLanguages"."languageId" FROM "##PREFIX##BookLanguages" WHERE "##PREFIX##BookLanguages"."bookId" = bookidparam
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION provenancenames(bindingidparam integer) RETURNS text
+CREATE FUNCTION ##PREFIX##provenancenames(bindingidparam integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
-        WHERE "Persons"."personId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Persons"."name" SEPARATOR ', ') INTO result FROM "##PREFIX##Persons"
+        WHERE "##PREFIX##Persons"."personId" IN
         (
-            SELECT "Provenances"."personId" FROM "Provenances" WHERE "Provenances"."bindingId" = bindingidparam
+            SELECT "##PREFIX##Provenances"."personId" FROM "##PREFIX##Provenances" WHERE "##PREFIX##Provenances"."bindingId" = bindingidparam
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION annotationtext(annotationidparam integer) RETURNS text
+CREATE FUNCTION ##PREFIX##annotationtext(annotationidparam integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT CONCAT("transcriptionEng", ' ', "transcriptionOrig") INTO result FROM "Annotations"
-        WHERE "Annotations"."annotationId" = annotationidparam;
+        SELECT CONCAT("transcriptionEng", ' ', "transcriptionOrig") INTO result FROM "##PREFIX##Annotations"
+        WHERE "##PREFIX##Annotations"."annotationId" = annotationidparam;
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION booktext(bookidparam integer) RETURNS text
+CREATE FUNCTION ##PREFIX##booktext(bookidparam integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
@@ -100,21 +100,21 @@ CREATE FUNCTION booktext(bookidparam integer) RETURNS text
         DECLARE result text;
         SELECT CONCAT_WS(' ',
             "title",
-            authorNames("bookId"),
+            ##PREFIX##authornames("bookId"),
             "publisher",
             "placePublished",
-            bookLanguageNames("bookId"),
-            provenanceNames("bindingId"),
-            (SELECT "libraryName" FROM "Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId")),
-            (SELECT "signature" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId"),
-            bindingLanguageNames("bindingId"),
-            bookAnnotationText("bookId")
-        ) INTO result FROM "Books"
+            ##PREFIX##booklanguagenames("bookId"),
+            ##PREFIX##provenancenames("bindingId"),
+            (SELECT "libraryName" FROM "##PREFIX##Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "##PREFIX##Bindings" WHERE "##PREFIX##Books"."bindingId" = "##PREFIX##Bindings"."bindingId")),
+            (SELECT "signature" FROM "##PREFIX##Bindings" WHERE "##PREFIX##Books"."bindingId" = "##PREFIX##Bindings"."bindingId"),
+            ##PREFIX##bindinglanguagenames("bindingId"),
+            book##PREFIX##annotationtext("bookId")
+        ) INTO result FROM "##PREFIX##Books"
         WHERE "bookId" = bookidparam;
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION bookannotationtext(bookidparam integer) RETURNS text
+CREATE FUNCTION book##PREFIX##annotationtext(bookidparam integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
@@ -122,13 +122,13 @@ CREATE FUNCTION bookannotationtext(bookidparam integer) RETURNS text
     BEGIN
         DECLARE result text;
         SELECT GROUP_CONCAT(annft.text SEPARATOR ' ') INTO result
-        FROM "Books" JOIN (SELECT * FROM "Scans" ORDER BY page ASC) scans
-            ON "Books"."bindingId" = scans."bindingId"
+        FROM "##PREFIX##Books" JOIN (SELECT * FROM "##PREFIX##Scans" ORDER BY page ASC) scans
+            ON "##PREFIX##Books"."bindingId" = scans."bindingId"
             AND "page" >= "firstPage"
             AND "page" <= "lastPage"
-        LEFT JOIN "Annotations" annotations
+        LEFT JOIN "##PREFIX##Annotations" annotations
             ON annotations."scanId" = scans."scanId"
-        LEFT JOIN "AnnotationsFT" annft
+        LEFT JOIN "##PREFIX##AnnotationsFT" annft
             ON annft."annotationId" = annotations."annotationId"
         WHERE "bookId" = bookidparam;
         RETURN result;
@@ -136,6 +136,6 @@ CREATE FUNCTION bookannotationtext(bookidparam integer) RETURNS text
 
 DELIMITER ;
 
-UPDATE "Books" SET "bookId" = "bookId";
+UPDATE "##PREFIX##Books" SET "bookId" = "bookId";
 
 COMMIT;

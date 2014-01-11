@@ -12,6 +12,9 @@
 ; Database password.
 ; database-password=...
 
+; Database table prefix, e.g. "prefix_"
+; database-prefix=...
+
 [User]
 ; Global password salt to be used alongside user-specific salts. Should be random.
 ; password-salt=...

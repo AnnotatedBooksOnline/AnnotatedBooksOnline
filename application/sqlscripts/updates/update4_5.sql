@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 
 -- Adds annotation table (currently only with transcriptions and polygons)
 
-CREATE TABLE "Annotations"
+CREATE TABLE "##PREFIX##Annotations"
 (
     "annotationID" serial NOT NULL,
     "bookID" integer NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE "Annotations"
     
     PRIMARY KEY ("annotationID"),
     FOREIGN KEY ("bookID")
-        REFERENCES "Books"
+        REFERENCES "##PREFIX##Books"
 );
 
 COMMIT;

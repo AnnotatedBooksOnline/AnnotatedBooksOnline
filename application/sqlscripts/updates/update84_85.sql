@@ -7,6 +7,6 @@ USE abo;
 START TRANSACTION;
 
 -- Add (default empty) alternate homepage url.
-INSERT INTO "Settings" ("settingName", "settingValue", "visible") VALUES ('homepage-url', '', 1);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "visible") VALUES ('homepage-url', '', 1);
 
 COMMIT;

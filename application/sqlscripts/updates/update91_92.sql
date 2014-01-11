@@ -6,8 +6,8 @@ USE abo;
 
 START TRANSACTION;
 
-UPDATE "Settings" SET "settingValue" = 'Description,Interpretation,References,_Color,Comparison' WHERE "settingName" = 'annotationInfoCategories';
-INSERT INTO "Settings" ("settingName", "settingValue", "visible") VALUES ('annotationInfoOrder', '0,1,3,4,2', 1);
+UPDATE "##PREFIX##Settings" SET "settingValue" = 'Description,Interpretation,References,_Color,Comparison' WHERE "settingName" = 'annotationInfoCategories';
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "visible") VALUES ('annotationInfoOrder', '0,1,3,4,2', 1);
 
 COMMIT;
 

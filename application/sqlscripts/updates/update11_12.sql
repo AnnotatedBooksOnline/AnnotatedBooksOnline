@@ -2,6 +2,6 @@
 
 BEGIN TRANSACTION;
 
-ALTER TABLE "Authors" RENAME "authorId"  TO "personId";
+ALTER TABLE "##PREFIX##Authors" RENAME "authorId"  TO "personId";
 
 COMMIT;

@@ -2,7 +2,7 @@
 
 BEGIN TRANSACTION;
 
-CREATE TABLE "Languages"
+CREATE TABLE "##PREFIX##Languages"
 (
     "languageId" serial NOT NULL,
     "languageName" varchar(30) NOT NULL,
@@ -17,10 +17,10 @@ CREATE TABLE "Languages"
 );
 
 -- Deletes all already present language data. Which at this point doesn't really matter.
-TRUNCATE TABLE "BookLanguages";
+TRUNCATE TABLE "##PREFIX##BookLanguages";
 
-ALTER TABLE "BookLanguages" DROP COLUMN "language";
-ALTER TABLE "BookLanguages" ADD COLUMN "languageId" integer NOT NULL;
-ALTER TABLE "BookLanguages" ADD FOREIGN KEY ("languageId") REFERENCES "Languages";
+ALTER TABLE "##PREFIX##BookLanguages" DROP COLUMN "language";
+ALTER TABLE "##PREFIX##BookLanguages" ADD COLUMN "languageId" integer NOT NULL;
+ALTER TABLE "##PREFIX##BookLanguages" ADD FOREIGN KEY ("languageId") REFERENCES "##PREFIX##Languages";
 
 COMMIT;

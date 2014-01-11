@@ -1,7 +1,7 @@
 BEGIN TRANSACTION;
 
 -- Set text pages in database.
-UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
+UPDATE "##PREFIX##Settings" SET "settingValue" = '<h2>Welcome</h2>
 
 <p>This project seeks to develop a virtual research environment (or collaboratory) and publication platform for a young and growing field in cultural history: the study of early modern reading practices. Proceeding from the idea that reading constitutes a crucial form of intellectual exchange, the collaborators will collect and enhance evidence of how readers used their books to build knowledge and assimilate ideas. This is especially pertinent since the early modern period, just like the twenty-first century, saw the revolutionary rise of a new medium of communication which helped shape cultural formation and intellectual freedom.</p>
 
@@ -15,7 +15,7 @@ UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
 <img src="frontend/resources/images/ugent.png" style="height: 100px"/>
 <img src="frontend/resources/images/cell.png" style="height: 100px"/>' WHERE "settingName" = 'welcome-page';
 
-UPDATE "Settings" SET "settingValue" = '<h2>About this collaboratory</h2>
+UPDATE "##PREFIX##Settings" SET "settingValue" = '<h2>About this collaboratory</h2>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
@@ -23,7 +23,7 @@ UPDATE "Settings" SET "settingValue" = '<h2>About this collaboratory</h2>
 
 <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>' WHERE "settingName" = 'info-page';
 
-UPDATE "Settings" SET "settingValue" = '<h2>Terms of Use</h2>
+UPDATE "##PREFIX##Settings" SET "settingValue" = '<h2>Terms of Use</h2>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 

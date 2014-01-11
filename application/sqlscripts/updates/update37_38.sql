@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 
 -- Adds two tables to be used by Help.
 
-CREATE TABLE "HelpPages"
+CREATE TABLE "##PREFIX##HelpPages"
 (
     "helpPageId" serial NOT NULL,
     "pageName" varchar(30) NOT NULL,
@@ -17,10 +17,10 @@ CREATE TABLE "HelpPages"
     PRIMARY KEY ("helpPageId"),
     UNIQUE ("pageName"),
     FOREIGN KEY ("parentHelpPageId")
-      REFERENCES "HelpPages"
+      REFERENCES "##PREFIX##HelpPages"
 );
 
-CREATE TABLE "HelpControlItems"
+CREATE TABLE "##PREFIX##HelpControlItems"
 (
     "controlItemName" varchar(30) NOT NULL,
     "helpPageId" integer NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE "HelpControlItems"
     
     PRIMARY KEY ("controlItemName"),
     FOREIGN KEY ("helpPageId")
-      REFERENCES "HelpPages"
+      REFERENCES "##PREFIX##HelpPages"
 );
 
 COMMIT;

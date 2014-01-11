@@ -1,21 +1,21 @@
 BEGIN TRANSACTION;
 
 -- For the users that still had column bookID in BookLanguages
-ALTER TABLE "BookLanguages" RENAME "bookID" TO "bookId";
+ALTER TABLE "##PREFIX##BookLanguages" RENAME "bookID" TO "bookId";
 
 COMMIT;
 
 BEGIN TRANSACTION;
 
 -- Splits up BookLanguages table in two tables: one for bindings and one for books.
-ALTER TABLE "BookLanguages" DROP CONSTRAINT "BookLanguages_pkey";
-ALTER TABLE "BookLanguages" DROP COLUMN "bookLanguageId";
-ALTER TABLE "BookLanguages" DROP COLUMN "bindingId";
-DELETE FROM "BookLanguages" WHERE "bookId" IS NULL;
-ALTER TABLE "BookLanguages" ALTER COLUMN "bookId" SET NOT NULL;
-ALTER TABLE "BookLanguages" ADD PRIMARY KEY ("bookId", "languageId");
+ALTER TABLE "##PREFIX##BookLanguages" DROP CONSTRAINT "##PREFIX##BookLanguages_pkey";
+ALTER TABLE "##PREFIX##BookLanguages" DROP COLUMN "bookLanguageId";
+ALTER TABLE "##PREFIX##BookLanguages" DROP COLUMN "bindingId";
+DELETE FROM "##PREFIX##BookLanguages" WHERE "bookId" IS NULL;
+ALTER TABLE "##PREFIX##BookLanguages" ALTER COLUMN "bookId" SET NOT NULL;
+ALTER TABLE "##PREFIX##BookLanguages" ADD PRIMARY KEY ("bookId", "languageId");
 
-CREATE TABLE "BindingLanguages"
+CREATE TABLE "##PREFIX##BindingLanguages"
 (
     "bindingId" integer NOT NULL,
     "languageId" integer NOT NULL,    
@@ -27,9 +27,9 @@ CREATE TABLE "BindingLanguages"
     
     PRIMARY KEY ("bindingId", "languageId"),
     FOREIGN KEY ("bindingId")
-      REFERENCES "Bindings",
+      REFERENCES "##PREFIX##Bindings",
     FOREIGN KEY ("languageId")
-      REFERENCES "Languages"
+      REFERENCES "##PREFIX##Languages"
 );
 
 

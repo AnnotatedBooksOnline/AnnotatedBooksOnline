@@ -5,11 +5,11 @@ BEGIN
     IF TG_OP = 'DELETE' THEN NEW := OLD; END IF;
     IF TG_OP = 'INSERT' THEN OLD := NEW; END IF;
     IF OLD."bindingId" != NEW."bindingId" THEN
-        UPDATE "Books"
+        UPDATE "##PREFIX##Books"
             SET "bindingId" = "bindingId"
             WHERE "bindingId" = NEW."bindingId";
     END IF;
-    UPDATE "Books"
+    UPDATE "##PREFIX##Books"
         SET "bindingId" = "bindingId"
         WHERE "bindingId" = OLD."bindingId";
     RETURN NULL;
