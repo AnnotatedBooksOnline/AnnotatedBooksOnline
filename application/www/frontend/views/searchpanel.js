@@ -412,9 +412,53 @@ Ext.define('Ext.ux.SearchFieldsPanel', {
         
         this.superclass.initComponent.apply(this, []);
         
-        var firstField = this.getComponent(0).down('[name=type]');
+        // Adds a search field for a certain type with optionally a default search value.
+        function addField(type, value)
+        {
+            var comp = _this.getComponent(_this.items.length - 1);
+            var typeField = comp.down('[name=type]');
+            var valField = comp.down('[name=value]');
+
+            typeField.select(type);
+            typeField.fireEvent('select', typeField, {});
+
+            if(value && value != '')
+            {
+                valField.setValue(value);
+                // FIXME .......
+            }
+        }
+
+        // If a query string is present, parse it and let it determine which search fields should
+        // be visible by default.
+        var query = window.location.search;
+        if(query && query.length > 1)
+        {
+            // Remove the initial ?.
+            query = query.slice(1);
+
+            // Extract the type=value pairs.
+            var pairs = query.split('&');
+            for(var i = 0; i < pairs.length; ++i)
+            {
+                var pair = pairs[i].split('=');
+                var type  = decodeURIComponent(pair[0]);
+                var value = decodeURIComponent(pair[1]);
+
+                addField(type, value);
+            }
+
+            // TODO: perform initial search.
+        }
+        else
+        {
+            // When no field is present, show a single any field.
+            addField('any');
+        }
+
+        /*var firstField = this.getComponent(0).down('[name=type]');
         firstField.select('any');
-        firstField.fireEvent('select', firstField, {});
+        firstField.fireEvent('select', firstField, {});*/
     }
 });
 
@@ -882,6 +926,7 @@ Ext.define('Ext.ux.SearchPanel', {
                 xtype: 'button',
                 text: 'Search',
                 iconCls: 'search-icon',
+                id: 'search-button',
                 name: 'searchbutton',
                 width: 140,
                 style: 'margin: 10px;',
@@ -902,8 +947,51 @@ Ext.define('Ext.ux.SearchPanel', {
                         }
                     }
                     
+                    // Update the query string within the URL to contain this search query.
+                    var queryStr = '';
+                    for(var i = 0; i < fields.length; ++i)
+                    {
+                        var valueStr;
+                        if(fields[i].type == 'year')
+                        {
+                            valueStr = fields[i].value.from + '_' + fields[i].value.to;
+                        }
+                        else
+                        {
+                            valueStr = fields[i].value;
+                        }
+
+                        if(valueStr == '')
+                        {
+                            continue;
+                        }
+
+                        if(i > 0)
+                        {
+                            queryStr += '&';
+                        }
+
+                        queryStr += encodeURIComponent(fields[i].type) + '='
+                                 +  encodeURIComponent(valueStr);
+                    }
+
+                    if(queryStr.length > 0)
+                    {
+                        queryStr = '?' + queryStr;
+                    }
+
+                    if(window.history)
+                    {
+                        var newUrl = window.location.pathname + queryStr + window.location.hash;
+                        window.history.replaceState('','', newUrl);
+                    }
+                    else
+                    {
+                        window.location.search = queryStr;
+                    }
+
                     var me = this.up('panel');
-                    
+
                     me.down('searchresultspanel').search(fields);
                 }
             },{
@@ -1123,9 +1211,9 @@ Ext.define('Ext.ux.SearchPanel', {
         
         this.superclass.initComponent.apply(this, []);
         
-        var firstField = this.down('[name=type]');
+        /*var firstField = this.down('[name=type]');
         firstField.select('any');
-        firstField.fireEvent('select',firstField,{});
+        firstField.fireEvent('select',firstField,{});*/
         
         this.onAuthenticationChange('modelchange', Authentication.getInstance());
         
