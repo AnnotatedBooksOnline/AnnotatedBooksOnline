@@ -79,7 +79,7 @@ Ext.define('Ext.ux.StaticPanel', {
         {
             Ext.apply(defConfig, {
                 loader: {
-                    url: window.location.pathname + 'frontend/static/' + this.file,
+                    url: window.location.pathname + 'frontend/static/' + _this.file,
                     autoLoad: true,
                     loadMask: true,
                     failure: function()
