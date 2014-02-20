@@ -40,6 +40,84 @@ var langStore = Ext.create('Ext.data.Store', {
     data: langStoreData
 });
 
+function createAnnotationTooltip(el, id)
+{
+    if (!el.tip)
+    {
+        
+        el.tip = Ext.create('Ext.tip.ToolTip',
+        {
+            listeners:
+            {
+                beforeshow: function(tip)
+                {
+                    tip.update('<p>Loading...</p>');
+                    Ext.ux.AnnotationModel.load(id, {
+                        success: function(model)
+                        {
+                            /* TODO: click to navigate to annotation.
+                            el.tipmodel = model;
+                            el.style.cursor = 'pointer';
+                            el.onclick = function()
+                            {
+                                alert(el.tipmodel.get('annotationId'));
+                            }
+                            */
+                            tip.update(renderAnnotationModel(model, '[Annotation]'));
+                            tip.realign();
+                        },
+                        failure: function()
+                        {
+                            tip.update('<p>Could not load annotation.</p>');
+                            tip.realign();
+                        }
+                    });
+                }
+            },
+            realign: function()
+            {
+                this.alignTo(el, 'r-l?', [-5, 0]);
+            },
+            dismissDelay: 0
+        });
+        el.tip.show();
+        el.tip.realign();
+    }
+    if (el.tiptimer)
+    {
+        clearTimeout(el.tiptimer);
+        el.tiptimer = null;
+    }
+}
+
+function destroyAnnotationTooltip(el)
+{
+    if (el.tip && !el.tiptimer)
+    {
+        el.tiptimer = setTimeout(function()
+        {
+            el.tip.destroy();
+            el.tip = null;
+        }, 1000);
+    }
+}
+
+function renderAnnotationModel(model, idcodefmt)
+{
+    var text = '';
+    for (var i = 0; i < langStoreData.length; i++)
+    {
+        var lang = langStoreData[i];
+        var data = model.get('annotationInfo')[lang.lang];
+        if (data)
+        {
+            text += '<h3>' + lang.name + '</h3>';
+            text += '<p>' + IDCode.replaceID(escape(data), idcodefmt) + '</p>';
+        }
+    }
+    return text;
+}
+
 Ext.define('Ext.ux.AnnotationsPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.annotationspanel',
@@ -58,11 +136,11 @@ Ext.define('Ext.ux.AnnotationsPanel', {
                 flex: 3,
                 resizable: { handles: 's' },
                 items: [{
-                    html: 'Please select an annotation below.',
+                    html: '<p>Please select an annotation below.</p>',
                     region: 'center',
                     name: 'active-annotation',
                     border: false,
-                    bodyPadding: 5,
+                    // bodyPadding: 5,
                     autoScroll: true,
                     cls: 'annotation-text'
                 },{
@@ -344,20 +422,19 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         // Set active model.
         this.activeModel = model;
         
+        var annotationRef = function(id)
+        {
+            return '<span class="annotation-ref" onmouseover="createAnnotationTooltip(this, '
+                   + id + ')" onmouseout="destroyAnnotationTooltip(this)">[Annotation]</span>';
+        };
+        
         // Fetch text in current language.
         var text = '';
         if (model !== undefined)
         {
-            for (var i = 0; i < langStoreData.length; i++)
-            {
-                var lang = langStoreData[i];
-                var data = model.get('annotationInfo')[lang.lang];
-                if (data)
-                {
-                    text += '<h3>' + lang.name + '</h3>';
-                    text += '<p>' + escape(data) + '</p>';
-                }
-            }
+            text = '<div class="annotation-code">Annotation <span class="idcode" onClick="selectTextElement(this)">'
+                 + IDCode.encode(model.get('annotationId')) + '</span></div>';
+            text += renderAnnotationModel(model, annotationRef);
         }
         
         // Show contents of new model.
@@ -890,6 +967,9 @@ Ext.define('Ext.ux.AnnotationsGrid', {
         {
             return '';
         }
+        
+        // Replace IDCodes.
+        text = IDCode.replaceID(text, '[Annotation]');
         
         // Replace newlines with spaces.
         text = text.replace(/\s*(\r\n|\n|\r)\s*/g, ' ');

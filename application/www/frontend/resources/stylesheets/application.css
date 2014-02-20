@@ -275,12 +275,37 @@ a:hover
 /* Annotation display */
 .annotation-text p
 {
+    margin-left: 5px;
+    margin-right: 5px;
     margin-bottom: 1em;
+    word-wrap: break-word;
 }
 
 .annotation-text h3
 {
+    margin-left: 5px;
+    margin-right: 5px;
     margin-bottom: .25em;
     border-bottom: 1px solid #E9E8F6;
     font-size: 105%;
+}
+
+.annotation-text .annotation-code
+{
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #E7ECF3;
+}
+
+.annotation-text .annotation-code .idcode
+{
+    color: #15498B;
+    font-weight: bold;
+}
+
+.annotation-text .annotation-ref
+{
+    color: #777;
+    font-style: italic;
+    cursor: default;
 }
