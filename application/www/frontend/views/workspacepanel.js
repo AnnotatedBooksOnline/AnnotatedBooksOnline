@@ -714,6 +714,12 @@ Ext.define('Ext.ux.WorkspacePanel', {
             layout: 'fit',
             border: false,
             items: [{
+                 xtype: 'fragmentspanel',
+                 title: 'Fragments',
+                 viewer: this.viewer,
+                 autoScroll: true,
+                 iconCls: 'fragments-icon'
+             },{
                 xtype: 'annotationspanel',
                 title: 'Annotations',
                 viewer: this.viewer,

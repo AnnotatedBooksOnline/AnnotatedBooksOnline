@@ -36,3 +36,4 @@ Ext.define('Ext.ux.InformationPanel', {
         this.callParent();
     }
 });
+
