@@ -64,45 +64,32 @@ Ext.define('Ext.ux.FragmentsPanel', {
             var firstPage = book.get('firstPage');
             var lastPage = book.get('lastPage');
             
-            // Author info.
-            var authors = [];
-            book.authors().each(function(author)
-            {
-                authors.push(author.get('name'));
-            });
-            
-            // Publisher info.
-            var placePublished = book.get('placePublished');
-            var publisher = book.get('publisher');
-            var version = book.get('printVersion');
-            var pubInfo = [];
-            if (placePublished)
-            {
-                pubInfo.push('in ' + placePublished);
-            }
-            if (publisher)
-            {
-                pubInfo.push('by ' + publisher);
-            }
-            pubInfo.push('in ' + book.getTimePeriod());
-            if (version)
-            {
-                pubInfo.push('edition ' + version);
-            }
                         
             // Generate book DOM.
             var el = $('<li/>');
             el.append(genText('h2', book.get('title')));
             var props = $('<ul/>');
-            if (authors.length > 0)
+            var meta = book.get('meta');
+            var fixProps = function()
             {
-                props.append(genText('li', authors.join(', ')).addClass('authorinfo'));
+                console.log('fixProps');
+                props.empty();
+                for (var i = 0; i < metaKeyTemplate.length; i++)
+                {
+                    var k = metaKeyTemplate[i];
+                    var v = meta[k];
+                    if (v)
+                    {
+                        var prop = $('<li/>');
+                        prop.append(genText('span', k).addClass('metakey'));
+                        prop.append(genText('span', v).addClass('metavalue'));
+                        props.append(prop);
+                    }
+                }
+                props.append(genText('li', 'Pages ' + firstPage + ' to ' + lastPage).addClass('pageinfo'));
             }
-            if (pubInfo.length > 0)
-            {
-                props.append(genText('li', 'Published ' + pubInfo.join(' ')).addClass('pubinfo'));
-            }
-            props.append(genText('li', 'Pages ' + firstPage + ' to ' + lastPage).addClass('pageinfo'));
+            book.store.on('datachanged', fixProps);
+            fixProps();
             el.append(props);
             
             // Go to page on click.
@@ -113,7 +100,7 @@ Ext.define('Ext.ux.FragmentsPanel', {
             el.prop('title', 'Go to page ' + firstPage);
             
             var wrapper = $('<div/>');
-            addEditButton(wrapper, function() { /* FIXME */ }); // TODO: implement edit handler
+            addEditButton(wrapper, function() { Ext.create('Ext.ux.MetaEditorWindow', { book: book }).show(); });
             var fragment = $('<div class="fragment"/>');
             fragment.append(el);
             wrapper.append(fragment);
@@ -178,7 +165,7 @@ Ext.define('Ext.ux.FragmentsPanel', {
     
     onAuthenticationChange: function()
     {
-        if (Authentication.getInstance().hasPermissionTo('add-annotations')) // TODO: change to edit-meta?
+        if (Authentication.getInstance().hasPermissionTo('edit-meta'))
         {
             this.addCls('permission-edit-meta');
         }

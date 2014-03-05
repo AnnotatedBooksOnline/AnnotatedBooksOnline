@@ -69,3 +69,20 @@ div.bookinfo
     display: block;
 }
 
+.booklist .metakey
+{
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.booklist .metakey:after
+{
+    content: ":";
+    font-weight: bold;
+}
+
+.booklist .metavalue
+{
+
+}
+
