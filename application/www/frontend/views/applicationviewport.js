@@ -216,6 +216,21 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 }
             },
             name: 'help'
+        },{
+            text: 'Tutorial',
+            iconCls: 'video-icon',
+            listeners: {
+                click: function()
+                {
+                    var youtube = new Ext.ux.YoutubeWindow({
+                        video: getCachedSetting('tutorial-video'),
+                        title: getCachedSetting('tutorial-video-title') || 'Tutorial'
+                    });
+                    youtube.show();
+                }
+            },
+            name: 'tutorial',
+            hidden: getCachedSetting('tutorial-video') == null || getCachedSetting('tutorial-video').trim() == ''
         }];
         
         var topRegion = {
