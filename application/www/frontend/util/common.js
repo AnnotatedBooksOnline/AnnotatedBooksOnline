@@ -156,6 +156,24 @@ function escape(str)
                         replace(/\r?\n/g,'<br />');
 }
 
+function selectTextElement(el)
+{
+    if (document.body.createTextRange)
+    {
+        var range = document.body.createTextRange();
+        range.moveToElementText(el);
+        range.select();
+    }
+    else if (window.getSelection)
+    {
+        var selection = window.getSelection();        
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
+
 // Gets all cookies.
 function getCookies()
 {
