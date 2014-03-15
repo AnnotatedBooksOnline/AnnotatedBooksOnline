@@ -47,6 +47,33 @@ class BookController extends ControllerBase
         return $this->handleLoad($data, 'Book', 'bookId', null, $defaultSorters);
     }
     
+    public function actionSetMeta($data)
+    {
+        Authentication::assertPermissionTo('edit-meta');
+        
+        Database::getInstance()->doTransaction(function() use ($data)
+        {
+            $bookId = self::getInteger($data, 'bookId');
+            $book = new Book($bookId);
+            
+            $key = self::getString($data, 'key');
+            $value = self::getString($data, 'value');
+            
+            $meta = $book->getMeta();
+            if ($value != '' && $key != '')
+            {
+                $meta[$key] = $value;
+            }
+            else if (isset($meta[$key]))
+            {
+                unset($meta[$key]);
+            }
+            Log::debug(print_r($meta, TRUE));
+            $book->setMeta($meta);
+            $book->save();
+        });
+    }
+        
     /**
      * Sets the first and last pages of the books
      */

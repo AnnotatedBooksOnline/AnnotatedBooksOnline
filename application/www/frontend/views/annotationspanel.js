@@ -922,9 +922,7 @@ Ext.define('Ext.ux.AnnotationsGrid', {
                         {
                             new Ext.Button({
                                 renderTo: id,
-                                text: 'Edit',
                                 iconCls: 'transcription-edit-icon',
-                                style: 'margin-right: 5px;',
                                 handler: function()
                                 {
                                     var window = new Ext.ux.TranscriptionEditorWindow({

@@ -317,6 +317,8 @@ class Database extends Singleton
             
             case 'base64':
                 return base64_decode($value);
+            case 'serialized':
+                return unserialize($value);
                 
             case 'date':
             case 'time':
@@ -352,6 +354,8 @@ class Database extends Singleton
                 
             case 'base64':
                 return base64_encode($value);
+            case 'serialized':
+                return serialize($value);
                 
             case 'date':
                 return date('Y-m-d', (int) $value);
@@ -390,6 +394,7 @@ class Database extends Singleton
                 return PDO::PARAM_LOB;
                 
             case 'base64':
+            case 'serialized':
             case 'date':
             case 'time':
             case 'timestamp':

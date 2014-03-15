@@ -7,7 +7,8 @@ Ext.define('Ext.ux.BookModel', {
     idProperty: 'bookId',
     fields: ['bookId', 'bindingId', 'title', 'minYear', 'maxYear',
              'author', 'languages', 'publisher', 'placePublished',
-             'firstPage', 'lastPage', 'version', 'printVersion'],
+             'firstPage', 'lastPage', 'version', 'printVersion',
+             'meta'],
     
     hasMany: [{
         model: 'Ext.ux.AuthorModel',
@@ -35,3 +36,4 @@ Ext.define('Ext.ux.BookModel', {
         return this.get('minYear') + ' - ' + this.get('maxYear');
     }
 });
+

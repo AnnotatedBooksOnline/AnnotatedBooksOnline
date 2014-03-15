@@ -59,6 +59,9 @@ class Book extends Entity
     /** Last page. */
     protected $lastPage;
     
+    /** Metadata. */
+    protected $meta;
+    
     /** list containing all the languages linked to this book. */
     protected $bookLanguageList;
     
@@ -191,7 +194,7 @@ class Book extends Entity
     {
         return array('title', 'bindingId', 'minYear', 'maxYear',
                      'preciseDate', 'placePublished', 'publisher', 'printVersion',
-                     'firstPage', 'lastPage');
+                     'firstPage', 'lastPage', 'meta');
     }
     
     /**
@@ -212,7 +215,8 @@ class Book extends Entity
             'publisher'      => 'string',
             'printVersion'   => 'string',
             'firstPage'      => 'int',
-            'lastPage'       => 'int'
+            'lastPage'       => 'int',
+            'meta'           => 'serialized'
         );
     }
     
@@ -258,4 +262,7 @@ class Book extends Entity
     
     public function getBookLanguageList()                  { return $this->bookLanguageList;              }
     public function setBookLanguageList($bookLanguageList) { $this->bookLanguageList = $bookLanguageList; }
+    
+    public function getMeta()      { return is_array($this->meta) ? $this->meta : array(); }
+    public function setMeta($meta) { $this->meta = $meta; }
 }

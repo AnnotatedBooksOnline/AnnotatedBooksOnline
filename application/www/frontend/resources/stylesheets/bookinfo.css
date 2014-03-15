@@ -1,4 +1,88 @@
-#bookInfo .x-grid-cell-inner, #bookInfo .x-grid-hd-inner 
+.booklist .fragment li li
 {
-    white-space: normal;
+    margin-left: 15px;
 }
+
+.booklist .fragment > li
+{
+    cursor: pointer;
+}
+
+.booklist > div
+{
+    border-left: 5px solid rgb(240, 240, 240);
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
+
+.booklist > div:hover
+{
+    background-color: rgb(231, 236, 243); /*rgb(203, 221, 243);*/
+    border-left: 5px solid rgb(153, 188, 232);
+}
+
+.booklist .currentbook
+{
+    border-left: 5px solid rgb(153, 188, 232);
+}
+
+.booklist .pageinfo
+{
+    color: rgb(120, 120, 120);
+}
+
+div.bookinfo
+{
+    margin-bottom: 10px;
+}
+
+.bindinginfo p
+{
+    margin-top: 5px;
+}
+
+.permission-edit-meta .booklist .fragment
+{
+    margin-right: 27px;
+    display: block;
+    min-height: 22px;
+}
+
+.booklist > div
+{
+    position: relative;
+}
+
+.booklist .fragmentedit
+{
+    display: none;
+    top: 50%;
+    right: 0px;
+    position: absolute;
+    margin-top: -11px;
+    width: 22px;
+    height: 22px;
+}
+
+.permission-edit-meta .booklist .fragmentedit
+{
+    display: block;
+}
+
+.booklist .metakey
+{
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.booklist .metakey:after
+{
+    content: ":";
+    font-weight: bold;
+}
+
+.booklist .metavalue
+{
+
+}
+
