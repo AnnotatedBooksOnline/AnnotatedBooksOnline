@@ -188,7 +188,7 @@ class Query
     {
         $query = new Query('INSERT');
         
-        $query->tables  = array($query->quoteIdentifiers($query->prefixTable($table)));
+        $query->tables  = array($query->quoteIdentifiers($query->prefixTable($table, false)));
         
         $query->columns = array();
         foreach ($values as $column => $value)
@@ -685,13 +685,13 @@ class Query
     }
     
     // Adds the database table prefix to the table name.
-    private function prefixTable($table)
+    private function prefixTable($table, $alias = TRUE)
     {
         $prefix = Configuration::getInstance()->getDatabasePrefix();
         $table = trim($table);
 
         // If no alias is given, use original name as alias for compatibility.
-        if (strpos($table, ' ') === FALSE)
+        if (strpos($table, ' ') === FALSE && $alias === TRUE)
         {
             return $prefix . $table . ' ' . $table;
         }
