@@ -8,7 +8,7 @@ START TRANSACTION;
 
 -- Create a table for scan comments. A history of previous versions is maintained, as well as the 
 -- last editors of each version.
-CREATE TABLE "ScanComments"
+CREATE TABLE "##PREFIX##ScanComments"
 (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
@@ -23,16 +23,16 @@ CREATE TABLE "ScanComments"
     
     PRIMARY KEY ("scanCommentId"),
     FOREIGN KEY ("userId") 
-        REFERENCES "Users" ("userId")
+        REFERENCES "##PREFIX##Users" ("userId")
         ON DELETE SET NULL,
     FOREIGN KEY ("scanId")
-        REFERENCES "Scans" ("scanId")
+        REFERENCES "##PREFIX##Scans" ("scanId")
         ON DELETE CASCADE,
         
     UNIQUE ("scanId", "versionNumber")
 );
 
 -- The comments column from Scans can be removed.
-ALTER TABLE "Scans" DROP COLUMN "comments";
+ALTER TABLE "##PREFIX##Scans" DROP COLUMN "comments";
 
 COMMIT;

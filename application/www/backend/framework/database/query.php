@@ -188,7 +188,7 @@ class Query
     {
         $query = new Query('INSERT');
         
-        $query->tables  = array($query->quoteIdentifiers($table));
+        $query->tables  = array($query->quoteIdentifiers($query->prefixTable($table)));
         
         $query->columns = array();
         foreach ($values as $column => $value)
@@ -211,7 +211,7 @@ class Query
     {
         $query = new Query('UPDATE');
         
-        $query->tables  = array($query->quoteIdentifiers($table));
+        $query->tables  = array($query->quoteIdentifiers($query->prefixTable($table)));
         
         $query->columns = array();
         foreach ($values as $column => $value)
@@ -231,7 +231,7 @@ class Query
     {
         $query = new Query('DELETE');
         
-        $query->tables = array($query->quoteIdentifiers($table));
+        $query->tables = array($query->quoteIdentifiers($query->prefixTable($table)));
         
         return $query;
     }
@@ -303,6 +303,7 @@ class Query
             throw new QueryFormatException('query-incomplete');
         }
         
+        $tables = array_map(array($this, 'prefixTable'), $tables);
         $this->tables = array_merge($this->tables,
             array_map(array($this, 'quoteIdentifiers'), $tables));
         
@@ -323,7 +324,7 @@ class Query
         }
         
         // Add join
-        $this->joinClause .= "\n" . $type . 'JOIN ' . $this->quoteIdentifiers($table);
+        $this->joinClause .= "\n" . $type . 'JOIN ' . $this->quoteIdentifiers($this->prefixTable($table));
         
         // Add conditions.
         if ($conditions)
@@ -397,7 +398,7 @@ class Query
         }
         else
         {
-            $condition = 'fulltextsearch(' . $column . ', ' . $query . ')';
+            $condition = $this->prefixTable('fulltextsearch(' . $column . ', ' . $query . ')');
         }
         
         if ($result !== null)
@@ -681,6 +682,20 @@ class Query
         {
             return Database::getInstance()->escape($value);
         }
+    }
+    
+    // Adds the database table prefix to the table name.
+    private function prefixTable($table)
+    {
+        $prefix = Configuration::getInstance()->getDatabasePrefix();
+        $table = trim($table);
+
+        // If no alias is given, use original name as alias for compatibility.
+        if (strpos($table, ' ') === FALSE)
+        {
+            return $prefix . $table . ' ' . $table;
+        }
+        return $prefix . $table;
     }
     
     // Takes a part of a SQL query (that is hard-coded and does NOT depend on user input) and surrounds SQL 

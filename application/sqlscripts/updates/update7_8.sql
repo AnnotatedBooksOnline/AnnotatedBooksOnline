@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 
 -- Add settings table.
 
-CREATE TABLE "Settings"
+CREATE TABLE "##PREFIX##Settings"
 (
     "settingName" varchar(100) NOT NULL,
     "settingValue" text,

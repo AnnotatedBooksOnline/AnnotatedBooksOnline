@@ -2,6 +2,6 @@
 
 BEGIN TRANSACTION;
 
-ALTER TABLE "Users" ADD COLUMN "passwordRestoreToken" character(32);
+ALTER TABLE "##PREFIX##Users" ADD COLUMN "passwordRestoreToken" character(32);
 
 COMMIT;

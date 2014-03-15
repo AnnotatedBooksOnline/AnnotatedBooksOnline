@@ -2,8 +2,8 @@ BEGIN TRANSACTION;
 
 -- Insert settings used for password restoration mails.
 
-INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('forgotpass-mail-subject', 'Restoration of your password');
-INSERT INTO "Settings" ("settingName", "settingValue") VALUES ('forgotpass-mail-message', 'Dear Mr./Ms. [LASTNAME],
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue") VALUES ('forgotpass-mail-subject', 'Restoration of your password');
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue") VALUES ('forgotpass-mail-message', 'Dear Mr./Ms. [LASTNAME],
 
 This e-mail has been send to you because you indicated you had forgotten your Collaboratory password. If this is not the case, please ignore this message.
 

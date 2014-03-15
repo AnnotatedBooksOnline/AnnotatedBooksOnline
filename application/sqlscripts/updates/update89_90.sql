@@ -6,9 +6,9 @@ USE abo;
 
 START TRANSACTION;
 
-UPDATE "Permissions" SET "minRank" = 40 WHERE "actionName" = 'view-users-part';
-UPDATE "Permissions" SET "minRank" = 40 WHERE "actionName" = 'view-users-complete';
-UPDATE "Permissions" SET "minRank" = 40 WHERE "actionName" = 'accept-registrations';
+UPDATE "##PREFIX##Permissions" SET "minRank" = 40 WHERE "actionName" = 'view-users-part';
+UPDATE "##PREFIX##Permissions" SET "minRank" = 40 WHERE "actionName" = 'view-users-complete';
+UPDATE "##PREFIX##Permissions" SET "minRank" = 40 WHERE "actionName" = 'accept-registrations';
 
 COMMIT;
 

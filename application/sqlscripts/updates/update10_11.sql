@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
 
 -- Add Uploads table.
 
-CREATE TABLE "Uploads"
+CREATE TABLE "##PREFIX##Uploads"
 (
     "uploadId" serial NOT NULL,
     "userId" serial NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE "Uploads"
     PRIMARY KEY ("uploadId"),
     UNIQUE ("token"),
     FOREIGN KEY ("userId")
-        REFERENCES "Users"
+        REFERENCES "##PREFIX##Users"
 );
 
 COMMIT;

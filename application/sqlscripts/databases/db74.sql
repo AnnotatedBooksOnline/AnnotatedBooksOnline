@@ -6,7 +6,7 @@ CREATE DATABASE abo CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci';
 
 USE abo;
 
-CREATE TABLE "Permissions" (
+CREATE TABLE "##PREFIX##Permissions" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE "Permissions" (
     PRIMARY KEY ("actionName")
 );
 
-CREATE TABLE "Settings" (
+CREATE TABLE "##PREFIX##Settings" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE "Settings" (
     PRIMARY KEY ("settingName")
 );
 
-CREATE TABLE "Languages" (
+CREATE TABLE "##PREFIX##Languages" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE "Languages" (
     UNIQUE ("languageName")
 );
 
-CREATE TABLE "Libraries" (
+CREATE TABLE "##PREFIX##Libraries" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE "Libraries" (
     UNIQUE ("libraryName")
 );
 
-CREATE TABLE "HelpPages" (
+CREATE TABLE "##PREFIX##HelpPages" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE "HelpPages" (
     UNIQUE ("pageName")
 );
 
-CREATE TABLE "Persons" (
+CREATE TABLE "##PREFIX##Persons" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE "Persons" (
     PRIMARY KEY ("personId")
 );
 
-CREATE TABLE "Users" (
+CREATE TABLE "##PREFIX##Users" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE "Users" (
     UNIQUE (username)
 );
 
-CREATE TABLE "HelpParagraphs" (
+CREATE TABLE "##PREFIX##HelpParagraphs" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -128,13 +128,13 @@ CREATE TABLE "HelpParagraphs" (
     
     PRIMARY KEY ("helpParagraphId"),
     UNIQUE ("helpPageId", "paragraphParentId", title),
-    FOREIGN KEY ("actionName") REFERENCES "Permissions"("actionName"),
-    FOREIGN KEY ("helpPageId") REFERENCES "HelpPages"("helpPageId"),
-    FOREIGN KEY ("paragraphParentId") REFERENCES "HelpParagraphs"("helpParagraphId"),
-    FOREIGN KEY ("settingName") REFERENCES "Settings"("settingName")
+    FOREIGN KEY ("actionName") REFERENCES "##PREFIX##Permissions"("actionName"),
+    FOREIGN KEY ("helpPageId") REFERENCES "##PREFIX##HelpPages"("helpPageId"),
+    FOREIGN KEY ("paragraphParentId") REFERENCES "##PREFIX##HelpParagraphs"("helpParagraphId"),
+    FOREIGN KEY ("settingName") REFERENCES "##PREFIX##Settings"("settingName")
 );
 
-CREATE TABLE "HelpContents" (
+CREATE TABLE "##PREFIX##HelpContents" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -147,10 +147,10 @@ CREATE TABLE "HelpContents" (
     
     PRIMARY KEY ("helpContentId"),
     UNIQUE ("helpParagraphId", "settingValue"(255)), -- Guarantees uniqueness on the first 255 characters
-    FOREIGN KEY ("helpParagraphId") REFERENCES "HelpParagraphs"("helpParagraphId")
+    FOREIGN KEY ("helpParagraphId") REFERENCES "##PREFIX##HelpParagraphs"("helpParagraphId")
 );
 
-CREATE TABLE "Bindings" (
+CREATE TABLE "##PREFIX##Bindings" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -166,11 +166,11 @@ CREATE TABLE "Bindings" (
     
     PRIMARY KEY ("bindingId"),
     UNIQUE (signature, "libraryId"),
-    FOREIGN KEY ("libraryId") REFERENCES "Libraries"("libraryId"),
-    FOREIGN KEY ("userId") REFERENCES "Users"("userId")
+    FOREIGN KEY ("libraryId") REFERENCES "##PREFIX##Libraries"("libraryId"),
+    FOREIGN KEY ("userId") REFERENCES "##PREFIX##Users"("userId")
 );
 
-CREATE TABLE "Books" (
+CREATE TABLE "##PREFIX##Books" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -189,10 +189,10 @@ CREATE TABLE "Books" (
     "lastPage" integer,
     
     PRIMARY KEY ("bookId"),
-    FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId")
+    FOREIGN KEY ("bindingId") REFERENCES "##PREFIX##Bindings"("bindingId")
 );
 
-CREATE TABLE "Uploads" (
+CREATE TABLE "##PREFIX##Uploads" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -208,10 +208,10 @@ CREATE TABLE "Uploads" (
     
     PRIMARY KEY ("uploadId"),
     UNIQUE (token),
-    FOREIGN KEY ("userId") REFERENCES "Users"("userId")
+    FOREIGN KEY ("userId") REFERENCES "##PREFIX##Users"("userId")
 );
 
-CREATE TABLE "Scans" (
+CREATE TABLE "##PREFIX##Scans" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -229,12 +229,12 @@ CREATE TABLE "Scans" (
     "scanName" character varying(255),
     
     PRIMARY KEY ("scanId"),
-    FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId"),
-    FOREIGN KEY ("uploadId") REFERENCES "Uploads"("uploadId"),
+    FOREIGN KEY ("bindingId") REFERENCES "##PREFIX##Bindings"("bindingId"),
+    FOREIGN KEY ("uploadId") REFERENCES "##PREFIX##Uploads"("uploadId"),
     CHECK (((("scanType" = 'jpeg') OR ("scanType" = 'tiff')) OR ("scanType" = '')))
 );
 
-CREATE TABLE "Annotations" (
+CREATE TABLE "##PREFIX##Annotations" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -252,12 +252,12 @@ CREATE TABLE "Annotations" (
     "timeChanged" timestamp NOT NULL,
     
     PRIMARY KEY ("annotationId"),
-    FOREIGN KEY ("changedUserId") REFERENCES "Users"("userId"),
-    FOREIGN KEY ("createdUserId") REFERENCES "Users"("userId"),
-    FOREIGN KEY ("scanId") REFERENCES "Scans"("scanId")
+    FOREIGN KEY ("changedUserId") REFERENCES "##PREFIX##Users"("userId"),
+    FOREIGN KEY ("createdUserId") REFERENCES "##PREFIX##Users"("userId"),
+    FOREIGN KEY ("scanId") REFERENCES "##PREFIX##Scans"("scanId")
 );
 
-CREATE TABLE "Authors" (
+CREATE TABLE "##PREFIX##Authors" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -267,11 +267,11 @@ CREATE TABLE "Authors" (
     "bookId" integer NOT NULL,
     
     PRIMARY KEY ("personId", "bookId"),
-    FOREIGN KEY ("personId") REFERENCES "Persons"("personId"),
-    FOREIGN KEY ("bookId") REFERENCES "Books"("bookId")
+    FOREIGN KEY ("personId") REFERENCES "##PREFIX##Persons"("personId"),
+    FOREIGN KEY ("bookId") REFERENCES "##PREFIX##Books"("bookId")
 );
 
-CREATE TABLE "BindingLanguages" (
+CREATE TABLE "##PREFIX##BindingLanguages" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -281,11 +281,11 @@ CREATE TABLE "BindingLanguages" (
     "languageId" integer NOT NULL,
     
     PRIMARY KEY ("bindingId", "languageId"),
-    FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId"),
-    FOREIGN KEY ("languageId") REFERENCES "Languages"("languageId")
+    FOREIGN KEY ("bindingId") REFERENCES "##PREFIX##Bindings"("bindingId"),
+    FOREIGN KEY ("languageId") REFERENCES "##PREFIX##Languages"("languageId")
 );
 
-CREATE TABLE "BookLanguages" (
+CREATE TABLE "##PREFIX##BookLanguages" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -295,11 +295,11 @@ CREATE TABLE "BookLanguages" (
     "languageId" integer NOT NULL,
     
     PRIMARY KEY ("bookId", "languageId"),
-    FOREIGN KEY ("bookId") REFERENCES "Books"("bookId"),
-    FOREIGN KEY ("languageId") REFERENCES "Languages"("languageId")
+    FOREIGN KEY ("bookId") REFERENCES "##PREFIX##Books"("bookId"),
+    FOREIGN KEY ("languageId") REFERENCES "##PREFIX##Languages"("languageId")
 );
 
-CREATE TABLE "Bookmarks" (
+CREATE TABLE "##PREFIX##Bookmarks" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -309,11 +309,11 @@ CREATE TABLE "Bookmarks" (
     "scanId" integer NOT NULL,
     
     PRIMARY KEY ("userId", "scanId"),
-    FOREIGN KEY ("scanId") REFERENCES "Scans"("scanId"),
-    FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE CASCADE
+    FOREIGN KEY ("scanId") REFERENCES "##PREFIX##Scans"("scanId"),
+    FOREIGN KEY ("userId") REFERENCES "##PREFIX##Users"("userId") ON DELETE CASCADE
 );
 
-CREATE TABLE "Notes" (
+CREATE TABLE "##PREFIX##Notes" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -323,10 +323,10 @@ CREATE TABLE "Notes" (
     text text,
     
     PRIMARY KEY ("userId"),
-    FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE CASCADE
+    FOREIGN KEY ("userId") REFERENCES "##PREFIX##Users"("userId") ON DELETE CASCADE
 );
 
-CREATE TABLE "PendingUsers" (
+CREATE TABLE "##PREFIX##PendingUsers" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -340,10 +340,10 @@ CREATE TABLE "PendingUsers" (
     PRIMARY KEY ("pendingUserId"),
     UNIQUE ("confirmationCode"),
     UNIQUE ("userId"),
-    FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE CASCADE
+    FOREIGN KEY ("userId") REFERENCES "##PREFIX##Users"("userId") ON DELETE CASCADE
 );
 
-CREATE TABLE "Provenances" (
+CREATE TABLE "##PREFIX##Provenances" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -353,11 +353,11 @@ CREATE TABLE "Provenances" (
     "personId" integer NOT NULL,
     
     PRIMARY KEY ("bindingId", "personId"),
-    FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId"),
-    FOREIGN KEY ("personId") REFERENCES "Persons"("personId")
+    FOREIGN KEY ("bindingId") REFERENCES "##PREFIX##Bindings"("bindingId"),
+    FOREIGN KEY ("personId") REFERENCES "##PREFIX##Persons"("personId")
 );
 
-CREATE TABLE "Shelves" (
+CREATE TABLE "##PREFIX##Shelves" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -371,11 +371,11 @@ CREATE TABLE "Shelves" (
     "position" integer DEFAULT 0,
     
     PRIMARY KEY ("shelfId"),
-    FOREIGN KEY ("parentShelfId") REFERENCES "Shelves"("shelfId"),
-    FOREIGN KEY ("userId") REFERENCES "Users"("userId") ON DELETE CASCADE
+    FOREIGN KEY ("parentShelfId") REFERENCES "##PREFIX##Shelves"("shelfId"),
+    FOREIGN KEY ("userId") REFERENCES "##PREFIX##Users"("userId") ON DELETE CASCADE
 );
 
-CREATE TABLE "ShelvedBooks" (
+CREATE TABLE "##PREFIX##ShelvedBooks" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -385,11 +385,11 @@ CREATE TABLE "ShelvedBooks" (
     "shelfId" integer NOT NULL,
     
     PRIMARY KEY ("bookId", "shelfId"),
-    FOREIGN KEY ("bookId") REFERENCES "Books"("bookId"),
-    FOREIGN KEY ("shelfId") REFERENCES "Shelves"("shelfId")
+    FOREIGN KEY ("bookId") REFERENCES "##PREFIX##Books"("bookId"),
+    FOREIGN KEY ("shelfId") REFERENCES "##PREFIX##Shelves"("shelfId")
 );
 
-CREATE TABLE "TEIFiles" (
+CREATE TABLE "##PREFIX##TEIFiles" (
     "changedOn" timestamp ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "changedBy" character varying(30),
     "createdOn" timestamp NOT NULL,
@@ -403,88 +403,88 @@ CREATE TABLE "TEIFiles" (
     
     PRIMARY KEY ("teiFileId"),
     UNIQUE ("bookId", "bindingId"),
-    FOREIGN KEY ("bindingId") REFERENCES "Bindings"("bindingId") ON DELETE SET NULL,
-    FOREIGN KEY ("bookId") REFERENCES "Books"("bookId") ON DELETE SET NULL
+    FOREIGN KEY ("bindingId") REFERENCES "##PREFIX##Bindings"("bindingId") ON DELETE SET NULL,
+    FOREIGN KEY ("bookId") REFERENCES "##PREFIX##Books"("bookId") ON DELETE SET NULL
 );
 
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-pages', 0, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('search-books', 0, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('add-annotations', 10, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('edit-annotations', 10, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('upload-bindings', 10, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('manage-bookshelf', 10, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('manage-notebook', 10, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('export-books', 10, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-history', 40, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('revert-changes', 40, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('change-book-info', 40, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('accept-registrations', 50, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('ban-users', 50, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('change-user-roles', 50, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('change-global-settings', 50, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('delete-users', 50, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-users-part', 10, NULL, NULL, NULL, NULL);
-INSERT INTO "Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-users-complete', 50, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-pages', 0, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('search-books', 0, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('add-annotations', 10, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('edit-annotations', 10, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('upload-bindings', 10, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('manage-bookshelf', 10, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('manage-notebook', 10, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('export-books', 10, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-history', 40, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('revert-changes', 40, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('change-book-info', 40, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('accept-registrations', 50, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('ban-users', 50, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('change-user-roles', 50, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('change-global-settings', 50, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('delete-users', 50, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-users-part', 10, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank", "createdOn", "createdBy", "changedOn", "changedBy") VALUES ('view-users-complete', 50, NULL, NULL, NULL, NULL);
 
-INSERT INTO "HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (2, 'Notes', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (3, 'Register', NULL, NULL, NULL, NULL, 'register');
-INSERT INTO "HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (4, 'Search', NULL, NULL, NULL, NULL, 'search');
-INSERT INTO "HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (5, 'Userlist', NULL, NULL, NULL, NULL, 'users');
-INSERT INTO "HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (6, 'Viewer', NULL, NULL, NULL, NULL, 'binding');
-INSERT INTO "HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (7, 'Welcome', NULL, NULL, NULL, NULL, 'welcome');
-INSERT INTO "HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (8, 'Upload', NULL, NULL, NULL, NULL, 'upload');
+INSERT INTO "##PREFIX##HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (2, 'Notes', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (3, 'Register', NULL, NULL, NULL, NULL, 'register');
+INSERT INTO "##PREFIX##HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (4, 'Search', NULL, NULL, NULL, NULL, 'search');
+INSERT INTO "##PREFIX##HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (5, 'Userlist', NULL, NULL, NULL, NULL, 'users');
+INSERT INTO "##PREFIX##HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (6, 'Viewer', NULL, NULL, NULL, NULL, 'binding');
+INSERT INTO "##PREFIX##HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (7, 'Welcome', NULL, NULL, NULL, NULL, 'welcome');
+INSERT INTO "##PREFIX##HelpPages" ("helpPageId", "pageName", "createdOn", "createdBy", "changedOn", "changedBy", "helpType") VALUES (8, 'Upload', NULL, NULL, NULL, NULL, 'upload');
 
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (2, 2, NULL, 'manage-notebook', 'Introduction', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (3, 2, NULL, 'manage-notebook', 'Adding / removing notes', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (4, 2, NULL, 'manage-notebook', 'Saving notes', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (6, 3, NULL, NULL, 'Finalizing your registration', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (7, 4, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (8, 4, NULL, NULL, 'Sorting options', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (9, 4, NULL, NULL, 'Result options', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (10, 4, NULL, NULL, 'Advanced search query notations', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (11, 5, NULL, 'view-users-part', 'Userlist', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (13, 6, NULL, NULL, 'Basic viewer functionalities', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (1, 7, NULL, NULL, 'Edit profile', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (19, 6, NULL, NULL, 'Go to another page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (18, 6, 13, NULL, 'Reset the view', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (27, 6, NULL, NULL, 'Link to a page, book or binding', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (28, 7, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (29, 7, NULL, NULL, 'Buttons', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (30, 7, NULL, NULL, 'Login / logout', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (31, 7, NULL, 'change-global-settings', 'Admin help page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (5, 3, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (14, 6, 13, NULL, 'Zoom in', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (15, 6, 13, NULL, 'Zoom out', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (16, 6, 13, NULL, 'Move across page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (17, 6, 13, NULL, 'Rotate', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (20, 6, 19, NULL, 'Previous page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (21, 6, 19, NULL, 'Next page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (22, 6, 19, NULL, 'First page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (23, 6, 19, NULL, 'Start of a book', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (24, 6, 19, NULL, 'Last page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (25, 6, 19, NULL, 'Certain page number', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (26, 6, 19, NULL, 'Select a page', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (12, 6, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (32, 8, NULL, 'upload-bindings', 'About uploading', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (33, 8, NULL, 'upload-bindings', 'Uploading books', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (34, 8, NULL, 'upload-bindings', 'Binding information', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (35, 8, NULL, 'upload-bindings', 'Book information', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (36, 6, NULL, NULL, 'Annotations', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (37, 6, 36, NULL, 'Read transcriptions of annotations', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (38, 6, 36, 'edit-annotations', 'Add and Edit transcriptions', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (39, 6, 36, 'add-annotations', 'Add transcription', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (40, 6, 36, 'edit-annotations', 'Add and edit text', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (41, 6, 36, 'edit-annotations', 'Edit polygon', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO "HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (42, 6, 36, 'edit-annotations', 'Delete a transcription', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (2, 2, NULL, 'manage-notebook', 'Introduction', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (3, 2, NULL, 'manage-notebook', 'Adding / removing notes', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (4, 2, NULL, 'manage-notebook', 'Saving notes', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (6, 3, NULL, NULL, 'Finalizing your registration', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (7, 4, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (8, 4, NULL, NULL, 'Sorting options', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (9, 4, NULL, NULL, 'Result options', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (10, 4, NULL, NULL, 'Advanced search query notations', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (11, 5, NULL, 'view-users-part', 'Userlist', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (13, 6, NULL, NULL, 'Basic viewer functionalities', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (1, 7, NULL, NULL, 'Edit profile', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (19, 6, NULL, NULL, 'Go to another page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (18, 6, 13, NULL, 'Reset the view', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (27, 6, NULL, NULL, 'Link to a page, book or binding', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (28, 7, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (29, 7, NULL, NULL, 'Buttons', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (30, 7, NULL, NULL, 'Login / logout', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (31, 7, NULL, 'change-global-settings', 'Admin help page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (5, 3, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (14, 6, 13, NULL, 'Zoom in', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (15, 6, 13, NULL, 'Zoom out', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (16, 6, 13, NULL, 'Move across page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (17, 6, 13, NULL, 'Rotate', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (20, 6, 19, NULL, 'Previous page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (21, 6, 19, NULL, 'Next page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (22, 6, 19, NULL, 'First page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (23, 6, 19, NULL, 'Start of a book', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (24, 6, 19, NULL, 'Last page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (25, 6, 19, NULL, 'Certain page number', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (26, 6, 19, NULL, 'Select a page', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (12, 6, NULL, NULL, 'Introduction', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (32, 8, NULL, 'upload-bindings', 'About uploading', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (33, 8, NULL, 'upload-bindings', 'Uploading books', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (34, 8, NULL, 'upload-bindings', 'Binding information', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (35, 8, NULL, 'upload-bindings', 'Book information', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (36, 6, NULL, NULL, 'Annotations', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (37, 6, 36, NULL, 'Read transcriptions of annotations', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (38, 6, 36, 'edit-annotations', 'Add and Edit transcriptions', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (39, 6, 36, 'add-annotations', 'Add transcription', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (40, 6, 36, 'edit-annotations', 'Add and edit text', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (41, 6, 36, 'edit-annotations', 'Edit polygon', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpParagraphId", "helpPageId", "paragraphParentId", "actionName", title, "createdOn", "createdBy", "changedOn", "changedBy", "settingName") VALUES (42, 6, 36, 'edit-annotations', 'Delete a transcription', NULL, NULL, NULL, NULL, NULL);
 
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (1, 2, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (1, 2, NULL, '<p>
     The notes functionality in this website allows users to keep personal notes on things like important details, references, ideas or quotes, without having to select a text editor. Not having to change programs means that the text in the browser will not be obscured, as often happens on small screens or at lower resolutions.
 </p>
 
 <p>
     The notes are available on various pages on the website and can be found in the Workspace sidebar, on the right side of the screen. The notes are personal, which means that nobody but you can read them, and you can''t read other users'' notes. The text is synchronized between all pages: any changes in the notes section on one page will also be made in the notes on all other pages. It is the real life equivalent of a single notebook on a desk next to a pile of books: no matter what book you open on one side, it will still have the single notebook next to it, unchanged.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (2, 3, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (2, 3, NULL, '<p>
 Adding notes is easy: simply click in the notes section and start typing. It works just like any other text field and supports features such as:
 </p>
 
@@ -503,13 +503,13 @@ Adding notes is easy: simply click in the notes section and start typing. It wor
 <p>
     Keep in mind that if you add or remove anything, the changes are applied to all the pages, not just the one you are currently viewing!
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (3, 4, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (3, 4, NULL, '<p>
     The latest version of your notes are saved in the system, and will still be there next time you log in. However, it is not designed to be the safest place for all your notes. It is only meant to keep your notes visible and in reach for easy access. It is always a good idea to back up any important notes you might write frequently to a local (or online) document. Then, if something goes wrong unexpectedly and the notes are lost, you will still have access to them.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (4, 6, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (4, 6, NULL, '<p>
     You will receive an email at the address you entered, containing a confirmation link. Please follow the link to finalize your registration. You should now be able to log in, and have access to all the features of the website.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (5, 7, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (5, 7, NULL, '<p>
     You can search for books by selecting what you want to limit your search to (''Author'', ''Title'', etc. or simply ''Any'') and then simply entering the search query in the textfield.
 </p>
 
@@ -528,20 +528,20 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     For more advanced search options, please see the list of **Advanced search query notations**.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (8, 10, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (8, 10, NULL, '<p>
     TODO
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (9, 11, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (9, 11, NULL, '<p>
     Logged in users can see the list of registered users by pressing the ''Users'' button. Here, you can see the public information of all the users, for example in case you want to check the correct spelling of a user''s name, or need to contact them.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (17, 30, NULL, '<ul>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (17, 30, NULL, '<ul>
     <li><b>Login:</b> To log in, first you need to **Register**. Once you have finished registration, simply press the button saying ''Login'', enter your username and password, and press ''Login''.</li>
     <li><b>Logout:</b> To log out, simply press the ''Logout'' button, which replaces the ''Log in'' button while you are logged in.</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (18, 31, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (18, 31, NULL, '<p>
     There is also an explanation for admins, available on **Admin**.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (19, 5, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (19, 5, NULL, '<p>
     After pressing the ''Register'' button, you will see a list of fields to fill out. All fields with a * after the description are mandatory. Some notes:
 </p>
 
@@ -554,15 +554,15 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     After reading and accepting the ''<a href="#termsofuse" title="Open terms of use">terms of use</a>'', please check the checkbox and press the ''Register'' button at the bottom of the page.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (27, 23, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (27, 23, NULL, '<p>
     You can go to the first page of a book through the book informatiion box.
 </p>
 <ul>
     <li>Open the book information box in the information sidebar to the left.</li>
     <li>Click on the page number displayed beneath the title of the book you want to go to.</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (36, 36, NULL, '', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (24, 20, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (36, 36, NULL, '', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (24, 20, NULL, '<p>
     To go to the previous page:
 </p>
 <ul>
@@ -571,7 +571,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     The button is to the left of the textfield displaying the current page number. This function is only available if there is a previous page to go to.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (37, 42, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (37, 42, NULL, '<p>
     To delete transcriptions, you must be in the edit mode.
 </p>
 <p>
@@ -584,7 +584,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     To make the delete permanent, you must save by clicking the ''save button'' in the annotations tab. You can also undo the deletion by clicking the ''reset'' button.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (38, 41, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (38, 41, NULL, '<p>
     To edit polygons, you must be in the edit mode.
 </p>
 <p>
@@ -628,7 +628,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     To save the changes, click the ''save'' button in the annotations tab.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (39, 40, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (39, 40, NULL, '<p>
     To add transcriptions, you must be in the edit mode.
 </p>
 <p>
@@ -676,7 +676,7 @@ Add and edit text
 <p>
     To save your work, click the ''save'' button in the annotations tab.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (40, 39, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (40, 39, NULL, '<p>
     To add transcriptions, you must be in the edit mode.
 </p>
 <p>
@@ -708,7 +708,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     To save your work, click the ''save'' button in the annotations tab.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (41, 37, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (41, 37, NULL, '<p>
     Users can mark annotations on the page and add transcriptions to them. A marked annotation has a wireframe surrounding it, which will light up when the mouse is moved over it.
 </p>
 <p>
@@ -724,7 +724,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Note:</b> Every anotation has a creation date and a last edited date. These can also be viewed in the annotations tab.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (42, 38, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (42, 38, NULL, '<p>
     To add or edit transcriptions, enter edit mode by clicking the ''edit mode'' button in the annotations tab.
 </p>
 <p>
@@ -739,26 +739,26 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li>**Edit wireframe||Viewer/Add and edit transcriptions/Edit polygon**</li>
     <li>**Delete a transcription||Viewer/Add and edit transcriptions/Delete a transcription**</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (6, 8, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (6, 8, NULL, '<p>
     To sort the list of results, there is a set of dropdown boxes in the Advanced options sidebar on the left side of the screen. To sort the list by one attribute, simply select it in the first dropdown box, and the list should be automatically sorted. If further sorting within this already sorted list is required, select another attribute in the second dropdown box. If necessary, a third can also be added.
 </p>
 
 <p>
     If you want to invert the sorting, for instance from Z to A or 999 to 1, simply check the checkbox to the right of the sorting you want to invert. The other sorting criteria will be unaffected.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (7, 9, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (7, 9, NULL, '<p>
     To change what attributes of the books in the list of search results are shown, go to the ''Result options'' in the Advanced options sidebar on the left side of the screen, below the ''**Sorting options||Search/Sorting options**''. To show or hide the attributes, simply check or uncheck the checkbox in front of the corresponding attribute name.
 </p>
 
 <p>
     In this menu you can also change how many results are shown per page: simply select the preferred amount in the dropdown box.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (32, 32, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (32, 32, NULL, '<p>
     As is to be expected, adding material to this website requires you to understand and agree with the terms and conditions. In particular, it is not allowed to upload scans if you do not have the permission to do so. Also, it is required that the scans have a high enough quality. The rules and specifics of uploading are detailed on the page that is shown when you press the ''Upload'' button at the top of the screen.
 
     After you have read the rules and agree with them, press ''Continue'' to progress to the actual uploading screen.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (33, 33, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (33, 33, NULL, '<p>
     Uploading books is done by selecting the scans of the books, entering the **information of the binding**, and finally entering the **information of any books** that might be contained within the binding.
 
     Uploading scans is done by pressing the ''Select scans'' button and selecting all the scan files (.tiff and .jpg are supported). The scans will automatically start uploading, and will be processed for viewing while you fill out the rest of the form below. If you need to add more scans, simply press the ''Select scans'' button again. Any scans you select will be added to the list of scans already uploading.
@@ -769,7 +769,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 
     Finally, once everything is done, press ''Continue'' to finalize the uploading process.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (34, 34, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (34, 34, NULL, '<p>
     As the scans are uploading and being processed by the system, you can fill out the binding information. The binding is the encompassing whole around any books that might be contained within, be it one or multiple. This part of the form contains the following fields:
 <ul>
     <li><b>Library:</b> the library in which the binding that is the source of the scans can be found. This is a mandatory field.</li>
@@ -778,7 +778,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li><b>Languages of annotations:</b> the languages in which the annotations are written. Simply open the dropdown box by clicking on it, (de)select the correct languages by clicking on them, then click outside the dropdown box to close it.</li>
 </ul>
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (35, 35, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (35, 35, NULL, '<p>
     If a binding contains one book, simply fill out the form as described below. If it contains multiple works bound together in a single binding, press the ''Add book'' button at the bottom until there are enough forms for every book. Press ''Delete book'' below the form you want to remove if you added too many. Make sure you do not remove the valid ones, or you will have to fill out the form again. If you are not sure, looking at the lines around the forms may help as a guideline to find out what button belongs with what form.
 
     The following fields are shown for every book:
@@ -792,7 +792,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li><b>Publisher/printer:</b> the publisher or printer that manufactured this copy of the book.</li>
 </ul>
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (31, 12, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (31, 12, NULL, '<p>
     The viewer is used to view scans, read and add transcriptions and download the books for study offline.
 </p>
 
@@ -808,7 +808,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li>**Read transcriptions of annotations||Viewer/Read transcriptions of annotations**</li>
     <li>**Add and edit transcriptions||Viewer/Add and edit transcriptions**</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (10, 13, NULL, '<p>What do you want to do?</p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (10, 13, NULL, '<p>What do you want to do?</p>
 <ul>
     <li>**Zoom in||Viewer/Basic viewer functionalities/Zoom in**</li>
     <li>**Zoom out||Viewer/Basic viewer functionalities/Zoom out**</li>
@@ -816,7 +816,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li>**Rotate||Viewer/Basic viewer functionalities/Rotate**</li>
     <li>**Reset the view||Viewer/Basic viewer functionalities/Reset the view**</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (20, 14, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (20, 14, NULL, '<p>
     When the page is first displayed in the viewer, it will be in a standard zoom: the whole page is visible on the screen. To get a better view of the page and details you are interested in, you can zoom in.
 </p>
 <p>
@@ -854,7 +854,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Tip:</b> You can also change the zoom by clicking on the bar of the zoom slider. The slider will be moved to that point and the zoom adjusted accordingly.</p>
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (21, 15, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (21, 15, NULL, '<p>
     There are three ways of zooming out:
 </p>
 <ul>
@@ -882,7 +882,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Tip:</b> You can also reset the zoom and rotation with the **reset the view** function.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (22, 16, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (22, 16, NULL, '<p>
     There are two ways to move the view of a page:
 </p>
 <ul>
@@ -904,7 +904,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Tip:</b> The navigation box displays a red square on the page thumbnail of the current page, showing where you are.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (23, 17, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (23, 17, NULL, '<p>
     There are two types of rotation. The crude rotation with buttons, from the buttons bar, and the more refined mouse rotation, which allows for very precise rotating.
 </p>
 <ul>
@@ -929,7 +929,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Tip:</b> When you want to set the page straight again, you can use the **reset the view||Viewer/Reset the view** function to easely undo the rotation and zooming.</li>
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (13, 18, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (13, 18, NULL, '<p>
     Reset the view is used to undo zooming and rotating. It restores the page to the view it was first presented in.
 </p>
 <p>
@@ -939,7 +939,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li>Click the reset view button on the buttons bar, to the right of the last page button.</li>
     <li>Press the home key on your keyboard.</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (12, 19, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (12, 19, NULL, '<p>
     Where in the binding do you want to go?
 </p>
 <ul>
@@ -950,7 +950,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li>**Certain page number||Viewer/Go to another page/Certain page number**</li>
     <li>**Select a page||Viewer/Go to another page/Select a page**</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (25, 21, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (25, 21, NULL, '<p>
     To go to the next page:
 </p>
 <ul>
@@ -959,7 +959,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     The button is to the right of the textfield displaying the current page number. This function is only available if there is a next page.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (26, 22, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (26, 22, NULL, '<p>
     With an easy press of a button, you can go straight to the first page in the binding.
 </p>
 <ul>
@@ -968,7 +968,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     The first page button is on the buttons bar, to the left of the next page button. This function is unavailable if the first page is already being displayed in the viewer.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (28, 24, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (28, 24, NULL, '<p>
     You can skip straight to the end of the binding.
 </p>
 <ul>
@@ -977,7 +977,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     The last page button is on the buttons bar, to the right of the next page button. This function is unavaileble if the last page is already being displayed.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (29, 25, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (29, 25, NULL, '<p>
     To directly go to a certain page:
 </p>
 <ol>
@@ -993,7 +993,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Tip:</b>  You can also **select a page||Viewer/Select a page** in the book navigation box. 
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (30, 26, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (30, 26, NULL, '<p>
     To quickly find an interesting looking page, you can use the navigation box in the information sidebar.
 </p>
 <ol>
@@ -1004,7 +1004,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Tip:</b> Also note that the currently being viewed page has a red border marking the part of the page visible in the viewer.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (14, 27, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (14, 27, NULL, '<p>
     For referring to a certain page, book or binding, there is the reference box in the information sidebar, which supplies links to each of these.
 </p>
 
@@ -1028,14 +1028,14 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
 <p>
     <b>Tip:</b> The pages and transcriptions online can change over time. If you want a secure copy of the page and transcriptions, you should **export to pdf**.
 </p>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (15, 28, NULL, '<ul>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (15, 28, NULL, '<ul>
     <li>All main functionality on this website is accessed through the buttons at the top of the page.</li>
     <li>The buttons will open new tabs, which will show up below the buttons. Click on them to open the page, or press the small ''x'' in the corner of a tab to close that tab.</li>
     <li>As a guest, you will see only a few buttons. Registered users will have more permissions, and once logged in will be able to see and click on more buttons to access additional functions. It is therefore recommended to start out by **registering||Register**, although registration is not needed for simply viewing the books.</li>
     <li>If you ever need help, simply press the ''Help'' button. It will open with information related to the page you were on while pressing the button.</li>
     <li>Many pages have sidebars: these contain extra functionalities and information concerning the current page. Pressing the arrow button at the top right of these sidebars will fold them away, or show them again. On some screens, you can change the width of the sidebars by left-clicking on the edge and dragging it left or right.</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (16, 29, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (16, 29, NULL, '<p>
     The following is a short explanation of all the buttons. Some of these are only available and visible to logged in users. Click on the links for further details.
 </p>
 
@@ -1050,7 +1050,7 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     <li><b>Forgot password?:</b> If you have forgotten your password, you can retrieve it here. </li>
     <li><b>**Edit profile||Edit profile**:</b> To change personal information or your password.</li>
 </ul>', NULL, NULL, NULL, NULL);
-INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (11, 1, NULL, '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpContentId", "helpParagraphId", "settingValue", content, "createdOn", "createdBy", "changedOn", "changedBy") VALUES (11, 1, NULL, '<p>
     In case you ever want to change your password or the personal information you entered during **Register||registering**, simply press the ''Edit profile'' button while logged in. It will open a popup window in which you can edit your email address, first and last name, affiliation, occupation, website and password.
 </p>
 
@@ -1058,54 +1058,54 @@ INSERT INTO "HelpContents" ("helpContentId", "helpParagraphId", "settingValue", 
     In case you wish to change your password, make sure to fill in the ''Current password'' field as well as ''New password'' (and repeating the new password in the ''Repeat password'' field). This is an extra security check.
 </p>', NULL, NULL, NULL, NULL);
 
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (1, 'Albanian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (2, 'Arabic', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (3, 'Aramaic', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (4, 'Belarusian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (5, 'Bulgarian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (6, 'Celtic', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (7, 'Chinese', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (8, 'Croatian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (9, 'Czech', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (10, 'Danish', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (11, 'Dutch', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (12, 'English', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (13, 'Estonian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (14, 'Finnish', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (15, 'French', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (16, 'German', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (17, 'Greek', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (18, 'Hebrew', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (19, 'Hungarian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (20, 'Icelandic', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (21, 'Irish', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (22, 'Italian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (23, 'Japanese', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (24, 'Latvian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (25, 'Lithuanian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (26, 'Macedonian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (27, 'Maltese', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (28, 'Norwegian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (29, 'Persian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (30, 'Polish', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (31, 'Portuguese', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (32, 'Romanian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (33, 'Russian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (34, 'Sanskrit', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (35, 'Serbian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (36, 'Slovak', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (37, 'Slovenian', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (38, 'Spanish', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (39, 'Syriac', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (40, 'Turkish', NULL, NULL, NULL, NULL);
-INSERT INTO "Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (41, 'Urkainian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (1, 'Albanian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (2, 'Arabic', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (3, 'Aramaic', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (4, 'Belarusian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (5, 'Bulgarian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (6, 'Celtic', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (7, 'Chinese', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (8, 'Croatian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (9, 'Czech', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (10, 'Danish', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (11, 'Dutch', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (12, 'English', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (13, 'Estonian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (14, 'Finnish', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (15, 'French', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (16, 'German', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (17, 'Greek', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (18, 'Hebrew', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (19, 'Hungarian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (20, 'Icelandic', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (21, 'Irish', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (22, 'Italian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (23, 'Japanese', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (24, 'Latvian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (25, 'Lithuanian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (26, 'Macedonian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (27, 'Maltese', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (28, 'Norwegian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (29, 'Persian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (30, 'Polish', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (31, 'Portuguese', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (32, 'Romanian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (33, 'Russian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (34, 'Sanskrit', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (35, 'Serbian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (36, 'Slovak', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (37, 'Slovenian', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (38, 'Spanish', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (39, 'Syriac', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (40, 'Turkish', NULL, NULL, NULL, NULL);
+INSERT INTO "##PREFIX##Languages" ("languageId", "languageName", "createdOn", "createdBy", "changedOn", "changedBy") VALUES (41, 'Urkainian', NULL, NULL, NULL, NULL);
 
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('activation-mail-subject', 'Activation of your account', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('user-declined-mail-subject', 'Account activation has been declined', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('deleted-user-id', '1', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('forgotpass-mail-subject', 'Restoration of your password', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('mail-from-address', 'no-reply@sp.urandom.nl', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('activation-mail-message', 'Dear Mr./Ms. [LASTNAME],
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('activation-mail-subject', 'Activation of your account', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('user-declined-mail-subject', 'Account activation has been declined', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('deleted-user-id', '1', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('forgotpass-mail-subject', 'Restoration of your password', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('mail-from-address', 'no-reply@sp.urandom.nl', NULL, NULL, NULL, NULL, FALSE);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('activation-mail-message', 'Dear Mr./Ms. [LASTNAME],
 
 Your registration for [PROJECTNAME] has been accepted. Your username is [USERNAME].
 
@@ -1118,7 +1118,7 @@ If clicking this link does not work, try to copy and paste it into the address b
 
 Regards,
 The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('forgotpass-mail-message', 'Dear Mr./Ms. [LASTNAME],
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('forgotpass-mail-message', 'Dear Mr./Ms. [LASTNAME],
 
 This e-mail has been send to you because you indicated you had forgotten your password for [PROJECTNAME]. If this is not the case, please ignore this message.
 
@@ -1134,15 +1134,15 @@ If clicking this link does not work, try to copy and paste it into the address b
 
 Regards,
 The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('user-declined-mail-message', 'Dear Mr./Ms. [LASTNAME],
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('user-declined-mail-message', 'Dear Mr./Ms. [LASTNAME],
 
 Unfortunately your registration for [PROJECTNAME] has been declined. For more information, please contact the webmaster.
 
 Regards,
 The [PROJECTNAME] Team', NULL, NULL, NULL, NULL, FALSE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('auto-user-acceptance', '1', NULL, NULL, NULL, NULL, TRUE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('project-title', 'Annotated Books Online', NULL, NULL, NULL, NULL, TRUE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('welcome-page', '<h2>Welcome</h2>
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('auto-user-acceptance', '1', NULL, NULL, NULL, NULL, TRUE);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('project-title', 'Annotated Books Online', NULL, NULL, NULL, NULL, TRUE);
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('welcome-page', '<h2>Welcome</h2>
 
 <p>Historical readers left many traces in the books they owned. Names, notes, marks, and underlining provide unique evidence of how generations of readers used their books. Annotated Books Online gives full access to these unique copies. Focusing on the first three centuries of print, it enables scholars and students interested in the history of reading to collect, view and study reading practices. User tools include extensive search, viewing and annotating options.</p>
 
@@ -1151,21 +1151,21 @@ INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy",
 <a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton.png" style="height: 65px"/></a>
 <a href="http://www.ugent.be/en" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent.png" style="height: 100px"/></a>
 <a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>', NULL, NULL, NULL, NULL, TRUE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('terms-of-use', '<h2>Terms of Use</h2>
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('terms-of-use', '<h2>Terms of Use</h2>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
 <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
 
 <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>', NULL, NULL, NULL, NULL, TRUE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('upload-instructions', '<h2>About this collaboratory</h2>
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('upload-instructions', '<h2>About this collaboratory</h2>
 
 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
 <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
 
 <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>', NULL, NULL, NULL, NULL, TRUE);
-INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('info-page', '<h2>About the project</h2>
+INSERT INTO "##PREFIX##Settings" ("settingName", "settingValue", "createdOn", "createdBy", "changedOn", "changedBy", visible) VALUES ('info-page', '<h2>About the project</h2>
 
 <p>Annotated Books Online is a virtual research environment for scholars and students interested in historical reading practices. It is part of the research project "A Collaboratory for the Study of Reading and the Circulation of Ideas in Early Modern Europe" funded by the Dutch National Research Council (NWO). Generous additional funding was provided by Professor Anthony Grafton for the edition of Gabriel Harvey''s annotations to Livy (Mellon Foundation).</p>
 
@@ -1211,9 +1211,9 @@ INSERT INTO "Settings" ("settingName", "settingValue", "createdOn", "createdBy",
 
 <p>For more information, contact Arnoud Visser, <a href="mailto:a.s.q.visser@uu.nl">a.s.q.visser@uu.nl</a> </p>', NULL, NULL, NULL, NULL, TRUE);
 
-INSERT INTO "Users" ("userId", username, "passwordHash", email, "firstName", "lastName", affiliation, occupation, website, "homeAddress", banned, rank, "createdOn", "createdBy", "changedOn", "changedBy", "passwordRestoreToken", "activationStage", "registrationDate", "lastActive") VALUES (1, '<deleted user>', '', '', NULL, NULL, NULL, NULL, NULL, NULL, TRUE, 0, NULL, NULL, NULL, NULL, NULL, 3, '2012-02-07', '2012-02-07 21:57:19.525202');
+INSERT INTO "##PREFIX##Users" ("userId", username, "passwordHash", email, "firstName", "lastName", affiliation, occupation, website, "homeAddress", banned, rank, "createdOn", "createdBy", "changedOn", "changedBy", "passwordRestoreToken", "activationStage", "registrationDate", "lastActive") VALUES (1, '<deleted user>', '', '', NULL, NULL, NULL, NULL, NULL, NULL, TRUE, 0, NULL, NULL, NULL, NULL, NULL, 3, '2012-02-07', '2012-02-07 21:57:19.525202');
 
-CREATE TABLE "AnnotationsFT" (
+CREATE TABLE "##PREFIX##AnnotationsFT" (
     "annotationId" integer NOT NULL,
     "text" text NOT NULL,
     
@@ -1221,7 +1221,7 @@ CREATE TABLE "AnnotationsFT" (
     FULLTEXT ("text")
 ) ENGINE=MyISAM;
 
-CREATE TABLE "BooksFT" (
+CREATE TABLE "##PREFIX##BooksFT" (
     "bookId" integer NOT NULL,
     "text" text NOT NULL,
     
@@ -1231,79 +1231,79 @@ CREATE TABLE "BooksFT" (
 
 delimiter $$
 
-CREATE FUNCTION authornames(bookid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##authornames(bookid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
-        WHERE "Persons"."personId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Persons"."name" SEPARATOR ', ') INTO result FROM "##PREFIX##Persons"
+        WHERE "##PREFIX##Persons"."personId" IN
         (
-            SELECT "Authors"."personId" FROM "Authors" WHERE "Authors"."bookId" = bookid
+            SELECT "##PREFIX##Authors"."personId" FROM "##PREFIX##Authors" WHERE "##PREFIX##Authors"."bookId" = bookid
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION bindinglanguagenames(bindingid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##bindinglanguagenames(bindingid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
-        WHERE "Languages"."languageId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Languages"."languageName" SEPARATOR ', ') INTO result FROM "##PREFIX##Languages"
+        WHERE "##PREFIX##Languages"."languageId" IN
         (
-            SELECT "BindingLanguages"."languageId" FROM "BindingLanguages" WHERE "BindingLanguages"."bindingId" = bindingid
+            SELECT "##PREFIX##BindingLanguages"."languageId" FROM "##PREFIX##BindingLanguages" WHERE "##PREFIX##BindingLanguages"."bindingId" = bindingid
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION booklanguagenames(bookid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##booklanguagenames(bookid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Languages"."languageName" SEPARATOR ', ') INTO result FROM "Languages"
-        WHERE "Languages"."languageId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Languages"."languageName" SEPARATOR ', ') INTO result FROM "##PREFIX##Languages"
+        WHERE "##PREFIX##Languages"."languageId" IN
         (
-            SELECT "BookLanguages"."languageId" FROM "BookLanguages" WHERE "BookLanguages"."bookId" = bookid
+            SELECT "##PREFIX##BookLanguages"."languageId" FROM "##PREFIX##BookLanguages" WHERE "##PREFIX##BookLanguages"."bookId" = bookid
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION provenancenames(bindingid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##provenancenames(bindingid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT GROUP_CONCAT("Persons"."name" SEPARATOR ', ') INTO result FROM "Persons"
-        WHERE "Persons"."personId" IN
+        SELECT GROUP_CONCAT("##PREFIX##Persons"."name" SEPARATOR ', ') INTO result FROM "##PREFIX##Persons"
+        WHERE "##PREFIX##Persons"."personId" IN
         (
-            SELECT "Provenances"."personId" FROM "Provenances" WHERE "Provenances"."bindingId" = bindingid
+            SELECT "##PREFIX##Provenances"."personId" FROM "##PREFIX##Provenances" WHERE "##PREFIX##Provenances"."bindingId" = bindingid
         );
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION annotationtext(annotationid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##annotationtext(annotationid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
     SQL SECURITY INVOKER
     BEGIN
         DECLARE result text;
-        SELECT CONCAT("transcriptionEng", ' ', "transcriptionOrig") INTO result FROM "Annotations"
-        WHERE "Annotations"."annotationId" = annotationid;
+        SELECT CONCAT("transcriptionEng", ' ', "transcriptionOrig") INTO result FROM "##PREFIX##Annotations"
+        WHERE "##PREFIX##Annotations"."annotationId" = annotationid;
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION booktext(bookid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##booktext(bookid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
@@ -1312,21 +1312,21 @@ CREATE FUNCTION booktext(bookid integer) RETURNS text
         DECLARE result text;
         SELECT CONCAT_WS(' ',
             "title",
-            authorNames("bookId"),
+            ##PREFIX##authorNames("bookId"),
             "publisher",
             "placePublished",
-            bookLanguageNames("bookId"),
-            provenanceNames("bindingId"),
-            (SELECT "libraryName" FROM "Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId")),
-            (SELECT "signature" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId"),
-            bindingLanguageNames("bindingId"),
-            bookAnnotationText("bookId")
-        ) INTO result FROM "Books"
+            ##PREFIX##bookLanguageNames("bookId"),
+            ##PREFIX##provenanceNames("bindingId"),
+            (SELECT "libraryName" FROM "##PREFIX##Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "##PREFIX##Bindings" WHERE "##PREFIX##Books"."bindingId" = "##PREFIX##Bindings"."bindingId")),
+            (SELECT "signature" FROM "##PREFIX##Bindings" WHERE "##PREFIX##Books"."bindingId" = "##PREFIX##Bindings"."bindingId"),
+            ##PREFIX##bindingLanguageNames("bindingId"),
+            ##PREFIX##bookAnnotationText("bookId")
+        ) INTO result FROM "##PREFIX##Books"
         WHERE "bookId" = bookid;
         RETURN COALESCE(result, '');
     END $$
 
-CREATE FUNCTION bookannotationtext(bookid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##bookannotationtext(bookid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
@@ -1334,13 +1334,13 @@ CREATE FUNCTION bookannotationtext(bookid integer) RETURNS text
     BEGIN
         DECLARE result text;
         SELECT GROUP_CONCAT(annft.text SEPARATOR ' ') INTO result
-        FROM "Books" JOIN (SELECT * FROM "Scans" ORDER BY page ASC) scans
-            ON "Books"."bindingId" = scans."bindingId"
+        FROM "##PREFIX##Books" JOIN (SELECT * FROM "##PREFIX##Scans" ORDER BY page ASC) scans
+            ON "##PREFIX##Books"."bindingId" = scans."bindingId"
             AND "page" >= "firstPage"
             AND "page" <= "lastPage"
-        LEFT JOIN "Annotations" annotations
+        LEFT JOIN "##PREFIX##Annotations" annotations
             ON annotations."scanId" = scans."scanId"
-        LEFT JOIN "AnnotationsFT" annft
+        LEFT JOIN "##PREFIX##AnnotationsFT" annft
             ON annft."annotationId" = annotations."annotationId"
         WHERE "bookId" = bookid;
         RETURN result;
@@ -1348,46 +1348,46 @@ CREATE FUNCTION bookannotationtext(bookid integer) RETURNS text
 
 -- Annotations
 
-CREATE TRIGGER "AnnotationsFulltextInsert" AFTER INSERT ON "Annotations"
+CREATE TRIGGER "##PREFIX##AnnotationsFulltextInsert" AFTER INSERT ON "##PREFIX##Annotations"
   FOR EACH ROW BEGIN
     DECLARE pagenr integer;
     DECLARE binding integer;
-    INSERT INTO "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId"), "annotationId" = NEW."annotationId";
-    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = NEW."scanId";
-    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = NEW."scanId";
-    UPDATE "Books"
+    INSERT INTO "##PREFIX##AnnotationsFT" SET "text" = ##PREFIX##annotationtext(NEW."annotationId"), "annotationId" = NEW."annotationId";
+    SELECT page INTO pagenr FROM "##PREFIX##Scans" WHERE "scanId" = NEW."scanId";
+    SELECT "bindingId" INTO binding FROM "##PREFIX##Scans" WHERE "scanId" = NEW."scanId";
+    UPDATE "##PREFIX##Books"
         SET "bookId" = "bookId"
-        WHERE "Books"."bindingId" = binding
+        WHERE "##PREFIX##Books"."bindingId" = binding
             AND pagenr >= "firstPage"
             AND pagenr <= "lastPage";
   END;
 $$
 
-CREATE TRIGGER "AnnotationsFulltextUpdate" AFTER UPDATE ON "Annotations"
+CREATE TRIGGER "##PREFIX##AnnotationsFulltextUpdate" AFTER UPDATE ON "##PREFIX##Annotations"
   FOR EACH ROW BEGIN
     DECLARE pagenr integer;
     DECLARE binding integer;
-    UPDATE "AnnotationsFT" SET "text" = annotationtext(NEW."annotationId") WHERE "annotationId" = NEW."annotationId";
-    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = NEW."scanId";
-    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = NEW."scanId";
-    UPDATE "Books"
+    UPDATE "##PREFIX##AnnotationsFT" SET "text" = ##PREFIX##annotationtext(NEW."annotationId") WHERE "annotationId" = NEW."annotationId";
+    SELECT page INTO pagenr FROM "##PREFIX##Scans" WHERE "scanId" = NEW."scanId";
+    SELECT "bindingId" INTO binding FROM "##PREFIX##Scans" WHERE "scanId" = NEW."scanId";
+    UPDATE "##PREFIX##Books"
         SET "bookId" = "bookId"
-        WHERE "Books"."bindingId" = binding
+        WHERE "##PREFIX##Books"."bindingId" = binding
             AND pagenr >= "firstPage"
             AND pagenr <= "lastPage";
   END;
 $$
 
-CREATE TRIGGER "AnnotationsFulltextDelete" AFTER DELETE ON "Annotations"
+CREATE TRIGGER "##PREFIX##AnnotationsFulltextDelete" AFTER DELETE ON "##PREFIX##Annotations"
   FOR EACH ROW BEGIN
     DECLARE pagenr integer;
     DECLARE binding integer;
-    DELETE FROM "AnnotationsFT" WHERE "annotationId" = OLD."annotationId";
-    SELECT page INTO pagenr FROM "Scans" WHERE "scanId" = OLD."scanId";
-    SELECT "bindingId" INTO binding FROM "Scans" WHERE "scanId" = OLD."scanId";
-    UPDATE "Books"
+    DELETE FROM "##PREFIX##AnnotationsFT" WHERE "annotationId" = OLD."annotationId";
+    SELECT page INTO pagenr FROM "##PREFIX##Scans" WHERE "scanId" = OLD."scanId";
+    SELECT "bindingId" INTO binding FROM "##PREFIX##Scans" WHERE "scanId" = OLD."scanId";
+    UPDATE "##PREFIX##Books"
         SET "bookId" = "bookId"
-        WHERE "Books"."bindingId" = binding
+        WHERE "##PREFIX##Books"."bindingId" = binding
             AND pagenr >= "firstPage"
             AND pagenr <= "lastPage";
   END;
@@ -1396,39 +1396,39 @@ $$
 
 -- Books
 
-CREATE TRIGGER "BooksFulltextInsert" AFTER INSERT ON "Books"
+CREATE TRIGGER "##PREFIX##BooksFulltextInsert" AFTER INSERT ON "##PREFIX##Books"
   FOR EACH ROW BEGIN
-    INSERT INTO "BooksFT" SET "text" = booktext(NEW."bookId"), "bookId" = NEW."bookId";
+    INSERT INTO "##PREFIX##BooksFT" SET "text" = ##PREFIX##booktext(NEW."bookId"), "bookId" = NEW."bookId";
   END;
 $$
 
-CREATE TRIGGER "BooksFulltextUpdate" AFTER UPDATE ON "Books"
+CREATE TRIGGER "##PREFIX##BooksFulltextUpdate" AFTER UPDATE ON "##PREFIX##Books"
   FOR EACH ROW BEGIN
-    UPDATE "BooksFT" SET "text" = booktext(NEW."bookId") WHERE "bookId" = NEW."bookId";
+    UPDATE "##PREFIX##BooksFT" SET "text" = ##PREFIX##booktext(NEW."bookId") WHERE "bookId" = NEW."bookId";
   END;
 $$
 
-CREATE TRIGGER "BooksFulltextDelete" AFTER DELETE ON "Books"
+CREATE TRIGGER "##PREFIX##BooksFulltextDelete" AFTER DELETE ON "##PREFIX##Books"
   FOR EACH ROW BEGIN
-    DELETE FROM "BooksFT" WHERE "bookId" = OLD."bookId";
+    DELETE FROM "##PREFIX##BooksFT" WHERE "bookId" = OLD."bookId";
   END;
 $$
 
 -- Bindings
 
-CREATE TRIGGER "BindingsFulltextUpdate" AFTER UPDATE ON "Bindings"
+CREATE TRIGGER "##PREFIX##BindingsFulltextUpdate" AFTER UPDATE ON "##PREFIX##Bindings"
   FOR EACH ROW BEGIN
-    UPDATE "BooksFT" SET "text" = booktext("bookId") WHERE "bookId" IN (SELECT "bookId" FROM "Books" WHERE "bindingId" = NEW."bindingId");
+    UPDATE "##PREFIX##BooksFT" SET "text" = ##PREFIX##booktext("bookId") WHERE "bookId" IN (SELECT "bookId" FROM "##PREFIX##Books" WHERE "bindingId" = NEW."bindingId");
   END;
 $$
 
 delimiter ;
 
-DROP FUNCTION booktext;
+DROP FUNCTION ##PREFIX##booktext;
 
 DELIMITER $$
 
-CREATE FUNCTION booktext(bookid integer) RETURNS text
+CREATE FUNCTION ##PREFIX##booktext(bookid integer) RETURNS text
     LANGUAGE SQL
     DETERMINISTIC
     READS SQL DATA
@@ -1437,17 +1437,17 @@ CREATE FUNCTION booktext(bookid integer) RETURNS text
         DECLARE result text;
         SELECT CONCAT_WS(' ',
             "title",
-            authorNames("bookId"),
+            ##PREFIX##authorNames("bookId"),
             "publisher",
             "placePublished",
-            bookLanguageNames("bookId"),
-            provenanceNames("bindingId"),
-            (SELECT "libraryName" FROM "Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId" AND "Books"."bookId" = bookid)),
-            (SELECT "signature" FROM "Bindings" WHERE "Books"."bindingId" = "Bindings"."bindingId" AND "Books"."bookId" = bookid),
-            bindingLanguageNames("bindingId"),
-            bookAnnotationText("bookId")
-        ) INTO result FROM "Books"
-        WHERE "Books"."bookId" = bookid;
+            ##PREFIX##bookLanguageNames("bookId"),
+            ##PREFIX##provenanceNames("bindingId"),
+            (SELECT "libraryName" FROM "##PREFIX##Libraries" WHERE "libraryId" IN (SELECT "libraryId" FROM "##PREFIX##Bindings" WHERE "##PREFIX##Books"."bindingId" = "##PREFIX##Bindings"."bindingId" AND "##PREFIX##Books"."bookId" = bookid)),
+            (SELECT "signature" FROM "##PREFIX##Bindings" WHERE "##PREFIX##Books"."bindingId" = "##PREFIX##Bindings"."bindingId" AND "##PREFIX##Books"."bookId" = bookid),
+            ##PREFIX##bindingLanguageNames("bindingId"),
+            ##PREFIX##bookAnnotationText("bookId")
+        ) INTO result FROM "##PREFIX##Books"
+        WHERE "##PREFIX##Books"."bookId" = bookid;
         RETURN COALESCE(result, '');
     END $$
 
@@ -1455,7 +1455,7 @@ DELIMITER ;
 
 delimiter $$
 
-CREATE FUNCTION splitspaces(document text, pos integer)
+CREATE FUNCTION ##PREFIX##splitspaces(document text, pos integer)
     RETURNS text
     DETERMINISTIC
     BEGIN
@@ -1465,7 +1465,7 @@ CREATE FUNCTION splitspaces(document text, pos integer)
         END IF;
     END $$
 
-CREATE FUNCTION headline(document text, query text, num integer)
+CREATE FUNCTION ##PREFIX##headline(document text, query text, num integer)
     RETURNS text
     DETERMINISTIC
     BEGIN
@@ -1489,7 +1489,7 @@ CREATE FUNCTION headline(document text, query text, num integer)
         SET x = 0;
         REPEAT
             SET x = x + 1;
-            SET word = splitspaces(document, x);
+            SET word = ##PREFIX##splitspaces(document, x);
             IF word IS NOT NULL
                 THEN INSERT INTO fts_tmp_table SET pos = x, txt = word;
             END IF;
@@ -1521,7 +1521,7 @@ CREATE FUNCTION headline(document text, query text, num integer)
         RETURN result;
     END $$
 
-CREATE FUNCTION fulltextsearch(document text, query text)
+CREATE FUNCTION ##PREFIX##fulltextsearch(document text, query text)
     RETURNS float
     DETERMINISTIC
     BEGIN

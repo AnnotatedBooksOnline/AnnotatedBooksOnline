@@ -1,31 +1,31 @@
 ﻿BEGIN TRANSACTION;
 
 --Insert Annotations into HelpPages
-INSERT INTO "HelpParagraphs" ("helpPageId", "title") VALUES ((SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Viewer'), 'Annotations');
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpPageId", "title") VALUES ((SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Viewer'), 'Annotations');
 
 --Insert Annotations subparagraphs into HelpParagraphs
-INSERT INTO "HelpParagraphs" ("helpPageId", "paragraphParentId", "title") VALUES ((SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Viewer'),
-(SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE "title" = 'Annotations'), 'Read transcriptions of annotations');
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpPageId", "paragraphParentId", "title") VALUES ((SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Viewer'),
+(SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE "title" = 'Annotations'), 'Read transcriptions of annotations');
 
-INSERT INTO "HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Viewer'),
-(SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE "title" = 'Annotations'), 'Add and Edit transcriptions', 'edit-annotations');
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Viewer'),
+(SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE "title" = 'Annotations'), 'Add and Edit transcriptions', 'edit-annotations');
 
-INSERT INTO "HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Viewer'),
-(SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE "title" = 'Annotations'), 'Add transcription', 'add-annotations');
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Viewer'),
+(SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE "title" = 'Annotations'), 'Add transcription', 'add-annotations');
 
-INSERT INTO "HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Viewer'),
-(SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE "title" = 'Annotations'), 'Add and edit text', 'edit-annotations');
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Viewer'),
+(SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE "title" = 'Annotations'), 'Add and edit text', 'edit-annotations');
 
-INSERT INTO "HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Viewer'),
-(SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE "title" = 'Annotations'), 'Edit polygon', 'edit-annotations');
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Viewer'),
+(SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE "title" = 'Annotations'), 'Edit polygon', 'edit-annotations');
 
-INSERT INTO "HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "HelpPages" WHERE "pageName" = 'Viewer'),
-(SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE "title" = 'Annotations'), 'Delete a transcription', 'edit-annotations');
+INSERT INTO "##PREFIX##HelpParagraphs" ("helpPageId", "paragraphParentId", "title", "actionName") VALUES ((SELECT "helpPageId" FROM "##PREFIX##HelpPages" WHERE "pageName" = 'Viewer'),
+(SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE "title" = 'Annotations'), 'Delete a transcription', 'edit-annotations');
 
 --Insert Annotations into HelpContents
-INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE title = 'Annotations'), '');
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE title = 'Annotations'), '');
 
-INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE title = 'Delete a transcription'), '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE title = 'Delete a transcription'), '<p>
     To delete transcriptions, you must be in the edit mode.
 </p>
 <p>
@@ -39,7 +39,7 @@ INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpPa
     To make the delete permanent, you must save by clicking the ''save button'' in the annotations tab. You can also undo the deletion by clicking the ''reset'' button.
 </p>');
 
-INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE title = 'Edit polygon'), '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE title = 'Edit polygon'), '<p>
     To edit polygons, you must be in the edit mode.
 </p>
 <p>
@@ -84,7 +84,7 @@ INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpPa
     To save the changes, click the ''save'' button in the annotations tab.
 </p>');
 
-INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE title = 'Add and edit text'), '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE title = 'Add and edit text'), '<p>
     To add transcriptions, you must be in the edit mode.
 </p>
 <p>
@@ -133,7 +133,7 @@ Add and edit text
     To save your work, click the ''save'' button in the annotations tab.
 </p>');
 
-INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE title = 'Add transcription'), '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE title = 'Add transcription'), '<p>
     To add transcriptions, you must be in the edit mode.
 </p>
 <p>
@@ -166,7 +166,7 @@ INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpPa
     To save your work, click the ''save'' button in the annotations tab.
 </p>');
 
-INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE title = 'Read transcriptions of annotations'), '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE title = 'Read transcriptions of annotations'), '<p>
     Users can mark annotations on the page and add transcriptions to them. A marked annotation has a wireframe surrounding it, which will light up when the mouse is moved over it.
 </p>
 <p>
@@ -183,7 +183,7 @@ INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpPa
     <b>Note:</b> Every anotation has a creation date and a last edited date. These can also be viewed in the annotations tab.
 </p>');
 
-INSERT INTO "HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "HelpParagraphs" WHERE title = 'Add and Edit transcriptions'), '<p>
+INSERT INTO "##PREFIX##HelpContents" ("helpParagraphId", content) VALUES  ((SELECT "helpParagraphId" FROM "##PREFIX##HelpParagraphs" WHERE title = 'Add and Edit transcriptions'), '<p>
     To add or edit transcriptions, enter edit mode by clicking the ''edit mode'' button in the annotations tab.
 </p>
 <p>

@@ -2,7 +2,7 @@ BEGIN TRANSACTION;
  
 -- Add Notes table.
  
-CREATE TABLE "Notes"
+CREATE TABLE "##PREFIX##Notes"
 (
     "userId" integer NOT NULL,
     "text" text, 
@@ -14,7 +14,7 @@ CREATE TABLE "Notes"
     
     PRIMARY KEY ("userId"),
     FOREIGN KEY ("userId")
-        REFERENCES "Users"
+        REFERENCES "##PREFIX##Users"
 );
  
 COMMIT;

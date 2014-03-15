@@ -7,6 +7,6 @@ USE abo;
 START TRANSACTION;
 
 -- Drop the UNIQUE constraint on signature and libraryId.
-DROP INDEX "signature" ON "Bindings";
+DROP INDEX "signature" ON "##PREFIX##Bindings";
 
 COMMIT;

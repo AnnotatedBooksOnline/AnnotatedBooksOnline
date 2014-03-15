@@ -1,7 +1,7 @@
 BEGIN TRANSACTION;
 
 -- Add links to logos for welcome page
-UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
+UPDATE "##PREFIX##Settings" SET "settingValue" = '<h2>Welcome</h2>
 
 <p>This project seeks to develop a virtual research environment (or collaboratory) and publication platform for a young and growing field in cultural history: the study of early modern reading practices. Proceeding from the idea that reading constitutes a crucial form of intellectual exchange, the collaborators will collect and enhance evidence of how readers used their books to build knowledge and assimilate ideas. This is especially pertinent since the early modern period, just like the twenty-first century, saw the revolutionary rise of a new medium of communication which helped shape cultural formation and intellectual freedom.</p>
 
@@ -13,6 +13,6 @@ UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
 <a href="http://www.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva.png" style="height: 60px"/></a>
 <a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton.png" style="height: 65px"/></a>
 <a href="http://www.ugent.be/" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent.png" style="height: 100px"/></a>
-<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>' WHERE "settingName" = 'welcome-page';
+<a href="http://www.livesandletters.ac.uk/" target="_blank" title="##PREFIX##Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>' WHERE "settingName" = 'welcome-page';
 
 COMMIT;

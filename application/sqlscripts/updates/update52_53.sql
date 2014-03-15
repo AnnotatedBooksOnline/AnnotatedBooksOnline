@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 
-ALTER TABLE "Bindings" ADD COLUMN "userId" integer;
-ALTER TABLE "Bindings" ADD FOREIGN KEY ("userId") REFERENCES "Users";
+ALTER TABLE "##PREFIX##Bindings" ADD COLUMN "userId" integer;
+ALTER TABLE "##PREFIX##Bindings" ADD FOREIGN KEY ("userId") REFERENCES "##PREFIX##Users";
 
 COMMIT;

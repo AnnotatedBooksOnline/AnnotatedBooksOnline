@@ -8,19 +8,23 @@ function sql
 # Execute a SQL file, replacing USE directives with the proper database name.
 function sqlfile
 {
-    cat $1 | sed "s/^ *USE  *[^; ]\+/USE $DBNAME/;s/^ *CREATE  *DATABASE  *[^; ]\+/CREATE DATABASE $DBNAME/" | mysql -u "$DBUSER" --password="$DBPASS"
+    cat $1 \
+    | sed "s/^ *USE  *[^; ]\+/USE $DBNAME/" \
+    | sed "s/^ *CREATE  *DATABASE  *[^;]\+;//" \
+    | sed "s/##PREFIX##/${DBPREFIX}/g" \
+    | mysql -u "$DBUSER" --password="$DBPASS"
 }
 
 # Get a setting from the database.
 function getSetting
 {
-    sql "SELECT settingValue FROM Settings WHERE settingName = '$1';"
+    sql "SELECT settingValue FROM ${DBPREFIX}Settings WHERE settingName = '$1';"
 }
 
 # Set a setting in the database.
 function setSetting
 {
-    sql "REPLACE Settings (settingName, settingValue) VALUE ('$1', '$2');"
+    sql "REPLACE ${DBPREFIX}Settings (settingName, settingValue) VALUE ('$1', '$2');"
 }
 
 function backupDB
@@ -85,6 +89,7 @@ function dbUpdateVersion
 
 DBUSER="$(config database-username)"
 DBPASS="$(config database-password)"
+DBPREFIX="$(config database-prefix)"
 DBNAME="$(config database-dsn | sed 's/.*dbname=\([^;]\+\).*/\1/')"
 
 # Verify database info.
@@ -102,6 +107,10 @@ if [ -z "$DBNAME" ]
 then
     echo "ERROR: Database name not configured. Exiting."
     exit 1
+fi
+if [ -z "$DBPREFIX" ]
+then
+    echo "WARNING: Using empty database table prefix."
 fi
 if ! ERR=$(mysql -B -u "$DBUSER" --password="$DBPASS" </dev/null 2>&1)
 then

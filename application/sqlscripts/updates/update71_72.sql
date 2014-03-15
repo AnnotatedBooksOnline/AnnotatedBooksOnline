@@ -1,7 +1,7 @@
 BEGIN TRANSACTION;
 
 -- Add links to logos for welcome page
-UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
+UPDATE "##PREFIX##Settings" SET "settingValue" = '<h2>Welcome</h2>
 
 <p>Historical readers left many traces in the books they owned. Names, notes, marks, and underlining provide unique evidence of how generations of readers used their books. Annotated Books Online gives full access to these unique copies. Focusing on the first three centuries of print, it enables scholars and students interested in the history of reading to collect, view and study reading practices. User tools include extensive search, viewing and annotating options.</p>
 
@@ -9,9 +9,9 @@ UPDATE "Settings" SET "settingValue" = '<h2>Welcome</h2>
 <a href="http://www.english.uva.nl/" target="_blank" title="Go to the website of University of Amsterdam"><img src="frontend/resources/images/uva.png" style="height: 60px"/></a>
 <a href="http://www.princeton.edu/" target="_blank" title="Go to the website of Princeton University"><img src="frontend/resources/images/princeton.png" style="height: 65px"/></a>
 <a href="http://www.ugent.be/en" target="_blank" title="Go to the website of Ghent University"><img src="frontend/resources/images/ugent.png" style="height: 100px"/></a>
-<a href="http://www.livesandletters.ac.uk/" target="_blank" title="Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>' WHERE "settingName" = 'welcome-page';
+<a href="http://www.livesandletters.ac.uk/" target="_blank" title="##PREFIX##Go to the website of CELL"><img src="frontend/resources/images/cell.png" style="height: 100px"/></a>' WHERE "settingName" = 'welcome-page';
 
-UPDATE "Settings" SET "settingValue" = '<h2>About the project</h2>
+UPDATE "##PREFIX##Settings" SET "settingValue" = '<h2>About the project</h2>
 
 <p>Annotated Books Online is a virtual research environment for scholars and students interested in historical reading practices. It is part of the research project "A Collaboratory for the Study of Reading and the Circulation of Ideas in Early Modern Europe" funded by the Dutch National Research Council (NWO). Generous additional funding was provided by Professor Anthony Grafton for the edition of Gabriel Harvey''s annotations to Livy (Mellon Foundation).</p>
 
