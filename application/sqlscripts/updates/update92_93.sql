@@ -6,8 +6,8 @@ USE abo;
 
 START TRANSACTION;
 
-INSERT INTO "Permissions" ("actionName", "minRank") VALUES ('edit-meta', 10);
-ALTER TABLE "Books" ADD COLUMN "meta" text;
+INSERT INTO "##PREFIX##Permissions" ("actionName", "minRank") VALUES ('edit-meta', 10);
+ALTER TABLE "##PREFIX##Books" ADD COLUMN "meta" text;
 
 COMMIT;
 
