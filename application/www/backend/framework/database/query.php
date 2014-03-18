@@ -231,7 +231,7 @@ class Query
     {
         $query = new Query('DELETE');
         
-        $query->tables = array($query->quoteIdentifiers($query->prefixTable($table)));
+        $query->tables = array($query->quoteIdentifiers($query->prefixTable($table, false)));
         
         return $query;
     }
