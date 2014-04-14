@@ -433,7 +433,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         if (model !== undefined)
         {
             text = '<div class="annotation-code">Annotation <span class="idcode" onClick="selectTextElement(this)">'
-                 + IDCode.encode(model.get('annotationId')) + '</span></div>';
+                 + (IDCode.encode(model.get('annotationId')) || '[unsaved]') + '</span></div>';
             text += renderAnnotationModel(model, annotationRef);
         }
         

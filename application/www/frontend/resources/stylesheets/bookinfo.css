@@ -8,11 +8,19 @@
     cursor: pointer;
 }
 
-.booklist > div
+.booklist .wrapper
 {
     border-left: 5px solid rgb(240, 240, 240);
     padding-left: 5px;
     margin-bottom: 5px;
+}
+
+.booklist .wrapper.subwrapper
+{
+    border-left: 5px solid rgb(240, 240, 240);
+    padding-left: 5px;
+    margin-bottom: 5px;
+    margin-left: 25px;
 }
 
 .booklist > div:hover
@@ -23,7 +31,7 @@
 
 .booklist .currentbook
 {
-    border-left: 5px solid rgb(153, 188, 232);
+    border-left: 5px solid rgb(153, 188, 232) !important;
 }
 
 .booklist .pageinfo
@@ -64,7 +72,23 @@ div.bookinfo
     height: 22px;
 }
 
+.booklist .fragmentappend
+{
+    display: none;
+    top: 50%;
+    right: 24px;
+    position: absolute;
+    margin-top: -11px;
+    width: 22px;
+    height: 22px;
+}
+
 .permission-edit-meta .booklist .fragmentedit
+{
+    display: block;
+}
+
+.permission-edit-meta .booklist .fragmentappend
 {
     display: block;
 }
