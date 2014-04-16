@@ -312,6 +312,11 @@
     background-image: url(../icons/table_edit.png);
 }
 
+.fragment-add-icon
+{
+    background-image: url(../icons/table_add.png);
+}
+
 .video-icon
 {
     background-image: url(../icons/film.png);
