@@ -28,7 +28,6 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
                     labelAlign: 'top',
                     name: 'annotationInfoField' + i,
                     value: fieldValue,
-                    style: 'margin-right: 5px;',
                     flex: 1,
                     allowBlank: true
             	});
@@ -55,12 +54,12 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
                     fieldLabel: 'Color',
                     labelAlign: 'top',
                     value: fieldValue,
-                    style: 'margin-right: 5px;',
                     flex: 1,
+                    height: 60,
                     defaultType: 'radiofield',
                     defaults: {
                         flex: 1,
-                        style: 'margin-right: 10px;'
+                        style: 'margin-right: 10px'
                     },
                     layout: {
                         type: 'table',
@@ -82,11 +81,24 @@ Ext.define('Ext.ux.TranscriptionEditorForm', {
             }
         }
         
+        for (var i = 0; i < orderedTextAreas.length; i++)
+        {
+            var t = orderedTextAreas[i];
+            orderedTextAreas[i] = {
+                xtype: 'fieldset',
+                title: t.fieldLabel,
+                collapsible: true,
+                collapsed: true,
+                layout: 'fit',
+                items: [t],
+                style: 'border-left: 0; border-right: 0; border-bottom: 0;'
+                     + 'padding-left: 0; padding-right: 0; padding-top: 5px;'
+            };
+            t.fieldLabel = '';
+        }
+        
         var defConfig = {
-            layout:{
-                type: 'vbox',
-                align: 'stretch'
-            },
+            autoScroll: true,
             items: orderedTextAreas,
             buttons: [{
                 xtype: 'button',
