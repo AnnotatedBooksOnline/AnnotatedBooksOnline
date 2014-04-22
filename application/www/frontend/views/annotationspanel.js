@@ -111,8 +111,11 @@ function renderAnnotationModel(model, idcodefmt)
         var data = model.get('annotationInfo')[lang.lang];
         if (data)
         {
+            data = escape(data);
+            data = markdown(data);
+            data = IDCode.replaceID(data, idcodefmt);
             text += '<h3>' + lang.name + '</h3>';
-            text += '<p>' + IDCode.replaceID(escape(data), idcodefmt) + '</p>';
+            text += '<p>' + data + '</p>';
         }
     }
     return text;
@@ -433,7 +436,7 @@ Ext.define('Ext.ux.AnnotationsPanel', {
         if (model !== undefined)
         {
             text = '<div class="annotation-code">Annotation <span class="idcode" onClick="selectTextElement(this)">'
-                 + IDCode.encode(model.get('annotationId')) + '</span></div>';
+                 + (IDCode.encode(model.get('annotationId')) || '[unsaved]') + '</span></div>';
             text += renderAnnotationModel(model, annotationRef);
         }
         
@@ -966,9 +969,6 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             return '';
         }
         
-        // Replace IDCodes.
-        text = IDCode.replaceID(text, '[Annotation]');
-        
         // Replace newlines with spaces.
         text = text.replace(/\s*(\r\n|\n|\r)\s*/g, ' ');
         
@@ -978,7 +978,16 @@ Ext.define('Ext.ux.AnnotationsGrid', {
             text = text.substr(0, 117) + '...';
         }
         
-        return escape(text);
+        // Escape HTML.
+        text = escape(text)
+
+        // Replace IDCodes.
+        text = IDCode.replaceID(text, '[Annotation]');
+        
+        // Parse markdown.
+        text = markdown(text);
+        
+        return text;
     },
     
     setLanguage: function(language)

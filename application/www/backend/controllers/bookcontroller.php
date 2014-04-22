@@ -53,23 +53,40 @@ class BookController extends ControllerBase
         
         Database::getInstance()->doTransaction(function() use ($data)
         {
-            $bookId = self::getInteger($data, 'bookId');
+            $ref = self::getArray($data, 'fragment');
+            $bookId = self::getInteger($ref, 'bookId');
+            $fragmentId = self::getInteger($ref, 'fragmentId');
             $book = new Book($bookId);
             
             $key = self::getString($data, 'key');
-            $value = self::getString($data, 'value');
+            $val = self::getArray($data, 'value');
+            $value = self::getString($val, 'value');
+            $comment = self::getString($val, 'comment');
             
-            $meta = $book->getMeta();
-            if ($value != '' && $key != '')
+            $frags = $book->getMeta();
+            if (!isset($frags[$fragmentId]))
             {
-                $meta[$key] = $value;
+                $frags[$fragmentId] = array();
+            }
+            $meta = $frags[$fragmentId];
+            if ((trim($value) != '' || trim($comment) != '') && $key != '')
+            {
+                $meta[$key] = array(
+                    'value'   => $value,
+                    'comment' => $comment
+                );
             }
             else if (isset($meta[$key]))
             {
                 unset($meta[$key]);
             }
-            Log::debug(print_r($meta, TRUE));
-            $book->setMeta($meta);
+            $frags[$fragmentId] = $meta;
+            if (count($meta) == 0)
+            {
+                unset($frags[$fragmentId]);
+            }
+            Log::debug(print_r($frags, TRUE));
+            $book->setMeta($frags);
             $book->save();
         });
     }
