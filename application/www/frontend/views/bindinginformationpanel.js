@@ -76,7 +76,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             {
                 props.append(genText('li', 'Published ' + pubInfo.join(' ')).addClass('pubinfo'));
             }
-            props.append(genText('li', 'Pages ' + firstPage + ' to ' + lastPage).addClass('pageinfo'));
+            props.append(genText('li', 'Scans ' + firstPage + ' to ' + lastPage).addClass('pageinfo'));
             el.append(props);
             
             // Go to page on click.
@@ -84,7 +84,7 @@ Ext.define('Ext.ux.BindingInformationPanel', {
             {
                 _this.viewer.gotoPage(firstPage - 1);
             });
-            el.prop('title', 'Go to page ' + firstPage);
+            el.prop('title', 'Go to scan ' + firstPage);
             
             books.push({
                 el: el,

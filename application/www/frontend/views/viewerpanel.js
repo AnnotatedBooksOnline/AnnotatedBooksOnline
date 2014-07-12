@@ -66,10 +66,10 @@ Ext.define('Ext.ux.ViewerPanel', {
                     cls: 'zoom-slider'
                 }, '-', {
                     iconCls: 'first-icon',
-                    tooltip: 'Go to first page',
+                    tooltip: 'Go to first scan',
                     disabled: true,
                     name: 'first-page',
-                    overflowText: 'Go to first page',
+                    overflowText: 'Go to first scan',
                     listeners: {
                         click: function()
                         {
@@ -78,17 +78,17 @@ Ext.define('Ext.ux.ViewerPanel', {
                     }
                 },{
                     iconCls: 'previous-icon',
-                    tooltip: 'Go to previous page',
+                    tooltip: 'Go to previous scan',
                     disabled: true,
                     name: 'previous-page',
-                    overflowText: 'Go to previous page',
+                    overflowText: 'Go to previous scan',
                     listeners: {
                         click: function()
                         {
                             _this.gotoPage(_this.getPage() - 1);
                         }
                     }
-                }, '-', 'Page', {
+                }, '-', 'Scan', {
                     xtype: 'textfield',
                     width: 40,
                     value: '1',
@@ -105,7 +105,7 @@ Ext.define('Ext.ux.ViewerPanel', {
                             return true;
                         }
                         
-                        return 'Enter a page between 1 and ' + _this.getPageAmount() + ' inclusive.';
+                        return 'Enter a scan between 1 and ' + _this.getPageAmount() + ' inclusive.';
                     },
                     listeners: {
                         blur: function()
@@ -130,10 +130,10 @@ Ext.define('Ext.ux.ViewerPanel', {
                     name: 'total-pages'
                 }, '-', {
                     iconCls: 'next-icon',
-                    tooltip: 'Go to next page',
+                    tooltip: 'Go to next scan',
                     disabled: (_this.getPageAmount() == 1),
                     name: 'next-page',
-                    overflowText: 'Go to next page',
+                    overflowText: 'Go to next scan',
                     listeners: {
                         click: function()
                         {
@@ -142,10 +142,10 @@ Ext.define('Ext.ux.ViewerPanel', {
                     }
                 },{
                     iconCls: 'last-icon',
-                    tooltip: 'Go to last page',
+                    tooltip: 'Go to last scan',
                     disabled: (_this.getPageAmount() == 1),
                     name: 'last-page',
-                    overflowText: 'Go to last page',
+                    overflowText: 'Go to last scan',
                     listeners: {
                         click: function()
                         {

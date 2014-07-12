@@ -332,7 +332,7 @@ class Pdf
         }
         if ($subset !== false)
         {
-            $this->drawText('Pages ' . $scans[0]->getPage() . ' – ' . $scans[count($scans)-1]->getPage());
+            $this->drawText('Scans ' . $scans[0]->getPage() . ' – ' . $scans[count($scans)-1]->getPage());
         }
         
         list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.25, 0.25);
@@ -445,7 +445,7 @@ class Pdf
             
             $this->y = $this->textMarginB;
             
-            $this->drawText('Page ' . $scan->getPage());
+            $this->drawText('Scan ' . $scan->getPage());
             $this->writePage();
             
             $this->setPageMargin(72); // 2,5 cm
@@ -590,7 +590,7 @@ class Pdf
             $title .= "\n";
         }
         $title .= $library->getLibraryName() . ", " . $binding->getSignature();
-        $title .= "\nPage " . $scan->getPage();
+        $title .= "\Scan " . $scan->getPage();
         $this->drawText($title);
         
         // Draw the scan, with annotations if required.
@@ -770,7 +770,7 @@ class Pdf
             return;
         }
         
-        $this->setHeaderText('Transcriptions for page ' . $scan->getPage());
+        $this->setHeaderText('Transcriptions for scan ' . $scan->getPage());
         for ($i = 1; $i <= count($annotations); $i++)
         {
             foreach ($transcriptions($annotations[$i-1]) as $name => $text)

@@ -186,7 +186,7 @@ Ext.define('Ext.ux.ScanListFieldset', {
                     stripeRows: true
                 },
                 columns: [{
-                    text:      'Page number',
+                    text:      'Scan number',
                     flex:      1,
                     sortable:  false,
                     dataIndex: 'page'
@@ -332,7 +332,7 @@ Ext.define('Ext.ux.SelectBookForm', {
                     cls: 'plaintext',
                     html: '<h2>Instructions</h2><p>In this screen you will need to assign the scans to the books. '
                         + 'First you will need to select a book by double clicking. '
-                        + 'Afterwards you can select the first page and the last page'
+                        + 'Afterwards you can select the first page and the last scan'
                         + ' of the book in any order by double clicking. When you have done this for all books,'
                         + 'you can press the save button and the binding will be added to the database.</p>'
                     },{

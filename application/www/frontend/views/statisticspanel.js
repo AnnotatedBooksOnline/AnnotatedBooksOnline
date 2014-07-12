@@ -274,7 +274,7 @@ Ext.define('Ext.ux.BindingStatisticsPanel', {
     alias: 'widget.bindingstatisticspanel',
 
     gridColumns: [{
-        text:      'Page',
+        text:      'Scan',
         flex:      1,
         dataIndex: 'page',
         renderer:  'htmlEncode'
@@ -330,7 +330,7 @@ Ext.define('Ext.ux.LatestAnnotationsStatisticsPanel', {
         dataIndex: 'book',
         renderer:  'htmlEncode'
     },{
-        text:      'Page',
+        text:      'Scan',
         flex:      1,
         dataIndex: 'page',
         renderer:  'htmlEncode'
