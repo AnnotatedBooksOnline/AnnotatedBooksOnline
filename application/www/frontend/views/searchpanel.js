@@ -1077,7 +1077,7 @@ Ext.define('Ext.ux.SearchPanel', {
                             index: 0
                         };
                         cols[cols.length] = {
-                            desc: 'First page',
+                            desc: 'First scan',
                             name: 'firstPage',
                             show: false,
                             index: 0

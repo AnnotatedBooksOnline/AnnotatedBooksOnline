@@ -213,7 +213,7 @@ Ext.define('Ext.ux.ExportForm', {
         var defConfig = {
             items: [{
                 xtype: 'radiogroup',
-                fieldLabel: 'Page selection',
+                fieldLabel: 'Scan selection',
                 columns: 1,
                 vertical: true,
                 labelAlign: 'top',
@@ -235,7 +235,7 @@ Ext.define('Ext.ux.ExportForm', {
                     heigth: 100,
                     width: 300,
                     layout: 'hbox',
-                    fieldLabel: 'Pages',
+                    fieldLabel: 'Scans',
                     labelWidth: 50,
                     labelAlign: 'left',
                     style: 'margin-left: 20px',
@@ -675,7 +675,7 @@ Ext.define('Ext.ux.AnnotationSearchPanel', {
                     tdCls: 'wrap',
                     flex: 5
                 },{
-                    text: 'Page',
+                    text: 'Scan',
                     dataIndex: 'page',
                     flex: 1
                 }],
