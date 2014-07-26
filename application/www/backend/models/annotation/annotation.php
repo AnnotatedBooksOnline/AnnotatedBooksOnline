@@ -276,4 +276,9 @@ class Annotation extends Entity
         $info[1] = $text;
         $this->setAnnotationInfo($info);
     }
+    
+    public function getIdCode()
+    {
+        return '#' . substr('0000000' . base_convert((crc32(pack('V', $this->annotationId)) + 0x80000000) & 0xFFFFFFFF, 10, 36), -7);
+    }
 }
