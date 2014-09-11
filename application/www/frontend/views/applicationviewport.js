@@ -257,7 +257,7 @@ Ext.define('Ext.ux.ApplicationViewport', {
                 type: 'hbox',
                 align: 'stretch'
             },
-            height: 120,
+            height: 187,
             cls: 'header',
             items: [{ 
                 // Header logo.
@@ -308,39 +308,30 @@ Ext.define('Ext.ux.ApplicationViewport', {
                     cursor: getCachedSetting('homepage-url') == "" ? "default" : "pointer"
                 }
             },{ 
-                // Title, with menu below.
-                layout: 'hbox',
-                layoutConfig: {
-                    align : 'stretch',
-                    pack  : 'start'
-                },
-                border: false,
+                layout: 'border',
                 flex: 1,
+                border: false,
+                height: 187,
                 items: [{
-                    layout: 'border',
                     flex: 1,
                     border: false,
-                    height: 120,
-                    items: [{
-                        flex: 1,
-                        border: false,
-                        region: 'center'
-                    },{
-                        height: 34,
-                        bodyPadding: 2,
-                        border: false,
-                        defaults: {
-                            xtype: 'button',
-                            cls: 'menu-button'
-                        },
-                        layout: 'hbox',
-                        items: menuButtons,
-                        region: 'south'
-                    }]
+                    region: 'center'
+                },{
+                    height: 34,
+                    bodyPadding: 2,
+                    border: false,
+                    defaults: {
+                        xtype: 'button',
+                        cls: 'menu-button'
+                    },
+                    layout: 'hbox',
+                    items: menuButtons,
+                    region: 'south'
                 },{ 
                     // User items.
                     border: false,
                     bodyPadding: 10,
+                    region: 'east',
                     width: 220,
                     layout: {
                         type: 'table',

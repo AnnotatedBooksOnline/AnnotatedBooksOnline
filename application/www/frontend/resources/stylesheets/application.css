@@ -2,16 +2,26 @@
  * Application stylesheet.
  */
 
+.header
+{
+    background-image: url(../images/masthead-abo.jpg);
+    background-size: 100% auto;
+    background-origin: border-box;
+    background-repeat: repeat;
+    background-clip: border-box;
+}
+
 /* Header styling. */
 .header .x-panel-body
 {
-    background-color: #E7ECF3;
+    background: none;
     color: #15498B;
 }
 
 .header .header-logo
 {
-    background: url(../images/header.png) 10px 10px no-repeat;
+    background: url(../images/caplogo.png) 10px 10px no-repeat;
+    width: 307px !important;
 }
 
 .header .x-panel-body h1
@@ -46,6 +56,11 @@
 {
     text-align: right;
     margin-bottom: 7px;
+}
+
+.header .user-text .x-panel-body
+{
+    color: #333333;
 }
 
 /* IE hack */
