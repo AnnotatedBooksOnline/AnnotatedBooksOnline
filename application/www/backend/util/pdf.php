@@ -335,7 +335,7 @@ class Pdf
             $this->drawText('Scans ' . $scans[0]->getPage() . ' – ' . $scans[count($scans)-1]->getPage());
         }
         
-        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.25, 0.25);
+        list($y, , $x,) = $this->drawJPEGImage($this->productLogo, $this->textMarginL, $this->textMarginB, 0.5, 0.5);
         
         if ($this->productShowName)
         {
