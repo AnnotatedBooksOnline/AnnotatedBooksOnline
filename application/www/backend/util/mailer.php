@@ -49,7 +49,7 @@ class Mailer
                  . 'From: ' . Setting::getSetting('project-title') 
                  . ' <'     . $fromaddress . ">\r\n";
         
-        $success = mail($recipient, $subject, $message, $headers);
+        $success = mail($recipient, $subject, $message, $headers, '-f ' . $fromaddress);
         if(!$success)
         {
             throw new MailerException('mail-failed', $recipient);
