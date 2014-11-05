@@ -114,7 +114,7 @@ class TilePyramidBuilder extends Singleton
         
         // Determine paths.
         $input  = '../data/tiles/' . ($scanId % 100) . '/' . $scanId . '/tile_0_0_0.jpg';
-        $output = '../data/thumbnails/' . $scanId . '.jpg';
+        $output = '../data/thumbnails/' . ($scanId % 100) . '/' . $scanId . '.jpg';
         
         // Determine thumbnail dimensions.
         $conf = Configuration::getInstance();

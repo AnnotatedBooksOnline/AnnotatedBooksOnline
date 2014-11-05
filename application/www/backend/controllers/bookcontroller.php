@@ -298,7 +298,7 @@ class BookController extends ControllerBase
                 'signature'     => $book->getValue('signature'),
                 'provenance'    => $book->getValue('provenancenames'),
                 'headline'      => $headline != "" ? BookController::headline($book->getValue('text'), $headline) : NULL,
-                'thumbnail'     => 'data/thumbnails/' . $book->getValue('scanId') . '.jpg',
+                'thumbnail'     => 'data/thumbnails/' . ($book->getValue('scanId') % 100) . '/' . $book->getValue('scanId') . '.jpg',
                 'id'            => $book->getValue('bookId'),
                 'bindingId'     => $book->getValue('bindingId'),
                 'firstPage'     => $book->getValue('firstPage'),
