@@ -59,7 +59,7 @@ class TilePyramidBuilder extends Singleton
         // Determine builder paths and arguments.
         $conf = Configuration::getInstance();
         
-        $outputPath = '../data/tiles/' . ((int) $scan->getScanId());
+        $outputPath = '../data/tiles/' . ((int) $scan->getScanId() % 100) . '/' . ((int) $scan->getScanId());
         
         // Determine arguments to builder command. Make sure bash injection is not possible.
         $scantype = escapeshellarg($scan->getScanType());
@@ -113,7 +113,7 @@ class TilePyramidBuilder extends Singleton
         Log::debug('Creating thumbnail for scan with id %d.', $scanId);
         
         // Determine paths.
-        $input  = '../data/tiles/' . $scanId . '/tile_0_0_0.jpg';
+        $input  = '../data/tiles/' . ($scanId % 100) . '/' . $scanId . '/tile_0_0_0.jpg';
         $output = '../data/thumbnails/' . $scanId . '.jpg';
         
         // Determine thumbnail dimensions.

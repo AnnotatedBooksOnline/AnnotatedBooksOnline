@@ -95,7 +95,7 @@ Binding.prototype.initialize = function()
 
 Binding.documentFromScan = function(scan)
 { 
-    var prefix = 'data/tiles/' + scan.get('location') + scan.get('scanId') + '/tile_';
+    var prefix = 'data/tiles/' + scan.get('location') + (scan.get('scanId') % 100) + '/' + scan.get('scanId') + '/tile_';
     
     return new Document(
         scan.get('width'),

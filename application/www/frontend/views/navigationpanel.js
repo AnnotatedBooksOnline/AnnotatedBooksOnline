@@ -178,7 +178,7 @@ Ext.define('Ext.ux.ThumbnailView', {
                     var el = node.el.firstChild;
                     if (el.style.visibility != 'visible')
                     {
-                        el.firstChild.src = 'data/tiles/' + node.location + node.id + '/tile_0_0_0.jpg';
+                        el.firstChild.src = 'data/tiles/' + node.location + (node.id % 100) + '/' + node.id + '/tile_0_0_0.jpg';
                         el.style.visibility = 'visible';
                     }
                 }

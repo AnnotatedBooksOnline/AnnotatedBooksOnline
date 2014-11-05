@@ -1231,7 +1231,7 @@ class Pdf
         {
             $z = $this->scanAttr['zoomLevel'];
         }
-        return $this->path . '/' . $scanId . '/tile_' . $z . '_' . $x . '_' . $y . '.jpg';
+        return $this->path . '/' . ($scanId % 100) . '/' . $scanId . '/tile_' . $z . '_' . $x . '_' . $y . '.jpg';
     }
     
     /**
