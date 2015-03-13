@@ -340,7 +340,7 @@ class Pdf
                         if ($value && isset($value['value']))
                         {
                             $this->drawText($key . ': ', false, true);
-                            $this->textMarginL = $this->x;
+                            $this->textMarginL = $mL + 36;
                             $this->drawText($value['value']);
                             $this->textMarginL = $mL;
                             $this->x = $mL;
@@ -364,7 +364,7 @@ class Pdf
                         if ($value && isset($value['value']))
                         {
                             $this->drawText($key . ': ', false, true);
-                            $this->textMarginL = $this->x;
+                            $this->textMarginL = $mL + 20 + 36;
                             $this->drawText($value['value']);
                             $this->textMarginL = $mL + 20;
                             $this->x = $mL + 20;
@@ -479,7 +479,7 @@ class Pdf
                         if ($value && isset($value['value']))
                         {
                             $this->drawText($key . ': ', false, true);
-                            $this->textMarginL = $this->x;
+                            $this->textMarginL = $mL + 36;
                             $this->drawText($value['value']);
                             $this->textMarginL = $mL;
                             $this->x = $mL;
@@ -503,7 +503,7 @@ class Pdf
                         if ($value && isset($value['value']))
                         {
                             $this->drawText($key . ': ', false, true);
-                            $this->textMarginL = $this->x;
+                            $this->textMarginL = $mL + 20 + 36;
                             $this->drawText($value['value']);
                             $this->textMarginL = $mL + 20;
                             $this->x = $mL + 20;
@@ -1586,7 +1586,7 @@ class Pdf
         $pats = array();
         $reps = array();
         $offset = 0;
-        while(preg_match('/(#[a-zA-Z0-9]{7})(?:[^a-zA-Z0-9]|$)/', $text, $matches, PREG_OFFSET_CAPTURE, $offset))
+        while(preg_match('/(#[a-zA-Z0-9]{7})(?=[^a-zA-Z0-9]|$)/', $text, $matches, PREG_OFFSET_CAPTURE, $offset))
         {
             $code = $matches[0][0];
             $pats[] = '/' . $code . '/';
